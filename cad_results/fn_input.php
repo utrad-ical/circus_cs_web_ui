@@ -329,32 +329,91 @@
 				
 					if($enteredFnNum >= 1)
 					{
+						$nearestLesionCnt = 0;
+						$nearestLesionArr = array();
+					
 						while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 						{
-							array_push($posArr, $result['location_x']);
-							array_push($posArr, $result['location_y']);
-							array_push($posArr, $result['location_z']);
-							
-							if($result['nearest_lesion_id'] > 0)
+	
+							if($result['nearest_lesion_id'] > 0) // 近傍病変候補がある場合
 							{
-								$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
-										. ' WHERE exec_id=? AND sub_id=?';
+								$dupePos = -1;
 								
-								$stmt2 = $pdo->prepare($sqlStr);
-								$stmt2->execute(array($param['execID'], $result['nearest_lesion_id']));
-								$result2 = $stmt2->fetch(PDO::FETCH_NUM);
+								for($i=0; $i<$nearestLesionCnt; $i++)
+								{
+									if($nearestLesionArr[$i] == $result['nearest_lesion_id'])
+									{
+										$dupePos = $i;
+										break;
+									}
+								}
+
+								if($dupePos == -1) // 近傍病変候補が既にposArrに含まれていない場合
+								{
+									$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
+											. ' WHERE exec_id=? AND sub_id=?';
 								
-								$dist = (($result['location_x']-$result2[0])*($result['location_x']-$result2[0])
-								      + ($result['location_y']-$result2[1])*($result['location_y']-$result2[1]))
-								      + ($result['location_z']-$result2[2])*($result['location_z']-$result2[2]);
-						
-								array_push($posArr, sprintf("%d / %.2f", $result['nearest_lesion_id'],  sqrt($dist)));
+									$stmt2 = $pdo->prepare($sqlStr);
+									$stmt2->execute(array($param['execID'], $result['nearest_lesion_id']));
+									$result2 = $stmt2->fetch(PDO::FETCH_NUM);
+
+									array_push($posArr, $result2[0]);
+									array_push($posArr, $result2[1]);
+									array_push($posArr, $result2[2]);
+									array_push($posArr, sprintf("%d / 0.00", $result['nearest_lesion_id']));
+									array_push($posArr, $result['entered_by']);
+									array_push($posArr, $result['location_id']);
+									
+									$nearestLesionArr[$nearestLesionCnt] = $result['nearest_lesion_id'];
+									$nearestLesionCnt++;
+								}
+								else // 近傍病変候補が既にposArrに含まれている場合（自動統合）
+								{
+									$posArr[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
+									$posArr[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
+									$enteredFnNum--; // 重複分を減算
+								}
 							}
-							else if($result['nearest_lesion_id'] == -1) array_push($posArr, 'BT');
-							else array_push($posArr, '- / -');
+							else // 近傍病変候補がない場合
+							{
+								//----------------------------------------------------------------------------
+								// 同一座標の有無をチェック
+								//----------------------------------------------------------------------------
+								$posCnt = count($posArr) / $DEFAULT_COL_NUM;
+								
+								$dupePos = -1;
+								
+								for($i=0; $i<$posCnt; $i++)
+								{
+									if($posArr[$i * $DEFAULT_COL_NUM] == $result['location_x']
+									   && $posArr[$i * $DEFAULT_COL_NUM + 1] == $result['location_y']
+									   && $posArr[$i * $DEFAULT_COL_NUM + 2] == $result['location_z'])
+									{
+										$dupePos = $i;
+										break;
+									}
+								}
+								//----------------------------------------------------------------------------
+							
+								if($dupePos == -1) // 重複がない場合
+								{
+									array_push($posArr, $result['location_x']);
+									array_push($posArr, $result['location_y']);
+									array_push($posArr, $result['location_z']);
+							
+									if($result['nearest_lesion_id'] == -1)  array_push($posArr, 'BT');
+									else                                    array_push($posArr, '- / -');
 		
-							array_push($posArr, $result['entered_by']);
-							array_push($posArr, $result['location_id']);
+									array_push($posArr, $result['entered_by']);
+									array_push($posArr, $result['location_id']);
+								}
+								else // 重複がある場合（自動統合）
+								{
+									$posArr[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
+									$posArr[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
+									$enteredFnNum--; // 重複分を減算
+								}
+							}
 						}
 					
 						$sqlStr = "SELECT DISTINCT entered_by FROM false_negative_location"
@@ -364,14 +423,14 @@
 						$stmt->bindParam(1, $param['execID']);
 						$stmt->execute();
 						
-						$userCnt = 1;
+						$userCnt = 0;
 					
 						while($result = $stmt->fetch(PDO::FETCH_NUM))
 						{			
 							if($result[0] != $userID)
 							{
+								$userCnt = (++$userCnt % 4);
 								$userStr .= "^" . $result[0] . "^" . $userCnt;
-								$userCnt = ($userCnt++ % 4);
 							}
 						}
 						
@@ -450,8 +509,20 @@
 	
 		for($j=0; $j<$enteredFnNum; $j++)
 		{
-			$fontColor = ($param['feedbackMode'] == "consensual") ? $colorList[$userArr[$posArr[$j * $DEFAULT_COL_NUM + 4]]] : "black";	
-			if($param['feedbackMode'] == "consensual" && $registTime != "")  $fontColor = "#ff00ff";
+			$fontColor = "black";
+			
+			if($param['feedbackMode'] == "consensual")
+			{
+				if($registTime != "")
+				{
+					$fontColor = "#ff00ff";
+				}
+				else
+				{
+					$tmpUserID = strtok($posArr[$j * $DEFAULT_COL_NUM + 4], ',');
+					$fontColor = $colorList[$userArr[$tmpUserID]];	
+				}
+			}
 		
 			$locationList[$j][0] = $fontColor;
 			$locationList[$j][1] = $posArr[$j*$DEFAULT_COL_NUM];											// posX
@@ -462,7 +533,12 @@
 			$locationList[$j][6] = $posArr[$j*$DEFAULT_COL_NUM+5];
 			
 			// Position for label
-			$locationList[$j][7] = ($param['feedbackMode'] == "consensual") ? $userArr[$posArr[$j * $DEFAULT_COL_NUM + 4]] : 0;
+			$locationList[$j][7] = 0;
+			if($param['feedbackMode'] == "consensual")
+			{
+				$tmpUserID = strtok($posArr[$j * $DEFAULT_COL_NUM + 4], ',');
+				$locationList[$j][7] = $userArr[$tmpUserID];
+			}
 		}
 		
 		// ↓画面遷移毎にFN一時登録が必要な場合は入れる？（要動作確認、特にConsensual)
