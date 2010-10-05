@@ -1,0 +1,58 @@
+@charset "shift_jis";
+/* ===================================================================
+CSS information
+
+ file name  :  default.css
+=================================================================== */
+/*--- reset */
+html {
+	overflow-y: scroll;
+}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+	margin: 0;
+	padding: 0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style: normal;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+caption,th {
+	text-align: left;
+}
+q:before,q:after {
+	content: '';
+}
+object,
+embed {
+	vertical-align: top;
+}
+hr,legend {
+	display: none;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size: 100%;
+}
+img,abbr,acronym,fieldset {
+	border: 0;
+}
+li {
+	list-style-type: none;
+}
+p {
+	margin-bottom: 0;
+}
+
+/*--- default */
+body {
+	background: #FFF;
+	color: #333;
+	font-size: small;
+	font-family: verdana,"ÉqÉâÉMÉmäpÉS Pro W3","Hiragino Kaku Gothic Pro",Osaka,"ÇlÇr ÇoÉSÉVÉbÉN","MS PGothic",Sans-Serif;
+	line-height: 1.5;
+}
+*:first-child + html body {	/* for IF7 */
+	font-family: "ÉÅÉCÉäÉI","Meiryo";
+}

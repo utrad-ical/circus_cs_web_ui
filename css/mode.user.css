@@ -1,0 +1,421 @@
+@charset "shift_jis";
+/* ===================================================================
+CSS information
+
+ file name  :layout.general.css
+ 
+ theme color : #66ccff(accent),#b4ebfa,#f5fafa
+=================================================================== */
+/* ===================================================
+	#leftside 
+		
+		LOGO Border color
+		
+		#menu
+			Background color
+			Button Background image
+			
+			Calendar
+ =================================================== */
+#leftside h1 img {
+	border-color: #66ccff;
+}
+#container {
+	background: url(../img_common/item/menu_bk.user.gif) left repeat-y;
+}
+#menu {
+	/*background-color: #b4ebfa;*/
+}
+
+.jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }
+.jq-btn-today { background-image: url(../img_common/btn/user/jq-btn-today.gif) ; }
+.jq-btn-search { background-image: url(../img_common/btn/user/jq-btn-search.gif) ; }
+.jq-btn-statistics { background-image: url(../img_common/btn/user/jq-btn-statistics.gif) ; }
+.jq-btn-research { background-image: url(../img_common/btn/user/jq-btn-research.gif) ; }
+.jq-btn-preference { background-image: url(../img_common/btn/user/jq-btn-preference.gif) ; }
+.jq-btn-favorites { background-image: url(../img_common/btn/user/jq-btn-favorites.gif) ; }
+.jq-btn-logout { background-image: url(../img_common/btn/user/jq-btn-logout.gif) ; }
+
+#menu #flash_admin,
+#menu #flash_guest {
+	display:none;
+}
+/* ===================================================
+
+	#content 
+		
+ =================================================== */
+#content h2 {
+	color: #09f;
+}
+#content h3 { /* for Search title */
+	background-color: #66ccff;
+	border-bottom:2px solid #b4ebfa;
+}
+
+/* ===================================================
+	TABLE 
+		body.general
+ =================================================== */
+table.col-tbl th {
+	background-color: #66ccff;
+	color: #fff;
+	border: 1px solid #b4ebfa;
+	padding: 2px;
+	text-align: center;
+}
+table.col-tbl tr td {
+	border: 1px solid #b4ebfa;
+	padding: 1px;
+	text-align: center;
+}
+table.col-tbl tr.column td {
+	background-color: #f5fafa;
+}
+
+table.row-tbl th {
+	background-color: #66ccff;
+	color: #fff;
+	border: 1px solid #b4ebfa;
+	padding: 2px;
+	text-align: left;
+}
+table.row-tbl tr td {
+	border: 1px solid #b4ebfa;
+	padding: 2px;
+	padding-left: 10px;
+	text-align: left;
+}
+
+table.img-tbl {
+	background: url(../img_common/item/imgbk_top.jpg) top no-repeat;
+	overflow: hidden;
+	width: 408px;
+	margin: 0;
+	padding: 0;
+}
+table.img-tbl td {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
+
+div.imgnum {
+	width: 90%;
+	margin: 5px auto;
+	background-color:#000;
+	color:#fff;
+}
+
+/*
+	SEARCH PANEL
+---------------------------------------------------- */
+.search-panel {
+	background-color: #f9f9f9;
+	margin-bottom: 20px;
+}
+.trim01 {
+	border-left: 2px solid #66ccff;
+	padding-left: 3px;
+}
+.selected-btn-search {
+	color: #ffffff;
+  background: url(../img_common/btn/user/btn-bk0.jpg) repeat-x;
+  text-decoration: none;
+}
+
+
+
+
+/* ===================================================
+	 for User settings
+ =================================================== */
+table.u-set {
+	margin-left: 15px;
+	font-size: 16px;
+}
+table.u-set th {
+	width: 353px;
+	background: url(../img_common/item/arrow02.gif) left bottom no-repeat;
+	width: 223px;
+	height: 25px;
+	font-weight: normal;
+	padding-top: 30px;
+}
+table.u-set td {
+	vertical-align: bottom;
+}
+
+div.setting input {
+	float: right;
+}
+
+
+#content h3.ptn02 { /* for result */
+	background-color: #fff;
+	padding-left: 0;
+	color: #000;
+	letter-spacing: 0;
+	border-bottom:2px solid #c9c9d7;
+}
+h3.ptn02 span {
+	font-weight: normal;
+}
+ul.ul-ptn02 {
+	margin: 20px 10px 10px 0;
+	text-align: right;
+	font-weight: bold;
+}
+ul.ul-ptn02 li {
+	display: inline;
+	margin-right: 15px;
+}
+
+
+/* ===================================================
+	 BUTTON for search.html
+ =================================================== */
+
+a:link.btn-search,a:active.btn-search,a:visited.btn-search { 
+	color: #000;
+	background: url(../img_common/btn/user/btn-bk1.jpg) repeat-x;
+	text-decoration: none;
+}
+a:hover.btn-search { 
+	color: #298dcc;
+	background: url(../img_common/btn/user/btn-bk2.jpg) repeat-x;
+}
+
+/* ===================================================
+	 BUTTON mode change
+ =================================================== */
+.jq-btn-personal{
+	background-image:url(../img_common/btn/user/jq-btn-personal.jpg);
+}
+.jq-btn-consensual {
+	background-image:url(../img_common/btn/user/jq-btn-consensual.jpg);
+}
+ 
+/* ===================================================
+	 TAB
+	 	Border color
+	 	Background image
+		Link style
+ 		
+			Detail PANEL color
+=================================================== */
+.tab-content {
+	border-color:#66ccff;
+}
+a:link.btn-tab,a:active.btn-tab,a:visited.btn-tab{
+	color: #66ccff;
+	background: url(../img_common/btn/user/tab.gif) no-repeat;
+}
+ 
+a:hover.btn-tab {
+	color: #fff;
+	background: url(../img_common/btn/user/tab0.gif) no-repeat;
+}
+p.add-favorite {
+	border-color: #66ccff;
+}
+/*
+	Detail PANEL
+---------------------------------------------------- */
+.detail-panel {
+	background-color: #f5fafa;
+}
+/* ===================================================
+   User hidden
+	 		
+ =================================================== */
+
+#admin-only {
+	display: none;
+}
+/* ===================================================
+	 Radio Button
+ =================================================== */
+/* Normal */
+.radio-to-button {
+	display:inline-block;
+	cursor:pointer;
+	
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding: 0;
+	margin: 0;
+	
+	outline:0;
+	overflow:hidden;
+	
+/*	float: left; */
+
+	/* Modified by Y.Nomura (2009.04.05) */
+	margin-right: 2px;
+	padding-left: 3px;
+	padding-right: 3px;
+	/* --------------------------------- */
+
+	text-decoration: none;
+	text-align: center;
+	line-height: 1.8;
+}
+
+.radio-to-button {
+	background-image:url(../img_common/btn/user/radio-to-button_white2.jpg);
+	font-size: 12px;
+	font-family:Arial, Helvetica, sans-serif;
+	height: 23px;
+}
+
+.radio-to-button-normal {
+	color: #333;
+	border: 1px solid #333;
+	background-position: 0 0;
+}
+.radio-to-button-hover {
+	color: #69f;
+	border: 1px solid #69f;
+	background-position: 0 -23px;
+}
+.radio-to-button-checked {
+	color: #fff;
+	border: 1px solid #0041ff;
+	background-position: 0 -46px;
+}
+.radio-to-button-disabled {
+	color: #aaa;
+	border: 1px solid #808080;
+	background-position: 0 -69px;
+}
+/* consensual extention */
+.consensual .radio-to-button-normal{
+	font-weight: bold;
+}
+.consensual .radio-to-button-hover{
+	font-weight: bold;
+}
+.consensual .radio-to-button-checked{
+	font-weight: bold;
+}
+
+.consensual .hide-on-consensual {
+	display:none; 
+}
+
+.personal .hide-on-personal {
+	display:none; 
+}
+
+/* Large */
+.radio-to-button-l {
+	display:block;
+	cursor:pointer;
+	
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding:0;
+	margin:0;
+	
+	outline:0;
+	overflow:hidden;
+	
+	float: left;
+	margin-right: 3px;
+	
+	text-decoration: none;
+	text-align: center;
+	line-height: 2;
+}
+
+.radio-to-button-l {
+	background-image:url(../img_common/btn/user/radio-to-button-l_white2.jpg);
+	font-size: 12px;
+	font-family:Arial, Helvetica, sans-serif;
+	height: 25px;
+	width: 130px;
+}
+
+.radio-to-button-l-normal {
+	color: #333;
+	border: 1px solid #333;
+	background-position: 0 0;
+}
+.radio-to-button-l-hover {
+	color: #69f;
+	border: 1px solid #69f;
+	background-position: 0 -25px;
+}
+.radio-to-button-l-checked {
+	color: #fff;
+	border: 1px solid #0041ff;
+	background-position: 0 -50px;
+}
+.radio-to-button-l-disabled {
+	color: #aaa;
+	border: 1px solid #808080;
+	background-position: 0 -75px;
+}
+
+/* ----------------------------------
+	Registration of feedback
+------------------------------------ */
+input.registration {
+	display:inline-block;
+	cursor:pointer;
+
+	padding: 5px 0;
+	width: 200px;
+}
+
+.registration-normal {
+	color: #000;
+	background-color: #b4ebfa;
+	border: 1px solid #0041ff;
+}
+.registration-hover {
+	color: #fff;
+	background-color: #66ccff;
+	border: 1px solid #0041ff;
+}
+.registration-disabled {
+	color: #ccc;
+	background-color: #999;
+	border: 1px solid #0041ff;
+}
+
+
+input.form-btn {
+	display:inline-block;
+	cursor:pointer;
+	border: 1px solid #0041ff;
+}
+
+.form-btn-normal {
+	color: #000;
+	background-color: #b4ebfa;
+}
+.form-btn-hover {
+	color: #fff;
+	background-color: #66ccff;
+}
+.form-btn-disabled {
+	color: #ccc;
+	background-color: #999;
+}
+
+
+/* ===================================================
+	User preference (added by Y.Nomura 2010.04.03)
+	
+		h3
+		h4
+ ===================================================*/  
+h4.upSec, .regist-caution {
+	color: #09F;
+	font-weight: bold;

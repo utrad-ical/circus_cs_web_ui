@@ -1,0 +1,105 @@
+@charset "shift_jis";
+
+/* ===================================================================
+CSS information
+
+ Use with jquery modules and jq.css
+
+=================================================================== */
+
+/*
+		Menu
+----------------------------------------- */
+.jq-btn-home,
+.jq-btn-today,
+.jq-btn-search,
+.jq-btn-statistics,
+.jq-btn-research,
+.jq-btn-preference,
+.jq-btn-favorites,
+.jq-btn-administration,
+.jq-btn-logout {
+	width: 197px;
+	height:49px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Radio button 
+
+
+
+.jq-btn-excellent {
+	background-image:url(../img_common/btn/jq-btn-excellent.jpg);
+	width: 74px;
+	height:23px;
+}
+.jq-btn-good {
+	background-image:url(../img_common/btn/jq-btn-good.jpg);
+	width: 56px;
+	height:23px;
+}
+.jq-btn-fair {
+	background-image:url(../img_common/btn/jq-btn-fair.jpg);
+	width: 51px;
+	height:23px;
+}
+.jq-btn-poor {
+	background-image:url(../img_common/btn/jq-btn-poor.jpg);
+	width: 46px;
+	height:23px;
+}
+.jq-btn-bad {
+	background-image:url(../img_common/btn/jq-btn-bad.jpg);
+	width: 41px;
+	height:23px;
+}
+.jq-btn-known {
+	background-image:url(../img_common/btn/jq-btn-known.jpg);
+	width: 75px;
+	height:23px;
+}
+.jq-btn-missed {
+	background-image:url(../img_common/btn/jq-btn-missed.jpg);
+	width: 76px;
+	height:23px;
+}
+.jq-btn-fp {
+	background-image:url(../img_common/btn/jq-btn-fp.jpg);
+	width: 39px;
+	height:23px;
+}
+.jq-btn-pending {
+	background-image:url(../img_common/btn/jq-btn-pending.jpg);
+	width: 62px;
+	height:23px;
+}
+.jq-btn-tp {
+	background-image:url(../img_common/btn/jq-btn-tp.jpg);
+	width: 46px;
+	height:23px;
+}
+
+
+.jq-btn-personal,
+.jq-btn-consensual {
+	width: 127px;
+	height:25px;
+}
+*/

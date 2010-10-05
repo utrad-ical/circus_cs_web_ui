@@ -1,0 +1,30 @@
+@charset "shift_jis";
+/* ===================================================================
+CSS information
+
+ file name  :darkroom.css
+
+ 2010.06.04 By Y.Nomura
+
+=================================================================== */
+
+#container.menu-darkroom {
+	background: url(img_common/item/menu_bk.black.gif) left repeat-y;
+}
+
+#container h1.darkroom {
+	background-color:#000;
+}
+
+#darkroom {
+	background-color:#000; color:#fff;
+}
+
+body.mono #darkroom{
+	background-color:#fff; color:#000;
+}
+
+#menu p.user-darkroom{
+	border-top: 1px solid #fff;
+	line-height: 2;
+}

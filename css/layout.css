@@ -1,0 +1,452 @@
+@charset "shift_jis";
+/* ===================================================================
+CSS information
+
+ file name  :layout.css
+ 
+=================================================================== */
+
+body {
+	text-align: center;/* for IE6 */
+	margin: 10px 0 0 0;
+	color: #000;
+	font-size: 12px;
+}
+
+table {
+	font-size: 12px;
+}
+a {
+	text-decoration: underline;
+	color: #000;
+}
+a:link {
+}
+
+a:visited {
+}
+
+a:hover {
+}
+
+a:active {
+}
+
+input[type=button] {
+	font-family: verdana,"‚l‚r ‚oƒSƒVƒbƒN",sans-serif;
+	padding: 0; 
+}
+input.s-btn {
+	font-size: 80%;
+}
+
+
+/* ===================================================
+	Layout
+	
+	#page
+		#container
+			#leftside
+			#content
+			
+ =================================================== */
+ 
+/*
+ 	#page
+---------------------------------------------------- */
+#page {
+	width: 1232px;
+	margin: 0 auto;
+}
+
+/*
+	#container
+---------------------------------------------------- */
+#container {
+	width: 1232px;
+	float: left;
+	text-align: left;
+}
+
+/*
+	#leftside
+---------------------------------------------------- */
+#leftside {
+	width: 210px;
+	float: left;
+	margin-right: 20px;
+	display:inline;
+}
+
+/*
+	#content
+---------------------------------------------------- */
+#content {
+	width: 1000px;
+	float: left;
+}
+
+/* =================================================
+ 
+	#leftside
+	
+		#menu
+			calendar
+		
+==================================================== */
+h1 {
+	/*margin-bottom: 5px;*/
+	background-color:#fff;
+	height: 70px;
+}
+h1 img {
+	border: 2px solid #000;
+}
+
+#menu {
+	width: 210px;
+	/*background-color: #e0e0e0;*/
+	text-align: center;
+	padding: 7px 0;
+}
+
+#menu ul {
+	padding:0;
+	margin-bottom: 5px;
+}
+#menu ul li {
+	width: 197px;
+	display: block;
+	margin: 0 auto;
+	margin-bottom: 5px !important;
+}
+#menu p.user {
+	width: 90%;
+	border-top: 1px solid #000;
+	margin: 0 auto;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 2;
+}
+
+div.calendar {
+	text-align:left;
+	margin-left:18px;
+	margin-top:8px;
+}
+
+/* ================================================= 
+	Layout #content
+	
+		tabArea
+		tab-content
+		
+		search-panel
+			search-tbl
+			serp
+		
+==================================================== */
+#content h2 {
+	clear: both;
+	padding: 0 0 0 6px;
+	line-height: 1.4;
+	font-size: 120%;
+	margin-bottom: 5px;
+	border-left: 5px solid ;
+}
+body.spot #content h2 {
+	margin-top: 45px;
+}
+#content h3 { /* for Search title */
+	padding-left: 20px;
+	color: #fff;
+	letter-spacing: 2px;
+}
+#content h3.ptn02 { /* for result */
+	clear: both;
+	background-color: #fff;
+	padding-left: 0;
+	color: #000;
+	letter-spacing: 0;
+	border-bottom:2px solid #c9c9d7;
+	margin-bottom: 1em;
+}
+h3.ptn02 span {
+	font-weight: normal;
+}
+ul.ul-ptn02 {
+	margin: 20px 10px 10px 0;
+	text-align: right;
+	font-weight: bold;
+}
+ul.ul-ptn02 li {
+	display: inline;
+	margin-right: 15px;
+}
+
+/*
+	tabArea
+---------------------------------------------------- */
+.tabArea {
+	padding-top: 40px;
+}
+.tabArea ul {
+	font-size: 14px;
+	padding-left: 10px;
+}
+.tabArea ul li {
+	float: left;
+	margin-right: 3px;
+	width: 150px;
+	text-align: center;
+	font-weight: bold;
+	line-height: 1.8;
+	overflow: hidden;
+}
+a:link.btn-tab,a:active.btn-tab,a:visited.btn-tab{
+	display: block;
+	text-decoration: none;
+	width: 150px;
+	height: 25px;
+}
+a:hover.btn-tab {
+	display: block;
+	text-decoration: none;
+	width: 150px;
+	height: 25px;
+}
+
+/*
+	tab-content
+---------------------------------------------------- */
+.tab-content {
+	clear: both;
+	padding: 10px 20px;
+	width: 960px;
+	border: 1px solid;
+}
+* html .tab-content {
+	width: 1000px;
+}
+/* Add favorite BUTTON */
+p.add-favorite {
+	float: right;
+	border-width: 1px;
+	border-style: solid;
+}
+
+/*
+	SEARCH PANEL
+---------------------------------------------------- */
+.search-panel {
+	width: 100%;
+	background-color: #f9f9f9;
+	/*padding: 10px 20px;*/
+	margin-bottom: 20px;
+}
+/* SEARCH TABLE */
+table.search-tbl {
+	font-size: 12px;
+}
+table.search-tbl th {
+	border-bottom: 1px dotted #ccc;
+	color: #000;
+	padding: 0;
+}
+table.search-tbl td {
+	border-bottom: 1px dotted #ccc;
+	padding: 0;
+}
+
+/*
+	SERP Search Engine Results Page
+---------------------------------------------------- */
+.serp,#serp-paging {
+	border: 1px solid #CCC;
+	height: 24px;
+	background: url(../img_common/share/btn-bk1.jpg) repeat-x;
+	margin-bottom: 10px;
+	line-height: 2;
+	padding-left: 1em;
+}
+#serp-paging div {
+	display: inline;
+	margin-right: 5px;
+}
+#serp-paging a:link,#serp-paging a:visited,#serp-paging a:active {
+	color: #000;
+	text-decoration: none;
+}
+#serp-paging a:hover {
+	color: #FF0000;
+	text-decoration: underline;
+}
+
+
+/* =================================================
+	PAGE TOP
+==================================================== */
+
+#content p.pagetop a:link,
+#content p.pagetop a:visited,
+#content p.pagetop a:active {
+	background: url(../img_common/item/ico_arrow.gif) left 70% no-repeat;
+	font-size: 90%;
+	color: #0066cc;
+	padding-left: 10px;
+	text-decoration: none;
+}
+
+#content p.pagetop a:hover {
+	background: url(../img_common/item/ico_arrow.gif) left 50% no-repeat;
+	font-size: 90%;
+	color: #0066cc;
+	padding-left: 10px;
+	text-decoration: underline;
+}
+
+.sort-by {
+	clear: both;
+	width: 785px;
+	padding-top: 3px;
+	/*text-align: right;*/
+}
+
+.sort-by div.total-cand
+{
+	width:380px;
+	margin-left:15px;
+	text-align:left;
+	float:left;
+	block:inline;
+}
+
+.sort-by div.sort-btn
+{
+	width:390px;
+	float:left;
+	text-align:right;
+}
+
+/* =================================================
+	Tag (for series, CAD, research)
+==================================================== */
+#tagArea
+{
+	font-size: 90%;
+}
+
+#tagArea a:link,
+#tagArea a:visited,
+#tagArea a:active {
+	color: #0066cc;
+	text-decoration: none;
+}
+#tagArea a:hover {
+	color: #0066cc;
+	text-decoration: underline;
+}
+
+table.arrange-tbl {
+	margin: 5px 0;
+	table-layout: fixed;
+}
+table.arrange-tbl td {
+	overflow: hidden;
+	padding: 0 10px 5px 0;
+}
+
+/* ===================================================
+	 for User settings
+ =================================================== */
+table.u-set {
+	margin-left: 15px;
+	font-size: 16px;
+}
+table.u-set th {
+	width: 353px;
+	background: url(../img_common/item/arrow02.gif) left bottom no-repeat;
+	width: 223px;
+	height: 25px;
+	font-weight: normal;
+	padding-top: 30px;
+}
+table.u-set td {
+	vertical-align: bottom;
+}
+
+div.setting input {
+	float: right;
+}
+
+
+
+/* ===================================================
+	 for Search.html
+ =================================================== */
+ul.inline {
+	float: left;
+	margin-bottom: 1em;
+}
+ul.inline li {
+	display: inline;
+	float: left;
+	margin-right: 5px;
+}
+
+.btn {
+	display: block;
+	height: 24px;
+	width: 100px;
+	border: 1px solid #a4a4a4;
+	text-align: center;
+	line-height: 2;
+}
+
+/* ===================================================
+	 for CAD result
+
+
+.result-record {
+ width:260px; 
+ float:left; 
+ margin:20px; 
+ margin-left:0;
+} =================================================== */
+
+/* ===================================================
+	 for CAD result (2010.3.30 modified by Y.Nomura) 
+ =================================================== */
+
+.result-record-2cols {
+ width:388px; 
+ float:left; 
+  margin:5px 20px 15px 0px;
+  margin-left:0;
+  padding: 1px 1px 3px 1px;
+  border-color: #888;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.result-record-3cols {
+  width:260px; 
+  float:left; 
+  margin:5px 20px 15px 0px;
+  margin-left:0;
+  padding: 1px 1px 3px 1px;
+  border-color: #888;
+  border-width: 1px;
+  border-style: solid;
+}
+/* ===================================================
+	 sort
+ =================================================== */
+table.col-tbl th a { color: #fff; }
+
+/* Added by Y.Nomura (2010.03.30) */
+table.col-tbl td a {
+	text-decoration: none;
+	border-bottom: 1px dashed;
+}
