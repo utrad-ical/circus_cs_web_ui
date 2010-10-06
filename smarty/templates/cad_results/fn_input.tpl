@@ -141,7 +141,7 @@ $(function() {ldelim}
 				</div>
 
 				<p class="mb10">
-				{if $registTime != ""}Location of false negatives were registered at {$registTime}{if $param.feedbackMode =="consensual"} (by {$enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
+				{if $registTime != ""}Location of false negatives were registered at {$registTime}{if $param.feedbackMode =="consensual" && $enteredBy != ""} (by {$enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
 				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name=id="checkVisibleFN" onclick="ChangeVisibleFN();"{if $visibleFlg == 1} checked="checked"{/if} />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">

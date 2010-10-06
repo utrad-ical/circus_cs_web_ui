@@ -227,7 +227,7 @@
 		// Registration of feedback
 		//---------------------------------------------------------------------------------------------------------
 		$nearestLesionId= 0;
-		$enteredBy = $userID;
+		$enteredBy = "";
 		$registMsg = "";
 		$consRegistSucessFlg = 0;
 		
