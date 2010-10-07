@@ -36,7 +36,22 @@ $(function() {ldelim}
 		{rdelim}
 	{rdelim});
 	$("#slider").css("width", "220px");
-	$("#sliderValue").html(jQuery("#slider").slider("value"));	
+	$("#sliderValue").html(jQuery("#slider").slider("value"));
+
+{if $moveCadResultFlg == 1}
+	$.event.add(window, "load", 
+				function(){ldelim}
+					 alert("[CAUTION] Lesion classification is not completed!");
+
+					var address = 'show_cad_results.php'
+								+ '?execID=' + $("#execID").val()
+                				+ '&feedbackMode=' + $("#feedbackMode").val();
+
+					location.href = address;
+
+				{rdelim});
+{/if}
+
 {rdelim});
 
 -->

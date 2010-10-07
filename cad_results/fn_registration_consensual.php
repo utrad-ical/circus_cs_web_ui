@@ -158,6 +158,14 @@
 				$registTime = $registeredAt;
 				$consRegistSucessFlg = 1;
 				$userStr = $userID . "^0";
+				
+				// •a•ÏŒó•â•ª—Þ‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚ð”»’è
+				$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='t' AND interrupt_flg='f'";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->bindValue(1, $param['execID']);
+				$stmt->execute();		
+		
+				if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;
 			}
 		}		
 	}

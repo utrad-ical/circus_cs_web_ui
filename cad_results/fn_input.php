@@ -230,7 +230,7 @@
 		$enteredBy = "";
 		$registMsg = "";
 		$consRegistSucessFlg = 0;
-		
+		$moveCadResultFlg = 0;
 	
 		if(($_SESSION['ticket'] == $_REQUEST['ticket']) && $_SESSION['groupID'] != 'demo' && $registFNFlg == 1)
 		//    && ($registFNFlg == 1 || $interruptFNFlg == 1))
@@ -446,6 +446,23 @@
 				}
 			}
 			else	$posArr = explode('^', $posStr);
+			
+			if($registTime != "")
+			{
+				// 病変候補分類が完了しているかを判定し、していなければCAD結果へ強制移動をする
+				// (フラグを立てる、FN入力が完了しているときのみ）
+				$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND interrupt_flg='f'";
+				
+				if($param['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f'";
+				else if($param['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
+								
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->bindValue(1, $param['execID']);
+				$stmt->execute();
+		
+				if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;
+			}
+			
 		}
 		else	$posArr = explode('^', $posStr);
 	
@@ -609,7 +626,7 @@
 		$smarty->assign('registFNFlg',     $registFNFlg);
 		$smarty->assign('visibleFlg',      $visibleFlg);
 		$smarty->assign('interruptFNFlg',  $interruptFNFlg);
-		
+		$smarty->assign('moveCadResultFlg',  $moveCadResultFlg);
 		
 		$smarty->assign('registTime',  $registTime);
 		$smarty->assign('ticket',      htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));

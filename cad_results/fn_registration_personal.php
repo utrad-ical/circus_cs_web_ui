@@ -144,8 +144,17 @@
 	
 	if($registMsg == "" && $interruptFNFlg == 0)
 	{
-		$registMsg = '<span style="color:#00f;">Successfully registered in CAD feedback database.</span>';
+		$registMsg = '<span style="color:#00f;">Successfully registered in feedback database.</span>';
 		$userStr = $userID . "^0";
+		
+		// •a•ÏŒó•â•ª—Þ‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚ð”»’è
+		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
+		$stmt = $pdo->prepare($sqlStr);
+		$stmt->bindValue(1, $param['execID']);
+		$stmt->execute();		
+		
+		if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;
+		
 	}
 	
 	$registFNFlg = 0;

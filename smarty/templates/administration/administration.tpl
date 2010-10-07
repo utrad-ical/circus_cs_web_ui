@@ -142,14 +142,14 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					 onClick="location.href='grayscale_config.php';" disabled="disabled" />
 					</td>
 					</tr>
-
+				-->
 					<tr>
 					<td class="pt5">Users</td>
 					<td class="pt5 pl10"><input type="button" id="userConfButton" value="config" class="form-btn"
 					 onClick="location.href='user_config.php';" />
 					</td>
 					</tr>
-
+				<!--
 					<tr>
 					<td class="pt5">Groups</td>
 					<td class="pt5 pl10"><input type="button" id="groupConfButton" value="config" class="form-btn"

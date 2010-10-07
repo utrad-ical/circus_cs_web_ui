@@ -150,7 +150,7 @@ function ChangeCondition(mode, feedbackMode)
 		else
 		{
 			alert(evalStr);
-			location.replace(address);
+			//location.replace(address);
 		}
 
 	}
@@ -178,7 +178,10 @@ function DispRegistCaution()
 	{
 		$("#registCaution").html(tmpStr);
 		$("#interruptFlg").val(1);
-		
+
+		// 病変候補分類中はソート順を変更させない（応急処置, 2010.10.07）
+		$("#sortBtn").attr("disabled", "disabled").addClass('form-btn-disabled');
+		$("#sortKey,input[name='sortOrder']").attr("disabled", "disabled");
 	}
 }
 
@@ -424,7 +427,7 @@ $(function() {ldelim}
 						{if $smarty.session.researchFlg==1}<span style="font-weight:bold;">Total candidates:</span> {$param.totalCandNum}{else}&nbsp;{/if}
 					</div>
 					<div class="sort-btn">
-						<input name="" type="button" value="Sort" class="s-btn w50 form-btn{if $param.feedbackMode=="consensual"} form-btn-disabled{/if}" onclick="ChangeCondition('changeSort','{$param.feedbackMode}');" />
+						<input id="sortBtn" type="button" value="Sort" class="s-btn w50 form-btn" onclick="ChangeCondition('changeSort','{$param.feedbackMode}');" />
 						by
 						<select id="sortKey" name="sortKey">
 							<option value="0" {if $param.sortKey==0}selected="selected"{/if}>Confidence</option>
