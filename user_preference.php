@@ -54,6 +54,7 @@
 			{
 				if($cnt > 0) $tmpStr .= '^';
 				$tmpStr .= $resultVersion['version'];
+				$cnt++;
 			}
 			
 			array_push($cadList, array($result['cad_name'], $tmpStr));
