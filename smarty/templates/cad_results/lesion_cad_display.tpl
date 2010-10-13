@@ -40,11 +40,12 @@ function CreateEvalStr(lesionArr)
 	{
 		if($("#lesionBlock" + lesionArr[j] + " input[name:'radio_" + lesionArr[j] + "']:checked").val() == undefined)
 		{
-			evalStr = "[ERROR] Lesion classification is not completed!";
-			break;
+			evalStr += "99^";
 		}
-
-		evalStr += $("#lesionBlock" + lesionArr[j] + " input[name:'radio_" + lesionArr[j] + "']:checked").val() + "^";
+		else 
+		{
+			evalStr += $("#lesionBlock" + lesionArr[j] + " input[name:'radio_" + lesionArr[j] + "']:checked").val() + "^";
+		}
 	}
 
 	return evalStr;
@@ -68,7 +69,6 @@ function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress
 	          evalStr: evalStr,
        		  fnNum: fnNum},
 			  function(data){
-				//alert(data.message);
 				if(dstAddress != "")
 				{
 					if(dstAddress == "historyBack")  history.back();
@@ -81,20 +81,11 @@ function MovePageWithTempRegistration(address)
 {
 	if($("#registTime").val() == "" && $("#interruptFlg").val() == 1)
 	{
-		if(confirm('Do you temporarily regist feedbacks?'))
-		{
-			var candStr = $("#candStr").val();
-			var lesionArr = candStr.split("^");
-			var evalStr = CreateEvalStr(lesionArr);
+		var candStr = $("#candStr").val();
+		var lesionArr = candStr.split("^");
+		var evalStr = CreateEvalStr(lesionArr);
 
-			if(evalStr.search(/ERROR/) == -1)  RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, address);
-			else                               alert(evalStr);
-		}
-		else
-		{
-			if(address == "historyBack")	history.back();
-			else							location.replace(address);
-		}
+		RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, address);
 	}
 	else
 	{
@@ -135,24 +126,31 @@ function ChangeCondition(mode, feedbackMode)
 		var lesionArr = candStr.split("^");
 		var evalStr = CreateEvalStr(lesionArr);
 
-		if(evalStr.search(/ERROR/) == -1)
+		if(mode == 'registration')
 		{
-			if(mode == 'registration')
+			evalArr = evalStr.split("^");
+			errFlg = 0;
+			
+			for(var j=0; j<(evalArr.length-1); j++)
+			{
+				if(evalArr[j] == 99)
+				{
+					alert("[ERROR] Lesion classification is not completed!");
+					errFlg = 1;
+					break;
+				}
+			}
+
+			if(errFlg == 0)
 			{
 				RegistFeedback(feedbackMode, 0, candStr, evalStr, address);
-		  	}
-			else if(mode == 'changeSort' && $("#interruptFlg").val()==1)
-			{
-				RegistFeedback(feedbackMode, 1, candStr, evalStr, address);
 			}
-			else  location.replace(address);
 		}
-		else
+		else if(mode == 'changeSort' && $("#interruptFlg").val()==1)
 		{
-			alert(evalStr);
-			//location.replace(address);
+			RegistFeedback(feedbackMode, 1, candStr, evalStr, address);
 		}
-
+		else  location.replace(address);
 	}
 	else	location.replace(address);
 }
@@ -179,9 +177,15 @@ function DispRegistCaution()
 		$("#registCaution").html(tmpStr);
 		$("#interruptFlg").val(1);
 
-		// 病変候補分類中はソート順を変更させない（応急処置, 2010.10.07）
-		$("#sortBtn").attr("disabled", "disabled").addClass('form-btn-disabled');
-		$("#sortKey,input[name='sortOrder']").attr("disabled", "disabled");
+		// 候補分類入力中にメニューバーを押された場合の対策
+		$("#linkAbout, #menu a").click(
+			function(event){ 
+				if(confirm("Do you want to save the changes?"))
+				{
+					event.preventDefault(); // リンクを防ぐ
+					MovePageWithTempRegistration(event.currentTarget.href);
+				}
+			});
 	}
 }
 
@@ -192,26 +196,11 @@ function ShowCADDetail(imgNum)
 
 	if($("#registTime").val() == "" && $("#interruptFlg").val() == 1)
 	{
-		if(confirm('Do you temporarily regist feedbacks?'))
-		{
-			var candStr = $("#candStr").val();
-			var lesionArr = candStr.split("^");
-			var evalStr = CreateEvalStr(lesionArr);
+		var candStr = $("#candStr").val();
+		var lesionArr = candStr.split("^");
+		var evalStr = CreateEvalStr(lesionArr);
 
-			var interruptFlg = $("#interruptFlg").val();
-
-			if(interruptFlg == 1)
-			{
-				if(evalStr.search(/ERROR/) == -1)
-				{  
-					RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, "");
-				}
-				else
-				{
-		           alert(evalStr);
-				}
-			}
-		}
+		RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, "");
 	}
 
 	$("#cadResult, #cadResultTab").hide();
@@ -313,7 +302,7 @@ $(function() {ldelim}
 {if $fnConsCheck == 1}
 	$.event.add(window, "load", 
 				function(){ldelim}
-					 alert("[CAUTION] Please confirm FN list before lesion classification!");
+					 alert("[CAUTION] Please confirm FN list!");
 
 					var address = 'fn_input.php'
 								+ '?execID=' + $("#execID").val()

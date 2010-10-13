@@ -4,7 +4,7 @@
 	swfobject.registerObject("today_{$smarty.session.colorSet}", "8.0.0");
 </script>
 
-<h1><a href="{$param.toTopDir}about.php"><img src="{$param.toTopDir}img_common/share/logo.jpg" width="208" height="63" alt="CIRCUS" /></a></h1>
+<h1><a id="linkAbout" href="{$param.toTopDir}about.php"><img src="{$param.toTopDir}img_common/share/logo.jpg" width="208" height="63" alt="CIRCUS" /></a></h1>
 <div id="menu">
 	<ul>
 		<li><a href="{$param.toTopDir}home.php" class="jq-btn jq-btn-home" title="home"></a></li>
@@ -70,7 +70,7 @@
 			</a>
 		</li>
 		<li><a href="{$param.toTopDir}search.php" class="jq-btn jq-btn-search" title="search"></a></li>
-		<li class="hide-on-guest"><a href="{$param.toTopDir}personal_statistics.php" class="jq-btn jq-btn-statistics" title="statistics"></a></li>
+		<li class="hide-on-guest"><a id="linkStatistics" href="{$param.toTopDir}personal_statistics.php" class="jq-btn jq-btn-statistics" title="statistics"></a></li>
 		
 		{if $smarty.session.researchFlg==1}
 			<li><a href="{$param.toTopDir}research/research_list.php" class="jq-btn jq-btn-research" title="research"></a></li>

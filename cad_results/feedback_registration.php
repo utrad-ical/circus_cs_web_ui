@@ -43,28 +43,28 @@
 			// Personal mode ‚Å’N‚©‚ªFN“ü—Í‚µ‚Ä‚¢‚éê‡AConsensual mode‚ÌFN input“ü—Í‚ªÏ‚Þ‚Ü‚Å‚Í
 			// ˆêŽž“o˜^‚É‚·‚é
 			//------------------------------------------------------------------------------------------------
-			if($feedbackMode == "consensual")
-			{
-				$sqlStr = "SELECT COUNT(*) FROM false_negative_location"
-						. " WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
-				$stmtFn = $pdo->prepare($sqlStr);
-				$stmtFn->bindValue(1, $execID);
-				$stmtFn->execute();
-
-				$fnPersonalCnt = $stmtFn->fetchColumn();
-						
-				$sqlStr = "SELECT COUNT(*) FROM false_negative_count"
-						. " WHERE exec_id=? AND consensual_flg='t' AND status=2";
-				$stmtFn = $pdo->prepare($sqlStr);
-				$stmtFn->bindValue(1, $execID);
-				$stmtFn->execute();
-
-				$fnConsCnt = $stmtFn->fetchColumn();
-				
-				//echo $fnPersonalCnt . ' ' . $fnConsCnt;
-			
-				if($fnPersonalCnt > 0 && $fnConsCnt != 1)  $interruptFlg = 1;
-			}
+			//if($feedbackMode == "consensual")
+			//{
+			//	$sqlStr = "SELECT COUNT(*) FROM false_negative_location"
+			//			. " WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
+			//	$stmtFn = $pdo->prepare($sqlStr);
+			//	$stmtFn->bindValue(1, $execID);
+			//	$stmtFn->execute();
+			//
+			//	$fnPersonalCnt = $stmtFn->fetchColumn();
+			//			
+			//	$sqlStr = "SELECT COUNT(*) FROM false_negative_count"
+			//			. " WHERE exec_id=? AND consensual_flg='t' AND status=2";
+			//	$stmtFn = $pdo->prepare($sqlStr);
+			//	$stmtFn->bindValue(1, $execID);
+			//	$stmtFn->execute();
+			//
+			//	$fnConsCnt = $stmtFn->fetchColumn();
+			//	
+			//	//echo $fnPersonalCnt . ' ' . $fnConsCnt;
+			//
+			//	if($fnPersonalCnt > 0 && $fnConsCnt != 1)  $interruptFlg = 1;
+			//}
 			//------------------------------------------------------------------------------------------------
 
 			$candArr = explode("^", $candStr);
