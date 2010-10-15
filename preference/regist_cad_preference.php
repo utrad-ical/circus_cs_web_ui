@@ -75,7 +75,7 @@
 
 			if($stmt->rowCount() == 1)
 			{
-				$dstData['message'] = 'Successed!';
+				$dstData['message'] = 'Succeeded!';
 				$dstData['preferenceFlg'] = ($mode == 'delete') ? 0 : 1;
 			}
 			else

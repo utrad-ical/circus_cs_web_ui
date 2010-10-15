@@ -23,7 +23,7 @@
 
 function deleteUser(userID)
 {
-	if(confirm('Do you delete "'+ userID + '" ?'))
+	if(confirm('Do you want to delete "'+ userID + '" ?'))
 	{
 		var address = 'user_config.php?mode=delete'
 		            + '&newUserID=' + userID
@@ -39,6 +39,7 @@ function UserSetting(mode, ticket)
 {
 	newTodayDisp = $('input[name="newTodayDisp"]:checked').val();
 	newDarkroomFlg = $('input[name="newDarkroomFlg"]:checked').val();
+	newAnonymizeFlg = $('input[name="newAnonymizeFlg"]:checked').val();
     newLatestResults = $('input[name="newLatestResults"]:checked').val();
 
 	if(mode == 'update' && $("#oldUserID").val() == "" 
@@ -51,7 +52,7 @@ function UserSetting(mode, ticket)
 	
 	if(mode == 'update')
 	{
-		if(!confirm('Do you update "'+ $("#oldUserID").val() +'" ?'))  flg = 0;
+		if(!confirm('Do you want to update "'+ $("#oldUserID").val() +'" ?'))  flg = 0;
 	}
 	
 	if(flg == 1)
@@ -63,6 +64,7 @@ function UserSetting(mode, ticket)
 		            + '&oldGroupID='  + $("#oldGroupID").val()
            			+ '&oldTodayDisp=' + $("#oldTodayDisp").val()
 					+ '&oldDarkroomFlg=' + $("#oldDarkroomFlg").val()
+					+ '&oldDarkroomFlg=' + $("#oldAnonymizeFlg").val()
             		+ '&oldLatestResults=' + $("#oldLatestResults").val()
 		            + '&newUserID='   + $("#inputUserID").val()
 		            + '&newUserName=' + $("#inputUserName").val()
@@ -70,6 +72,7 @@ function UserSetting(mode, ticket)
 		            + '&newGroupID='  + $("#groupList").val()
 		            + '&newTodayDisp=' + newTodayDisp
 		            + '&newDarkroomFlg=' + newDarkroomFlg
+		            + '&newAnonymizeFlg=' + newAnonymizeFlg
 		            + '&newLatestResults=' + newLatestResults
 					+ '&ticket=' + $("#ticket").val();
 
@@ -77,7 +80,7 @@ function UserSetting(mode, ticket)
 	}
 }
 
-function UpdateTextBox(userID, userName, password, groupID, todayDisp, darkroomFlg, latestResults)
+function SetEditBox(userID, userName, password, groupID, todayDisp, darkroomFlg, anonymizeFlg, latestResults)
 {
 	$("#oldUserID").val(userID);
 	$("#oldUserName").val(userName);
@@ -85,32 +88,25 @@ function UpdateTextBox(userID, userName, password, groupID, todayDisp, darkroomF
 	$("#oldGroupID").val(groupID);
 	$("#oldTodayDisp").val(todayDisp);
 	$("#oldDarkroomFlg").val(userName);
+	$("#oldAnonymizeFlg").val(userName);
 	$("#oldLatestResults").val(latestResults);
 	
 	$("#inputUserID").val(userID);
 	$("#inputUserName").val(userName);
 	$("#inputPass").val(password);
 
-	var length = document.form1.groupList.options.length;
-
-	for(i=0; i<length; i++)
-	{
-		if( document.form1.groupList.options[i].text == groupID)
-		{
-			 document.form1.groupList.options[i].selected = true;
-		}
-		else
-		{
-			 document.form1.groupList.options[i].selected = false;
-		}
-	}
+	// select 
+	$("#groupList").val(groupID);
 
 	$("input[name='newTodayDisp']").filter(function(){ return ($(this).val() == todayDisp) }).attr("checked", true);
 	$("input[name='newDarkroomFlg']").filter(function(){ return ($(this).val() == darkroomFlg) }).attr("checked", true);
+	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == anonymizeFlg) }).attr("checked", true);
 	$("input[name='newLatestResults']").filter(function(){ return ($(this).val() == latestResults) }).attr("checked", true);
 
 	$("#updateBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-	$("#addBtn").attr('disabled', 'disabled').removeClass('form-btn-normal, form-btn-hover').addClass('form-btn-disabled');
+	$("#addBtn, #userList input[type='button']").attr('disabled', 'disabled')
+                                                .removeClass('form-btn-normal, form-btn-hover')
+                                                .addClass('form-btn-disabled');
 }
 
 function CancelUpdate()
@@ -122,10 +118,13 @@ function CancelUpdate()
 
 	$("input[name='newTodayDisp']").filter(function(){ return ($(this).val() == 'cad') }).attr("checked", true);
 	$("input[name='newDarkroomFlg']").filter(function(){ return ($(this).val() == 'white') }).attr("checked", true);
+	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newLatestResults']").filter(function(){ return ($(this).val() == 'none') }).attr("checked", true);
 
-	$("#addBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-	$("#updateBtn, #cancelBtn").attr('disabled', 'disabled').removeClass('form-btn-normal, form-btn-hover').addClass('form-btn-disabled');
+	$("#addBtn, #userList input[type='button']").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+	$("#updateBtn, #cancelBtn, #userList input[name='loginUser']").attr('disabled', 'disabled')
+                                                                  .removeClass('form-btn-normal, form-btn-hover')
+                                                                  .addClass('form-btn-disabled');
 }
 
 
@@ -151,30 +150,30 @@ function CancelUpdate()
 		</div><!-- / #leftside END -->
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
-			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="ticket" value="{$ticket}" />
-
 			<h2>User configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="oldUserID"         value="">
-				<input type="hidden" id="oldUserName"       value="">
-				<input type="hidden" id="oldPassword"       value="">
-				<input type="hidden" id="oldGroupID"        value="">
-				<input type="hidden" id="oldTodayDisp"      value="">
-				<input type="hidden" id="oldDarkroomFlg"    value="">
-				<input type="hidden" id="oldLatestResults"  value="">
+				<input type="hidden" id="ticket" value="{$ticket}" />
+				<input type="hidden" id="oldUserID"         value="" />
+				<input type="hidden" id="oldUserName"       value="" />
+				<input type="hidden" id="oldPassword"       value="" />
+				<input type="hidden" id="oldGroupID"        value="" />
+				<input type="hidden" id="oldTodayDisp"      value="" />
+				<input type="hidden" id="oldDarkroomFlg"    value="" />
+				<input type="hidden" id="oldAnonymizeFlg"   value="" />
+				<input type="hidden" id="oldLatestResults"  value="" />
 
 				<div id="message" class="mt5 mb5 ml10">{$message}</div>
 
-				<div class="ml10">
+				<div id="userList" class="ml10">
 					<table class="col-tbl">
 						<tr>
 							<th>User ID</th>
 							<th>User name</th>
 							<th>Group</th>
 							<th>Today</th>
-							<th>Darkroom flg</th>
+							<th>Darkroom mode</th>
+							<th>Anonymization</th>
 							<th>Latest results</th>
 							<th>&nbsp;</th>
 						</tr>
@@ -186,16 +185,17 @@ function CancelUpdate()
 								<td class="al-l">{$item[2]}</td>
 								<td>{$item[3]}</td>
 								<td>{if $item[4]==true}black{else}white{/if}</td>
-								<td>{$item[5]}</td>
+								<td>{if $item[5]==true}TRUE{else}FALSE{/if}</td>
+								<td>{$item[6]}</td>
 								<td>
 									<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
-                                     onClick="UpdateTextBox('{$item[0]}', '{$item[1]}', '{$item[6]}', '{$item[2]}', '{$item[3]}', 
-                                                            '{if $item[4]==true}t{else}f{/if}', '{$item[5]}');" />
+                                     onClick="SetEditBox('{$item[0]}', '{$item[1]}', '{$item[7]}','{$item[2]}', '{$item[3]}',
+														 '{if $item[4]==true}t{else}f{/if}', '{if $item[5]==true}t{else}f{/if}','{$item[6]}');" />
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 										{if $item[0] != $smarty.session.userID}
 										 	class="s-btn form-btn" onClick="deleteUser('{$item[0]}');" />
 									 	{else}
-										 	class="s-btn form-btn form-btn-disabled" disabled="disabled" />
+										 	name="loginUser" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
 										{/if}
 								</td>
 							</tr>
@@ -244,6 +244,14 @@ function CancelUpdate()
 							<td>
 								<input name="newDarkroomFlg" type="radio" value="f" checked="checked" />white
 								<input name="newDarkroomFlg" type="radio" value="t" />black
+							</td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Anonymization</span></th>
+							<td>
+								<input name="newAnonymizeFlg" type="radio" value="t" />TRUE
+								<input name="newAnonymizeFlg" type="radio" value="f" checked="checked" />FALSE
 							</td>
 						</tr>
 					

@@ -59,6 +59,7 @@
 					$_SESSION['groupID']       = $result['group_id'];
 					$_SESSION['todayDisp']     = $result['today_disp'];
 					$_SESSION['darkroomFlg']   = ($result['darkroom_flg'] == 't') ? 1 : 0;
+					$_SESSION['anonymizeFlg']    = ($result['anonymize_flg'] == 't') ? 1 : 0;
 					$_SESSION['latestResults'] = $result['latest_results'];
 				
 					$stmt = $pdo->prepare("UPDATE users SET last_login_dt=?, ip_address=? WHERE user_id=?");
@@ -71,7 +72,6 @@
 
 					$_SESSION['colorSet']        = $result['color_set'];
 					$_SESSION['execCADFlg']      = ($result['exec_cad'] == 't') ? 1 : 0;
-					$_SESSION['anonymizeFlg']    = ($result['anonymize_personal_info'] == 't') ? 1 : 0;
 					$_SESSION['personalFBFlg']   = ($result['personal_feedback'] == 't') ? 1 : 0;
 					$_SESSION['consensualFBFlg'] = ($result['consensual_feedback'] == 't') ? 1 : 0;
 					$_SESSION['allStatFlg']      = ($result['view_all_statistics'] == 't') ? 1 : 0;

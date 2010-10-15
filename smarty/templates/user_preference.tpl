@@ -41,14 +41,18 @@ function ChangePagePreference()
             newTodayDisp:     $('input[name="newTodayDisp"]:checked').val(),
             oldDarkroomFlg:   $("#oldDarkroomFlg").val(),
             newDarkroomFlg:   $('input[name="newDarkroomFlg"]:checked').val(),
+            oldAnonymizeFlg:  $("#oldAnonymizeFlg").val(),
+            newAnonymizeFlg:  $('input[name="newAnonymizeFlg"]:checked').val(),
             oldLatestResults: $("#oldLatestResults").val(),
             newLatestResults: $('input[name="newLatestResults"]:checked').val()},
+
             function(data){
 				if(data.message == "Success")
 				{
 					alert('Page preference was successfully changed.');
 					$("#oldTodayDisp").val($('input[name="newTodayDisp"]:checked').val());
 					$("#oldDarkroomFlg").val($('input[name="newDarkroomFlg"]:checked').val());
+					$("#oldAnonymizeFlg").val($('input[name="newAnonymizeFlg"]:checked').val());
 					$("#oldLatestResults").val($('input[name="newLatestResults"]:checked').val());
 					$("#linkTodayDisp").attr("href", data.todayList + ".php?mode=today");
 				}
@@ -108,7 +112,7 @@ function RegisterCadPreference(mode)
 						{
 							alert(data.message);
 
-							if(data.message == 'Successed!')
+							if(data.message == 'Succeeded!')
 							{
 								$("#preferenceFlg").val(data.preferenceFlg);
 
@@ -181,6 +185,7 @@ function ChangeCadMenu()
 			<form id="form1" name="form1" onsubmit="return false;">
 			<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp}">
 			<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg}">
+			<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg}">
 			<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults}">
 			<input type="hidden" id="cadName"             value="">
 			<input type="hidden" id="version"             value="">
@@ -237,6 +242,13 @@ function ChangeCadMenu()
 						<td>
 							<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white
 							<input name="newDarkroomFlg" type="radio" value="t"{if $oldDarkroomFlg=="t"} checked="checked"{/if} />black
+						</td>
+					</tr>
+					<tr>
+						<th><span class="trim01">Anonymization</span></th>
+						<td>
+							<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if} />TRUE
+							<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if} />FALSE
 						</td>
 					</tr>
 					<tr>

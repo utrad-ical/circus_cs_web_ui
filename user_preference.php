@@ -23,13 +23,14 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For page preference
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT today_disp, darkroom_flg, latest_results FROM users WHERE user_id=?");
+		$stmt = $pdo->prepare("SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?");
 		$stmt->bindParam(1, $userID);
 		$stmt->execute();
 		$result = $stmt->fetch(PDO::FETCH_NUM);
 		$oldTodayDisp = $result[0];
 		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
-		$oldLatestResults = $result[2];
+		$oldAnonymizeFlg = ($result[2]==true) ? "t" : "f";
+		$oldLatestResults = $result[3];
 		//--------------------------------------------------------------------------------------------------------------
 		
 		//--------------------------------------------------------------------------------------------------------------
@@ -75,8 +76,9 @@
 			
 		$smarty->assign('userID',    $userID);
 		
-		$smarty->assign('oldTodayDisp',      $oldTodayDisp);
+		$smarty->assign('oldTodayDisp',     $oldTodayDisp);
 		$smarty->assign('oldDarkroomFlg',   $oldDarkroomFlg);
+		$smarty->assign('oldAnonymizeFlg',  $oldAnonymizeFlg);
 		$smarty->assign('oldLatestResults', $oldLatestResults);
 		
 		$smarty->assign('cadList',   $cadList);

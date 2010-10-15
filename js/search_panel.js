@@ -30,19 +30,19 @@ function DoSearch(list, mode)
 
 	if(mode != 'patient' && mode != 'study')
 	{
-		var id   = $("#" + list + "Search input[name='filterPtID']").val();
-		var name = $("#" + list + "Search input[name='filterPtName']").val();
-		var sex  = $("#" + list + "Search input[name='filterSex']:checked").val();
+		var ptID   = $("#" + list + "Search input[name='filterPtID']").val();
+		var ptName = $("#" + list + "Search input[name='filterPtName']").val();
+		var sex    = $("#" + list + "Search input[name='filterSex']:checked").val();
 
-		if(id != "")
+		if(ptID != "")
 		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtID=' + id;
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtID=' + ptID;
 			conditionNum++;
 		}
 	
-		if(name != "")
+		if(ptName != "")
 		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtName=' + name;
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtName=' + ptName;
 			conditionNum++;
 		}
 
@@ -148,6 +148,7 @@ function DoSearch(list, mode)
 		var filterVersion = $("#cadSearch select[name='filterVersion']").val();
 		var personalFB    = $("#cadSearch input[name='personalFB']:checked").val();
 		var consensualFB  = $("#cadSearch input[name='consensualFB']:checked").val();
+		var filterFBUser  = $("#cadSearch input[name='filterFBUser']").val();
 		var filterTP      = $("#cadSearch input[name='filterTP']:checked").val();
 		var filterFN      = $("#cadSearch input[name='filterFN']:checked").val();
 
@@ -155,7 +156,7 @@ function DoSearch(list, mode)
 		{
 			if(cadDateFrom != "")
 			{
-				address += ((conditionNum ==0) ? '?' : '&') + 'cadDateFrom=' + cadDateFrom;
+				address += ((conditionNum == 0) ? '?' : '&') + 'cadDateFrom=' + cadDateFrom;
 				conditionNum++;
 			}
 
@@ -168,13 +169,13 @@ function DoSearch(list, mode)
 
 		if(filterCadID != "")
 		{
-			address += ((conditionNum ==0) ? '?' : '&') + 'filterCadID=' + filterCadID;
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterCadID=' + filterCadID;
 			conditionNum++;
 		}
 
 		if(filterCAD != "")
 		{
-			address += ((conditionNum ==0) ? '?' : '&') + 'filterCAD=' + filterCAD;
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterCAD=' + filterCAD;
 			conditionNum++;
 		}
 
@@ -196,9 +197,16 @@ function DoSearch(list, mode)
 			conditionNum++;
 		}
 
+
 		if(filterTP != "")
 		{
 			address += ((conditionNum == 0) ? '?' : '&') + 'filterTP=' + filterTP;
+			conditionNum++;
+		}
+
+		if(filterFBUser != "")
+		{
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterFBUser=' + filterFBUser;
 			conditionNum++;
 		}
 
@@ -210,49 +218,48 @@ function DoSearch(list, mode)
 
 	}
 
-	address += ((conditionNum ==0) ? '?' : '&') + 'showing=' + $("#" + list + "Search select[name='showing']").val();
+	address += ((conditionNum == 0) ? '?' : '&') + 'showing=' + $("#" + list + "Search select[name='showing']").val();
 
-	location.href=address;
+	location.href = address;
 }
 
 
 
 function ResetSearchBlock(list, mode)
 {
+
+	// select
 	$("#" + list + "Search select[name='showing']").children("[value='10']").attr("selected", true);
-	$("#" + list + "Search input[name='filterPtID'], #" + list + "Search input[name='filterPtName']").removeAttr("disabled").removeAttr("value");
-	$("#" + list + "Search input[name='filterSex']").removeAttr("disabled").filter(function(){ return ($(this).val() == "all") }).attr("checked", true)
+
 	if(list != "patient")
 	{
-		$("#" + list + "Search input[name='filterAgeMin'], #" + list + "Search input[name='filterAgeMax']").removeAttr("disabled").removeAttr("value");
-		$("#" + list + "Search select[name='filterModality']").children().removeAttr("selected");
+		$("#" + list + "Search select[name!='showing']").children().removeAttr("selected");
 	}
 
-	if(list == "study")
+	// radio
+	$("#" + list + "Search input[type='radio']").removeAttr("disabled")
+												.filter(function(){ return ($(this).val() == "all") })
+												.attr("checked", true);
+	// text
+	if(mode == "today")
 	{
-		$("#studySearch input[name='stDateFrom'], #studySearch input[name='stDateTo']").removeAttr("value");
-	}
-
-	if(list == "series")
-	{
-		$("#seriesSearch input[name='filterSrDescription'], #seriesSearch input[name='filterTag']").removeAttr("value");
-		
-		if(mode != "today")
+		if(list == "series")
 		{
-			$("#seriesSearch input[name='srDateFrom'], #seriesSearch input[name='srDateTo']").removeAttr("value");
+			$("#seriesSearch input[type='text'][name!='srDateFrom'][name!='srDateTo']").removeAttr("value").removeAttr("disabled");
+		}
+		else if(list == "cad")
+		{
+			$("#cadSearch input[type='text'][name!='cadDateFrom'][name!='cadDateTo']").removeAttr("value").removeAttr("disabled");
 		}
 	}
+	else
+	{
+		$("#" + list + "Search input[type='text']").removeAttr("disabled").removeAttr("value");
+	}
 
+	// others (CAD only)
 	if(list == "cad")
 	{
-		if(mode != "today")
-		{
-			$("#cadSearch input[name='cadDateFrom'], #cadSearch input[name='cadDateTo']").removeAttr("value");
-		}
-
-		$("#cadSearch input[name='filterCadID'], #cadSearch input[name='srDateFrom'], #cadSearch input[name='srDateTo'], #cadSearch input[name='filterTag']").removeAttr("value");
-		$("#cadSearch select[name='filterCAD'], #cadSearch select[name='filterVersion']").children().removeAttr("selected");
-		$("#cadSearch input[name='personalFB'], #cadSearch input[name='consensualFB'], #cadSearch input[name='filterTP'], #cadSearch input[name='filterFN']").filter(function(){ return ($(this).val() == "all") }).attr("checked", true);
 		ChangefilterModality();
 		ChangefilterCad();
 	}

@@ -4,14 +4,14 @@
 		<table class="search-tbl">
 			<tr>
 	            <th style="width: 8.5em"><span class="trim01">CAD date</span></th>
-				<td style="width: 200px;">
+				<td style="width: 180px;">
 					<input name="cadDateFrom" type="text" style="width:72px;" value="{$param.cadDateFrom}" {if $param.mode=='today'}disabled="disabled"{/if} />
 					-&nbsp;
 					<input name="cadDateTo" type="text" style="width:72px;" value="{$param.cadDateTo}" {if $param.mode=='today'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 6em"><span class="trim01">CAD ID</span></th>
-				<td style="width: 140px;">
-					<input name="filterCadID" type="text" style="width: 110px;" value="{$param.filterCadID}" />
+				<td style="width: 180px;">
+					<input name="filterCadID" type="text" style="width: 160px;" value="{$param.filterCadID}" />
 				</td>
 				<th  style="width: 9em"><span class="trim01">Personal FB</span></th>
 				<td>
@@ -49,19 +49,15 @@
 				</td>
 				<th><span class="trim01">CAD</span></th>
 				<td>
-					<select name="filterCAD" onchange="ChangefilterCad();" style="width: 120px;">
+					<select name="filterCAD" onchange="ChangefilterCad();" style="width: 160px;">
 						<option value="">all</option>
 						{foreach from=$cadList item=item}
 							<option value="{$item[1]}"{if $param.filterCAD==$item[0]} selected="selected"{/if}>{$item[0]}</option>
 						{/foreach}
 					</select>
 				</td>
-		        <th><span class="trim01">TP</span></th>
-    			<td> 
-					<label><input name="filterTP" type="radio" value="with" {if $param.filterTP=="with"}checked="checked" {/if}/>with</label>
-					<label><input name="filterTP" type="radio" value="without" {if $param.filterTP=="without"}checked="checked" {/if}/>without</label>
-					<label><input name="filterTP" type="radio" value="all" {if $param.filterTP=="all"}checked="checked" {/if}/>all</label>
-				</td>
+	            <th><span class="trim01">Entered by</span></th>
+    			<td><input name="filterFBUser" type="text" style="width: 200px;" value="{$param.filterFBUser}" /></td>
 			</tr>
 			
 			<tr>
@@ -77,11 +73,11 @@
 						{/foreach}
 					</select>
 				</td>
-	            <th><span class="trim01">FN</span></th>
-	            <td>
-					<label><input name="filterFN" type="radio" value="with" {if $param.filterFN=="with"}checked="checked" {/if}/>with</label>
-					<label><input name="filterFN" type="radio" value="without" {if $param.filterFN=="without"}checked="checked" {/if}/>without</label>
-					<label><input name="filterFN" type="radio" value="all" {if $param.filterFN=="all"}checked="checked" {/if}/>all</label>
+		        <th><span class="trim01">TP</span></th>
+    			<td> 
+					<label><input name="filterTP" type="radio" value="with" {if $param.filterTP=="with"}checked="checked" {/if}/>with</label>
+					<label><input name="filterTP" type="radio" value="without" {if $param.filterTP=="without"}checked="checked" {/if}/>without</label>
+					<label><input name="filterTP" type="radio" value="all" {if $param.filterTP=="all"}checked="checked" {/if}/>all</label>
 				</td>
 			</tr>
    			<tr>
@@ -97,8 +93,12 @@
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$param.filterAgeMax}" />
 				</td>
-	            <th><span class="trim01">Tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 200px;" value="{$param.filterTag}" /></td>
+	            <th><span class="trim01">FN</span></th>
+	            <td>
+					<label><input name="filterFN" type="radio" value="with" {if $param.filterFN=="with"}checked="checked" {/if}/>with</label>
+					<label><input name="filterFN" type="radio" value="without" {if $param.filterFN=="without"}checked="checked" {/if}/>without</label>
+					<label><input name="filterFN" type="radio" value="all" {if $param.filterFN=="all"}checked="checked" {/if}/>all</label>
+				</td>
    			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
@@ -110,10 +110,9 @@
 						<option value="all" {if $param.showing=="all"}selected="selected"{/if}>all</option>
 					</select>
 				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+
+	            <th><span class="trim01">Tag</span></th>
+    			<td colspan="3"><input name="filterTag" type="text" style="width: 160px;" value="{$param.filterTag}" /></td>
 			</tr>
 		</table>
 		<div class="al-l mt10 ml20" style="width: 100%;">

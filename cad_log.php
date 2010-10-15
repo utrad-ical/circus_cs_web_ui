@@ -35,6 +35,7 @@
 				   'cadTimeTo'           => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
 				   'personalFB'          => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
 				   'consensualFB'        => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
+				   'filterFBUser'        => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
 				   'filterTP'            => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
 				   'filterFN'            => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
 				   'mode'                => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
@@ -418,14 +419,70 @@
 				$param['pageAddress'] .= "&";
 			}
 			else	$sqlCond .= " WHERE";
+
+			$param['pageAddress'] .= 'personalFB=' . $param['personalFB'];
 			
 			$operator = ($param['personalFB'] == "entered") ? '=' : '<>';
 		
-			$sqlCond .= " el.exec_id " . $operator . "ANY"
-					 .  " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='f'"
-					 .  " AND interrupt_flg='f' AND entered_by=?)";
-			array_push($condArr, $userID);
-			$param['pageAddress'] .= 'personalFB=' . $param['personalFB'];
+			$sqlCond .= " el.exec_id " . $operator . " ANY"
+					 .  " (SELECT DISTINCT exec_id FROM lesion_feedback WHERE consensual_flg='f'"
+					 .  " AND interrupt_flg='f'";
+
+			if($param['personalFB'] == "entered")
+			{
+				if($param['filterFBUser'] != "")
+				{
+					//if(strncmp($param['filterFBUser'],'PAIR(', 5) == 0)
+					if(strncmp($param['filterFBUser'],'PAIR"', 5) == 0)
+					{
+						//$tmpStr = trim(strtok(substr($param['filterFBUser'], 5),")"));
+						//$fbUserArr = explode(',', $tmpStr);
+
+						$tmpStr = substr($param['filterFBUser'], 5);
+						$fbUserArr = array();
+						//echo $tmpStr;
+						
+						array_push($fbUserArr, strtok($tmpStr,'"'));
+						
+						echo $fbUserArr[0];
+
+						while($tmpStr2 = strtok('"'))
+						{
+							echo $tmpStr2;
+							if($tmpStr2 != ")")  array_push($fbUserArr, $tmpStr2);
+						}
+						
+						if(count($fbUserArr) == 1)
+						{
+							$sqlCond .= ' AND entered_by=?)';
+							array_push($condArr, $fbUserArr[0]);
+						}
+						else if(count($fbUserArr) >= 2)
+						{
+							$sqlCond .= " AND entered_by~*? AND exec_id IN"
+									 .  " (SELECT DISTINCT exec_id FROM lesion_feedback"
+									 .  "  WHERE consensual_flg='f' AND interrupt_flg='f'"
+									 .  "  AND entered_by~*?))";
+									 
+							array_push($condArr, $fbUserArr[0]);
+							array_push($condArr, $fbUserArr[1]);
+						}
+					}
+					else
+					{
+						$sqlCond .= ' AND entered_by~*?)';
+						array_push($condArr, $param['filterFBUser']);
+					}
+			
+					$param['filterFBUser'] = htmlspecialchars($param['filterFBUser']);
+					$param['pageAddress'] .= 'filterFBUser=' . $param['filterFBUser'];
+				}
+				else
+				{
+					$sqlCond .= ' AND entered_by=?)';
+					array_push($condArr, $userID);
+				}
+			}	
 			$optionNum++;
 		}	
 	
