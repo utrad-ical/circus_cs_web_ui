@@ -3,6 +3,7 @@
 	session_start();
 
 	include("common.php");
+	require_once('class/PersonalInfoScramble.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -78,7 +79,8 @@
 		               array('colName' => 'CAD',        'align' => 'left'));
 	
 	$data = array();
-
+	$PinfoScramble = new PinfoScramble();
+	
 	try
 	{	
 		// Connect to SQL Server
@@ -119,7 +121,7 @@
 			
 			if($_SESSION['anonymizeFlg'] == 1)
 			{		
-				$param['filterPtID'] = PinfoEncrypter($result['patient_id'], $_SESSION['key']);
+				$param['filterPtID'] = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);
 				$param['filterPtName'] = "";
 			}
 			else
@@ -145,7 +147,7 @@
 			if($param['filterPtID'] != "")
 			{
 				$patientID = $param['filterPtID'];
-				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoDecrypter($param['filterPtID'], $_SESSION['key']);
+				if($_SESSION['anonymizeFlg'] == 1)  $patientID = $PinfoScramble->Decrypt($param['filterPtID'], $_SESSION['key']);
 
 				if(0<$optionNum)
 				{
@@ -466,8 +468,8 @@
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$ptID   = PinfoEncrypter($result['patient_id'], $_SESSION['key']);
-				$ptName = ScramblePatientName();
+				$ptID   = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);
+				$ptName = $PinfoScramble->ScramblePtName();
 			}
 			else
 			{
@@ -489,8 +491,8 @@
 									$result['series_description'],
 									$cadNum,
 									$cadColSettings,
-									PinfoEncrypter($result['patient_id'], $_SESSION['key']),
-									PinfoEncrypter($result['patient_name'], $_SESSION['key'])));
+									$PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']),
+									$PinfoScramble->Encrypt($result['patient_name'], $_SESSION['key'])));
 		}
 		//var_dump($data);
 		//--------------------------------------------------------------------------------------------------------------

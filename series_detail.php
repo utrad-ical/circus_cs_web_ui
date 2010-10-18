@@ -3,6 +3,7 @@
 	session_start();
 
 	include("common.php");
+	require_once('class/PersonalInfoScramble.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -34,8 +35,9 @@
 				   'seriesDescription' => (isset($_REQUEST['seriesDescription'])) ? $_REQUEST['seriesDescription'] : "",
 				   'bodyPart'          => (isset($_REQUEST['bodyPart'])) ? $_REQUEST['bodyPart'] : "");
 
-	$data['patientID']   = PinfoDecrypter($data['encryptedPtID'], $_SESSION['key']);
-	$data['patientName'] = PinfoDecrypter($data['encryptedPtName'], $_SESSION['key']);
+	$PinfoScramble = new PinfoScramble();
+	$data['patientID']   = $PinfoScramble->Decrypt($data['encryptedPtID'], $_SESSION['key']);
+	$data['patientName'] = $PinfoScramble->Decrypt($data['encryptedPtName'], $_SESSION['key']);
 	
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -78,8 +80,8 @@
 			$data['seriesDescription'] = $result[13];
 			$data['bodyPart']          = $result[14];
 			
-			$data['encryptedPtID']   = PinfoEncrypter($data['patientID'], $_SESSION['key']);
-			$data['encryptedPtName'] = PinfoEncrypter($data['patientName'], $_SESSION['key']);			
+			$data['encryptedPtID']   = $PinfoScramble->Encrypt($data['patientID'], $_SESSION['key']);
+			$data['encryptedPtName'] = $PinfoScramble->Encrypt($data['patientName'], $_SESSION['key']);			
 			
 			$data['seriesDir'] = $result[2] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
 					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
@@ -93,8 +95,8 @@
 	
 		if($_SESSION['anonymizeFlg'] == 1)
 		{	
-			$data['patientID'] = $data['encryptedPatientID'];
-			$data['patientName'] = ScramblePatientName();
+			$data['patientID'] = $data['encryptedPtID'];
+			$data['patientName'] = $PinfoScramble->ScramblePtName();
 		}
 	
 		$data['dispWidth']  = $data['orgWidth'];
@@ -243,8 +245,6 @@
 			}
 		}	
 		//--------------------------------------------------------------------------------------------------------------		
-		
-		
 
 		//var_dump($data);	
 		//--------------------------------------------------------------------------------------------------------

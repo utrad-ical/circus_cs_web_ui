@@ -3,7 +3,8 @@
 	session_start();
 
 	include("../common.php");
-	include("fn_input_private.php");	
+	include("fn_input_private.php");
+	require_once('../class/PersonalInfoScramble.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -11,6 +12,8 @@
 	if(time() > $_SESSION['timeLimit'])  header('location: ../index.php?mode=timeout');
 	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
 	//------------------------------------------------------------------------------------------------------------------
+
+	$PinfoScramble = new PinfoScramble();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -43,8 +46,8 @@
 
 	if($_SESSION['anonymizeFlg'] == 0)
 	{
-		$patientID   = PinfoDecrypter($encryptedPatientID, $_SESSION['key']);
-		$patientName = PinfoDecrypter($encryptedPatientName, $_SESSION['key']);
+		$patientID   = $PinfoScramble->Decrypt($encryptedPatientID, $_SESSION['key']);
+		$patientName = $PinfoScramble->Decrypt($encryptedPatientName, $_SESSION['key']);
 	}
 
 	$sex =  $_REQUEST['sex'];
@@ -94,8 +97,8 @@
 			$orgWidth  = $result[3];
 			$orgHeight = $result[4];
 			
-			$encryptedPatientID   = PinfoEncrypter($patientID, $_SESSION['key']);
-			$encryptedPatientName = PinfoEncrypter($patientName, $_SESSION['key']);
+			$encryptedPatientID   = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
+			$encryptedPatientName = $PinfoScramble->Encrypt($patientName, $_SESSION['key']);
 		}
 		
 		$dispWidth  = $orgWidth;

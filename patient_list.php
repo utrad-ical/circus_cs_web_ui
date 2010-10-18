@@ -3,6 +3,7 @@
 	session_start();
 
 	include_once("common.php");
+	require_once('class/PersonalInfoScramble.class.php');	
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -31,7 +32,7 @@
 	if($param['showing'] != "all" && $param['showing'] < 10)  $param['showing'] = 1;	
 
 	//-----------------------------------------------------------------------------------------------------------------
-
+	
 	//-----------------------------------------------------------------------------------------------------------------
 	// Retrieve sort column and order (Default: ascending order of patient ID)
 	//-----------------------------------------------------------------------------------------------------------------
@@ -52,7 +53,8 @@
 		               array('colName' => 'Detail',     'align' => ''));
 
 	$data = array();
-
+	$PinfoScramble = new PinfoScramble();
+	
 	try
 	{	
 		// Connect to SQL Server
@@ -149,14 +151,14 @@
 		
 		while ($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
-			$encryptedPtID = PinfoEncrypter($result[0], $_SESSION['key']);
+			$encryptedPtID = $PinfoScramble->Encrypt($result[0], $_SESSION['key']);
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
 				array_push($data, array($encryptedPtID,
-				                        ScramblePatientName(),
+				                        $PinfoScramble->ScramblePtName(),
 			                            $result[2],
-				                        ScrambleBirthDate(),
+				                        $PinfoScramble->ScrambleBirthDate(),
 			                            htmlspecialchars($encryptedPtID, ENT_QUOTES)));
 			}
 			else

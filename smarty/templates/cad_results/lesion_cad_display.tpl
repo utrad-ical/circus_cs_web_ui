@@ -180,10 +180,15 @@ function DispRegistCaution()
 		// 候補分類入力中にメニューバーを押された場合の対策
 		$("#linkAbout, #menu a").click(
 			function(event){ 
-				if(confirm("Do you want to save the changes?"))
+
+				if(!event.isDefaultPrevented())
 				{
-					event.preventDefault(); // リンクを防ぐ
-					MovePageWithTempRegistration(event.currentTarget.href);
+					event.preventDefault();  // prevent link action
+					
+					if(confirm("Do you want to save the changes?"))
+					{
+						MovePageWithTempRegistration(event.currentTarget.href);
+					}
 				}
 			});
 	}

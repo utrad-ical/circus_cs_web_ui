@@ -3,6 +3,7 @@
 	session_start();
 
 	include_once("../common.php");
+	require_once('../class/PersonalInfoScramble.class.php');
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -42,6 +43,8 @@
 	
 	//------------------------------------------------------------------------------------------------------------------
 
+	$PinfoScramble = new PinfoScramble();
+
 	try
 	{	
 		// Connect to SQL Server
@@ -62,8 +65,8 @@
 		$param['patientID']   = $result['patient_id'];
 		$param['patientName'] = $result['patient_name'];
 	
-		$encryptedPatientID   = PinfoEncrypter($param['patientID'] , $_SESSION['key']);
-		$encryptedPatientName = PinfoEncrypter($result['patient_name'], $_SESSION['key']);	
+		$encryptedPatientID   = $PinfoScramble->Encrypt($param['patientID'] , $_SESSION['key']);
+		$encryptedPatientName = $PinfoScramble->Encrypt($result['patient_name'], $_SESSION['key']);	
 
 		$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
 		$stmt->execute(array($param['cadName'], $param['version']));
@@ -293,8 +296,8 @@
 		
 					if($_SESSION['anonymizeFlg'] == 1)
 					{
-						$patientID   = PinfoEncrypter($patientID, $_SESSION['key']);
-						$patientName = ScramblePatientName();
+						$patientID   = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
+						$patientName = $PinfoScramble->ScriptPtName();
 					}
 				}
 		

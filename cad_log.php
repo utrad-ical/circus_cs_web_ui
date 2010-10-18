@@ -3,6 +3,7 @@
 	session_start();
 
 	include("common.php");
+	require_once('class/PersonalInfoScramble.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -90,6 +91,8 @@
 
 	try
 	{
+		$PinfoScramble = new PinfoScramble();
+
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 		
@@ -256,7 +259,7 @@
 		if($param['filterPtID'] != "")
 		{
 			$patientID = $param['filterPtID'];
-			if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoDecrypter($param['filterPtID'], $_SESSION['key']);		
+			if($_SESSION['anonymizeFlg'] == 1)  $patientID = $PinfoScramble->Decrypt($param['filterPtID'], $_SESSION['key']);		
 
 			if(0<$optionNum) 
 			{
@@ -605,16 +608,22 @@
 	             . " WHERE exec_id=? AND consensual_flg=? AND interrupt_flg='f'";
 		$stmtHeads = $pdo->prepare($sqlStr);
 
-		// SQL statement to count number of TP
+		// SQL statement to count the number of TP
 		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=?"
 		        . " AND consensual_flg=? AND evaluation>=1 AND interrupt_flg='f'";
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
-		// SQL statement to count number of personal feedback
+		// SQL statement to count the number of personal feedback
 		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='f'"
 		         . " AND interrupt_flg='f' AND entered_by=?";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
+
+		// SQL statement to count the number of personal feedback
+		//$sqlStr  = "SELECT COUNT(*) FROM false_negative_count WHERE exec_id=? AND consensual_flg='f'"
+		//         . " AND status=2 AND entered_by=?";
+		//$stmtPersonalFN = $pdo->prepare($sqlStr);
+		//$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
 		//------------------------------------------------------------------------------------------
 		
 		//------------------------------------------------------------------------------------------
@@ -637,8 +646,8 @@
 		{
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$patientID   = PinfoEncrypter($result['patient_id'], $_SESSION['key']);	// Patient ID
-				$patientName = ScramblePatientName();
+				$patientID   = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);	// Patient ID
+				$patientName = $PinfoScramble->ScramblePtName();
 			}
 			else
 			{

@@ -139,8 +139,8 @@ $(function() {ldelim}
 				{* <h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version}]<span class="ml10" style="font-size:12px;">(ID:{$param.execID})</span></h2> *}
 			
 				<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$param.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
+					<div class="fl-l"><a onclick="">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="">{$studyDate}&nbsp;({$studyID})</a></div>
 					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
 				</div>
 		

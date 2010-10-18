@@ -4,6 +4,7 @@
 
 	include("../common.php");
 	include("show_cad_results_private.php");
+	require_once('../class/PersonalInfoScramble.class.php');
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
@@ -54,6 +55,8 @@
 
 	try
 	{	
+		$PinfoScramble = new PinfoScramble();
+	
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
@@ -194,12 +197,12 @@
 		$webPathOfCADReslut = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $param['cadName']
 		                    . '_v.' . $param['version'];
 		
-		$param['encryptedPtID'] = PinfoEncrypter($patientID, $_SESSION['key']);
+		$param['encryptedPtID'] = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
 
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
 			$patientID   = $param['encryptedPtID'];
-			$patientName = ScramblePatientName();
+			$patientName = $PinfoScramble->ScramblePtName();
 		}
 		//--------------------------------------------------------------------------------------------------------------
 	

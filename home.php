@@ -146,30 +146,6 @@
 							.  ' z-index:1;">'
 							.  '</div>'
 							.  '</div>';
-			
-				//$latestHtml .= '<td width=' . $dispWidth . ' valign=top'
-				//			.  ' style="padding:3px;">'
-				//			//.  ' style="border: 2px solid #888; padding:3px;">'
-				//			.  '<span style="font-size:12px;">'
-				//			.  '<b>&nbsp;Pt.: </b>' . $item['patient_name'] . ' (' . $item['patient_id'] . ')<br>'
-				//			.  '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br>'
-				//			.  '<b>&nbsp;CAD: </b>' . $item['plugin_name'] . ' v.' . $item['version']
-				//			.  '<input name="" type="button" value="detail" class="form-btn"'
-				//			.  ' onclick="location.href=\'cad_results/show_cad_results.php?execID=' . $item['exec_id']
-				//			.  '&feedbackMode=personal&remarkCand=' . $item['lesion_id'] . '&sortKey=0&sortOrder=t\';"'
-				//			.  ' style="margin-left:70px;"><br>'
-				//			.  '<b>&nbsp;Candidate ID: </b>' . $item['lesion_id'] . '<br>'
-				//			.  '</span>'
-				//			.  '<div style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;'
-				//			.  ' overflow:hidden; position:relative; left:0px; top:0px;">'
-				//			.  '<img src="cad_results/images/magenta_circle.png"'
-				//			.  ' style="position:absolute; left:' . (($item['location_x']-$item['org_x'])*$scale-12) . 'px;'
-				//			.  ' top:' . (($item['location_y']-$item['org_y'])*$scale-12) . 'px; z-index:2;">'
-				//			.  '<img src="' . $srcFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
-				//			.  ' style="position:absolute; left:' . (-$item['org_x']*$scale) . 'px; top:' . (-$item['org_y']*$scale) . 'px;'
-				//			.  ' z-index:1;">'
-				//			.  '</div>'
-				//			.  '</td>';
 			}
 		}
 		//--------------------------------------------------------------------------------------------------------------
