@@ -593,7 +593,7 @@
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
 			$smarty->assign('patientID',   $encryptedPatientID);
-			$smarty->assign('patientName', ScramblePatientName());
+			$smarty->assign('patientName', $PinfoScramble->ScramblePtName());
 		}
 		else
 		{
