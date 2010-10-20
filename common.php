@@ -94,7 +94,7 @@
 	
 		for($i = 0; $i<count($flist); $i++)
 		{
-			if(ereg('.dcm$', $flist[$i]))  $imgCnt++;
+			if(preg_match('/\\.dcm$/i', $flist[$i]))  $imgCnt++;
 		}
 		
 		return $imgCnt;
@@ -112,7 +112,7 @@
 		
 		for($i=0; $i<count($tmpFlist); $i++)
 		{
-			if(ereg('.dcm$', $tmpFlist[$i]))  array_push($flist, $tmpFlist[$i]);
+			if(preg_match('/\\.dcm$/i', $tmpFlist[$i]))  $flist[] = $tmpFlist[$i];
 		}
 		
 		return $flist;
@@ -132,25 +132,6 @@
 	
 		if($baseDate < $birthDate)	return -1;
 		else						return (int)(($baseDate - $birthDate) / 10000);
-	}
-	//-------------------------------------------------------------------------------------------------------
-
-	//-------------------------------------------------------------------------------------------------------
-	// FUnction to delete the specified directory
-	//-------------------------------------------------------------------------------------------------------
-	function DeleteDirRecursively($rootPath, $dirSeparator)
-	{
-		if(is_dir($rootPath))
-		{
-			if(substr(PHP_OS, 0, 3) == "WIN")	// for Windows
-			{
-				return shell_exec('rmdir /S /Q ' . $rootPath);
-			}
-			else // for Linux etc
-			{
-			}
-		}
-		return FALSE;
 	}
 	//-------------------------------------------------------------------------------------------------------
 	

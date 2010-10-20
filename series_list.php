@@ -79,7 +79,6 @@
 		               array('colName' => 'CAD',        'align' => 'left'));
 	
 	$data = array();
-	$PinfoScramble = new PinfoScramble();
 	
 	try
 	{	
@@ -121,7 +120,7 @@
 			
 			if($_SESSION['anonymizeFlg'] == 1)
 			{		
-				$param['filterPtID'] = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);
+				$param['filterPtID'] = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
 				$param['filterPtName'] = "";
 			}
 			else
@@ -147,7 +146,7 @@
 			if($param['filterPtID'] != "")
 			{
 				$patientID = $param['filterPtID'];
-				if($_SESSION['anonymizeFlg'] == 1)  $patientID = $PinfoScramble->Decrypt($param['filterPtID'], $_SESSION['key']);
+				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($param['filterPtID'], $_SESSION['key']);
 
 				if(0<$optionNum)
 				{
@@ -468,8 +467,8 @@
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$ptID   = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);
-				$ptName = $PinfoScramble->ScramblePtName();
+				$ptID   = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
+				$ptName = PinfoScramble::scramblePtName();
 			}
 			else
 			{
@@ -491,8 +490,8 @@
 									$result['series_description'],
 									$cadNum,
 									$cadColSettings,
-									$PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']),
-									$PinfoScramble->Encrypt($result['patient_name'], $_SESSION['key'])));
+									PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']),
+									PinfoScramble::encrypt($result['patient_name'], $_SESSION['key'])));
 		}
 		//var_dump($data);
 		//--------------------------------------------------------------------------------------------------------------

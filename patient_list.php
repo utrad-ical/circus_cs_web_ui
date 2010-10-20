@@ -53,7 +53,6 @@
 		               array('colName' => 'Detail',     'align' => ''));
 
 	$data = array();
-	$PinfoScramble = new PinfoScramble();
 	
 	try
 	{	
@@ -151,14 +150,14 @@
 		
 		while ($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
-			$encryptedPtID = $PinfoScramble->Encrypt($result[0], $_SESSION['key']);
+			$encryptedPtID = PinfoScramble::encrypt($result[0], $_SESSION['key']);
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
 				array_push($data, array($encryptedPtID,
-				                        $PinfoScramble->ScramblePtName(),
+				                        PinfoScramble::scramblePtName(),
 			                            $result[2],
-				                        $PinfoScramble->ScrambleBirthDate(),
+				                        PinfoScramble::scrambleBirthDate(),
 			                            htmlspecialchars($encryptedPtID, ENT_QUOTES)));
 			}
 			else

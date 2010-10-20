@@ -35,9 +35,8 @@
 				   'seriesDescription' => (isset($_REQUEST['seriesDescription'])) ? $_REQUEST['seriesDescription'] : "",
 				   'bodyPart'          => (isset($_REQUEST['bodyPart'])) ? $_REQUEST['bodyPart'] : "");
 
-	$PinfoScramble = new PinfoScramble();
-	$data['patientID']   = $PinfoScramble->Decrypt($data['encryptedPtID'], $_SESSION['key']);
-	$data['patientName'] = $PinfoScramble->Decrypt($data['encryptedPtName'], $_SESSION['key']);
+	$data['patientID']   = PinfoScramble::decrypt($data['encryptedPtID'], $_SESSION['key']);
+	$data['patientName'] = PinfoScramble::decrypt($data['encryptedPtName'], $_SESSION['key']);
 	
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -80,8 +79,8 @@
 			$data['seriesDescription'] = $result[13];
 			$data['bodyPart']          = $result[14];
 			
-			$data['encryptedPtID']   = $PinfoScramble->Encrypt($data['patientID'], $_SESSION['key']);
-			$data['encryptedPtName'] = $PinfoScramble->Encrypt($data['patientName'], $_SESSION['key']);			
+			$data['encryptedPtID']   = PinfoScramble::encrypt($data['patientID'], $_SESSION['key']);
+			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);			
 			
 			$data['seriesDir'] = $result[2] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
 					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
@@ -96,7 +95,7 @@
 		if($_SESSION['anonymizeFlg'] == 1)
 		{	
 			$data['patientID'] = $data['encryptedPtID'];
-			$data['patientName'] = $PinfoScramble->ScramblePtName();
+			$data['patientName'] = PinfoScramble::scramblePtName();
 		}
 	
 		$data['dispWidth']  = $data['orgWidth'];

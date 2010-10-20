@@ -1,10 +1,10 @@
 <?
 	class PinfoScramble
 	{
-		private $_baseStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
-		private $_baseLength = 62;
+		private static $_baseStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+		private static $_baseLength = 62;
 	
-		public function Encrypt($str, $key)
+		public static function encrypt($str, $key)
 		{
 			$ret = "";
 		
@@ -15,10 +15,10 @@
 
 				$inNum = $keyNum = -1;
 
-				for($i=0; $i<strlen($this->_baseStr); $i++)
+				for($i=0; $i<strlen(self::$_baseStr); $i++)
 				{
-					if($inChar  === $this->_baseStr[$i])  $inNum  = $i;
-					if($keyChar === $this->_baseStr[$i])  $keyNum = $i;
+					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
+					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
 				}
 				
 				if($inNum == -1 || $keyNum == -1)
@@ -27,15 +27,15 @@
 				}
 				else
 				{
-					$encodeNum = ($inNum + $keyNum) % $this->_baseLength;
-					$ret .= $this->_baseStr[$encodeNum];
+					$encodeNum = ($inNum + $keyNum) % self::$_baseLength;
+					$ret .= self::$_baseStr[$encodeNum];
 				}
 			}
 		
 			return $ret;
 		}
 	
-		public function Decrypt($str, $key)
+		public static function decrypt($str, $key)
 		{
 			$ret = "";
 		
@@ -46,10 +46,10 @@
 
 				$inNum = $keyNum = -1;
 
-				for($i=0; $i<strlen($this->_baseStr); $i++)
+				for($i=0; $i<strlen(self::$_baseStr); $i++)
 				{
-					if($inChar  === $this->_baseStr[$i])  $inNum  = $i;
-					if($keyChar === $this->_baseStr[$i])  $keyNum = $i;
+					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
+					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
 				}
 		
 				if($inNum == -1 || $keyNum == -1)
@@ -58,20 +58,20 @@
 				}
 				else
 				{
-					$encodeNum = ($inNum - $keyNum + $this->_baseLength) % $this->_baseLength;
-					$ret .= $this->_baseStr[$encodeNum];
+					$encodeNum = ($inNum - $keyNum + self::$_baseLength) % self::$_baseLength;
+					$ret .= self::$_baseStr[$encodeNum];
 				}
 			}
 			
 			return $ret;
 		}
 
-		public function ScramblePtName()
+		public function scramblePtName()
 		{
 			return 'XXXXX XXXXX';
 		}
 
-		public function ScrambleBirthDate()
+		public function scrambleBirthDate()
 		{
 			return 'YYYY-MM-DD';
 		}

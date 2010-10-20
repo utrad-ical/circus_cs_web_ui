@@ -55,8 +55,6 @@
 
 	try
 	{	
-		$PinfoScramble = new PinfoScramble();
-	
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
@@ -197,12 +195,12 @@
 		$webPathOfCADReslut = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $param['cadName']
 		                    . '_v.' . $param['version'];
 		
-		$param['encryptedPtID'] = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
+		$param['encryptedPtID'] = PinfoScramble::encrypt($patientID, $_SESSION['key']);
 
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
 			$patientID   = $param['encryptedPtID'];
-			$patientName = $PinfoScramble->ScramblePtName();
+			$patientName = PinfoScramble::scramblePtName();
 		}
 		//--------------------------------------------------------------------------------------------------------------
 	

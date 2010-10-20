@@ -72,8 +72,7 @@
 		               array('colName' => 'Detail',        'align' => ''));
 
 	$data = array();
-	$PinfoScramble = new PinfoScramble();
-	
+
 	try
 	{	
 		// Connect to SQL Server
@@ -89,7 +88,7 @@
 
 		if($param['mode'] == 'patient')
 		{
-			$patientID = $PinfoScramble->Decrypt($param['encryptedPtID'], $_SESSION['key']);
+			$patientID = PinfoScramble::decrypt($param['encryptedPtID'], $_SESSION['key']);
 			$param['filterPtID'] = ($_SESSION['anonymizeFlg'] == 1) ? $param['encryptedPtID'] : $patientID;
 			
 			$sqlCond .= " pt.patient_id=?";
@@ -112,7 +111,7 @@
 			if($param['filterPtID'] != "")
 			{
 				$patientID = $param['filterPtID'];
-				if($_SESSION['anonymizeFlg'] == 1)  $patientID = $PinfoScramble->Decrypt($param['filterPtID'], $_SESSION['key']);
+				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($param['filterPtID'], $_SESSION['key']);
 
 				if(0<$optionNum)
 				{
@@ -321,8 +320,8 @@
 			
 			if($_SESSION['anonymizeFlg'])
 			{
-				$patientID   = htmlspecialchars($PinfoScramble->Encrypt($patientID, $_SESSION['key']), ENT_QUOTES);
-				$patientName = $PinfoScramble->ScramblePtName();
+				$patientID   = htmlspecialchars(PinfoScramble::encrypt($patientID, $_SESSION['key']), ENT_QUOTES);
+				$patientName = PinfoScramble::scramblePtName();
 			}
 
 			array_push($data, array($result['study_instance_uid'],

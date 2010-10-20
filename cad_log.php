@@ -91,8 +91,6 @@
 
 	try
 	{
-		$PinfoScramble = new PinfoScramble();
-
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 		
@@ -259,7 +257,7 @@
 		if($param['filterPtID'] != "")
 		{
 			$patientID = $param['filterPtID'];
-			if($_SESSION['anonymizeFlg'] == 1)  $patientID = $PinfoScramble->Decrypt($param['filterPtID'], $_SESSION['key']);		
+			if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($param['filterPtID'], $_SESSION['key']);		
 
 			if(0<$optionNum) 
 			{
@@ -646,8 +644,8 @@
 		{
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$patientID   = $PinfoScramble->Encrypt($result['patient_id'], $_SESSION['key']);	// Patient ID
-				$patientName = $PinfoScramble->ScramblePtName();
+				$patientID   = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);	// Patient ID
+				$patientName = PinfoScramble::scramblePtName();
 			}
 			else
 			{

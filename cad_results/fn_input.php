@@ -13,8 +13,6 @@
 	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
 	//------------------------------------------------------------------------------------------------------------------
 
-	$PinfoScramble = new PinfoScramble();
-
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
 	//------------------------------------------------------------------------------------------------------------------
@@ -46,8 +44,8 @@
 
 	if($_SESSION['anonymizeFlg'] == 0)
 	{
-		$patientID   = $PinfoScramble->Decrypt($encryptedPatientID, $_SESSION['key']);
-		$patientName = $PinfoScramble->Decrypt($encryptedPatientName, $_SESSION['key']);
+		$patientID   = PinfoScramble::decrypt($encryptedPatientID, $_SESSION['key']);
+		$patientName = PinfoScramble::decrypt($encryptedPatientName, $_SESSION['key']);
 	}
 
 	$sex =  $_REQUEST['sex'];
@@ -97,8 +95,8 @@
 			$orgWidth  = $result[3];
 			$orgHeight = $result[4];
 			
-			$encryptedPatientID   = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
-			$encryptedPatientName = $PinfoScramble->Encrypt($patientName, $_SESSION['key']);
+			$encryptedPatientID   = PinfoScramble::encrypt($patientID, $_SESSION['key']);
+			$encryptedPatientName = PinfoScramble::encrypt($patientName, $_SESSION['key']);
 		}
 		
 		$dispWidth  = $orgWidth;
@@ -593,7 +591,7 @@
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
 			$smarty->assign('patientID',   $encryptedPatientID);
-			$smarty->assign('patientName', $PinfoScramble->ScramblePtName());
+			$smarty->assign('patientName', PinfoScramble::scramblePtName());
 		}
 		else
 		{

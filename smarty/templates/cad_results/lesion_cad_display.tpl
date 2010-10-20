@@ -266,9 +266,6 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 			  windowWidth: windowWidth,
 			  presetName:  presetName },
   			  function(data){
-
-				//alert(data.message);
-
 				$("#imgBox img").attr("src", '../' + data.imgFname);
 				$("#imgBox span").html(data.imgNumStr);
 				$("#sliceNumber").html(data.sliceNumber);

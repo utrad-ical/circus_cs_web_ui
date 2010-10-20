@@ -1,5 +1,5 @@
 <?php
-	//session_cache_limiter('nocache');
+
 	session_start();
 
 	include("common.php");
@@ -32,10 +32,11 @@
 	//------------------------------------------------------------------------------------------------------------------
 	$studyInstanceUID  = (isset($_POST['studyInstanceUID']))  ? $_POST['studyInstanceUID']  : "";
 	$seriesInstanceUID = (isset($_POST['seriesInstanceUID'])) ? $_POST['seriesInstanceUID'] : "";
-	$imgNum = (isset($_POST['imgNum'])) ? $_POST['imgNum'] : 1;	
-
-	$windowLevel = (isset($_POST['windowLevel'])) ? $_POST['windowLevel'] : "";	
-	$windowWidth = (isset($_POST['windowWidth'])) ? $_POST['windowWidth'] : "";	
+	
+	$imgNum = (ctype_digit($_REQUEST['imgNum']) && $_REQUEST['imgNum'] > 0) ? $_REQUEST['imgNum'] : 1;
+	
+	$windowLevel = (isset($_REQUEST['windowLevel']) && ctype_digit($_REQUEST['windowLevel'])) ? $_REQUEST['windowLevel'] : 0;
+	$windowWidth = (isset($_REQUEST['windowWidth']) && ctype_digit($_REQUEST['windowWidth'])) ? $_REQUEST['windowWidth'] : 0;
 	$presetName  = (isset($_POST['presetName'])) ? $_POST['presetName'] : "";	
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -48,11 +49,11 @@
 		$pdo = new PDO($connStrPDO);	
 
 		$sqlStr = "SELECT st.patient_id, sm.path, sm.apache_alias"
-					. " FROM study_list st, series_list sr, storage_master sm" 
-			        . " WHERE sr.study_instance_uid=?" 
-			        . " AND sr.series_instance_uid=?" 
-			        . " AND sr.study_instance_uid=st.study_instance_uid" 
-			        . " AND sr.storage_id=sm.storage_id;";
+				. " FROM study_list st, series_list sr, storage_master sm" 
+			    . " WHERE sr.study_instance_uid=?" 
+			    . " AND sr.series_instance_uid=?" 
+			    . " AND sr.study_instance_uid=st.study_instance_uid" 
+			    . " AND sr.storage_id=sm.storage_id;";
 	
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute(array($studyInstanceUID, $seriesInstanceUID));
@@ -68,7 +69,6 @@
 
 		$flist = array();
 		$flist = GetDicomFileListInPath($seriesDir);
-
 
 		//$fNum = count($flist);
 		
