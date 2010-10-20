@@ -29,7 +29,7 @@
 		$result = $stmt->fetch(PDO::FETCH_NUM);
 		$oldTodayDisp = $result[0];
 		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
-		$oldAnonymizeFlg = ($result[2]==true) ? "t" : "f";
+		$oldAnonymizeFlg = ($result[2]==true || $_SESSION['anonymizeGroupFlg'] == 1) ? "t" : "f";
 		$oldLatestResults = $result[3];
 		//--------------------------------------------------------------------------------------------------------------
 		

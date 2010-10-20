@@ -233,29 +233,29 @@ function ChangeCadMenu()
 					<tr>
 						<th style="width: 17em;"><span class="trim01">Display today's list</span></th>
 						<td>
-							<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series
+							<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series&nbsp;
 							<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"}checked="checked"{/if} />CAD
 						</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Darkroom mode</span></th>
 						<td>
-							<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white
+							<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white&nbsp;
 							<input name="newDarkroomFlg" type="radio" value="t"{if $oldDarkroomFlg=="t"} checked="checked"{/if} />black
 						</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Anonymization</span></th>
 						<td>
-							<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if} />TRUE
-							<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if} />FALSE
+							<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
+							<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
 						</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Latest results</span></th>
 						<td>
-							<input name="newLatestResults" type="radio" value="own"{if $oldLatestResults=="own"} checked="checked"{/if} />own
-							<input name="newLatestResults" type="radio" value="all"{if $oldLatestResults=="all"} checked="checked"{/if} />all
+							<input name="newLatestResults" type="radio" value="own"{if $oldLatestResults=="own"} checked="checked"{/if} />own&nbsp;
+							<input name="newLatestResults" type="radio" value="all"{if $oldLatestResults=="all"} checked="checked"{/if} />all&nbsp;
 							<input name="newLatestResults" type="radio" value="none"{if $oldLatestResults=="none"} checked="checked"{/if} />none
 						</td>
 					</tr>

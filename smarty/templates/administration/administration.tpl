@@ -113,11 +113,11 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					 onClick="location.href='dicom_storage_server_config.php';" />
 					</td>
 					</tr>
-				<!--
+
 					<tr>
-					<td class="pt5">Disk storages</td>
+					<td class="pt5">Data storages</td>
 					<td class="pt5 pl10"><input type="button" id="diskStorageConfButton" value="config" class="form-btn"
-					 onClick="location.href='storage_config.php';"/>
+					 onClick="location.href='data_storage_config.php';"/>
 					</td>
 					</tr>
 
@@ -127,7 +127,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					 onClick="location.href='add_plugin.php';" />
 					</td>
 					</tr>
-
+				<!--
 					<tr>
 					<td class="pt5">Plug-in</td>
 					<td class="pt5 pl10"><input type="button" id="pluginConfButton" value="config" class="form-btn"

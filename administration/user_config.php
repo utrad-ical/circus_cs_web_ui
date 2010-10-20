@@ -239,7 +239,6 @@
 	
 			$smarty->display('administration/user_config.tpl');
 			//------------------------------------------------------------------------------------------------
-
 		}
 		catch (PDOException $e)
 		{
