@@ -107,14 +107,13 @@ function ChangeServerStatus(baseName, serviceName, mode)
 			<h3>Server settings</h3>
 			<div class="p5 ml10 mb10">
 				<table>
-				<!--
 					<tr>
 					<td>DICOM storage server</td>
 					<td class="pl10"><input type="button" id="dicomStorageConfButton" value="config" class="form-btn"
 					 onClick="location.href='dicom_storage_server_config.php';" />
 					</td>
 					</tr>
-
+				<!--
 					<tr>
 					<td class="pt5">Disk storages</td>
 					<td class="pt5 pl10"><input type="button" id="diskStorageConfButton" value="config" class="form-btn"
@@ -149,14 +148,14 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					 onClick="location.href='user_config.php';" />
 					</td>
 					</tr>
-				<!--
+
 					<tr>
 					<td class="pt5">Groups</td>
 					<td class="pt5 pl10"><input type="button" id="groupConfButton" value="config" class="form-btn"
 					 onClick="location.href='group_config.php';" />
 					</td>
 					</tr>
-				-->	
+
 					<tr>
 					<td class="pt5">Server logs</td>
 					<td class="pt5 pl10"><input type="button" id="groupConfButton" value="show" class="form-btn"

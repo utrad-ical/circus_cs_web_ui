@@ -37,11 +37,6 @@ function deleteUser(userID)
 
 function UserSetting(mode, ticket)
 {
-	newTodayDisp = $('input[name="newTodayDisp"]:checked').val();
-	newDarkroomFlg = $('input[name="newDarkroomFlg"]:checked').val();
-	newAnonymizeFlg = $('input[name="newAnonymizeFlg"]:checked').val();
-    newLatestResults = $('input[name="newLatestResults"]:checked').val();
-
 	if(mode == 'update' && $("#oldUserID").val() == "" 
        && $("#oldUserName").val() == "" && $("#oldPassword").val() == "")
 	{
@@ -70,10 +65,10 @@ function UserSetting(mode, ticket)
 		            + '&newUserName=' + $("#inputUserName").val()
 		            + '&newPassword=' + $("#inputPass").val()
 		            + '&newGroupID='  + $("#groupList").val()
-		            + '&newTodayDisp=' + newTodayDisp
-		            + '&newDarkroomFlg=' + newDarkroomFlg
-		            + '&newAnonymizeFlg=' + newAnonymizeFlg
-		            + '&newLatestResults=' + newLatestResults
+		            + '&newTodayDisp=' + $('input[name="newTodayDisp"]:checked').val()
+		            + '&newDarkroomFlg=' + $('input[name="newDarkroomFlg"]:checked').val()
+		            + '&newAnonymizeFlg=' + $('input[name="newAnonymizeFlg"]:checked').val()
+		            + '&newLatestResults=' + $('input[name="newLatestResults"]:checked').val()
 					+ '&ticket=' + $("#ticket").val();
 
 		location.replace(address);	
@@ -111,7 +106,7 @@ function SetEditBox(userID, userName, password, groupID, todayDisp, darkroomFlg,
 
 function CancelUpdate()
 {
-	$("#oldUserID,#oldUserName,#oldPassword,#oldGroupID,#oldTodayDisp,#oldDarkroomFlg,#oldLatestResults").val("");
+	$("input[type='hidden'][id^='old']").val("");
 	$("#inputUserID,#inputUserName,#inputPass").val("");
 
 	$("#groupList").children().removeAttr("selected");

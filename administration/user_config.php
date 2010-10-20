@@ -3,9 +3,9 @@
 	session_start();
 	include("../common.php");
 
-	//-----------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout
-	//-----------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	if(time() > $_SESSION['timeLimit'] || $_SESSION['superUserFlg'] == 0)
 	{
 		header('location: ../index.php?mode=timeout');
@@ -14,15 +14,15 @@
 	{
 		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
 	}
-	//-----------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 		
 	if($_SESSION['superUserFlg'])
 	{
 		$param = array('toTopDir' => "../");	
 	
-		//----------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables
-		//----------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------
 		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
 		$oldUserID         = (isset($_REQUEST['oldUserID']))        ? $_REQUEST['oldUserID']        : "";
 		$oldUserName       = (isset($_REQUEST['oldUserName']))      ? $_REQUEST['oldUserName']      : "";
@@ -40,7 +40,7 @@
 		$newDarkroomFlg    = (isset($_REQUEST['newDarkroomFlg']))   ? $_REQUEST['newDarkroomFlg']   : "";
 		$newAnonymizeFlg   = (isset($_REQUEST['newAnonymizeFlg']))  ? $_REQUEST['newAnonymizeFlg']  : "";
 		$newLatestResults  = (isset($_REQUEST['newLatestResults'])) ? $_REQUEST['newLatestResults'] : "";
-		//----------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------
 
 		$longinUser = $_SESSION['userID'];
 
@@ -150,7 +150,8 @@
 						$updateCnt++;
 					}
 				
-					$sqlStr .= " WHERE user_id='" . $oldUserID . "'";	
+					$sqlStr .= " WHERE user_id=?";
+					$sqlParams[$updateCnt] = $oldUserID;
 
 					if($updateCnt == 0)  $sqlStr  = "";
 				}
@@ -182,9 +183,9 @@
 					
 					switch($mode)
 					{
-						case 'add'    :  $message .= $newUserID . ' was successfully added.'; break;
-						case 'update' :  $message .= $oldUserID . ' was successfully updated.'; break;
-						case 'delete' :  $message .= $newUserID . ' was successfully deleted.'; break;
+						case 'add'    :  $message .= '"' . $newUserID . '" was successfully added.'; break;
+						case 'update' :  $message .= '"' . $oldUserID . '" was successfully updated.'; break;
+						case 'delete' :  $message .= '"' . $newUserID . '" was successfully deleted.'; break;
 					}
 					$message .= '</span>';
 				}
@@ -201,7 +202,7 @@
 			//------------------------------------------------------------------------------------------------
 
 			//------------------------------------------------------------------------------------------------
-			// Create user lists
+			// Retrieve user lists
 			//------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT user_id, user_name, group_id, today_disp, darkroom_flg, anonymize_flg,"
 					. " latest_results, passcode FROM users ORDER BY user_id ASC";
@@ -213,7 +214,7 @@
 			//------------------------------------------------------------------------------------------------
 
 			//------------------------------------------------------------------------------------------------
-			// Create user lists
+			// Retrieve group lists
 			//------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT group_id FROM groups ORDER BY group_id ASC";
 
@@ -223,7 +224,6 @@
 			$groupList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//------------------------------------------------------------------------------------------------
 
-	
 			//------------------------------------------------------------------------------------------------
 			// Settings for Smarty
 			//------------------------------------------------------------------------------------------------
