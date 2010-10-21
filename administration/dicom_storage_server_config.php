@@ -1,24 +1,13 @@
 <?php
 
 	session_start();
+	
 	include("../common.php");
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'] || $_SESSION['superUserFlg'] == 0)
-	{
-		header('location: ../index.php?mode=timeout');
-	}
-	else
-	{
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	}
-	//------------------------------------------------------------------------------------------------------------------
+	include("auto_logout_administration.php");
 
 	if($_SESSION['superUserFlg'])
 	{
-		$param = array('toTopDir' => "../");
+		$params = array('toTopDir' => "../");
 		$confFname = $APP_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -123,7 +112,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();	
 
-		$smarty->assign('param',      $param);
+		$smarty->assign('params',     $params);
 		$smarty->assign('message',    $message);
 		$smarty->assign('configData', $configData);
 		$smarty->assign('restartFlg', $restartFlg);

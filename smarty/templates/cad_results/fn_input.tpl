@@ -93,8 +93,8 @@ $(function() {ldelim}
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				<li><a href="href="../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
-				<li><a href="show_cad_results.php?cadName={$param.cadName}&version={$param.version}&studyInstanceUID={$param.studyInstanceUID}&seriesInstanceUID={$param.seriesInstanceUID}&feedbackMode={$param.feedbackMode}" class="btn-tab" title="CAD result">CAD result</a></li>
+				<li><a href="href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+				<li><a href="show_cad_results.php?cadName={$params.cadName}&version={$params.version}&studyInstanceUID={$params.studyInstanceUID}&seriesInstanceUID={$params.seriesInstanceUID}&feedbackMode={$params.feedbackMode}" class="btn-tab" title="CAD result">CAD result</a></li>
 				<li><a href="#" class="btn-tab" title="FN input" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">FN input</a></li>
 			</ul>
 			<p class="add-favorite"><a href="" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
@@ -105,17 +105,17 @@ $(function() {ldelim}
 			<div id="fnInput">
 				<form id="form1" name="form1">
 				<input type="hidden" id="seriesDir"         name="seriesDir"         value="{$seriesDir}">
-				<input type="hidden" id="execID"            name="execID"            value="{$param.execID}">
-				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$param.studyInstanceUID}">
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$param.seriesInstanceUID}">
-				<input type="hidden" id="cadName"           name="cadName"           value="{$param.cadName}">
-				<input type="hidden" id="version"           name="version"           value="{$param.version}">
+				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
+				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
+				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
+				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}">
+				<input type="hidden" id="version"           name="version"           value="{$params.version}">
 				<input type="hidden" id="imgNum"            name="imgNum"            value="{$imgNum}">
 				<input type="hidden" id="rowNum"            name="rowNum"            value="">
 				<input type="hidden" id="posStr"            name="posStr"            value="">
 				<input type="hidden" id="userStr"           name="userStr"           value="{$userStr}">
 				<input type="hidden" id="candStr"           name="candStr"           value="{$candStr}">
-				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$param.feedbackMode}">	
+				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">	
 				<input type="hidden" id="userID"            name="userID"            value="{$userID}">	
 				<input type="hidden" id="encryptedPatientID"   name="encryptedPatientID"   value="{$encryptedPatientID}">
 				<input type="hidden" id="encryptedPatientName" name="encryptedPatientName" value="{$encryptedPatientName}">
@@ -147,16 +147,16 @@ $(function() {ldelim}
 				<input type="hidden" id="registTime"   name="registTime"   value="{$registTime}">
 				<input type="hidden" id="ticket"       name="ticket"       value="{$ticket}">
 
-				<h2>FN input&nbsp;[{$param.cadName} v.{$param.version} ID:{$param.execID}]&nbsp;&nbsp;({$param.feedbackMode} mode)</h2>
+				<h2>FN input&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]&nbsp;&nbsp;({$params.feedbackMode} mode)</h2>
 
 				<div class="headerArea">
-					<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$param.encryptedPtID}">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}">{$studyDate}&nbsp;({$studyID})</a></div>
+					<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}">{$studyDate}&nbsp;({$studyID})</a></div>
 					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
 				</div>
 
 				<p class="mb10">
-				{if $registTime != ""}Location of false negatives were registered at {$registTime}{if $param.feedbackMode =="consensual" && $enteredBy != ""} (by {$enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
+				{if $registTime != ""}Location of false negatives were registered at {$registTime}{if $params.feedbackMode =="consensual" && $enteredBy != ""} (by {$enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
 				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name=id="checkVisibleFN" onclick="ChangeVisibleFN();"{if $visibleFlg == 1} checked="checked"{/if} />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">
@@ -247,7 +247,7 @@ $(function() {ldelim}
 								<th>Pos Y</th>
 								<th>Pos Z</th>
 								<th>Nearest candidate<br /><span style="font-weight: normal">rank&nbsp;/&nbsp;dist.[voxel]</span></th>
-								{if $param.feedbackMode == "consensual"}
+								{if $params.feedbackMode == "consensual"}
 									<th>Entered by</th>
 									<th style="display:none;">&nbsp;</th>
 								{/if}
@@ -276,7 +276,7 @@ $(function() {ldelim}
 							
 								<td align=center onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][4]}</td>
 
-								{if $param.feedbackMode == "consensual"}
+								{if $params.feedbackMode == "consensual"}
 									<td align=center onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][5]}</td>
 									<td align=center style=display:none;">{$locationList[$j][6]}</td>
 								{/if}
@@ -289,7 +289,7 @@ $(function() {ldelim}
 					<div id="blockDeleteButton" style="margin-top:7px; font-size:14px;">
 						{if $registTime == "" && $enteredFnNum > 0 && $smarty.session.groupID != 'demo'}
 							<input type="button" id="delButton" class="s-btn form-btn" value="delete the checked" onclick="DeleteLocationRows();">
-							{if $param.feedbackMode == "consensual"}
+							{if $params.feedbackMode == "consensual"}
 								&nbsp;&nbsp;<input type="button" id="integrationButton" class="s-btn form-btn" value="integrate the checked" onclick="IntegrateLocationRows();">
 							{/if}
 						{/if}

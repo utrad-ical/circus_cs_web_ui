@@ -24,7 +24,7 @@
 				. " AND location_x=? AND location_y=? AND location_z=? AND entered_by=?";
 				
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($param['execID'], $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM+1],
+		$stmt->execute(array($params['execID'], $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM+1],
 		                     $posArr[$j * $DEFAULT_COL_NUM + 2], $userID));
 							 
 		$rowNum = $stmt->rowCount();
@@ -41,7 +41,7 @@
 			$sqlStr .= " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?"
 			        .  " AND location_x=? AND location_y=? AND location_z=?";
 			$sqlParam[0] = $registTime;
-			$sqlParam[1] = $param['execID'];
+			$sqlParam[1] = $params['execID'];
 			$sqlParam[2] = $userID;
 			$sqlParam[3] = $posArr[$j * $DEFAULT_COL_NUM];
 			$sqlParam[4] = $posArr[$j * $DEFAULT_COL_NUM + 1];
@@ -53,7 +53,7 @@
 			        . " location_x, location_y, location_z, nearest_lesion_id, interrupt_flg, registered_at)"
 			        . " VALUES (?, ?, 'f', ?, ?, ?, ?, ?, ?)";
 
-			$sqlParam[0] = $param['execID'];
+			$sqlParam[0] = $params['execID'];
 			$sqlParam[1] = $userID;
 			$sqlParam[2] = $posArr[$j * $DEFAULT_COL_NUM];
 			$sqlParam[3] = $posArr[$j * $DEFAULT_COL_NUM + 1];
@@ -86,7 +86,7 @@
 	//	        . " AND entered_by=?";
 	//	
 	//	$stmt = $pdo->prepare($sqlStr);
-	//	$stmt->execute(array($param['execID'], $registTime, $userID));		
+	//	$stmt->execute(array($params['execID'], $registTime, $userID));		
 	//	
 	//	echo $stmt->rowCount();
 	//	
@@ -103,7 +103,7 @@
                 . " AND consensual_flg='f' AND entered_by=?";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($param['execID'], $userID));			
+		$stmt->execute(array($params['execID'], $userID));			
 		
 		$status = ($interruptFNFlg == 0) ? 2 : 0;
 		
@@ -116,7 +116,7 @@
 			        . " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
 			$sqlParam[0] = $enteredFnNum;
 			$sqlParam[1] = $status;
-			$sqlParam[2] = $param['execID'];
+			$sqlParam[2] = $params['execID'];
 			$sqlParam[3] = $userID;
 		}
 		else
@@ -124,7 +124,7 @@
 			$sqlStr = "INSERT INTO false_negative_count "
 			        . "(exec_id, entered_by, consensual_flg, false_negative_num, status, registered_at)"
 			        . " VALUES (?, ?, 'f', ?, ?, ?);";
-			$sqlParam[0] = $param['execID'];
+			$sqlParam[0] = $params['execID'];
 			$sqlParam[1] = $userID;
 			$sqlParam[2] = $enteredFnNum;
 			$sqlParam[3] = $status;
@@ -150,7 +150,7 @@
 		// •a•ÏŒó•â•ª—Þ‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚ð”»’è
 		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(1, $param['execID']);
+		$stmt->bindValue(1, $params['execID']);
 		$stmt->execute();		
 		
 		if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;

@@ -1,16 +1,16 @@
 <?
 
-	$consensualFlg = ($param['feedbackMode'] == "consensual") ? 1 : 0;
+	$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 : 0;
 		
-	if($param['feedbackMode'] == "personal" || $param['feedbackMode'] == "consensual")
+	if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 	{
 		$sqlParam = array();
 		
 		$sqlStr = "SELECT score FROM visual_assessment WHERE exec_id=?";
-		$sqlParam[0] = $param['execID'];
+		$sqlParam[0] = $params['execID'];
 		
 		
-		if($param['feedbackMode'] == "personal")
+		if($params['feedbackMode'] == "personal")
 		{
 			$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
 			$sqlParam[1] = $userID;
@@ -32,13 +32,13 @@
 	$totalNum = 0;
 	$checkFlg = 0;
 			
-	if($param['feedbackMode'] == "consensual")
+	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM visual_assessment"
                  . " WHERE exec_id=? AND consensual_flg='f'";
 				 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $param['execID']);
+		$stmt->bindParam(1, $params['execID']);
 		$stmt->execute();		 
 		$totalNum = $stmt->fetchColumn();
 	}
@@ -48,13 +48,13 @@
 	$maxScoreCnt = 0;
 	$maxScoreVal = 3;
 
-	if($param['feedbackMode'] == "consensual")
+	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr = "SELECT score, count(*) FROM visual_assessment WHERE exec_id=?"
 	            . " AND consensual_flg='f' AND interrupt_flg='f' GROUP BY score ORDER BY score ASC;";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $param['execID']);
+		$stmt->bindParam(1, $params['execID']);
 		$stmt->execute();		 
 		
 		$numRows = $stmt->rowCount();
@@ -81,7 +81,7 @@
 		$titleStr = "";
 		$enterNum = 0;
 		
-		if($param['feedbackMode'] == "consensual" && $enterNumArr[$j-1] > 0)
+		if($params['feedbackMode'] == "consensual" && $enterNumArr[$j-1] > 0)
 		{
 			$evalStr = " " . $enterNumArr[$j-1];
 			
@@ -89,7 +89,7 @@
 					. " AND consensual_flg='f' AND interrupt_flg='f' AND score=?";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($param['execID'], $j));
+			$stmt->execute(array($params['execID'], $j));
 			
 			$enterNum = $stmt->rowCount();
 			
@@ -109,13 +109,13 @@
 			if($evalVal == $j)	$scoringHtml .= ' checked="checked"';
 			else				$scoringHtml .= ' disabled="disabled"';
 		}
-		else if(($param['feedbackMode'] == "personal" && $j == 3 && $checkFlg == 0)
-			   || ($param['feedbackMode'] == "consensual" && $j == $maxScoreVal))
+		else if(($params['feedbackMode'] == "personal" && $j == 3 && $checkFlg == 0)
+			   || ($params['feedbackMode'] == "consensual" && $j == $maxScoreVal))
 		{
 			$scoringHtml .= ' checked="checked"';
 		}
 		
-		if($param['feedbackMode'] == "consensual" && $titleStr != "")	$scoringHtml .= ' title="' . $titleStr . '" />';
+		if($params['feedbackMode'] == "consensual" && $titleStr != "")	$scoringHtml .= ' title="' . $titleStr . '" />';
 		else															$scoringHtml .= ' />';
 	}
 ?>

@@ -12,7 +12,7 @@
 	$orgImg = $webPathOfCADReslut . '/in' . sprintf("%04d", $imgNum) . '.jpg';
 	$resImg = $webPathOfCADReslut . '/out' . sprintf("%04d", $imgNum) . '.jpg';
 	
-	$segResultFile = '../' . $webPathOfCADReslut . '/' . $param['seriesInstanceUID'] . '_opt.zip';
+	$segResultFile = '../' . $webPathOfCADReslut . '/' . $params['seriesInstanceUID'] . '_opt.zip';
 	
 	$maxImgNum = 101;
 
@@ -22,8 +22,8 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param', $param);
-	$smarty->assign('data',  $data);
+	$smarty->assign('params', $params);
+	$smarty->assign('data',   $data);
 
 	$smarty->assign('consensualFBFlg', $consensualFBFlg);
 

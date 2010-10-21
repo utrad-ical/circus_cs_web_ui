@@ -59,7 +59,7 @@ function RefleshLogList()
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
 			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="ticket" value="{$param.ticket}" />
+			<input type="hidden" id="ticket" value="{$params.ticket}" />
 
 			<h2>Server logs</h2>
 

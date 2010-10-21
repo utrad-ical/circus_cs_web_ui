@@ -8,7 +8,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Load base file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($param['resPath']."CAD-SummarizerResult_0_base.txt", "r"); 
+	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_base.txt", "r"); 
 
 	$data['caseNum']      = rtrim(fgets($fp));
 	$data['undispTpNum']  = rtrim(fgets($fp));
@@ -27,7 +27,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Load dispTp file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($param['resPath']."CAD-SummarizerResult_0_dispTp.txt", "r"); 
+	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_dispTp.txt", "r"); 
 	
 	$totalTP = (int)($data['dispTpNum']) + (int)($data['undispTpNum']) + (int)($data['fnNum']);
 	
@@ -58,7 +58,7 @@
 	
 	for($n=0; $n<4; $n++)
 	{
-		$fp = fopen($param['resPath']."CAD-SummarizerResult_" . $listName[$n] . "List.txt", "r"); 
+		$fp = fopen($params['resPath']."CAD-SummarizerResult_" . $listName[$n] . "List.txt", "r"); 
 
 		$listCnt = (int)(rtrim(fgets($fp)));
 		$candList= array();
@@ -189,15 +189,15 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 
-	$tmpFname = 'ROC' . $param['execID'] . '_' . microtime(true) . '.png';
+	$tmpFname = 'ROC' . $params['execID'] . '_' . microtime(true) . '.png';
 
 	$curveFname    = $APACHE_DOCUMENT_ROOT . $DIR_SEPARATOR . 'CIRCUS-CS' . $DIR_SEPARATOR . 'tmp'
 	               . $DIR_SEPARATOR . $tmpFname;
 	$curveFnameWeb = '../tmp/' . $tmpFname;
 
-	CreateRocCurve(0, 0, $param['resPath'], $curveFname);
+	CreateRocCurve(0, 0, $params['resPath'], $curveFname);
 
-	$param['resPath'] = addslashes($param['resPath']);
+	$params['resPath'] = addslashes($params['resPath']);
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
@@ -205,7 +205,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param',          $param);
+	$smarty->assign('params',         $params);
 	$smarty->assign('data',           $data);
 	$smarty->assign('curveFnameWeb',  $curveFnameWeb);
 	

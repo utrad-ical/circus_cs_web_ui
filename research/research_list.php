@@ -2,41 +2,36 @@
 	session_cache_limiter('none');
 	session_start();
 
-	include("../common.php");
+	$params = array('toTopDir' => "../");
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: ../index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("../common.php");
+	include_once("../auto_logout.php");	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables 
 	//------------------------------------------------------------------------------------------------------------------
-	$param = array('toTopDir'    => '../',
-				   'pluginName'  => "",
-	               'version'     => "",
-				   'resDateFrom' => (isset($_REQUEST['resDateFrom']) && $_REQUEST['resDateFrom'] != "undefined") ? $_REQUEST['resDateFrom'] : "",
-				   'resDateTo'   => (isset($_REQUEST['resDateTo']) && $_REQUEST['resDateTo'] != "undefined") ? $_REQUEST['resDateTo'] : "",
-				   'resTimeTo'   => (isset($_REQUEST['resTimeTo']) && $_REQUEST['resTimeTo'] != "undefined") ? $_REQUEST['resTimeTo'] : "",
-				   'filterTag'   => (isset($_REQUEST['filterTag']) && $_REQUEST['filterTag'] != "undefined") ? $_REQUEST['filterTag'] : "",
-				   'orderCol'    => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "ID",
-				   'orderMode'   => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
-				   'totalNum'    => (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0,
-				   'pageNum'     => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
-				   'showing'     => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
-				   'startNum'    => 1,
-				   'endNum'      => 10,
-				   'maxPageNum'  => 1,
-				   'pageAddress' => 'research_list.php?');
+	$params['pluginName']  = "";
+	$params['version']     = "";
+	$params['resDateFrom'] = (isset($_REQUEST['resDateFrom']) && $_REQUEST['resDateFrom'] != "undefined") ? $_REQUEST['resDateFrom'] : "";
+	$params['resDateTo']   = (isset($_REQUEST['resDateTo']) && $_REQUEST['resDateTo'] != "undefined") ? $_REQUEST['resDateTo'] : "";
+	$params['resTimeTo']   = (isset($_REQUEST['resTimeTo']) && $_REQUEST['resTimeTo'] != "undefined") ? $_REQUEST['resTimeTo'] : "";
+	$params['filterTag']   = (isset($_REQUEST['filterTag']) && $_REQUEST['filterTag'] != "undefined") ? $_REQUEST['filterTag'] : "";
+	$params['orderCol']    = (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "ID";
+	$params['orderMode']   = ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC";
+	$params['totalNum']    = (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0;
+	$params['pageNum']     = (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1;
+	$params['showing']     = (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10;
+	$params['startNum']    = 1;
+	$params['endNum']      = 10;
+	$params['maxPageNum']  = 1;
+	$params['pageAddress'] = 'research_list.php?';
 				   
 	$pluginNameTmp = $_POST['pluginName'];
 	
 	if($pluginNameTmp != "all" && $pluginNameTmp != "undefined")
 	{
-		$param['pluginName'] = substr($pluginNameTmp, 0, strpos($pluginNameTmp, " v."));
-		$param['version']    = substr($pluginNameTmp, strrpos($pluginNameTmp, " v.")+3);
+		$params['pluginName'] = substr($pluginNameTmp, 0, strpos($pluginNameTmp, " v."));
+		$params['version']    = substr($pluginNameTmp, strrpos($pluginNameTmp, " v.")+3);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -59,64 +54,64 @@
 		
 		$sqlCond =" WHERE plugin_type=2";
 
-		if($param['resDateFrom'] != "" && $param['resDateTo'] != "" && $param['resDateFrom'] == $param['resDateTo'])
+		if($params['resDateFrom'] != "" && $params['resDateTo'] != "" && $params['resDateFrom'] == $params['resDateTo'])
 		{
 			$sqlCond .= " AND executed_at>=? AND executed_at<=?";
-			array_push($condArr, $param['resDateFrom'] . ' 00:00:00');
-			array_push($condArr, $param['resDateFrom'] . ' 23:59:59');
+			array_push($condArr, $params['resDateFrom'] . ' 00:00:00');
+			array_push($condArr, $params['resDateFrom'] . ' 23:59:59');
 			
-			$param['pageAddress'] .= 'resDateFrom=' . $param['resDateFrom'] . '&resDateTo=' . $param['resDateTo'];
+			$params['pageAddress'] .= 'resDateFrom=' . $params['resDateFrom'] . '&resDateTo=' . $params['resDateTo'];
 			$optionNum++;			
 		}
 		else
 		{
-			if($param['resDateFrom'] != "")
+			if($params['resDateFrom'] != "")
 			{
 				$sqlCond .= " AND ?<=executed_at";
-				array_push($condArr, $param['resDateFrom'].' 00:00:00');
+				array_push($condArr, $params['resDateFrom'].' 00:00:00');
 
-				$param['pageAddress'] .= 'resDateFrom=' . $param['resDateFrom'];
+				$params['pageAddress'] .= 'resDateFrom=' . $params['resDateFrom'];
 				$optionNum++;
 			}
 		
-			if($param['resDateTo'] != "")
+			if($params['resDateTo'] != "")
 			{
 				$sqlCond .= " AND executed_at<=?";
 
-				if(0<$optionNum)  $param['pageAddress'] .= "&";
-				$param['pageAddress'] .= 'resDateTo=' . $param['resDateTo'];
+				if(0<$optionNum)  $params['pageAddress'] .= "&";
+				$params['pageAddress'] .= 'resDateTo=' . $params['resDateTo'];
 
-				if($param['resTimeTo'] != "")
+				if($params['resTimeTo'] != "")
 				{
-					array_push($condArr, $param['resDateTo'] . ' ' . $param['resTimeTo']);
-					$param['pageAddress'] .= '&resTimeTo=' . $param['resTimeTo'];
+					array_push($condArr, $params['resDateTo'] . ' ' . $params['resTimeTo']);
+					$params['pageAddress'] .= '&resTimeTo=' . $params['resTimeTo'];
 				}
 				else
 				{
-					array_push($condArr, $param['resDateTo'] . ' 23:59:59');
+					array_push($condArr, $params['resDateTo'] . ' 23:59:59');
 				}
 				$optionNum++;				
 			}
 		}
 		
-		if($param['pluginName'] != "" && $param['version'] != "")
+		if($params['pluginName'] != "" && $params['version'] != "")
 		{
 			$sqlCond .= " AND plugin_name=? AND version=?";
-			array_push($condArr, $param['pluginName']);
-			array_push($condArr, $param['version']);
+			array_push($condArr, $params['pluginName']);
+			array_push($condArr, $params['version']);
 			
-			if(0<$optionNum)  $param['pageAddress'] .= "&";
-			$param['pageAddress'] .= 'pluginName=' . $pluginNameTmp;
+			if(0<$optionNum)  $params['pageAddress'] .= "&";
+			$params['pageAddress'] .= 'pluginName=' . $pluginNameTmp;
 			$optionNum++;
 		}
 
-		if($param['filterTag'] != "")
+		if($params['filterTag'] != "")
 		{		
 		 	$sqlCond .= " AND exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
-			array_push($condArr, $param['filterTag']);
+			array_push($condArr, $params['filterTag']);
 
-			if(0<$optionNum)  $param['pageAddress'] .= "&";
-			$param['pageAddress'] .= 'filterTag=' . $param['filterTag'];
+			if(0<$optionNum)  $params['pageAddress'] .= "&";
+			$params['pageAddress'] .= 'filterTag=' . $params['filterTag'];
 
 			$optionNum++;
 		}
@@ -127,40 +122,40 @@
 		$stmt = $pdo->prepare("SELECT COUNT(*) FROM executed_plugin_list" . $sqlCond);
 		$stmt->execute($condArr);
 		
-		$param['totalNum'] = $stmt->fetchColumn();
-		$param['maxPageNum'] = ($param['showing'] == "all") ? 1 : ceil($param['totalNum'] / $param['showing']);
-		$param['startPageNum'] = max($param['pageNum'] - $PAGER_DELTA, 1);
-		$param['endPageNum']   = min($param['pageNum'] + $PAGER_DELTA, $param['maxPageNum']);		
+		$params['totalNum'] = $stmt->fetchColumn();
+		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
+		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
 		//--------------------------------------------------------------------------------------------------------------
 
 		$sqlStr .= $sqlCond . " ORDER BY ";
 		
-		switch($param['orderCol'])
+		switch($params['orderCol'])
 		{
-			case 'Plugin':	$sqlStr .= " plugin_name ".$param['orderMode'].", version ".$param['orderMode'];  break;
-			case 'Time':	$sqlStr .= " executed_at ".$param['orderMode'];									  break;
-			default:		$sqlStr .= " exec_id ".$param['orderMode'];										  break;
+			case 'Plugin':	$sqlStr .= " plugin_name ".$params['orderMode'].", version ".$params['orderMode'];  break;
+			case 'Time':	$sqlStr .= " executed_at ".$params['orderMode'];									  break;
+			default:		$sqlStr .= " exec_id ".$params['orderMode'];										  break;
 		}
 
-		if(0<$optionNum)  $param['pageAddress'] .= "&";
-		$param['pageAddress'] .= 'orderCol=' . $param['orderCol'] . '&orderMode=' .  $param['orderMode']
-		                      .  '&showing=' . $param['showing'];
+		if(0<$optionNum)  $params['pageAddress'] .= "&";
+		$params['pageAddress'] .= 'orderCol=' . $params['orderCol'] . '&orderMode=' .  $params['orderMode']
+		                      .  '&showing=' . $params['showing'];
 							  
-		$_SESSION['listAddress'] = $param['pageAddress'];
+		$_SESSION['listAddress'] = $params['pageAddress'];
 
-		if($param['showing'] != "all")
+		if($params['showing'] != "all")
 		{
 			$sqlStr .= " LIMIT ? OFFSET ?";
-			array_push($condArr, $param['showing']);
-			array_push($condArr, $param['showing'] * ($param['pageNum']-1));
+			array_push($condArr, $params['showing']);
+			array_push($condArr, $params['showing'] * ($params['pageNum']-1));
 		}
 		
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($condArr);
 		
 		$rowNum = $stmt->rowCount();
-		$param['startNum'] = ($rowNum == 0) ? 0 : $param['showing'] * ($param['pageNum']-1) + 1;
-		$param['endNum']   = ($rowNum == 0) ? 0 : $param['startNum'] + $rowNum - 1;			
+		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
+		$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;			
 		
 		while($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
@@ -182,7 +177,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param',      $param);
+		$smarty->assign('params',     $params);
 		$smarty->assign('data',       $data);
 		$smarty->assign('pluginList', $pluginList);
 

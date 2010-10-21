@@ -241,7 +241,7 @@ function ShowResearchList()
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				<li><a href="{if $param.srcList!="" && $smarty.session.listAddress!=""}{$smarty.session.listAddress}{else}research_list.php{/if}" class="btn-tab" title="Research list">Research list</a></li>
+				<li><a href="{if $params.srcList!="" && $smarty.session.listAddress!=""}{$smarty.session.listAddress}{else}research_list.php{/if}" class="btn-tab" title="Research list">Research list</a></li>
 				<li><a href="#" class="btn-tab" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Research job</a></li>
 			</ul>
 		</div><!-- / .tabArea END -->
@@ -294,9 +294,9 @@ function ShowResearchList()
 							<tr>
 					            <th><span class="trim01">CAD date</span></th>
 								<td>
-									<input name="cadDateFrom" type="text" style="width:72px;" value="{$param.cadDateFrom}" {if $param.mode=='today'}disabled="disabled"{/if} />
+									<input name="cadDateFrom" type="text" style="width:72px;" value="{$params.cadDateFrom}" {if $params.mode=='today'}disabled="disabled"{/if} />
 									-&nbsp;
-									<input name="cadDateTo" type="text" style="width:72px;" value="{$param.cadDateTo}" {if $param.mode=='today'}disabled="disabled"{/if} />
+									<input name="cadDateTo" type="text" style="width:72px;" value="{$params.cadDateTo}" {if $params.mode=='today'}disabled="disabled"{/if} />
 								</td>
 				     			<th><span class="trim01">Sex</span></th>
 				    			 <td>

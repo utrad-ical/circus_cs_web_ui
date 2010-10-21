@@ -51,15 +51,15 @@
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				<li><a href="{if $param.srcList!="" && $smarty.session.listAddress!=""}{$smarty.session.listAddress}{else}research_list.php{/if}" class="btn-tab" title="Research list">Research list</a></li>
+				<li><a href="{if $params.srcList!="" && $smarty.session.listAddress!=""}{$smarty.session.listAddress}{else}research_list.php{/if}" class="btn-tab" title="Research list">Research list</a></li>
 				<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Research result</a></li>
 			</ul>
 			<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
 		</div><!-- / .tabArea END -->
 
 		<div class="tab-content">
-			<h2>Research result&nbsp;&nbsp;[{$param.pluginName} v.{$param.version} ID:{$param.execID}]</h2>
-			<div class="headerArea">Executed at: {$param.executedAt}</div>
+			<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.execID}]</h2>
+			<div class="headerArea">Executed at: {$params.executedAt}</div>
 
 			{$dstHtml}
 

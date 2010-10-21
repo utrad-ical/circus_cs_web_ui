@@ -2,7 +2,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Road parameter file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($param['resPath']."VATstat.txt", "r"); 
+	$fp = fopen($params['resPath']."VATstat.txt", "r"); 
 
 	$caseNum    = rtrim(fgets($fp));
 	$volumeMean = rtrim(fgets($fp));
@@ -16,7 +16,7 @@
 	fclose($fp);
 	//------------------------------------------------------------------------------------------------------------------
 
-	$dataFile = $param['resPath'] . "VAT.txt";
+	$dataFile = $params['resPath'] . "VAT.txt";
 	
 	$tmpFname = 'VATplot_' . microtime(true) . '.png';
 
@@ -119,7 +119,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param',   $param);
+	$smarty->assign('params',  $params);
 	$smarty->assign('dstHtml', $dstHtml);
 
 	$smarty->display('research/fat_volumetry_anal_v1.tpl');

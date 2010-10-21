@@ -43,6 +43,7 @@ jQuery(function(){
 <?php
 
 	include ('common.php');
+	include("auto_logout.php");	
 
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 

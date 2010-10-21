@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
-<meta http-equiv="refresh" content="0; url={$param.fileName}">
+<meta http-equiv="refresh" content="0; url={$params.fileName}">
 
 <title>Download volume data</title>
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
@@ -34,17 +34,17 @@ input.close-btn {
 <body>
 	<form>
 	<form>
-	{if $param.message == ""}
+	{if $params.message == ""}
 		<h4 class="mb10">Please download from [download] button.</h4>
 
 		<div class="block-al-c" style="width:350px;">
 			<input name="" value="download" type="button" class="close-btn" style="width: 100px;"
-                   onclick="location.replace('{$param.fileName}')" />
+                   onclick="location.replace('{$params.fileName}')" />
 			<input name="" value="close" type="button" class="close-btn" style="width: 100px;" onclick="window.close()" />
 		</div><!-- / .detail-panel END -->
 
 	{else}
-		<h4>{$param.message}</h4>
+		<h4>{$params.message}</h4>
 		<div class="mt15">
 			<input name="" value="close" type="button" class="form-btn" style="width: 100px;" onclick="window.close()" />
 		</div>

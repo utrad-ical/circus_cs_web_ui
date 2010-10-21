@@ -1,16 +1,12 @@
 <?php
 	session_cache_limiter('nocache');
 	session_start();
+	
+	$params = array('toTopDir' => "../");
 
 	include_once("../common.php");
+	include_once("../auto_logout.php");	
 	require_once('../class/PersonalInfoScramble.class.php');
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -28,22 +24,19 @@
 	if(isset($_REQUEST['studyInstanceUID']))	array_push($studyUIDArr, $_REQUEST['studyInstanceUID']);
 	if(isset($_REQUEST['seriesInstanceUID']))	array_push($seriesUIDArr, $_REQUEST['seriesInstanceUID']);
 
-	$param = array('toTopDir'         => "../",
-	               'mode'             => '',
-				   'cadName'          => (isset($_REQUEST['cadName'])) ? $_REQUEST['cadName'] : "",
-				   'version'          => (isset($_REQUEST['version'])) ? $_REQUEST['version'] : "",
-				   'studyInstanceUID' => (isset($_REQUEST['studyInstanceUID'])) ? $_REQUEST['studyInstanceUID'] : "",
-				   'inputType'        => 0,
-				   'srcList'          => (isset($_REQUEST['srcList'])) ? $_REQUEST['srcList'] : "");
+	$params['mode'] ='';
+	$params['cadName'] = (isset($_REQUEST['cadName'])) ? $_REQUEST['cadName'] : "";
+	$params['version'] = (isset($_REQUEST['version'])) ? $_REQUEST['version'] : "";
+	$params['studyInstanceUID'] = (isset($_REQUEST['studyInstanceUID'])) ? $_REQUEST['studyInstanceUID'] : "";
+	$params['inputType'] = 0;
+	$params['srcList'] = (isset($_REQUEST['srcList'])) ? $_REQUEST['srcList'] : "");
 	
 	$userID = $_SESSION['userID'];
 	
-	if($param['srcList'] == 'todaysSeries')		$param['listTabTitle'] = "Today's series";
-	else										$param['listTabTitle'] = "Series list";
+	if($params['srcList'] == 'todaysSeries')	$params['listTabTitle'] = "Today's series";
+	else										$params['listTabTitle'] = "Series list";
 	
 	//------------------------------------------------------------------------------------------------------------------
-
-	$PinfoScramble = new PinfoScramble();
 
 	try
 	{	
@@ -62,17 +55,17 @@
 			
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 				
-		$param['patientID']   = $result['patient_id'];
-		$param['patientName'] = $result['patient_name'];
+		$params['patientID']   = $result['patient_id'];
+		$params['patientName'] = $result['patient_name'];
 	
-		$encryptedPatientID   = $PinfoScramble->Encrypt($param['patientID'] , $_SESSION['key']);
-		$encryptedPatientName = $PinfoScramble->Encrypt($result['patient_name'], $_SESSION['key']);	
+		$encryptedPatientID   = PinfoScramble::encrypt($params['patientID'] , $_SESSION['key']);
+		$encryptedPatientName = PinfoScramble::encrypt($result['patient_name'], $_SESSION['key']);	
 
 		$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
-		$stmt->execute(array($param['cadName'], $param['version']));
+		$stmt->execute(array($params['cadName'], $params['version']));
 		$cadResult = $stmt->fetch(PDO::FETCH_ASSOC);
 		
-		$param['inputType'] = $cadResult['input_type'];
+		$params['inputType'] = $cadResult['input_type'];
 		$seriesNum = 0;
 	
 		// Set series array
@@ -81,7 +74,7 @@
 				. " ORDER BY series_id ASC;";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($param['cadName'], $param['version']));
+		$stmt->execute(array($params['cadName'], $params['version']));
 			
 		$seriesNum = $stmt->rowCount();
 	
@@ -97,7 +90,7 @@
 					. " WHERE cad_name=? AND version=? AND series_id=? ORDER BY series_description DESC";
 
 			$stmtDesc = $pdo->prepare($sqlStr);
-			$stmtDesc->execute(array($param['cadName'], $param['version'], $seriesIdRes[0]));
+			$stmtDesc->execute(array($params['cadName'], $params['version'], $seriesIdRes[0]));
 	
 			$tmp = $stmtDesc->rowCount();  // No. of description
 			$descriptionNumArr[$j] = $tmp;
@@ -132,7 +125,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			// Create SQL state
 			//----------------------------------------------------------------------------------------------------------
-			if($param['inputType'] == 1) // multi series in same study
+			if($params['inputType'] == 1) // multi series in same study
 			{
 				$sqlStr = "SELECT study_instance_uid, series_instance_uid FROM series_list"
 				        . " WHERE study_instance_uid=? AND modality=?"
@@ -173,7 +166,7 @@
 
 				//echo $sqlStr . '<br>';
 			}
-			else if($param['inputType'] == 2) // multi series in mulit studies
+			else if($params['inputType'] == 2) // multi series in mulit studies
 			{
 				$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid"
 				        . " FROM study_list st, series_list sr"
@@ -226,7 +219,7 @@
 			
 			if ($rowNum <= 0)
 			{
-				$param['mode'] ='error';
+				$params['mode'] ='error';
 				break;
 			}
 			else
@@ -241,7 +234,7 @@
 					}
 					else
 					{
-						$param['mode'] = 'select';
+						$params['mode'] = 'select';
 					}
 				}
 				else if(count($modalityArr)>3)
@@ -254,15 +247,15 @@
 		} // end for
 		//--------------------------------------------------------------------------------------------------------------
 		
-		if($param['mode'] == "")
+		if($params['mode'] == "")
 		{
 			if(count($modalityArr)<=2)
 			{
-				$param['mode'] = 'confirm';
+				$params['mode'] = 'confirm';
 			}
 			else
 			{
-				$param['mode'] = 'select';
+				$params['mode'] = 'select';
 			}
 		}
 		
@@ -273,7 +266,7 @@
 		$studyUIDStr = "";
 		$seriesUIDStr = "";
 				
-		if($param['mode'] == 'confirm')
+		if($params['mode'] == 'confirm')
 		{
 			for($j=0; $j<count($seriesUIDArr); $j++)
 			{
@@ -296,8 +289,8 @@
 		
 					if($_SESSION['anonymizeFlg'] == 1)
 					{
-						$patientID   = $PinfoScramble->Encrypt($patientID, $_SESSION['key']);
-						$patientName = $PinfoScramble->ScriptPtName();
+						$patientID   = PinfoScramble::encrypt($patientID, $_SESSION['key']);
+						$patientName = PinfoScramble::scriptPtName();
 					}
 				}
 		
@@ -318,7 +311,7 @@
 				}
 			}
 		}
-		else if($param['mode'] == 'select')
+		else if($params['mode'] == 'select')
 		{
 			$cnt = 0;
 			
@@ -358,7 +351,7 @@
 					//--------------------------------------------------------------------------------------------------
 					$colArr = array();
 					
-					if($param['inputType'] == 1)
+					if($params['inputType'] == 1)
 					{
 						$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid,"
 						        . " st.study_id, sr.series_number, sr.series_date, sr.series_time, "
@@ -369,8 +362,8 @@
 								. " AND sr.modality=?"
 								. " AND (";
 								
-						array_push($colArr, $studyUIDArr[0]);
-						array_push($colArr, $modalityArr[$k]);
+						$colArr[] = $studyUIDArr[0];
+						$colArr[] = $modalityArr[$k];
 								
 						for($j=0; $j<$descriptionNumArr[$k]; $j++)
 						{
@@ -379,13 +372,13 @@
 							if($seriesDescriptionArr[$cnt+$j] == '(default)')
 							{
 								$sqlStr .= "(sr.image_number>=? AND sr.image_number<=?)";
-								array_push($colArr, $minSliceArr[$cnt+$j]);
-								array_push($colArr, $maxSliceArr[$cnt+$j]);
+								$colArr[] = $minSliceArr[$cnt+$j];
+								$colArr[] = $maxSliceArr[$cnt+$j];
 							}
 							else
 							{
 								$sqlStr .= "sr.series_description=?";
-								array_push($colArr, $seriesDescriptionArr[$cnt+$j]);
+								$colArr[] = $seriesDescriptionArr[$cnt+$j];
 							}
 						}
 								
@@ -394,12 +387,12 @@
 						if($modalityArr[$k] == $modalityArr[0])
 						{
 							$sqlStr .= " AND sr.series_instance_uid!=?";
-							array_push($colArr, $seriesUIDArr[0]);
+							$colArr[] = $seriesUIDArr[0];
 						}
 						
 						//echo $sqlStr . "<br>";
 					}
-					else if($param['inputType'] == 2)
+					else if($params['inputType'] == 2)
 					{
 						$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid,"
 					   		    . " st.study_id, sr.series_number, sr.series_date, sr.series_time, "
@@ -410,8 +403,8 @@
 								. " AND sr.modality=?"
 								. " AND (";
 
-						array_push($colArr, $patientID);
-						array_push($colArr, $modalityArr[$k]);
+						$colArr[] = $patientID;
+						$colArr[] = $modalityArr[$k];
 								
 						for($j=0; $j<$descriptionNumArr[$k]; $j++)
 						{
@@ -420,21 +413,21 @@
 							if($seriesDescriptionArr[$cnt+$i] == '(default)')
 							{
 								$sqlStr .= "(sr.image_number>=? AND sr.image_number<=?)";
-								array_push($colArr, $minSliceArr[$cnt+$j]);
-								array_push($colArr, $maxSliceArr[$cnt+$j]);
+								$colArr[] = $minSliceArr[$cnt+$j];
+								$colArr[] = $maxSliceArr[$cnt+$j];
 							}
 							else
 							{
 								$sqlStr .= "sr.series_description=?";
-								array_push($colArr, $seriesDescriptionArr[$cnt+$j]);
+								$colArr[] = $seriesDescriptionArr[$cnt+$j];
 							}	
 						}
 			
 						if($modalityArr[$k] == $modalityArr[0])
 						{
 							$sqlStr .= " AND NOT (st.study_instance_uid=? AND sr.series_instance_uid=?)";
-							array_push($colArr, $studyUIDArr[0]);
-							array_push($colArr, $seriesUIDArr[0]);
+							$colArr[] = $studyUIDArr[0];
+							$colArr[] = $seriesUIDArr[0];
 						}
 					}
 					$sqlStr .= " ORDER BY sr.series_date DESC, sr.series_time DESC";
@@ -454,7 +447,7 @@
 						if($result[7] == $defaultSeriesDescriptionArr[$k])
 						{
 							$tmpStr = ($k+1) . '_' . $seriesList[$k][$j][0];
-							array_push($defaultSelectedSeriesArr, $tmpStr);
+							$defaultSelectedSeriesArr[] = $tmpStr;
 						}
 						
 						for($i=1; $i<7; $i++)
@@ -487,7 +480,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param',      $param);
+		$smarty->assign('params',     $params);
 		$smarty->assign('seriesList', $seriesList);
 		
 		$smarty->assign('seriesNum',            $seriesNum);

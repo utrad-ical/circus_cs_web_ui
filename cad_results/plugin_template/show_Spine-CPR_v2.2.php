@@ -84,7 +84,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param', $param);
+	$smarty->assign('params', $params);
 
 	$smarty->assign('consensualFBFlg', $consensualFBFlg);
 

@@ -2,14 +2,10 @@
 	session_cache_limiter('nocache');
 	session_start();
 
+	$params = array('toTopDir' => "../");
+
 	include_once("../common.php");
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("../auto_logout.php");	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables 
@@ -57,8 +53,8 @@
 		if($resDateFrom != "" && $resDateTo != "" && $resDateFrom == $resDateTo)
 		{
 			$sqlCond .= " AND executed_at>=? AND executed_at<=?";
-			array_push($condArr, $param['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $param['cadDateFrom'] . ' 23:59:59');
+			array_push($condArr, $params['cadDateFrom'] . ' 00:00:00');
+			array_push($condArr, $params['cadDateFrom'] . ' 23:59:59');
 		}
 		else
 		{

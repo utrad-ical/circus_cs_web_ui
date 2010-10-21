@@ -2,14 +2,10 @@
 	session_cache_limiter('nocache');
 	session_start();
 
+	$params = array('toTopDir' => "../");
+
 	include_once("../common.php");
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("../auto_logout.php");	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables 
@@ -17,19 +13,18 @@
 	$cadName = $_POST['cadName'];
 	$version = $_POST['version'];
 
-	$param = array('cadName'      => (isset($_POST['cadName'])) ? $_POST['cadName'] : "",
-	               'version'      => (isset($_POST['version'])) ? $_POST['version'] : "",
-				   'filterSex'    => (isset($_POST['filterSex']) && $_POST['filterSex'] != "undefined") ? $_POST['filterSex'] : "all",
-				   'filterAgeMin' => (isset($_POST['filterAgeMin']) && $_POST['filterAgeMin'] != "undefined") ? $_POST['filterAgeMin'] : "",
-				   'filterAgeMax' => (isset($_POST['filterAgeMax']) && $_POST['filterAgeMax'] != "undefined") ? $_POST['filterAgeMax'] : "",
-				   'filterTag'    => (isset($_POST['filterTag']) && $_POST['filterTag'] != "undefined") ? $_POST['filterTag'] : "",
-				   'srDateFrom'   => (isset($_POST['srDateFrom']) && $_POST['srDateFrom'] != "undefined") ? $_POST['srDateFrom'] : "",
-				   'srDateTo'     => (isset($_POST['srDateTo']) && $_POST['srDateTo'] != "undefined") ? $_POST['srDateTo'] : "",
-				   'srTimeTo'     => (isset($_POST['stTimeTo']) && $_POST['stTimeTo'] != "undefined") ? $_POST['stTimeTo'] : "",
-				   'cadDateFrom'  => (isset($_POST['cadDateFrom']) && $_POST['cadDateFrom'] != "undefined") ? $_POST['cadDateFrom'] : "",
-				   'cadDateTo'    => (isset($_POST['cadDateTo']) && $_POST['cadDateTo'] != "undefined") ? $_POST['cadDateTo'] : "",
-				   'cadTimeTo'    => (isset($_POST['cadTimeTo']) && $_POST['cadTimeTo'] != "undefined") ? $_POST['cadTimeTo'] : "");
-
+	$params['cadName']      = (isset($_POST['cadName'])) ? $_POST['cadName'] : "";
+	$params['version']      = (isset($_POST['version'])) ? $_POST['version'] : "";
+	$params['filterSex']    = (isset($_POST['filterSex']) && $_POST['filterSex'] != "undefined") ? $_POST['filterSex'] : "all";
+	$params['filterAgeMin'] = (isset($_POST['filterAgeMin']) && $_POST['filterAgeMin'] != "undefined") ? $_POST['filterAgeMin'] : "";
+	$params['filterAgeMax'] = (isset($_POST['filterAgeMax']) && $_POST['filterAgeMax'] != "undefined") ? $_POST['filterAgeMax'] : "";
+	$params['filterTag']    = (isset($_POST['filterTag']) && $_POST['filterTag'] != "undefined") ? $_POST['filterTag'] : "";
+	$params['srDateFrom']   = (isset($_POST['srDateFrom']) && $_POST['srDateFrom'] != "undefined") ? $_POST['srDateFrom'] : "";
+	$params['srDateTo']     = (isset($_POST['srDateTo']) && $_POST['srDateTo'] != "undefined") ? $_POST['srDateTo'] : "";
+	$params['srTimeTo']     = (isset($_POST['stTimeTo']) && $_POST['stTimeTo'] != "undefined") ? $_POST['stTimeTo'] : "";
+	$params['cadDateFrom']  = (isset($_POST['cadDateFrom']) && $_POST['cadDateFrom'] != "undefined") ? $_POST['cadDateFrom'] : "";
+	$params['cadDateTo']    = (isset($_POST['cadDateTo']) && $_POST['cadDateTo'] != "undefined") ? $_POST['cadDateTo'] : "";
+	$params['cadTimeTo']    = (isset($_POST['cadTimeTo']) && $_POST['cadTimeTo'] != "undefined") ? $_POST['cadTimeTo'] : "";
 	//------------------------------------------------------------------------------------------------------------------
 
 	try
@@ -44,8 +39,8 @@
 
 		$stmt = $pdo->prepare("SELECT result_type FROM cad_master WHERE cad_name=? AND version=?");
 		
-		array_push($condArr, $param['cadName']);
-		array_push($condArr, $param['version']);
+		array_push($condArr, $params['cadName']);
+		array_push($condArr, $params['version']);
 				
 		$stmt->execute($condArr);
 		
@@ -76,98 +71,98 @@
 					. " AND pt.patient_id=st.patient_id";
 		}
 		
-		if($param['cadDateFrom'] != "" && $param['cadDateTo'] != "" && $param['cadDateFrom'] == $param['cadDateTo'])
+		if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
 			$sqlStr .= " AND el.executed_at>=? AND el.executed_at<=?";
-			array_push($condArr, $param['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $param['cadDateFrom'] . ' 23:59:59');
+			array_push($condArr, $params['cadDateFrom'] . ' 00:00:00');
+			array_push($condArr, $params['cadDateFrom'] . ' 23:59:59');
 		}
 		else
 		{
-			if($param['cadDateFrom'] != "")
+			if($params['cadDateFrom'] != "")
 			{
 				$sqlStr .= " AND ?<=el.executed_at";
-				array_push($condArr, $param['cadDateFrom'].' 00:00:00');
+				array_push($condArr, $params['cadDateFrom'].' 00:00:00');
 				$optionNum++;
 			}
 		
-			if($param['cadDateTo'] != "")
+			if($params['cadDateTo'] != "")
 			{
 				$sqlStr .= " AND el.executed_at<=?";
 		
-				if($param['cadTimeTo'] != "")
+				if($params['cadTimeTo'] != "")
 				{
-					array_push($condArr, $param['cadDateTo'] . ' ' . $param['cadTimeTo']);
+					array_push($condArr, $params['cadDateTo'] . ' ' . $params['cadTimeTo']);
 				}
 				else
 				{
-					array_push($condArr, $param['cadDateTo'] . '23:59:59');
+					array_push($condArr, $params['cadDateTo'] . '23:59:59');
 				}
 			}
 		}
 
 	
-		if($param['srDateFrom'] != "" && $param['srDateTo'] != "" && $param['srDateFrom'] == $param['srDateTo'])
+		if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 		{
 			$sqlStr .= " AND sr.series_date=?";
-			array_push($condArr, $param['srDateFrom']);
+			array_push($condArr, $params['srDateFrom']);
 		}
 		else
 		{
-			if($param['srDateFrom'] != "")
+			if($params['srDateFrom'] != "")
 			{
 				$sqlStr .= " AND ?<=sr.series_date";
-				array_push($condArr, $param['srDateFrom']);
+				array_push($condArr, $params['srDateFrom']);
 			}
 		
-			if($param['srDateTo'] != "")
+			if($params['srDateTo'] != "")
 			{
-				if($param['srTimeTo'] != "")
+				if($params['srTimeTo'] != "")
 				{
 					$sqlStr .= " AND (sr.series_date<? OR (sr.series_date=? AND sr.series_date<=?))";
-					array_push($condArr, $param['srDateTo']);
-					array_push($condArr, $param['srDateTo']);
-					array_push($condArr, $param['srTimeTo']);
+					array_push($condArr, $params['srDateTo']);
+					array_push($condArr, $params['srDateTo']);
+					array_push($condArr, $params['srTimeTo']);
 				}
 				else
 				{
 					$sqlStr .= " AND sr.series_date<=?";
-					array_push($condArr, $param['srDateTo']);
+					array_push($condArr, $params['srDateTo']);
 				}
 			}
 		}
 		
-		if($param['filterSex'] == "M" || $param['filterSex'] == "F")
+		if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 		{
 			$sqlStr .= " AND pt.sex=?";
-			array_push($condArr, $param['filterSex']);
+			array_push($condArr, $params['filterSex']);
 			$optionNum++;
 		}
 
-		if($param['filterAgeMin'] != "" && $param['filterAgeMax'] != "" && $param['filterAgeMin'] == $param['filterAgeMax'])
+		if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 		{
 			$sqlStr .= " AND st.age=?";
-			array_push($condArr, $param['filterAgeMin']);
+			array_push($condArr, $params['filterAgeMin']);
 		}
 		else
 		{
-			if($param['filterAgeMin'] != "")
+			if($params['filterAgeMin'] != "")
 			{
 				$sqlStr .= " AND ?<=st.age";
-				array_push($condArr, $param['filterAgeMin']);
+				array_push($condArr, $params['filterAgeMin']);
 			}
 		
-			if($param['filterAgeMax'] != "")
+			if($params['filterAgeMax'] != "")
 			{
 				$sqlStr .= " AND st.age<=?";
-				array_push($condArr, $param['filterAgeMax']);
+				array_push($condArr, $params['filterAgeMax']);
 			}
 		}
 
-		if($param['filterTag'] != "")
+		if($params['filterTag'] != "")
 		{
 			$sqlStr .= " AND el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
-			array_push($condArr, $param['filterTag']);
+			array_push($condArr, $params['filterTag']);
 		}
 		
 		$sqlStr .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"

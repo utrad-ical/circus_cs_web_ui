@@ -24,6 +24,7 @@
 <?php
 
 	include("../common.php");
+	include("auto_logout_administration.php");	
 
 	// Prevent timeout error
 	set_time_limit(0);

@@ -3,24 +3,18 @@
 	session_start();
 
 	include ('common.php');
-
+	include("auto_logout.php");
+	
 	//-----------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
+	// Import $_REQUEST variables and set $params array
 	//-----------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//-----------------------------------------------------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $param array
-	//-----------------------------------------------------------------------------------------------------------------
-	$param = array('mode'         => "",
-				   'filterSex'    => "all",
-				   'personalFB'   => "all",
-				   'consensualFB' => "all",
-				   'filterTP'     => "all",
-				   'filterFN'     => "all",
-				   'showing'      => 10);
+	$params = array('mode'         => "",
+				    'filterSex'    => "all",
+				    'personalFB'   => "all",
+				    'consensualFB' => "all",
+				    'filterTP'     => "all",
+				    'filterFN'     => "all",
+				    'showing'      => 10);
 	//-----------------------------------------------------------------------------------------------------------------
 
 	try
@@ -28,7 +22,7 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
-		include('set_cad_panel_param.php');
+		include('set_cad_panel_params.php');
 		$versionList = array("all");
 
 		//----------------------------------------------------------------------------------------------------
@@ -37,7 +31,7 @@
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 
-		$smarty->assign('param', $param);
+		$smarty->assign('params', $params);
 
 		$smarty->assign('modalityList',    $modalityList);
 		$smarty->assign('modalityMenuVal', $modalityMenuVal);	

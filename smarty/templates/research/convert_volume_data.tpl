@@ -54,29 +54,29 @@ input.close-btn {
 
 <body>
 	<form>
-	<input type="hidden" id="studyInstanceUID"  value="{$param.studyInstanceUID}" />
-	<input type="hidden" id="seriesInstanceUID" value="{$param.seriesInstanceUID}" />
+	<input type="hidden" id="studyInstanceUID"  value="{$params.studyInstanceUID}" />
+	<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
 
-	{if $param.message == ""}
+	{if $params.message == ""}
 		<h4 class="mb10"><img src="../images/busy.gif" />&nbsp;&nbsp;Creating volume data, please,wait...</h4>
 
 		<div class="block-al-c" style="width:350px;">
 			<table class="detail-tbl block-al-c">
 				<tr>
 					<th style="width: 12em;"><span class="trim01">Patient ID</span></th>
-					<td class="al-l">{$param.patientID}</td>
+					<td class="al-l">{$params.patientID}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Series time</span></th>
-					<td class="al-l">{$param.seriesTime}</td>
+					<td class="al-l">{$params.seriesTime}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Modality</span></th>
-					<td class="al-l">{$param.modality}</td>
+					<td class="al-l">{$params.modality}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Series description</span></th>
-					<td class="al-l">{$param.seriesDescription}</td>
+					<td class="al-l">{$params.seriesDescription}</td>
 				</tr>
 			</table>
 		</div><!-- / .detail-panel END -->
@@ -85,7 +85,7 @@ input.close-btn {
 			<input name="" value="cancel" type="button" class="close-btn" style="width: 100px;" onclick="window.close()" />
 		</div>
 	{else}
-		<h4>{$param.message}</h4>
+		<h4>{$params.message}</h4>
 		<div class="mt15">
 			<input name="" value="close" type="button" class="close-btn" style="width: 100px;" onclick="window.close()" />
 		</div>

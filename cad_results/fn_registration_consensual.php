@@ -1,7 +1,7 @@
 <?php
 
 	$registeredAt = date('Y-m-d H:i:s');
-	$consensualFlg = ($param['feedbackMode'] == "consensual") ? 't' : 'f';
+	$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
 	$posArr = explode('^', $posStr);
 
@@ -44,7 +44,7 @@
 					. " VALUES (?, ?, 't', ?, ?, ?, ?, 'f', ?)";
 	
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($param['execID'], $userID, $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM + 1],
+			$stmt->execute(array($params['execID'], $userID, $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM + 1],
 			                     $posArr[$j * $DEFAULT_COL_NUM + 2], $tmpStr[0], $registeredAt));
 	
 			if($stmt->rowCount() != 1)
@@ -60,7 +60,7 @@
 			$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND consensual_flg='t'"
 				    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
 
-			$sqlParam = array($param['execID'], $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM + 1],
+			$sqlParam = array($params['execID'], $posArr[$j * $DEFAULT_COL_NUM], $posArr[$j * $DEFAULT_COL_NUM + 1],
 			                  $posArr[$j * $DEFAULT_COL_NUM + 2], $registeredAt);
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -121,11 +121,11 @@
 		if($registMsg == "")
 		{
 			$stmt = $pdo->prepare("SELECT COUNT(*) FROM false_negative_count WHERE exec_id=? AND consensual_flg='t'");
-			$stmt->bindParam(1, $param['execID']);
+			$stmt->bindParam(1, $params['execID']);
 			$stmt->execute();
 			
 			$sqlStr = "";
-			$sqlParam = array( 'execID'       => $param['execID'],
+			$sqlParam = array( 'execID'       => $params['execID'],
 			                   'userID'       => $userID,
 							   'rowNum'       => $enteredFnNum,
 							   'registeredAt' => $registeredAt);
@@ -162,7 +162,7 @@
 				// •a•ÏŒó•â•ª—Þ‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚ð”»’è
 				$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='t' AND interrupt_flg='f'";
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $param['execID']);
+				$stmt->bindValue(1, $params['execID']);
 				$stmt->execute();		
 		
 				if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;

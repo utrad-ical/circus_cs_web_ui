@@ -52,7 +52,7 @@ function ChangeSlice(imgNum)
 {ldelim}
 	$.post("plugin_template/change_slice_fat_volumetry_v1.php",
 			{ldelim}
-              version: {$param.version},
+              version: {$params.version},
 			  imgNum: imgNum,
 			  execID: $("#execID").val(),
 			  orgImgFname: $("#orgImg").attr("src"),
@@ -125,18 +125,18 @@ $(function() {ldelim}
 		
 		<div class="tab-content">
 			<form id="form1" name="form1">
-			<input type="hidden" id="execID"            name="execID"            value="{$param.execID}">
-			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$param.studyInstanceUID}">
-			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$param.seriesInstanceUID}">
+			<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
+			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
+			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
 			<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
-			<input type="hidden" id="srcList"           name="srcList"           value="{$param.srcList}">
-			<input type="hidden" id="tagStr"            name="tagStr"            value="{$param.tagStr}">
-			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$param.tagEnteredBy}">
+			<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}">
+			<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}">
+			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$params.tagEnteredBy}">
 
 			<div id="cadResult">
 
-				<h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version} ID:{$param.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version}]<span class="ml10" style="font-size:12px;">(ID:{$param.execID})</span></h2> *}
+				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 			
 				<div class="headerArea">
 					<div class="fl-l"><a onclick="">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>

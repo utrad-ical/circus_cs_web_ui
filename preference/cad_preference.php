@@ -1,21 +1,11 @@
 <?php
 	session_start();
 
-	include ('../common.php');
-	
-	//--------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//--------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])
-	{
-		echo '<script language="Javascript">';
-		echo "top.location.href = '../index.php?mode=timeout'";
-		echo '</script>';
-		exit(0);
-	}
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//--------------------------------------------------------------------------------------------------------
+	$params = array('toTopDir' => "../");
 
+	include_once("../common.php");
+	include_once("../auto_logout.php");	
+	
 	$cadList = array();
 
 	try

@@ -131,10 +131,10 @@ div.imgArea {
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				{if $param.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$param.listTabTitle}">{$param.listTabTitle}</a></li>
+				{if $params.srcList!="" && $smarty.session.listAddress!=""}
+					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
 				{else}
-					<li><a href="../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+					<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 				{/if}
 				<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD result</a></li>
 			</ul>
@@ -145,23 +145,23 @@ div.imgArea {
 			{*<div id="cadResult">*}
 			<div id="resultBody" class="resultBody">
 
-				<h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version} ID:{$param.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version}]<span class="ml10" style="font-size:12px;">(ID:{$param.execID})</span></h2> *}
+				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 			
 				<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$param.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
+					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
 					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
 				</div>
 
 				<div class="fl-clr"></div>
 					
 				<form id="form1" name="form1">
-				<input type="hidden" id="studyInstanceUID"   name="studyInstanceUID"   value="{$param.studyInstanceUID}" />
-				<input type="hidden" id="seriesInstanceUID"  name="seriesInstanceUID"  value="{$param.seriesInstanceUID}" />
-				<input type="hidden" id="cadName"            name="cadName"            value="{$param.cadName}" />
-				<input type="hidden" id="version"            name="version"            value="{$param.version}" />
-				<input type="hidden" id="execID"             name="execID"             value="{$param.execID}" />
+				<input type="hidden" id="studyInstanceUID"   name="studyInstanceUID"   value="{$params.studyInstanceUID}" />
+				<input type="hidden" id="seriesInstanceUID"  name="seriesInstanceUID"  value="{$params.seriesInstanceUID}" />
+				<input type="hidden" id="cadName"            name="cadName"            value="{$params.cadName}" />
+				<input type="hidden" id="version"            name="version"            value="{$params.version}" />
+				<input type="hidden" id="execID"             name="execID"             value="{$params.execID}" />
 
 				<input type="hidden" id="orgWidth"   value="{$width}" />
 				<input type="hidden" id="orgHeight"  value="{$height}" />

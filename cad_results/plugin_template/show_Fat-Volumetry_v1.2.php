@@ -10,7 +10,7 @@
 	$consensualFBFlg = ($_SESSION['groupID'] == 'admin') ? 1 : 0;
 
 	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "fat_volumetry_v1.2" WHERE exec_id=?');
-	$stmt->bindParam(1, $param['execID']);
+	$stmt->bindParam(1, $params['execID']);
 	$stmt->execute();
 	$maxImgNum = $stmt->fetchColumn();
 
@@ -21,7 +21,7 @@
 	// Measuring results
 	//------------------------------------------------------------------------------------------------------------------
 	$stmt = $pdo->prepare('SELECT * FROM "fat_volumetry_v1.2" WHERE exec_id=? AND sub_id =?');
-	$stmt->execute(array($param['execID'], $imgNum));
+	$stmt->execute(array($params['execID'], $imgNum));
 
 	$data = $stmt->fetch(PDO::FETCH_ASSOC);
 	//------------------------------------------------------------------------------------------------------------------
@@ -44,11 +44,11 @@
 		$evalVal[$j][$i] = 0;
 	}	
 	
-	$sqlStr = 'SELECT * FROM "fat_volumetry_v' . $param['version'] . '_score"'
+	$sqlStr = 'SELECT * FROM "fat_volumetry_v' . $params['version'] . '_score"'
 			.  " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
 
 	$stmt = $pdo->prepare($sqlStr);
-	$stmt->execute(array($param['execID'], $userID));
+	$stmt->execute(array($params['execID'], $userID));
 		
 	if($stmt->rowCount()==1)
 	{
@@ -157,8 +157,8 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param', $param);
-	$smarty->assign('data',  $data);
+	$smarty->assign('params', $params);
+	$smarty->assign('data',   $data);
 
 	$smarty->assign('consensualFBFlg', $consensualFBFlg);
 

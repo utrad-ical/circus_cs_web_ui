@@ -137,35 +137,35 @@ function ShowCADResult()
 		
 		<div class="tab-content">
 			<form id="form1" name="form1">
-			<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$param.feedbackMode}">
-			<input type="hidden" id="execID"            name="execID"            value="{$param.execID}">
+			<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">
+			<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
 			<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}">
-			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$param.studyInstanceUID}">
-			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$param.seriesInstanceUID}">
-			<input type="hidden" id="cadName"           name="cadName"           value="{$param.cadName}">	
-			<input type="hidden" id="version"           name="version"           value="{$param.version}">
+			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
+			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
+			<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}">	
+			<input type="hidden" id="version"           name="version"           value="{$params.version}">
 			<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
 			<input type="hidden" id="ticket"            name="ticket"            value="{$ticket}">
 			<input type="hidden" id="registTime"        name="registTime"        value="{$registTime}">
-			<input type="hidden" id="interruptFlg"      name="interruptFlg"      value="{$param.interruptFlg}">
-			<input type="hidden" id="srcList"           name="srcList"           value="{$param.srcList}">
-			<input type="hidden" id="tagStr"            name="tagStr"            value="{$param.tagStr}">
-			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$param.tagEnteredBy}">
+			<input type="hidden" id="interruptFlg"      name="interruptFlg"      value="{$params.interruptFlg}">
+			<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}">
+			<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}">
+			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$params.tagEnteredBy}">
 
 			<div id="cadResult">
 
-				<h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version} ID:{$param.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version}]<span class="ml10" style="font-size:12px;">(ID:{$param.execID})</span></h2> *}
+				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 
 				<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$param.encryptedPtID}', 1);">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}', 1);">{$studyDate}&nbsp;({$studyID})</a></div>
+					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}', 1);">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}', 1);">{$studyDate}&nbsp;({$studyID})</a></div>
 					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
 				</div>
 		
 				<div class="hide-on-guest">
-					<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $param.feedbackMode=='personal'}checked="checked"{/if} />
-					<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $param.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($param.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
+					<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
+					<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
 					<div class="fl-l" style="margin-left:5px;">{$registMsg}</div>
 				</div>
 
@@ -233,15 +233,15 @@ function ShowCADResult()
 				{if $smarty.session.personalFBFlg == 1 || $smarty.session.consensualFBFlg == 1 || $smarty.session.groupID == 'demo'}
 					<input type="hidden" id="lesionStr"    name="lesionStr"    value="{$lesionStr}">
 					<input type="hidden" id="evalStr"      name="evalStr"      value="">
-					<input type="hidden" id="interruptFlg" name="interruptFlg" value="{$param.interruptFlg}">
-					<input type="hidden" id="registFlg"    name="registFlg"    value="{$param.registFlg}">
+					<input type="hidden" id="interruptFlg" name="interruptFlg" value="{$params.interruptFlg}">
+					<input type="hidden" id="registFlg"    name="registFlg"    value="{$params.registFlg}">
 
 					<div class="hide-on-guest fl-clr" style="width: 800px;">
-						<div class="ml40 js-personal-or-consensual {$param.feedbackMode}" style="display:inline;">
+						<div class="ml40 js-personal-or-consensual {$params.feedbackMode}" style="display:inline;">
 							{$scoringHtml}
 						</div>
 						<p class="fl-r" style="width:255px;">
-							<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="RegistFeedback('{$param.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
+							<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="RegistFeedback('{$params.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
 							<br />
 							<span id="registCaution" class="regist-caution">{if $interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{/if}</span>
 						</p>

@@ -86,15 +86,15 @@ function DeleteTag(tagID)
 
 <body>
 	<form onsubmit="return false;">
-	<input type="hidden" id="execID"  value="{$param.execID}" />
-	<input type="hidden" id="candID"  value="{$param.candID}" />
-	<input type="hidden" id="feedbackMode"  value="{$param.feedbackMode}" />
-	<input type="hidden" id="userID"  value="{$param.userID}" />
+	<input type="hidden" id="execID"  value="{$params.execID}" />
+	<input type="hidden" id="candID"  value="{$params.candID}" />
+	<input type="hidden" id="feedbackMode"  value="{$params.feedbackMode}" />
+	<input type="hidden" id="userID"  value="{$params.userID}" />
 
 	<h4>Candidate tags</h4>
 	<p class="font-s mb10">
-		(ID: {$param.execID}, candidate: {$param.candID},
-		{if $param.feedbackMode == "personal"}personal, user ID:{$param.userID}{else}consensual{/if})
+		(ID: {$params.execID}, candidate: {$params.candID},
+		{if $params.feedbackMode == "personal"}personal, user ID:{$params.userID}{else}consensual{/if})
 	</p>
 
 	<div id="tagList" class="block-al-c" style="width:270px;">

@@ -2,20 +2,14 @@
 	session_cache_limiter('none');
 	session_start();
 
-	include("../common.php");
+	$params = array('toTopDir' => "../");
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location:../index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("../common.php");
+	include_once("../auto_logout.php");	
 
 	try
 	{	
 		$pluginList = array();
-		
-		$param = array('toTopDir' => '../');
 
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
@@ -102,7 +96,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param',         $param);
+		$smarty->assign('params',        $params);
 		$smarty->assign('pluginList',    $resultPlugin);
 		$smarty->assign('pluginMenuVal', $pluginMenuVal);
 		$smarty->assign('cadList',       $cadList);

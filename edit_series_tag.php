@@ -7,9 +7,9 @@
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
 	//--------------------------------------------------------------------------------------------------------	
-	$param = array('toTopDir'          => './',
-	               'message'           => '',
-	               'seriesInstanceUID' => $_REQUEST['seriesInstanceUID']);
+	$params = array('toTopDir'          => './',
+	                'message'           => '',
+	                'seriesInstanceUID' => $_REQUEST['seriesInstanceUID']);
 	//--------------------------------------------------------------------------------------------------------	
 
 	try
@@ -20,7 +20,7 @@
 		$sqlStr = "SELECT tag_id, tag FROM series_tag WHERE series_instance_uid=? ORDER BY tag_id ASC";
 		
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(1, $param['seriesInstanceUID']);
+		$stmt->bindValue(1, $params['seriesInstanceUID']);
 		$stmt->execute();
 
 		$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
@@ -31,7 +31,7 @@
 		require_once('./smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param',    $param);
+		$smarty->assign('params',   $params);
 		$smarty->assign('tagArray', $tagArray);
 		
 		$smarty->display('edit_series_tag.tpl');

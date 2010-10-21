@@ -3,7 +3,7 @@
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
 	$stmt = $pdo->prepare("SELECT crop_width, crop_height, crop_depth FROM param_set WHERE exec_id=?");
-	$stmt->bindParam(1, $param['execID']);
+	$stmt->bindParam(1, $params['execID']);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_NUM);
 
@@ -18,7 +18,7 @@
 	$sqlStr = "SELECT sub_id, landmark_name, short_name, location_x as x, location_y as y, location_z as z"
 		    . " FROM \"landmark_detection_v0\" WHERE exec_id=? ORDER BY sub_id ASC";	 
 	$stmt = $pdo->prepare($sqlStr);
-	$stmt->bindParam(1, $param['execID']);
+	$stmt->bindParam(1, $params['execID']);
 	$stmt->execute();
 	$posData = $stmt->fetchAll();
 
@@ -224,7 +224,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param', $param);
+	$smarty->assign('params', $params);
 
 	$smarty->assign('patientID',         $patientID);
 	$smarty->assign('patientName',       $patientName);	

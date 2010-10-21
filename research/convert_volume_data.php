@@ -2,19 +2,21 @@
 	session_cache_limiter('none');
 	session_start();
 
-	include("../common.php");
+	$params = array('toTopDir' => "../");
 
-	//--------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables 
-	//--------------------------------------------------------------------------------------------------------	
-	$param = array('toTopDir'          => '../',
-	               'message'           => '',
-	               'studyInstanceUID'  => $_POST['studyInstanceUID'],
-	               'seriesInstanceUID' => $_POST['seriesInstanceUID']);
-	//--------------------------------------------------------------------------------------------------------	
+	include_once("../common.php");
+	include_once("../auto_logout.php");	
 
 	try
 	{
+		//--------------------------------------------------------------------------------------------------------------
+		// Import $_REQUEST variables 
+		//--------------------------------------------------------------------------------------------------------------	
+		$params['message'] ='';
+		$params['studyInstanceUID']  = $_POST['studyInstanceUID'];
+		$params['seriesInstanceUID'] = $_POST['seriesInstanceUID'];
+		//--------------------------------------------------------------------------------------------------------------	
+
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 	
@@ -26,25 +28,25 @@
 				. " AND pt.patient_id=st.patient_id";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($param['seriesInstanceUID'], $param['studyInstanceUID']));
+		$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
 
 		if($stmt->rowCount() != 1)
 		{
-			$param['message'] = "[Error] DICOM series is unspecified!!";
+			$params['message'] = "[Error] DICOM series is unspecified!!";
 		}
 		else
 		{
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 	
-			$param['patientID']         = $result[0];
-			$param['seriesTime']        = $result[2] . ' ' . $result[3];
-			$param['modality']          = $result[4];
-			$param['seriesDescription'] = $result[5];
+			$params['patientID']         = $result[0];
+			$params['seriesTime']        = $result[2] . ' ' . $result[3];
+			$params['modality']          = $result[4];
+			$params['seriesDescription'] = $result[5];
 			
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$param['encryptedPtID'] = PinfoEncrypter($param['patientID'], $_SESSION['key']);
+				$params['encryptedPtID'] = PinfoEncrypter($params['patientID'], $_SESSION['key']);
 			}
 		}
 		
@@ -54,7 +56,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param', $param);
+		$smarty->assign('params', $params);
 		
 		$smarty->display('research/convert_volume_data.tpl');
 		//--------------------------------------------------------------------------------------------------------------

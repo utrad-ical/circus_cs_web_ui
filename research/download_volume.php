@@ -14,8 +14,8 @@
 
 	try
 	{
-		$param = array('message'    => '',
-		               'dlFileName' => '');
+		$params = array('message'    => '',
+		                'dlFileName' => '');
 	
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
@@ -31,7 +31,7 @@
 		
 		if($stmt->rowCount() != 1)
 		{
-			$param['message'] = "[Error] DICOM series is unspecified!!";
+			$params['message'] = "[Error] DICOM series is unspecified!!";
 		}		
 		else
 		{
@@ -44,7 +44,7 @@
 			                    . $DIR_SEPARATOR_WEB . $studyInstanceUID
 	    		                . $DIR_SEPARATOR_WEB . $seriesInstanceUID;
 						
-			$param['fileName'] = "../" . $webPathOfseriesDir . $DIR_SEPARATOR_WEB . $seriesInstanceUID . ".zip";
+			$params['fileName'] = "../" . $webPathOfseriesDir . $DIR_SEPARATOR_WEB . $seriesInstanceUID . ".zip";
 		}
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param', $param);
+		$smarty->assign('params', $params);
 
 		$smarty->display('research/download_volume.tpl');
 		//--------------------------------------------------------------------------------------------------------------

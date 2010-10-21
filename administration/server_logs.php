@@ -1,20 +1,9 @@
 <?php
 
 	session_start();
+	
 	include("../common.php");
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'] || $_SESSION['superUserFlg'] == 0)
-	{
-		header('location: ../index.php?mode=timeout');
-	}
-	else
-	{
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	}
-	//------------------------------------------------------------------------------------------------------------------
+	include("auto_logout_administration.php");
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -29,7 +18,7 @@
 		touch($LOG_DIR.$DIR_SEPARATOR.$filename);
 	}
 	
-	$param = array('toTopDir' => "../");
+	$params = array('toTopDir' => "../");
 
 	$flist = scandir($LOG_DIR);
 	$numFiles = count($flist);
@@ -54,7 +43,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 		
-	$smarty->assign('param',    $param);
+	$smarty->assign('params',   $params);
 	$smarty->assign('fileData', $fileData);
 
 	$smarty->display('administration/server_logs.tpl');

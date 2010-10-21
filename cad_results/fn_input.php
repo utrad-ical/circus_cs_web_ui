@@ -2,21 +2,17 @@
 	session_cache_limiter('none');
 	session_start();
 
-	include("../common.php");
+	$params = array('toTopDir' => "../");
+
+	include_once("../common.php");
+	include_once("../auto_logout.php");	
 	include("fn_input_private.php");
 	require_once('../class/PersonalInfoScramble.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: ../index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
-
-	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
 	//------------------------------------------------------------------------------------------------------------------
-	$param = array('toTopDir'          => "../",
+	$params = array('toTopDir'          => "../",
 	               'studyInstanceUID'  => (isset($_REQUEST['studyInstanceUID'])) ? $_REQUEST['studyInstanceUID'] : "",
 	               'seriesInstanceUID' => (isset($_REQUEST['seriesInstanceUID'])) ? $_REQUEST['seriesInstanceUID'] : "",
 				   'execID'            => (isset($_REQUEST['execID'])) ? $_REQUEST['execID'] : "",
@@ -74,7 +70,7 @@
 			        . " AND sr.storage_id=sm.storage_id;";
 					
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($param['seriesInstanceUID'], $param['studyInstanceUID']));
+			$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
 					
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 			
@@ -90,8 +86,8 @@
 			$seriesDescription = $result[12];
 			
 			$seriesDir = $result[2] . $DIR_SEPARATOR . $result[0]
-			           . $DIR_SEPARATOR . $param['studyInstanceUID']
-					   . $DIR_SEPARATOR . $param['seriesInstanceUID'];
+			           . $DIR_SEPARATOR . $params['studyInstanceUID']
+					   . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 			$orgWidth  = $result[3];
 			$orgHeight = $result[4];
 			
@@ -153,7 +149,7 @@
 		if(!isset($_REQUEST['sliceOrigin']) || !isset($_REQUEST['slicePitch']) || !isset($_REQUEST['sliceOffset']))
 		{
 			$stmt = $pdo->prepare("SELECT * FROM param_set where exec_id=?");
-			$stmt->bindParam(1, $param['execID']);
+			$stmt->bindParam(1, $params['execID']);
 			$stmt->execute();
 			
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -172,14 +168,14 @@
 		else
 		{
 			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE cad_name=? AND version=?");
-			$stmt->execute(array($param['cadName'], $param['version']));
+			$stmt->execute(array($params['cadName'], $params['version']));
 			$tableName = $stmt->fetchColumn();
 		
 			$sqlStr  = 'SELECT sub_id, location_x, location_y, location_z'
 			         . ' FROM "' . $tableName . '" WHERE exec_id=? ORDER BY sub_id ASC';
 					 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $param['execID']);
+			$stmt->bindParam(1, $params['execID']);
 			$stmt->execute();
 			$lesionNum = $stmt->rowCount(); 
 			
@@ -237,18 +233,18 @@
 		//    && ($registFNFlg == 1 || $interruptFNFlg == 1))
 		{
 			include("fn_registration_private.php");
-			include("fn_registration_".$param['feedbackMode'].".php");
+			include("fn_registration_".$params['feedbackMode'].".php");
 		}
-		else if(($interruptFNFlg == 0 && $posStr == "") || ($param['feedbackMode'] == "consensual" &&  $userStr == ""))
+		else if(($interruptFNFlg == 0 && $posStr == "") || ($params['feedbackMode'] == "consensual" &&  $userStr == ""))
 		{
 			$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?";
-			if($param['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f' AND entered_by=?";		
-			else if($param['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
+			if($params['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f' AND entered_by=?";		
+			else if($params['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 			
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $param['execID']);
-			if($param['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
+			$stmt->bindParam(1, $params['execID']);
+			if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
 			$stmt->execute();
 			$enteredFnNum = $stmt->rowCount();
 			
@@ -270,7 +266,7 @@
 								. ' WHERE exec_id=? AND sub_id=?';
 								
 						$stmt2 = $pdo->prepare($sqlStr);
-						$stmt2->execute(array($param['execID'], $result['nearest_lesion_id']));
+						$stmt2->execute(array($params['execID'], $result['nearest_lesion_id']));
 									 
 						$result2 = $stmt2->fetch(PDO::FETCH_NUM);
 							
@@ -290,22 +286,22 @@
 				$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
 						. " AND entered_by=? AND interrupt_flg='t'";	
 				
-				if($param['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f'";
-				else if($param['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
+				if($params['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f'";
+				else if($params['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
 				
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($param['execID'], $userID));
+				$stmt->execute(array($params['execID'], $userID));
 
 				if($stmt->fetchColumn()>0)	$registTime ="";
 			
 			}
-			else if($param['feedbackMode'] == "consensual")
+			else if($params['feedbackMode'] == "consensual")
 			{
 				$sqlStr = "SELECT registered_at, entered_by FROM false_negative_count WHERE exec_id=?"
 						. " AND consensual_flg='t' AND status=2";	
 							
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $param['execID']);
+				$stmt->bindParam(1, $params['execID']);
 				$stmt->execute();
 			
 				if($stmt->rowCount() == 1)
@@ -324,7 +320,7 @@
 							. " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 	
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindParam(1, $param['execID']);
+					$stmt->bindParam(1, $params['execID']);
 					$stmt->execute();
 					$enteredFnNum = $stmt->rowCount();
 				
@@ -355,7 +351,7 @@
 											. ' WHERE exec_id=? AND sub_id=?';
 								
 									$stmt2 = $pdo->prepare($sqlStr);
-									$stmt2->execute(array($param['execID'], $result['nearest_lesion_id']));
+									$stmt2->execute(array($params['execID'], $result['nearest_lesion_id']));
 									$result2 = $stmt2->fetch(PDO::FETCH_NUM);
 
 									array_push($posArr, $result2[0]);
@@ -421,7 +417,7 @@
 						        . " WHERE exec_id=? AND consensual_flg='f' ORDER BY entered_by ASC";
 		
 						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindParam(1, $param['execID']);
+						$stmt->bindParam(1, $params['execID']);
 						$stmt->execute();
 						
 						$userCnt = 0;
@@ -439,7 +435,7 @@
 								. " AND consensual_flg='t'" . " AND interrupt_flg='t'";	
 								
 						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindParam(1, $param['execID']);
+						$stmt->bindParam(1, $params['execID']);
 						$stmt->execute();
 				
 						if($stmt->fetchColumn()>0)	$registTime ="";
@@ -454,11 +450,11 @@
 				// (フラグを立てる、FN入力が完了しているときのみ）
 				$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND interrupt_flg='f'";
 				
-				if($param['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f'";
-				else if($param['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
+				if($params['feedbackMode'] == "personal")         $sqlStr .= " AND consensual_flg='f'";
+				else if($params['feedbackMode'] == "consensual")  $sqlStr .= " AND consensual_flg='t'";
 								
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $param['execID']);
+				$stmt->bindValue(1, $params['execID']);
 				$stmt->execute();
 		
 				if($stmt->fetchColumn() <= 0)  $moveCadResultFlg = 1;
@@ -529,7 +525,7 @@
 		{
 			$fontColor = "black";
 			
-			if($param['feedbackMode'] == "consensual")
+			if($params['feedbackMode'] == "consensual")
 			{
 				if($registTime != "")
 				{
@@ -552,7 +548,7 @@
 			
 			// Position for label
 			$locationList[$j][7] = 0;
-			if($param['feedbackMode'] == "consensual")
+			if($params['feedbackMode'] == "consensual")
 			{
 				$tmpUserID = strtok($posArr[$j * $DEFAULT_COL_NUM + 4], ',');
 				$locationList[$j][7] = $userArr[$tmpUserID];
@@ -571,7 +567,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 	
-		$smarty->assign('param', $param);
+		$smarty->assign('params',   $params);
 	
 		$smarty->assign('inFname',  $inFname);
 		$smarty->assign('outFname', $outFname);
@@ -632,7 +628,7 @@
 		$smarty->assign('registTime',  $registTime);
 		$smarty->assign('ticket',      htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
 		
-		if($param['feedbackMode'] =="consensual")
+		if($params['feedbackMode'] =="consensual")
 		{
 			$smarty->assign('enteredBy', $enteredBy);
 		}

@@ -235,10 +235,10 @@ function RegistrationCADJob()
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				{if $param.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$param.listTabTitle}">{$param.listTabTitle}</a></li>
+				{if $params.srcList!="" && $smarty.session.listAddress!=""}
+					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
 				{else}
-					<li><a href="../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+					<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 				{/if}
 				<li><a href="" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD execution</a></li>
 			</ul>
@@ -246,15 +246,15 @@ function RegistrationCADJob()
 		
 		<div class="tab-content">
 			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="cadName"              name="cadName"              value="{$param.cadName}" />
-			<input type="hidden" id="version"              name="version"              value="{$param.version}" />
+			<input type="hidden" id="cadName"              name="cadName"              value="{$params.cadName}" />
+			<input type="hidden" id="version"              name="version"              value="{$params.version}" />
 			<input type="hidden" id="studyUIDStr"          name="studyUIDStr"          value="{$studyUIDStr}" />
 			<input type="hidden" id="seriesUIDStr"         name="seriesUIDStr"         value="{$seriesUIDStr}" />
 			<input type="hidden" id="modalityStr"          name="modalityStr"          value="{$modalityStr}" />
 			<input type="hidden" id="seriesDescriptionStr" name="seriesDescriptionStr" value="{$seriesDescriptionStr}" />
-			<input type="hidden" id="srcList"              name="srcList"              value="{$param.srcList}">
+			<input type="hidden" id="srcList"              name="srcList"              value="{$params.srcList}">
 
-			<div id="seriesSelect" {if $param.mode!='select'}style="display:none;"{/if}>
+			<div id="seriesSelect" {if $params.mode!='select'}style="display:none;"{/if}>
 
 
 				<h2>Series selection</h2>
@@ -269,15 +269,15 @@ function RegistrationCADJob()
 					<table class="detail-tbl">
 						<tr>
 							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$param.cadName} v.{$param.version}</td>
+							<td>{$params.cadName} v.{$params.version}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Patient ID</span></th>
-							<td>{$param.patientID}</td>
+							<td>{$params.patientID}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Pateint name</span></th>
-							<td>{$param.patientName}</td>
+							<td>{$params.patientName}</td>
 						</tr>
 					</table>
 				</div><!-- / .detail-panel END -->
@@ -359,7 +359,7 @@ function RegistrationCADJob()
 			<!-- / Detail END -->
 			
 			<!-- Confirmation -->
-			<div id="confirm" {if $param.mode!='confirm'}style="display:none;"{/if}>
+			<div id="confirm" {if $params.mode!='confirm'}style="display:none;"{/if}>
 				<h2>Confirmation</h2>
 				<p class="mb10">Do you register following CAD job?</p>
 				
@@ -372,15 +372,15 @@ function RegistrationCADJob()
 					<table class="detail-tbl">
 						<tr>
 							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$param.cadName} v.{$param.version}</td>
+							<td>{$params.cadName} v.{$params.version}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Patient ID</span></th>
-							<td>{$param.patientID}</td>
+							<td>{$params.patientID}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Pateint name</span></th>
-							<td>{$param.patientName}</td>
+							<td>{$params.patientName}</td>
 						</tr>
 					</table>
 				</div>
@@ -401,7 +401,7 @@ function RegistrationCADJob()
 						</tr>
 					</thead>
 					<tbody>
-						{if $param.mode=='confirm'}
+						{if $params.mode=='confirm'}
 							{foreach from=$seriesList item=item name=confirmList}
 								<tr>
 									<td>{$smarty.foreach.confirmList.iteration}</td>
@@ -437,15 +437,15 @@ function RegistrationCADJob()
 						</tr>
 						<tr>
 							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$param.cadName} v.{$param.version}</td>
+							<td>{$params.cadName} v.{$params.version}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Patient ID</span></th>
-							<td>{$param.patientID}</td>
+							<td>{$params.patientID}</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">Pateint name</span></th>
-							<td>{$param.patientName}</td>
+							<td>{$params.patientName}</td>
 						</tr>
 					</table>
 				</div>
@@ -465,7 +465,7 @@ function RegistrationCADJob()
 						</tr>
 					</thead>
 					<tbody>
-						{if $param.mode=='confirm'}
+						{if $params.mode=='confirm'}
 							{foreach from=$seriesList item=item name=confirmList}
 								<tr>
 									<td>{$smarty.foreach.confirmList.iteration}</td>
@@ -485,9 +485,9 @@ function RegistrationCADJob()
 			<!-- / Seccessfully END -->
 
 			<!-- Error display -->
-			<div id="error" {if $param.mode!='error'}style="display:none;"{/if}> 
+			<div id="error" {if $params.mode!='error'}style="display:none;"{/if}> 
 				<h2>Error</h2>
-				<p class="mb10">{$param.cadName} v.{$param.version} requires following series in the same {if $param.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
+				<p class="mb10">{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
 </p>
 				<table class="col-tbl mb30">
 					<thead>

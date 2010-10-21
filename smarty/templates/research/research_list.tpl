@@ -121,23 +121,23 @@ function ResetSearchBlock()
 							<tr>
 				    	        <th><span class="trim01">Research date</span></th>
 								<td>
-									<input name="resDateFrom" type="text" style="width:72px;" value="{$param.resDateFrom}" />
+									<input name="resDateFrom" type="text" style="width:72px;" value="{$params.resDateFrom}" />
 									-&nbsp;
-									<input name="resDateTo" type="text" style="width:72px;" value="{$param.resDateTo}" />
+									<input name="resDateTo" type="text" style="width:72px;" value="{$params.resDateTo}" />
 								</td>
 							</tr>
 							<tr>
 	   							<th><span class="trim01">Tag</span></th>
-								<td><input name="filterTag" type="text" style="width:160px;" value="{$param.filterTag}" /></td>
+								<td><input name="filterTag" type="text" style="width:160px;" value="{$params.filterTag}" /></td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Showing</span></th>
 								<td>
 									<select name="showing" style="width: 50px;">
-										<option value="10"  {if $param.showing=="10"}selected="selected"{/if}>10</option>
-										<option value="25"  {if $param.showing=="25"}selected="selected"{/if}>25</option>
-										<option value="50"  {if $param.showing=="50"}selected="selected"{/if}>50</option>
-										<option value="all" {if $param.showing=="all"}selected="selected"{/if}>all</option>
+										<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
+										<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
+										<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
+										<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
 									</select>
 								</td>
 							</tr>
@@ -152,7 +152,7 @@ function ResetSearchBlock()
 
 				<!-- ***** List ***** -->
 				<div class="serp">
-					Showing {$param.startNum} - {$param.endNum} of {$param.totalNum} results
+					Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results
 				</div>
 			
 				<table class="col-tbl" style="width:100%;">
@@ -180,33 +180,33 @@ function ResetSearchBlock()
 
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">
-					{if $param.maxPageNum > 1}
-						{if $param.pageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
+					{if $params.maxPageNum > 1}
+						{if $params.pageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
 						{/if}
 
-						{if $param.startPageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum=1">1</a></div>
-							{if $param.startPageNum > 2}<div>...</div>{/if}
+						{if $params.startPageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum=1">1</a></div>
+							{if $params.startPageNum > 2}<div>...</div>{/if}
 						{/if}
 
-						{section name=i start=$param.startPageNum loop=$param.endPageNum+1}
+						{section name=i start=$params.startPageNum loop=$params.endPageNum+1}
 							{assign var="i" value=$smarty.section.i.index}
 
-				    		{if $i==$param.pageNum}
+				    		{if $i==$params.pageNum}
 								<div><span style="color: red" class="fw-bold">{$i}</span></div>
 							{else}
-								<div><a href="{$param.pageAddress}&pageNum={$i}">{$i}</a></div>
+								<div><a href="{$params.pageAddress}&pageNum={$i}">{$i}</a></div>
 							{/if}
 						{/section}
 
-						{if $param.endPageNum < $param.maxPageNum}
-							{if $param.maxPageNum-1 > $param.endPageNum}<div>...</div>{/if}
-							<div><a href="{$param.pageAddress}&pageNum={$param.maxPageNum}">{$param.maxPageNum}</a></div>
+						{if $params.endPageNum < $params.maxPageNum}
+							{if $params.maxPageNum-1 > $params.endPageNum}<div>...</div>{/if}
+							<div><a href="{$params.pageAddress}&pageNum={$params.maxPageNum}">{$params.maxPageNum}</a></div>
 						{/if}
 
-						{if $param.pageNum < $param.maxPageNum}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
+						{if $params.pageNum < $params.maxPageNum}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
 						{/if}
 					{/if}
 				</div>

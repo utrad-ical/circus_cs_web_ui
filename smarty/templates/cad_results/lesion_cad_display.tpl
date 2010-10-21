@@ -353,10 +353,10 @@ $(function() {ldelim}
 		<!-- ***** TAB ***** -->
 		<div id="cadResultTab" class="tabArea">
 			<ul>
-				{if $param.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="#" onclick="MovePageWithTempRegistration('../{$smarty.session.listAddress}');" class="btn-tab" title="{$param.listTabTitle}">{$param.listTabTitle}</a></li>
+				{if $params.srcList!="" && $smarty.session.listAddress!=""}
+					<li><a href="#" onclick="MovePageWithTempRegistration('../{$smarty.session.listAddress}');" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
 				{else}
-					<li><a href="#" onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}');" class="btn-tab" title="Series list">Series list</a></li>
+					<li><a href="#" onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');" class="btn-tab" title="Series list">Series list</a></li>
 				{/if}
 				<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD result</a></li>
 			</ul>
@@ -365,10 +365,10 @@ $(function() {ldelim}
 
 		<div id="cadDetailTab" class="tabArea" style="display:none;">
 			<ul>
-				{if $param.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$param.listTabTitle}">{$param.listTabTitle}</a></li>
+				{if $params.srcList!="" && $smarty.session.listAddress!=""}
+					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
 				{else}
-					<li><a href="../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+					<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 				{/if}
 				<li><a href="#" onclick="ShowCADResult();" class="btn-tab" title="CAD result">CAD result</a></li>
 				<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD detail</a></li>
@@ -379,35 +379,35 @@ $(function() {ldelim}
 		
 		<div class="tab-content">
 			<form id="form1" name="form1">
-			<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$param.feedbackMode}" />
-			<input type="hidden" id="execID"            name="execID"            value="{$param.execID}" />
+			<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}" />
+			<input type="hidden" id="execID"            name="execID"            value="{$params.execID}" />
 			<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}" />
-			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$param.studyInstanceUID}" />
-			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$param.seriesInstanceUID}" />
-			<input type="hidden" id="cadName"           name="cadName"           value="{$param.cadName}" />	
-			<input type="hidden" id="version"           name="version"           value="{$param.version}" />
+			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}" />
+			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
+			<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}" />	
+			<input type="hidden" id="version"           name="version"           value="{$params.version}" />
 			<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}" />
 			<input type="hidden" id="ticket"            name="ticket"            value="{$ticket}" />
 			<input type="hidden" id="registTime"        name="registTime"        value="{$registTime}" />
-			<input type="hidden" id="srcList"           name="srcList"           value="{$param.srcList}" />
-			<input type="hidden" id="tagStr"            name="tagStr"            value="{$param.tagStr}" />
-			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$param.tagEnteredBy}" />
-			<input type="hidden" id="remarkCand"        name="remarkCand"        value="{$param.remarkCand}" />
+			<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}" />
+			<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}" />
+			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$params.tagEnteredBy}" />
+			<input type="hidden" id="remarkCand"        name="remarkCand"        value="{$params.remarkCand}" />
 
 			<div id="cadResult">
 
-				<h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version} ID:{$param.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$param.cadName} v.{$param.version}]<span class="ml10" style="font-size:12px;">(ID:{$param.execID})</span></h2> *}
+				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 
 			<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$param.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$param.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
+					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
 					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
 				</div>
 		
 				<div class="hide-on-guest">
-					<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $param.feedbackMode=='personal'}checked="checked"{/if} />
-					<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $param.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($param.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
+					<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
+					<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
 					<div class="fl-l" style="margin-left:5px;">{$registMsg}</div>
 				</div>
 			
@@ -415,18 +415,18 @@ $(function() {ldelim}
 
 				<div class="sort-by">
 					<div class="total-cand">
-						{if $smarty.session.researchFlg==1}<span style="font-weight:bold;">Total candidates:</span> {$param.totalCandNum}{else}&nbsp;{/if}
+						{if $smarty.session.researchFlg==1}<span style="font-weight:bold;">Total candidates:</span> {$params.totalCandNum}{else}&nbsp;{/if}
 					</div>
 					<div class="sort-btn">
-						<input id="sortBtn" type="button" value="Sort" class="s-btn w50 form-btn" onclick="ChangeCondition('changeSort','{$param.feedbackMode}');" />
+						<input id="sortBtn" type="button" value="Sort" class="s-btn w50 form-btn" onclick="ChangeCondition('changeSort','{$params.feedbackMode}');" />
 						by
 						<select id="sortKey" name="sortKey">
-							<option value="0" {if $param.sortKey==0}selected="selected"{/if}>Confidence</option>
-							<option value="1" {if $param.sortKey==1}selected="selected"{/if}>Img. No.</option>
-							<option value="2" {if $param.sortKey==2}selected="selected"{/if}>Volume</option>
+							<option value="0" {if $params.sortKey==0}selected="selected"{/if}>Confidence</option>
+							<option value="1" {if $params.sortKey==1}selected="selected"{/if}>Img. No.</option>
+							<option value="2" {if $params.sortKey==2}selected="selected"{/if}>Volume</option>
 						</select>
-						<input name="sortOrder" type="radio" value="f" {if $param.sortOrder=='f'}checked="checked"{/if} />Asc.
-						<input name="sortOrder" type="radio" value="t" {if $param.sortOrder=='t'}checked="checked"{/if} />Desc.
+						<input name="sortOrder" type="radio" value="f" {if $params.sortOrder=='f'}checked="checked"{/if} />Asc.
+						<input name="sortOrder" type="radio" value="t" {if $params.sortOrder=='t'}checked="checked"{/if} />Desc.
 						</div>
 				</div>
 
@@ -443,8 +443,8 @@ $(function() {ldelim}
 
 					<input type="hidden" id="candStr"      name="candStr"    value="{$candStr}">
 					<input type="hidden" id="evalStr"      name="evalStr"      value="">
-					<input type="hidden" id="interruptFlg" name="interruptFlg" value="{$param.interruptFlg}">
-					<input type="hidden" id="registFlg"    name="registFlg"    value="{$param.registFlg}">
+					<input type="hidden" id="interruptFlg" name="interruptFlg" value="{$params.interruptFlg}">
+					<input type="hidden" id="registFlg"    name="registFlg"    value="{$params.registFlg}">
 
 					<div class="hide-on-guest fl-clr" style="width: 780px;">
 						<div class="fl-l">
@@ -452,9 +452,9 @@ $(function() {ldelim}
 							<input name="" type="button" class="form-btn" value="FN input" onclick="ShowFNinput();" />
 						</div>
 						<p class="fl-r" style="width:255px;">
-							<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="ChangeCondition('registration', '{$param.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
+							<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
 							<br />
-							<span id="registCaution" class="regist-caution">{if $param.interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{/if}</span>
+							<span id="registCaution" class="regist-caution">{if $params.interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{/if}</span>
 						</p>
 					</div>
 				{/if}

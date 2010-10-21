@@ -3,19 +3,13 @@
 	session_start();
 
 	include("common.php");
+	include("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
+	// Import $_REQUEST variables and set $params array	
 	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $param array	
-	//------------------------------------------------------------------------------------------------------------------
-	$param = array('mode'                => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
+	$params = array('mode'                => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
 	               'filterPtID'          => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
 				   'filterPtName'        => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
 				   'filterSex'           => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
@@ -39,44 +33,9 @@
 				   'maxPageNum'          => 1,
 				   'pageAddress'         => 'series_list.php?');
 				   
-	if($param['filterSex'] != "M" && $param['filterSex'] != "F")  $param['filterSex'] = "all";
-	if($param['showing'] != "all" && $param['showing'] < 10)  $param['showing'] = 10;
+	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
+	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;
 	//------------------------------------------------------------------------------------------------------------------
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Retrieve mode of display order (Default: ascending order of series number)
-	//------------------------------------------------------------------------------------------------------------------
-	$orderColStr = "";
-	
-	switch($param['orderCol'])
-	{
-		case "Patient ID":	$orderColStr = 'pt.patient_id '         . $param['orderMode'];  break;	
-		case "Name":		$orderColStr = 'pt.patient_name '       . $param['orderMode'];  break;	
-		case "Age":			$orderColStr = 'st.age '                . $param['orderMode'];  break;
-		case "Sex":			$orderColStr = 'pt.sex '                . $param['orderMode'];  break;
-		case "ID":          $orderColStr = 'sr.series_number '      . $param['orderMode'];  break;
-		case "Modality":    $orderColStr = 'sr.modality '           . $param['orderMode'];  break;
-		case "Img.":        $orderColStr = 'sr.image_number '       . $param['orderMode'];  break;
-		case "Desc.":       $orderColStr = 'sr.series_description ' . $param['orderMode'];  break;
-		default: // Date
-			$orderColStr = 'sr.series_date ' . $param['orderMode'] . ', sr.series_time ' . $param['orderMode'];
-			$param['orderCol'] = ($param['mode'] == 'today') ? 'Time' : 'Date';
-			break;
-	}
-	//------------------------------------------------------------------------------------------------------------------
-
-	$colParam = array( array('colName' => 'Patient ID', 'align' => 'right'),
-		               array('colName' => 'Name',       'align' => 'left'),
-		               array('colName' => 'Age',        'align' => 'left'),
-		               array('colName' => 'Sex',        'align' => 'left'),
-		               array('colName' => 'Date',       'align' => 'center'),
-		               array('colName' => 'Time',       'align' => 'center'),
-		               array('colName' => 'ID',         'align' => 'left'),
-		               array('colName' => 'Modality',   'align' => 'center'),
-		               array('colName' => 'Img.',       'align' => 'right'),
-		               array('colName' => 'Desc.',      'align' => 'left'),
-		               array('colName' => 'Detail',     'align' => 'center'),
-		               array('colName' => 'CAD',        'align' => 'left'));
 	
 	$data = array();
 	
@@ -88,272 +47,216 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Create WHERE statement of SQL
 		//--------------------------------------------------------------------------------------------------------------
-		$optionNum = 0;
-		$condArr = array();
+		$sqlCondArray = array();
+		$sqlParams = array();
+		$sqlCond = "";
+		$pageAddressParams = array();
 		
-		$sqlCond = " WHERE";
+		$sqlCond = " WHERE ";
 
-		if($param['mode'] == 'today')
+		if($params['mode'] == 'today')
 		{
-			$param['showing'] = "all";  // for HIMEDIC
+			$params['showing'] = "all";  // for HIMEDIC
 		
 			$today = date("Y-m-d");
-			$param['srDateFrom'] = $today;
-			$param['srDateTo']   = $today;
+			$params['srDateFrom'] = $today;
+			$params['srDateTo']   = $today;
 			
-			$sqlCond .= " sr.series_date=?";
-			array_push($condArr, $param['srDateFrom']);
-			$param['pageAddress'] .= 'mode=today';
-			$optionNum++;
+			$sqlCondArray[] = "sr.series_date=?";
+			$sqlParams[] = $params['srDateFrom'];
+			$pageAddressParams['mode'] = 'today';
 		}
 		
-		if($param['mode']== "study")
+		if($params['mode']== "study")
 		{
 			$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.study_id, st.study_date, st.age"
 					. " FROM patient_list pt, study_list st WHERE st.study_instance_uid=? AND pt.patient_id=st.patient_id";
 		
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $param['studyInstanceUID']);
+			$stmt->bindParam(1, $params['studyInstanceUID']);
 			$stmt->execute();
 			
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 			
 			if($_SESSION['anonymizeFlg'] == 1)
 			{		
-				$param['filterPtID'] = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
-				$param['filterPtName'] = "";
+				$params['filterPtID'] = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
+				$params['filterPtName'] = "";
 			}
 			else
 			{
-				$param['filterPtID'] = $result['patient_id'];
-				$param['filterPtName'] = $result['patient_name'];
+				$params['filterPtID'] = $result['patient_id'];
+				$params['filterPtName'] = $result['patient_name'];
 			}
 			
-			$param['filterStudyID'] = $result['study_id'];
-			$param['filterStudyDate'] = $result['study_date'];
-			$param['filterAgeMin'] = $param['filterAgeMax'] = $result['age'];
-			$param['filterSex'] = $result['sex'];
+			$params['filterStudyID'] = $result['study_id'];
+			$params['filterStudyDate'] = $result['study_date'];
+			$params['filterAgeMin'] = $params['filterAgeMax'] = $result['age'];
+			$params['filterSex'] = $result['sex'];
 
-			if($param['filterSex'] != "M" && $param['filterSex'] != "F")  $param['filterSex'] = "all";
+			if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
 			
-			$sqlCond .= " sr.study_instance_uid=?";
-			array_push($condArr, $param['studyInstanceUID']);
-			$param['pageAddress'] .= 'mode=study&studyInstanceUID=' . $param['studyInstanceUID'];
-			$optionNum++;
+			$sqlCondArray[] = "sr.study_instance_uid=?";
+			$sqlParams[] = $params['studyInstanceUID'];
+			$pageAddressParams['mode'] = 'study';
+			$pageAddressParams['studyInstanceUID'] = $params['studyInstanceUID'];
 		}
 		else		
 		{
-			if($param['filterPtID'] != "")
+			if($params['filterPtID'] != "")
 			{
-				$patientID = $param['filterPtID'];
-				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($param['filterPtID'], $_SESSION['key']);
+				$patientID = $params['filterPtID'];
+				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($params['filterPtID'], $_SESSION['key']);
 
-				if(0<$optionNum)
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-	
 				// Search by regular expression
-				$sqlCond .= " pt.patient_id~*?";
-				array_push($condArr, $patientID);
-				$param['pageAddress'] .= 'filterPtID=' . $param['filterPtID'];
-				$optionNum++;
+				$sqlCondArray[] = "pt.patient_id~*?";
+				$sqlParams[] = $patientID;
+				$pageAddressParams['filterPtID'] = $params['filterPtID'];
 			}
 	
-			if($param['filterPtName'] != "")
+			if($params['filterPtName'] != "")
 			{
-				if(0<$optionNum)	$sqlCond .= " AND";
-
 				// Search by regular expression 
-				$sqlCond .= " pt.patient_name~*?";
-				array_push($condArr, $param['filterPtName']);
-				$param['pageAddress'] .= 'filterPtName=' . $param['filterPtName'];
-				$optionNum++;
+				$sqlCondArray[] = "pt.patient_name~*?";
+				$sqlParams[] = $params['filterPtName'];
+				$pageAddressParams['filterPtName'] = $params['filterPtName'];
 			}
 			
-			if($param['filterSex'] == "M" || $param['filterSex'] == "F")
+			if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 			{
-				if(0<$optionNum)
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				
-				$sqlCond .= " pt.sex=?";
-				array_push($condArr, $param['filterSex']);
-				$param['pageAddress'] .= 'filterSex=' . $param['filterSex'];
-				$optionNum++;
-				
+				$sqlCondArray[] = "pt.sex=?";
+				$sqlParams[] = $params['filterSex'];
+				$pageAddressParams['filterSex'] = $params['filterSex'];
 			}
 			
-			if($param['filterAgeMin'] != "" && $param['filterAgeMax'] != "" && $param['filterAgeMin'] == $param['filterAgeMax'])
+			if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 			{
-				if(0<$optionNum)
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				
-				$sqlCond .= " st.age=?";
-				array_push($condArr, $param['filterAgeMin']);
-				$param['pageAddress'] .= 'filterAgeMin=' . $param['filterAgeMin'] . '&filterAgeMax=' . $param['filterAgeMax'];
-				$optionNum++;
+				$sqlCondArray[] = "st.age=?";
+				$sqlParams[] = $params['filterAgeMin'];
+				$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
+				$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
 			}
 			else
 			{
-				if($param['filterAgeMin'] != "")
+				if($params['filterAgeMin'] != "")
 				{
-					if(0<$optionNum)
-					{
-						$sqlCond .= " AND";
-						$param['pageAddress'] .= "&";
-					}
-					
-					$sqlCond .= " ?<=st.age";
-					array_push($condArr, $param['filterAgeMin']);
-					$param['pageAddress'] .= 'filterAgeMin=' . $param['filterAgeMin'];
-					$optionNum++;
+					$sqlCondArray[] = "?<=st.age";
+					$sqlParams[] = $params['filterAgeMin'];
+					$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
 				}
 		
-				if($param['filterAgeMax'] != "")
+				if($params['filterAgeMax'] != "")
 				{
-					if(0<$optionNum)
-					{
-						$sqlCond .= " AND";
-						$param['pageAddress'] .= "&";
-					}
-					
-					$sqlCond .= " st.age<=?";
-					array_push($condArr, $param['filterAgeMax']);
-					$param['pageAddress'] .= 'filterAgeMax=' . $param['filterAgeMax'];
-					$optionNum++;
+					$sqlCondArray[] = "st.age<=?";
+					$sqlParams[] = $params['filterAgeMax'];
+					$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
 				}
 			}		
 		}
 		
-		if($param['mode'] != 'today')
+		if($params['mode'] != 'today')
 		{
-			if($param['srDateFrom'] != "" && $param['srDateTo'] != "" && $param['srDateFrom'] == $param['srDateTo'])
+			if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 			{
-				if(0<$optionNum)
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				$sqlCond .= " sr.series_date=?";
-				array_push($condArr, $param['srDateFrom']);
-				$param['pageAddress'] .= 'srDateFrom=' . $param['srDateFrom'] . '&srDateTo=' . $param['srDateTo'];
-				$optionNum++;
+				$sqlCondArray[] = "sr.series_date=?";
+				$sqlParams[] = $params['srDateFrom'];
+				$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
+				$pageAddressParams['srDateTo'] = $params['srDateTo'];
 			}
 			else
 			{
-				if($param['srDateFrom'] != "")
+				if($params['srDateFrom'] != "")
 				{
-					if(0<$optionNum)
-					{
-						$sqlCond .= " AND";
-						$param['pageAddress'] .= "&";
-					}
-					
-					$sqlCond .= " ?<=sr.series_date";
-					array_push($condArr, $param['srDateFrom']);
-					$param['pageAddress'] .= 'srDateFrom=' . $param['srDateFrom'];
-					$optionNum++;
+					$sqlCondArray[] = "?<=sr.series_date";
+					$sqlParams[] = $params['srDateFrom'];
+					$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
 				}
 		
-				if($param['srDateTo'] != "")
+				if($params['srDateTo'] != "")
 				{
-					if(0<$optionNum)
+					$sqlParams[] = $params['srDateTo'];
+					$pageAddressParams['srDateTo'] = $params['srDateTo'];
+
+					if($params['srTimeTo'] != "")
 					{
-						$sqlCond .= " AND";
-						$param['pageAddress'] .= "&";
-					}
-					
-					if($param['srTimeTo'] != "")
-					{
-						$sqlCond .= " (sr.series_date<? OR (sr.series_date=? AND sr.series_time<=?))";
-						array_push($condArr, $param['srDateTo']);
-						array_push($condArr, $param['srDateTo']);
-						array_push($condArr, $param['srTimeTo']);
-						$param['pageAddress'] .= 'srDateTo=' . $param['srDateTo'] . '&srTimeTo=' . $param['srTimeTo'];
+						$sqlCondArray[] = "(sr.series_date<? OR (sr.series_date=? AND sr.series_time<=?))";
+						$sqlParams[] = $params['srDateTo'];
+						$sqlParams[] = $params['srTimeTo'];
+						$pageAddressParams['srTimeTo'] = $params['srTimeTo'];
 					}
 					else
 					{
-						$sqlCond .= " sr.series_date<=?";
-						array_push($condArr, $param['srDateTo']);
-						$param['pageAddress'] .= 'srDateTo=' . $param['srDateTo'];
+						$sqlCondArray[] = "sr.series_date<=?";
 					}
-					$optionNum++;
 				}
 			}
 		}
 		
-		if($param['filterModality'] != "" && $param['filterModality'] != "all")
+		if($params['filterModality'] != "" && $params['filterModality'] != "all")
 		{
-			if(0<$optionNum)
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			$sqlCond .= " sr.modality=?";
-			array_push($condArr, $param['filterModality']);
-			$param['pageAddress'] .= 'filterModality=' . $param['filterModality'];
-			$optionNum++;
+			$sqlCondArray[] = "sr.modality=?";
+			$sqlParams[] = $params['filterModality'];
+			$pageAddressParams['filterModality'] = $params['filterModality'];
 		}
 		
-		if($param['filterSrDescription'] != "")
+		if($params['filterSrDescription'] != "")
 		{
-			if(0<$optionNum)
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			
 			// Search by regular expression
-			$sqlCond .= " sr.series_description~*?";
-			array_push($condArr, $param['filterSrDescription']);
-			$param['pageAddress'] .= 'filterSrDescription=' . $param['filterSrDescription'];
-			$optionNum++;
+			$sqlCondArray[] = "sr.series_description~*?";
+			$sqlParams[] = $params['filterSrDescription'];
+			$pageAddressParams['filterSrDescription'] = $params['filterSrDescription'];
 		}
 		
-		if($param['filterTag'] != "")
+		if($params['filterTag'] != "")
 		{		
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-
-		 	$sqlCond .= " sr.series_instance_uid IN (SELECT DISTINCT series_instance_uid FROM series_tag WHERE tag~*?)";
-			array_push($condArr, $param['filterTag']);
-			$param['pageAddress'] .= 'filterTag=' . $param['filterTag'];
-			$optionNum++;
+		 	$sqlCond .= "sr.series_instance_uid IN (SELECT DISTINCT series_instance_uid FROM series_tag WHERE tag~*?)";
+			$sqlParams[] = $params['filterTag'];
+			$pageAddressParams['filterTag'] = $params['filterTag'];
 		}			
 			
-		if(0<$optionNum)
-		{
-			$sqlCond .= " AND";
-			$param['pageAddress'] .= "&";
-		}
-		$sqlCond .= " st.study_instance_uid=sr.study_instance_uid "
-		         .  " AND pt.patient_id=st.patient_id";
-		$param['pageAddress'] .= 'orderCol=' . $param['orderCol'] . '&orderMode=' .  $param['orderMode']
-		                      .  '&showing=' . $param['showing'];
-							  
-		$_SESSION['listAddress'] = $param['pageAddress'];
+		$sqlCondArray[] = "st.study_instance_uid=sr.study_instance_uid";
+		$sqlCondArray[] = "pt.patient_id=st.patient_id";
+		$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
 		//--------------------------------------------------------------------------------------------------------------
+
+		//--------------------------------------------------------------------------------------------------------------
+		// Retrieve mode of display order (Default: ascending order of series number)
+		//--------------------------------------------------------------------------------------------------------------	
+		$orderColStr = "";
+	
+		switch($params['orderCol'])
+		{
+			case "Patient ID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;	
+			case "Name":		$orderColStr = 'pt.patient_name '       . $params['orderMode'];  break;	
+			case "Age":			$orderColStr = 'st.age '                . $params['orderMode'];  break;
+			case "Sex":			$orderColStr = 'pt.sex '                . $params['orderMode'];  break;
+			case "ID":          $orderColStr = 'sr.series_number '      . $params['orderMode'];  break;
+			case "Modality":    $orderColStr = 'sr.modality '           . $params['orderMode'];  break;
+			case "Img.":        $orderColStr = 'sr.image_number '       . $params['orderMode'];  break;
+			case "Desc.":       $orderColStr = 'sr.series_description ' . $params['orderMode'];  break;
+			default: // Date
+				$orderColStr = 'sr.series_date ' . $params['orderMode'] . ', sr.series_time ' . $params['orderMode'];
+				$params['orderCol'] = ($params['mode'] == 'today') ? 'Time' : 'Date';
+				break;
+		}
+				 
+		$pageAddressParams['orderCol']  = $params['orderCol'];
+		$pageAddressParams['orderMode'] = $params['orderMode'];
+		$pageAddressParams['showing']   = $params['showing'];
+		//--------------------------------------------------------------------------------------------------------------
+
+		$params['pageAddress'] = implode('&', array_map(UrlKeyValPair, array_keys($pageAddressParams), array_values($pageAddressParams)));
 
 		//--------------------------------------------------------------------------------------------------------------
 		// count total number
 		//--------------------------------------------------------------------------------------------------------------
 		$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list pt, study_list st, series_list sr " . $sqlCond);
-		$stmt->execute($condArr);		
+		$stmt->execute($sqlParams);		
 		
-		$param['totalNum'] = $stmt->fetchColumn();
-		$param['maxPageNum'] = ($param['showing'] == "all") ? 1 : ceil($param['totalNum'] / $param['showing']);
-		$param['startPageNum'] = max($param['pageNum'] - $PAGER_DELTA, 1);
-		$param['endPageNum']   = min($param['pageNum'] + $PAGER_DELTA, $param['maxPageNum']);		
+		$params['totalNum'] = $stmt->fetchColumn();
+		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
+		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -365,22 +268,22 @@
 				. " FROM patient_list pt, study_list st, series_list sr "
 				. $sqlCond . " ORDER BY " . $orderColStr;
 				
-		if($param['showing'] != "all")
+		if($params['showing'] != "all")
 		{
 			$sqlStr .= " LIMIT ? OFFSET ?";
-			array_push($condArr, $param['showing']);
-			array_push($condArr, $param['showing'] * ($param['pageNum']-1));
+			$sqlParams[] = $params['showing'];
+			$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 		}
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute($condArr);
+		$stmt->execute($sqlParams);
 
 		//var_dump($stmt);
 		//var_dump($condArr);
 		
 		$rowNum = $stmt->rowCount();
-		$param['startNum'] = ($rowNum == 0) ? 0 : $param['showing'] * ($param['pageNum']-1) + 1;
-		$param['endNum']   = ($rowNum == 0) ? 0 : $param['startNum'] + $rowNum - 1;	
+		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
+		$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
 		
 		// Search executable or executed CAD software
 		$sqlStr = "SELECT cm.cad_name, cm.version, cm.exec_flg, max(cs.series_description)"
@@ -427,9 +330,6 @@
 			// Setting of "CAD" column (pull-downmenu, [Exec] button, and [Result] button)
 			//----------------------------------------------------------------------------------------------------------
 			$stmtCADMaster->execute(array($result['modality'], $result['series_description'], $imgNum, $imgNum));
-		
-			//var_dump($stmtCADMaster);
-			//echo $result['modality'] . $result['series_description'] . $imgNum;
 		
 			$cadNum = 0;
 			$cadColSettings = array();
@@ -502,9 +402,8 @@
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param', $param);
-		$smarty->assign('colParam', $colParam);
-		$smarty->assign('data', $data);
+		$smarty->assign('params', $params);
+		$smarty->assign('data',   $data);
 		
 		$smarty->assign('modalityList', $modalityList);
 	

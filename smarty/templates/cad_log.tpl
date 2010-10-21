@@ -38,19 +38,19 @@
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				{if $param.mode=='today'}
+				{if $params.mode=='today'}
 					<li><a href="series_list.php?mode=today" class="btn-tab" title="Today's series">Today's series</a></li>
 				{/if}
-				<li><a href="" class="btn-tab" title="{if $param.mode=='today'}Today's CAD{else}CAD log{/if}" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">{if $param.mode=='today'}Today's CAD{else}CAD log{/if}</a></li>
+				<li><a href="" class="btn-tab" title="{if $params.mode=='today'}Today's CAD{else}CAD log{/if}" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">{if $params.mode=='today'}Today's CAD{else}CAD log{/if}</a></li>
 
 			</ul>
-			{if $param.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
+			{if $params.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
 			</ul>
 
 		</div><!-- / .tabArea END -->
 		
 		<div class="tab-content">
-			{if $param.mode=='today'}
+			{if $params.mode=='today'}
 				<div id="todays_cad">
 					<!-- <h2>Today's CAD</h2> -->
 			{else}
@@ -60,30 +60,30 @@
 
 				<!-- ***** Search ***** -->
 					<form name="" onsubmit="return false;">
-						<input type="hidden" id="mode"                     value="{$param.mode}" />
-						<input type="hidden" id="hiddenFilterPtID"         value="{$param.filterPtID}" />
-						<input type="hidden" id="hiddenFilterPtName"       value="{$param.filterPtName}" />
-						<input type="hidden" id="hiddenFilterSex"          value="{$param.filterSex}" />
-						<input type="hidden" id="hiddenFilterAgeMin"       value="{$param.filterAgeMin}" />
-						<input type="hidden" id="hiddenFilterAgeMax"       value="{$param.filterAgeMax}" />
-						<input type="hidden" id="hiddenFilterModality"     value="{$param.filterModality}" />
-						<input type="hidden" id="hiddenFilterCAD"          value="{$param.filterCAD}" />
-						<input type="hidden" id="hiddenFilterVersion"      value="{$param.filterVersion}" />
-						<input type="hidden" id="hiddenFilterCadID"        value="{$param.filterCadID}" />
-						<input type="hidden" id="hiddenFilterTP"           value="{$param.filterTP}" />
-						<input type="hidden" id="hiddenFilterFN"           value="{$param.filterFN}" />
-						<input type="hidden" id="hiddenFilterPersonalFB"   value="{$param.personalFB}" />
-						<input type="hidden" id="hiddenFilterConsensualFB" value="{$param.consensualFB}" />
-						<input type="hidden" id="hiddenSrDateFrom"         value="{$param.srDateFrom}" />
-						<input type="hidden" id="hiddenSrDateTo"           value="{$param.srDateTo}" />
-						<input type="hidden" id="hiddenSrTimeTo"           value="{$param.srTimeTo}" />
-						<input type="hidden" id="hiddenCadDateFrom"        value="{$param.cadDateFrom}" />
-						<input type="hidden" id="hiddenCadDateTo"          value="{$param.cadDateTo}" />
-						<input type="hidden" id="hiddenCadTimeTo"          value="{$param.cadTimeTo}" />
-						<input type="hidden" id="hiddenShowing"            value="{$param.showing}" />
+						<input type="hidden" id="mode"                     value="{$params.mode}" />
+						<input type="hidden" id="hiddenFilterPtID"         value="{$params.filterPtID}" />
+						<input type="hidden" id="hiddenFilterPtName"       value="{$params.filterPtName}" />
+						<input type="hidden" id="hiddenFilterSex"          value="{$params.filterSex}" />
+						<input type="hidden" id="hiddenFilterAgeMin"       value="{$params.filterAgeMin}" />
+						<input type="hidden" id="hiddenFilterAgeMax"       value="{$params.filterAgeMax}" />
+						<input type="hidden" id="hiddenFilterModality"     value="{$params.filterModality}" />
+						<input type="hidden" id="hiddenFilterCAD"          value="{$params.filterCAD}" />
+						<input type="hidden" id="hiddenFilterVersion"      value="{$params.filterVersion}" />
+						<input type="hidden" id="hiddenFilterCadID"        value="{$params.filterCadID}" />
+						<input type="hidden" id="hiddenFilterTP"           value="{$params.filterTP}" />
+						<input type="hidden" id="hiddenFilterFN"           value="{$params.filterFN}" />
+						<input type="hidden" id="hiddenFilterPersonalFB"   value="{$params.personalFB}" />
+						<input type="hidden" id="hiddenFilterConsensualFB" value="{$params.consensualFB}" />
+						<input type="hidden" id="hiddenSrDateFrom"         value="{$params.srDateFrom}" />
+						<input type="hidden" id="hiddenSrDateTo"           value="{$params.srDateTo}" />
+						<input type="hidden" id="hiddenSrTimeTo"           value="{$params.srTimeTo}" />
+						<input type="hidden" id="hiddenCadDateFrom"        value="{$params.cadDateFrom}" />
+						<input type="hidden" id="hiddenCadDateTo"          value="{$params.cadDateTo}" />
+						<input type="hidden" id="hiddenCadTimeTo"          value="{$params.cadTimeTo}" />
+						<input type="hidden" id="hiddenShowing"            value="{$params.showing}" />
 
-						<input type="hidden" id="orderMode"        value="{$param.orderMode}" />
-						<input type="hidden" id="orderCol"         value="{$param.orderCol}" />
+						<input type="hidden" id="orderMode"        value="{$params.orderMode}" />
+						<input type="hidden" id="orderCol"         value="{$params.orderCol}" />
 
 						{include file='cad_search_panel.tpl'}
 					</form>
@@ -92,41 +92,41 @@
 				<!-- ***** List ***** -->
 
 				<div class="serp">
-					Showing {$param.startNum} - {$param.endNum} of {$param.totalNum} results
+					Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results
 				</div>
 				<table class="col-tbl" style="width: 100%;">
 					<thead>
 						<tr>
 							<th rowspan="2">
-								{if $param.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Patient ID', '{if $param.orderCol=='Patient ID' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+								{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Patient ID', '{if $params.orderCol=='Patient ID' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 							</th>
 
 							<th rowspan="2">
-								{if $param.orderCol=='Name'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Name', '{if $param.orderCol=='Name' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">Name</a></span>
+								{if $params.orderCol=='Name'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Name', '{if $params.orderCol=='Name' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Name</a></span>
 							</th>
 
 							<th rowspan="2">
-								{if $param.orderCol=='Age'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Age', '{if $param.orderCol=='Age' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">Age</a></span>
+								{if $params.orderCol=='Age'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Age', '{if $params.orderCol=='Age' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Age</a></span>
 							</th>
 
 							<th rowspan="2">
-								{if $param.orderCol=='Sex'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Sex', '{if $param.orderCol=='Sex' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">Sex</a></span>
+								{if $params.orderCol=='Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Sex', '{if $params.orderCol=='Sex' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Sex</a></span>
 							</th>
 
 							<th colspan="2">
-								{if $param.orderCol=='Series'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Series', '{if $param.orderCol=='Series' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">Series</a></span>
+								{if $params.orderCol=='Series'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Series', '{if $params.orderCol=='Series' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Series</a></span>
 
 							<th rowspan="2">
-								{if $param.orderCol=='CAD'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD', '{if $param.orderCol=='CAD' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD</a></span>
+								{if $params.orderCol=='CAD'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD', '{if $params.orderCol=='CAD' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD</a></span>
 							</th>
 
 							<th rowspan="2">
-								{if $param.orderCol=='CAD date'}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD date', '{if $param.orderCol=='CAD date' && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
+								{if $params.orderCol=='CAD date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD date', '{if $params.orderCol=='CAD date' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
 							</th>
 
 							<th rowspan="2">Result</th>
 
-							{if $param.mode=='today'}
+							{if $params.mode=='today'}
 								{if $smarty.session.colorSet == "admin"}
 									<th colspan="2">Feedback</th>
 								{elseif $smarty.session.colorSet == "user" && $smarty.session.personalFBFlg == 1}
@@ -144,7 +144,7 @@
 							<th>Date</th>
 							<th>Time</th>
 
-							{if $param.mode=='today'}
+							{if $params.mode=='today'}
 								{if $smarty.session.colorSet == "admin"}
 									<th>Personal</th>
 									<th>Cons.</th>
@@ -174,7 +174,7 @@
 								<!-- <td class="al-r">{$item[8]}</td> -->
 								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[8]}', '{$item[9]}', '{$item[10]}', '{$item[11]}', {$smarty.session.personalFBFlg});" /></td>
 								
-								{if $param.mode=='today'}
+								{if $params.mode=='today'}
 									{if $smarty.session.colorSet == "admin"}
 										<td>{$item[12]}</td>
 										<td>{$item[13]}</td>
@@ -195,33 +195,33 @@
 					
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">
-					{if $param.maxPageNum > 1}
-						{if $param.pageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
+					{if $params.maxPageNum > 1}
+						{if $params.pageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
 						{/if}
 
-						{if $param.startPageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum=1">1</a></div>
-							{if $param.startPageNum > 2}<div>...</div>{/if}
+						{if $params.startPageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum=1">1</a></div>
+							{if $params.startPageNum > 2}<div>...</div>{/if}
 						{/if}
 
-						{section name=i start=$param.startPageNum loop=$param.endPageNum+1}
+						{section name=i start=$params.startPageNum loop=$params.endPageNum+1}
 							{assign var="i" value=$smarty.section.i.index}
 
-				    		{if $i==$param.pageNum}
+				    		{if $i==$params.pageNum}
 								<div><span style="color: red" class="fw-bold">{$i}</span></div>
 							{else}
-								<div><a href="{$param.pageAddress}&pageNum={$i}">{$i}</a></div>
+								<div><a href="{$params.pageAddress}&pageNum={$i}">{$i}</a></div>
 							{/if}
 						{/section}
 
-						{if $param.endPageNum < $param.maxPageNum}
-							{if $param.maxPageNum-1 > $param.endPageNum}<div>...</div>{/if}
-							<div><a href="{$param.pageAddress}&pageNum={$param.maxPageNum}">{$param.maxPageNum}</a></div>
+						{if $params.endPageNum < $params.maxPageNum}
+							{if $params.maxPageNum-1 > $params.endPageNum}<div>...</div>{/if}
+							<div><a href="{$params.pageAddress}&pageNum={$params.maxPageNum}">{$params.maxPageNum}</a></div>
 						{/if}
 
-						{if $param.pageNum < $param.maxPageNum}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
+						{if $params.pageNum < $params.maxPageNum}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
 						{/if}
 					{/if}
 				</div>

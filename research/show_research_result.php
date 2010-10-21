@@ -2,22 +2,17 @@
 	session_cache_limiter('nocache');
 	session_start();
 
+	$params = array('toTopDir' => "../");
+
 	include_once("../common.php");
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: ../index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("../auto_logout.php");	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
 	//------------------------------------------------------------------------------------------------------------------
-	$param = array('toTopDir'   => '../',
-	               'pluginType' => 2,
-                   'execID'     => $_REQUEST['execID'],
-	               'srcList'    => (isset($_REQUEST['srcList'])) ? $_REQUEST['srcList'] : "");
+	$params['pluginType'] = 2;
+	$params['execID'] = $_REQUEST['execID'];
+	$params['srcList'] = (isset($_REQUEST['srcList'])) ? $_REQUEST['srcList'] : "";
 	//------------------------------------------------------------------------------------------------------------------
 
 	try
@@ -31,24 +26,24 @@
 				.  " WHERE el.exec_id=? AND el.storage_id = sm.storage_id";
 				
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $param['execID']);
+		$stmt->bindParam(1, $params['execID']);
 		$stmt->execute();
 		
 		$result = $stmt->fetch(PDO::FETCH_NUM);
 		
-		$param['pluginName'] = $result[0];
-		$param['version']    = $result[1];
-		$param['executedAt'] = $result[2];
-		$param['resPath']    = $result[3] . $DIR_SEPARATOR . $param['execID'] . $DIR_SEPARATOR;
-		$param['resPathWeb'] = "../" . $result[4] . $param['execID'] . $DIR_SEPARATOR_WEB;
+		$params['pluginName'] = $result[0];
+		$params['version']    = $result[1];
+		$params['executedAt'] = $result[2];
+		$params['resPath']    = $result[3] . $DIR_SEPARATOR . $params['execID'] . $DIR_SEPARATOR;
+		$params['resPathWeb'] = "../" . $result[4] . $params['execID'] . $DIR_SEPARATOR_WEB;
 
 		//--------------------------------------------------------------------------------------------------------------
 		// Retrieve tag data
 		//--------------------------------------------------------------------------------------------------------------
-		$param['tagArray'] = array();
+		$params['tagArray'] = array();
 		
 		$stmt = $pdo->prepare("SELECT tag, entered_by FROM executed_plugin_tag WHERE exec_id=? ORDER BY tag_id ASC");
-		$stmt->bindValue(1, $param['execID']);
+		$stmt->bindValue(1, $params['execID']);
 		$stmt->execute();
 		$tagNum = $stmt->rowCount();
 			
@@ -56,12 +51,12 @@
 		{
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 		
-			$param['tagArray'][$i] = $result[0];
-			if($i == 0) $param['tagEnteredBy'] = $result[1];
+			$params['tagArray'][$i] = $result[0];
+			if($i == 0) $params['tagEnteredBy'] = $result[1];
 		}	
 		//--------------------------------------------------------------------------------------------------------------
 		
-		$templateName = 'plugin_template/show_' . $param['pluginName'] . '_v.' . $param['version'] . '.php';
+		$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';
 		include($templateName);
 
 		//echo $dstHtml;

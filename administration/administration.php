@@ -2,25 +2,12 @@
 
 	session_start();
 	include("../common.php");
-
-	//-----------------------------------------------------------------------------------------------------------------
-	// Auto logout
-	//-----------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'] || $_SESSION['superUserFlg'] == 0)
-	{
-		header('location: ../index.php?mode=timeout');
-	}
-	else
-	{
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	}
-	//-----------------------------------------------------------------------------------------------------------------
-
+	include("auto_logout_administration.php");
 	include("server_status_private.php");
 
 	try
 	{	
-		$param = array('toTopDir' => "../");	
+		$params = array('toTopDir' => "../");	
 		$cadList = array();
 
 		$userID = $_SESSION['userID'];
@@ -42,7 +29,7 @@
 		// Make one-time ticket
 		//-------------------------------------------------------------------------------------------------------------
 		$_SESSION['ticket'] = md5(uniqid().mt_rand());
-		$param['ticket'] = htmlspecialchars($_SESSION['ticket'], ENT_QUOTES);
+		$params['ticket'] = htmlspecialchars($_SESSION['ticket'], ENT_QUOTES);
 		//-------------------------------------------------------------------------------------------------------------
 		
 		//--------------------------------------------------------------------------------------------------------------
@@ -51,7 +38,7 @@
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 			
-		$smarty->assign('param',            $param);
+		$smarty->assign('params',           $params);
 		$smarty->assign('storageSvStatus',  $storageSvStatus);
 		$smarty->assign('jobManagerStatus', $jobManagerStatus);
 		

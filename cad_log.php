@@ -4,7 +4,7 @@
 
 	include("common.php");
 	require_once('class/PersonalInfoScramble.class.php');	
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
 	//------------------------------------------------------------------------------------------------------------------
@@ -13,79 +13,48 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $param array	
+	// Import $_REQUEST variables and set $params array	
 	//------------------------------------------------------------------------------------------------------------------
-	$param = array('srcPage'             => (isset($_REQUEST['srcPage'])) ? $_REQUEST['srcPage'] : "",
-	               'filterPtID'          => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
-				   'filterPtName'        => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
-				   'filterSex'           => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
-				   'filterAgeMin'        => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
-				   'filterAgeMax'        => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
-				   'filterCadID'         => (isset($_REQUEST['filterCadID'])) ? $_REQUEST['filterCadID'] : "",
-				   'filterModality'      => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
-				   'filterCAD'           => (isset($_REQUEST['filterCAD'])) ? $_REQUEST['filterCAD'] : "all",
-				   'filterVersion'       => (isset($_REQUEST['filterVersion'])) ? $_REQUEST['filterVersion'] : "all",
-				   'filterTag'           => (isset($_REQUEST['filterTag'])) ? $_REQUEST['filterTag'] : "",
-				   'srDateFrom'          => (isset($_REQUEST['srDateFrom'])) ? $_REQUEST['srDateFrom'] : "",
-				   'srDateTo'            => (isset($_REQUEST['srDateTo'])) ? $_REQUEST['srDateTo'] : "",
-				   //'srTimeFrom'          => (isset($_REQUEST['srTimeFrom'])) ? $_REQUEST['srTimeFrom'] : "00:00:00",
-				   'srTimeTo'            => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
-				   'cadDateFrom'         => (isset($_REQUEST['cadDateFrom'])) ? $_REQUEST['cadDateFrom'] : "",
-				   'cadDateTo'           => (isset($_REQUEST['cadDateTo'])) ? $_REQUEST['cadDateTo'] : "",
-				   //'cadTimeFrom'         => (isset($_REQUEST['cadTimeFrom'])) ? $_REQUEST['cadTimeFrom'] : "00:00:00",
-				   'cadTimeTo'           => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
-				   'personalFB'          => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
-				   'consensualFB'        => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
-				   'filterFBUser'        => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
-				   'filterTP'            => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
-				   'filterFN'            => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
-				   'mode'                => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
-				   'orderCol'            => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
-				   'orderMode'           => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
-				   'totalNum'            => (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0,
-				   'pageNum'             => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
-				   'showing'             => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
-				   'startNum'            => 1,
-				   'endNum'              => 10,
-				   'maxPageNum'          => 1,
-				   'pageAddress'         => 'cad_log.php?');
+	$params = array('srcPage'        => (isset($_REQUEST['srcPage'])) ? $_REQUEST['srcPage'] : "",
+	                'filterPtID'     => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
+				    'filterPtName'   => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
+				    'filterSex'      => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
+				    'filterAgeMin'   => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
+				    'filterAgeMax'   => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
+				    'filterCadID'    => (isset($_REQUEST['filterCadID'])) ? $_REQUEST['filterCadID'] : "",
+				    'filterModality' => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
+				    'filterCAD'      => (isset($_REQUEST['filterCAD'])) ? $_REQUEST['filterCAD'] : "all",
+				    'filterVersion'  => (isset($_REQUEST['filterVersion'])) ? $_REQUEST['filterVersion'] : "all",
+				    'filterTag'      => (isset($_REQUEST['filterTag'])) ? $_REQUEST['filterTag'] : "",
+				    'srDateFrom'     => (isset($_REQUEST['srDateFrom'])) ? $_REQUEST['srDateFrom'] : "",
+				    'srDateTo'       => (isset($_REQUEST['srDateTo'])) ? $_REQUEST['srDateTo'] : "",
+				    //'srTimeFrom'     => (isset($_REQUEST['srTimeFrom'])) ? $_REQUEST['srTimeFrom'] : "00:00:00",
+				    'srTimeTo'       => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
+				    'cadDateFrom'    => (isset($_REQUEST['cadDateFrom'])) ? $_REQUEST['cadDateFrom'] : "",
+				    'cadDateTo'      => (isset($_REQUEST['cadDateTo'])) ? $_REQUEST['cadDateTo'] : "",
+				    //'cadTimeFrom'    => (isset($_REQUEST['cadTimeFrom'])) ? $_REQUEST['cadTimeFrom'] : "00:00:00",
+				    'cadTimeTo'      => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
+				    'personalFB'     => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
+				    'consensualFB'   => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
+				    'filterFBUser'   => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
+				    'filterTP'       => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
+				    'filterFN'       => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
+				    'mode'           => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
+				    'orderCol'       => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
+				    'orderMode'      => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
+				    'totalNum'       => (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0,
+				    'pageNum'        => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
+				    'showing'        => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
+				    'startNum'       => 1,
+				    'endNum'         => 10,
+				    'maxPageNum'     => 1,
+				    'pageAddress'    => 'cad_log.php?');
 
-	if($param['filterSex'] != "M" && $param['filterSex'] != "F")  $param['filterSex'] = "all";
-	if($param['showing'] != "all" && $param['showing'] < 10)  $param['showing'] = 10;
+	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
+	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;
 	
 	$userID = $_SESSION['userID'];
 	//------------------------------------------------------------------------------------------------------------------
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Retrieve mode of display order (Default: ascending order of series number)
-	//------------------------------------------------------------------------------------------------------------------
-	$orderColStr = "";
-	
-	switch($param['orderCol'])
-	{
-		case "Patient ID":  $orderColStr = 'pt.patient_id '   . $param['orderMode'];  break;	
-		case "Name":        $orderColStr = 'pt.patient_name ' . $param['orderMode'];  break;	
-		case "Age":         $orderColStr = 'st.age '          . $param['orderMode'];  break;
-		case "Sex":         $orderColStr = 'pt.sex '          . $param['orderMode'];  break;
-		case "Series":      $orderColStr = 'sr.series_date '.$param['orderMode'].', sr.series_time '.$param['orderMode']; break;
-		case "CAD":         $orderColStr = 'el.plugin_name '.$param['orderMode'].', el.version '.$param['orderMode'];        break;
-		default:
-					$param['orderCol'] = "CAD date";
-					$orderColStr = 'el.executed_at '  . $param['orderMode'];
-					break;
-	}
-	//------------------------------------------------------------------------------------------------------------------
-
-	$colParam = array( array('colName' => 'Patient ID',  'align' => 'al-l'),
-		               array('colName' => 'Name',        'align' => 'al-l'),
-		               array('colName' => 'Age',         'align' => ''),
-		               array('colName' => 'Sex',         'align' => ''),
-		               array('colName' => 'Date',        'align' => ''),
-		               array('colName' => 'Time',        'align' => ''),
-		               array('colName' => 'CAD',         'align' => 'al-l'),
-		               array('colName' => 'CAD date',    'align' => ''),
-		               array('colName' => 'Result',      'align' => ''),
-		               array('colName' => 'Feedback',    'align' => ''));
 
 	$data = array();
 
@@ -97,8 +66,9 @@
 		//--------------------------------------------------------------------------------------------------------
 		// Create SQL queries 
 		//--------------------------------------------------------------------------------------------------------
-		$optionNum = 0;
-		$condArr = array();		
+		$sqlCondArray = array();
+		$sqlParams = array();
+		$pageAddressParams = array();	
 		
 		$sqlCond = " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 			       . " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
@@ -108,345 +78,199 @@
 			       . " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupt_flg='f')"
 			       . " LEFT JOIN false_negative_count fn ON (es.exec_id = fn.exec_id AND fn.status>=1)";
 
-		if($param['mode'] == 'today')
+		if($params['mode'] == 'today')
 		{
-			$param['showing'] = "all";  // for HIMEDIC
+			$params['showing'] = "all";  // for HIMEDIC
 		
 			$today = date("Y-m-d");
-			$param['cadDateFrom'] = $today;
-			$param['cadDateTo']   = $today;
+			$params['cadDateFrom'] = $today;
+			$params['cadDateTo']   = $today;
 			
-			$sqlCond .= " WHERE el.executed_at>=? AND el.executed_at<=?";
-			array_push($condArr, $param['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $param['cadDateFrom'] . ' 23:59:59');
-			$param['pageAddress'] .= 'mode=today&cadDateFrom=' . $param['cadDateFrom'] . '&cadDateTo=' . $param['cadDateTo'];
-			$optionNum++;		
+			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
+			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
+			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
+			$pageAddressParams['mode'] .= 'today';
+			$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
+			$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
 		}
-		else if($param['cadDateFrom'] != "" && $param['cadDateTo'] != "" && $param['cadDateFrom'] == $param['cadDateTo'])
+		else if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";	
-		
-			$sqlCond .= " el.executed_at>=? AND el.executed_at<=?";
-			array_push($condArr, $param['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $param['cadDateFrom'] . ' 23:59:59');
-			$param['pageAddress'] .= 'cadDateFrom=' . $param['cadDateFrom'] . '&cadDateTo=' . $param['cadDateTo'];
-			$optionNum++;
+			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
+			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
+			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
+			$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
+			$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
 		}
 		else
 		{
-			if($param['cadDateFrom'] != "")
+			if($params['cadDateFrom'] != "")
 			{
-				if(0<$optionNum) 
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";	
-						
-				$sqlCond .= " ?<=el.executed_at";
-				array_push($condArr, $param['cadDateFrom'].' 00:00:00');
-				$param['pageAddress'] .= 'cadDateFrom=' . $param['cadDateFrom'];
-				$optionNum++;
+				$sqlCondArray[] = "?<=el.executed_at";
+				$sqlParams[] = $params['cadDateFrom'].' 00:00:00';
+				$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
 			}
 		
-			if($param['cadDateTo'] != "")
+			if($params['cadDateTo'] != "")
 			{
-				if(0<$optionNum) 
+				$sqlCondArray[] = "el.executed_at<=?";
+				$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
+
+				if($params['cadTimeTo'] != "")
 				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";
-		
-				if($param['cadTimeTo'] != "")
-				{
-					$sqlCond .= " el.executed_at<=?";
-					array_push($condArr, $param['cadDateTo'] . ' ' . $param['cadTimeTo']);
-					$param['pageAddress'] .= 'cadDateTo=' . $param['cadDateTo'] . '&cadTimeTo=' . $param['cadTimeTo'];
+					$sqlParams[] = $params['cadDateTo'] . ' ' . $params['cadTimeTo'];
+					$pageAddressParams['cadTimeTo'] = $params['cadTimeTo'];
 				}
 				else
 				{
-					$sqlCond .= " el.executed_at<=?";
-					array_push($condArr, $param['cadDateTo'] . ' 23:59:59');
-					$param['pageAddress'] .= 'cadDateTo=' . $param['cadDateTo'];
+					$sqlParams[] = $params['cadDateTo'] . ' 23:59:59';
 				}
-				$optionNum++;
 			}
 		}
 
 	
-		if($param['srDateFrom'] != "" && $param['srDateTo'] != "" && $param['srDateFrom'] == $param['srDateTo'])
+		if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-		
-			$sqlCond .= " sr.series_date=?";
-			array_push($condArr, $param['srDateFrom']);
-			$param['pageAddress'] .= 'srDateFrom=' . $param['srDateFrom'] . '&srDateTo=' . $param['srDateTo'];
-			$optionNum++;
+			$sqlCondArray[] = "sr.series_date=?";
+			
+			$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
+			$pageAddressParams['srDateTo'] = $params['srDateTo'];
 		}
 		else
 		{
-			if($param['srDateFrom'] != "")
+			if($params['srDateFrom'] != "")
 			{
-				if(0<$optionNum) 
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";
-
-				$sqlCond .= " ?<=sr.series_date";
-				array_push($condArr, $param['srDateFrom']);
-				$param['pageAddress'] .= 'srDateFrom=' . $param['srDateFrom'];
-				$optionNum++;
+				$sqlCondArray[] = "?<=sr.series_date";
+				$sqlParams[] = $params['srDateFrom'];
+				$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
 			}
 		
-			if($param['srDateTo'] != "")
+			if($params['srDateTo'] != "")
 			{
-				if(0<$optionNum) 
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";
+				$sqlParams[] = $params['srDateTo'];
+				$pageAddressParams['srDateTo'] = $params['srDateTo'];
 		
-				if($param['srTimeTo'] != "")
+				if($params['srTimeTo'] != "")
 				{
-					$sqlCond .= " (sr.series_date<? OR (sr.series_date=? AND sr.series_date<=?))";
-					array_push($condArr, $param['srDateTo']);
-					array_push($condArr, $param['srDateTo']);
-					array_push($condArr, $param['srTimeTo']);
-					$param['pageAddress'] .= 'srDateTo=' . $param['srDateTo'] . '&srTimeTo=' . $param['srTimeTo'];
+					$sqlCondArray[] = "(sr.series_date<? OR (sr.series_date=? AND sr.series_date<=?))";
+					$sqlParams[] = $params['srDateTo'];
+					$sqlParams[] = $params['srTimeTo'];
+					$pageAddressParams['srTimeTo'] = $params['srTimeTo'];
 				}
 				else
 				{
-					$sqlCond .= " sr.series_date<=?";
-					array_push($condArr, $param['srDateTo']);
-					$param['pageAddress'] .= 'srDateTo=' . $param['srDateTo'];
+					$sqlCondArray[] = "sr.series_date<=?";
 				}
-				$optionNum++;
 			}
 		}
 
-		if($param['filterCadID'] != "")
+		if($params['filterCadID'] != "")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
 			// Search by regular expression
-			$sqlCond .= " el.exec_id=?";
-			array_push($condArr, $param['filterCadID']);
-			$param['pageAddress'] .= 'filterCadID=' . $param['filterCadID'];
-			$optionNum++;
+			$sqlCondArray[] = "el.exec_id=?";
+			$sqlParams[] = $params['filterCadID'];
+			$pageAddressParams['filterCadID'] = $params['filterCadID'];
 		}
 		
-		if($param['filterPtID'] != "")
+		if($params['filterPtID'] != "")
 		{
-			$patientID = $param['filterPtID'];
-			if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($param['filterPtID'], $_SESSION['key']);		
+			$patientID = $params['filterPtID'];
+			if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($params['filterPtID'], $_SESSION['key']);		
 
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
 			// Search by regular expression
-			$sqlCond .= " pt.patient_id~*?";
-			array_push($condArr, $patientID);
-			$param['pageAddress'] .= 'filterPtID=' . $param['filterPtID'];
-			$optionNum++;
+			$sqlCondArray[] = "pt.patient_id~*?";
+			$sqlParams[] = $patientID;
+			$pageAddressParams['filterPtID'] = $params['filterPtID'];
 		}
 
-		if($param['filterPtName'] != "")
+		if($params['filterPtName'] != "")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
 			// Search by regular expression (test, case-insensitive)
-			$sqlCond .= " pt.patient_name~*?";
-			array_push($condArr, $param['filterPtName']);
-			$param['pageAddress'] .= 'filterPtName=' . $param['filterPtName'];
-			$optionNum++;
+			$sqlCondArray[] = "pt.patient_name~*?";
+			$sqlParams[] = $params['filterPtName'];
+			$pageAddressParams['filterPtName'] = $params['filterPtName'];
 		}
 		
-		if($param['filterSex'] == "M" || $param['filterSex'] == "F")
+		if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
-			$sqlCond .= " pt.sex=?";
-			array_push($condArr, $param['filterSex']);
-			$param['pageAddress'] .= 'filterSex=' . $param['filterSex'];
-			$optionNum++;
+			$sqlCondArray[] = "pt.sex=?";
+			$sqlParams[] = $params['filterSex'];
+			$pageAddressParams['filterSex'] = $params['filterSex'];
 		}
 		
-		if($param['filterAgeMin'] != "" && $param['filterAgeMax'] != "" && $param['filterAgeMin'] == $param['filterAgeMax'])
+		if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-				
-			$sqlCond .= " st.age=?";
-			array_push($condArr, $param['filterAgeMin']);
-			$param['pageAddress'] .= 'filterAgeMin=' . $param['filterAgeMin'] . '&filterAgeMax=' . $param['filterAgeMax'];
-			$optionNum++;
+			$sqlCondArray[] = "st.age=?";
+			$sqlParams[] = $params['filterAgeMin'];
+			$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
+			$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
 		}
 		else
 		{
-			if($param['filterAgeMin'] != "")
+			if($params['filterAgeMin'] != "")
 			{
-				if(0<$optionNum) 
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";
-				
-				$sqlCond .= " ?<=st.age";
-				array_push($condArr, $param['filterAgeMin']);
-				$param['pageAddress'] .= 'filterAgeMin=' . $param['filterAgeMin'];
-				$optionNum++;
+				$sqlCondArray[] = "?<=st.age";
+				$sqlParams[] = $params['filterAgeMin'];
+				$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
 			}
 		
-			if($param['filterAgeMax'] != "")
+			if($params['filterAgeMax'] != "")
 			{
-				if(0<$optionNum) 
-				{
-					$sqlCond .= " AND";
-					$param['pageAddress'] .= "&";
-				}
-				else	$sqlCond .= " WHERE";
-				
-				$sqlCond .= " st.age<=?";
-				array_push($condArr, $param['filterAgeMax']);
-				$param['pageAddress'] .= 'filterAgeMax=' . $param['filterAgeMax'];
-				$optionNum++;
+				$sqlCondArray[] = "st.age<=?";
+				$sqlParams[] = $params['filterAgeMax'];
+				$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
 			}
 		}				
 
-		if($param['filterModality'] != "" && $param['filterModality'] != "all")
+		if($params['filterModality'] != "" && $params['filterModality'] != "all")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
-			$sqlCond .= " sr.modality=?";
-			array_push($condArr, $param['filterModality']);
-			$param['pageAddress'] .= 'filterModality=' . $param['filterModality'];
-			$optionNum++;
+			$sqlCondArray[] = "sr.modality=?";
+			$sqlParams[] = $params['filterModality'];
+			$pageAddressParams['filterModality'] = $params['filterModality'];
 		}		
 			
 		
-		if($param['filterCAD'] != "all")
+		if($params['filterCAD'] != "all")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-		
-		 	$sqlCond .= " el.plugin_name=?";
-			array_push($condArr, $param['filterCAD']);
-			$param['pageAddress'] .= 'filterCAD=' . $param['filterCAD'];
-			$optionNum++;
+			$sqlCondArray[] = "el.plugin_name=?";
+			$sqlParams[] = $params['filterCAD'];
+			$pageAddressParams['filterCAD'] = $params['filterCAD'];
 		}				
 	
-		if($param['filterVersion'] != "all")
+		if($params['filterVersion'] != "all")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-		
-		 	$sqlCond .= " el.version=?";
-			array_push($condArr, $param['filterVersion']);
-			$param['pageAddress'] .= 'filterVersion=' . $param['filterVersion'];
-			$optionNum++;
+			$sqlCondArray[] = "el.version=?";
+			$sqlParams[] = $params['filterVersion'];
+			$pageAddressParams['filterVersion'] = $params['filterVersion'];
 		}
 		
-		if($param['filterTag'] != "")
+		if($params['filterTag'] != "")
 		{		
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
-		 	$sqlCond .= " el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
-			array_push($condArr, $param['filterTag']);
-			$param['pageAddress'] .= 'filterTag=' . $param['filterTag'];
-			$optionNum++;
+			$sqlCondArray[] = "el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
+			$sqlParams[] = $params['filterTag'];
+			$pageAddressParams['filterTag'] = $params['filterTag'];
 		}
 	
-		if($param['personalFB'] == "entered" || $param['personalFB'] == "notEntered")
+		if($params['personalFB'] == "entered" || $params['personalFB'] == "notEntered")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-
-			$param['pageAddress'] .= 'personalFB=' . $param['personalFB'];
+			$params['pageAddress'] .= 'personalFB=' . $params['personalFB'];
 			
-			$operator = ($param['personalFB'] == "entered") ? '=' : '<>';
+			$operator = ($params['personalFB'] == "entered") ? '=' : '<>';
 		
-			$sqlCond .= " el.exec_id " . $operator . " ANY"
+			$tmpCond .= " el.exec_id " . $operator . " ANY"
 					 .  " (SELECT DISTINCT exec_id FROM lesion_feedback WHERE consensual_flg='f'"
 					 .  " AND interrupt_flg='f'";
-
-			if($param['personalFB'] == "entered")
+		
+			if($params['personalFB'] == "entered")
 			{
-				if($param['filterFBUser'] != "")
+				if($params['filterFBUser'] != "")
 				{
-					//if(strncmp($param['filterFBUser'],'PAIR(', 5) == 0)
-					if(strncmp($param['filterFBUser'],'PAIR"', 5) == 0)
+					if(strncmp($params['filterFBUser'],'PAIR"', 5) == 0)
 					{
-						//$tmpStr = trim(strtok(substr($param['filterFBUser'], 5),")"));
-						//$fbUserArr = explode(',', $tmpStr);
-
-						$tmpStr = substr($param['filterFBUser'], 5);
+						$tmpStr = substr($params['filterFBUser'], 5);
 						$fbUserArr = array();
-						//echo $tmpStr;
-						
-						array_push($fbUserArr, strtok($tmpStr,'"'));
-						
-						echo $fbUserArr[0];
 
+						array_push($fbUserArr, strtok($tmpStr,'"'));
+		
 						while($tmpStr2 = strtok('"'))
 						{
 							echo $tmpStr2;
@@ -455,117 +279,138 @@
 						
 						if(count($fbUserArr) == 1)
 						{
-							$sqlCond .= ' AND entered_by=?)';
-							array_push($condArr, $fbUserArr[0]);
+							$tmpCond .= ' AND entered_by=?)';
+							$sqlParams[] = $fbUserArr[0];
 						}
 						else if(count($fbUserArr) >= 2)
 						{
-							$sqlCond .= " AND entered_by~*? AND exec_id IN"
+							$tmpCond .= " AND entered_by~*? AND exec_id IN"
 									 .  " (SELECT DISTINCT exec_id FROM lesion_feedback"
 									 .  "  WHERE consensual_flg='f' AND interrupt_flg='f'"
 									 .  "  AND entered_by~*?))";
 									 
-							array_push($condArr, $fbUserArr[0]);
-							array_push($condArr, $fbUserArr[1]);
+							$sqlParams[] = $fbUserArr[0];
+							$sqlParams[] = $fbUserArr[1];
 						}
 					}
 					else
 					{
-						$sqlCond .= ' AND entered_by~*?)';
-						array_push($condArr, $param['filterFBUser']);
+						$tmpCond .= ' AND entered_by~*?)';
+						$sqlParams[] = $params['filterFBUser'];
 					}
 			
-					$param['filterFBUser'] = htmlspecialchars($param['filterFBUser']);
-					$param['pageAddress'] .= 'filterFBUser=' . $param['filterFBUser'];
+					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
+					$pageAddressParams['filterFBUser'] = $params['filterFBUser'];
 				}
 				else
 				{
-					$sqlCond .= ' AND entered_by=?)';
+					$tmpCond .= ' AND entered_by=?)';
 					array_push($condArr, $userID);
 				}
-			}	
-			$optionNum++;
+			}
+			else
+			{
+				$tmpCond .= ")";
+			} 
+			$sqlCondArray[] = $tmpCond;
 		}	
 	
-		if($param['consensualFB'] == "entered" || $param['consensualFB'] == "notEntered")
+		if($params['consensualFB'] == "entered" || $params['consensualFB'] == "notEntered")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
-			$operator = ($param['consensualFB'] == "entered") ? '=' : '<>';
+			$operator = ($params['consensualFB'] == "entered") ? '=' : '<>';
 		
-			$sqlCond .= " el.exec_id " . $operator . "ANY"
-					 .  " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='t' AND interrupt_flg='f')";
-			$param['pageAddress'] .= 'consensualFB=' . $param['consensualFB'];
-			$optionNum++;
+			$tmpCond = "el.exec_id " . $operator . " ANY"
+					 . " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='t' AND interrupt_flg='f')";
+
+			$sqlCondArray[] = $tmpCond;
+			$pageAddressParams['consensualFB'] = $params['consensualFB'];
 		}		
 	
-		if($param['filterTP'] == "with" || $param['filterTP'] == "without")
+		if($params['filterTP'] == "with" || $params['filterTP'] == "without")
 		{
-			if(0<$optionNum) 
-			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
-			}
-			else	$sqlCond .= " WHERE";
-			
-			$operator = ($param['filterTP'] == "with") ? '>=' : '<';
+			$operator = ($params['filterTP'] == "with") ? '>=' : '<';
 		
-			$sqlCond .= " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupt_flg='f'";
-			if($param['consensualFB'] == "entered")          $sqlCond .= " AND consensual_flg='t'";
-			else if($param['consensualFB'] == "notEntered")  $sqlCond .= " AND consensual_flg='f'";
-			$sqlCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $operator . "1)";
+			$tmpCond .= " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupt_flg='f'";
+	
+			if($params['consensualFB'] == "entered")
+			{
+				$tmpCond .= " AND consensual_flg='t'";
+			}
+			else if($params['consensualFB'] == "notEntered")
+			{
+				$tmpCond .= " AND consensual_flg='f'";
+			}
+			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $tmpCond . "1)";
 
-			$param['pageAddress'] .= 'filterTP=' . $param['filterTP'];
-			$optionNum++;
+			$sqlCondArray[] = $tmpCond;
+			$pageAddressParams['filterTP'] = $params['filterTP'];
 		}
 				
-		if($param['filterFN'] == "with" || $param['filterFN'] == "without") 
+		if($params['filterFN'] == "with" || $params['filterFN'] == "without") 
 		{
-			if(0<$optionNum) 
+			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
+			
+			$tmpCond = "el.exec_id IN (SELECT DISTINCT exec_id FROM false_negative_count WHERE status>0";
+			
+			if($params['consensualFB'] == "entered")
 			{
-				$sqlCond .= " AND";
-				$param['pageAddress'] .= "&";
+				$tmpCond .= " AND consensual_flg='t'";
 			}
-			else	$sqlCond .= " WHERE";
+			else if($params['consensualFB'] == "notEntered")
+			{
+				$tmpCond .= " AND consensual_flg='f'";
+			}
+			$tmpCond .= " GROUP BY exec_id HAVING MAX(false_negative_num)" .  $condition . ")";
 			
-			$condition = ($param['filterFN'] == "with") ? '>=1' : '=0';
-			
-			$sqlCond .= " el.exec_id IN (SELECT DISTINCT exec_id FROM false_negative_count WHERE status>0";
-			if($param['consensualFB'] == "entered")          $sqlCond .= " AND consensual_flg='t'";
-			else if($param['consensualFB'] == "notEntered")  $sqlCond .= " AND consensual_flg='f'";
-			$sqlCond .= " GROUP BY exec_id HAVING MAX(false_negative_num)" .  $condition . ")";
-
-			$param['pageAddress'] .= 'filterFN=' . $param['filterFN'];
-			$optionNum++;
+			$sqlCondArray[] = $tmpCond;
+			$pageAddressParams['filterFN'] = $params['filterFN'];
 		}
+		
+		if(count($sqlParams) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));		
 		
 		$sqlCond .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version, el.executed_at,"
 				 .  " es.study_instance_uid, es.series_instance_uid";
-
-		if(0<$optionNum)  $param['pageAddress'] .= "&";
-		$param['pageAddress'] .= 'orderCol=' . $param['orderCol'] . '&orderMode=' .  $param['orderMode']
-		                      .  '&showing=' . $param['showing'];
-							  
-		$_SESSION['listAddress'] = $param['pageAddress'];
 		//--------------------------------------------------------------------------------------------------------------
+
+		//--------------------------------------------------------------------------------------------------------------
+		// Retrieve mode of display order (Default: ascending order of series number)
+		//--------------------------------------------------------------------------------------------------------------
+		$orderColStr = "";
+		
+		switch($params['orderCol'])
+		{
+			case "Patient ID":  $orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;	
+			case "Name":        $orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;	
+			case "Age":         $orderColStr = 'st.age '          . $params['orderMode'];  break;
+			case "Sex":         $orderColStr = 'pt.sex '          . $params['orderMode'];  break;
+			case "Series":      $orderColStr = 'sr.series_date '.$params['orderMode'].', sr.series_time '.$params['orderMode']; break;
+			case "CAD":         $orderColStr = 'el.plugin_name '.$params['orderMode'].', el.version '.$params['orderMode'];        break;
+			default:
+					$params['orderCol'] = "CAD date";
+					$orderColStr = 'el.executed_at '  . $params['orderMode'];
+					break;
+		}
+		
+		$pageAddressParams['orderCol']  = $params['orderCol'];
+		$pageAddressParams['orderMode'] = $params['orderMode'];
+		$pageAddressParams['showing']   = $params['showing'];		
+		//--------------------------------------------------------------------------------------------------------------
+			
+		$params['pageAddress'] = implode('&', array_map(UrlKeyValPair, array_keys($pageAddressParams), array_values($pageAddressParams)));
+		$_SESSION['listAddress'] = $params['pageAddress'];
 
 		//--------------------------------------------------------------------------------------------------------------
 		// count total number
 		//--------------------------------------------------------------------------------------------------------------
 		$stmt = $pdo->prepare("SELECT COUNT(*) " . $sqlCond);
-		$stmt->execute($condArr);
+		$stmt->execute($sqlParams);
 		
-		//$param['totalNum'] = $stmt->fetchColumn();
-		$param['totalNum'] = $stmt->rowCount();
-		$param['maxPageNum'] = ($param['showing'] == "all") ? 1 : ceil($param['totalNum'] / $param['showing']);
-		$param['startPageNum'] = max($param['pageNum'] - $PAGER_DELTA, 1);
-		$param['endPageNum']   = min($param['pageNum'] + $PAGER_DELTA, $param['maxPageNum']);		
+		$params['totalNum'] = $stmt->fetchColumn();
+		//$params['totalNum'] = $stmt->rowCount();
+		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
+		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -580,22 +425,22 @@
 				
 		//echo $sqlStr;
 		
-		if($param['showing'] != "all")
+		if($params['showing'] != "all")
 		{
 			$sqlStr .= " LIMIT ? OFFSET ?";
-			array_push($condArr, $param['showing']);
-			array_push($condArr, $param['showing'] * ($param['pageNum']-1));
+			$sqlParams[] = $params['showing'];
+			$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 		}
 		
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute($condArr);
+		$stmt->execute($sqlParams);
 
 		//var_dump($stmt);
 		//var_dump($condArr);
 		
 		$rowNum = $stmt->rowCount();
-		$param['startNum'] = ($rowNum == 0) ? 0 : $param['showing'] * ($param['pageNum']-1) + 1;
-		$param['endNum']   = ($rowNum == 0) ? 0 : $param['startNum'] + $rowNum - 1;			
+		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
+		$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;			
 		
 
 		//------------------------------------------------------------------------------------------
@@ -660,7 +505,7 @@
 							$result['series_date'],
 							$result['series_time'],
 							($result['plugin_name'].' v.'.$result['version']),
-							(($param['mode'] == 'today') ? substr($result['executed_at'], 11) : $result['executed_at']),
+							(($params['mode'] == 'today') ? substr($result['executed_at'], 11) : $result['executed_at']),
 							$result['plugin_name'],
 							$result['version'],
 							$result['study_instance_uid'],
@@ -668,7 +513,7 @@
 	
 			$flgArray = array('f', 't');
 	
-			if($param['mode'] == 'today')
+			if($params['mode'] == 'today')
 			{
 				if($_SESSION['colorSet'] == "admin")
 				{	
@@ -691,8 +536,8 @@
 							$numTP = $stmtTPCnt->fetchColumn();
 						}
 						
-						if($numTP > 0)	array_push($colArr, ('<span style="color:#0000ff; font-weight:bold;">'.$numFeedback.'</span>'));
-						else			array_push($colArr, $numFeedback);
+						if($numTP > 0)	$colArr[] = '<span style="color:#0000ff; font-weight:bold;">'.$numFeedback.'</span>';
+						else			$colArr[] = $numFeedback;
 					}
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
@@ -700,7 +545,7 @@
 					$stmtPersonalFB->bindParam(1, $result['exec_id']);
 					$stmtPersonalFB->execute();
 						
-					array_push($colArr, ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-');
+					$colArr[] = ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-';
 				}				
 			}
 			else
@@ -724,15 +569,15 @@
 						$numTP = $stmtTPCnt->fetchColumn();
 					}
 					
-					if($numTP > 0)	array_push($colArr, ('<span style="color:#0000ff; font-weight:bold;">'.$numFeedback.'</span>'));
-					else			array_push($colArr, $numFeedback);
+					if($numTP > 0)	$colArr[] = '<span style="color:#0000ff; font-weight:bold;">'.$numFeedback.'</span>';
+					else			$colArr[] = $numFeedback;
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
 					$stmtPersonalFB->bindParam(1, $result['exec_id']);
 					$stmtPersonalFB->execute();
 						
-					array_push($colArr, ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-');
+					$colArr[] = ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-';
 				}							
 
 				$tpColStr = "-";
@@ -768,30 +613,30 @@
 					}
 				}
 			
-				array_push($colArr, $tpColStr);
-				array_push($colArr, $fnColStr);
+				$colArr[] = $tpColStr;
+				$colArr[] = $fnColStr;
 			}
 			
-			array_push($data, $colArr);
+			$data[] = $colArr;
 
 		}// end while
 		
-		// set parameter of CAD, version menu
-		include('set_cad_panel_param.php');
+		// set paramseter of CAD, version menu
+		include('set_cad_panel_params.php');
 		$versionList = array("all");
 		
-		if($param['filterCAD'] != 'all' && $param['filterVersion'] != 'all')
+		if($params['filterCAD'] != 'all' && $params['filterVersion'] != 'all')
 		{
 		
 			for($i=0; $i<$cadNum; $i++)
 			{
-				if($param['filterCAD'] == $cadList[$i][0])
+				if($params['filterCAD'] == $cadList[$i][0])
 				{
 					$tmpArr = explode('^', $cadList[$i][1]);
 					
 					foreach($tmpArr as $item)
 					{
-						array_push($versionList, $item);
+						$versionList[] = $item;
 					}		
 					break;
 				}
@@ -807,15 +652,13 @@
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('param', $param);
-		$smarty->assign('colParam', $colParam);
-		$smarty->assign('data', $data);
+		$smarty->assign('params', $params);
+		$smarty->assign('data',   $data);
 		
-		$smarty->assign('modalityList', $modalityList);
+		$smarty->assign('modalityList',    $modalityList);
 		$smarty->assign('modalityMenuVal', $modalityMenuVal);	
-		$smarty->assign('cadList',         $cadList);		
+		$smarty->assign('cadList',         $cadList);
 		$smarty->assign('versionList',     $versionList);		
-
 
 		$smarty->display('cad_log.tpl');
 		//--------------------------------------------------------------------------------------------------------------

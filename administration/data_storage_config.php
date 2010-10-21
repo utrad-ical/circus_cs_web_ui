@@ -2,20 +2,8 @@
 	session_start();
 
 	include("../common.php");
-	
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'] || $_SESSION['superUserFlg'] == 0)
-	{
-		header('location: ../index.php?mode=timeout');
-	}
-	else
-	{
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	}
-	//------------------------------------------------------------------------------------------------------------------
-	
+	include("auto_logout_administration.php");
+		
 	if($_SESSION['superUserFlg'])
 	{
 		//--------------------------------------------------------------------------------------------------------------
@@ -32,7 +20,7 @@
 		$newResearchID = (isset($_REQUEST['newResearchID']) && is_numeric($_REQUEST['newResearchID'])) ? $_REQUEST['newResearchID'] : 0;
 		//--------------------------------------------------------------------------------------------------------------
 
-		$param = array('toTopDir' => "../");
+		$params = array('toTopDir' => "../");
 		$restartButtonFlg = 0;
 
 		try
@@ -279,8 +267,8 @@
 			require_once('../smarty/SmartyEx.class.php');
 			$smarty = new SmartyEx();	
 
-			$smarty->assign('param',     $param);
-			$smarty->assign('message',   $message);
+			$smarty->assign('params',        $params);
+			$smarty->assign('message',       $message);
 			$smarty->assign('storageList',   $storageList);
 			$smarty->assign('oldDicomID',    $oldDicomID);
 			$smarty->assign('oldResearchID', $oldResearchID);

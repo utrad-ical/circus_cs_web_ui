@@ -2,15 +2,15 @@
 	session_start();
 	
 	include("common.php");
-
-	$data = array();
+	include("auto_logout.php");
 
 	try
 	{	
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 		
-		$param = array('toTopDir' => "./");
+		$params = array('toTopDir' => "./");
+		$data = array();
 
 		// For plug-in block
 		$stmt = $pdo->prepare("SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC");
@@ -24,7 +24,7 @@
 		$smarty = new SmartyEx();
 		
 
-		$smarty->assign('param',      $param);
+		$smarty->assign('params',     $params);
 		$smarty->assign('pluginData', $pluginData);
 		
 		$smarty->display('about.tpl');

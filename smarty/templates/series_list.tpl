@@ -36,17 +36,17 @@
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				<li><a href="" class="btn-tab" title="{if $param.mode=='today'}Today's series{else}Series list{/if}" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">{if $param.mode=='today'}Today's series{else}Series list{/if}</a></li>
-				{if $param.mode=='today'}
+				<li><a href="" class="btn-tab" title="{if $params.mode=='today'}Today's series{else}Series list{/if}" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">{if $params.mode=='today'}Today's series{else}Series list{/if}</a></li>
+				{if $params.mode=='today'}
 					<li><a href="cad_log.php?mode=today" class="btn-tab" title="Today's CAD">Today's CAD</a></li>
 				{/if}
 			</ul>
-			{if $param.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
+			{if $params.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
 		</div><!-- / .tabArea END -->
 		
 		<div class="tab-content">
 
-			{if $param.mode=='today'}
+			{if $params.mode=='today'}
 				<div id="todays_series">
 					<!-- <h2>Today's series</h2> -->
 			{else}
@@ -56,22 +56,22 @@
 			
 			<!-- ***** Search ***** -->
 				<form name="" onsubmit="return false;">
-					<input type="hidden" id="mode"                      value="{$param.mode}" />
-					<input type="hidden" id="studyInstanceUID"          value="{$param.studyInstanceUID}" />
-					<input type="hidden" id="hiddenFilterPtID"          value="{$param.filterPtID}" />
-					<input type="hidden" id="hiddenFilterPtName"        value="{$param.filterPtName}" />
-					<input type="hidden" id="hiddenFilterSex"           value="{$param.filterSex}" />
-					<input type="hidden" id="hiddenFilterAgeMin"        value="{$param.filterAgeMin}" />
-					<input type="hidden" id="hiddenFilterAgeMax"        value="{$param.filterAgeMax}" />
-					<input type="hidden" id="hiddenFilterModality"      value="{$param.filterModality}" />
-					<input type="hidden" id="hiddenFilterSrDescription" value="{$param.filterSrDescription}" />
-					<input type="hidden" id="hiddenSrDateFrom"          value="{$param.srDateFrom}" />
-					<input type="hidden" id="hiddenSrDateTo"            value="{$param.srDateTo}" />
-					<input type="hidden" id="hiddenSrTimeTo"            value="{$param.srTimeTo}" />
-					<input type="hidden" id="hiddenShowing"             value="{$param.showing}" />
+					<input type="hidden" id="mode"                      value="{$params.mode}" />
+					<input type="hidden" id="studyInstanceUID"          value="{$params.studyInstanceUID}" />
+					<input type="hidden" id="hiddenFilterPtID"          value="{$params.filterPtID}" />
+					<input type="hidden" id="hiddenFilterPtName"        value="{$params.filterPtName}" />
+					<input type="hidden" id="hiddenFilterSex"           value="{$params.filterSex}" />
+					<input type="hidden" id="hiddenFilterAgeMin"        value="{$params.filterAgeMin}" />
+					<input type="hidden" id="hiddenFilterAgeMax"        value="{$params.filterAgeMax}" />
+					<input type="hidden" id="hiddenFilterModality"      value="{$params.filterModality}" />
+					<input type="hidden" id="hiddenFilterSrDescription" value="{$params.filterSrDescription}" />
+					<input type="hidden" id="hiddenSrDateFrom"          value="{$params.srDateFrom}" />
+					<input type="hidden" id="hiddenSrDateTo"            value="{$params.srDateTo}" />
+					<input type="hidden" id="hiddenSrTimeTo"            value="{$params.srTimeTo}" />
+					<input type="hidden" id="hiddenShowing"             value="{$params.showing}" />
 
-					<input type="hidden" id="orderMode"        value="{$param.orderMode}" />
-					<input type="hidden" id="orderCol"         value="{$param.orderCol}" />
+					<input type="hidden" id="orderMode"        value="{$params.orderMode}" />
+					<input type="hidden" id="orderCol"         value="{$params.orderCol}" />
 
 					{include file='series_search_panel.tpl'}
 				</form>
@@ -80,23 +80,57 @@
 			<!-- ***** List ***** -->
 
 				<div class="serp">
-					Showing {$param.startNum} - {$param.endNum} of {$param.totalNum} results
+					Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results
 				</div>
 				
 				<table class="col-tbl" style="width: 100%;">
 					<thead>
 						<tr>
-							{foreach from=$colParam item=item}
-								{if !($param.mode=='today' && $item.colName=='Date')}
-									{if $item.colName!='Detail' && $item.colName!='CAD' && !($param.mode!='today' && $item.colName=='Time')}
-										<th>
-											{if $param.orderCol==$item.colName}<span style="color:#fff; font-size:10px">{if $param.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('{$item.colName}', '{if $param.orderCol==$item.colName && $param.orderMode=="ASC"}DESC{else}ASC{/if}');">{$item.colName}</a></span>
-										</th>
-									{else}
-										<th>{$item.colName}</th>
-									{/if}
-								{/if}
-							{/foreach}
+							<th>
+								{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Name'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Name', '{if $params.orderCol=="Name" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Name</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Age'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Age', '{if $params.orderCol=="Age" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Age</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Sex', '{if $params.orderCol=="Sex" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Sex</a></span>
+							</th>
+
+							{if $params.mode!='today'}
+								<th>
+									{if $params.orderCol=='Date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Date', '{if $params.orderCol=="Date" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Date</a></span>
+								</th>
+								<th>Time</th>
+							{else}
+								<th>
+									{if $params.orderCol=='Time'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Time', '{if $params.orderCol=="Time" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Time</a></span>
+								</th>
+							{/if}
+
+							<th>
+								{if $params.orderCol=='ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('ID', '{if $params.orderCol=="ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">ID</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Modality'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Modality', '{if $params.orderCol=="Modality" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Modality</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Img.'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Img.', '{if $params.orderCol=="Img." && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Img.</a></span>
+							</th>
+
+							<th>
+								{if $params.orderCol=='Desc.'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Desc.', '{if $params.orderCol=="Desc." && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Desc.</a></span>
+							</th>
+
+							<th>Detail</th>
+							<th>CAD</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -106,7 +140,7 @@
 								<td class="al-l">{$item[3]}</td>
 								<td>{$item[4]}</td>
 								<td>{$item[5]}</td>
-								{if $param.mode!='today'}<td>{$item[6]}</td>{/if}
+								{if $params.mode!='today'}<td>{$item[6]}</td>{/if}
 								<td>{$item[7]}</td>
 								<td>{$item[8]}</td>
 								<td>{$item[9]}</td>
@@ -120,7 +154,7 @@
 								<td class="al-l">
 									{if $item[12] > 0}
 										{* ----- pull-down menu ----- *}
-										<select id="cadMenu{$smarty.foreach.cnt.iteration}" onchange="ChangeCADMenu({if $param.mode=='today'}'todaysSeriesList'{else}'seriesList'{/if},'{$smarty.foreach.cnt.iteration}', this.selectedIndex, {$smarty.session.execCADFlg})" style="width:100px;">
+										<select id="cadMenu{$smarty.foreach.cnt.iteration}" onchange="ChangeCADMenu({if $params.mode=='today'}'todaysSeriesList'{else}'seriesList'{/if},'{$smarty.foreach.cnt.iteration}', this.selectedIndex, {$smarty.session.execCADFlg})" style="width:100px;">
 											{section name=i start=0 loop=$item[12]}
 										
 												{assign var="i"         value=$smarty.section.i.index}
@@ -168,33 +202,33 @@
 				
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">
-					{if $param.maxPageNum > 1}
-						{if $param.pageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
+					{if $params.maxPageNum > 1}
+						{if $params.pageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
 						{/if}
 
-						{if $param.startPageNum > 1}
-							<div><a href="{$param.pageAddress}&pageNum=1">1</a></div>
-							{if $param.startPageNum > 2}<div>...</div>{/if}
+						{if $params.startPageNum > 1}
+							<div><a href="{$params.pageAddress}&pageNum=1">1</a></div>
+							{if $params.startPageNum > 2}<div>...</div>{/if}
 						{/if}
 
-						{section name=i start=$param.startPageNum loop=$param.endPageNum+1}
+						{section name=i start=$params.startPageNum loop=$params.endPageNum+1}
 							{assign var="i" value=$smarty.section.i.index}
 
-				    		{if $i==$param.pageNum}
+				    		{if $i==$params.pageNum}
 								<div><span style="color: red" class="fw-bold">{$i}</span></div>
 							{else}
-								<div><a href="{$param.pageAddress}&pageNum={$i}">{$i}</a></div>
+								<div><a href="{$params.pageAddress}&pageNum={$i}">{$i}</a></div>
 							{/if}
 						{/section}
 
-						{if $param.endPageNum < $param.maxPageNum}
-							{if $param.maxPageNum-1 > $param.endPageNum}<div>...</div>{/if}
-							<div><a href="{$param.pageAddress}&pageNum={$param.maxPageNum}">{$param.maxPageNum}</a></div>
+						{if $params.endPageNum < $params.maxPageNum}
+							{if $params.maxPageNum-1 > $params.endPageNum}<div>...</div>{/if}
+							<div><a href="{$params.pageAddress}&pageNum={$params.maxPageNum}">{$params.maxPageNum}</a></div>
 						{/if}
 
-						{if $param.pageNum < $param.maxPageNum}
-							<div><a href="{$param.pageAddress}&pageNum={$param.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
+						{if $params.pageNum < $params.maxPageNum}
+							<div><a href="{$params.pageAddress}&pageNum={$params.pageNum+1}">Next&nbsp;<span style="color: red">&raquo;</span></a></div>
 						{/if}
 					{/if}
 				</div>

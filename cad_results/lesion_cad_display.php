@@ -4,30 +4,30 @@
 	$candArr = array();
 	
 	$stmt = $pdo->prepare('SELECT COUNT(*) FROM "' . $resultTableName . '" WHERE exec_id=?');
-	$stmt->bindValue(1, $param['execID']);
+	$stmt->bindValue(1, $params['execID']);
 	$stmt->execute();
 	
-	$param['totalCandNum'] = $stmt->fetchColumn();
+	$params['totalCandNum'] = $stmt->fetchColumn();
 	
-	if($param['maxDispNum'] <= 0)  $param['maxDispNum'] = $param['totalCandNum'];
+	if($params['maxDispNum'] <= 0)  $params['maxDispNum'] = $params['totalCandNum'];
 		
-	if($param['feedbackMode'] == "consensual")
+	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr = 'SELECT * FROM "' . $resultTableName . '" WHERE exec_id= :execID'
 				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_feedback"
 				. " WHERE exec_id=:execID AND consensual_flg='f' AND interrupt_flg='f')"
 				. ' ORDER BY ';
 				
-		switch($param['sortKey'])
+		switch($params['sortKey'])
 		{
 			case 0: $sqlStr .= 'confidence';   break;  // confidence
 			case 1: $sqlStr .= 'location_z';   break;  // slice number
 			case 2: $sqlStr .= 'volume_size';  break;  // volume of candidate
 		}	
-		$sqlStr .= ($param['sortOrder'] == 'f') ? ' ASC' : ' DESC';
+		$sqlStr .= ($params['sortOrder'] == 'f') ? ' ASC' : ' DESC';
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(':execID', $param['execID']); 
+		$stmt->bindValue(':execID', $params['execID']); 
 		$stmt->execute();
 	}	
 	else // for personal
@@ -36,27 +36,27 @@
 				. " WHERE exec_id=? AND confidence >= ? ORDER BY confidence DESC"
 				. " LIMIT ?) set1 ORDER BY set1.";
 				  
-		switch($param['sortKey'])
+		switch($params['sortKey'])
 		{
 			case 0: $sqlStr .= 'confidence';   break;  // confidence
 			case 1: $sqlStr .= 'location_z';   break;  // slice number
 			case 2: $sqlStr .= 'volume_size';  break;  // volume of candidate
 		}	
-		$sqlStr .= ($param['sortOrder'] == 'f') ? ' ASC' : ' DESC';
+		$sqlStr .= ($params['sortOrder'] == 'f') ? ' ASC' : ' DESC';
 	
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($param['execID'], $param['confidenceTh'], $param['maxDispNum']));
+		$stmt->execute(array($params['execID'], $params['confidenceTh'], $params['maxDispNum']));
 		//var_dump($stmt);
 	}	
 	
 	$candNum = $stmt->rowCount();
 	
-	$param['resultColNum'] = 3;  // 3 candidates per row
+	$params['resultColNum'] = 3;  // 3 candidates per row
 	
 	if($candNum < 5 && $mainModality == 'CT')   // for HIMEDIC
 	//if($candNum < 5)					      // for other case...
 	{
-		$param['resultColNum'] = 2;
+		$params['resultColNum'] = 2;
 		$dispWidth = 384;	
 	}
 
@@ -78,7 +78,7 @@
 		if($registTime != "")
 		{
 			$registMsg = 'registered at ' . $registTime;
-			if($param['feedbackMode'] == "consensual")
+			if($params['feedbackMode'] == "consensual")
 			{
 				$registMsg .= ' (by ' . $enteredBy . ')';
 			}
@@ -88,12 +88,12 @@
 		// Personal mode ‚Å’N‚©‚ªFN“ü—Í‚µ‚Ä‚¢‚éê‡AConsensual mode‚ÌFN input“ü—Í‚ªÏ‚Þ‚Ü‚Å‚Í
 		// ³Ž®“o˜^‚É‚¹‚¸AFN“ü—Í‰æ–Ê‚Ö‘JˆÚ‚·‚é
 		//------------------------------------------------------------------------------------------------		
-		if($param['feedbackMode'] == "consensual" && $param['interruptFlg'] == 1)
+		if($params['feedbackMode'] == "consensual" && $params['interruptFlg'] == 1)
 		{		
 			$sqlStr = "SELECT COUNT(*) FROM false_negative_location"
 					. " WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
 			$stmtFn = $pdo->prepare($sqlStr);
-			$stmtFn->bindValue(1, $param['execID']);
+			$stmtFn->bindValue(1, $params['execID']);
 			$stmtFn->execute();
 
 			$fnPersonalCnt = $stmtFn->fetchColumn();
@@ -101,7 +101,7 @@
 			$sqlStr = "SELECT COUNT(*) FROM false_negative_count"
 					. " WHERE exec_id=? AND consensual_flg='t' AND status=2";
 			$stmtFn = $pdo->prepare($sqlStr);
-			$stmtFn->bindValue(1, $param['execID']);
+			$stmtFn->bindValue(1, $params['execID']);
 			$stmtFn->execute();
 
 			$fnConsCnt = $stmtFn->fetchColumn();
@@ -139,8 +139,8 @@
 		$height = $img->getImageHeight();
 		$img->destroy();
 		
-		$candHtml[$k]  = '<div id="lesionBlock' . $candID . '" class="result-record-' . $param['resultColNum'] . 'cols al-c"';
-		if($candID == $param['remarkCand'])  $candHtml[$k] .= ' style="border: 1px solid #F00;"';
+		$candHtml[$k]  = '<div id="lesionBlock' . $candID . '" class="result-record-' . $params['resultColNum'] . 'cols al-c"';
+		if($candID == $params['remarkCand'])  $candHtml[$k] .= ' style="border: 1px solid #F00;"';
 		$candHtml[$k] .= '>';
 		$candHtml[$k] .= '<div class="al-l">';
 		$candHtml[$k] .= sprintf("<b>&nbsp;Image No.: </b>%d<br>", $posZ);
@@ -176,7 +176,7 @@
 					  .  '</div>';
 		
 		// MRA with axial MIP display
-		//if($param['cadName'] == "MRA-CAD")
+		//if($params['cadName'] == "MRA-CAD")
 		//{
 		//	$srcMIPFnameWeb = sprintf("../%s%sMIP_axial.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB);
 		//
@@ -191,22 +191,22 @@
 		
 		if($resultType == 1 && ($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg']))
 		{
-			$consensualFlg = ($param['feedbackMode'] == "consensual") ? 1 :0;
+			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 :0;
 		
 			//$evalVal = ($registTime == "") ? -1 : -2;
 			$evalVal = -2;
 			$checkFlg = 0;
 			
-			if($param['feedbackMode'] == "personal" || $param['feedbackMode'] == "consensual")
+			if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 			{			
 				$sqlStr = "SELECT evaluation FROM lesion_feedback WHERE exec_id=? AND lesion_id=?";
-				if($param['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f' AND entered_by=?";		
+				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f' AND entered_by=?";		
 				else										$sqlStr .= " AND consensual_flg='t'";
 				
 				$stmtFeedback = $pdo->prepare($sqlStr);
-				$stmtFeedback->bindParam(1, $param['execID']);
+				$stmtFeedback->bindParam(1, $params['execID']);
 				$stmtFeedback->bindParam(2, $candID);
-				if($param['feedbackMode'] == "personal")  $stmtFeedback->bindParam(3, $userID);
+				if($params['feedbackMode'] == "personal")  $stmtFeedback->bindParam(3, $userID);
 		
 				$stmtFeedback->execute();
 
@@ -219,17 +219,17 @@
 			
 			$totalNum = 0;
 			
-			if($param['feedbackMode'] == "consensual")
+			if($params['feedbackMode'] == "consensual")
 			{
 				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
 		                 . " WHERE exec_id=? AND consensual_flg='f'";
 				$stmtFeedback = $pdo->prepare($sqlStr);
-				$stmtFeedback->bindParam(1, $param['execID']);		
+				$stmtFeedback->bindParam(1, $params['execID']);		
 				$stmtFeedback->execute();						 
 				$totalNum =  $stmtFeedback->fetchColumn();
 			}			
 			
-			$candHtml[$k] .= '<div class="hide-on-guest js-personal-or-consensual ' . $param['feedbackMode'] . '">';
+			$candHtml[$k] .= '<div class="hide-on-guest js-personal-or-consensual ' . $params['feedbackMode'] . '">';
 			
 			//$maxNum = 0;
 	
@@ -239,7 +239,7 @@
 				$titleStr = "";
 				$enterNum = 0;
 			
-				if($param['feedbackMode'] == "consensual")
+				if($params['feedbackMode'] == "consensual")
 				{
 					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE exec_id=?"
 				            . " AND lesion_id=? AND consensual_flg='f' AND interrupt_flg='f'";
@@ -248,7 +248,7 @@
 					else                                                 $sqlStr .= " AND evaluation=?";
 									
 					$stmtFeedback = $pdo->prepare($sqlStr);
-					$stmtFeedback->bindParam(1, $param['execID']);
+					$stmtFeedback->bindParam(1, $params['execID']);
 					$stmtFeedback->bindParam(2, $candID);									
 					if($radioButtonList[$consensualFlg][$j][0] != 'TP')  $stmtFeedback->bindParam(3, $radioButtonList[$consensualFlg][$j][1]);	
 									
@@ -283,17 +283,17 @@
 			
 				if($evalVal == $radioButtonList[$consensualFlg][$j][1])		$candHtml[$k] .= ' checked="checked"';
 				
-				if(($param['feedbackMode'] != "personal" && $param['feedbackMode'] != "consensual")
+				if(($params['feedbackMode'] != "personal" && $params['feedbackMode'] != "consensual")
 				   || ($registTime != "" && $evalVal != $radioButtonList[$consensualFlg][$j][1]))	 $candHtml[$k] .= ' disabled="disabled"';
 				
-				if($param['feedbackMode'] == "consensual" && $titleStr != "")	$candHtml[$k] .= ' title="' . $titleStr . '" /></span><!-- -->';
+				if($params['feedbackMode'] == "consensual" && $titleStr != "")	$candHtml[$k] .= ' title="' . $titleStr . '" /></span><!-- -->';
 				else													        $candHtml[$k] .= ' /></span><!-- -->';
 			}
 
 			$candHtml[$k] .= '</div>';
 			
 		//	$sqlStr = "SELECT tag FROM lesion_candidate_tag WHERE exec_id=? AND candidate_id=?";
-		//	if($param['feedbackMode'] == "consensual")
+		//	if($params['feedbackMode'] == "consensual")
 		//	{
 		//		$sqlStr .= " AND consensual_flg='t'";
 		//	}
@@ -304,9 +304,9 @@
 		//	$sqlStr .= " ORDER BY tag_id ASC";
 		//
 		//	$stmtTag = $pdo->prepare($sqlStr);
-		//	$stmtTag->bindParam(1, $param['execID']);
+		//	$stmtTag->bindParam(1, $params['execID']);
 		//	$stmtTag->bindParam(2, $candID);
-		//	if($param['feedbackMode'] == "personal")  $stmtTag->bindParam(3, $userID);
+		//	if($params['feedbackMode'] == "personal")  $stmtTag->bindParam(3, $userID);
 		//		
 		//	$stmtTag->execute();
 		//	$tagNum = $stmtTag->rowCount();
@@ -320,8 +320,8 @@
 		//	
 		//	if($_SESSION['researchFlg']==1)
 		//	{			
-		//		$candHtml[$k] .= ' <a href="#" onclick="EditCandidateTag(' . $param['execID'] . ',' . $candID
-		//					  .  ',\'' . $param['feedbackMode'] . '\',\'' . $userID . '\');">(Edit)</a></p>';
+		//		$candHtml[$k] .= ' <a href="#" onclick="EditCandidateTag(' . $params['execID'] . ',' . $candID
+		//					  .  ',\'' . $params['feedbackMode'] . '\',\'' . $userID . '\');">(Edit)</a></p>';
 		//	}
 		}
 		
@@ -338,12 +338,12 @@
 	{
 		$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=?";
 			
-		if($param['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
-		else if($param['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
+		if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
+		else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
 		
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $param['execID']);
-		if($param['feedbackMode']=="personal")  $stmt->bindParam(2, $userID);
+		$stmt->bindParam(1, $params['execID']);
+		if($params['feedbackMode']=="personal")  $stmt->bindParam(2, $userID);
 		
 		$stmt->execute();
 		
@@ -482,7 +482,7 @@
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
-	$smarty->assign('param', $param);
+	$smarty->assign('params', $params);
 
 	$smarty->assign('consensualFBFlg', $consensualFBFlg);
 	$smarty->assign('sliceOffset',     $sliceOffset);

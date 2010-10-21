@@ -81,10 +81,10 @@ function DeleteTag(tagID)
 
 <body>
 	<form onsubmit="return false;">
-	<input type="hidden" id="execID"  value="{$param.execID}" />
-	<input type="hidden" id="pluginType"  value="{$param.pluginType}" />
+	<input type="hidden" id="execID"  value="{$params.execID}" />
+	<input type="hidden" id="pluginType"  value="{$params.pluginType}" />
 
-	<h4 class="mb10">Tags for execID: {$param.execID}</h4>
+	<h4 class="mb10">Tags for execID: {$params.execID}</h4>
 
 	<div id="tagList" class="block-al-c" style="width:270px;">
 
