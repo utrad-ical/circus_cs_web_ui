@@ -131,7 +131,7 @@
 		$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $candID);
 		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $candID);
 
-		if(!is_file($srcFname))  dcm2png($cmdForProcess, $cmdDcmToPng, $DIR_SEPARATOR, $srcFname, $posZ, $candID, $windowLevel, $windowWidth);
+		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $windowLevel, $windowWidth);
 
 		$img = new Imagick();
 		$img->readImage($srcFname);			

@@ -14,12 +14,12 @@ function DoSearch(list, mode)
 
 	if(list == 'study' && mode == 'patient')  
 	{
-		address += '?mode=patient&encryptedPtID=' + $("#encryptedPtID").val();
+		address += '?mode=patient&encryptedPtID=' + encodeURIComponent($("#encryptedPtID").val());
 		conditionNum++;
 	}
 	else if(list == 'series' && mode == 'study')
 	{
-		address += '?mode=study&studyInstanceUID=' + $("#studyInstanceUID").val();
+		address += '?mode=study&studyInstanceUID=' + encodeURIComponent($("#studyInstanceUID").val());
 		conditionNum++;
 	}
 	else if(mode == 'today')
@@ -30,9 +30,9 @@ function DoSearch(list, mode)
 
 	if(mode != 'patient' && mode != 'study')
 	{
-		var ptID   = $("#" + list + "Search input[name='filterPtID']").val();
-		var ptName = $("#" + list + "Search input[name='filterPtName']").val();
-		var sex    = $("#" + list + "Search input[name='filterSex']:checked").val();
+		var ptID   = encodeURIComponent($("#" + list + "Search input[name='filterPtID']").val());
+		var ptName = encodeURIComponent($("#" + list + "Search input[name='filterPtName']").val());
+		var sex    = encodeURIComponent($("#" + list + "Search input[name='filterSex']:checked").val());
 
 		if(ptID != "")
 		{
@@ -55,9 +55,9 @@ function DoSearch(list, mode)
 
 	if(list != "patient")
 	{
-		var ageMin     = $("#" + list + "Search input[name='filterAgeMin']").val();
-		var ageMax     = $("#" + list + "Search input[name='filterAgeMax']").val();
-		var modality   = $("#" + list + "Search select[name='filterModality'] option:selected").text();
+		var ageMin     = encodeURIComponent($("#" + list + "Search input[name='filterAgeMin']").val());
+		var ageMax     = encodeURIComponent($("#" + list + "Search input[name='filterAgeMax']").val());
+		var modality   = encodeURIComponent($("#" + list + "Search select[name='filterModality'] option:selected").text());
 
 		if(mode != 'study')
 		{
@@ -83,8 +83,8 @@ function DoSearch(list, mode)
 
 	if(list == "study")
 	{
-		var stDateFrom = $("#studySearch input[name='stDateFrom']").val();
-		var stDateTo   = $("#studySearch input[name='stDateTo']").val();
+		var stDateFrom = encodeURIComponent($("#studySearch input[name='stDateFrom']").val());
+		var stDateTo   = encodeURIComponent($("#studySearch input[name='stDateTo']").val());
 
 		if(stDateFrom != "")
 		{
@@ -101,7 +101,7 @@ function DoSearch(list, mode)
 
 	if(list == "series" || list == "cad")
 	{
-		var filterTag = $("#" + list + "Search input[name='filterTag']").val();
+		var filterTag = encodeURIComponent($("#" + list + "Search input[name='filterTag']").val());
 
 		if(filterTag != "")
 		{
@@ -111,8 +111,8 @@ function DoSearch(list, mode)
 
 		if(mode != 'today')
 		{
-			var srDateFrom = $("#" + list + "Search input[name='srDateFrom']").val();
-			var srDateTo   = $("#" + list + "Search input[name='srDateTo']").val();
+			var srDateFrom = encodeURIComponent($("#" + list + "Search input[name='srDateFrom']").val());
+			var srDateTo   = encodeURIComponent($("#" + list + "Search input[name='srDateTo']").val());
 
 			if(srDateFrom != "")
 			{
@@ -130,7 +130,7 @@ function DoSearch(list, mode)
 
 	if(list == "series")
 	{
-		var description = $("#seriesSearch input[name='filterSrDescription']").val();
+		var description = encodeURIComponent($("#seriesSearch input[name='filterSrDescription']").val());
 
 		if(description != "")
 		{
@@ -141,16 +141,16 @@ function DoSearch(list, mode)
 
 	if(list == "cad")
 	{
-		var cadDateFrom   = $("#cadSearch input[name='cadDateFrom']").val();
-		var cadDateTo     = $("#cadSearch input[name='cadDateTo']").val();
-		var filterCadID   = $("#cadSearch input[name='filterCadID']").val();
-		var filterCAD     = $("#cadSearch select[name='filterCAD'] option:selected").text();
-		var filterVersion = $("#cadSearch select[name='filterVersion']").val();
-		var personalFB    = $("#cadSearch input[name='personalFB']:checked").val();
-		var consensualFB  = $("#cadSearch input[name='consensualFB']:checked").val();
-		var filterFBUser  = $("#cadSearch input[name='filterFBUser']").val();
-		var filterTP      = $("#cadSearch input[name='filterTP']:checked").val();
-		var filterFN      = $("#cadSearch input[name='filterFN']:checked").val();
+		var cadDateFrom   = encodeURIComponent($("#cadSearch input[name='cadDateFrom']").val());
+		var cadDateTo     = encodeURIComponent($("#cadSearch input[name='cadDateTo']").val());
+		var filterCadID   = encodeURIComponent($("#cadSearch input[name='filterCadID']").val());
+		var filterCAD     = encodeURIComponent($("#cadSearch select[name='filterCAD'] option:selected").text());
+		var filterVersion = encodeURIComponent($("#cadSearch select[name='filterVersion']").val());
+		var personalFB    = encodeURIComponent($("#cadSearch input[name='personalFB']:checked").val());
+		var consensualFB  = encodeURIComponent($("#cadSearch input[name='consensualFB']:checked").val());
+		var filterFBUser  = encodeURIComponent($("#cadSearch input[name='filterFBUser']").val());
+		var filterTP      = encodeURIComponent($("#cadSearch input[name='filterTP']:checked").val());
+		var filterFN      = encodeURIComponent($("#cadSearch input[name='filterFN']:checked").val());
 
 		if(mode != 'today')
 		{
@@ -218,7 +218,8 @@ function DoSearch(list, mode)
 
 	}
 
-	address += ((conditionNum == 0) ? '?' : '&') + 'showing=' + $("#" + list + "Search select[name='showing']").val();
+	address += ((conditionNum == 0) ? '?' : '&') 
+            +  'showing=' + encodeURIComponent($("#" + list + "Search select[name='showing']").val());
 
 	location.href = address;
 }

@@ -2,47 +2,24 @@
 
 	session_start();
 
-	include("common.php");
-
-	function CreateThumbnail($cmd1, $cmd2, $srcFname, $dstFname, $quality, $dumpFlg, $windowLevel, $windowWidth)
-	{
-		$cmdStr  = $cmd1 . ' "' . $cmd2 . ' ' . $srcFname . ' ' . $dstFname . ' ' . $quality . ' ' . $dumpFlg
-		         . ' ' . $windowLevel . ' ' . $windowWidth . '"';	
-
-		shell_exec($cmdStr);
-		
-		$img = new Imagick();
-
-		for($i=0; $i<100; $i++)
-		{
-			if($img->readImage($dstFname) == TRUE)	break;
-			else                                    sleep(100000);
-		}
-	}
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
+	include_once("common.php");
+	require_once('class/DcmExport.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables 
 	//------------------------------------------------------------------------------------------------------------------
-	$studyInstanceUID  = (isset($_POST['studyInstanceUID']))  ? $_POST['studyInstanceUID']  : "";
-	$seriesInstanceUID = (isset($_POST['seriesInstanceUID'])) ? $_POST['seriesInstanceUID'] : "";
+	$studyInstanceUID  = (isset($_REQUEST['studyInstanceUID']))  ? $_REQUEST['studyInstanceUID']  : "";
+	$seriesInstanceUID = (isset($_REQUEST['seriesInstanceUID'])) ? $_REQUEST['seriesInstanceUID'] : "";
 	
-	$imgNum = (ctype_digit($_REQUEST['imgNum']) && $_REQUEST['imgNum'] > 0) ? $_REQUEST['imgNum'] : 1;
+	$imgNum = (is_numeric($_REQUEST['imgNum']) && $_REQUEST['imgNum'] > 0) ? $_REQUEST['imgNum'] : 1;
 	
-	$windowLevel = (isset($_REQUEST['windowLevel']) && ctype_digit($_REQUEST['windowLevel'])) ? $_REQUEST['windowLevel'] : 0;
-	$windowWidth = (isset($_REQUEST['windowWidth']) && ctype_digit($_REQUEST['windowWidth'])) ? $_REQUEST['windowWidth'] : 0;
-	$presetName  = (isset($_POST['presetName'])) ? $_POST['presetName'] : "";	
+	$windowLevel = (isset($_REQUEST['windowLevel']) && is_numeric($_REQUEST['windowLevel'])) ? $_REQUEST['windowLevel'] : 0;
+	$windowWidth = (isset($_REQUEST['windowWidth']) && is_numeric($_REQUEST['windowWidth'])) ? $_REQUEST['windowWidth'] : 0;
+	$presetName  = (isset($_REQUEST['presetName'])) ? $_REQUEST['presetName'] : "";	
 	//------------------------------------------------------------------------------------------------------------------
 
 	$dstData = array('imgFname'  => '',
 	                 'imgNumStr' => sprintf("Img. No. %04d", $imgNum));
-
 	try
 	{	
 		// Connect to SQL Server
@@ -99,7 +76,7 @@
 		// Create thumbnail image
 		if(!is_file($dstFname))
 		{
-			CreateThumbnail($cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname, $JPEG_QUALITY, 1, $windowLevel, $windowWidth);
+			DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $windowLevel, $windowWidth);
 		}
 		
 		$dstData['imgFname'] = $dstFnameWeb;
@@ -119,7 +96,7 @@
 					case 'Image No.':
 						$dstData['sliceNumber'] = $dumpContent;
 						break;
-
+		
 					case 'Slice location':
 						$dstData['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
 						break;
@@ -128,7 +105,6 @@
 		
 			fclose($fp);
 		}
-		
 		echo json_encode($dstData);
 	}
 	catch (PDOException $e)

@@ -121,7 +121,7 @@
 						Proc. of RSNA 2009:919 (LL-IN2158-R01), November 2009</li>
 					<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Miki S, Maeda E, Ohtomo K,
 						CIRCUS: an MDA platform for clinical image analysis in hospitals,
-						Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1 (In printing)</li>
+						Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
 				</ol>
 			</div>
 
@@ -129,9 +129,9 @@
 			<h2>Installed plug-ins</h2>
 			<div class="plug-in ml10">
 				<ul>
-					{foreach from=$pluginData item=item}
-						<li>{$item.plugin_name} v.{$item.version} (installed in {$item.install_dt})
-						<a href="plugin_info.php?pluginName='{$item.plugin_name}&version={$item.version}">detail</a>
+					{foreach from=$pluginData item=item|escape}
+						<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})
+						<a href="plugin_info.php?pluginName='{$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
 					{/foreach}
 				</ul>
 			</div>

@@ -5,13 +5,13 @@
 			<tr>
 				<th style="width: 8.5em;"><span class="trim01">Series date</span></th>
 				<td style="width: 200px;">
-					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom}" {if $params.mode=='today'}disabled="disabled"{/if} />
+					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 					-&nbsp;
-					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo}" {if $params.mode=='today'}disabled="disabled"{/if} />
+					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 11em;"><span class="trim01">Series description</span></th>
 				<td style="width: 200px;">
-					<input name="filterSrDescription" type="text" style="width: 180px;" value="{$params.filterSrDescription}" />
+					<input name="filterSrDescription" type="text" style="width: 180px;" value="{$params.filterSrDescription|escape}" />
 				</td>
 				<th style="width: 6em;"><span class="trim01">Modality</span></th>
 				<td>
@@ -25,7 +25,7 @@
 			<tr>
 				<th><span class="trim01">Patient ID</span></th>
 				<td>
-					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID}" {if $params.mode=='study'}disabled="disabled"{/if} />
+					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
 				<th><span class="trim01">Sex</span></th>
 				<td>
@@ -35,18 +35,18 @@
 				</td>
 				<th><span class="trim01">Age</span></th>
 			  	<td>
-					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin}" {if $params.mode=='study'}disabled="disabled"{/if} />
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax}" {if $params.mode=='study'}disabled="disabled"{/if} />
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Patient Name</span></th>
 				<td>
-					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName}"{/if} {if $params.mode=='study' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
+					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='study' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
 	            <th><span class="trim01">Tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 180px;" value="{$params.filterTag}" /></td>
+    			<td><input name="filterTag" type="text" style="width: 180px;" value="{$params.filterTag|escape}" /></td>
 				<td colspan="2"></td>
 			</tr>
 			<tr>
@@ -66,8 +66,8 @@
 			</tr>
 		</table>
 		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('series', '{$params.mode}');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('series', '{$params.mode}');" />
+			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('series', '{$params.mode|escape}');" />
+			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('series', '{$params.mode|escape}');" />
 		</div>
 	</div><!-- / .m20 END -->
 </div><!-- / .search-panel END -->

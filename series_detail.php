@@ -2,9 +2,10 @@
 	//session_cache_limiter('nocache');
 	session_start();
 
-	include("common.php");
-	include("auto_logout.php");
+	include_once('common.php');
+	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');
+	require_once('class/DcmExport.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -171,8 +172,8 @@
 		
 		if(!is_file($data['dstFname']))
 		{
-			dcm2jpg($cmdForProcess, $cmdCreateThumbnail, $data['srcFname'], $data['dstFname'],
-			         $JPEG_QUALITY, 1, $data['windowLevel'], $data['windowWidth']);
+			DcmExport::createThumbnailJpg($data['srcFname'], $data['dstFname'], $JPEG_QUALITY, 1, 
+										  $data['windowLevel'], $data['windowWidth']);
 		}
 				
 		$fp = fopen($dumpFname, "r");

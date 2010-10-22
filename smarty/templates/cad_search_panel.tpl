@@ -5,13 +5,13 @@
 			<tr>
 	            <th style="width: 8.5em"><span class="trim01">CAD date</span></th>
 				<td style="width: 180px;">
-					<input name="cadDateFrom" type="text" style="width:72px;" value="{$params.cadDateFrom}" {if $params.mode=='today'}disabled="disabled"{/if} />
+					<input name="cadDateFrom" type="text" style="width:72px;" value="{$params.cadDateFrom|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 					-&nbsp;
-					<input name="cadDateTo" type="text" style="width:72px;" value="{$params.cadDateTo}" {if $params.mode=='today'}disabled="disabled"{/if} />
+					<input name="cadDateTo" type="text" style="width:72px;" value="{$params.cadDateTo|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 6em"><span class="trim01">CAD ID</span></th>
 				<td style="width: 180px;">
-					<input name="filterCadID" type="text" style="width: 160px;" value="{$params.filterCadID}" />
+					<input name="filterCadID" type="text" style="width: 160px;" value="{$params.filterCadID|escape}" />
 				</td>
 				<th  style="width: 9em"><span class="trim01">Personal FB</span></th>
 				<td>
@@ -23,15 +23,15 @@
    			<tr>
      			<th><span class="trim01">Series date</span></th>
 				<td>
-					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom}" />
+					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom|escape}" />
 					-&nbsp;
-					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo}" />
+					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo|escape}" />
 				</td>
 				<th style="width: 6em"><span class="trim01">Modality</span></th>
 				<td>
 					<select name="filterModality" onchange="ChangefilterModality()" style="width: 60px;">
 						{foreach from=$modalityList item=item name=modality}
-							<option value="{$modalityMenuVal[$smarty.foreach.modality.index]}" {if $params.filterModality==$item}selected="selected"{/if}>{$item}</option>
+							<option value="{$modalityMenuVal[$smarty.foreach.modality.index]|escape}" {if $params.filterModality==$item}selected="selected"{/if}>{$item|escape}</option>
 						{/foreach}
 					</select>
 				</td>
@@ -45,31 +45,31 @@
 			<tr>
      			<th><span class="trim01">Patient ID</span></th>
 	            <td>
-					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID}" />
+					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" />
 				</td>
 				<th><span class="trim01">CAD</span></th>
 				<td>
 					<select name="filterCAD" onchange="ChangefilterCad();" style="width: 160px;">
 						<option value="">all</option>
 						{foreach from=$cadList item=item}
-							<option value="{$item[1]}"{if $params.filterCAD==$item[0]} selected="selected"{/if}>{$item[0]}</option>
+							<option value="{$item[1]|escape}"{if $params.filterCAD==$item[0]} selected="selected"{/if}>{$item[0]|escape}</option>
 						{/foreach}
 					</select>
 				</td>
 	            <th><span class="trim01">Entered by</span></th>
-    			<td><input name="filterFBUser" type="text" style="width: 200px;" value="{$params.filterFBUser}" /></td>
+    			<td><input name="filterFBUser" type="text" style="width: 200px;" value="{$params.filterFBUser|escape}" /></td>
 			</tr>
 			
 			<tr>
      			<th><span class="trim01">Patient Name</span></th>
      			<td>
-					<input name="filterPtName" type="text" style="width: 160px;" value="{$params.filterPtName}" {if !$smarty.session.anonymizeFlg}{$params.filterPtName}{/if}" {if $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
+					<input name="filterPtName" type="text" style="width: 160px;" value="{$params.filterPtName|escape}" {if !$smarty.session.anonymizeFlg}{$params.filterPtName}{/if}" {if $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
 				<th><span class="trim01">Version</span></th>
 				<td>
 					<select name="filterVersion" style="width: 60px;">
 						{foreach from=$versionList item=item}
-							<option value="{$item}"{if $params.filterVersion==$item} selected="selected"{/if}>{$item}</option>
+							<option value="{$item|escape}"{if $params.filterVersion==$item} selected="selected"{/if}>{$item|escape}</option>
 						{/foreach}
 					</select>
 				</td>
@@ -89,9 +89,9 @@
 				</td>
 				<th><span class="trim01">Age</span></th>
 			  	<td>
-					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin}" />
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
 					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax}" />
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
 	            <th><span class="trim01">FN</span></th>
 	            <td>
@@ -112,12 +112,12 @@
 				</td>
 
 	            <th><span class="trim01">Tag</span></th>
-    			<td colspan="3"><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag}" /></td>
+    			<td colspan="3"><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 		</table>
 		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode}');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode}');" />
+			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
+			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->

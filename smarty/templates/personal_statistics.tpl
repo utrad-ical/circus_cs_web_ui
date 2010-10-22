@@ -202,7 +202,7 @@ function ResetCondition()
 								<select id="userMenu" name="userMenu" style="width: 100px;>
 									<option value="all">all</option>
 									{foreach from=$userList item=item}
-										<option value="{$item}" {if $item==$smarty.session.userID}selected="selected"{/if}>{$item}</option>
+										<option value="{$item|escape}" {if $item==$smarty.session.userID}selected="selected"{/if}>{$item|escape}</option>
 									{/foreach}
 								</select>
 							</td>
@@ -212,7 +212,7 @@ function ResetCondition()
 							<td>
 								<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeCadMenu();">
 									{foreach from=$cadList item=item}
-										<option value="{$item[1]}">{$item[0]}</option>
+										<option value="{$item[1]|escape}">{$item[0]|escape}</option>
 									{/foreach}
 								</select>
 							</td>
@@ -221,7 +221,7 @@ function ResetCondition()
 								<select id="versionMenu" name="versionMenu" style="width: 70px;">
 									<option value="all">all</option>
 									{foreach from=$versionDetail item=item}
-										<option value="{$item}">{$item}</option>
+										<option value="{$item|escape}">{$item|escape}</option>
 									{/foreach}
 								</select>
 							</td>

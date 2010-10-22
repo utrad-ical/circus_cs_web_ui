@@ -1,8 +1,8 @@
 <?php
 	session_start();
 	
-	include("common.php");
-	include("auto_logout.php");
+	include_once('common.php');
+	include_once("auto_logout.php");
 
 	try
 	{	

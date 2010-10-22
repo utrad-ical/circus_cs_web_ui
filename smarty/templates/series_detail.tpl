@@ -135,8 +135,7 @@ function DownloadVolume()
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				{* 	<li><a href="{$data.listTabAddress}" class="btn-tab" title="detail">{$data.listTabName}</a></li> *}
-				<li><a href="series_list.php?mode=study&studyInstanceUID={$data.studyInstanceUID}" class="btn-tab" title="detail">Series list</a></li>
+				<li><a href="series_list.php?mode=study&studyInstanceUID={$data.studyInstanceUID|escape}" class="btn-tab" title="detail">Series list</a></li>
 				<li><a href="" class="btn-tab" title="list" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Series detail</a></li>
 			</ul>
 			<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
@@ -149,14 +148,14 @@ function DownloadVolume()
 				<div class="series-detail-img">
 					<form id="form1" name="form1" action="series_detail.php" method="POST">
 
-					<input type="hidden" id="dispMode"          name="dispMode"           value="{$data.dispMode}" />
-					<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"   value="{$data.studyInstanceUID}" />
-					<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID}" />		
-					<input type="hidden" id="encryptedPtID"     name="encryptedPtID"      value="{$data.encryptedPtID}" />
-					<input type="hidden" id="encryptedPtName"   name="encryptedPtName"    value="{$data.encryptedPtName}" />
-					<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName}" />
-					<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel}" />
-					<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth}" />
+					<input type="hidden" id="dispMode"          name="dispMode"           value="{$data.dispMode|escape}" />
+					<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"   value="{$data.studyInstanceUID|escape}" />
+					<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID|escape}" />		
+					<input type="hidden" id="encryptedPtID"     name="encryptedPtID"      value="{$data.encryptedPtID|escape}" />
+					<input type="hidden" id="encryptedPtName"   name="encryptedPtName"    value="{$data.encryptedPtName|escape}" />
+					<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName|escape}" />
+					<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel|escape}" />
+					<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth|escape}" />
 					<input type="hidden" name="orgWidth"        value="{$data.orgWidth}" />
 					<input type="hidden" name="orgHeight"       value="{$data.orgHeight}" />
 					<input type="hidden" id="dispWidth"         name="dispWidth"          value="{$data.dispWidth}" />
@@ -167,7 +166,7 @@ function DownloadVolume()
 						<tr>
 							<td valign=top align=left width="320" height="{$data.dispHeight}">
 								<div id="imgBox" style="width:{$data.dispWidth}; height:{$data.dispHeight}; position:relative;">
-									<img src="{$data.dstFnameWeb}" width="{$data.dispWidth}" height="{$data.dispHeight}" style="position:absolute; left:{$data.imgLeftPos}px; top:0px; z-index:1;" />
+									<img src="{$data.dstFnameWeb|escape}" width="{$data.dispWidth}" height="{$data.dispHeight}" style="position:absolute; left:{$data.imgLeftPos}px; top:0px; z-index:1;" />
 									<span style="color:#fff; font-weight:bold; position:absolute; left:{$data.imgNumStrLeftPos}px; top:0px; z-index:2;">Img. No. {$data.imgNum|string_format:"%04d"}</span>
 								</div>
 							</td>
@@ -279,9 +278,9 @@ function DownloadVolume()
 			<div id="tagArea" class="mt10" style="width:500px;">
 				Tags:
 				{foreach from=$data.tagArray item=tag}
-					<a href="series_list.php?filterTag={$tag}">{$tag}</a>&nbsp;
+					<a href="series_list.php?filterTag={$tag|escape}">{$tag|escape}</a>&nbsp;
 				{/foreach}
-				{if $smarty.session.researchFlg==1}<a href="#" onclick="EditTag('{$data.seriesInstanceUID}');">(Edit)</a>{/if}
+				{if $smarty.session.researchFlg==1}<a href="#" onclick="EditTag('{$data.seriesInstanceUID|escape}');">(Edit)</a>{/if}
 			</div>
 
 			{literal}

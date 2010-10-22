@@ -15,6 +15,7 @@
 		$smarty->display('login_disp.tpl');
 	}
 
+	$message = "";
 	$mode = (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "";
 	
 	if(!isset($_SESSION['userID']))

@@ -121,14 +121,14 @@ function ResetSearchBlock()
 							<tr>
 				    	        <th><span class="trim01">Research date</span></th>
 								<td>
-									<input name="resDateFrom" type="text" style="width:72px;" value="{$params.resDateFrom}" />
+									<input name="resDateFrom" type="text" style="width:72px;" value="{$params.resDateFrom|escape}" />
 									-&nbsp;
-									<input name="resDateTo" type="text" style="width:72px;" value="{$params.resDateTo}" />
+									<input name="resDateTo" type="text" style="width:72px;" value="{$params.resDateTo|escape}" />
 								</td>
 							</tr>
 							<tr>
 	   							<th><span class="trim01">Tag</span></th>
-								<td><input name="filterTag" type="text" style="width:160px;" value="{$params.filterTag}" /></td>
+								<td><input name="filterTag" type="text" style="width:160px;" value="{$params.filterTag|escape}" /></td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Showing</span></th>
@@ -169,10 +169,10 @@ function ResetSearchBlock()
 					<tbody>
 						{foreach from=$data item=item}
 							<tr>
-								<td>{$item[0]}</td>
-			                	<td>{$item[1]}</td>
-			                	<td>{$item[2]}</td>
-								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowResearchResult('{$item[0]}');" /></td>
+								<td>{$item[0]|escape}</td>
+			                	<td>{$item[1]|escape}</td>
+			                	<td>{$item[2]|escape}</td>
+								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowResearchResult('{$item[0]|escape}');" /></td>
 							</tr>
 						{/foreach}
 					</tbody>

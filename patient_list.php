@@ -4,27 +4,78 @@
 
 	include_once("common.php");
 	include("auto_logout.php");
-	require_once('class/PersonalInfoScramble.class.php');	
+	require_once('class/PersonalInfoScramble.class.php');
+	require_once('class/FormValidator.class.php');	
 	
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $params array
+	// Import $_REQUEST variables and set $params array (with validation)
 	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('filterPtID'   => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
-				    'filterPtName' => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filtePtName'] : "",
-				    'filterSex'    => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
-				    'orderCol'     => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Patient ID",
-				    'orderMode'    => ($_REQUEST['orderMode'] === 'DESC') ? 'DESC' : 'ASC',
-				    'totalNum'     => (isset($_REQUEST['totalNum'])) ? $_REQUEST['totalNum'] : 0,
-				    'pageNum'      => (isset($_REQUEST['pageNum'])) ? $_REQUEST['pageNum'] : 1,
-				    'showing'      => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : "all",
+	$params = array('filterPtID'   => "",
+				    'filterPtName' => "",
+				    'filterSex'    => "all",
+				    'orderCol'     => "Patient ID",
+				    'orderMode'    => 'ASC',
+				    'totalNum'     => 0,
+				    'pageNum'      => 1,
+				    'showing'      => "all",
 				    'startNum'     => 1,
 				    'endNum'       => 10,
-				    'maxPageNum'   => 1,
-				    'pageAddress'  => 'patient_list.php?');
-		   
-	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
-	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;	
+				    'maxPageNum'   => 1);
+					
+	
+	if(isset($_GET['filterPtID']))
+	{
+		//if(validation条件を付加)
+		//{
+			$params['filterPtID'] = $_GET['filterPtID'];
+		//}
+		//else
+		//{
+		//	// エラー対策
+		//}
+	}
+	
+	if(isset($_GET['filterPtName']))
+	{
+		//if(validation条件を付加)
+		//{
+			$params['filterPtName'] = $_GET['filterPtName'];
+		//}
+		//else
+		//{
+		//	// エラー対策
+		//}
+	}
+	
+	if(isset($_GET['filterSex']) && FormValidator::validateSex($_GET['filterSex']))
+	{	
+		$params['filterSex'] = $_GET['filterSex'];
+	}
+	
+	if(isset($_GET['orderCol']))
+	{
+		$params['orderCol'] = $_GET['orderCol'];
+	}
+	
+	if($_GET['orderMode'] === 'DESC')
+	{
+		$params['orderMode'] = 'DESC';
+	}
+	
+	if(isset($_GET['totalNum']) && ctype_digit($_GET['totalNum']))
+	{
+		$params['totalNum'] = ($_GET['totalNum'] >= 0) ? $_GET['totalNum'] : 0;
+	}
+	
+	if(isset($_GET['pageNum']) && ctype_digit($_GET['pageNum']))
+	{
+		$params['pageNum'] = ($_GET['pageNum'] > 0) ? $_GET['pageNum'] : 1;
+	}
 
+	if(isset($_GET['showing']) && ctype_digit($_GET['showing']))
+	{
+		$params['showing'] = ($_GET['showing'] >= 10) ? $_GET['showing'] : 10;
+	}
 	//-----------------------------------------------------------------------------------------------------------------
 	
 	$data = array();
@@ -40,14 +91,14 @@
 		$sqlCondArray = array();
 		$sqlParams = array();
 		$sqlCond = "";
-		$pageAddressParams = array();
+		$addressParams = array();
 	
 		if($params['filterPtID'] != "")
 		{
 			// Search by regular expression (test, case-insensitive)
 			$sqlCondArray[] = "patient_id ~* ?";
 			$sqlParams[] = $params['filterPtID'];
-			$pageAddressParams['filterPtID'] = $params['filterPtID'];
+			$addressParams['filterPtID'] = $params['filterPtID'];
 		}	
 	
 		if($params['filterPtName'] != "")
@@ -55,17 +106,15 @@
 			// Search by regular expression (test, case-insensitive)
 			$sqlCondArray[] = "patient_name ~* ?";
 			$sqlParams[] = $params['filterPtName'];
-			$pageAddressParams['filterPtName'] = $params['filterPtName'];
+			$addressParams['filterPtName'] = $params['filterPtName'];
 		}
 
 		if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 		{
 			$sqlCondArray[] = "sex = ?";
 			$sqlParams[] = $params['filterSex'];
-			$pageAddressParams['filterSex'] = $params['filterSex'];
+			$addressParams['filterSex'] = $params['filterSex'];
 		}
-		
-		if(0<$optionNum) $params['pageAddress'] .= "&";
 		
 		if(count($sqlParams) > 0)  $sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
 		//--------------------------------------------------------------------------------------------------------------
@@ -82,12 +131,12 @@
 			default:			$orderColStr = 'patient_id '   . $params['orderMode'];  break;
 		}
 
-		$pageAddressParams['orderCol']  = $params['orderCol'];
-		$pageAddressParams['orderMode'] = $params['orderMode'];
-		$pageAddressParams['showing']   = $params['showing'];
+		$addressParams['orderCol']  = $params['orderCol'];
+		$addressParams['orderMode'] = $params['orderMode'];
+		$addressParams['showing']   = $params['showing'];
 		//--------------------------------------------------------------------------------------------------------------
 
-		$params['pageAddress'] = implode('&', array_map(UrlKeyValPair, array_keys($pageAddressParams), array_values($pageAddressParams)));
+		$params['pageAddress'] = sprintf('patient_list.php?%s', implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
 
 		//--------------------------------------------------------------------------------------------------------------
 		// count total number

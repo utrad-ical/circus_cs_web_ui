@@ -75,20 +75,20 @@
 			<div class="news">
 				<ul>
 					{foreach from=$newsData item=item}
-						<li>{$item.plugin_name}&nbsp;v.{$item.version} was installed.&nbsp;({$item.install_dt})</li>
+						<li>{$item.plugin_name|escape}&nbsp;v.{$item.version|escape} was installed.&nbsp;({$item.install_dt|escape})</li>
 					{/foreach}
 				</ul>
 			</div>
 
 			<h2>CAD execution</h2>
 			<div class="cad_execution">
-				<h4>Total of CAD execution: {$executionNum} (since {$oldestExecDate})</h4>
+				<h4>Total of CAD execution: {$executionNum|escape} (since {$oldestExecDate|escape})</h4>
 
 				{if $executionNum > 0}
 					[Top {$cadExecutionData|@count}]</p>
 					<ul>
 						{foreach from=$cadExecutionData item=item}
-							<li class="ml10">{$item.plugin_name}&nbsp;v.{$item.version}: {$item.cnt}</li>
+							<li class="ml10">{$item.plugin_name|escape}&nbsp;v.{$item.version|escape}: {$item.cnt|escape}</li>
 						{/foreach}
 					</ul>
 				{/if}

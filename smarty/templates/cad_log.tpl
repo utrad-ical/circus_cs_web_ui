@@ -60,30 +60,30 @@
 
 				<!-- ***** Search ***** -->
 					<form name="" onsubmit="return false;">
-						<input type="hidden" id="mode"                     value="{$params.mode}" />
-						<input type="hidden" id="hiddenFilterPtID"         value="{$params.filterPtID}" />
-						<input type="hidden" id="hiddenFilterPtName"       value="{$params.filterPtName}" />
-						<input type="hidden" id="hiddenFilterSex"          value="{$params.filterSex}" />
-						<input type="hidden" id="hiddenFilterAgeMin"       value="{$params.filterAgeMin}" />
-						<input type="hidden" id="hiddenFilterAgeMax"       value="{$params.filterAgeMax}" />
-						<input type="hidden" id="hiddenFilterModality"     value="{$params.filterModality}" />
-						<input type="hidden" id="hiddenFilterCAD"          value="{$params.filterCAD}" />
-						<input type="hidden" id="hiddenFilterVersion"      value="{$params.filterVersion}" />
-						<input type="hidden" id="hiddenFilterCadID"        value="{$params.filterCadID}" />
-						<input type="hidden" id="hiddenFilterTP"           value="{$params.filterTP}" />
-						<input type="hidden" id="hiddenFilterFN"           value="{$params.filterFN}" />
-						<input type="hidden" id="hiddenFilterPersonalFB"   value="{$params.personalFB}" />
-						<input type="hidden" id="hiddenFilterConsensualFB" value="{$params.consensualFB}" />
-						<input type="hidden" id="hiddenSrDateFrom"         value="{$params.srDateFrom}" />
-						<input type="hidden" id="hiddenSrDateTo"           value="{$params.srDateTo}" />
-						<input type="hidden" id="hiddenSrTimeTo"           value="{$params.srTimeTo}" />
-						<input type="hidden" id="hiddenCadDateFrom"        value="{$params.cadDateFrom}" />
-						<input type="hidden" id="hiddenCadDateTo"          value="{$params.cadDateTo}" />
-						<input type="hidden" id="hiddenCadTimeTo"          value="{$params.cadTimeTo}" />
-						<input type="hidden" id="hiddenShowing"            value="{$params.showing}" />
+						<input type="hidden" id="mode"                     value="{$params.mode|escape}" />
+						<input type="hidden" id="hiddenFilterPtID"         value="{$params.filterPtID|escape}" />
+						<input type="hidden" id="hiddenFilterPtName"       value="{$params.filterPtName|escape}" />
+						<input type="hidden" id="hiddenFilterSex"          value="{$params.filterSex|escape}" />
+						<input type="hidden" id="hiddenFilterAgeMin"       value="{$params.filterAgeMin|escape}" />
+						<input type="hidden" id="hiddenFilterAgeMax"       value="{$params.filterAgeMax|escape}" />
+						<input type="hidden" id="hiddenFilterModality"     value="{$params.filterModality|escape}" />
+						<input type="hidden" id="hiddenFilterCAD"          value="{$params.filterCAD|escape}" />
+						<input type="hidden" id="hiddenFilterVersion"      value="{$params.filterVersion|escape}" />
+						<input type="hidden" id="hiddenFilterCadID"        value="{$params.filterCadID|escape}" />
+						<input type="hidden" id="hiddenFilterTP"           value="{$params.filterTP|escape}" />
+						<input type="hidden" id="hiddenFilterFN"           value="{$params.filterFN|escape}" />
+						<input type="hidden" id="hiddenFilterPersonalFB"   value="{$params.personalFB|escape}" />
+						<input type="hidden" id="hiddenFilterConsensualFB" value="{$params.consensualFB|escape}" />
+						<input type="hidden" id="hiddenSrDateFrom"         value="{$params.srDateFrom|escape}" />
+						<input type="hidden" id="hiddenSrDateTo"           value="{$params.srDateTo|escape}" />
+						<input type="hidden" id="hiddenSrTimeTo"           value="{$params.srTimeTo|escape}" />
+						<input type="hidden" id="hiddenCadDateFrom"        value="{$params.cadDateFrom|escape}" />
+						<input type="hidden" id="hiddenCadDateTo"          value="{$params.cadDateTo|escape}" />
+						<input type="hidden" id="hiddenCadTimeTo"          value="{$params.cadTimeTo|escape}" />
+						<input type="hidden" id="hiddenShowing"            value="{$params.showing|escape}" />
 
-						<input type="hidden" id="orderMode"        value="{$params.orderMode}" />
-						<input type="hidden" id="orderCol"         value="{$params.orderCol}" />
+						<input type="hidden" id="orderMode"        value="{$params.orderMode|escape}" />
+						<input type="hidden" id="orderCol"         value="{$params.orderCol|escape}" />
 
 						{include file='cad_search_panel.tpl'}
 					</form>
@@ -92,7 +92,7 @@
 				<!-- ***** List ***** -->
 
 				<div class="serp">
-					Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results
+					Showing {$params.startNum|escape} - {$params.endNum|escape} of {$params.totalNum|escape} results
 				</div>
 				<table class="col-tbl" style="width: 100%;">
 					<thead>
@@ -163,16 +163,16 @@
 
 							<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 
-								<td class="al-l"><a href="cad_log.php?filterPtID={$item[0]}">{$item[0]}</td>
-								<td class="al-l">{$item[1]}</td>
-								<td>{$item[2]}</td>
-								<td>{$item[3]}</td>
-								<td>{$item[4]}</td>
-								<td>{$item[5]}</td>
-								<td>{$item[6]}</td>
-								<td>{$item[7]}</td>
-								<!-- <td class="al-r">{$item[8]}</td> -->
-								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[8]}', '{$item[9]}', '{$item[10]}', '{$item[11]}', {$smarty.session.personalFBFlg});" /></td>
+								<td class="al-l"><a href="cad_log.php?filterPtID={$item[0]|escape}">{$item[0]|escape}</td>
+								<td class="al-l">{$item[1]|escape}</td>
+								<td>{$item[2]|escape}</td>
+								<td>{$item[3]|escape}</td>
+								<td>{$item[4]|escape}</td>
+								<td>{$item[5]|escape}</td>
+								<td>{$item[6]|escape}</td>
+								<td>{$item[7]|escape}</td>
+								<!-- <td class="al-r">{$item[8]|escape}</td> -->
+								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[8]|escape}', '{$item[9]|escape}', '{$item[10]|escape}', '{$item[11]|escape}', {$smarty.session.personalFBFlg});" /></td>
 								
 								{if $params.mode=='today'}
 									{if $smarty.session.colorSet == "admin"}

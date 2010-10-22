@@ -6,8 +6,9 @@
 
 	include_once("../common.php");
 	include_once("../auto_logout.php");	
-	include("fn_input_private.php");
-	require_once('../class/PersonalInfoScramble.class.php');	
+	include_once("fn_input_private.php");
+	require_once('../class/PersonalInfoScramble.class.php');
+	require_once('../class/DcmExport.class.php');	
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -27,11 +28,13 @@
 	$registTime = (isset($_REQUEST['registTime'])) ? $_REQUEST['registTime'] : "";
 	$visibleFlg = (isset($_REQUEST['visibleFlg'])) ? $_REQUEST['visibleFlg'] : 1;
 
-	if(isset($_REQUEST['seriesDir']))
-	{
-		if(ini_get('magic_quotes_gpc') == "1")  $seriesDir = stripslashes($_REQUEST['seriesDir']);
-		else                                    $seriesDir = $_REQUEST['seriesDir'];
-	}
+	//if(isset($_REQUEST['seriesDir']))
+	//{
+	//	if(ini_get('magic_quotes_gpc') == "1")  $seriesDir = stripslashes($_REQUEST['seriesDir']);
+	//	else                                    $seriesDir = $_REQUEST['seriesDir'];
+	//}
+	$seriesDir = "";
+	$seriesDirWeb = "";
 	
 	$orgWidth  = $_REQUEST['orgWidth'];
 	$orgHeight = $_REQUEST['orgHeight'];
@@ -55,14 +58,14 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
-		if($seriesDir == "" || !isset($_REQUEST['orgWidth']) || !isset($_REQUEST['orgHeight'])
+		if($seriesDir == "" || $seriesDirWeb == "" || !isset($_REQUEST['orgWidth']) || !isset($_REQUEST['orgHeight'])
 		   || $encryptedPatientID == "" || $encryptedPatientName == ""
 		   || !isset($_REQUEST['sex']) || !isset($_REQUEST['age']) || !isset($_REQUEST['seriesDate'])
 		   || !isset($_REQUEST['modality']))
 		{
-			$sqlStr = "SELECT pt.patient_id, pt.patient_name, sm.path, sr.image_width," 
-			        . " sr.image_height, pt.sex, st.age, st.study_id, st.study_date, sr.series_number,"
-					. " sr.series_date, sr.modality, sr.series_description"
+			$sqlStr = "SELECT pt.patient_id, pt.patient_name, sr.image_width, sr.image_height," 
+			        . " pt.sex, st.age, st.study_id, st.study_date, sr.series_number,"
+					. " sr.series_date, sr.modality, sr.series_description, sm.path, sm.apache_alias"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm " 
 			        . " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?" 
 			        . " AND sr.study_instance_uid=st.study_instance_uid" 
@@ -76,20 +79,24 @@
 			
 			$patientID         = $result[0];
 			$patientName       = $result[1];
-			$sex               = $result[5];
-			$age               = $result[6];
-			$studyID           = $result[7];
-			$studyDate         = $result[8];
-			$seriesID          = $result[9];
-			$seriesDate        = $result[10];
-			$modality          = $result[11];
-			$seriesDescription = $result[12];
+			$sex               = $result[4];
+			$age               = $result[5];
+			$studyID           = $result[6];
+			$studyDate         = $result[7];
+			$seriesID          = $result[8];
+			$seriesDate        = $result[9];
+			$modality          = $result[10];
+			$seriesDescription = $result[11];
 			
-			$seriesDir = $result[2] . $DIR_SEPARATOR . $result[0]
+			$seriesDir = $result[12] . $DIR_SEPARATOR . $result[0]
 			           . $DIR_SEPARATOR . $params['studyInstanceUID']
 					   . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-			$orgWidth  = $result[3];
-			$orgHeight = $result[4];
+					   
+			$seriesDirWeb = $result[13] . $result[0]
+		                  . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
+		                  . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];					   
+			$orgWidth  = $result[2];
+			$orgHeight = $result[3];
 			
 			$encryptedPatientID   = PinfoScramble::encrypt($patientID, $_SESSION['key']);
 			$encryptedPatientName = PinfoScramble::encrypt($patientName, $_SESSION['key']);
@@ -478,6 +485,9 @@
 		$_SESSION['ticket'] = md5(uniqid().mt_rand());
 		//--------------------------------------------------------------------------------------------------------
 	
+		//--------------------------------------------------------------------------------------------------------
+		// FN“ü—Í‰æ–Ê‚Ì2D‰æ‘œƒtƒ@ƒCƒ‹–¼‚Ì¶¬
+		//--------------------------------------------------------------------------------------------------------
 		$flist = array();
 		$flist = GetDicomFileListInPath($seriesDir);
 		$fNum = count($flist);
@@ -487,10 +497,28 @@
 			
 		$tmpFname = $flist[$imgNum-1];
 	
-		$inFname  = $seriesDir . $DIR_SEPARATOR . $tmpFname;
-		$outFname = $subDir . $DIR_SEPARATOR . substr($tmpFname, 0, strlen($tmpFname)-4);
-		if($presetName != "" && $presetName != "Auto")  $outFname .= "_" . $presetName;
-		$outFname .= '.jpg';
+		$srcFname  = $seriesDir . $DIR_SEPARATOR . $tmpFname;
+		
+		// For compresed DICOM file
+		$tmpFname = str_ireplace("c_", "_", $tmpFname);
+		$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
+
+		$dstFname .= $subDir . $DIR_SEPARATOR . $tmpFname;
+		$dstFnameWeb .= $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
+
+		if($presetName != "" && $presetName != "Auto") 
+		{
+			$dstFname .= "_" . $presetName;
+			$dstFnameWeb .= "_" . $presetName;
+		}
+		$dstFname .= '.jpg';
+		$dstFnameWeb .= '.jpg';		
+		
+		if(!is_file($data['dstFname']))
+		{
+			DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $windowLevel, $windowWidth);
+		}
+		
 		//--------------------------------------------------------------------------------------------------------
 	
 		//--------------------------------------------------------------------------------------------------------
@@ -569,11 +597,6 @@
 	
 		$smarty->assign('params',   $params);
 	
-		$smarty->assign('inFname',  $inFname);
-		$smarty->assign('outFname', $outFname);
-		
-		$smarty->assign('seriesDir',  $seriesDir);
-
 		$smarty->assign('imgNum',  $imgNum);
 		$smarty->assign('fNum',    $fNum);
 		
@@ -619,6 +642,8 @@
 		$smarty->assign('orgHeight',    $orgHeight);
 		$smarty->assign('dispWidth',    $dispWidth);
 		$smarty->assign('dispHeight',   $dispHeight);
+		
+		$smarty->assign('dstFnameWeb',  $dstFnameWeb);
 		
 		$smarty->assign('registFNFlg',     $registFNFlg);
 		$smarty->assign('visibleFlg',      $visibleFlg);

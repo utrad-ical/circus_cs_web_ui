@@ -22,7 +22,6 @@ function AddTag()
            	   {mode: 'add',
  				execID: $("#execID").val(),
 				candID: $("#candID").val(),
-				feedbackMode: $("#feedbackMode").val(),
 				tagStr: $("#addTagText").val(),
 				userID: $("#userID").val()},
 
@@ -50,7 +49,6 @@ function DeleteTag(tagID)
            	   {mode: 'delete',
 				execID: $("#execID").val(),
 				candID: $("#candID").val(),
-				feedbackMode: $("#feedbackMode").val(),
 				tagID: tagID,
 				tagStr: $("#tagStr" + tagID).html(),
 				userID: $("#userID").val()},
@@ -88,13 +86,11 @@ function DeleteTag(tagID)
 	<form onsubmit="return false;">
 	<input type="hidden" id="execID"  value="{$params.execID}" />
 	<input type="hidden" id="candID"  value="{$params.candID}" />
-	<input type="hidden" id="feedbackMode"  value="{$params.feedbackMode}" />
 	<input type="hidden" id="userID"  value="{$params.userID}" />
 
 	<h4>Candidate tags</h4>
 	<p class="font-s mb10">
 		(ID: {$params.execID}, candidate: {$params.candID},
-		{if $params.feedbackMode == "personal"}personal, user ID:{$params.userID}{else}consensual{/if})
 	</p>
 
 	<div id="tagList" class="block-al-c" style="width:270px;">
@@ -109,7 +105,7 @@ function DeleteTag(tagID)
 			{foreach from=$tagArray item=item}
 				<tr>
 					<td id="{$item[0]}">{$item[0]}</td>
-					<td id="tagStr{$item[0]}" class="al-l" style="width:200px;">{$item[1]}</td>
+					<td id="tagStr{$item[0]}" class="al-l" style="width:200px;">{$item[1]|escape}</td>
 					<td class="al-l">
 						<input type="button" id="del{$item[0]}'" class="s-btn form-btn" value="delete" onclick="DeleteTag({$item[0]});" />
 					</td>

@@ -1,8 +1,8 @@
 <?php
 	session_start();
 	
-	include("common.php");
-	include("auto_logout.php");
+	include_once('common.php');
+	include_once("auto_logout.php");
 	
 	$data = array();
 
@@ -33,7 +33,7 @@
 		$stmt = $pdo->prepare("SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1");
 		$stmt->execute();
 			
-		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1";
+		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1 ORDER BY version DESC";
 
 		$stmtVersion = $pdo->prepare($sqlStr);
 

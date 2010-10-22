@@ -35,17 +35,17 @@
 			
 		<!-- ***** Search ***** -->
 			<form name="" onsubmit="return false;">
-				<input type="hidden" id="mode"                 value="{$params.mode}" />
-				<input type="hidden" id="encryptedPtID"        value="{$params.encryptedPtID}" />
-				<input type="hidden" id="hiddenFilterPtID"     value="{$params.filterPtID}" />
-				<input type="hidden" id="hiddenFilterPtName"   value="{$params.filterPtName}" />
-				<input type="hidden" id="hiddenFilterSex"      value="{$params.filterSex}" />
-				<input type="hidden" id="hiddenFilterAgeMin"   value="{$params.filterAgeMin}" />
-				<input type="hidden" id="hiddenFilterAgeMax"   value="{$params.filterAgeMax}" />
-				<input type="hidden" id="hiddenFilterModality" value="{$params.filterModality}" />
-				<input type="hidden" id="hiddenStDateFrom"     value="{$params.stDateFrom}" />
-				<input type="hidden" id="hiddenStDateTo"       value="{$params.stDateTo}" />
-				<input type="hidden" id="hiddenStTimeTo"       value="{$params.stTimeTo}" />
+				<input type="hidden" id="mode"                 value="{$params.mode|escape}" />
+				<input type="hidden" id="encryptedPtID"        value="{$params.encryptedPtID|escape}" />
+				<input type="hidden" id="hiddenFilterPtID"     value="{$params.filterPtID|escape}" />
+				<input type="hidden" id="hiddenFilterPtName"   value="{$params.filterPtName|escape}" />
+				<input type="hidden" id="hiddenFilterSex"      value="{$params.filterSex|escape}" />
+				<input type="hidden" id="hiddenFilterAgeMin"   value="{$params.filterAgeMin|escape}" />
+				<input type="hidden" id="hiddenFilterAgeMax"   value="{$params.filterAgeMax|escape}" />
+				<input type="hidden" id="hiddenFilterModality" value="{$params.filterModality|escape}" />
+				<input type="hidden" id="hiddenStDateFrom"     value="{$params.stDateFrom|escape}" />
+				<input type="hidden" id="hiddenStDateTo"       value="{$params.stDateTo|escape}" />
+				<input type="hidden" id="hiddenStTimeTo"       value="{$params.stTimeTo|escape}" />
 				<input type="hidden" id="hiddenShowing"        value="{$params.showing}" />
 				{include file='study_search_panel.tpl'}
 			</form>
@@ -96,15 +96,15 @@
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-							<td class="al-l"><a href="study_list.php?filterPtID={$item[1]}">{$item[1]}</td>
-							<td class="al-l">{$item[2]}</td>
-							<td class="al-r">{$item[3]}</td>
-							<td>{$item[4]}</td>
-							<td class="al-r">{$item[5]}</td>
-							<td>{$item[6]}</td>
-							<td>{$item[7]}</td>
-							<td>{$item[8]}</td>
-							<td>{$item[9]}</td>
+							<td class="al-l"><a href="study_list.php?filterPtID={$item[1]|escape}">{$item[1]|escape}</td>
+							<td class="al-l">{$item[2]|escape}</td>
+							<td class="al-r">{$item[3]|escape}</td>
+							<td>{$item[4]|escape}</td>
+							<td class="al-r">{$item[5]|escape}</td>
+							<td>{$item[6]|escape}</td>
+							<td>{$item[7]|escape}</td>
+							<td>{$item[8]|escape}</td>
+							<td>{$item[9]|escape}</td>
 							<td>
 								<input name="" type="button" value="show" class="s-btn form-btn"
 									   onclick="ShowSeriesList({$smarty.foreach.cnt.iteration}, '{$item[0]}');" />

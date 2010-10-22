@@ -21,7 +21,7 @@ function AddTag()
 		$.post('series_tag_registration.php', 
            	   {mode: 'add',
  				seriesInstanceUID: $("#seriesInstanceUID").val(),
-				tagStr: $("#addTagText").val() },
+				tagStr: encodeURIComponent($("#addTagText").val()) },
 				function(data){
 		    		if(data.message != "")
 					{
@@ -94,10 +94,10 @@ function DeleteTag(tagID)
 			<tbody>
 			{foreach from=$tagArray item=item}
 				<tr>
-					<td id="{$item[0]}">{$item[0]}</td>
-					<td id="tagStr{$item[0]}" class="al-l" style="width:200px;">{$item[1]}</td>
+					<td id="{$item[0]|escape}">{$item[0]|escape}</td>
+					<td id="tagStr{$item[0]|escape}" class="al-l" style="width:200px;">{$item[1]|escape}</td>
 					<td class="al-l">
-						<input type="button" id="del{$item[0]}'" class="s-btn form-btn" value="delete" onclick="DeleteTag({$item[0]});" />
+						<input type="button" id="del{$item[0]|escape}'" class="s-btn form-btn" value="delete" onclick="DeleteTag({$item[0]|escape});" />
 					</td>
 				</tr>
 			{/foreach}

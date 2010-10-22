@@ -104,7 +104,6 @@ $(function() {ldelim}
 		<div class="tab-content">
 			<div id="fnInput">
 				<form id="form1" name="form1">
-				<input type="hidden" id="seriesDir"         name="seriesDir"         value="{$seriesDir}">
 				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
@@ -166,7 +165,7 @@ $(function() {ldelim}
 						<tr>
 							<td colspan="3" valign="top">
 								<div id="imgBlock">
-									<img id="imgArea" class="{if $registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../show_thumbnail_image.php?inFname={$inFname}&outFname={$outFname}&imgNum={$imgNum}&dispWidth={$dispWidth}&dispHeight={$dispHeight}&windowLevel={$windowLevel}&windowWidth={$windowWidth}&dumpFlg=0" width="{$dispWidth}" "height={$dispHeight}" />
+									<img id="imgArea" class="{if $registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$dstFnameWeb}" width="{$dispWidth}" "height={$dispHeight}" />
 								</div>
 							</td>
 						</tr>

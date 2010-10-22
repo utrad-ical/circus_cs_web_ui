@@ -14,7 +14,6 @@
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/ui/ui.core.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/ui/ui.slider.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/ui/ui.dialog.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
@@ -330,7 +329,6 @@ $(function() {ldelim}
 
 <!-- InstanceBeginEditable name="head" -->
 <link href="../jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../jq/ui/css/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />

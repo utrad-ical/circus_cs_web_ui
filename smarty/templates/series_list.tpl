@@ -56,22 +56,22 @@
 			
 			<!-- ***** Search ***** -->
 				<form name="" onsubmit="return false;">
-					<input type="hidden" id="mode"                      value="{$params.mode}" />
-					<input type="hidden" id="studyInstanceUID"          value="{$params.studyInstanceUID}" />
-					<input type="hidden" id="hiddenFilterPtID"          value="{$params.filterPtID}" />
-					<input type="hidden" id="hiddenFilterPtName"        value="{$params.filterPtName}" />
-					<input type="hidden" id="hiddenFilterSex"           value="{$params.filterSex}" />
-					<input type="hidden" id="hiddenFilterAgeMin"        value="{$params.filterAgeMin}" />
-					<input type="hidden" id="hiddenFilterAgeMax"        value="{$params.filterAgeMax}" />
-					<input type="hidden" id="hiddenFilterModality"      value="{$params.filterModality}" />
-					<input type="hidden" id="hiddenFilterSrDescription" value="{$params.filterSrDescription}" />
-					<input type="hidden" id="hiddenSrDateFrom"          value="{$params.srDateFrom}" />
-					<input type="hidden" id="hiddenSrDateTo"            value="{$params.srDateTo}" />
-					<input type="hidden" id="hiddenSrTimeTo"            value="{$params.srTimeTo}" />
+					<input type="hidden" id="mode"                      value="{$params.mode|escape}" />
+					<input type="hidden" id="studyInstanceUID"          value="{$params.studyInstanceUID|escape}" />
+					<input type="hidden" id="hiddenFilterPtID"          value="{$params.filterPtID|escape}" />
+					<input type="hidden" id="hiddenFilterPtName"        value="{$params.filterPtName|escape}" />
+					<input type="hidden" id="hiddenFilterSex"           value="{$params.filterSex|escape}" />
+					<input type="hidden" id="hiddenFilterAgeMin"        value="{$params.filterAgeMin|escape}" />
+					<input type="hidden" id="hiddenFilterAgeMax"        value="{$params.filterAgeMax|escape}" />
+					<input type="hidden" id="hiddenFilterModality"      value="{$params.filterModality|escape}" />
+					<input type="hidden" id="hiddenFilterSrDescription" value="{$params.filterSrDescription|escape}" />
+					<input type="hidden" id="hiddenSrDateFrom"          value="{$params.srDateFrom|escape}" />
+					<input type="hidden" id="hiddenSrDateTo"            value="{$params.srDateTo|escape}" />
+					<input type="hidden" id="hiddenSrTimeTo"            value="{$params.srTimeTo|escape}" />
 					<input type="hidden" id="hiddenShowing"             value="{$params.showing}" />
 
-					<input type="hidden" id="orderMode"        value="{$params.orderMode}" />
-					<input type="hidden" id="orderCol"         value="{$params.orderCol}" />
+					<input type="hidden" id="orderMode"        value="{$params.orderMode|escape}" />
+					<input type="hidden" id="orderCol"         value="{$params.orderCol|escape}" />
 
 					{include file='series_search_panel.tpl'}
 				</form>
@@ -136,18 +136,18 @@
 					<tbody>
 						{foreach from=$data item=item name=cnt}
 							<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-								<td class="al-l"><a href="series_list.php?filterPtID={$item[2]}">{$item[2]}</a></td>
-								<td class="al-l">{$item[3]}</td>
-								<td>{$item[4]}</td>
-								<td>{$item[5]}</td>
-								{if $params.mode!='today'}<td>{$item[6]}</td>{/if}
-								<td>{$item[7]}</td>
-								<td>{$item[8]}</td>
-								<td>{$item[9]}</td>
-								<td class="al-r">{$item[10]}</td>
-								<td class="al-l">{$item[11]}</td>
+								<td class="al-l"><a href="series_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</a></td>
+								<td class="al-l">{$item[3]|escape}</td>
+								<td>{$item[4]|escape}</td>
+								<td>{$item[5]|escape}</td>
+								{if $params.mode!='today'}<td>{$item[6]|escape}</td>{/if}
+								<td>{$item[7]|escape}</td>
+								<td>{$item[8]|escape}</td>
+								<td>{$item[9]|escape}</td>
+								<td class="al-r">{$item[10]|escape}</td>
+								<td class="al-l">{$item[11]|escape}</td>
 								<td>
-									<input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail('{$smarty.session.colorSet}', '{$item[0]}', '{$item[1]}');"/>
+									<input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail('{$smarty.session.colorSet}', '{$item[0]|escape}', '{$item[1]|escape}');"/>
 								</td>
 
 								{* ----- CAD column ----- *}

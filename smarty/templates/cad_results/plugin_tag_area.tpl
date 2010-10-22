@@ -2,9 +2,9 @@
 	Tags:
 	{foreach from=$params.tagArray item=tag}
 		{if $params.pluginType == 1}
-			<a href="../cad_log.php?filterTag={$tag}">{$tag}</a>&nbsp;
+			<a href="../cad_log.php?filterTag={$tag|escape}">{$tag|escape}</a>&nbsp;
 		{elseif $params.pluginType == 2}
-			<a href="research_list.php?filterTag={$tag}">{$tag}</a>&nbsp;
+			<a href="research_list.php?filterTag={$tag|escape}">{$tag|escape}</a>&nbsp;
 		{/if}
 	{/foreach}
 	{if $smarty.session.researchFlg==1}<a href="#" onclick="EditPluginTag({$params.execID}, {$params.pluginType});">(Edit)</a>{/if}

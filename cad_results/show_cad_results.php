@@ -6,8 +6,9 @@
 
 	include_once("../common.php");
 	include_once("../auto_logout.php");	
-	include("show_cad_results_private.php");
+	include_once("show_cad_results_private.php");
 	require_once('../class/PersonalInfoScramble.class.php');
+	require_once('../class/DcmExport.class.php');
 	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables 
@@ -24,7 +25,7 @@
 	$params['srcList']           = (isset($_REQUEST['srcList'])) ? $_REQUEST['srcList'] : "";
 	$params['tagStr']            = "";
 	$params['tagArray']          = array();
-	$params['tagEnteredBy']      = "");
+	$params['tagEnteredBy']      = "";
 
 	$userID = $_SESSION['userID'];
 	

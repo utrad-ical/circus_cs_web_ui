@@ -2,15 +2,9 @@
 	session_cache_limiter('nocache');
 	session_start();
 
-	include("common.php");
+	include_once('common.php');
+	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');	
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Auto logout (session timeout)
-	//------------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'])  header('location: index.php?mode=timeout');
-	else	$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables and set $params array	
