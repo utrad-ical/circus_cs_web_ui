@@ -51,14 +51,14 @@
 						. " WHERE pjob.job_id=? AND pjob.job_id=jcad.job_id"
 						. " AND (";
 					
-				array_push($colArr, $result);
+				$colArr[] = $result;
 
 				for($i=0; $i<$cadNum; $i++)
 				{
 					if($i > 0)  $sqlStr .= " OR ";
 
 					$sqlStr .= "(jcad.exec_id=?)";
-					array_push($colArr, $cadIDArr[$i]);
+					$colArr[] = $cadIDArr[$i];
 				}
 				$sqlStr .= ")";				
 				
@@ -97,14 +97,14 @@
 							. " WHERE el.exec_id=? AND el.exec_id=ecad.exec_id"
 							. " AND (";
 				
-					array_push($colArr, $result);
+					$colArr[] = $result;
 			
 					for($i=0; $i<$cadNum; $i++)
 					{
 						if($i > 0)  $sqlStr .= " OR ";
 					
 						$sqlStr .= "(ecad.cad_exec_id=?)";
-						array_push($colArr, $cadIDArr[$i]);
+						$colArr[] = $cadIDArr[$i];
 					}
 					$sqlStr .= ");";
 			
@@ -148,8 +148,8 @@
 				{
 					if($i > 0) $sqlStr .= ",";
 					$sqlStr .= "(?,?)";
-					array_push($colArr, $jobID);
-					array_push($colArr, $cadIDArr[$i]);
+					$colArr[] = $jobID;
+					$colArr[] = $cadIDArr[$i];
 				}
 
 				$stmt = $pdo->prepare($sqlStr);

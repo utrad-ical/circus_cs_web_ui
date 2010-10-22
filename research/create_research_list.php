@@ -53,15 +53,15 @@
 		if($resDateFrom != "" && $resDateTo != "" && $resDateFrom == $resDateTo)
 		{
 			$sqlCond .= " AND executed_at>=? AND executed_at<=?";
-			array_push($condArr, $params['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $params['cadDateFrom'] . ' 23:59:59');
+			$condArr[] = $params['cadDateFrom'] . ' 00:00:00';
+			$condArr[] = $params['cadDateFrom'] . ' 23:59:59';
 		}
 		else
 		{
 			if($resDateFrom != "")
 			{
 				$sqlCond .= " AND ?<=executed_at";
-				array_push($condArr, $resDateFrom.' 00:00:00');
+				$condArr[] = $resDateFrom.' 00:00:00';
 			}
 		
 			if($resDateTo != "")
@@ -69,12 +69,12 @@
 				if($resimeTo != "")
 				{
 					$sqlCond .= " AND executed_at<=?";
-					array_push($condArr, $resDateTo . ' ' . $resTimeTo);
+					$condArr[] = $resDateTo . ' ' . $resTimeTo;
 				}
 				else
 				{
 					$sqlCond .= " AND executed_at<=?";
-					array_push($condArr, $resDateTo . ' 23:59:59');
+					$condArr[] = $resDateTo . ' 23:59:59';
 				}
 			}
 		}
@@ -82,8 +82,8 @@
 		if($pluginName != "" && $version != "")
 		{
 			$sqlCond .= " AND plugin_name=? AND version=?";
-			array_push($condArr, $pluginName);
-			array_push($condArr, $version);
+			$condArr[] = $pluginName;
+			$condArr[] = $version;
 		}
 
 		//-------------------------------------------------------------------------------------------------------------

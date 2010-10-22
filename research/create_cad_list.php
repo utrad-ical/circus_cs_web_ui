@@ -39,8 +39,8 @@
 
 		$stmt = $pdo->prepare("SELECT result_type FROM cad_master WHERE cad_name=? AND version=?");
 		
-		array_push($condArr, $params['cadName']);
-		array_push($condArr, $params['version']);
+		$condArr[] = $params['cadName'];
+		$condArr[] = $params['version'];
 				
 		$stmt->execute($condArr);
 		
@@ -74,16 +74,15 @@
 		if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
 			$sqlStr .= " AND el.executed_at>=? AND el.executed_at<=?";
-			array_push($condArr, $params['cadDateFrom'] . ' 00:00:00');
-			array_push($condArr, $params['cadDateFrom'] . ' 23:59:59');
+			$condArr[] = $params['cadDateFrom'] . ' 00:00:00';
+			$condArr[] = $params['cadDateFrom'] . ' 23:59:59';
 		}
 		else
 		{
 			if($params['cadDateFrom'] != "")
 			{
 				$sqlStr .= " AND ?<=el.executed_at";
-				array_push($condArr, $params['cadDateFrom'].' 00:00:00');
-				$optionNum++;
+				$condArr[] = $params['cadDateFrom'].' 00:00:00';
 			}
 		
 			if($params['cadDateTo'] != "")
@@ -92,11 +91,11 @@
 		
 				if($params['cadTimeTo'] != "")
 				{
-					array_push($condArr, $params['cadDateTo'] . ' ' . $params['cadTimeTo']);
+					$condArr[] = $params['cadDateTo'] . ' ' . $params['cadTimeTo'];
 				}
 				else
 				{
-					array_push($condArr, $params['cadDateTo'] . '23:59:59');
+					$condArr[] = $params['cadDateTo'] . '23:59:59';
 				}
 			}
 		}
@@ -105,29 +104,29 @@
 		if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 		{
 			$sqlStr .= " AND sr.series_date=?";
-			array_push($condArr, $params['srDateFrom']);
+			$condArr[] = $params['srDateFrom'];
 		}
 		else
 		{
 			if($params['srDateFrom'] != "")
 			{
 				$sqlStr .= " AND ?<=sr.series_date";
-				array_push($condArr, $params['srDateFrom']);
+				$condArr[] = $params['srDateFrom'];
 			}
 		
 			if($params['srDateTo'] != "")
 			{
+				$condArr[] = $params['srDateTo'];
+
 				if($params['srTimeTo'] != "")
 				{
 					$sqlStr .= " AND (sr.series_date<? OR (sr.series_date=? AND sr.series_date<=?))";
-					array_push($condArr, $params['srDateTo']);
-					array_push($condArr, $params['srDateTo']);
-					array_push($condArr, $params['srTimeTo']);
+					$condArr[] = $params['srDateTo'];
+					$condArr[] = $params['srTimeTo'];
 				}
 				else
 				{
 					$sqlStr .= " AND sr.series_date<=?";
-					array_push($condArr, $params['srDateTo']);
 				}
 			}
 		}
@@ -135,34 +134,33 @@
 		if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 		{
 			$sqlStr .= " AND pt.sex=?";
-			array_push($condArr, $params['filterSex']);
-			$optionNum++;
+			$condArr[] = $params['filterSex'];
 		}
 
 		if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 		{
 			$sqlStr .= " AND st.age=?";
-			array_push($condArr, $params['filterAgeMin']);
+			$condArr[] = $params['filterAgeMin'];
 		}
 		else
 		{
 			if($params['filterAgeMin'] != "")
 			{
 				$sqlStr .= " AND ?<=st.age";
-				array_push($condArr, $params['filterAgeMin']);
+				$condArr[] = $params['filterAgeMin'];
 			}
 		
 			if($params['filterAgeMax'] != "")
 			{
 				$sqlStr .= " AND st.age<=?";
-				array_push($condArr, $params['filterAgeMax']);
+				$condArr[] = $params['filterAgeMax'];
 			}
 		}
 
 		if($params['filterTag'] != "")
 		{
 			$sqlStr .= " AND el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
-			array_push($condArr, $params['filterTag']);
+			$condArr[] = $params['filterTag'];
 		}
 		
 		$sqlStr .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
@@ -177,7 +175,7 @@
 		
 		while($result = $stmt->fetch(PDO::FETCH_ASSOC)) 
 		{
-			array_push($cadList, $result);
+			$cadList[] = $result;
 		}
 
 		echo json_encode($cadList);

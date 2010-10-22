@@ -65,7 +65,7 @@
 				}
 				$tmpStr .= '^' . $result[1];
 			}
-			array_push($pluginMenuVal, $tmpStr);
+			$pluginMenuVal[] = $tmpStr;
 		}
 
 		$cadMenuStr = explode('/', $pluginMenuVal[0]);
@@ -90,9 +90,6 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
-		//エラーが発生した場合にエラー表示をする設定
-		ini_set( 'display_errors', 1 );
-
 		require_once('../smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		

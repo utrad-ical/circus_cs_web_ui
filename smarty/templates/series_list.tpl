@@ -16,6 +16,22 @@
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
 <script language="javascript" type="text/javascript" src="js/list_tab.js"></script>
+
+{if $params.errorMessage != ""}
+<script language="Javascript">
+<!--
+
+$(function() {ldelim}
+	$.event.add(window, "load", 
+			function(){ldelim}
+					 alert('{$params.errorMessage}');
+			{rdelim});
+	{rdelim});
+-->
+</script>
+{/if}
+
+
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
@@ -78,9 +94,8 @@
 			<!-- / Search End -->
 
 			<!-- ***** List ***** -->
-
 				<div class="serp">
-					Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results
+					{if $params.startNum>0 && $params.endNum>0}Showing {$params.startNum} - {$params.endNum} of {$params.totalNum} results{/if}
 				</div>
 				
 				<table class="col-tbl" style="width: 100%;">

@@ -5,34 +5,118 @@
 	include_once('common.php');
 	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');
+	require_once('class/FormValidator.class.php');	
+
+	//-----------------------------------------------------------------------------------------------------------------
+	// Import $_GET variables (set $params array)
+	//-----------------------------------------------------------------------------------------------------------------
+	$params = array('mode'           => (isset($_GET['mode']) && $_GET['mode'] == 'patient') ? 'patient' : "",
+				    'errorMessage'   => "",
+				    'encryptedPtID'  => (isset($_GET['encryptedPtID']))  ? $_GET['encryptedPtID']  : "",
+	                'filterPtID'     => (isset($_GET['filterPtID']))     ? $_GET['filterPtID']     : "",
+				    'filterPtName'   => (isset($_GET['filterPtName']))   ? $_GET['filterPtName']   : "",
+				    'filterSex'      => (isset($_GET['filterSex']))      ? $_GET['filterSex']      : "all",
+				    'filterAgeMin'   => (isset($_GET['filterAgeMin']))   ? $_GET['filterAgeMin']   : "",
+				    'filterAgeMax'   => (isset($_GET['filterAgeMax']))   ? $_GET['filterAgeMax']   : "",
+				    'filterModality' => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
+				    'stDateFrom'     => (isset($_GET['stDateFrom']))     ? $_GET['stDateFrom']     : "",
+				    'stDateTo'       => (isset($_GET['stDateTo']))       ? $_GET['stDateTo']       : "",
+				    'stTimeTo'       => (isset($_GET['stTimeTo']))       ? $_GET['stTimeTo']       : "",
+				    'orderCol'       => (isset($_GET['orderCol']))       ? $_GET['orderCol']       : "Study date",
+				    'orderMode'      => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
+				    'pageNum'        => (isset($_REQUEST['pageNum']))  ? $_REQUEST['pageNum']  : 1,
+				    'showing'        => (isset($_REQUEST['showing']))  ? $_REQUEST['showing']  : 10,
+				    'startNum'       => 0,
+				    'endNum'         => 0,
+				    'totalNum'       => 0,
+				    'maxPageNum'     => 1);
+
+	if($params['filterSex'] != "all" && !FormValidator::validateSex($_GET['filterSex']))
+	{	
+		$params['filterSex'] = "all";
+	}
 	
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $params array	
-	//------------------------------------------------------------------------------------------------------------------
-	$params = array('mode'           => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
-	                'filterPtID'     => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
-				    'filterPtName'   => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
-				    'filterSex'      => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
-				    'filterAgeMin'   => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
-				    'filterAgeMax'   => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
-				    'filterModality' => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
-				    'stDateFrom'     => (isset($_REQUEST['stDateFrom'])) ? $_REQUEST['stDateFrom'] : "",
-				    'stDateTo'       => (isset($_REQUEST['stDateTo'])) ? $_REQUEST['stDateTo'] : "",
-				    //'stTimeFrom'     => (isset($_REQUEST['stTimeFrom'])) ? $_REQUEST['stTimeFrom'] : "00:00:00",
-				    'stTimeTo'       => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
-				    'encryptedPtID'  => (isset($_REQUEST['encryptedPtID']))   ? $_REQUEST['encryptedPtID'] : "",
-				    'orderCol'       => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
-				    'orderMode'      => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
-				    'totalNum'       => (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0,
-				    'pageNum'        => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
-				    'showing'        => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
-				    'startNum'       => 1,
-				    'endNum'         => 10,
-				    'maxPageNum'     => 1,
-				    'pageAddress'    => 'study_list.php?');
-				   
-	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
-	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;	
+	if(!is_numeric($_GET['pageNum']) || $params['pageNum'] <= 0)
+	{
+		$params['pageNum'] = 1;
+	}
+
+	if($params['showing'] != 10 && $params['showing'] != 25 && $params['showing'] != 50 && $params['showing'] != "all")
+	{
+		$params['showing'] = 10;
+	}
+	//-----------------------------------------------------------------------------------------------------------------
+
+	//-----------------------------------------------------------------------------------------------------------------
+	// Validate $_GET variables
+	//-----------------------------------------------------------------------------------------------------------------
+	if($params['mode'] == 'patient')
+	{
+		if(!FormValidator::validateString($params['encryptedPtID']))
+		{
+			$params['errorMessage'] = '[Error] URL is incorrect!';
+		}
+	}
+	else
+	{
+		if(!FormValidator::validateString($_GET['filterPtID']))
+		{
+			$params['errorMessage'] = '[Error] Entered patient ID is invalid!';
+		}
+	}
+	
+	if($params['errorMessage'] == "" && !FormValidator::validateString($_GET['filterPtName']))
+	{
+		$params['errorMessage'] = '[Error] Entered patient name is invalid!';
+	}
+	
+	if($params['errorMessage'] == "" && $params['filterAgeMin'] != "")
+	{
+		if(!is_numeric($params['filterAgeMin']) || $params['filterAgeMin'] < 0)
+		{
+			$params['errorMessage'] = '[Error] Entered age is invalid!';
+		}
+	}
+
+	if($params['errorMessage'] == "" && $params['filterAgeMax'] != "")
+	{
+		if(!is_numeric($params['filterAgeMax']) || $params['filterAgeMax'] < 0)
+		{
+			$params['errorMessage'] = '[Error] Entered age is invalid!';
+		}
+	}
+	
+	if($params['errorMessage'] == "" && is_numeric($params['filterAgeMin']) && is_numeric($params['filterAgeMax'])
+	   && $params['filterAgeMin'] > $params['filterAgeMax'])
+	{
+		$params['errorMessage'] = '[Error] Entered age is invalid!';
+	}
+	
+	if($params['errorMessage'] == "" && !FormValidator::validateAlphabet($params['filterModality']))
+	{	
+		$params['errorMessage'] = '[Error] Selected modality is invalid!';
+	}	
+	
+	if($params['errorMessage'] == "" && $params['stDateFrom'] != "" && !FormValidator::validateDate($params['stDateFrom']))
+	{
+		$params['errorMessage'] = '[Error] Entered study date is invalid!';
+	}	
+
+	if($params['errorMessage'] == "" && $params['stDateTo'] != "" && !FormValidator::validateDate($params['stDateTo']))
+	{
+		$params['errorMessage'] = '[Error] Entered study date is invalid!';
+	}
+	
+	if($params['errorMessage'] == "" && $params['stDateFrom'] != "" && $params['stDateTo'] != "" 
+		&& $params['stDateFrom'] > $params['stDateTo'])
+	{
+		$params['errorMessage'] = '[Error] Entered study date is invalid!';
+	}	
+
+	if($params['errorMessage'] == "" && $params['stTimeTo'] != "" && !FormValidator::validateTime($params['stTimeTo']))
+	{
+		$params['errorMessage'] = '[Error] URL is incorrect!';
+	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	$data = array();
@@ -42,217 +126,210 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 		
-		//--------------------------------------------------------------------------------------------------------------
-		// Create WHERE statement of SQL
-		//--------------------------------------------------------------------------------------------------------------
-		$sqlCondArray = array();
-		$sqlParams = array();
-		$sqlCond = "";
-		$pageAddressParams = array();
+		if($params['errorMessage'] == '')
+		{
+			//----------------------------------------------------------------------------------------------------------
+			// Create WHERE statement of SQL
+			//----------------------------------------------------------------------------------------------------------
+			$sqlCondArray = array();
+			$sqlParams = array();
+			$sqlCond = "";
+			$addressParams = array();
 		
-		$sqlCond = " WHERE ";
+			$sqlCond = " WHERE ";
 
-		if($params['mode'] == 'patient')
-		{
-			$patientID = PinfoScramble::decrypt($params['encryptedPtID'], $_SESSION['key']);
-			$params['filterPtID'] = ($_SESSION['anonymizeFlg'] == 1) ? $params['encryptedPtID'] : $patientID;
-			
-			$sqlCondArray[] = "pt.patient_id=?";
-			$sqlParams[]    = $patientID;
-			$pageAddressParams['mode'] = 'patient';
-			$pageAddressParams['encryptedPtID'] = $params['encryptedPtID'];
-			
-			$stmt = $pdo->prepare("SELECT pt.patient_name, pt.sex FROM patient_list pt WHERE patient_id=?");
-			$stmt->bindParam(1, $patientID);
-			$stmt->execute();
-			
-			$result = $stmt->fetch(PDO::FETCH_NUM);
-			$params['filterPtName'] = $result[0];
-			$params['filterSex'] = $result[1];
-			
-			if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
-		}
-		else
-		{
-			if($params['filterPtID'] != "")
+			if($params['mode'] == 'patient')
 			{
-				$patientID = $params['filterPtID'];
-				if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($params['filterPtID'], $_SESSION['key']);
-
-				// Search by regular expression
-				$sqlCondArray[] = "pt.patient_id~*?";
-				$sqlParams[] = $patientID;
-				$pageAddressParams['filterPtID'] = $params['filterPtID'];
+				$patientID = PinfoScramble::decrypt($params['encryptedPtID'], $_SESSION['key']);
+				$params['filterPtID'] = ($_SESSION['anonymizeFlg'] == 1) ? $params['encryptedPtID'] : $patientID;
+			
+				$sqlCondArray[] = "pt.patient_id=?";
+				$sqlParams[]    = $patientID;
+				$addressParams['mode'] = 'patient';
+				$addressParams['encryptedPtID'] = $params['encryptedPtID'];
+			
+				$stmt = $pdo->prepare("SELECT pt.patient_name, pt.sex FROM patient_list pt WHERE patient_id=?");
+				$stmt->bindParam(1, $patientID);
+				$stmt->execute();
+			
+				$result = $stmt->fetch(PDO::FETCH_NUM);
+				$params['filterPtName'] = $result[0];
+				$params['filterSex'] = $result[1];
+			
+				if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
 			}
+			else
+			{
+				if($params['filterPtID'] != "")
+				{
+					$patientID = $params['filterPtID'];
+					if($_SESSION['anonymizeFlg'] == 1)  $patientID = PinfoScramble::decrypt($params['filterPtID'], $_SESSION['key']);
+
+					// Search by regular expression
+					$sqlCondArray[] = "pt.patient_id~*?";
+					$sqlParams[] = $patientID;
+					$addressParams['filterPtID'] = $params['filterPtID'];
+				}
 	
-			if($params['filterPtName'] != "")
-			{
-				// Search by regular expression 
-				$sqlCondArray[] = "pt.patient_name~*?";
-				$sqlParams[] = $params['filterPtName'];
-				$pageAddressParams['filterPtName'] = $params['filterPtName'];
+				if($params['filterPtName'] != "")
+				{
+					// Search by regular expression 
+					$sqlCondArray[] = "pt.patient_name~*?";
+					$sqlParams[] = $params['filterPtName'];
+					$addressParams['filterPtName'] = $params['filterPtName'];
+				}
+			
+				if($params['filterSex'] == "M" || $params['filterSex'] == "F")
+				{
+					$sqlCondArray[] = "pt.sex=?";
+					$sqlParams[] = $params['filterSex'];
+					$addressParams['filterSex'] = $params['filterSex'];
+				}
 			}
-		
-			if($params['filterSex'] == "M" || $params['filterSex'] == "F")
+			
+			if($params['stDateFrom'] != "" && $params['stDateTo'] != "" && $params['stDateFrom'] == $params['stDateTo'])
 			{
-				$sqlCondArray[] = "pt.sex=?";
-				$sqlParams[] = $params['filterSex'];
-				$params['pageAddress'] .= 'filterSex=' . $params['filterSex'];
-			}
-		}
-		
-		if($params['stDateFrom'] != "" && $params['stDateTo'] != "" && $params['stDateFrom'] == $params['stDateTo'])
-		{
-			$sqlCondArray[] = "st.study_date=?";
-			$sqlParams[] = $params['stDateFrom'];
-			$pageAddressParams['stDateFrom'] = $params['stDateFrom'];
-			$pageAddressParams['stDateTo'] = $params['stDateTo'];
-		}
-		else
-		{
-			if($params['stDateFrom'] != "")
-			{
-	 			$sqlCondArray[] = "?<=st.study_date";
+				$sqlCondArray[] = "st.study_date=?";
 				$sqlParams[] = $params['stDateFrom'];
-				$pageAddressParams['stDateFrom'] = $params['stDateFrom'];
+				$addressParams['stDateFrom'] = $params['stDateFrom'];
+				$addressParams['stDateTo'] = $params['stDateTo'];
 			}
-	
-			if($params['stDateTo'] != "")
+			else
 			{
-				if($params['stTimeTo'] != "")
+				if($params['stDateFrom'] != "")
 				{
-					$sqlCondArray[] = "(st.study_date<? OR (st.study_date=? AND st.study_time<=?))";
-					$sqlParams[] = $params['stDateTo'];
-					$sqlParams[] = $params['stDateTo'];
-					$sqlParams[] = $params['stTimeTo'];
-					$pageAddressParams['stDateTo'] = $params['stDateTo'];
-					$pageAddressParams['stTimeTo'] = $params['stTimeTo'];
+		 			$sqlCondArray[] = "?<=st.study_date";
+					$sqlParams[] = $params['stDateFrom'];
+					$addressParams['stDateFrom'] = $params['stDateFrom'];
 				}
-				else
+		
+				if($params['stDateTo'] != "")
 				{
-					$sqlCondArray[] = "st.study_date<=?";
 					$sqlParams[] = $params['stDateTo'];
-					$pageAddressParams['stDateTo'] = $params['stDateTo'];
+					$addressParams['stDateTo'] = $params['stDateTo'];
+	
+					if($params['stTimeTo'] != "")
+					{
+						$sqlCondArray[] = "(st.study_date<? OR (st.study_date=? AND st.study_time<=?))";
+						$sqlParams[] = $params['stDateTo'];
+						$sqlParams[] = $params['stTimeTo'];
+						$addressParams['stTimeTo'] = $params['stTimeTo'];
+					}
+					else
+					{
+						$sqlCondArray[] = "st.study_date<=?";
+					}
 				}
 			}
-		}
-	
-		if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
-		{
-			$sqlCondArray[] = "st.age=?";
-			$sqlParams[] = $params['filterAgeMin'];
-			$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
-			$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
-		}
-		else
-		{
-			if($params['filterAgeMin'] != "")
+		
+			if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 			{
-				$sqlCondArray[] .= " ?<=st.age";
+				$sqlCondArray[] = "st.age=?";
 				$sqlParams[] = $params['filterAgeMin'];
-				$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
+				$addressParams['filterAgeMin'] = $params['filterAgeMin'];
+				$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 			}
-	
-			if($params['filterAgeMax'] != "")
+			else
 			{
-				$sqlCondArray[] = "st.age<=?";
-				$sqlParams[] = $params['filterAgeMax'];
-				$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
+				if($params['filterAgeMin'] != "")
+				{
+					$sqlCondArray[] .= " ?<=st.age";
+					$sqlParams[] = $params['filterAgeMin'];
+					$addressParams['filterAgeMin'] = $params['filterAgeMin'];
+				}
+		
+				if($params['filterAgeMax'] != "")
+				{
+					$sqlCondArray[] = "st.age<=?";
+					$sqlParams[] = $params['filterAgeMax'];
+					$addressParams['filterAgeMax'] = $params['filterAgeMax'];
+				}
+			}		
+		
+			if($params['filterModality'] != "" && $params['filterModality'] != "all")
+			{
+				$sqlCondArray[] = "st.modality=?";
+				$sqlParams[] = $params['filterModality'];
+				$addressParams['filterModality'] = $params['filterModality'];
 			}
-		}		
-	
-		if($params['filterModality'] != "" && $params['filterModality'] != "all")
-		{
-			$sqlCondArray[] = "st.modality=?";
-			$sqlParams[] = $params['filterModality'];
-			$params['pageAddress'] .= 'filterModality=' . $params['filterModality'];
-		}
-		
-		$sqlCondArray[] = "pt.patient_id=st.patient_id";
-		$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));					  
-		//--------------------------------------------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------------------------------------------
-		// Retrieve sort column and order (Default: ascending order of patient ID)
-		//--------------------------------------------------------------------------------------------------------------
-		$orderColStr = "";
-	
-		switch($params['orderCol'])
-		{
-			case "Patient ID":		$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
-			case "Name":			$orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
-			case "Age":				$orderColStr = 'st.age '          . $params['orderMode'];  break;
-			case "Sex":				$orderColStr = 'pt.sex '          . $params['orderMode'];  break;
-			case "Modality":		$orderColStr = 'st.modality '     . $params['orderMode'];  break;
-			case "Study ID":		$orderColStr = 'st.study_id" '    . $params['orderMode'];  break;
-			default:	
-				$orderColStr = 'st.study_date ' . $params['orderMode'] . ', st.study_time ' . $params['orderMode'];
-				$params['orderCol']    = 'Study date';
-				break;
-		}
-
-		$pageAddressParams['orderCol']  = $paramss['orderCol'];
-		$pageAddressParams['orderMode'] = $paramss['orderMode'];
-		$pageAddressParams['showing']   = $paramss['showing'];
-		//--------------------------------------------------------------------------------------------------------------
-
-		$params['pageAddress'] = implode('&', array_map(UrlKeyValPair, array_keys($pageAddressParams), array_values($pageAddressParams)));
-
-		//--------------------------------------------------------------------------------------------------------------
-		// count total number
-		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list pt, study_list st " . $sqlCond);
-		$stmt->execute($sqlParams);		
-		
-		$params['totalNum'] = $stmt->fetchColumn();
-		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
-		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
-		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
-		//--------------------------------------------------------------------------------------------------------------
-		
-		//--------------------------------------------------------------------------------------------------------------
-		// Set $data array
-		//--------------------------------------------------------------------------------------------------------------
-		$sqlStr = "SELECT * FROM patient_list pt, study_list st" . $sqlCond . " ORDER BY " . $orderColStr;
-				
-		if($params['showing'] != "all")
-		{
-			$sqlStr .= " LIMIT ? OFFSET ?";
-			$sqlParams[] = $params['showing'];
-			$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
-		}
-
-		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute($sqlParams);
-		
-		$rowNum = $stmt->rowCount();
-		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
-		$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
-		
-		while ($result = $stmt->fetch(PDO::FETCH_ASSOC))
-		{
-			$patientID = $result['patient_id'];
-			$patientName = $result['patient_name'];
 			
-			if($_SESSION['anonymizeFlg'])
+			$sqlCondArray[] = "pt.patient_id=st.patient_id";
+			$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));					  
+			//----------------------------------------------------------------------------------------------------------
+			
+			//----------------------------------------------------------------------------------------------------------
+			// Retrieve sort column and order (Default: ascending order of patient ID)
+			//----------------------------------------------------------------------------------------------------------
+			$orderColStr = "";
+		
+			switch($params['orderCol'])
 			{
-				$patientID   = htmlspecialchars(PinfoScramble::encrypt($patientID, $_SESSION['key']), ENT_QUOTES);
-				$patientName = PinfoScramble::scramblePtName();
+				case "Patient ID":		$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
+				case "Name":			$orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
+				case "Age":				$orderColStr = 'st.age '          . $params['orderMode'];  break;
+				case "Sex":				$orderColStr = 'pt.sex '          . $params['orderMode'];  break;
+				case "Modality":		$orderColStr = 'st.modality '     . $params['orderMode'];  break;
+				case "Study ID":		$orderColStr = 'st.study_id" '    . $params['orderMode'];  break;
+				default:	
+					$orderColStr = 'st.study_date ' . $params['orderMode'] . ', st.study_time ' . $params['orderMode'];
+					$params['orderCol']    = 'Study date';
+					break;
 			}
-
-			array_push($data, array($result['study_instance_uid'],
-			                        $patientID,
-									$patientName,
-									$result['age'],
-									$result['sex'],
-									$result['study_id'],
-									$result['study_date'],
-									$result['study_time'],
-									$result['modality'],
-									$result['accession_number']));
+	
+			$addressParams['orderCol']  = $paramss['orderCol'];
+			$addressParams['orderMode'] = $paramss['orderMode'];
+			$addressParams['showing']   = $paramss['showing'];
+			//----------------------------------------------------------------------------------------------------------
+	
+			$params['pageAddress'] = sprintf('study_list.php?%s',
+			                                 implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
+	
+			//----------------------------------------------------------------------------------------------------------
+			// count total number
+			//----------------------------------------------------------------------------------------------------------
+			$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list pt, study_list st " . $sqlCond);
+			$stmt->execute($sqlParams);		
+			
+			$params['totalNum'] = $stmt->fetchColumn();
+			$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
+			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
+			//----------------------------------------------------------------------------------------------------------
+			
+			//----------------------------------------------------------------------------------------------------------
+			// Set $data array
+			//----------------------------------------------------------------------------------------------------------
+			$sqlStr = "SELECT st.study_instance_uid, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+					. " st.study_id, st.study_date, st.study_time, st.modality, st.accession_number"
+					. " FROM patient_list pt, study_list st" . $sqlCond . " ORDER BY " . $orderColStr;
+					
+			if($params['showing'] != "all")
+			{
+				$sqlStr .= " LIMIT ? OFFSET ?";
+				$sqlParams[] = $params['showing'];
+				$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
+			}
+	
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute($sqlParams);
+			
+			$rowNum = $stmt->rowCount();
+			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
+			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
+			
+			while ($result = $stmt->fetch(PDO::FETCH_NUM))
+			{
+				if($_SESSION['anonymizeFlg'])
+				{
+					$result[1] = PinfoScramble::encrypt($result[1], $_SESSION['key']);
+					$result[2] = PinfoScramble::scramblePtName();
+				}
+	
+				$data[] = $result;
+			}
+			//----------------------------------------------------------------------------------------------------------
 		}
-		//--------------------------------------------------------------------------------------------------------------
-
+		
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
