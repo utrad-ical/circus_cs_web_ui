@@ -35,7 +35,7 @@ function deleteUser(userID)
 
 
 
-function UserSetting(mode, ticket)
+function UserSetting(mode)
 {
 	if(mode == 'update' && $("#oldUserID").val() == "" 
        && $("#oldUserName").val() == "" && $("#oldPassword").val() == "")
@@ -148,7 +148,7 @@ function CancelUpdate()
 			<h2>User configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket" value="{$ticket}" />
+				<input type="hidden" id="ticket"            value="{$ticket|escape}" />
 				<input type="hidden" id="oldUserID"         value="" />
 				<input type="hidden" id="oldUserName"       value="" />
 				<input type="hidden" id="oldPassword"       value="" />
@@ -158,7 +158,7 @@ function CancelUpdate()
 				<input type="hidden" id="oldAnonymizeFlg"   value="" />
 				<input type="hidden" id="oldLatestResults"  value="" />
 
-				<div id="message" class="mt5 mb5 ml10">{$message}</div>
+				<div id="message" class="mt5 mb5 ml10">{$params.message}</div>
 
 				<div id="userList" class="ml10">
 					<table class="col-tbl">
@@ -167,8 +167,8 @@ function CancelUpdate()
 							<th>User name</th>
 							<th>Group</th>
 							<th>Today</th>
-							<th>Darkroom mode</th>
-							<th>Anonymization</th>
+							<th>Darkroom</th>
+							<th>Anonymize</th>
 							<th>Latest results</th>
 							<th>&nbsp;</th>
 						</tr>
@@ -179,13 +179,13 @@ function CancelUpdate()
 								<td class="al-l">{$item[1]}</td>
 								<td class="al-l">{$item[2]}</td>
 								<td>{$item[3]}</td>
-								<td>{if $item[4]==true}black{else}white{/if}</td>
-								<td>{if $item[5]==true}TRUE{else}FALSE{/if}</td>
+								<td>{if $item[4]}black{else}white{/if}</td>
+								<td>{$item[5]|OorMinus}</td>
 								<td>{$item[6]}</td>
 								<td>
 									<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
                                      onClick="SetEditBox('{$item[0]}', '{$item[1]}', '{$item[7]}','{$item[2]}', '{$item[3]}',
-														 '{if $item[4]==true}t{else}f{/if}', '{if $item[5]==true}t{else}f{/if}','{$item[6]}');" />
+														 '{$item[4]|TorF}', '{$item[5]|TorF}','{$item[6]}');" />
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 										{if $item[0] != $smarty.session.userID}
 										 	class="s-btn form-btn" onClick="deleteUser('{$item[0]}');" />
@@ -262,9 +262,9 @@ function CancelUpdate()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" id="addBtn" class="form-btn" value="add" onClick="UserSetting('add','{$ticket}');" />&nbsp;
+							<input type="button" id="addBtn" class="form-btn" value="add" onClick="UserSetting('add');" />&nbsp;
 							<input type="button" id="updateBtn" class="form-btn form-btn-disabled" value="update"
-                                   onClick="UserSetting('update','{$ticket}');" disabled="disabled" />
+                                   onClick="UserSetting('update');" disabled="disabled" />
 							<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="cancel"
                                    onClick="CancelUpdate();" disabled="disabled" />
 						</p>

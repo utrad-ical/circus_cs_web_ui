@@ -5,34 +5,29 @@
 	include("../common.php");
 	include("auto_logout_administration.php");
 	
-	if($_SESSION['superUserFlg'])
+	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{
-		$params = array('toTopDir' => "../");
+		$params = array('toTopDir' => "../",
+		                'message'  => "&nbsp;");
 	
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables 
 		//--------------------------------------------------------------------------------------------------------------
-		$mode             = (isset($_REQUEST['mode']))             ? $_REQUEST['mode']             : "";
-		$oldGroupID       = (isset($_REQUEST['oldGroupID']))       ? $_REQUEST['oldGroupID']       : "";
-		$oldColorSet      = (isset($_REQUEST['oldColorSet']))      ? $_REQUEST['oldColorSet']      : "";
-		$oldExecCAD       = (isset($_REQUEST['oldExecCAD']))       ? $_REQUEST['oldExecCAD']       : "";
-		$oldPersonalFB    = (isset($_REQUEST['oldPersonalFB']))    ? $_REQUEST['oldPersonalFB']    : "";
-		$oldConsensualFB  = (isset($_REQUEST['oldConsensualFB']))  ? $_REQUEST['oldConsensualFB']  : "";
-		$oldAllStatistics = (isset($_REQUEST['oldAllStatistics'])) ? $_REQUEST['oldAllStatistics'] : "";
-		$oldResearch      = (isset($_REQUEST['oldResearch']))      ? $_REQUEST['oldResearch']      : "";
-		$oldVolumeDL      = (isset($_REQUEST['oldVolumeDL']))      ? $_REQUEST['oldVolumeDL']      : "";
-		$oldAnonymizeFlg  = (isset($_REQUEST['oldAnonymizeFlg']))  ? $_REQUEST['oldAnonymizeFlg']  : "";
-		$oldSuFlg         = (isset($_REQUEST['oldSuFlg']))         ? $_REQUEST['oldSuFlg']         : "";
-		$newGroupID       = (isset($_REQUEST['newGroupID']))       ? $_REQUEST['newGroupID']       : "";
-		$newColorSet      = (isset($_REQUEST['newColorSet']))      ? $_REQUEST['newColorSet']      : "";
-		$newExecCAD       = (isset($_REQUEST['newExecCAD']))       ? $_REQUEST['newExecCAD']       : "";
-		$newPersonalFB    = (isset($_REQUEST['newPersonalFB']))    ? $_REQUEST['newPersonalFB']    : "";
-		$newConsensualFB  = (isset($_REQUEST['newConsensualFB']))  ? $_REQUEST['newConsensualFB']  : "";
-		$newAllStatistics = (isset($_REQUEST['newAllStatistics'])) ? $_REQUEST['newAllStatistics'] : "";
-		$newResearch      = (isset($_REQUEST['newResearch']))      ? $_REQUEST['newResearch']      : "";
-		$newVolumeDL      = (isset($_REQUEST['newVolumeDL']))      ? $_REQUEST['newVolumeDL']      : "";
-		$newAnonymizeFlg  = (isset($_REQUEST['newAnonymizeFlg']))  ? $_REQUEST['newAnonymizeFlg']  : "";
-		$newSuFlg         = (isset($_REQUEST['newSuFlg']))         ? $_REQUEST['newSuFlg']         : "";
+		$mode                = (isset($_REQUEST['mode']))                ? $_REQUEST['mode']                : "";
+		$oldGroupID          = (isset($_REQUEST['oldGroupID']))          ? $_REQUEST['oldGroupID']          : "";
+		$newGroupID          = (isset($_REQUEST['newGroupID']))          ? $_REQUEST['newGroupID']          : "";
+		$newColorSet         = (isset($_REQUEST['newColorSet']))         ? $_REQUEST['newColorSet']         : "";
+		$newExecCAD          = (isset($_REQUEST['newExecCAD']))          ? $_REQUEST['newExecCAD']          : "";
+		$newPersonalFB       = (isset($_REQUEST['newPersonalFB']))       ? $_REQUEST['newPersonalFB']       : "";
+		$newConsensualFB     = (isset($_REQUEST['newConsensualFB']))     ? $_REQUEST['newConsensualFB']     : "";
+		$newModifyConsensual = (isset($_REQUEST['newModifyConsensual'])) ? $_REQUEST['newModifyConsensual'] : "";
+		$newAllStatistics    = (isset($_REQUEST['newAllStatistics']))    ? $_REQUEST['newAllStatistics']    : "";
+		$newResearch         = (isset($_REQUEST['newResearch']))         ? $_REQUEST['newResearch']         : "";
+		$newVolumeDL         = (isset($_REQUEST['newVolumeDL']))         ? $_REQUEST['newVolumeDL']         : "";
+		$newAnonymizeFlg     = (isset($_REQUEST['newAnonymizeFlg']))     ? $_REQUEST['newAnonymizeFlg']     : "";
+		$newDataDelete       = (isset($_REQUEST['newDataDelete']))       ? $_REQUEST['newDataDelete']       : "";
+		$newServerOperation  = (isset($_REQUEST['newServerOperation']))  ? $_REQUEST['newServerOperation']  : "";
+		$newServerSettings   = (isset($_REQUEST['newServerSettings']))   ? $_REQUEST['newServerSettings']   : "";
 		//--------------------------------------------------------------------------------------------------------------
 
 		try
@@ -43,152 +38,77 @@
 			//----------------------------------------------------------------------------------------------------
 			// Add / Update / Delete group
 			//----------------------------------------------------------------------------------------------------
-			$message = "&nbsp;";
 			$sqlStr = "";
 			$sqlParams = array();
-		
-			if($mode == 'add' && $newGroupID != "")
-			{
-				$sqlStr = 'INSERT INTO groups(group_id, color_set, exec_cad, personal_feedback, consensual_feedback,'
-						. ' view_all_statistics, research, volume_download, anonymize_flg, super_user)'
-						. ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-						
-				$sqlParams[0]  = $newGroupID;
-				$sqlParams[1]  = $newColorSet;
-				$sqlParams[2]  = $newExecCAD;
-				$sqlParams[3]  = $newPersonalFB;
-				$sqlParams[4]  = $newConsensualFB;
-				$sqlParams[5]  = $newAllStatistics;
-				$sqlParams[6]  = $newResearch;
-				$sqlParams[7]  = $newVolumeDL;
-				$sqlParams[8]  = $newAnonymizeFlg;
-				$sqlParams[9]  = $newSuFlg;
-			}
-			else if($mode == 'update') // Update group
-			{
-				$updateCnt = 0;
-				
-				if($oldGroupID == "admin")	$msg = "You can't change setting of <b>admin</b> group.";
 			
-				if($msg == "")
+			if(($mode == 'delete' && $newGroupID != "admin") || $mode == 'update')
+			{
+				$sqlStr = "DELETE FROM groups WHERE group_id=?;";
+				$sqlParams[] = $newGroupID;
+			}
+		
+			if(($mode == 'add' && $newGroupID != "") || $mode == 'update')
+			{
+				if($mode == 'update' && $oldGroupID == "admin")
 				{
-					$sqlStr = 'UPDATE groups SET ';
-					if($newGroupID != $oldGroupID)
-					{
-						$sqlStr .= "group_id=?";
-						$sqlParams[$updateCnt] = $newGroupID;
-						$updateCnt++;
-					}
-	
-					if($newColorSet != $oldColorSet)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "color_set=?";
-						$sqlParams[$updateCnt] = $newColorSet;
-						$updateCnt++;
-					}
-
-					if($newExecCAD != $oldExecCAD)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "exec_cad=?";
-						$sqlParams[$updateCnt] = $newExecCAD;
-						$updateCnt++;
-					}
-	
-					if($newPersonalFB != $oldPersonalFB)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "personal_feedback=?";
-						$sqlParams[$updateCnt] = $newPersonalFB;
-						$updateCnt++;
-					}
-	
-					if($newConsensualFB != $oldConsensualFB)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "consensual_feedback=?";
-						$sqlParams[$updateCnt] = $newConsensualFB;
-						$updateCnt++;
-					}
-	
-					if($newAllStatistics != $oldAllStatistics)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "view_all_statistics=?";
-						$sqlParams[$updateCnt] = $newAllStatistics;
-						$updateCnt++;
-					}
-
-					if($newResearch != $oldResearch)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "research=?";
-						$sqlParams[$updateCnt] = $newResearch;
-						$updateCnt++;
-					}
-	
-					if($newVolumeDL != $oldVolumeDL)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "volume_download=?";
-						$sqlParams[$updateCnt] = $newVolumeDL;
-						$updateCnt++;
-					}
-
-					if($newAnonymizeFlg != $oldAnonymizeFlg)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "anonymize_flg=?";
-						$sqlParams[$updateCnt] = $newAnonymizeFlg;
-						$updateCnt++;
-					}
-
-					if($newSuFlg != $oldSuFlg)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "super_user=?";
-						$sqlParams[$updateCnt] = $newSuFlg;
-						$updateCnt++;
-					}
-	
-					if($updateCnt > 0)
-					{
-						$sqlStr .= " WHERE group_id=?";
-						$sqlParams[$updateCnt] = $oldGroupID;
-					}
-					else  $sqlStr = "";
+					$params['message'] = '<span style="color:#ff0000;">You can\'t change setting of <b>admin</b> group.</span>';
+				}
+				else
+				{
+					$sqlStr .= 'INSERT INTO groups(group_id, color_set, exec_cad, personal_feedback, consensual_feedback,'
+							.  'modify_consensual, view_all_statistics, research, volume_download, anonymize_flg,'
+							.  'data_delete, server_operation, server_settings)'
+							.  ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+						
+					$sqlParams[]  = $newGroupID;
+					$sqlParams[]  = $newColorSet;
+					$sqlParams[]  = $newExecCAD;
+					$sqlParams[]  = $newPersonalFB;
+					$sqlParams[]  = $newConsensualFB;
+					$sqlParams[]  = $newModifyConsensual;
+					$sqlParams[]  = $newAllStatistics;
+					$sqlParams[]  = $newResearch;
+					$sqlParams[]  = $newVolumeDL;
+					$sqlParams[]  = $newAnonymizeFlg;
+					$sqlParams[]  = $newDataDelete;
+					$sqlParams[]  = $newServerOperation;
+					$sqlParams[]  = $newServerSettings;
 				}
 			}
-			else if($mode == 'delete' && $newGroupID != "admin")	// Delete group
-			{
-				$sqlStr = "DELETE FROM groups WHERE group_id=?";
-				$sqlParams[0] = $newGroupID;
-			}
-			
-			if($message == "&nbsp;" && $sqlStr != "")
+
+			if($params['message'] == "&nbsp;" && $sqlStr != "")
 			{
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
+				$errorMessage = $stmt->errorInfo();
 				
-				$tmp = $stmt->errorInfo();
-				$message = $tmp[2];			
-				
-				if($message == "")
+				if($errorMessage[2] == "")
 				{
-					$message = '<span style="color: #0000ff;" >';
+					$params['message'] = '<span style="color: #0000ff;" >';
 				
 					switch($mode)
 					{
-						case 'add'    :  $message .= '"' . $newGroupID . '" was successfully added.'; break;
-						case 'update' :  $message .= '"' . $oldGroupID . '" was successfully updated.'; break;
-						case 'delete' :  $message .= '"' . $newGroupID . '" was successfully deleted.'; break;
+						case 'add'    :  $params['message'] .= '"' . $newGroupID . '" was successfully added.'; break;
+						case 'update' :  $params['message'] .= '"' . $oldGroupID . '" was successfully updated.'; break;
+						case 'delete' :  $params['message'] .= '"' . $newGroupID . '" was successfully deleted.'; break;
 					}
-					$message .= '</span>';
+					$params['message'] .= '</span>';
 				}
-				else $message = '<span style="color:#ff0000;">' . $message . '</span>';
+				else
+				{
+					$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
+					
+					if($mode == 'update')
+					{
+						$params['message'] .= $oldGroupID;
+					}
+					else
+					{
+						$params['message'] .= $newGroupID;
+					}
+					$params['message'] .= '"</span>';
+				}
 			}
-			else $message = '<span style="color:#ff0000;">' . $message . '</span>';
 			
 			//----------------------------------------------------------------------------------------------------------
 	
@@ -202,30 +122,32 @@
 			// Retrieve group lists
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = 'SELECT group_id, color_set, exec_cad, personal_feedback, consensual_feedback,'
-					. 'view_all_statistics, research, volume_download, anonymize_flg, super_user'
-					. ' FROM groups ORDER BY group_id ASC';
+					. 'modify_consensual, view_all_statistics, research, volume_download, anonymize_flg,'
+					. 'data_delete, server_operation, server_settings, '
+					. 'cast(exec_cad as integer)+cast(personal_feedback as integer)+cast(consensual_feedback as integer)'
+					. '+cast(modify_consensual as integer)+cast(view_all_statistics as integer)+cast(research as integer)'
+					. '+cast(volume_download as integer)+cast(anonymize_flg as integer)+cast(data_delete as integer)'
+					. '+cast(server_operation as integer)+cast(server_settings as integer) as true_cnt'
+					. ' FROM groups ORDER BY true_cnt DESC';
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute();
 			
 			$groupList = $stmt->fetchAll(PDO::FETCH_NUM);
-			//------------------------------------------------------------------------------------------------	
+			//----------------------------------------------------------------------------------------------------------
 	
-			//------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------------
 			// Settings for Smarty
-			//------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------------
 			require_once('../smarty/SmartyEx.class.php');
 			$smarty = new SmartyEx();	
 
 			$smarty->assign('params',    $params);
-			$smarty->assign('message',   $message);
 			$smarty->assign('groupList', $groupList);
-			
-			$smarty->assign('ticket',   htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
+			$smarty->assign('ticket',    $_SESSION['ticket']);
 	
 			$smarty->display('administration/group_config.tpl');
-			//------------------------------------------------------------------------------------------------
-
+			//----------------------------------------------------------------------------------------------------------
 		}
 		catch (PDOException $e)
 		{

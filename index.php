@@ -71,19 +71,21 @@
 
 					$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-					$_SESSION['colorSet']           = $result['color_set'];
-					$_SESSION['execCADFlg']         = ($result['exec_cad'] == 't') ? 1 : 0;
-					$_SESSION['personalFBFlg']      = ($result['personal_feedback'] == 't') ? 1 : 0;
-					$_SESSION['consensualFBFlg']    = ($result['consensual_feedback'] == 't') ? 1 : 0;
-					$_SESSION['allStatFlg']         = ($result['view_all_statistics'] == 't') ? 1 : 0;
-					$_SESSION['researchFlg']        = ($result['research'] == 't') ? 1 : 0;
-					$_SESSION['anonymizeGroupFlg'] = ($result['anonymize_flg'] == 't') ? 1 : 0;
-					$_SESSION['superUserFlg']    = ($result['super_user'] == 't') ? 1 : 0;
-					if($_SESSION['superUserFlg'] == 1) $_SESSION['adminModeFlg'] = 0;
-					$_SESSION['dlVolumeFlg']     = ($result['download_volume'] == 't') ? 1 : 0;
-
+					$_SESSION['colorSet']            = $result['color_set'];
+					$_SESSION['execCADFlg']          = ($result['exec_cad'] == 't') ? 1 : 0;
+					$_SESSION['personalFBFlg']       = ($result['personal_feedback'] == 't') ? 1 : 0;
+					$_SESSION['consensualFBFlg']     = ($result['consensual_feedback'] == 't') ? 1 : 0;
+					$_SESSION['modifyConsensualFlg'] = ($result['modify_consensual'] == 't') ? 1 : 0;
+					$_SESSION['allStatFlg']          = ($result['view_all_statistics'] == 't') ? 1 : 0;
+					$_SESSION['researchFlg']         = ($result['research'] == 't') ? 1 : 0;
+					$_SESSION['dlVolumeFlg']         = ($result['download_volume'] == 't') ? 1 : 0;
+					$_SESSION['dataDeleteFlg']       = ($result['data_delete'] == 't') ? 1 : 0;
+					$_SESSION['serverOperationFlg']  = ($result['server_operation'] == 't') ? 1 : 0;
+					$_SESSION['serverSettingsFlg']   = ($result['server_settings'] == 't') ? 1 : 0;
+					
 					if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
-
+					
+					$_SESSION['adminModeFlg'] = 0;
 					$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
 				
 					$fp = fopen($LOG_DIR.$DIR_SEPARATOR.$LOGIN_LOG, "a");

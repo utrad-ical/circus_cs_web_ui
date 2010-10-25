@@ -10,7 +10,7 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables (set $params array)
 	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('errorMessage' => "",
+	$params = array('errorMessage' => "&nbsp;",
 				    'filterPtID'   => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
 				    'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filtePtName'] : "",
 				    'filterSex'    => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
@@ -47,7 +47,7 @@
 		$params['errorMessage'] = '[Error] Entered patient ID is invalid!';
 	}
 	
-	if($params['errorMessage'] == "" && !FormValidator::validateString($params['filterPtName']))
+	if($params['errorMessage'] == "&nbsp;" && !FormValidator::validateString($params['filterPtName']))
 	{
 		$params['errorMessage'] = '[Error] Entered patient name is invalid!';
 	}
@@ -60,7 +60,7 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
-		if($params['errorMessage'] == '')
+		if($params['errorMessage'] == "&nbsp;")
 		{
 			//-------------------------------------------------------------------------------------------------------------
 			// Create WHERE statement of SQL

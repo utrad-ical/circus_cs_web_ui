@@ -4,7 +4,7 @@
 	include("../common.php");
 	include("auto_logout_administration.php");
 		
-	if($_SESSION['superUserFlg'])
+	if($_SESSION['serverSettingsFlg']==1)
 	{
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables 

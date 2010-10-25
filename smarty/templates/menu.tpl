@@ -80,7 +80,7 @@
 	<ul>
 		<li><a href="{$params.toTopDir}user_preference.php" class="jq-btn jq-btn-preference" title="preference"></a></li>
 {*		<li><a href="#" class="jq-btn jq-btn-favorites" title="favorites"></a></li> *}
-		{if $smarty.session.superUserFlg==1}
+		{if $smarty.session.serverOperationFlg==1 || $smarty.session.serverSettingsFlg==1}
 			<li><a href="{$params.toTopDir}administration/administration.php" class="jq-btn jq-btn-administration" title="administration"></a></li>
 		{/if}
 		<li><a href="{$params.toTopDir}index.php?mode=logout" class="jq-btn jq-btn-logout" title="logout"></a></li>

@@ -36,7 +36,7 @@
 }
 
 .plug-in {
-  overflow-y:auto;
+  overflow-y:absolute;
   overflow-x:hidden;
   height: 100px;
 }
@@ -129,7 +129,7 @@
 			<h2>Installed plug-ins</h2>
 			<div class="plug-in ml10">
 				<ul>
-					{foreach from=$pluginData item=item|escape}
+					{foreach from=$pluginData item=item}
 						<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})
 						<a href="plugin_info.php?pluginName='{$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
 					{/foreach}

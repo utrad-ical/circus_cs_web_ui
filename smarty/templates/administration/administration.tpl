@@ -107,60 +107,71 @@ function ChangeServerStatus(baseName, serviceName, mode)
 			<h3>Server settings</h3>
 			<div class="p5 ml10 mb10">
 				<table>
+					{if $smarty.session.serverSettingsFlg==1}
+						<tr>
+							<td>DICOM storage server</td>
+							<td class="pl10">
+								<input type="button" id="dicomStorageConfButton" value="config" class="form-btn"
+							 			onClick="location.href='dicom_storage_server_config.php';" />
+							</td>
+						</tr>
+
+						<tr>
+							<td class="pt5">Data storages</td>
+							<td class="pt5 pl10">
+								<input type="button" id="diskStorageConfButton" value="config" class="form-btn"
+								 		onClick="location.href='data_storage_config.php';"/>
+							</td>
+						</tr>
+
+						<tr>
+							<td class="pt5">Add plug-in from pakaged file</td>
+							<td class="pt5 pl10">
+								<input type="button" id="pluginConfButton" value="config" class="form-btn"
+									 onClick="location.href='add_plugin.php';" />
+							</td>
+						</tr>
+					<!--
+						<tr>
+							<td class="pt5">Plug-in</td>
+							<td class="pt5 pl10">
+								<input type="button" id="pluginConfButton" value="config" class="form-btn"
+					 				onClick="location.href='plugin_config.php';">
+							</td>
+						</tr>
+
+						<tr>
+							<td class="pt5">Grayscale preset</td>
+							<td class="pt5 pl10">
+								<input type="button" id="grayscaleConfButton" value="config" class="form-btn"
+									 onClick="location.href='grayscale_config.php';" disabled="disabled" />
+							</td>
+						</tr>
+					-->
+					{/if}
+					
 					<tr>
-					<td>DICOM storage server</td>
-					<td class="pl10"><input type="button" id="dicomStorageConfButton" value="config" class="form-btn"
-					 onClick="location.href='dicom_storage_server_config.php';" />
-					</td>
+						<td class="pt5">Users</td>
+						<td class="pt5 pl10">
+							<input type="button" id="userConfButton" value="config" class="form-btn"
+								 onClick="location.href='user_config.php';" />
+						</td>
 					</tr>
 
 					<tr>
-					<td class="pt5">Data storages</td>
-					<td class="pt5 pl10"><input type="button" id="diskStorageConfButton" value="config" class="form-btn"
-					 onClick="location.href='data_storage_config.php';"/>
-					</td>
+						<td class="pt5">Groups</td>
+						<td class="pt5 pl10">
+							<input type="button" id="groupConfButton" value="config" class="form-btn"
+					 				onClick="location.href='group_config.php';" />
+						</td>
 					</tr>
 
 					<tr>
-					<td class="pt5">Add plug-in from pakaged file</td>
-					<td class="pt5 pl10"><input type="button" id="pluginConfButton" value="config" class="form-btn"
-					 onClick="location.href='add_plugin.php';" />
-					</td>
-					</tr>
-				<!--
-					<tr>
-					<td class="pt5">Plug-in</td>
-					<td class="pt5 pl10"><input type="button" id="pluginConfButton" value="config" class="form-btn"
-					 onClick="location.href='plugin_config.php';">
-					</td>
-					</tr>
-
-					<tr>
-					<td class="pt5">Grayscale preset</td>
-					<td class="pt5 pl10"><input type="button" id="grayscaleConfButton" value="config" class="form-btn"
-					 onClick="location.href='grayscale_config.php';" disabled="disabled" />
-					</td>
-					</tr>
-				-->
-					<tr>
-					<td class="pt5">Users</td>
-					<td class="pt5 pl10"><input type="button" id="userConfButton" value="config" class="form-btn"
-					 onClick="location.href='user_config.php';" />
-					</td>
-					</tr>
-
-					<tr>
-					<td class="pt5">Groups</td>
-					<td class="pt5 pl10"><input type="button" id="groupConfButton" value="config" class="form-btn"
-					 onClick="location.href='group_config.php';" />
-					</td>
-					</tr>
-
-					<tr>
-					<td class="pt5">Server logs</td>
-					<td class="pt5 pl10"><input type="button" id="groupConfButton" value="show" class="form-btn"
-					 onClick="location.href='server_logs.php';" />
-					</td>
+						<td class="pt5">Server logs</td>
+						<td class="pt5 pl10">
+							<input type="button" id="groupConfButton" value="show" class="form-btn"
+					 				onClick="location.href='server_logs.php';" />
+						</td>
 					</tr>
 					
 					</table>

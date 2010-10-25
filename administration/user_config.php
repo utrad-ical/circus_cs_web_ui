@@ -5,22 +5,16 @@
 	include("../common.php");
 	include("auto_logout_administration.php");
 		
-	if($_SESSION['superUserFlg'])
+	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{
-		$params = array('toTopDir' => "../");	
+		$params = array('toTopDir' => "../",
+		                'message'  => "&nbsp;");	
 	
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables
 		//--------------------------------------------------------------------------------------------------------------
 		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
 		$oldUserID         = (isset($_REQUEST['oldUserID']))        ? $_REQUEST['oldUserID']        : "";
-		$oldUserName       = (isset($_REQUEST['oldUserName']))      ? $_REQUEST['oldUserName']      : "";
-		$oldPassword       = (isset($_REQUEST['oldPassword']))      ? $_REQUEST['oldPassword']      : "";
-		$oldGroupID        = (isset($_REQUEST['oldGroupID']))       ? $_REQUEST['oldGroupID']       : "";
-		$oldTodayDisp      = (isset($_REQUEST['oldTodayDisp']))     ? $_REQUEST['oldTodayDisp']     : "";
-		$oldDarkroomFlg    = (isset($_REQUEST['oldDarkroomFlg']))   ? $_REQUEST['oldDarkroomFlg']   : "";
-		$oldAnonymizeFlg   = (isset($_REQUEST['oldAnonymizeFlg']))  ? $_REQUEST['oldAnonymizeFlg']  : "";
-		$oldLatestResults  = (isset($_REQUEST['oldLatestResults'])) ? $_REQUEST['oldLatestResults'] : "";
 		$newUserID         = (isset($_REQUEST['newUserID']))        ? $_REQUEST['newUserID']        : "";
 		$newUserName       = (isset($_REQUEST['newUserName']))      ? $_REQUEST['newUserName']      : "";
 		$newPassword       = (isset($_REQUEST['newPassword']))      ? $_REQUEST['newPassword']      : "";
@@ -41,146 +35,69 @@
 			//----------------------------------------------------------------------------------------------------
 			// Add / Update / Delete user
 			//----------------------------------------------------------------------------------------------------
-			$message = "&nbsp;";
 			$sqlStr = "";
 			$sqlParams = array();
-		
-			if($mode == 'add')
+			
+			if(($mode == 'delete' && $newUserID != $longinUser) || $mode ='update')	// delete user
 			{
-				$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
-				         . " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+				$sqlStr = "DELETE FROM users WHERE user_id=?;";
+				$sqlParams[] = $newUserID;
+			}
+
+			if(($mode == 'add' && $newUserID != "" && $newPassword != "" ) || $mode == 'update')
+			{
+				$sqlStr  .= "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
+				         .  " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 						 
-				$sqlParams[0] = $newUserID;
-				$sqlParams[1] = $newUserName;
-				$sqlParams[2] = md5($newPassword);
-				$sqlParams[3] = $newGroupID;
-				$sqlParams[4] = $newTodayDisp;
-				$sqlParams[5] = $newDarkroomFlg;
-				$sqlParams[6] = $newAnonymizeFlg;
-				$sqlParams[7] = $newLatestResults;
-			
-				if($newUserID == "" || $newPassword == "")  $sqlStr = "";
+				$sqlParams[] = $newUserID;
+				$sqlParams[] = $newUserName;
+				$sqlParams[] = md5($newPassword);
+				$sqlParams[] = $newGroupID;
+				$sqlParams[] = $newTodayDisp;
+				$sqlParams[] = $newDarkroomFlg;
+				$sqlParams[] = $newAnonymizeFlg;
+				$sqlParams[] = $newLatestResults;
 			}
-			else if($mode == 'update') // update user config
+
+			if($mode ='update' && $oldUserID == $longinUser && $newUserID != $oldUserID)
 			{
-				$updateCnt = 0;
-			
-				$sqlStr = 'UPDATE users SET ';
-				if($oldUserID == $longinUser && $newUserID != $oldUserID)
-				{
-					$msg = "You can't change your user ID (" . $longinUser . " -> " . $newUserID . ")";
-				}
-				else if($newUserID != $oldUserID)
-				{
-					$sqlStr .= "user_id=?";
-					$sqlParams[$updateCnt] = $newUserID;
-					$updateCnt++;
-				}
+				$sqlStr = "";
+				$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
+			}			
 
-				if($msg == "")
-				{
-					if($oldUserName != $newUserName)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "user_name=?";
-						$sqlParams[$updateCnt] = $newUserName;
-						$updateCnt++;
-					}
-
-					if($oldPassword != $newPassword && $oldPassword != md5($newPassword))
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "passcode=?";
-						$sqlParams[$updateCnt] = md5($newPassword);
-						$updateCnt++;
-					}
-
-					if($oldUserID == $longinUser && $oldGroupID != $newGroupID)
-					{
-						$msg = "You can't change your group ID (" . $oldGroupID . " -> " . $newGroupID . ")";
-					}
-					else if($oldGroupID != $newGroupID)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "group_id=?";
-						$sqlParams[$updateCnt] = $newGroupID;
-						$updateCnt++;
-					}
-
-					if($oldTodayDisp != $newTodayDisp)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "today_disp=?";
-						$sqlParams[$updateCnt] = $newTodayDisp;
-						$updateCnt++;
-					}
-					
-					if($oldDarkroomFlg != $newDarkroomFlg)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "darkroom_flg=?";
-						$sqlParams[$updateCnt] = $newDarkroomFlg;
-						$updateCnt++;
-					}
-
-					if($oldAnonymizeFlg != $newAnonymizeFlg)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "anonymize_flg=?";
-						$sqlParams[$updateCnt] = $newAnonymizeFlg;
-						$updateCnt++;
-					}
-
-					if($oldLatestResults != $newLatestResults)
-					{
-						if($updateCnt > 0)	$sqlStr .= ",";
-						$sqlStr .= "latest_results=?";
-						$sqlParams[$updateCnt] = $newLatestResults;
-						$updateCnt++;
-					}
-				
-					$sqlStr .= " WHERE user_id=?";
-					$sqlParams[$updateCnt] = $oldUserID;
-
-					if($updateCnt == 0)  $sqlStr  = "";
-				}
-			}
-			else if($mode == 'delete')	// delete user
-			{
-				if($newUserID == $longinUser)
-				{
-					$message = "You can't delete own user ID (" . $longinUser . ")";
-				}
-				else if($newUserID != "")
-				{
-					$sqlStr = "DELETE FROM users WHERE user_id=?";
-					$sqlParams[0] = $newUserID;
-				}
-			}
-		
-			if($message == "&nbsp;" && $sqlStr != "")
+			if($params['message'] == "&nbsp;" && $sqlStr != "")
 			{
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
-				
-				$tmp = $stmt->errorInfo();
-				$message = $tmp[2];
+				$errorMessage = $stmt->errorInfo();
 
-				if($message == "")
+				if($errorMessage[2] == "")
 				{
-					$message = '<span style="color: #0000ff;" >';
+					$params['message'] = '<span style="color: #0000ff;" >';
 					
 					switch($mode)
 					{
-						case 'add'    :  $message .= '"' . $newUserID . '" was successfully added.'; break;
-						case 'update' :  $message .= '"' . $oldUserID . '" was successfully updated.'; break;
-						case 'delete' :  $message .= '"' . $newUserID . '" was successfully deleted.'; break;
+						case 'add'    :  $params['message'] .= '"' . $newUserID . '" was successfully added.'; break;
+						case 'update' :  $params['message'] .= '"' . $oldUserID . '" was successfully updated.'; break;
+						case 'delete' :  $params['message'] .= '"' . $newUserID . '" was successfully deleted.'; break;
 					}
-					$message .= '</span>';
+					$params['message'] .= '</span>';
 				}
-				else $message = '<span style="color: #ff0000;">' . $message . '</span>';
+				else
+				{
+					$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
+					
+					if($mode == 'update')
+					{
+						$params['message'] .= $oldUserID;
+					}
+					else
+					{
+						$params['message'] .= $newUserID;
+					}
+				}
 			}
-			else $message = '<span style="color: #ff0000;">' . $message . '</span>';
+			else $params['message'] = '<span style="color: #ff0000;">' . $params['message'] . '</span>';
 		
 			//------------------------------------------------------------------------------------------------
 
@@ -220,11 +137,10 @@
 			$smarty = new SmartyEx();	
 
 			$smarty->assign('params',    $params);
-			$smarty->assign('message',   $message);
 			$smarty->assign('userList',  $userList);
 			$smarty->assign('groupList', $groupList);
 			
-			$smarty->assign('ticket',   htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
+			$smarty->assign('ticket',    $_SESSION['ticket']);
 	
 			$smarty->display('administration/user_config.tpl');
 			//------------------------------------------------------------------------------------------------

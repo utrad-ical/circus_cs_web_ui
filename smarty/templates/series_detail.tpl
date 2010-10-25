@@ -88,8 +88,6 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 			  presetName:  presetName },
   			  function(data){
 
-				//alert(data.message);
-
 				$("#imgBox img").attr("src", data.imgFname);
 				$("#imgBox span").html(data.imgNumStr);
 				$("#sliceNumber").html(data.sliceNumber);
@@ -268,8 +266,11 @@ function DownloadVolume()
 							<td><span id="sliceLocation">{$data.sliceLocation}</span></td>
 						</tr>
 					</table>
-					<div id="admin-only" class="mt15 ml10">
-						<input name="" value="Download volume data" type="button" class="form-btn" style="width: 200px;" onclick="DownloadVolume();" />						</div>
+					{if $smarty.session.dlVolumeFlg}
+						<div class="mt15 ml10">
+							<input name="" value="Download volume data" type="button" class="form-btn" style="width: 200px;" onclick="DownloadVolume();" />
+						</div>
+					{/if}
 				</div><!-- / .detail-panel END -->
 				<div class="fl-clr"></div>
 			</div>

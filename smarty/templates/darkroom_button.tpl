@@ -1,4 +1,4 @@
-<div style="position:fixed; top: 0; right:0;">
+<div style="position:absolute; top: 0; right:0;">
 			<input type="button" id="darkroom" name="darkroom" value="darkroom" onclick="ToggleDarkroomBtn();" />
 </div>
 

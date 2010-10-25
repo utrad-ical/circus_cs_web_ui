@@ -1,6 +1,6 @@
 <div id="cadSearch" class="search-panel">
 	<h3>Search</h3>
-	<div class="p20">
+	<div style="padding:20px 20px 0px;">
 		<table class="search-tbl">
 			<tr>
 	            <th style="width: 8.5em"><span class="trim01">CAD date</span></th>
@@ -118,6 +118,7 @@
 		<div class="al-l mt10 ml20" style="width: 100%;">
 			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
 			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
+			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->

@@ -55,46 +55,45 @@ function GroupSetting(mode, ticket)
 
 		if(mode == 'update')
 		{
-		    address += '&oldGroupID='       + $("#oldGroupID").val()
-		            +  '&oldColorSet='      + $("#oldColorSet").val()
-		            +  '&oldExecCAD='       + $("#oldExecCAD").val()
-		            +  '&oldPersonalFB='    + $("#oldPersonalFB").val()
-		            +  '&oldConsensualFB='  + $("#oldConsensualFB").val()
-		            +  '&oldAllStatistics=' + $("#oldAllStatistics").val()
-		            +  '&oldResearch='      + $("#oldResearch").val()
-		            +  '&oldVolumeDL='      + $("#oldVolumeDL").val()
-		            +  '&oldAnonymizeFlg='  + $("#oldAnonymizeFlg").val()
-		            +  '&oldSuFlg='         + $("#oldSuFlg").val();
+		    address += '&oldGroupID=' + $("#oldGroupID").val()
 		}
 
-		address += '&newGroupID='      + $("#inputGroupID").val()
-		        + '&newColorSet='      + $("#colorSet").val()
-		        + '&newExecCAD='       + $("input[name='newExecCAD']:checked").val()
-		        + '&newPersonalFB='    + $("input[name='newPersonalFB']:checked").val()
-		        + '&newConsensualFB='  + $("input[name='newConsensualFB']:checked").val()
-		        + '&newAllStatistics=' + $("input[name='newAllStatistics']:checked").val()
-		        + '&newResearch='      + $("input[name='newResearch']:checked").val()
-		        + '&newVolumeDL='      + $("input[name='newVolumeDL']:checked").val()
-		        + '&newAnonymizeFlg='  + $("input[name='newAnonymizeFlg']:checked").val()
-		        + '&newSuFlg='         + $("input[name='newSuFlg']:checked").val()
+		address += '&newGroupID='         + $("#inputGroupID").val()
+		        + '&newColorSet='         + $("#colorSet").val()
+		        + '&newExecCAD='          + $("input[name='newExecCAD']:checked").val()
+		        + '&newPersonalFB='       + $("input[name='newPersonalFB']:checked").val()
+		        + '&newConsensualFB='     + $("input[name='newConsensualFB']:checked").val()
+		        + '&newModifyConsensual=' + $("input[name='newModifyConsensual']:checked").val()
+		        + '&newAllStatistics='    + $("input[name='newAllStatistics']:checked").val()
+		        + '&newResearch='         + $("input[name='newResearch']:checked").val()
+		        + '&newVolumeDL='         + $("input[name='newVolumeDL']:checked").val()
+		        + '&newAnonymizeFlg='     + $("input[name='newAnonymizeFlg']:checked").val()
+		        + '&newDataDelete='       + $("input[name='newDataDelete']:checked").val()
+		        + '&newServerOperation='  + $("input[name='newServerOperation']:checked").val()
+		        + '&newServerSettings='   + $("input[name='newServerSettings']:checked").val()
 				+ '&ticket=' + ticket
 
 		location.replace(address);	
 	}
 }
 
-function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, allStatistics, research, volumeDL, anonymizeFlg, suFlg)
+function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modifyConsensual, 
+                    allStatistics, research, volumeDL, anonymizeFlg, dataDelete,
+                    serverOperation, serverSettings)
 {
 	$("#oldGroupID").val(groupID);
 	$("#oldColorSet").val(colorSet);
 	$("#oldExecCAD").val(execCAD);
 	$("#oldPersonalFB").val(personalFB);
 	$("#oldConsensualFB").val(consensualFB);
+	$("#oldModifyConsensual").val(modifyConsensual);
 	$("#oldAllStatistics").val(allStatistics);
 	$("#oldResearch").val(research);
 	$("#oldVolumeDL").val(volumeDL);
 	$("#oldAnonymizeFlg").val(anonymizeFlg);
-	$("#oldSuFlg").val(suFlg);
+	$("#oldDataDelete").val(dataDelete);
+	$("#oldServerOperation").val(serverOperation);
+	$("#oldServerSettings").val(serverSettings);
 	
 	$("#inputGroupID").val(groupID);
 
@@ -104,11 +103,14 @@ function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, allSta
 	$("input[name='newExecCAD']").filter(function(){ return ($(this).val() == execCAD) }).attr("checked", true);
 	$("input[name='newPersonalFB']").filter(function(){ return ($(this).val() == personalFB) }).attr("checked", true);
 	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == consensualFB) }).attr("checked", true);
+	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == modifyConsensual) }).attr("checked", true);
 	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == allStatistics) }).attr("checked", true);
 	$("input[name='newResearch']").filter(function(){ return ($(this).val() == research) }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == volumeDL) }).attr("checked", true);
 	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == anonymizeFlg) }).attr("checked", true);
-	$("input[name='newSuFlg']").filter(function(){ return ($(this).val() == suFlg) }).attr("checked", true);
+	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == dataDelete) }).attr("checked", true);
+	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == serverOperation) }).attr("checked", true);
+	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == serverSettings) }).attr("checked", true);
 
 	$("#updateBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#addBtn, #groupList input[type='button']").attr('disabled', 'disabled')
@@ -125,11 +127,14 @@ function CancelUpdate()
 	$("input[name='newExecCAD']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
 	$("input[name='newPersonalFB']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
 	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
+	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newResearch']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newSuFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 
 	$("#addBtn, #groupList input[type='button']").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#updateBtn, #cancelBtn, #groupList input[name='noDelete']").attr('disabled', 'disabled')
@@ -163,33 +168,40 @@ function CancelUpdate()
 			<h2>Group configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket" value="{$ticket}" />
-				<input type="hidden" id="oldGroupID"       value="" />
-				<input type="hidden" id="oldColorSet"      value="" />
-				<input type="hidden" id="oldExecCAD"       value="" />
-				<input type="hidden" id="oldPersonalFB"    value="" />
-				<input type="hidden" id="oldConsensualFB"  value="" />
-				<input type="hidden" id="oldAllStatistics" value="" />
-				<input type="hidden" id="oldResearch"      value="" />
-				<input type="hidden" id="oldVolumeDL"      value="" />
-				<input type="hidden" id="oldAnonymizeFlg"  value="" />
-				<input type="hidden" id="oldSuFlg"         value="" />
+				<input type="hidden" id="ticket" value="{$ticket|escape}" />
+				<input type="hidden" id="oldGroupID"          value="" />
+				<input type="hidden" id="oldColorSet"         value="" />
+				<input type="hidden" id="oldExecCAD"          value="" />
+				<input type="hidden" id="oldPersonalFB"       value="" />
+				<input type="hidden" id="oldConsensualFB"     value="" />
+				<input type="hidden" id="oldModifyConsensual" value="" />
+				<input type="hidden" id="oldAllStatistics"    value="" />
+				<input type="hidden" id="oldResearch"         value="" />
+				<input type="hidden" id="oldVolumeDL"         value="" />
+				<input type="hidden" id="oldAnonymizeFlg"     value="" />
+				<input type="hidden" id="oldDataDelete"       value="" />
+				<input type="hidden" id="oldServerOperation"  value="" />
+				<input type="hidden" id="oldServerSettings"   value="" />
 
-				<div id="message" class="mt5 mb5 ml10">{$message}</div>
+
+				<div id="message" class="mt5 mb5 ml10">{$params.message}</div>
 
 				<div id="groupList" class="ml10">
 					<table class="col-tbl">
 						<tr>
 							<th>Group ID</th>
-							<th>Color set</th>
-							<th>Exec CAD</th>
+							<th style="width:3.5em;">Color set</th>
+							<th style="width:3em;">Exec CAD</th>
 							<th style="width:5em;">Personal feedback</th>
 							<th style="width:6em;">Consensual feedback</th>
-							<th>All Stat.</th>
+							<th style="width:4.5em;">Modify cons.</th>
+							<th style="width:3em;">All stat.</th>
 							<th>Research</th>
-							<th style="width:7.5em;">Download volume data</th>
-							<th>Anonymization</th>
-							<th>Super user</th>
+							<th style="width:5em;">Download volume</th>
+							<th>Anonymize</th>
+							<th style="width:5em;">Data delete</th>
+							<th style="width:5em;">Server operation</th>
+							<th style="width:5em;">Server settings</th>
 							<th>&nbsp;</th>
 						</tr>
 
@@ -198,22 +210,23 @@ function CancelUpdate()
 
 								<td class="al-l">{$item[0]}</td>
 								<td>{$item[1]}</td>
-								<td>{if $item[2]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[3]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[4]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[5]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[6]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[7]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[8]==true}TRUE{else}FALSE{/if}</td>
-								<td>{if $item[9]==true}TRUE{else}FALSE{/if}</td>
+								<td>{$item[2]|OorMinus}</td>
+								<td>{$item[3]|OorMinus}</td>
+								<td>{$item[4]|OorMinus}</td>
+								<td>{$item[5]|OorMinus}</td>
+								<td>{$item[6]|OorMinus}</td>
+								<td>{$item[7]|OorMinus}</td>
+								<td>{$item[8]|OorMinus}</td>
+								<td>{$item[9]|OorMinus}</td>
+								<td>{$item[10]|OorMinus}</td>
+								<td>{$item[11]|OorMinus}</td>
+								<td>{$item[12]|OorMinus}</td>
 								{if $item[0] != "admin"}
 									<td>
 										<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
-                                   		  onClick="SetEditBox('{$item[0]}', '{$item[1]}',
-                                       		                  '{if $item[2]==true}t{else}f{/if}', '{if $item[3]==true}t{else}f{/if}',
-													 		  '{if $item[4]==true}t{else}f{/if}', '{if $item[5]==true}t{else}f{/if}',
-														 	  '{if $item[6]==true}t{else}f{/if}', '{if $item[7]==true}t{else}f{/if}',
-														 	  '{if $item[8]==true}t{else}f{/if}', '{if $item[9]==true}t{else}f{/if}');" />
+                                   		  onClick="SetEditBox('{$item[0]}','{$item[1]}','{$item[2]|TorF}', '{$item[3]|TorF}', '{$item[4]|TorF}',
+                                                              '{$item[5]|TorF}','{$item[6]|TorF}','{$item[7]|TorF}','{$item[8]|TorF}',
+                                                              '{$item[9]|TorF}','{$item[10]|TorF}','{$item[11]|TorF}', '{$item[12]|TorF}');" />
 										<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 											{if $item[0] != $smarty.session.userID}
 									 			class="s-btn form-btn" onClick="deleteGroup('{$item[0]}');" />
@@ -232,7 +245,7 @@ function CancelUpdate()
 				<div class="mt20 ml40">
 					<table class="detail-tbl">
 						<tr>
-							<th style="width: 16em;"><span class="trim01">Group ID</th>
+							<th style="width: 18em;"><span class="trim01">Group ID</th>
 							<td><input class="loginForm" size="40" type="text" id="inputGroupID" name="inputGroupID" /></td>
 						</tr>
 
@@ -271,6 +284,13 @@ function CancelUpdate()
 							</td>
 						</tr>
 
+						<tr>
+							<th><span class="trim01">Modify consensual feedback</span></th>
+							<td>
+								<input name="newModifyConsensual" type="radio" value="t"  />TRUE
+								<input name="newModifyConsensual" type="radio" value="f" checked="checked" />FALSE
+							</td>
+						</tr>
 
 						<tr>
 							<th><span class="trim01">View all user's statistics</span></th>
@@ -305,12 +325,29 @@ function CancelUpdate()
 						</tr>
 
 						<tr>
-							<th><span class="trim01">Super user</span></th>
+							<th><span class="trim01">Delete data</span></th>
 							<td>
-								<input name="newSuFlg" type="radio" value="t" />TRUE
-								<input name="newSuFlg" type="radio" value="f" checked="checked" />FALSE
+								<input name="newDataDelete" type="radio" value="t" />TRUE
+								<input name="newDataDelete" type="radio" value="f" checked="checked" />FALSE
 							</td>
 						</tr>
+
+						<tr>
+							<th><span class="trim01">Server operation</span></th>
+							<td>
+								<input name="newServerOperation" type="radio" value="t" />TRUE
+								<input name="newServerOperation" type="radio" value="f" checked="checked" />FALSE
+							</td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Server settings</span></th>
+							<td>
+								<input name="newServerSettings" type="radio" value="t" />TRUE
+								<input name="newServerSettings" type="radio" value="f" checked="checked" />FALSE
+							</td>
+						</tr>
+
 
 					</table>
 

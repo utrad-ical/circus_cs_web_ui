@@ -21,30 +21,24 @@
 <!--
 {literal}
 
-function UpdateConfig(ticket)
+function UpdateConfig()
 {
 		
 	if(confirm('Do you want to update configuration file?'))	
 	{
 		var address = 'dicom_storage_server_config.php?mode=update'
-				    + '&oldAeTitle='      + encodeURIComponent($("#oldAETitle").val())
-				    + '&oldPortNumber='   + encodeURIComponent($("#oldPortNumber").val())
-				    + '&oldLogFname='     + encodeURIComponent($("#oldLogFname").val())
-				    + '&oldErrLogFname='  + encodeURIComponent($("#oldErrLogFname").val())
-				    + '&oldThumbnailFlg=' + $("#oldThumbnailFlg").val()
-				    + '&oldCompressFlg='  + $("#oldCompressFlg").val()
 				    + '&newAeTitle='      + encodeURIComponent($("#newAETitle").val())
 				    + '&newPortNumber='   + encodeURIComponent($("#newPortNumber").val())
 				    + '&newLogFname='     + encodeURIComponent($("#newLogFname").val())
 				    + '&newErrLogFname='  + encodeURIComponent($("#newErrLogFname").val())
 				    + '&newThumbnailFlg=' + $('input[name="newThumbnailFlg"]:checked').val()
 				    + '&newCompressFlg='  + $('input[name="newCompressFlg"]:checked').val()
-					+ '&ticket=' + ticket;
+					+ '&ticket=' + $("#ticket").val();
 		location.replace(address);	
 	}
 }
 
-function CancelConfig(ticket)
+function CancelConfig()
 {
 	$("#newAeTitle.value").val($("#oldAeTitle").val());
 	$("#newPortNumber").val($("#oldPortNumber").val());
@@ -54,11 +48,11 @@ function CancelConfig(ticket)
 	$("input[name='newCompressFlg']").filter(function(){ return ($(this).val() == $("#oldCompressFlg").val()) }).attr("checked", true);
 }
 
-function RestartDICOMStorageSv(ticket)
+function RestartStorageSv()
 {
 	if(confirm('Do you restart DICOM storage server?'))
 	{
-		var address = 'dicom_storage_server_config.php?mode=restartSv&ticket=' + ticket;
+		var address = 'dicom_storage_server_config.php?mode=restartSv&ticket=' + $("#ticket").val();
 		location.replace(address);
 	}
 }
@@ -88,51 +82,52 @@ function RestartDICOMStorageSv(ticket)
 			<h2>Configuration of DICOM storage server</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="oldAETitle"      value="{$configData.aeTitle}">
-				<input type="hidden" id="oldPortNumber"   value="{$configData.portNumber}">
-				<input type="hidden" id="oldLogFname"     value="{$configData.logFname}">
-				<input type="hidden" id="oldErrLogFname"  value="{$configData.errLogFname}">
+				<input type="hidden" id="ticket"          value="{$ticket|escape}" />
+				<input type="hidden" id="oldAETitle"      value="{$configData.aeTitle|escape}">
+				<input type="hidden" id="oldPortNumber"   value="{$configData.portNumber|escape}">
+				<input type="hidden" id="oldLogFname"     value="{$configData.logFname|escape}">
+				<input type="hidden" id="oldErrLogFname"  value="{$configData.errLogFname|escape}">
 				<input type="hidden" id="oldThumbnailFlg" value="{$configData.thumbnailFlg}">
 				<input type="hidden" id="oldCompressFlg"  value="{$configData.compressFlg}">
 
-				<div id="message" class="mt5 ml20">{$message}</div>
+				<div id="message" class="mt5 ml20">{$params.message}</div>
 
 				<div class="mt20 ml20">
 					<table class="detail-tbl">
 						<tr>
 							<th style="width: 15em;"><span class="trim01">AE title</th>
-							<td><input id="newAETitle" size="20" type="text" value="{$configData.aeTitle}" /></td>
+							<td><input id="newAETitle" size="20" type="text" value="{$configData.aeTitle|escape}" /></td>
 						</tr>
 
 						<tr>
 							<th><span class="trim01">Port number</th>
-							<td><input id="newPortNumber" size="20" type="text" value="{$configData.portNumber}" /></td>
+							<td><input id="newPortNumber" size="20" type="text" value="{$configData.portNumber|escape}" /></td>
 						</tr>
 
 						<tr>
 							<th><span class="trim01">Log file</th>
-							<td><input id="newLogFname" size="60" type="text" value="{$configData.logFname}" disabled="disabled" /></td>
+							<td><input id="newLogFname" size="60" type="text" value="{$configData.logFname|escape}" disabled="disabled" /></td>
 						</tr>
 
 
 						<tr>
 							<th><span class="trim01">Error log file</th>
-							<td><input id="newErrLogFname" size="60" type="text" value="{$configData.errLogFname}" disabled="disabled" /></td>
+							<td><input id="newErrLogFname" size="60" type="text" value="{$configData.errLogFname|escape}" disabled="disabled" /></td>
 						</tr>
 
 						<tr>
 							<th><span class="trim01">Create thumbnail images</th>
 							<td>
-								<input name="newThumbnailFlg" type="radio" value="1"{if $configData.thumbnailFlg ==1} checked="checked"{/if} />TRUE
-								<input name="newThumbnailFlg" type="radio" value="0"{if $configData.thumbnailFlg ==0} checked="checked"{/if} />FALSE
+								<input name="newThumbnailFlg" type="radio" value="1"{if $configData.thumbnailFlg} checked="checked"{/if} />TRUE
+								<input name="newThumbnailFlg" type="radio" value="0"{if !$configData.thumbnailFlg} checked="checked"{/if} />FALSE
 							</td>
 						</tr>
 
 						<tr>
 							<th><span class="trim01">Compress DICOM image with lossless JPEG</th>
 							<td>
-								<input name="newCompressFlg" type="radio" value="1"{if $configData.compressFlg ==1} checked="checked"{/if} />TRUE
-								<input name="newCompressFlg" type="radio" value="0"{if $configData.compressFlg ==0} checked="checked"{/if} />FALSE
+								<input name="newCompressFlg" type="radio" value="1"{if $configData.compressFlg} checked="checked"{/if} />TRUE
+								<input name="newCompressFlg" type="radio" value="0"{if !$configData.compressFlg} checked="checked"{/if} />FALSE
 							</td>
 						</tr>
 
@@ -140,13 +135,12 @@ function RestartDICOMStorageSv(ticket)
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" value="Update" onClick="UpdateConfig('{$ticket}');"
-								class="form-btn{if $restartFlg==1} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
+							<input type="button" value="Update" onClick="UpdateConfig();"
+								class="form-btn{if $restartFlg} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
 							<input type="button" id="addBtn" class="form-btn" value="Cancel" onClick="CancelConfig();"
-								class="form-btn{if $restartFlg==1} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
-							{if $restartFlg==1}
-								<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="Restart"
-                                       onClick="RestartDICOMStorageSv('{$ticket}');" />
+								class="form-btn{if $restartFlg} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
+							{if $restartFlg}
+								<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="Restart" onClick="RestartStorageSv();" />
 							{/if}
 						</p>
 					</div>
