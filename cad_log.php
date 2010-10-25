@@ -5,50 +5,49 @@
 	include_once('common.php');
 	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');	
+	require_once('class/FormValidator.class.php');	
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $params array	
-	//------------------------------------------------------------------------------------------------------------------
-	$params = array('srcPage'        => (isset($_REQUEST['srcPage'])) ? $_REQUEST['srcPage'] : "",
-	                'filterPtID'     => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
-				    'filterPtName'   => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
-				    'filterSex'      => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
-				    'filterAgeMin'   => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
-				    'filterAgeMax'   => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
-				    'filterCadID'    => (isset($_REQUEST['filterCadID'])) ? $_REQUEST['filterCadID'] : "",
-				    'filterModality' => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
-				    'filterCAD'      => (isset($_REQUEST['filterCAD'])) ? $_REQUEST['filterCAD'] : "all",
-				    'filterVersion'  => (isset($_REQUEST['filterVersion'])) ? $_REQUEST['filterVersion'] : "all",
-				    'filterTag'      => (isset($_REQUEST['filterTag'])) ? $_REQUEST['filterTag'] : "",
-				    'srDateFrom'     => (isset($_REQUEST['srDateFrom'])) ? $_REQUEST['srDateFrom'] : "",
-				    'srDateTo'       => (isset($_REQUEST['srDateTo'])) ? $_REQUEST['srDateTo'] : "",
-				    //'srTimeFrom'     => (isset($_REQUEST['srTimeFrom'])) ? $_REQUEST['srTimeFrom'] : "00:00:00",
-				    'srTimeTo'       => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
-				    'cadDateFrom'    => (isset($_REQUEST['cadDateFrom'])) ? $_REQUEST['cadDateFrom'] : "",
-				    'cadDateTo'      => (isset($_REQUEST['cadDateTo'])) ? $_REQUEST['cadDateTo'] : "",
-				    //'cadTimeFrom'    => (isset($_REQUEST['cadTimeFrom'])) ? $_REQUEST['cadTimeFrom'] : "00:00:00",
-				    'cadTimeTo'      => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
-				    'personalFB'     => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
-				    'consensualFB'   => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
-				    'filterFBUser'   => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
-				    'filterTP'       => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
-				    'filterFN'       => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
-				    'mode'           => (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "",
-				    'orderCol'       => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
-				    'orderMode'      => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
-				    'totalNum'       => (isset($_REQUEST['totalNum']))  ? $_REQUEST['totalNum'] : 0,
+	//-----------------------------------------------------------------------------------------------------------------
+	// Import $_GET variables (set $params array)
+	//-----------------------------------------------------------------------------------------------------------------
+	$params = array('mode' => (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "",
+				    'errorMessage'        => "",
+					'srcPage'        => (isset($_REQUEST['srcPage'])) ? $_REQUEST['srcPage'] : "",
+					'filterPtID'     => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
+					'filterPtName'   => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
+					'filterSex'      => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
+					'filterAgeMin'   => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
+					'filterAgeMax'   => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
+					'filterCadID'    => (isset($_REQUEST['filterCadID'])) ? $_REQUEST['filterCadID'] : "",
+					'filterModality' => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
+					'filterCAD'      => (isset($_REQUEST['filterCAD'])) ? $_REQUEST['filterCAD'] : "all",
+					'filterVersion'  => (isset($_REQUEST['filterVersion'])) ? $_REQUEST['filterVersion'] : "all",
+					'filterTag'      => (isset($_REQUEST['filterTag'])) ? $_REQUEST['filterTag'] : "",
+					'srDateFrom'     => (isset($_REQUEST['srDateFrom'])) ? $_REQUEST['srDateFrom'] : "",
+					'srDateTo'       => (isset($_REQUEST['srDateTo'])) ? $_REQUEST['srDateTo'] : "",
+					'srTimeTo'       => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
+					'cadDateFrom'    => (isset($_REQUEST['cadDateFrom'])) ? $_REQUEST['cadDateFrom'] : "",
+					'cadDateTo'      => (isset($_REQUEST['cadDateTo'])) ? $_REQUEST['cadDateTo'] : "",
+					'cadTimeTo'      => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
+					'personalFB'     => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
+					'consensualFB'   => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
+					'filterFBUser'   => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
+					'filterTP'       => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
+					'filterFN'       => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
+					'orderCol'       => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
+					'orderMode'      => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
 				    'pageNum'        => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
 				    'showing'        => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
-				    'startNum'       => 1,
-				    'endNum'         => 10,
-				    'maxPageNum'     => 1,
-				    'pageAddress'    => 'cad_log.php?');
+				    'startNum'       => 0,
+				    'endNum'         => 0,
+					'totalNum'       => 0,
+				    'maxPageNum'     => 1);
 
 	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
 	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;
 	
 	$userID = $_SESSION['userID'];
-	//------------------------------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
 
 	$data = array();
 
@@ -62,7 +61,7 @@
 		//--------------------------------------------------------------------------------------------------------
 		$sqlCondArray = array();
 		$sqlParams = array();
-		$pageAddressParams = array();	
+		$addressParams = array();	
 		
 		$sqlCond = " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 			       . " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
@@ -83,17 +82,17 @@
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
 			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
-			$pageAddressParams['mode'] .= 'today';
-			$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
-			$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
+			$addressParams['mode'] .= 'today';
+			$addressParams['cadDateFrom'] = $params['cadDateFrom'];
+			$addressParams['cadDateTo'] = $params['cadDateTo'];
 		}
 		else if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
 			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
-			$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
-			$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
+			$addressParams['cadDateFrom'] = $params['cadDateFrom'];
+			$addressParams['cadDateTo'] = $params['cadDateTo'];
 		}
 		else
 		{
@@ -101,18 +100,18 @@
 			{
 				$sqlCondArray[] = "?<=el.executed_at";
 				$sqlParams[] = $params['cadDateFrom'].' 00:00:00';
-				$pageAddressParams['cadDateFrom'] = $params['cadDateFrom'];
+				$addressParams['cadDateFrom'] = $params['cadDateFrom'];
 			}
 		
 			if($params['cadDateTo'] != "")
 			{
 				$sqlCondArray[] = "el.executed_at<=?";
-				$pageAddressParams['cadDateTo'] = $params['cadDateTo'];
+				$addressParams['cadDateTo'] = $params['cadDateTo'];
 
 				if($params['cadTimeTo'] != "")
 				{
 					$sqlParams[] = $params['cadDateTo'] . ' ' . $params['cadTimeTo'];
-					$pageAddressParams['cadTimeTo'] = $params['cadTimeTo'];
+					$addressParams['cadTimeTo'] = $params['cadTimeTo'];
 				}
 				else
 				{
@@ -126,8 +125,8 @@
 		{
 			$sqlCondArray[] = "sr.series_date=?";
 			
-			$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
-			$pageAddressParams['srDateTo'] = $params['srDateTo'];
+			$addressParams['srDateFrom'] = $params['srDateFrom'];
+			$addressParams['srDateTo'] = $params['srDateTo'];
 		}
 		else
 		{
@@ -135,20 +134,20 @@
 			{
 				$sqlCondArray[] = "?<=sr.series_date";
 				$sqlParams[] = $params['srDateFrom'];
-				$pageAddressParams['srDateFrom'] = $params['srDateFrom'];
+				$addressParams['srDateFrom'] = $params['srDateFrom'];
 			}
 		
 			if($params['srDateTo'] != "")
 			{
 				$sqlParams[] = $params['srDateTo'];
-				$pageAddressParams['srDateTo'] = $params['srDateTo'];
+				$addressParams['srDateTo'] = $params['srDateTo'];
 		
 				if($params['srTimeTo'] != "")
 				{
 					$sqlCondArray[] = "(sr.series_date<? OR (sr.series_date=? AND sr.series_date<=?))";
 					$sqlParams[] = $params['srDateTo'];
 					$sqlParams[] = $params['srTimeTo'];
-					$pageAddressParams['srTimeTo'] = $params['srTimeTo'];
+					$addressParams['srTimeTo'] = $params['srTimeTo'];
 				}
 				else
 				{
@@ -162,7 +161,7 @@
 			// Search by regular expression
 			$sqlCondArray[] = "el.exec_id=?";
 			$sqlParams[] = $params['filterCadID'];
-			$pageAddressParams['filterCadID'] = $params['filterCadID'];
+			$addressParams['filterCadID'] = $params['filterCadID'];
 		}
 		
 		if($params['filterPtID'] != "")
@@ -173,7 +172,7 @@
 			// Search by regular expression
 			$sqlCondArray[] = "pt.patient_id~*?";
 			$sqlParams[] = $patientID;
-			$pageAddressParams['filterPtID'] = $params['filterPtID'];
+			$addressParams['filterPtID'] = $params['filterPtID'];
 		}
 
 		if($params['filterPtName'] != "")
@@ -181,22 +180,22 @@
 			// Search by regular expression (test, case-insensitive)
 			$sqlCondArray[] = "pt.patient_name~*?";
 			$sqlParams[] = $params['filterPtName'];
-			$pageAddressParams['filterPtName'] = $params['filterPtName'];
+			$addressParams['filterPtName'] = $params['filterPtName'];
 		}
 		
 		if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 		{
 			$sqlCondArray[] = "pt.sex=?";
 			$sqlParams[] = $params['filterSex'];
-			$pageAddressParams['filterSex'] = $params['filterSex'];
+			$addressParams['filterSex'] = $params['filterSex'];
 		}
 		
 		if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 		{
 			$sqlCondArray[] = "st.age=?";
 			$sqlParams[] = $params['filterAgeMin'];
-			$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
-			$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
+			$addressParams['filterAgeMin'] = $params['filterAgeMin'];
+			$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 		}
 		else
 		{
@@ -204,14 +203,14 @@
 			{
 				$sqlCondArray[] = "?<=st.age";
 				$sqlParams[] = $params['filterAgeMin'];
-				$pageAddressParams['filterAgeMin'] = $params['filterAgeMin'];
+				$addressParams['filterAgeMin'] = $params['filterAgeMin'];
 			}
 		
 			if($params['filterAgeMax'] != "")
 			{
 				$sqlCondArray[] = "st.age<=?";
 				$sqlParams[] = $params['filterAgeMax'];
-				$pageAddressParams['filterAgeMax'] = $params['filterAgeMax'];
+				$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 			}
 		}				
 
@@ -219,7 +218,7 @@
 		{
 			$sqlCondArray[] = "sr.modality=?";
 			$sqlParams[] = $params['filterModality'];
-			$pageAddressParams['filterModality'] = $params['filterModality'];
+			$addressParams['filterModality'] = $params['filterModality'];
 		}		
 			
 		
@@ -227,21 +226,21 @@
 		{
 			$sqlCondArray[] = "el.plugin_name=?";
 			$sqlParams[] = $params['filterCAD'];
-			$pageAddressParams['filterCAD'] = $params['filterCAD'];
+			$addressParams['filterCAD'] = $params['filterCAD'];
 		}				
 	
 		if($params['filterVersion'] != "all")
 		{
 			$sqlCondArray[] = "el.version=?";
 			$sqlParams[] = $params['filterVersion'];
-			$pageAddressParams['filterVersion'] = $params['filterVersion'];
+			$addressParams['filterVersion'] = $params['filterVersion'];
 		}
 		
 		if($params['filterTag'] != "")
 		{		
 			$sqlCondArray[] = "el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
 			$sqlParams[] = $params['filterTag'];
-			$pageAddressParams['filterTag'] = $params['filterTag'];
+			$addressParams['filterTag'] = $params['filterTag'];
 		}
 	
 		if($params['personalFB'] == "entered" || $params['personalFB'] == "notEntered")
@@ -294,7 +293,7 @@
 					}
 			
 					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
-					$pageAddressParams['filterFBUser'] = $params['filterFBUser'];
+					$addressParams['filterFBUser'] = $params['filterFBUser'];
 				}
 				else
 				{
@@ -317,7 +316,7 @@
 					 . " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='t' AND interrupt_flg='f')";
 
 			$sqlCondArray[] = $tmpCond;
-			$pageAddressParams['consensualFB'] = $params['consensualFB'];
+			$addressParams['consensualFB'] = $params['consensualFB'];
 		}		
 	
 		if($params['filterTP'] == "with" || $params['filterTP'] == "without")
@@ -337,7 +336,7 @@
 			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $tmpCond . "1)";
 
 			$sqlCondArray[] = $tmpCond;
-			$pageAddressParams['filterTP'] = $params['filterTP'];
+			$addressParams['filterTP'] = $params['filterTP'];
 		}
 				
 		if($params['filterFN'] == "with" || $params['filterFN'] == "without") 
@@ -357,7 +356,7 @@
 			$tmpCond .= " GROUP BY exec_id HAVING MAX(false_negative_num)" .  $condition . ")";
 			
 			$sqlCondArray[] = $tmpCond;
-			$pageAddressParams['filterFN'] = $params['filterFN'];
+			$addressParams['filterFN'] = $params['filterFN'];
 		}
 		
 		if(count($sqlParams) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));		
@@ -378,20 +377,27 @@
 			case "Name":        $orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;	
 			case "Age":         $orderColStr = 'st.age '          . $params['orderMode'];  break;
 			case "Sex":         $orderColStr = 'pt.sex '          . $params['orderMode'];  break;
-			case "Series":      $orderColStr = 'sr.series_date '.$params['orderMode'].', sr.series_time '.$params['orderMode']; break;
-			case "CAD":         $orderColStr = 'el.plugin_name '.$params['orderMode'].', el.version '.$params['orderMode'];        break;
+			case "Series":      
+					$orderColStr = 'sr.series_date '.$params['orderMode'].', sr.series_time '.$params['orderMode'];
+					break;
+	
+			case "CAD":         
+					$orderColStr = 'el.plugin_name '.$params['orderMode'].', el.version '.$params['orderMode'];
+					break;
+			
 			default:
 					$params['orderCol'] = "CAD date";
 					$orderColStr = 'el.executed_at '  . $params['orderMode'];
 					break;
 		}
 		
-		$pageAddressParams['orderCol']  = $params['orderCol'];
-		$pageAddressParams['orderMode'] = $params['orderMode'];
-		$pageAddressParams['showing']   = $params['showing'];		
+		$addressParams['orderCol']  = $params['orderCol'];
+		$addressParams['orderMode'] = $params['orderMode'];
+		$addressParams['showing']   = $params['showing'];		
 		//--------------------------------------------------------------------------------------------------------------
 			
-		$params['pageAddress'] = implode('&', array_map(UrlKeyValPair, array_keys($pageAddressParams), array_values($pageAddressParams)));
+		$params['pageAddress'] = sprintf('cad_log.php?%s',
+		                         implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
 		$_SESSION['listAddress'] = $params['pageAddress'];
 
 		//--------------------------------------------------------------------------------------------------------------

@@ -66,12 +66,12 @@
 			return $ret;
 		}
 
-		public function scramblePtName()
+		public static function scramblePtName()
 		{
 			return 'XXXXX XXXXX';
 		}
 
-		public function scrambleBirthDate()
+		public static function scrambleBirthDate()
 		{
 			return 'YYYY-MM-DD';
 		}
