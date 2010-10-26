@@ -39,8 +39,9 @@ $(function() {ldelim}
 	$("#sliderValue").html(jQuery("#slider").slider("value"));
 
 {if $moveCadResultFlg == 1}
+{literal}
 	$.event.add(window, "load", 
-				function(){ldelim}
+				function(){
 					 alert("[CAUTION] Lesion classification is not completed!");
 
 					var address = 'show_cad_results.php'
@@ -49,7 +50,8 @@ $(function() {ldelim}
 
 					location.href = address;
 
-				{rdelim});
+				});
+{/literal}
 {/if}
 
 {rdelim});
@@ -164,20 +166,20 @@ $(function() {ldelim}
 
 						<tr>
 							<td colspan="3" valign="top">
-								<div id="imgBlock">
+								<div id="imgBlock" style="margin:0px;padding:0px;width:{$dispWidth}px;height:{$dispHeight}px;position:relative;">
 									<img id="imgArea" class="{if $registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$dstFnameWeb}" width="{$dispWidth}" "height={$dispHeight}" />
 								</div>
 							</td>
 						</tr>
 
 						<tr>
-							<td align="right" {if $dispWidth >=256}width={$widthOfPlusButton}{/if}>
+							<td align="right" style="{if $dispWidth >=256}width:{$widthOfPlusButton}{/if}px;">
 								<input type="button" value="-" onClick="JumpImgNumber({$imgNum-1});" {if $imgNum == ($sliceOffset+1)} disabled{/if}>
 							</td>
 				
-							<td align=center width=256><div id="slider"></div></td>
+							<td align=center style="width:256px;"><div id="slider"></div></td>
 
-							<td align=left  {if $dispWidth >=256}width={$widthOfPlusButton}{/if}>
+							<td align=left  style="{if $dispWidth >=256}width:{$widthOfPlusButton}{/if}px;">
 						 		<input type="button" value="+" onClick="JumpImgNumber({$imgNum+1});" {if $imgNum == $fNum} disabled{/if}>
 							</td>
 						</tr>

@@ -149,12 +149,12 @@ function plotDots(id, x, y, set)
 	}
 
 	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; left:' + (x+dotOffsetX) + 'px; '
-        	    + 'height:3px; width:3px; padding:0px; background-color:' + color + ';"></span>'
+        	    + 'height:3px; width:3px; padding:0px; background-color:' + color + ';position:absolute;"></span>'
 				+ '<span id="label' + id + '" class="dot" style="top:' + (y+labelBaseY+labelOffsetY) + 'px;'
 				+ ' left:' + (x+labelBaseX+labelOffsetX) + 'px; color:' + color + ';'
 				+ ' filter:dropshadow(color=#000000 offX=1 offY=0) dropshadow(color=#000000 offX=-1 offY=0)'
 				+ ' dropshadow(color=#000000 offX=0 offY=1) dropshadow(color=#000000 offX=0 offY=-1);'
-				+ ' font-weight:bold;">' + id + '</span>';
+				+ ' font-weight:bold;position:absolute;">' + id + '</span>';
 
 	$("#imgBlock").append(htmlStr);
 }
@@ -163,13 +163,13 @@ function plotDots(id, x, y, set)
 function plotClickedLocation(id, x, y, set)
 {
 	// parseIntÇÕâûã}èàíu
-	var xOffset = parseInt($("#imgArea").position().left);
-	var yOffset = parseInt($("#imgArea").position().top);
+	//var xOffset = parseInt($("#imgArea").position().left);
+	//var yOffset = parseInt($("#imgArea").position().top);
 
 	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
 	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
 	
-	 plotDots(id, xPos+xOffset, yPos+yOffset, set);
+	 plotDots(id, xPos, yPos, set);
 	 
 }
 
@@ -487,10 +487,10 @@ $(document).ready(function(){
 		// Number of rows
     	var rowNum=tObj.rows["length"];
 
-		plotDots(rowNum, e.pageX, e.pageY, 0);
+		var x = e.pageX - $("#imgBlock").position().left;
+		var y = e.pageY - $("#imgBlock").position().top;
 
-		var x = e.pageX - $("img#imgArea").position().left;
-		var y = e.pageY - $("img#imgArea").position().top;
+		plotDots(rowNum, x, y, 0);
 
 		var xPos = parseInt(x*parseFloat($("#orgWidth").val())/parseFloat($("#dispWidth").val())+0.5);
 		var yPos = parseInt(y*parseFloat($("#orgHeight").val())/parseFloat($("#dispHeight").val())+0.5);
