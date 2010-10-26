@@ -162,10 +162,6 @@ function plotDots(id, x, y, set)
 
 function plotClickedLocation(id, x, y, set)
 {
-	// parseIntは応急処置
-	//var xOffset = parseInt($("#imgArea").position().left);
-	//var yOffset = parseInt($("#imgArea").position().top);
-
 	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
 	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
 	
@@ -487,8 +483,17 @@ $(document).ready(function(){
 		// Number of rows
     	var rowNum=tObj.rows["length"];
 
-		var x = e.pageX - $("#imgBlock").position().left;
-		var y = e.pageY - $("#imgBlock").position().top;
+		var x = e.pageX - $("#imgBlock").offset().left;
+		var y = e.pageY - $("#imgBlock").offset().top;
+
+		// iPad対策(iPhoneも？) iOS4.2になれば不要
+		var iOSPattern = /; CPU\sOS\s(?:3_2|4_0)/i;
+
+		if(iOSPattern.test(navigator.userAgent) )
+		{
+			x += window.scrollX;
+			y += window.scrollY;
+		}
 
 		plotDots(rowNum, x, y, 0);
 
