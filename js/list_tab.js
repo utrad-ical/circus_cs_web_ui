@@ -1,13 +1,4 @@
 
-function htmlspecialchars(ch) { 
-    ch = ch.replace(/&/g,"&amp;");
-    ch = ch.replace(/"/g,"&quot;");
-    ch = ch.replace(/'/g,"&#039;");
-    ch = ch.replace(/</g,"&lt;");
-    ch = ch.replace(/>/g,"&gt;");
-    return ch ;
-}
-
 //--------------------------------------------------------------------------------------------------
 // For patient list
 //--------------------------------------------------------------------------------------------------
@@ -39,7 +30,8 @@ function ChangeOrderOfPatientList(orderCol, orderMode)
 //--------------------------------------------------------------------------------------------------
 function ShowSeriesList(idNum, studyInstanceUID)
 {
-	location.href = 'series_list.php?mode=study&studyInstanceUID=' + studyInstanceUID;
+	location.href = 'series_list.php?mode=study&studyInstanceUID='
+                  + encodeURIComponent(studyInstanceUID);
 }
 
 function ChangeOrderOfStudyList(orderCol, orderMode)
@@ -119,8 +111,8 @@ function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 			address += 'orderCol=' + orderCol + '&orderMode=' + orderMode;
 		}
 
-		if(id != "")	              address += '&filterPtID=' + id;
-		if(name != "")	              address += '&filterPtName=' + name;
+		if(id != "")	              address += '&filterPtID=' + htmlspecialchars(id);
+		if(name != "")	              address += '&filterPtName=' + htmlspecialchars(name);
 		if(sex == "M" || sex == "F")  address += '&filterSex=' + sex;
 		if(ageMin != "")              address += '&filterAgeMin=' + ageMin;
 		if(ageMax != "")              address += '&filterAgeMax=' + ageMax;
@@ -133,8 +125,8 @@ function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 		if(srTimeTo != "")		address += '&srTimeTo=' + srTimeTo;
 	}
 
-	if(modality != "all")   address += '&filterModality=' + modality;
-	if(description != "")	address += '&filterSrDescription=' + description;
+	if(modality != "all")   address += '&filterModality=' + htmlspecialchars(modality);
+	if(description != "")	address += '&filterSrDescription=' + htmlspecialchars(description);
 	if(showing != 10)		address += '&showing=' + showing;
 
 	return address;

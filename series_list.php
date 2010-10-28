@@ -5,129 +5,132 @@
 	include_once('common.php');
 	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');
-	require_once('class/FormValidator.class.php');	
+	require_once('class/validator.class.php');
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables (set $params array)
 	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('mode' => (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "",
-				    'errorMessage'        => "",
-	                'filterPtID'          => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-				    'filterPtName'        => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
-				    'filterSex'           => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
-				    'filterAgeMin'        => (isset($_GET['filterAgeMin'])) ? $_GET['filterAgeMin'] : "",
-				    'filterAgeMax'        => (isset($_GET['filterAgeMax'])) ? $_GET['filterAgeMax'] : "",
-				    'filterModality'      => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
-				    'filterSrDescription' => (isset($_GET['filterSrDescription'])) ? $_GET['filterSrDescription'] : "",
-				    'filterTag'           => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",				   
-				    'srDateFrom'          => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
-				    'srDateTo'            => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
-				    'srTimeTo'            => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
-				    'studyInstanceUID'    => (isset($_GET['studyInstanceUID'])) ? $_GET['studyInstanceUID'] : "",
-				    'orderCol'            => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Date",
-				    'orderMode'           => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
-				    'pageNum'             => (isset($_GET['pageNum']))   ? $_GET['pageNum']  : 1,
-				    'showing'             => (isset($_GET['showing'])) ? $_GET['showing'] : 10,
-				    'startNum'            => 0,
-				    'endNum'              => 0,
-				    'totalNum'            => 0,
-				    'maxPageNum'          => 1);					
+	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "";
 
-	if($params['filterSex'] != "all" && !FormValidator::validateSex($_GET['filterSex']))
-	{	
-		$params['filterSex'] = "all";
-	}
-	
-	if(!is_numeric($_GET['pageNum']) || $params['pageNum'] <= 0)
-	{
-		$params['pageNum'] = 1;
-	}
+	$request = array('filterPtID'          => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
+				     'filterPtName'        => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
+				     'filterSex'           => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
+				     'filterAgeMin'        => (isset($_GET['filterAgeMin'])) ? $_GET['filterAgeMin'] : "",
+				     'filterAgeMax'        => (isset($_GET['filterAgeMax'])) ? $_GET['filterAgeMax'] : "",
+				     'filterModality'      => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
+				     'filterSrDescription' => (isset($_GET['filterSrDescription'])) ? $_GET['filterSrDescription'] : "",
+				     'filterTag'           => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",				   
+				     'srDateFrom'          => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
+				     'srDateTo'            => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
+				     //'srTimeTo'            => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
+				     'studyInstanceUID'    => (isset($_GET['studyInstanceUID'])) ? $_GET['studyInstanceUID'] : "",
+				     'orderCol'            => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Date",
+				     'orderMode'           => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
+				     'showing'             => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
 
-	if($params['showing'] != 10 && $params['showing'] != 25 && $params['showing'] != 50 && $params['showing'] != "all")
-	{
-		$params['showing'] = 10;
-	}
+	$params = array();
 	//-----------------------------------------------------------------------------------------------------------------
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $params array	
-	//------------------------------------------------------------------------------------------------------------------
-	if($params['mode'] == 'study')
+	//-----------------------------------------------------------------------------------------------------------------
+	// Validation
+	//-----------------------------------------------------------------------------------------------------------------
+	$validator = new FormValidator();
+	
+	if($mode == 'study')
 	{
-		if($params['studyInstanceUID'] != "" && !FormValidator::validateUid($params['studyInstanceUID']))
-		{
-			$params['errorMessage'] = '[Error] URL is incorrect!';
-		}
+		$validator->addRules(array(
+			"studyInstanceUID" => array(
+				"type" => "callback",
+				"callback" => "check_valid_uid",
+				"required" => 1,
+				"errorMes" => "URL is incorrect.")));
+	}
+	else
+	{
+		$validator->addRules(array(
+			"filterPtID" => array(
+				"type" => "callback",
+				"callback" => "check_valid_string",
+				"errorMes" => "Entered 'Patient ID' is invalid."),
+			"filterPtName" => array(
+				"type" => "callback",
+				"callback" => "check_valid_string",
+				"errorMes" => "Entered 'Patient name' is invalid."),
+			"filterSex" => array(
+				"type" => "select",
+				"options" => array('M', 'F', 'all'),
+				"default" => "all"),
+			"filterAgeMin" => array(
+				'type' => 'int', 
+				'min' => '0',
+				'errorMes' => "Entered 'Age' is invalid."),
+			"filterAgeMax" => array(
+				'type' => 'int', 
+				'min' => '0',
+				'errorMes' => "Entered 'Age' is invalid.")
+			));				
 	}
 
-	if($params['errorMessage'] == "" && !FormValidator::validateString($params['filterPtID']))
+	if($mode != 'today')
 	{
-		$params['errorMessage'] = '[Error] Entered patient ID is invalid!!';
-	}
-	
-	if($params['errorMessage'] == "" && !FormValidator::validateString($_GET['filterPtName']))
-	{
-		$params['errorMessage'] = '[Error] Entered patient name is invalid!';
-	}
-	
-	if($params['errorMessage'] == "" && $params['filterAgeMin'] != "")
-	{
-		if(!is_numeric($params['filterAgeMin']) || $params['filterAgeMin'] < 0)
-		{
-			$params['errorMessage'] = '[Error] Entered age is invalid!';
-		}
+		$validator->addRules(array(
+			"srDateFrom" => array(
+				"type" => "date",
+				"errorMes" => "Entered 'Series date' is invalid."),
+			"srDateTo" => array(
+				"type" => "date",
+				"errorMes" => "Entered 'Series date' is invalid.")
+			));	
 	}
 
-	if($params['errorMessage'] == "" && $params['filterAgeMax'] != "")
+	$validator->addRules(array(
+		"filterModality" => array(
+			'type' => 'select', 
+			"options" => $modalityList,
+			"default" => "all"),
+		"filterSrDescription"=> array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "Entered 'Series description' is invalid."),
+		"filterTag"=> array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "Entered 'Tag' is invalid."),
+		"orderCol" => array(
+			"type" => "select",
+			"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
+			"default" => 'Date'),
+		"orderMode" => array(
+			"type" => "select",
+			"options" => array('DESC', 'ASC'),
+			"default" => 'DESC'),
+		"showing" => array(
+			"type" => "select",
+			"options" => array('10', '25', '50', 'all'),
+			"default" => '10')
+		));
+	
+	if($validator->validate($request))
 	{
-		if(!is_numeric($params['filterAgeMax']) || $params['filterAgeMax'] < 0)
-		{
-			$params['errorMessage'] = '[Error] Entered age is invalid!';
-		}
+		$params = $validator->output;
+		$params['errorMessage'] = "&nbsp;";
+		
+		$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
+		$params['startNum'] = 0;
+		$params['endNum'] = 0;
+		$params['totalNum'] = 0;
+		$params['maxPageNum'] = 1;
 	}
-	
-	if($params['errorMessage'] == "" && is_numeric($params['filterAgeMin']) && is_numeric($params['filterAgeMax'])
-	   && $params['filterAgeMin'] > $params['filterAgeMax'])
+	else
 	{
-		$params['errorMessage'] = '[Error] Entered age is invalid!';
+		$params = $request;
+		$params['errorMessage'] = $validator->errors[0];
 	}
-	
-	if($params['errorMessage'] == "" && !FormValidator::validateAlphabet($params['filterModality']))
-	{	
-		$params['errorMessage'] = '[Error] Selected modality is invalid!';
-	}	
-	
-	if($params['errorMessage'] == "" && !FormValidator::validateString($params['filterSrDescription']))
-	{
-		$params['errorMessage'] = '[Error] Entered series description is invalid!!';
-	}
-	
-	if($params['errorMessage'] == "" && !FormValidator::validateString($params['filterTag']))
-	{
-		$params['errorMessage'] = '[Error] Entered tag is invalid!!';
-	}		
-	
-	if($params['errorMessage'] == "" && $params['srDateFrom'] != "" && !FormValidator::validateDate($params['srDateFrom']))
-	{
-		$params['errorMessage'] = '[Error] Entered series date is invalid!';
-	}	
+	$params['mode'] = $mode;
 
-	if($params['errorMessage'] == "" && $params['srDateTo'] != "" && !FormValidator::validateDate($params['srDateTo']))
-	{
-		$params['errorMessage'] = '[Error] Entered series date is invalid!';
-	}
-	
-	if($params['errorMessage'] == "" && $params['srDateFrom'] != "" && $params['srDateTo'] != "" 
-		&& $params['srDateFrom'] > $params['srDateTo'])
-	{
-		$params['errorMessage'] = '[Error] Entered series date is invalid!';
-	}	
+	// ”N—î‚Ì”ÍˆÍE“ú•t‚Ì®‡«‚ÍŒã“úŒŸ“¢
+	//-----------------------------------------------------------------------------------------------------------------
 
-	if($params['errorMessage'] == "" && $params['srTimeTo'] != "" && !FormValidator::validateTime($params['srTimeTo']))
-	{
-		$params['errorMessage'] = '[Error] URL is incorrect!';
-	}
-	//------------------------------------------------------------------------------------------------------------------
 
 	$data = array();
 	
@@ -136,7 +139,7 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
-		if($params['errorMessage'] == '')
+		if($params['errorMessage'] == "&nbsp;")
 		{
 			//----------------------------------------------------------------------------------------------------------
 			// Create WHERE statement of SQL

@@ -5,48 +5,161 @@
 	include_once('common.php');
 	include_once("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');	
-	require_once('class/FormValidator.class.php');	
+	require_once('class/validator.class.php');	
+
+	$userID = $_SESSION['userID'];
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables (set $params array)
 	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('mode' => (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "",
-				    'errorMessage'        => "",
-					'srcPage'        => (isset($_REQUEST['srcPage'])) ? $_REQUEST['srcPage'] : "",
-					'filterPtID'     => (isset($_REQUEST['filterPtID'])) ? $_REQUEST['filterPtID'] : "",
-					'filterPtName'   => (isset($_REQUEST['filterPtName'])) ? $_REQUEST['filterPtName'] : "",
-					'filterSex'      => (isset($_REQUEST['filterSex'])) ? $_REQUEST['filterSex'] : "all",
-					'filterAgeMin'   => (isset($_REQUEST['filterAgeMin'])) ? $_REQUEST['filterAgeMin'] : "",
-					'filterAgeMax'   => (isset($_REQUEST['filterAgeMax'])) ? $_REQUEST['filterAgeMax'] : "",
-					'filterCadID'    => (isset($_REQUEST['filterCadID'])) ? $_REQUEST['filterCadID'] : "",
-					'filterModality' => (isset($_REQUEST['filterModality'])) ? $_REQUEST['filterModality'] : "all",
-					'filterCAD'      => (isset($_REQUEST['filterCAD'])) ? $_REQUEST['filterCAD'] : "all",
-					'filterVersion'  => (isset($_REQUEST['filterVersion'])) ? $_REQUEST['filterVersion'] : "all",
-					'filterTag'      => (isset($_REQUEST['filterTag'])) ? $_REQUEST['filterTag'] : "",
-					'srDateFrom'     => (isset($_REQUEST['srDateFrom'])) ? $_REQUEST['srDateFrom'] : "",
-					'srDateTo'       => (isset($_REQUEST['srDateTo'])) ? $_REQUEST['srDateTo'] : "",
-					'srTimeTo'       => (isset($_REQUEST['stTimeTo'])) ? $_REQUEST['stTimeTo'] : "",
-					'cadDateFrom'    => (isset($_REQUEST['cadDateFrom'])) ? $_REQUEST['cadDateFrom'] : "",
-					'cadDateTo'      => (isset($_REQUEST['cadDateTo'])) ? $_REQUEST['cadDateTo'] : "",
-					'cadTimeTo'      => (isset($_REQUEST['cadTimeTo'])) ? $_REQUEST['cadTimeTo'] : "",
-					'personalFB'     => (isset($_REQUEST['personalFB'])) ? $_REQUEST['personalFB'] : "all",
-					'consensualFB'   => (isset($_REQUEST['consensualFB'])) ? $_REQUEST['consensualFB'] : "all",
-					'filterFBUser'   => (isset($_REQUEST['filterFBUser'])) ? $_REQUEST['filterFBUser'] : "",
-					'filterTP'       => (isset($_REQUEST['filterTP'])) ? $_REQUEST['filterTP'] : "all",
-					'filterFN'       => (isset($_REQUEST['filterFN'])) ? $_REQUEST['filterFN'] : "all",
-					'orderCol'       => (isset($_REQUEST['orderCol'])) ? $_REQUEST['orderCol'] : "Study date",
-					'orderMode'      => ($_REQUEST['orderMode'] === "ASC") ? "ASC" : "DESC",
-				    'pageNum'        => (isset($_REQUEST['pageNum']))   ? $_REQUEST['pageNum']  : 1,
-				    'showing'        => (isset($_REQUEST['showing'])) ? $_REQUEST['showing'] : 10,
-				    'startNum'       => 0,
-				    'endNum'         => 0,
-					'totalNum'       => 0,
-				    'maxPageNum'     => 1);
+	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";	
 
-	if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
-	if($params['showing'] != "all" && $params['showing'] < 10)  $params['showing'] = 10;
+	$request = array('srcPage'        => (isset($_GET['srcPage'])) ? $_GET['srcPage'] : "",
+					 'filterPtID'     => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
+					 'filterPtName'   => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
+					 'filterSex'      => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
+					 'filterAgeMin'   => (isset($_GET['filterAgeMin'])) ? $_GET['filterAgeMin'] : "",
+					 'filterAgeMax'   => (isset($_GET['filterAgeMax'])) ? $_GET['filterAgeMax'] : "",
+					 'filterCadID'    => (isset($_GET['filterCadID'])) ? $_GET['filterCadID'] : "",
+					 'filterModality' => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
+					 'filterCAD'      => (isset($_GET['filterCAD'])) ? $_GET['filterCAD'] : "all",
+					 'filterVersion'  => (isset($_GET['filterVersion'])) ? $_GET['filterVersion'] : "all",
+					 'filterTag'      => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",
+					 'srDateFrom'     => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
+					 'srDateTo'       => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
+					 //'srTimeTo'       => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
+					 'cadDateFrom'    => (isset($_GET['cadDateFrom'])) ? $_GET['cadDateFrom'] : "",
+					 'cadDateTo'      => (isset($_GET['cadDateTo'])) ? $_GET['cadDateTo'] : "",
+					 //'cadTimeTo'      => (isset($_GET['cadTimeTo'])) ? $_GET['cadTimeTo'] : "",
+					 'personalFB'     => (isset($_GET['personalFB'])) ? $_GET['personalFB'] : "all",
+					 'consensualFB'   => (isset($_GET['consensualFB'])) ? $_GET['consensualFB'] : "all",
+					 'filterFBUser'   => (isset($_GET['filterFBUser'])) ? $_GET['filterFBUser'] : "",
+					 'filterTP'       => (isset($_GET['filterTP'])) ? $_GET['filterTP'] : "all",
+					 'filterFN'       => (isset($_GET['filterFN'])) ? $_GET['filterFN'] : "all",
+					 'orderCol'       => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Study date",
+					 'orderMode'      => ($_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
+				     'showing'        => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
+
+	$params = array();
+	//-----------------------------------------------------------------------------------------------------------------
+
+	//-----------------------------------------------------------------------------------------------------------------
+	// Validation
+	//-----------------------------------------------------------------------------------------------------------------
+	$validator = new FormValidator();
+
+	if($mode != 'today')
+	{
+		$validator->addRules(array(
+			"cadDateFrom" => array(
+				"type" => "date",
+				"errorMes" => "'CAD date' is invalid."),
+			"cadDateTo" => array(
+				"type" => "date",
+				"errorMes" => "'CAD date' is invalid.")
+			));	
+	}
+
+	$validator->addRules(array(
+		"filterCadID" => array(
+			'type' => 'int', 
+			'min' => '0',
+			'errorMes' => "'CAD ID' is invalid."),
+		"filterCAD" => array(
+			"type" => "callback",
+			"callback" => "check_valid_cad",
+			'errorMes' => "'CAD' is invalid."),
+		"filterVersion" => array(
+			"type" => "callback",
+			"callback" => "check_valid_version",
+			'errorMes' => "'Version' is invalid."),
+		"filterPtID" => array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "'Patient ID' is invalid."),
+		"filterPtName" => array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "'Patient name' is invalid."),
+		"filterSex" => array(
+			"type" => "select",
+			"options" => array('M', 'F', 'all'),
+			"default" => "all"),
+		"filterAgeMin" => array(
+			'type' => 'int', 
+			'min' => '0',
+			'errorMes' => "'Age' is invalid."),
+		"filterAgeMax" => array(
+			'type' => 'int', 
+			'min' => '0',
+			'errorMes' => "'Age' is invalid."),
+		"filterModality" => array(
+			'type' => 'select', 
+			"options" => $modalityList,
+			"default" => "all"),
+		"srDateFrom" => array(
+			"type" => "date",
+			"errorMes" => "'Series date' is invalid."),
+		"srDateTo" => array(
+			"type" => "date",
+			"errorMes" => "'Series date' is invalid."),
+		"filterTag"=> array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "Entered 'Tag' is invalid."),
+		"filterFBUser"=> array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "'Series description' is invalid."),
+		"personalFB" => array(
+			"type" => "select",
+			"options" => array('entered', 'notEntered', 'all'),
+			"default" => "all"),
+		"consensualFB" => array(
+			"type" => "select",
+			"options" => array('entered', 'notEntered', 'all'),
+			"default" => "all"),
+		"filterTP" => array(
+			"type" => "select",
+			"options" => array('with', 'withour', 'all'),
+			"default" => "all"),
+		"filterFN" => array(
+			"type" => "select",
+			"options" => array('with', 'without', 'all'),
+			"default" => "all"),
+		"orderCol" => array(
+			"type" => "select",
+			"options" => array('Patient ID','Name','Age','Sex','Series','CAD','CAD date'),
+			"default" => 'CAD date'),
+		"orderMode" => array(
+			"type" => "select",
+			"options" => array('DESC', 'ASC'),
+			"default" => 'DESC'),
+		"showing" => array(
+			"type" => "select",
+			"options" => array('10', '25', '50', 'all'),
+			"default" => '10')
+		));
 	
-	$userID = $_SESSION['userID'];
+	if($validator->validate($request))
+	{
+		$params = $validator->output;
+		$params['errorMessage'] = "&nbsp;";
+		
+		$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
+		$params['startNum'] = 0;
+		$params['endNum'] = 0;
+		$params['totalNum'] = 0;
+		$params['maxPageNum'] = 1;
+	}
+	else
+	{
+		$params = $request;
+		$params['errorMessage'] = $validator->errors[0];
+	}
+	$params['mode'] = $mode;
+
+	// ”N—î‚Ì”ÍˆÍE“ú•t‚Ì®‡«‚ÍŒã“úŒŸ“¢
 	//-----------------------------------------------------------------------------------------------------------------
 
 	$data = array();

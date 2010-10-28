@@ -5,51 +5,68 @@
 	include_once("common.php");
 	include("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');
-	require_once('class/FormValidator.class.php');	
+	require_once('class/validator.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables (set $params array)
+	// Import $_GET variables (set $request array)
 	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('errorMessage' => "&nbsp;",
-				    'filterPtID'   => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-				    'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filtePtName'] : "",
-				    'filterSex'    => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
-				    'orderCol'     => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Patient ID",
-				    'orderMode'    => (isset($_GET['orderMode']) && $_GET['orderMode'] === 'DESC') ? 'DESC' : 'ASC',
-				    'showing'      => (isset($_GET['showing'])) ? $_GET['showing'] : 10,
-					'pageNum'      => (isset($_GET['pageNum'])) ? $_GET['pageNum'] : 1,
-				    'startNum'     => 0,
-				    'endNum'       => 0,
-				    'totalNum'     => 0,
-				    'maxPageNum'   => 1);
-					
-	if($params['filterSex'] != "all" && !FormValidator::validateSex($_GET['filterSex']))
-	{	
-		$params['filterSex'] = "all";
-	}
-	
-	if(!is_numeric($_GET['pageNum']) || $params['pageNum'] <= 0)
-	{
-		$params['pageNum'] = 1;
-	}
+	$request = array('filterPtID'   => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
+				     'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filtePtName'] : "",
+				     'filterSex'    => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
+				     'orderCol'     => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Patient ID",
+				     'orderMode'    => (isset($_GET['orderMode']) && $_GET['orderMode'] === 'DESC') ? 'DESC' : 'ASC',
+				     'showing'      => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
 
-	if($params['showing'] != 10 && $params['showing'] != 25 && $params['showing'] != 50 && $params['showing'] != "all")
-	{
-		$params['showing'] = 10;
-	}
+	$params = array();
 	//-----------------------------------------------------------------------------------------------------------------
+				
+	//-----------------------------------------------------------------------------------------------------------------
+	// Validation
+	//-----------------------------------------------------------------------------------------------------------------
+	$validator = new FormValidator();
 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validate $_GET variables
-	//-----------------------------------------------------------------------------------------------------------------
-	if(!FormValidator::validateString($params['filterPtID']))
-	{
-		$params['errorMessage'] = '[Error] Entered patient ID is invalid!';
-	}
+	$validator->addRules(array(
+		"filterPtID" => array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "'Patient ID' is invalid."),
+		"filterPtName" => array(
+			"type" => "callback",
+			"callback" => "check_valid_string",
+			"errorMes" => "'Patient name' is invalid."),
+		"filterSex" => array(
+			"type" => "select",
+			"options" => array('M', 'F', 'all'),
+			"default" => "all"),
+		"orderCol" => array(
+			"type" => "select",
+			"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
+			"default" => 'Patient ID'),
+		"orderMode" => array(
+			"type" => "select",
+			"options" => array('DESC', 'ASC'),
+			"default" => 'DESC'),
+		"showing" => array(
+			"type" => "select",
+			"options" => array('10', '25', '50', 'all'),
+			"default" => '10')
+		));
 	
-	if($params['errorMessage'] == "&nbsp;" && !FormValidator::validateString($params['filterPtName']))
+	if($validator->validate($request))
 	{
-		$params['errorMessage'] = '[Error] Entered patient name is invalid!';
+		$params = $validator->output;
+		$params['errorMessage'] = "&nbsp;";
+		
+		$params['pageNum']  = (ctype_digit($_GET['pageNum']) && $_GET['pageNum'] > 0) ? $_GET['pageNum'] : 1;
+		$params['startNum'] = 0;
+		$params['endNum'] = 0;
+		$params['totalNum'] = 0;
+		$params['maxPageNum'] = 1;
+	}
+	else
+	{
+		$params = $request;
+		$params['errorMessage'] = $validator->errors[0];
 	}
 	//-----------------------------------------------------------------------------------------------------------------
 	

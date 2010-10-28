@@ -21,7 +21,7 @@
 
 <script language="Javascript">
 <!--
-
+{if $data.errorMessage == ""}
 $(function() {ldelim}
 	$("#slider").slider({ldelim}
 		value:{$data.imgNum},
@@ -40,6 +40,7 @@ $(function() {ldelim}
 	$("#sliderValue").html(jQuery("#slider").slider("value"));	
 
 {rdelim});
+{/if}
 
 {literal}
 function Plus()
@@ -88,10 +89,13 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 			  presetName:  presetName },
   			  function(data){
 
-				$("#imgBox img").attr("src", data.imgFname);
-				$("#imgBox span").html(data.imgNumStr);
-				$("#sliceNumber").html(data.sliceNumber);
-				$("#sliceLocation").html(data.sliceLocation);
+				if(data.imgFname != "")
+				{
+					$("#imgBox img").attr("src", data.imgFname);
+					$("#imgBox span").html(data.imgNumStr);
+					$("#sliceNumber").html(data.sliceNumber);
+					$("#sliceLocation").html(data.sliceLocation);
+				}
 			}, "json");
 }
 
@@ -140,8 +144,14 @@ function DownloadVolume()
 		</div><!-- / .tabArea END -->
 		
 		<div class="tab-content">
+		{if $data.errorMessage != ""}
+			<div style="color:#f00;font-weight:bold;">{$data.errorMessage}</div>
+		{else}
 			<div id="series_detail">
 				<h2>Series detail</h2>
+
+
+
 					
 				<div class="series-detail-img">
 					<form id="form1" name="form1" action="series_detail.php" method="POST">
@@ -299,7 +309,7 @@ function DownloadVolume()
 			<div class="al-r ">
 				<p class="pagetop"><a href="#page">page top</a></p>
 			</div>
-		
+		{/if}
 		</div><!-- / .tab-content END -->
 
 		<!-- darkroom button -->

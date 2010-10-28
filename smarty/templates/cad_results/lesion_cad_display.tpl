@@ -265,10 +265,14 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 			  windowWidth: windowWidth,
 			  presetName:  presetName },
   			  function(data){
-				$("#imgBox img").attr("src", '../' + data.imgFname);
-				$("#imgBox span").html(data.imgNumStr);
-				$("#sliceNumber").html(data.sliceNumber);
-				$("#sliceLocation").html(data.sliceLocation);
+
+				if(data.imgFname != "")
+				{
+					$("#imgBox img").attr("src", '../' + data.imgFname);
+					$("#imgBox span").html(data.imgNumStr);
+					$("#sliceNumber").html(data.sliceNumber);
+					$("#sliceLocation").html(data.sliceLocation);
+				}
 			}, "json");
 }
 

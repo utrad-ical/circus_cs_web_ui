@@ -14,17 +14,24 @@
 
 	try
 	{
-		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		if(!preg_match('/[^\d\\.]/', $params['seriesInstanceUID']))
+		{
+			// Connect to SQL Server
+			$pdo = new PDO($connStrPDO);
 	
-		$sqlStr = "SELECT tag_id, tag FROM series_tag WHERE series_instance_uid=? ORDER BY tag_id ASC";
+			$sqlStr = "SELECT tag_id, tag FROM series_tag WHERE series_instance_uid=? ORDER BY tag_id ASC";
 		
-		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(1, $params['seriesInstanceUID']);
-		$stmt->execute();
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->bindValue(1, $params['seriesInstanceUID']);
+			$stmt->execute();
 
-		$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
-
+			$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
+		}
+		else
+		{
+			$params['message'] = "[ERROR] Series instance UID is invalid."
+		}
+		
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
