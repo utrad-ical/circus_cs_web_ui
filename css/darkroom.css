@@ -4,9 +4,41 @@ CSS information
 
  file name  :darkroom.css
 
- 2010.06.04 By Y.Nomura
+ 2010.10.28 By Y.Nomura
 
 =================================================================== */
+
+#darkroom {
+	background-color:#000; color:#fff;
+}
+
+body.darkroom {
+	background-color: #000;
+	color: #fff;
+}
+
+body.darkroom #darkroom{
+	background-color:#fff; color:#000;
+}
+
+body.darkroom .headerArea a {
+	text-decoration: underline;
+	color: #fff;
+}
+body.darkroom .tab-content {
+	background-color: #000!important;
+	color: #fff!important;
+}
+body.darkroom .detail-panel {
+	background-color: #000 !important;
+}
+body.darkroom table.detail-tbl th,body.mono table.detail-tbl td {
+	border-bottom-color: #fff !important;
+}
+
+body.darkroom table.col-tbl tr.column td {
+	background-color: transparent;
+}
 
 #container.menu-darkroom {
 	background: url(img_common/item/menu_bk.black.gif) left repeat-y;
@@ -16,15 +48,13 @@ CSS information
 	background-color:#000;
 }
 
-#darkroom {
-	background-color:#000; color:#fff;
-}
-
-body.mono #darkroom{
-	background-color:#fff; color:#000;
-}
 
 #menu p.user-darkroom{
 	border-top: 1px solid #fff;
 	line-height: 2;
+
+
+
+
+
 }

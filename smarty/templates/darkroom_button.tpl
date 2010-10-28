@@ -4,20 +4,20 @@
 
 <script language="javascript">
 <!-- 
+{literal}
 function ToggleDarkroomBtn()
-{ldelim}
-	$('body').toggleClass('mono');
+{
+	$('body').toggleClass('darkroom');
 	$('h1').toggleClass('darkroom');
 	$('#menu p').toggleClass('user-darkroom');
 	$('#container').toggleClass('menu-back').toggleClass('menu-darkroom').height( $(document).height() - 10 );
-{rdelim}
+}
+{/literal}
 
 {if $smarty.session.darkroomFlg==1}
-	$(function(){ldelim}
-		$('h1').toggleClass('darkroom');
-		$('#menu p').toggleClass('user-darkroom');
-		$('#container').toggleClass('menu-back').toggleClass('menu-darkroom').height( $(document).height() - 10 );
-	{rdelim});
+{literal}
+	$(function(){ ToggleDarkroomBtn(); });
+{/literal}
 {/if}
 
 -->

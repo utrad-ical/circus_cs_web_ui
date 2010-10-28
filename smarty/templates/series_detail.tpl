@@ -118,7 +118,6 @@ function DownloadVolume()
 <link href="./css/base_style.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="./css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/popup.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/darkroom.css" rel="stylesheet" type="text/css" media="all" />
 
@@ -126,7 +125,7 @@ function DownloadVolume()
 <!-- InstanceParam name="class" type="text" value="series-list" -->
 </head>
 
-<body class="series-list{if $smarty.session.darkroomFlg==1} mono{/if}">
+<body class="series-list">
 <div id="page">
 	<div id="container" class="menu-back">
 		<div id="leftside">

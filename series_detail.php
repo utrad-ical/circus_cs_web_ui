@@ -29,7 +29,7 @@
 			"callback" => "check_valid_uid",
 			"required" => 1,
 			"errorMes" => "[ERROR] URL is incorrect."),
-		"seriesyInstanceUID" => array(
+		"seriesInstanceUID" => array(
 			"type" => "callback",
 			"callback" => "check_valid_uid",
 			"required" => 1,
@@ -50,9 +50,9 @@
 		$data = $request;
 		$data['errorMessage'] = $validator->errors[0];
 	}
+	
+	//var_dump($data);
 	//-----------------------------------------------------------------------------------------------------------------
-
-
 
 	try
 	{	

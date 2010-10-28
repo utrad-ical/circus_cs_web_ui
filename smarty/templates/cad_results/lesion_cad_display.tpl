@@ -334,7 +334,6 @@ $(function() {ldelim}
 <!-- InstanceBeginEditable name="head" -->
 <link href="../jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/darkroom.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../js/radio-to-button.js"></script>
@@ -343,7 +342,7 @@ $(function() {ldelim}
 </head>
 
 <!-- InstanceParam name="class" type="text" value="home" -->
-<body class="lesion_cad_display{if $smarty.session.darkroomFlg==1} mono{/if}">
+<body class="lesion_cad_display">
 <div id="page">
 	<div id="container" class="menu-back">
 		<div id="leftside">
