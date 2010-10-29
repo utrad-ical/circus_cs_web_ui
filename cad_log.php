@@ -48,7 +48,7 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 
-	if($mode != 'today')
+	if($mode != "today")
 	{
 		$validator->addRules(array(
 			"cadDateFrom" => array(
@@ -65,15 +65,15 @@
 
 	$validator->addRules(array(
 		"filterCadID" => array(
-			'type' => 'int', 
-			'min' => '0',
-			'errorMes' => "'CAD ID' is invalid."),
+			"type" => "int", 
+			"min" => '0',
+			"errorMes" => "'CAD ID' is invalid."),
 		"filterCAD" => array(
 			"type" => "cadname",
-			'errorMes' => "'CAD' is invalid."),
+			"errorMes" => "'CAD' is invalid."),
 		"filterVersion" => array(
 			"type" => "version",
-			'errorMes' => "'Version' is invalid."),
+			"errorMes" => "'Version' is invalid."),
 		"filterPtID" => array(
 			"type" => "regexp",
 			"errorMes" => "'Patient ID' is invalid."),
@@ -86,17 +86,17 @@
 			"default" => "all",
 			"adjVal" => "all"),
 		"filterAgeMin" => array(
-			'type' => 'int', 
-			'min' => '0',
-			'errorMes' => "'Age (min)' is invalid."),
+			"type" => "int", 
+			"min" => "0",
+			"errorMes" => "'Age (min)' is invalid."),
 		"filterAgeMax" => array(
-			'type' => 'int', 
-			'min' => '0',
-			'errorMes' => "'Age (max)' is invalid."),
+			"type" => "int", 
+			"min" => "0",
+			"errorMes" => "'Age (max)' is invalid."),
 		"filterModality" => array(
-			'type' => 'adjselect', 
+			"type" => "adjselect", 
 			"options" => $modalityList,
-			"default" => 'all',
+			"default" => "all",
 			"adjVal" => "all"),
 		"srDateFrom" => array(
 			"type" => "date",
@@ -106,7 +106,7 @@
 			"errorMes" => "'Series date (to)' is invalid."),
 		"srTimeTo" => array(
 			"type" => "time",
-			"errorMes" => "'Series time (to)' is invalid."),			
+			"errorMes" => "'Series time (to)' is invalid."),
 		"filterTag"=> array(
 			"type" => "regexp",
 			"errorMes" => "'Tag' is invalid."),
@@ -115,38 +115,39 @@
 			"errorMes" => "'Series description' is invalid."),
 		"personalFB" => array(
 			"type" => "adjselect",
-			"options" => array('entered', 'notEntered', 'all'),
+			"options" => array("entered", "notEntered", "all"),
 			"default" => "all",
 			"adjVal"  => "all"),
 		"consensualFB" => array(
 			"type" => "adjselect",
-			"options" => array('entered', 'notEntered', 'all'),
+			"options" => array("entered", "notEntered", "all"),
 			"default" => "all",
 			"adjVal"  => "all"),
 		"filterTP" => array(
 			"type" => "adjselect",
-			"options" => array('with', 'withour', 'all'),
+			"options" => array("with", "withour", "all"),
 			"default" => "all",
 			"adjVal"  => "all"),
 		"filterFN" => array(
 			"type" => "adjselect",
-			"options" => array('with', 'without', 'all'),
+			"options" => array("with", "without", "all"),
 			"default" => "all",
 			"adjVal"  => "all"),
 		"orderCol" => array(
-			"type" => "select",
-			"options" => array('Patient ID','Name','Age','Sex','Series','CAD','CAD date'),
-			"default" => 'CAD date'),
+			"type" => "adjselect",
+			"options" => array("Patient ID","Name","Age","Sex","Series","CAD","CAD date"),
+			"default" => "CAD date",
+			"adjVal" => "CAD date"),
 		"orderMode" => array(
 			"type" => "adjselect",
 			"options" => array('DESC', 'ASC'),
-			"default" => "DESC"
+			"default" => "DESC",
 			"adjVal"  => "DESC"),
 		"showing" => array(
 			"type" => "adjselect",
-			"options" => array('10', '25', '50', 'all'),
-			"default" => '10',
-			"adjVal" => '10')
+			"options" => array("10", "25", "50", "all"),
+			"default" => "10",
+			"adjVal" => "10")
 		));
 	
 	if($validator->validate($request))
