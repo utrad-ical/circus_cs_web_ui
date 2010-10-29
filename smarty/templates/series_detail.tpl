@@ -287,19 +287,19 @@ function DownloadVolume()
 
 			<div id="tagArea" class="mt10" style="width:500px;">
 				Tags:
-				{foreach from=$data.tagArray item=tag}
-					<a href="series_list.php?filterTag={$tag|escape}">{$tag|escape}</a>&nbsp;
+				{foreach from=$tagArray item=item}
+					<a href="series_list.php?filterTag={$item[0]|escape}" title="{$item[1]|escape}">{$item[0]|escape}</a>&nbsp;
 				{/foreach}
-				{if $smarty.session.researchFlg==1}<a href="#" onclick="EditTag('{$data.seriesInstanceUID|escape}');">(Edit)</a>{/if}
+				{if $smarty.session.personalFBFlg==1}<a href="#" onclick="EditTag('{$data.sid|escape}');">(Edit)</a>{/if}
 			</div>
 
 			{literal}
 			<script language="javascript">
 			<!-- 
-				function EditTag(seriesInstanceUID)
+				function EditTag(sid)
 				{
-					var dstAddress = "edit_series_tag.php?seriesInstanceUID=" + seriesInstanceUID;
-					window.open(dstAddress,"Edit tag", "width=400,height=250,location=no,resizable=no,scrollbars=1");
+					var dstAddress = "edit_tags.php?category=3&reference_id=" + sid;
+					window.open(dstAddress,"Edit series tag", "width=400,height=250,location=no,resizable=no,scrollbars=1");
 				}
 			-->
 			</script>

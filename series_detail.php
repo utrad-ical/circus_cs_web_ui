@@ -25,19 +25,18 @@
 	
 	$validator->addRules(array(
 		"studyInstanceUID" => array(
-			"type" => "callback",
-			"callback" => "check_valid_uid",
+			"type" => "uid",
 			"required" => 1,
-			"errorMes" => "[ERROR] URL is incorrect."),
+			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
 		"seriesInstanceUID" => array(
-			"type" => "callback",
-			"callback" => "check_valid_uid",
+			"type" => "uid",
 			"required" => 1,
-			"errorMes" => "[ERROR] URL is incorrect."),
+			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid."),
 		"listTabName" => array(
 			"type" => "select",
 			"options" => array("Today's series", "Series list"),
-			"default" => "Series list")
+			"default" => "Series list",
+			"adjValue" => "Series list")
 		));				
 
 	if($validator->validate($request))
@@ -48,7 +47,7 @@
 	else
 	{
 		$data = $request;
-		$data['errorMessage'] = $validator->errors[0];
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	
 	//var_dump($data);
@@ -61,7 +60,7 @@
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);	
 	
-			$sqlStr = "SELECT pt.patient_id, pt.patient_name, sm.path, sm.apache_alias," 
+			$sqlStr = "SELECT sr.sid, pt.patient_id, pt.patient_name, sm.path, sm.apache_alias," 
 			        . " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality,"
 					. " sr.series_description, sr.body_part, sr.compress_flg"
@@ -77,29 +76,30 @@
 	
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 					
-			$data['patientID']         = $result[0];
-			$data['patientName']       = $result[1];
-			$data['sex']               = $result[6];
-			$data['age']               = $result[7];
-			$data['studyID']           = $result[8];
-			$data['seriesID']          = $result[9];
-			$data['seriesDate']        = $result[10];
-			$data['seriesTime']        = $result[11];
-			$data['modality']          = $result[12];
-			$data['seriesDescription'] = $result[13];
-			$data['bodyPart']          = $result[14];
+			$data['sid']               = $result[0];
+			$data['patientID']         = $result[1];
+			$data['patientName']       = $result[2];
+			$data['sex']               = $result[7];
+			$data['age']               = $result[8];
+			$data['studyID']           = $result[9];
+			$data['seriesID']          = $result[10];
+			$data['seriesDate']        = $result[11];
+			$data['seriesTime']        = $result[12];
+			$data['modality']          = $result[13];
+			$data['seriesDescription'] = $result[14];
+			$data['bodyPart']          = $result[15];
 				
 			$data['encryptedPtID']   = PinfoScramble::encrypt($data['patientID'], $_SESSION['key']);
 			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);			
 				
-			$data['seriesDir'] = $result[2] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
+			$data['seriesDir'] = $result[3] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
 					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
 						   
-			$data['seriesDirWeb'] = $result[3]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
+			$data['seriesDirWeb'] = $result[4]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
 					              . $DIR_SEPARATOR_WEB . $data['seriesInstanceUID'];		   
 						   
-			$data['orgWidth'] = $result[4];
-			$data['orgHeight'] = $result[5];
+			$data['orgWidth'] = $result[5];
+			$data['orgHeight'] = $result[6];
 			
 			if($_SESSION['anonymizeFlg'] == 1)
 			{	
@@ -236,31 +236,16 @@
 				//------------------------------------------------------------------------------------------------------
 				// Retrieve tag data
 				//------------------------------------------------------------------------------------------------------
-				$data['tagArray'] = array();
+				$tagArray = array();
 			
-				$sqlStr = "SELECT tag, entered_by FROM series_tag WHERE series_instance_uid=? ORDER BY tag_id ASC";
+				$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=3 AND reference_id=? ORDER BY sid ASC";
 			
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $data['seriesInstanceUID']);
+				$stmt->bindValue(1, $data['sid']);
 				$stmt->execute();
 				$tagNum = $stmt->rowCount();
 				
-				for($i=0; $i<$tagNum; $i++)
-				{
-					$result = $stmt->fetch(PDO::FETCH_NUM);
-			
-					$data['tagArray'][$i] = $result[0];
-				
-					if($i == 0)
-					{
-						$data['tagEnteredBy'] = $result[1];
-						$data['tagStr'] = $result[0];
-					}
-					else
-					{
-						$data['tagStr'] .= ", " . $result[0];
-					}
-				}	
+				$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
 				//------------------------------------------------------------------------------------------------------
 			}
 			//var_dump($data);	
@@ -272,7 +257,8 @@
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 	
-		$smarty->assign('data', $data);
+		$smarty->assign('data',     $data);
+		$smarty->assign('tagArray', $tagArray);
 	
 		$smarty->display('series_detail.tpl');
 		//-------------------------------------------------------------------------------------------------------------
