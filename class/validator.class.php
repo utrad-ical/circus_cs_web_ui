@@ -16,16 +16,22 @@
 class FormValidator
 {
 	private $validators = array(
-		'int'      => 'IntegerValidator',
-		'integer'  => 'IntegerValidator',
-		'str'      => 'StringValidator',
-		'string'   => 'StringValidator',
-		'date'     => 'DateValidator',
-		'datetime' => 'DateTimeValidator',
-		'select'   => 'SelectValidator',
-		'array'    => 'ArrayValidator',
-		'callback' => 'CallBackValidator',
-		'pass'     => 'PassThroughValidator',
+		'int'       => 'IntegerValidator',
+		'integer'   => 'IntegerValidator',
+		'str'       => 'StringValidator',
+		'string'    => 'StringValidator',
+		'regexp'    => 'RegexpValidator',
+		'date'      => 'DateValidator',
+		'datetime'  => 'DateTimeValidator',
+		'time'      => 'TimeValidator',
+		'uid'       => 'UIDValidator',
+		'cadname'   => 'CadNameValidator',
+		'version'   => 'CadVersionValidator',
+		'select'    => 'SelectValidator',
+		'adjselect' => 'AdjustSelectValidator',
+		'array'     => 'ArrayValidator',
+		'callback'  => 'CallBackValidator',
+		'pass'      => 'PassThroughValidator',
 	);
 	
 	/**
@@ -336,6 +342,24 @@ class StringValidator extends ScalarValidator
 }
 
 /**
+ * Validator for strings including regular expression.
+ * by Y.Nomura
+ */
+class RegexpValidator extends ScalarValidator
+{
+	public function validate($input) {
+		if (preg_match("/[<>\\&\\!;]/", $input)) {
+			$this->error = "Input data '$label' is invalid.";
+			return false;
+		}
+		$this->output = $input;
+		return true;
+	}
+}
+
+
+
+/**
  * Validator for date and time.
  * This checks if the passed string is the valid expression which
  * PHP's internal DateTime::__construct can understand.
@@ -404,6 +428,33 @@ class DateValidator extends DateTimeValidator
 	}
 }
 
+/**
+ * Validator for time.
+ * by Y.Nomura
+ */
+class TimeValidator extends ScalarValidator
+{
+	public function validate($input) {
+
+		if(preg_match('/^\d{1,2}:\d{1,2}:\d{1,2}$/', $input))
+		{
+			$vals = explode(":", $input);
+				
+			if(0<=$vals[0] && $vals[0]<=23 && 0<=$vals[1] && $vals[1]<=59
+			    && 0<=$vals[2] && $vals[2]<=59){
+				$this->output = $input;
+				return true;
+			} else {
+				$this->error = "Input data '$this->label' is invalid.";
+				return false;
+			}
+		} else {
+			$this->error = "Input data '$this->label' is invalid.";
+			return false;
+		}
+	}
+}
+
 
 /**
  * Validator which checks if the input is one of the given enumeraton data.
@@ -417,8 +468,29 @@ class SelectValidator extends ScalarValidator
 		if (is_array($options) && array_search($input, $options) !== false) {
 			$this->output = $input;
 			return true;
-		} else if ($this->params['default']) {
-			$this->output = $this->params['default'];
+		} else {
+			$this->error = "Input data '$this->label' is invalid.";
+			return false;
+		}
+	}
+}
+
+/**
+ * Validator which checks if the input is one of the given enumeraton data.
+ * If none of the enumeraton data match and 'adjVal' is set, result is set 
+ * to 'adjVal'.
+ * @package formValidators
+ * by Y.Nomura
+ */
+class AdjustSelectValidator extends ScalarValidator
+{
+	public function validate($input) {
+		$options = $this->params['options'];
+		if (is_array($options) && array_search($input, $options) !== false) {
+			$this->output = $input;
+			return true;
+		} else if ($this->params['adjVal']) {
+			$this->output = $this->params['adjVal'];
 			return true;
 		} else {
 			$this->error = "Input data '$this->label' is invalid.";
@@ -426,6 +498,7 @@ class SelectValidator extends ScalarValidator
 		}
 	}
 }
+
 
 /**
  * Validator that confirms the given data is an array.
@@ -549,23 +622,60 @@ class PassThroughValidator extends ValidatorBase
 	}
 }
 
-//--------------------------------------------------------------------------------------------------
-// Callback function (by Y.Nomura)
-//--------------------------------------------------------------------------------------------------
-function check_valid_string($input) {
-	return !preg_match("/[<>\\&\\!;]/", $input);
-}
-	
-function check_valid_uid($input) {
-	return !preg_match("/[^\d\\.]/", $input);
+/**
+ * Validator for DICOM UID (allowed characters: 0-9 and period).
+ * by Y.Nomura
+ */
+class UIDValidator extends ScalarValidator
+{
+	public function validate($input) {
+		if (preg_match("/[^\d\\.]/", $input)) {
+			$this->error = "Input data '$label' is invalid.";
+			return false;
+		}
+		$this->output = $input;
+		return true;
+	}
 }
 
-function check_valid_cad($input) {
-	return ($input=='all' || !preg_match("/[^\\w-]/", $input));
+/**
+ * Validator for CAD name (allowed characters: 'all' or (\w and '-')).
+ * by Y.Nomura
+ */
+class CadNameValidator extends ScalarValidator
+{
+	public function validate($input) {
+		if ($input==='all' || !preg_match("/[^\\w-]/", $input)) {
+			$this->output = $input;
+			return true;
+		} else if ($this->params['adjVal']) {
+			$this->output = $this->params['adjVal'];
+			return true;
+		} else {
+			$this->error = "Input data '$this->label' is invalid.";
+			return false;
+		}
+	}
 }
 
-function check_valid_version($input) {
-	return ($input=='all' || !preg_match("/[^\w\\.]/", $input));
+/**
+ * Validator for CAD name (allowed characters: 'all' or (\w and '.')).
+ * by Y.Nomura
+ */
+class CadVersionValidator extends ScalarValidator
+{
+	public function validate($input) {
+		if ($input==='all' || !preg_match("/[^\\w.]/", $input)) {
+			$this->output = $input;
+			return true;
+		} else if ($this->params['adjVal']) {
+			$this->output = $this->params['adjVal'];
+			return true;
+		} else {
+			$this->error = "Input data '$this->label' is invalid.";
+			return false;
+		}
+	}	
 }
 
 ?>

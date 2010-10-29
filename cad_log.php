@@ -27,10 +27,10 @@
 					 'filterTag'      => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",
 					 'srDateFrom'     => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
 					 'srDateTo'       => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
-					 //'srTimeTo'       => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
+					 'srTimeTo'       => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
 					 'cadDateFrom'    => (isset($_GET['cadDateFrom'])) ? $_GET['cadDateFrom'] : "",
 					 'cadDateTo'      => (isset($_GET['cadDateTo'])) ? $_GET['cadDateTo'] : "",
-					 //'cadTimeTo'      => (isset($_GET['cadTimeTo'])) ? $_GET['cadTimeTo'] : "",
+					 'cadTimeTo'      => (isset($_GET['cadTimeTo'])) ? $_GET['cadTimeTo'] : "",
 					 'personalFB'     => (isset($_GET['personalFB'])) ? $_GET['personalFB'] : "all",
 					 'consensualFB'   => (isset($_GET['consensualFB'])) ? $_GET['consensualFB'] : "all",
 					 'filterFBUser'   => (isset($_GET['filterFBUser'])) ? $_GET['filterFBUser'] : "",
@@ -53,10 +53,13 @@
 		$validator->addRules(array(
 			"cadDateFrom" => array(
 				"type" => "date",
-				"errorMes" => "'CAD date' is invalid."),
+				"errorMes" => "'CAD date (from)' is invalid."),
 			"cadDateTo" => array(
 				"type" => "date",
-				"errorMes" => "'CAD date' is invalid.")
+				"errorMes" => "'CAD date (to)' is invalid."),
+			"cadTimeTo" => array(
+				"type" => "time",
+				"errorMes" => "'CAD time (to)' is invalid.")
 			));	
 	}
 
@@ -66,79 +69,84 @@
 			'min' => '0',
 			'errorMes' => "'CAD ID' is invalid."),
 		"filterCAD" => array(
-			"type" => "callback",
-			"callback" => "check_valid_cad",
+			"type" => "cadname",
 			'errorMes' => "'CAD' is invalid."),
 		"filterVersion" => array(
-			"type" => "callback",
-			"callback" => "check_valid_version",
+			"type" => "version",
 			'errorMes' => "'Version' is invalid."),
 		"filterPtID" => array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
+			"type" => "regexp",
 			"errorMes" => "'Patient ID' is invalid."),
 		"filterPtName" => array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
+			"type" => "regexp",
 			"errorMes" => "'Patient name' is invalid."),
 		"filterSex" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('M', 'F', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal" => "all"),
 		"filterAgeMin" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age' is invalid."),
+			'errorMes' => "'Age (min)' is invalid."),
 		"filterAgeMax" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age' is invalid."),
+			'errorMes' => "'Age (max)' is invalid."),
 		"filterModality" => array(
-			'type' => 'select', 
+			'type' => 'adjselect', 
 			"options" => $modalityList,
-			"default" => "all"),
+			"default" => 'all',
+			"adjVal" => "all"),
 		"srDateFrom" => array(
 			"type" => "date",
-			"errorMes" => "'Series date' is invalid."),
+			"errorMes" => "'Series date (from)' is invalid."),
 		"srDateTo" => array(
 			"type" => "date",
-			"errorMes" => "'Series date' is invalid."),
+			"errorMes" => "'Series date (to)' is invalid."),
+		"srTimeTo" => array(
+			"type" => "time",
+			"errorMes" => "'Series time (to)' is invalid."),			
 		"filterTag"=> array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
-			"errorMes" => "Entered 'Tag' is invalid."),
+			"type" => "regexp",
+			"errorMes" => "'Tag' is invalid."),
 		"filterFBUser"=> array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
+			"type" => "regexp",
 			"errorMes" => "'Series description' is invalid."),
 		"personalFB" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('entered', 'notEntered', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal"  => "all"),
 		"consensualFB" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('entered', 'notEntered', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal"  => "all"),
 		"filterTP" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('with', 'withour', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal"  => "all"),
 		"filterFN" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('with', 'without', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal"  => "all"),
 		"orderCol" => array(
 			"type" => "select",
 			"options" => array('Patient ID','Name','Age','Sex','Series','CAD','CAD date'),
 			"default" => 'CAD date'),
 		"orderMode" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('DESC', 'ASC'),
-			"default" => 'DESC'),
+			"default" => "DESC"
+			"adjVal"  => "DESC"),
 		"showing" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('10', '25', '50', 'all'),
-			"default" => '10')
+			"default" => '10',
+			"adjVal" => '10')
 		));
 	
 	if($validator->validate($request))
@@ -155,7 +163,7 @@
 	else
 	{
 		$params = $request;
-		$params['errorMessage'] = $validator->errors[0];
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;
 

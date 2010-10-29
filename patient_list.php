@@ -11,7 +11,7 @@
 	// Import $_GET variables (set $request array)
 	//-----------------------------------------------------------------------------------------------------------------
 	$request = array('filterPtID'   => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-				     'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filtePtName'] : "",
+				     'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
 				     'filterSex'    => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
 				     'orderCol'     => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Patient ID",
 				     'orderMode'    => (isset($_GET['orderMode']) && $_GET['orderMode'] === 'DESC') ? 'DESC' : 'ASC',
@@ -27,29 +27,31 @@
 
 	$validator->addRules(array(
 		"filterPtID" => array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
+			"type" => "regexp",
 			"errorMes" => "'Patient ID' is invalid."),
 		"filterPtName" => array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
+			"type" => "regexp",
 			"errorMes" => "'Patient name' is invalid."),
 		"filterSex" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('M', 'F', 'all'),
-			"default" => "all"),
+			"default" => "all",
+			"adjVal" => "all"),
 		"orderCol" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
-			"default" => 'Patient ID'),
+			"default"=> 'Patient ID',
+			"adjVal" => 'Patient ID'),
 		"orderMode" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('DESC', 'ASC'),
-			"default" => 'DESC'),
+			"default" => 'ASC',
+			"adjVal" => 'ASC'),
 		"showing" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('10', '25', '50', 'all'),
-			"default" => '10')
+			"default" => '10',
+			"adjVal" => '10')
 		));
 	
 	if($validator->validate($request))
@@ -66,7 +68,7 @@
 	else
 	{
 		$params = $request;
-		$params['errorMessage'] = $validator->errors[0];
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	//-----------------------------------------------------------------------------------------------------------------
 	

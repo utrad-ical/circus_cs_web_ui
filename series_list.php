@@ -22,7 +22,7 @@
 				     'filterTag'           => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",				   
 				     'srDateFrom'          => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
 				     'srDateTo'            => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
-				     //'srTimeTo'            => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
+				     'srTimeTo'            => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
 				     'studyInstanceUID'    => (isset($_GET['studyInstanceUID'])) ? $_GET['studyInstanceUID'] : "",
 				     'orderCol'            => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Date",
 				     'orderMode'           => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
@@ -40,8 +40,7 @@
 	{
 		$validator->addRules(array(
 			"studyInstanceUID" => array(
-				"type" => "callback",
-				"callback" => "check_valid_uid",
+				"type" => "uid",
 				"required" => 1,
 				"errorMes" => "URL is incorrect.")));
 	}
@@ -49,25 +48,24 @@
 	{
 		$validator->addRules(array(
 			"filterPtID" => array(
-				"type" => "callback",
-				"callback" => "check_valid_string",
-				"errorMes" => "Entered 'Patient ID' is invalid."),
+				"type" => "regexp",
+				"errorMes" => "'Patient ID' is invalid."),
 			"filterPtName" => array(
-				"type" => "callback",
-				"callback" => "check_valid_string",
-				"errorMes" => "Entered 'Patient name' is invalid."),
+				"type" => "regexp",
+				"errorMes" => "'Patient name' is invalid."),
 			"filterSex" => array(
-				"type" => "select",
+				"type" => "adjselect",
 				"options" => array('M', 'F', 'all'),
-				"default" => "all"),
+				"default" => "all",
+				"adjVal" => "all"),
 			"filterAgeMin" => array(
 				'type' => 'int', 
 				'min' => '0',
-				'errorMes' => "Entered 'Age' is invalid."),
+				'errorMes' => "'Age (min)' is invalid."),
 			"filterAgeMax" => array(
 				'type' => 'int', 
 				'min' => '0',
-				'errorMes' => "Entered 'Age' is invalid.")
+				'errorMes' => "'Age (max)' is invalid.")
 			));				
 	}
 
@@ -76,38 +74,42 @@
 		$validator->addRules(array(
 			"srDateFrom" => array(
 				"type" => "date",
-				"errorMes" => "Entered 'Series date' is invalid."),
+				"errorMes" => "'Series date (from)' is invalid."),
 			"srDateTo" => array(
 				"type" => "date",
-				"errorMes" => "Entered 'Series date' is invalid.")
+				"errorMes" => "'Series date (to)' is invalid."),
+			"srTimeTo" => array(
+				"type" => "time",
+				"errorMes" => "'Series time (to)' is invalid.")
 			));	
 	}
 
 	$validator->addRules(array(
 		"filterModality" => array(
-			'type' => 'select', 
+			'type' => 'adjselect', 
 			"options" => $modalityList,
-			"default" => "all"),
+			"default" => 'all',
+			"adjVal" => "all"),
 		"filterSrDescription"=> array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
-			"errorMes" => "Entered 'Series description' is invalid."),
+			"type" => "regexp",
+			"errorMes" => "'Series description' is invalid."),
 		"filterTag"=> array(
-			"type" => "callback",
-			"callback" => "check_valid_string",
-			"errorMes" => "Entered 'Tag' is invalid."),
+			"type" => "regexp",
+			"errorMes" => "'Tag' is invalid."),
 		"orderCol" => array(
 			"type" => "select",
 			"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
 			"default" => 'Date'),
 		"orderMode" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('DESC', 'ASC'),
-			"default" => 'DESC'),
+			"default" => 'DESC',
+			"adjVal"  => 'DESC'),
 		"showing" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('10', '25', '50', 'all'),
-			"default" => '10')
+			"default" => '10',
+			"adjVal" => '10')
 		));
 	
 	if($validator->validate($request))
@@ -124,11 +126,11 @@
 	else
 	{
 		$params = $request;
-		$params['errorMessage'] = $validator->errors[0];
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;
 
-	// 年齢の範囲・日付の整合性は後日検討
+	// 年齢の範囲の整合性は後日検討
 	//-----------------------------------------------------------------------------------------------------------------
 
 

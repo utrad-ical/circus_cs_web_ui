@@ -21,7 +21,7 @@
 				     'filterModality' => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
 				     'stDateFrom'     => (isset($_GET['stDateFrom']))     ? $_GET['stDateFrom']     : "",
 				     'stDateTo'       => (isset($_GET['stDateTo']))       ? $_GET['stDateTo']       : "",
-				     //'stTimeTo'       => (isset($_GET['stTimeTo']))       ? $_GET['stTimeTo']       : "",
+				     'stTimeTo'       => (isset($_GET['stTimeTo']))       ? $_GET['stTimeTo']       : "",
 				     'orderCol'       => (isset($_GET['orderCol']))       ? $_GET['orderCol']       : "Study date",
 				     'orderMode'      => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
 				     'showing'        => (isset($_REQUEST['showing']))  ? $_REQUEST['showing']  : 10);
@@ -38,8 +38,7 @@
 	{
 		$validator->addRules(array(
 			"encryptedPtID" => array(
-				"type" => "callback",
-				"callback" => "check_valid_string",
+				"type" => "regexp",
 				"required" => 1,
 				"errorMes" => "URL is incorrect.")));
 	}
@@ -47,17 +46,16 @@
 	{
 		$validator->addRules(array(
 			"filterPtID" => array(
-				"type" => "callback",
-				"callback" => "check_valid_string",
+				"type" => "regexp",
 				"errorMes" => "'Patient ID' is invalid."),
 			"filterPtName" => array(
-				"type" => "callback",
-				"callback" => "check_valid_string",
+				"type" => "regexp",
 				"errorMes" => "'Patient name' is invalid."),
-			"filterSex" => array(
-				"type" => "select",
-				"options" => array('M', 'F', 'all'),
-				"default" => "all")
+		"filterSex" => array(
+			"type" => "adjselect",
+			"options" => array('M', 'F', 'all'),
+			"default" => "all",
+			"adjVal" => "all")
 			));
 	}
 	
@@ -65,33 +63,40 @@
 		"filterAgeMin" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age' is invalid."),
+			'errorMes' => "'Age (min)' is invalid."),
 		"filterAgeMax" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age' is invalid."),
+			'errorMes' => "'Age (max)' is invalid."),
 		"filterModality" => array(
-			'type' => 'select', 
+			'type' => 'adjselect', 
 			"options" => $modalityList,
-			"default" => "all"),
+			"default" => "all",
+			"adjVal" => "all"),
 		"stDateFrom" => array(
 			"type" => "date",
-			"errorMes" => "'Study date' is invalid."),
+			"errorMes" => "'Study date (from)' is invalid."),
 		"stDateTo" => array(
 			"type" => "date",
-			"errorMes" => "'Study date' is invalid."),
+			"errorMes" => "'Study date (to)' is invalid."),
+		"stTimeTo" => array(
+			"type" => "time",
+			"errorMes" => "'Study time (to)' is invalid."),
 		"orderCol" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('Patient ID','Name','Age','Sex','ID','Study ID','Study date'),
-			"default" => 'Study date'),
+			"default" => 'Study date',
+			"adjVal" => 'Study date'),
 		"orderMode" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('DESC', 'ASC'),
-			"default" => 'DESC'),
+			"default"=> 'DESC',
+			"adjVal" => 'DESC'),
 		"showing" => array(
-			"type" => "select",
+			"type" => "adjselect",
 			"options" => array('10', '25', '50', 'all'),
-			"default" => '10')
+			"default" => '10',
+			"adjVal" => '10')
 		));
 	
 	if($validator->validate($request))
@@ -108,11 +113,11 @@
 	else
 	{
 		$params = $request;
-		$params['errorMessage'] = $validator->errors[0];
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;
 
-	// 年齢の範囲・日付の整合性は後日検討
+	// 年齢の範囲の整合性は後日検討
 	//-----------------------------------------------------------------------------------------------------------------
 
 	$data = array();
