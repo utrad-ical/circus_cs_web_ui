@@ -300,7 +300,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//----------------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT st.study_instance_uid, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+			$sqlStr = "SELECT st.sid, st.study_instance_uid, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 					. " st.study_id, st.study_date, st.study_time, st.modality, st.accession_number"
 					. " FROM patient_list pt, study_list st" . $sqlCond . " ORDER BY " . $orderColStr;
 					
@@ -322,8 +322,8 @@
 			{
 				if($_SESSION['anonymizeFlg'])
 				{
-					$result[1] = PinfoScramble::encrypt($result[1], $_SESSION['key']);
-					$result[2] = PinfoScramble::scramblePtName();
+					$result[2] = PinfoScramble::encrypt($result[2], $_SESSION['key']);
+					$result[3] = PinfoScramble::scramblePtName();
 				}
 	
 				$data[] = $result;

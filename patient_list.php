@@ -153,7 +153,7 @@
 			//---------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//---------------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT patient_id, patient_name, sex, birth_date FROM patient_list"
+			$sqlStr = "SELECT sid, patient_id, patient_name, sex, birth_date FROM patient_list"
 					. $sqlCond . " ORDER BY " . $orderColStr;
 					
 			if($params['showing'] != "all")
@@ -175,20 +175,19 @@
 			
 			while ($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
-				$encryptedPtID = PinfoScramble::encrypt($result[0], $_SESSION['key']);
+				$encryptedPtID = PinfoScramble::encrypt($result[1], $_SESSION['key']);
 	
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
-					$data[] = array($encryptedPtID, 
+					$data[] = array($result[0], $encryptedPtID, 
 					                PinfoScramble::scramblePtName(),
-				                    $result[2],
+				                    $result[3],
 					                PinfoScramble::scrambleBirthDate(),
-				                    htmlspecialchars($encryptedPtID, ENT_QUOTES));
+				                    $encryptedPtID);
 				}
 				else
 				{
-					$data[] = array($result[0], $result[1], $result[2], $result[3],
-					                htmlspecialchars($encryptedPtID, ENT_QUOTES));
+					$data[] = array($result[0], $result[1], $result[2], $result[3], $result[4],$encryptedPtID);
 				}
 			}
 			//var_dump($data);

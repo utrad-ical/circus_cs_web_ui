@@ -183,10 +183,10 @@ function ChangeCadMenu()
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
 			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp}">
-			<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg}">
-			<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg}">
-			<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults}">
+			<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp|escape}">
+			<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg|escape}">
+			<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg|escape}">
+			<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults|escape}">
 			<input type="hidden" id="cadName"             value="">
 			<input type="hidden" id="version"             value="">
 			<input type="hidden" id="preferenceFlg"       value="">

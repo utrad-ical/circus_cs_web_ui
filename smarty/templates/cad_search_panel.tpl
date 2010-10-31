@@ -118,7 +118,7 @@
 		<div class="al-l mt10 ml20" style="width: 100%;">
 			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
 			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
+			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage|escape}</p>
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->

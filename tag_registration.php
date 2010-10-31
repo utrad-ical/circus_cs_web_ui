@@ -155,12 +155,12 @@
 				
 				while($result = $stmt->fetch(PDO::FETCH_NUM))
 				{
-					if($params['category'] ==3)
+					if($params['category']==3)
 					{				
 						$dstData['parentTagHtml']  .= ' <a href="series_list.php?filterTag=' . $result[1] . '">'
 												   .  $result[1] . '</a> ';
 					}
-					else if($params['category'] ==3)
+					else if($params['category']==4)
 					{				
 						$dstData['parentTagHtml']  .= ' <a href="cad_log.php?filterTag=' . $result[1] . '">'
 												   .  $result[1] . '</a> ';

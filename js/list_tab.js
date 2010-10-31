@@ -1,5 +1,25 @@
 
 //--------------------------------------------------------------------------------------------------
+// Show sub window for editing tag 
+//--------------------------------------------------------------------------------------------------
+function EditTag(category, sid)
+{
+	var title ="";
+
+	switch(category)
+	{
+		case 1: title = "Edit patient tags";  break;
+		case 2: title = "Edit study tags";  break;
+		case 3: title = "Edit series tags";  break;
+		case 4: title = "Edit CAD tags";  break;
+		case 5: title = "Edit tags for Lesion candidate";  break;
+	}
+
+	var dstAddress = "edit_tags.php?category=" + category + "&reference_id=" + sid;
+	window.open(dstAddress, title, "width=400,height=250,location=no,resizable=no,scrollbars=1");
+}
+
+//--------------------------------------------------------------------------------------------------
 // For patient list
 //--------------------------------------------------------------------------------------------------
 function ShowStudyList(idNum, encryptedPtID)
@@ -14,12 +34,13 @@ function ChangeOrderOfPatientList(orderCol, orderMode)
 	var sex     = $("#hiddenFfilterSex").val();
 	var showing = $("#hiddenShowing").val();
 
-	var address = 'patient_list.php?orderCol=' + orderCol + '&orderMode=' + orderMode;
+	var address = 'patient_list.php?orderCol=' + encodeURIComponent(orderCol)
+                + '&orderMode=' + encodeURIComponent(orderMode);
 
-	if(id != "")	              address += '&filterPtID=' + id;
-	if(name != "")	              address += '&filterPtName=' + name;
-	if(sex == "M" || sex == "F")  address += '&filterSex=' + sex;
-	if(showing != 10)			  address += '&showing=' + showing;
+	if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
+	if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
+	if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
+	if(showing != 10)             address += '&showing=' + encodeURIComponent(showing);
 
 	location.replace(address);
 }
@@ -51,24 +72,26 @@ function ChangeOrderOfStudyList(orderCol, orderMode)
 
 	if($("#mode").val() == 'patient')  
 	{
-		address += 'mode=patient&orderCol=' + orderCol + '&orderMode=' + orderMode
-                +  '&encryptedPtID=' + $("#encryptedPtID").val();
+		address += 'mode=patient&orderCol=' + encodeURIComponent(orderCol)
+                +  '&orderMode=' + encodeURIComponent(orderMode)
+                +  '&encryptedPtID=' + encodeURIComponent($("#encryptedPtID").val());
 	}
 	else
 	{
-		address += 'orderCol=' + orderCol + '&orderMode=' + orderMode;
-		if(id != "")	              address += '&filterPtID=' + id;
-		if(name != "")	              address += '&filterPtName=' + name;
-		if(sex == "M" || sex == "F")  address += '&filterSex=' + sex;
+		address += 'orderCol=' + encodeURIComponent(orderCol)
+                +  '&orderMode=' + encodeURIComponent(orderMode);
+		if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
+		if(name != "")                address += '&filterPtName=' + encodeURIComponent(name);
+		if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
 	}
 
-	if(modality != "all")	address += '&filterModality=' + modality;
-	if(ageMin != "")		address += '&filterAgeMin=' + ageMin;
-	if(ageMax != "")		address += '&filterAgeMax=' + ageMax;
-	if(stDateFrom != "")	address += '&stDateFrom=' + stDateFrom;
-	if(stDateTo != "")		address += '&stDateTo=' + stDateTo;
-	if(stTimeTo != "")		address += '&stTimeTo=' + stTimeTo;
-	if(showing != 10)		address += '&showing=' + showing;
+	if(modality != "all")	address += '&filterModality=' + encodeURIComponent(modality);
+	if(ageMin != "")		address += '&filterAgeMin=' + encodeURIComponent(ageMin);
+	if(ageMax != "")		address += '&filterAgeMax=' + encodeURIComponent(ageMax);
+	if(stDateFrom != "")	address += '&stDateFrom=' + encodeURIComponent(stDateFrom);
+	if(stDateTo != "")		address += '&stDateTo=' + encodeURIComponent(stDateTo);
+	if(stTimeTo != "")		address += '&stTimeTo=' + encodeURIComponent(stTimeTo);
+	if(showing != 10)		address += '&showing=' + encodeURIComponent(showing);
 
 	location.replace(address);
 }
@@ -97,37 +120,36 @@ function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 
 	if(mode == 'study')  
 	{
-		address += 'mode=study&orderCol=' + orderCol + '&orderMode=' + orderMode
-                +  '&studyInstanceUID=' + $("#studyInstanceUID").val();
+		address += 'mode=study&orderCol=' + encodeURIComponent(orderCol)
+                +  '&orderMode=' + encodeURIComponent(orderMode)
+                +  '&studyInstanceUID=' + encodeURIComponent($("#studyInstanceUID").val());
 	}
 	else
 	{
 		if(mode == 'today')
 		{
-			address += 'mode=today&orderCol=' + orderCol + '&orderMode=' + orderMode;
+			address += 'mode=today&';
 		}
-		else
-		{
-			address += 'orderCol=' + orderCol + '&orderMode=' + orderMode;
-		}
+		address += 'orderCol=' + encodeURIComponent(orderCol)
+		        +  '&orderMode=' + encodeURIComponent(orderMode);
 
-		if(id != "")	              address += '&filterPtID=' + htmlspecialchars(id);
-		if(name != "")	              address += '&filterPtName=' + htmlspecialchars(name);
-		if(sex == "M" || sex == "F")  address += '&filterSex=' + sex;
-		if(ageMin != "")              address += '&filterAgeMin=' + ageMin;
-		if(ageMax != "")              address += '&filterAgeMax=' + ageMax;
+		if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
+		if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
+		if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
+		if(ageMin != "")              address += '&filterAgeMin=' + encodeURIComponent(ageMin);
+		if(ageMax != "")              address += '&filterAgeMax=' + encodeURIComponent(ageMax);
 	}
 
 	if(mode != 'today')
 	{
-		if(srDateFrom != "")	address += '&srDateFrom=' + srDateFrom;
-		if(srDateTo != "")		address += '&srDateTo=' + srDateTo;
-		if(srTimeTo != "")		address += '&srTimeTo=' + srTimeTo;
+		if(srDateFrom != "")  address += '&srDateFrom=' + encodeURIComponent(srDateFrom);
+		if(srDateTo != "")	  address += '&srDateTo=' + encodeURIComponent(srDateTo);
+		if(srTimeTo != "")	  address += '&srTimeTo=' + encodeURIComponent(srTimeTo);
 	}
 
-	if(modality != "all")   address += '&filterModality=' + htmlspecialchars(modality);
-	if(description != "")	address += '&filterSrDescription=' + htmlspecialchars(description);
-	if(showing != 10)		address += '&showing=' + showing;
+	if(modality != "all")   address += '&filterModality=' + encodeURIComponent(modality);
+	if(description != "")	address += '&filterSrDescription=' + encodeURIComponent(description);
+	if(showing != 10)		address += '&showing=' + encodeURIComponent(showing);
 
 	return address;
 }
@@ -143,8 +165,8 @@ function ShowSeriesDetail(colorSet, studyInstanceUID, seriesInstanceUID)
 {
 	var mode    = $("#mode").val();
 
-	location.href = "series_detail.php?studyInstanceUID=" + studyInstanceUID
-                  + "&seriesInstanceUID=" + seriesInstanceUID
+	location.href = "series_detail.php?studyInstanceUID=" + encodeURIComponent(studyInstanceUID)
+                  + "&seriesInstanceUID=" + encodeURIComponent(seriesInstanceUID)
                   + "&listTabName=" + ((mode == 'today') ? "Today's series" : "Series list");
 }
 
@@ -157,9 +179,9 @@ function ShowCADResultFromSeriesList(seriesID, studyInstanceUID, seriesInstanceU
 	var version = tmpStr[1];
 
 	var address = 'cad_results/show_cad_results.php'
-                + '?cadName=' + cadName + '&version=' + version
-                + '&studyInstanceUID=' + studyInstanceUID
-                + '&seriesInstanceUID=' + seriesInstanceUID;
+                + '?cadName=' + encodeURIComponent(cadName) + '&version=' + encodeURIComponent(version)
+                + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
+                + '&seriesInstanceUID=' + encodeURIComponent(seriesInstanceUID);
 	
 	if(personalFeedbackFlg == 1)  address += '&feedbackMode=personal';
 
@@ -183,8 +205,18 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 
 	if(execCADFlg==1)
 	{
-		if(flg == 0)	$("#execButton"+seriesID).removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		else			$("#execButton"+seriesID).attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		if(flg == 0)
+		{
+			$("#execButton"+seriesID).removeAttr("disabled")
+								     .removeClass('form-btn-disabled')
+									 .addClass('form-btn-normal');
+		}
+		else
+		{
+			$("#execButton"+seriesID).attr("disabled", "disabled")
+									 .removeClass('form-btn-normal')
+									 .addClass('form-btn-disabled');
+		}
 	}
 
 	if(flg == 2)
@@ -225,9 +257,10 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 	var orderCol  = $("#orderCol").val();
 	var orderMode = $("#orderMode").val();	
 
-	var address = 'cad_job/cad_execution.php?cadName=' + cadName + '&version=' + version
-	            + '&studyInstanceUID=' + studyInstanceUID 
-                + '&seriesInstanceUID=' + seriesInstanceUID;
+	var address = 'cad_job/cad_execution.php?cadName=' + encodeURIComponent(cadName)
+                + '&version=' + encodeURIComponent(version)
+	            + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
+                + '&seriesInstanceUID=' + encodeURIComponent(seriesInstanceUID);
 
 	if($("#mode").val() == "today")		address += '&srcList=todaysSeries';
 	else								address += '&srcList=series';
@@ -241,14 +274,15 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 //--------------------------------------------------------------------------------------------------
 // For CAD log
 //--------------------------------------------------------------------------------------------------
-function ShowCADResultFromCADLog(cadName, version, studyInstanceUID, seriesInstanceUID, personalFeedbackFlg)
+function ShowCADResultFromCADLog(cadName, version, studyInstanceUID, seriesInstanceUID, personalFBFlg)
 {
 	var address = 'cad_results/show_cad_results.php'
-                + '?cadName=' + cadName + '&version=' + version
-                + '&studyInstanceUID=' + studyInstanceUID
-                + '&seriesInstanceUID=' + seriesInstanceUID;
+                + '?cadName=' + encodeURIComponent(cadName)
+                + '&version=' + encodeURIComponent(version)
+                + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
+                + '&seriesInstanceUID=' + encodeURIComponent(seriesInstanceUID);
 	
-	if(personalFeedbackFlg == 1)  address += '&feedbackMode=personal';
+	if(personalFBFlg == 1)  address += '&feedbackMode=personal';
 
 	if($("#mode").val() == "today")		address += '&srcList=todaysCAD';
 	else								address += '&srcList=cadLog';
@@ -286,38 +320,37 @@ function ChangeOrderOfCADList(orderCol, orderMode)
 
 	if(mode == 'today')
 	{
-		address += 'mode=today&orderCol=' + orderCol + '&orderMode=' + orderMode;
+		address += 'mode=today&';
 	}
-	else
-	{
-		address += 'orderCol=' + orderCol + '&orderMode=' + orderMode;
-	}
+	
+	address += 'orderCol=' + encodeURIComponent(orderCol)
+            +  '&orderMode=' + encodeURIComponent(orderMode);
 
-	if(id != "")	              address += '&filterPtID=' + id;
-	if(name != "")	              address += '&filterPtName=' + name;
-	if(sex == "M" || sex == "F")  address += '&filterSex=' + sex;
-	if(ageMin != "")              address += '&filterAgeMin=' + ageMin;
-	if(ageMax != "")              address += '&filterAgeMax=' + ageMax;
+	if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
+	if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
+	if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
+	if(ageMin != "")              address += '&filterAgeMin=' + encodeURIComponent(ageMin);
+	if(ageMax != "")              address += '&filterAgeMax=' + encodeURIComponent(ageMax);
 
 	if(mode != 'today')
 	{
-		if(cadDateFrom != "")	address += '&cadDateFrom=' + cadDateFrom;
-		if(cadDateTo != "")		address += '&cadDateTo=' + cadDateTo;
-		if(cadTimeTo != "")		address += '&cadTimeTo=' + cadTimeTo;
+		if(cadDateFrom != "")	address += '&cadDateFrom=' + encodeURIComponent(cadDateFrom);
+		if(cadDateTo != "")		address += '&cadDateTo=' + encodeURIComponent(cadDateTo);
+		if(cadTimeTo != "")		address += '&cadTimeTo=' + encodeURIComponent(cadTimeTo);
 	}
 
-	if(srDateFrom != "")		address += '&srDateFrom=' + srDateFrom;
-	if(srDateTo != "")			address += '&srDateTo=' + srDateTo;
-	if(srTimeTo != "")			address += '&srTimeTo=' + srTimeTo;
-	if(modality != "all")       address += '&filterModality=' + modality;
-	if(showing != 10)		    address += '&showing=' + showing;
-	if(filterCadID != "all")    address += '&filterCadID=' + filterCadID;
-	if(filterCAD != "all")	    address += '&filterCAD=' + filterCAD;
-	if(filterVersion != "all")  address += '&filterVersion=' + filterVersion;
-	if(personalFB != "all")     address += '&personalFB=' + personalFB;
-	if(consensualFB != "all")	address += '&consensualFB=' + consensualFB;
-	if(filterTP != "all")       address += '&filterTP=' + filterTP;
-	if(filterFN != "all")       address += '&filterFN=' + filterFN;
+	if(srDateFrom != "")		address += '&srDateFrom=' + encodeURIComponent(srDateFrom);
+	if(srDateTo != "")			address += '&srDateTo=' + encodeURIComponent(srDateTo);
+	if(srTimeTo != "")			address += '&srTimeTo=' + encodeURIComponent(srTimeTo);
+	if(modality != "all")       address += '&filterModality=' + encodeURIComponent(modality);
+	if(showing != 10)		    address += '&showing=' + encodeURIComponent(showing);
+	if(filterCadID != "all")    address += '&filterCadID=' + encodeURIComponent(filterCadID);
+	if(filterCAD != "all")	    address += '&filterCAD=' + encodeURIComponent(filterCAD);
+	if(filterVersion != "all")  address += '&filterVersion=' + encodeURIComponent(filterVersion);
+	if(personalFB != "all")     address += '&personalFB=' + encodeURIComponent(personalFB);
+	if(consensualFB != "all")	address += '&consensualFB=' + encodeURIComponent(consensualFB);
+	if(filterTP != "all")       address += '&filterTP=' + encodeURIComponent(filterTP);
+	if(filterFN != "all")       address += '&filterFN=' + encodeURIComponent(filterFN);
 
 	location.href = address;
 }

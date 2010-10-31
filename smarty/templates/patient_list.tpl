@@ -39,7 +39,7 @@
 				<input type="hidden" id="hiddenFilterPtID"   value="{$params.filterPtID|escape}" />
 				<input type="hidden" id="hiddenFilterPtName" value="{$params.filterPtName|escape}" />
 				<input type="hidden" id="hiddenFilterSex"    value="{$params.filterSex|escape}" />
-				<input type="hidden" id="hiddenShowing"      value="{$params.showing}" />
+				<input type="hidden" id="hiddenShowing"      value="{$params.showing|escape}" />
 				{include file='patient_search_panel.tpl'}
 			</form>
 		<!-- / End of search -->
@@ -70,20 +70,26 @@
 							{if $params.orderCol == 'Birth date'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Birth date', '{if $params.orderCol == "Birth date" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Name</a></span>
 						</th>
 
-						<th>Detail</th>
+						<th style="width:3.5em;">Detail</th>
+						{if $smarty.session.personalFBFlg}<th style="width:3.5em;">Tag</th>{/if}
 					</tr>
 				</thead>
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-							<td class="al-l">{$item[0]|escape}</td>
 							<td class="al-l">{$item[1]|escape}</td>
-							<td>{$item[2]|escape}</td>
+							<td class="al-l">{$item[2]|escape}</td>
 							<td>{$item[3]|escape}</td>
+							<td>{$item[4]|escape}</td>
 							<td>
 								<input name="" type="button" value="show" class="s-btn form-btn"
-								       onclick="ShowStudyList({$smarty.foreach.cnt.iteration}, '{$item[4]|escape}')" />
+								       onclick="ShowStudyList({$smarty.foreach.cnt.iteration}, '{$item[5]|escape}')" />
 							</td>
+							{if $smarty.session.personalFBFlg}
+							<td>
+								<input type="button" value="tag" class="s-btn form-btn" onclick="EditTag(1, '{$item[0]|escape}')" />
+							</td>
+							{/if}
 						</tr>
 					{/foreach}
 				</tbody>

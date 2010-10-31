@@ -35,7 +35,11 @@ function EditTag(mode, sid)
 						$("#tagTable tbody").html(data.popupTableHtml);
 						$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 						$("#addTagText").removeAttr("value");
-						opener.document.getElementById('tagArea').innerHTML = data.parentTagHtml;
+
+						if($("#category").val() >= 3)
+						{
+							opener.document.getElementById('tagArea').innerHTML = data.parentTagHtml;
+						}
 					}
 		  	}, "json");
 	}
@@ -71,7 +75,7 @@ function EditTag(mode, sid)
 				<th>ID</th>
 				<th style="width:200px;">Tag</th>
 				<th>Entered by</th>
-				<th>&nbsp;</th>
+				<th style="width:40px;">&nbsp;</th>
 			</thead>
 			<tbody>
 			{foreach from=$tagArray item=item name=tagList}

@@ -47,7 +47,7 @@
 				<input type="hidden" id="hiddenStDateFrom"     value="{$params.stDateFrom|escape}" />
 				<input type="hidden" id="hiddenStDateTo"       value="{$params.stDateTo|escape}" />
 				<input type="hidden" id="hiddenStTimeTo"       value="{$params.stTimeTo|escape}" />
-				<input type="hidden" id="hiddenShowing"        value="{$params.showing}" />
+				<input type="hidden" id="hiddenShowing"        value="{$params.showing|escape}" />
 				{include file='study_search_panel.tpl'}
 			</form>
 		<!-- / Search End -->
@@ -92,24 +92,30 @@
 
 						<th>Accession No.</th>
 						<th>Detail</th>
+						{if $smarty.session.personalFBFlg}<th style="width:3.5em;">Tag</th>{/if}
 					</tr>
 				</thead>
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-							<td class="al-l"><a href="study_list.php?filterPtID={$item[1]|escape}">{$item[1]|escape}</td>
-							<td class="al-l">{$item[2]|escape}</td>
-							<td class="al-r">{$item[3]|escape}</td>
-							<td>{$item[4]|escape}</td>
-							<td class="al-r">{$item[5]|escape}</td>
-							<td>{$item[6]|escape}</td>
+							<td class="al-l"><a href="study_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</td>
+							<td class="al-l">{$item[3]|escape}</td>
+							<td class="al-r">{$item[4]|escape}</td>
+							<td>{$item[5]|escape}</td>
+							<td class="al-r">{$item[6]|escape}</td>
 							<td>{$item[7]|escape}</td>
 							<td>{$item[8]|escape}</td>
 							<td>{$item[9]|escape}</td>
+							<td>{$item[10]|escape}</td>
 							<td>
 								<input name="" type="button" value="show" class="s-btn form-btn"
-									   onclick="ShowSeriesList({$smarty.foreach.cnt.iteration}, '{$item[0]|escape}');" />
+									   onclick="ShowSeriesList({$smarty.foreach.cnt.iteration},'{$item[1]|escape}');" />
 							</td>
+							{if $smarty.session.personalFBFlg}
+							<td>
+								<input type="button" value="tag" class="s-btn form-btn" onclick="EditTag(2,'{$item[0]|escape}')" />
+							</td>
+							{/if}
 						</tr>
 					{/foreach}
 					</tr>

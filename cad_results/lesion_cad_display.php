@@ -292,16 +292,10 @@
 
 			$candHtml[$k] .= '</div>';
 			
-		//	$sqlStr = "SELECT tag FROM lesion_candidate_tag WHERE exec_id=? AND candidate_id=?";
-		//	if($params['feedbackMode'] == "consensual")
-		//	{
-		//		$sqlStr .= " AND consensual_flg='t'";
-		//	}
-		//	else
-		//	{
-		//		$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
-		//	}
-		//	$sqlStr .= " ORDER BY tag_id ASC";
+		//----------------------------------------------------------------------------------------------------
+		// Tag list
+		//----------------------------------------------------------------------------------------------------
+		//$sqlStr = "SELECT tag FROM tag_list WHERE exec_id=? AND candidate_id=?";
 		//
 		//	$stmtTag = $pdo->prepare($sqlStr);
 		//	$stmtTag->bindParam(1, $params['execID']);

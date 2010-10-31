@@ -243,33 +243,20 @@
 			
 		}
 		//--------------------------------------------------------------------------------------------------------------
-	
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Retrieve tag data
 		//--------------------------------------------------------------------------------------------------------------
 		$params['tagArray'] = array();
-		
-		$stmt = $pdo->prepare("SELECT tag, entered_by FROM executed_plugin_tag WHERE exec_id=? ORDER BY tag_id ASC");
+			
+		$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=4 AND reference_id=? ORDER BY sid ASC";
+			
+		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindValue(1, $params['execID']);
 		$stmt->execute();
 		$tagNum = $stmt->rowCount();
-			
-		for($i=0; $i<$tagNum; $i++)
-		{
-			$result = $stmt->fetch(PDO::FETCH_NUM);
 		
-			$params['tagArray'][$i] = $result[0];
-			
-			if($i == 0)
-			{
-				$params['tagEnteredBy'] = $result[1];
-				$params['tagStr'] = $result[0];
-			}
-			else
-			{
-				$params['tagStr'] .= ", " . $result[0];
-			}
-		}	
+		$params['tagArray'] = $result = $stmt->fetchAll(PDO::FETCH_NUM);
 		//--------------------------------------------------------------------------------------------------------------
 	
 		if($resultType == 1)

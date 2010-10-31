@@ -69,7 +69,7 @@
 					<input type="hidden" id="hiddenSrDateFrom"          value="{$params.srDateFrom|escape}" />
 					<input type="hidden" id="hiddenSrDateTo"            value="{$params.srDateTo|escape}" />
 					<input type="hidden" id="hiddenSrTimeTo"            value="{$params.srTimeTo|escape}" />
-					<input type="hidden" id="hiddenShowing"             value="{$params.showing}" />
+					<input type="hidden" id="hiddenShowing"             value="{$params.showing|escape}" />
 
 					<input type="hidden" id="orderMode"        value="{$params.orderMode|escape}" />
 					<input type="hidden" id="orderCol"         value="{$params.orderCol|escape}" />

@@ -3,6 +3,7 @@
 	session_start();
 
 	include("common.php");
+	require_once('class/validator.class.php');	
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables 
@@ -63,7 +64,7 @@
 		}
 		else
 		{
-			$params['errorMessage'] = "[ERROR] URL is invalid."
+			$params['errorMessage'] = "[ERROR] URL is invalid.";
 		}
 		
 		//--------------------------------------------------------------------------------------------------------------
