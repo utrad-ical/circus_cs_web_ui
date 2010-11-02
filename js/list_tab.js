@@ -239,7 +239,7 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 	if(flg == 2)
 	{
 		$("#resultButton" + seriesID).show();
-		$("#cadInfo"+seriesID).html('Executed at ' + dateTime).show();
+		$("#cadInfo"+seriesID).html('Executed at ' + dateTime);
 	}
 	else
 	{
@@ -247,17 +247,17 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 	
 		if(flg == 1)
 		{
-			$("#cadInfo"+seriesID).html('Registered in CAD job list').show();
+			$("#cadInfo"+seriesID).html('Registered in CAD job list');
 		}
 		else
 		{
 			if(source == 'todaysSeriesList')
 			{
-				$("#cadInfo"+seriesID).html('<span style="color:#fff;">Not executed</span>').show();
+				$("#cadInfo"+seriesID).html('<span style="color:#fff;">Not executed</span>');
 			}
 			else
 			{
-				$("#cadInfo"+seriesID).html('').hide();
+				$("#cadInfo"+seriesID).html('&nbsp;');
 			}
 		}
 	}
