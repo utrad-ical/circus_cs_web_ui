@@ -9,18 +9,9 @@
 	require_once('class/validator.class.php');	
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables 
+	// Import $_GET variables and validation
 	//------------------------------------------------------------------------------------------------------------------
-	$request = array('studyInstanceUID'  => (isset($_GET['studyInstanceUID']))  ? $_GET['studyInstanceUID']  : "",
-		 		     'seriesInstanceUID' => (isset($_GET['seriesInstanceUID'])) ? $_GET['seriesInstanceUID'] : "",
-				     'listTabName'       => (isset($_GET['listTabName'])) ? $_GET['listTabName'] : "");
-
 	$data = array();
-	//------------------------------------------------------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 	
 	$validator->addRules(array(
@@ -39,7 +30,7 @@
 			"adjValue" => "Series list")
 		));				
 
-	if($validator->validate($request))
+	if($validator->validate($_GET)
 	{
 		$data = $validator->output;
 		$data['errorMessage'] = "";
@@ -47,7 +38,7 @@
 	else
 	{
 		$data = $request;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
+		$data['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	
 	//var_dump($data);

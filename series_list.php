@@ -8,32 +8,11 @@
 	require_once('class/validator.class.php');
 
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables (set $params array)
+	// Import $_GET variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "";
 
-	$request = array('filterPtID'          => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-				     'filterPtName'        => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
-				     'filterSex'           => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
-				     'filterAgeMin'        => (isset($_GET['filterAgeMin'])) ? $_GET['filterAgeMin'] : "",
-				     'filterAgeMax'        => (isset($_GET['filterAgeMax'])) ? $_GET['filterAgeMax'] : "",
-				     'filterModality'      => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
-				     'filterSrDescription' => (isset($_GET['filterSrDescription'])) ? $_GET['filterSrDescription'] : "",
-				     'filterTag'           => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",				   
-				     'srDateFrom'          => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
-				     'srDateTo'            => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
-				     'srTimeTo'            => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
-				     'studyInstanceUID'    => (isset($_GET['studyInstanceUID'])) ? $_GET['studyInstanceUID'] : "",
-				     'orderCol'            => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Date",
-				     'orderMode'           => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
-				     'showing'             => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
-
 	$params = array();
-	//-----------------------------------------------------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 	
 	if($mode == 'study')
@@ -48,16 +27,16 @@
 	{
 		$validator->addRules(array(
 			"filterPtID" => array(
-				"type" => "regexp",
+				"type" => "pgregexp",
 				"errorMes" => "'Patient ID' is invalid."),
 			"filterPtName" => array(
-				"type" => "regexp",
+				"type" => "pgregexp",
 				"errorMes" => "'Patient name' is invalid."),
 			"filterSex" => array(
-				"type" => "adjselect",
+				"type" => "select",
 				"options" => array('M', 'F', 'all'),
 				"default" => "all",
-				"adjVal" => "all"),
+				"otherwise" => "all"),
 			"filterAgeMin" => array(
 				'type' => 'int', 
 				'min' => '0',
@@ -86,33 +65,33 @@
 
 	$validator->addRules(array(
 		"filterModality" => array(
-			'type' => 'adjselect', 
+			'type' => 'select', 
 			"options" => $modalityList,
 			"default" => 'all',
-			"adjVal" => "all"),
+			"otherwise" => "all"),
 		"filterSrDescription"=> array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Series description' is invalid."),
 		"filterTag"=> array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Tag' is invalid."),
 		"orderCol" => array(
 			"type" => "select",
 			"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
 			"default" => 'Date'),
 		"orderMode" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('DESC', 'ASC'),
 			"default" => 'DESC',
-			"adjVal"  => 'DESC'),
+			"otherwise" => 'DESC'),
 		"showing" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('10', '25', '50', 'all'),
 			"default" => '10',
-			"adjVal" => '10')
+			"otherwise" => '10')
 		));
 	
-	if($validator->validate($request))
+	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "&nbsp;";
@@ -125,14 +104,13 @@
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;
 
 	// ”N—î‚Ì”ÍˆÍ‚Ì®‡«‚ÍŒã“úŒŸ“¢
 	//-----------------------------------------------------------------------------------------------------------------
-
 
 	$data = array();
 	
@@ -357,10 +335,8 @@
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list pt, study_list st, series_list sr " . $sqlCond);
-			$stmt->execute($sqlParams);		
-			
-			$params['totalNum'] = $stmt->fetchColumn();
+			$sqlStr = "SELECT COUNT(*) FROM patient_list pt, study_list st, series_list sr " . $sqlCond;
+			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');	
 			$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
 			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		

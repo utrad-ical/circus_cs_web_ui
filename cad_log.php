@@ -10,42 +10,11 @@
 	$userID = $_SESSION['userID'];
 
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables (set $params array)
+	// Import $_GET variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";	
-
-	$request = array('srcPage'        => (isset($_GET['srcPage'])) ? $_GET['srcPage'] : "",
-					 'filterPtID'     => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-					 'filterPtName'   => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
-					 'filterSex'      => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
-					 'filterAgeMin'   => (isset($_GET['filterAgeMin'])) ? $_GET['filterAgeMin'] : "",
-					 'filterAgeMax'   => (isset($_GET['filterAgeMax'])) ? $_GET['filterAgeMax'] : "",
-					 'filterCadID'    => (isset($_GET['filterCadID'])) ? $_GET['filterCadID'] : "",
-					 'filterModality' => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
-					 'filterCAD'      => (isset($_GET['filterCAD'])) ? $_GET['filterCAD'] : "all",
-					 'filterVersion'  => (isset($_GET['filterVersion'])) ? $_GET['filterVersion'] : "all",
-					 'filterTag'      => (isset($_GET['filterTag'])) ? $_GET['filterTag'] : "",
-					 'srDateFrom'     => (isset($_GET['srDateFrom'])) ? $_GET['srDateFrom'] : "",
-					 'srDateTo'       => (isset($_GET['srDateTo'])) ? $_GET['srDateTo'] : "",
-					 'srTimeTo'       => (isset($_GET['stTimeTo'])) ? $_GET['stTimeTo'] : "",
-					 'cadDateFrom'    => (isset($_GET['cadDateFrom'])) ? $_GET['cadDateFrom'] : "",
-					 'cadDateTo'      => (isset($_GET['cadDateTo'])) ? $_GET['cadDateTo'] : "",
-					 'cadTimeTo'      => (isset($_GET['cadTimeTo'])) ? $_GET['cadTimeTo'] : "",
-					 'personalFB'     => (isset($_GET['personalFB'])) ? $_GET['personalFB'] : "all",
-					 'consensualFB'   => (isset($_GET['consensualFB'])) ? $_GET['consensualFB'] : "all",
-					 'filterFBUser'   => (isset($_GET['filterFBUser'])) ? $_GET['filterFBUser'] : "",
-					 'filterTP'       => (isset($_GET['filterTP'])) ? $_GET['filterTP'] : "all",
-					 'filterFN'       => (isset($_GET['filterFN'])) ? $_GET['filterFN'] : "all",
-					 'orderCol'       => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Study date",
-					 'orderMode'      => ($_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
-				     'showing'        => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
-
 	$params = array();
-	//-----------------------------------------------------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 
 	if($mode != "today")
@@ -75,16 +44,16 @@
 			"type" => "version",
 			"errorMes" => "'Version' is invalid."),
 		"filterPtID" => array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Patient ID' is invalid."),
 		"filterPtName" => array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Patient name' is invalid."),
 		"filterSex" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('M', 'F', 'all'),
 			"default" => "all",
-			"adjVal" => "all"),
+			"otherwise" => "all"),
 		"filterAgeMin" => array(
 			"type" => "int", 
 			"min" => "0",
@@ -94,10 +63,10 @@
 			"min" => "0",
 			"errorMes" => "'Age' is invalid."),
 		"filterModality" => array(
-			"type" => "adjselect", 
+			"type" => "select", 
 			"options" => $modalityList,
 			"default" => "all",
-			"adjVal" => "all"),
+			"otherwise" => "all"),
 		"srDateFrom" => array(
 			"type" => "date",
 			"errorMes" => "'Series date' is invalid."),
@@ -108,49 +77,49 @@
 			"type" => "time",
 			"errorMes" => "'Series time' is invalid."),
 		"filterTag"=> array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Tag' is invalid."),
 		"filterFBUser"=> array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Series description' is invalid."),
 		"personalFB" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("entered", "notEntered", "all"),
 			"default" => "all",
-			"adjVal"  => "all"),
+			"otherwise"  => "all"),
 		"consensualFB" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("entered", "notEntered", "all"),
 			"default" => "all",
-			"adjVal"  => "all"),
+			"otherwise"  => "all"),
 		"filterTP" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("with", "withour", "all"),
 			"default" => "all",
-			"adjVal"  => "all"),
+			"otherwise"  => "all"),
 		"filterFN" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("with", "without", "all"),
 			"default" => "all",
-			"adjVal"  => "all"),
+			"otherwise"  => "all"),
 		"orderCol" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("Patient ID","Name","Age","Sex","Series","CAD","CAD date"),
 			"default" => "CAD date",
-			"adjVal" => "CAD date"),
+			"otherwise" => "CAD date"),
 		"orderMode" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('DESC', 'ASC'),
 			"default" => "DESC",
-			"adjVal"  => "DESC"),
+			"otherwise"  => "DESC"),
 		"showing" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array("10", "25", "50", "all"),
 			"default" => "10",
-			"adjVal" => "10")
+			"otherwise" => "10")
 		));
 	
-	if($validator->validate($request))
+	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "&nbsp;";
@@ -163,7 +132,7 @@
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;

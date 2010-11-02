@@ -194,7 +194,7 @@ function ChangeCadMenu()
 			<input type="hidden" id="defaultSortOrder"    value="">
 			<input type="hidden" id="defaultMaxDispNum"   value="">
 			<input type="hidden" id="defaultConfidenceTh" value="">
-			<input type="hidden" name="ticket" value="{$ticket}">
+			<input type="hidden" name="ticket" value="{$ticket|escape}">
 
 			<h2>User preference</h2>
 			
@@ -234,7 +234,7 @@ function ChangeCadMenu()
 						<th style="width: 17em;"><span class="trim01">Display today's list</span></th>
 						<td>
 							<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series&nbsp;
-							<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"}checked="checked"{/if} />CAD
+							<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"} checked="checked"{/if} />CAD
 						</td>
 					</tr>
 					<tr>

@@ -20,7 +20,7 @@ class FormValidator
 		'integer'   => 'IntegerValidator',
 		'str'       => 'StringValidator',
 		'string'    => 'StringValidator',
-		'regexp'    => 'RegexpValidator',
+		'pgregexp'  => 'PgRegexpValidator',
 		'date'      => 'DateValidator',
 		'datetime'  => 'DateTimeValidator',
 		'time'      => 'TimeValidator',
@@ -28,12 +28,11 @@ class FormValidator
 		'cadname'   => 'CadNameValidator',
 		'version'   => 'CadVersionValidator',
 		'select'    => 'SelectValidator',
-		'adjselect' => 'AdjustSelectValidator',
 		'array'     => 'ArrayValidator',
 		'callback'  => 'CallBackValidator',
 		'pass'      => 'PassThroughValidator',
 	);
-	
+
 	/**
 	 * Normalized output of the validated data.
 	 */
@@ -342,22 +341,31 @@ class StringValidator extends ScalarValidator
 }
 
 /**
- * Validator for strings including regular expression.
- * by Y.Nomura
+ * Validator for strings including regular expression (POSIX).
+ * ereg() function is not recommend for PHP 5.3.X
  */
-class RegexpValidator extends ScalarValidator
+class PgRegexpValidator extends ScalarValidator
 {
 	public function validate($input) {
-		if (preg_match("/[<>\\&\\!;]/", $input)) {
-			$this->error = "Input data '$label' is invalid.";
+		set_error_handler(array("PgRegexpValidator", "errorHandler"));
+		try {
+			ereg($input, "dummy");
+		} catch(Exception $e) {
+			restore_error_handler();
+			$this->error = "Invalid regular expression";
 			return false;
 		}
+		restore_error_handler();
 		$this->output = $input;
 		return true;
 	}
+	
+	public static function errorHandler($errno, $errstr) {
+		throw new Exception();
+		return true;
+	}	
+	
 }
-
-
 
 /**
  * Validator for date and time.
@@ -469,36 +477,15 @@ class SelectValidator extends ScalarValidator
 			$this->output = $input;
 			return true;
 		} else {
+			if ($this->params['otherwise']) {
+				$this->output = $this->params['otherwise'];
+				return true;
+			}
 			$this->error = "Input data '$this->label' is invalid.";
 			return false;
 		}
 	}
 }
-
-/**
- * Validator which checks if the input is one of the given enumeraton data.
- * If none of the enumeraton data match and 'adjVal' is set, result is set 
- * to 'adjVal'.
- * @package formValidators
- * by Y.Nomura
- */
-class AdjustSelectValidator extends ScalarValidator
-{
-	public function validate($input) {
-		$options = $this->params['options'];
-		if (is_array($options) && array_search($input, $options) !== false) {
-			$this->output = $input;
-			return true;
-		} else if ($this->params['adjVal']) {
-			$this->output = $this->params['adjVal'];
-			return true;
-		} else {
-			$this->error = "Input data '$this->label' is invalid.";
-			return false;
-		}
-	}
-}
-
 
 /**
  * Validator that confirms the given data is an array.

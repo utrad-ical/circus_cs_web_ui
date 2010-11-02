@@ -89,7 +89,7 @@ function MovePageWithTempRegistration(address)
 	else
 	{
 		if(address == "historyBack")	history.back();
-		else							location.replace(address);
+		else							location.href=address;
 	}
 }
 
@@ -98,10 +98,6 @@ function ShowFNinput()
 {
 	var address = 'fn_input.php'
 				+ '?execID=' + $("#execID").val()
-                + '&cadName=' + $("#cadName").val()
-                + '&version=' + $("#version").val()
-                + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-                + '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
                 + '&feedbackMode=' + $("#feedbackMode").val();
 	
 	MovePageWithTempRegistration(address);

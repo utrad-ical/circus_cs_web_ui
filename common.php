@@ -137,5 +137,39 @@
 		return $key . "=" . urlencode($val);
 	}
 	//-------------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------------
+	// Wrap functions for PDO
+	//-------------------------------------------------------------------------------------------------------
+	function PdoQueryOne($pdo, $sqlStr, $bindValues, $outputType)
+	{
+		$stmt = $pdo->prepare($sqlStr);
+		$cnt =count($bindValues);
+		
+		if($cnt > 1)
+		{
+			$stmt->execute($bindValues);
+		}
+		else 
+		{
+			if($cnt ==1)	$stmt->bindValue(1, $bindValues);
+			$stmt->execute();
+		}
+		
+		if($stmt->errorCode()=='00000')
+		{
+			switch($outputType)
+			{
+				case 'SCALAR':       return $stmt->fetchColumn();				break;
+				case 'ARRAY_ASSOC':  return $stmt->fetch(PDO::FETCH_ASSOC);		break;
+				case 'ARRAY_NUM':    return $stmt->fetch(PDO::FETCH_NUM);		break;
+				case 'ALL_ASSOC':    return $stmt->fetchAll(PDO::FETCH_ASSOC);	break;
+				case 'ALL_NUM':      return $stmt->fetchAll(PDO::FETCH_NUM);	break;
+				default:             return null;
+			}
+		}
+		else	return null;
+	}
+	//-------------------------------------------------------------------------------------------------------
 	
 ?>

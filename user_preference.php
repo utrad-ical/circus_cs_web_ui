@@ -3,8 +3,6 @@
 	
 	include_once('common.php');
 	include_once("auto_logout.php");
-	
-	$data = array();
 
 	try
 	{	
@@ -17,10 +15,9 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For page preference
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?");
-		$stmt->bindParam(1, $userID);
-		$stmt->execute();
-		$result = $stmt->fetch(PDO::FETCH_NUM);
+		$sqlStr = "SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?";
+		$result = PdoQueryOne($pdo, $sqlStr, $userID, 'ARRAY_NUM');
+		
 		$oldTodayDisp = $result[0];
 		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
 		$oldAnonymizeFlg = ($result[2]==true || $_SESSION['anonymizeGroupFlg'] == 1) ? "t" : "f";
@@ -30,29 +27,24 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For CAD preference
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1");
-		$stmt->execute();
-			
+		$sqlStr = "SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1";
+		$cadNameArray = PdoQueryOne($pdo, $sqlStr, null, 'ALL_NUM');
+
 		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1 ORDER BY version DESC";
+		$stmt = $pdo->prepare($sqlStr);
 
-		$stmtVersion = $pdo->prepare($sqlStr);
-
-		while($result = $stmt->fetch(PDO::FETCH_ASSOC))
+		foreach($cadNameArray as $item)
 		{
-			$stmtVersion->bindParam(1, $result['cad_name']);	
-			$stmtVersion->execute();
+			$stmt->bindParam(1, $item[0]);	
+			$stmt->execute();
 				 
-			$tmpStr = "";
-			$cnt = 0;
+			$tmpArray = array();
 				
-			while($resultVersion = $stmtVersion->fetch(PDO::FETCH_ASSOC))
+			while($resultVersion = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
-				if($cnt > 0) $tmpStr .= '^';
-				$tmpStr .= $resultVersion['version'];
-				$cnt++;
+				$tmpArray[] = $resultVersion['version'];
 			}
-			
-			array_push($cadList, array($result['cad_name'], $tmpStr));
+			$cadList[] = array($item[0], implode('^', $tmpArray));
 		}
 		//--------------------------------------------------------------------------------------------------------------
 		
@@ -78,7 +70,7 @@
 		$smarty->assign('cadList',   $cadList);
 		$smarty->assign('verDetail', explode('^', $cadList[0][1]));
 		$smarty->assign('sortStr',   array("Confidence", "Img. No.", "Volume"));
-		$smarty->assign('ticket',    htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
+		$smarty->assign('ticket',    $_SESSION['ticket']);
 		
 		$smarty->display('user_preference.tpl');
 		//----------------------------------------------------------------------------------------------------

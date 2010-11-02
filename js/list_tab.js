@@ -39,7 +39,7 @@ function EditTag(category, sid)
 		case 5: title = "Edit tags for Lesion candidate";  break;
 	}
 
-	var dstAddress = "edit_tags.php?category=" + category + "&reference_id=" + sid;
+	var dstAddress = "edit_tags.php?category=" + category + "&referenceID=" + sid;
 	window.open(dstAddress, title, "width=400,height=250,location=no,resizable=no,scrollbars=1");
 }
 //--------------------------------------------------------------------------------------------------

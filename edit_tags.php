@@ -6,16 +6,9 @@
 	require_once('class/validator.class.php');	
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables 
+	// Import $_GET variables and validation
 	//------------------------------------------------------------------------------------------------------------------
-	$request = array('category'     => $_GET['category'],
-	                 'referenceID' => $_GET['reference_id']);
 	$params = array();
-	//------------------------------------------------------------------------------------------------------------------
-
-	//------------------------------------------------------------------------------------------------------------------
-	// Validation
-	//------------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 	
 	$validator->addRules(array(
@@ -25,21 +18,21 @@
 			"max" => 5,
 			"required" => 1,
 			"errorMes" => "Cagegory is invalid."),
-			"referenceID" => array(
+		"referenceID" => array(
 			"type" => "int",
 			"min" => 1,
 			"required" => 1,
 			"errorMes" => "Reference ID is invalid."),
 		));	
 
-	if($validator->validate($request))
+	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['toTopDir'] = './';
@@ -47,20 +40,13 @@
 
 	try
 	{
-		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
-	
 		if($params['errorMessage'] == '')
 		{
+			$pdo = new PDO($connStrPDO);
 			$sqlStr = "SELECT sid, tag, entered_by FROM tag_list"
 					. " WHERE category=? AND reference_id=? ORDER BY sid ASC";
-		
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $params['category']);
-			$stmt->bindValue(2, $params['referenceID']);
-			$stmt->execute();	
-
-			$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
+			$sqlParams = array($params['category'], $params['referenceID']);
+			$tagArray = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_NUM');
 		}
 		else
 		{

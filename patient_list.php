@@ -8,53 +8,41 @@
 	require_once('class/validator.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables (set $request array)
+	// Import $_GET variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
-	$request = array('filterPtID'   => (isset($_GET['filterPtID'])) ? $_GET['filterPtID'] : "",
-				     'filterPtName' => (isset($_GET['filterPtName'])) ? $_GET['filterPtName'] : "",
-				     'filterSex'    => (isset($_GET['filterSex'])) ? $_GET['filterSex'] : "all",
-				     'orderCol'     => (isset($_GET['orderCol'])) ? $_GET['orderCol'] : "Patient ID",
-				     'orderMode'    => (isset($_GET['orderMode']) && $_GET['orderMode'] === 'DESC') ? 'DESC' : 'ASC',
-				     'showing'      => (isset($_GET['showing'])) ? $_GET['showing'] : 10);
-
 	$params = array();
-	//-----------------------------------------------------------------------------------------------------------------
-				
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
 		"filterPtID" => array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Patient ID' is invalid."),
 		"filterPtName" => array(
-			"type" => "regexp",
+			"type" => "pgregexp",
 			"errorMes" => "'Patient name' is invalid."),
 		"filterSex" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('M', 'F', 'all'),
 			"default" => "all",
-			"adjVal" => "all"),
+			"oterwise" => "all"),
 		"orderCol" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
 			"default"=> 'Patient ID',
-			"adjVal" => 'Patient ID'),
+			"oterwise" => 'Patient ID'),
 		"orderMode" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('DESC', 'ASC'),
 			"default" => 'ASC',
-			"adjVal" => 'ASC'),
+			"oterwise" => 'ASC'),
 		"showing" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('10', '25', '50', 'all'),
 			"default" => '10',
-			"adjVal" => '10')
+			"oterwise" => '10')
 		));
 	
-	if($validator->validate($request))
+	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "&nbsp;";
@@ -67,7 +55,7 @@
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	//-----------------------------------------------------------------------------------------------------------------
@@ -141,10 +129,8 @@
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list" . $sqlCond);
-			$stmt->execute($sqlParams);
-	
-			$params['totalNum']     = $stmt->fetchColumn();
+			$sqlStr = "SELECT COUNT(*) FROM patient_list" . $sqlCond;
+			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
 			$params['maxPageNum']   = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
 			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
@@ -172,11 +158,12 @@
 			$rowNum = $stmt->rowCount();
 			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
 			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
+
+			$sqlStr = "SELECT tag FROM tag_list WHERE category=1 AND reference_id=?";
+			$stmtTag = $pdo->prepare($sqlStr);
 			
 			while ($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
-				$sqlStr = "SELECT tag FROM tag_list WHERE category=1 AND reference_id=?";
-				$stmtTag = $pdo->prepare($sqlStr);
 				$stmtTag->bindValue(1, $result[0]);
 				$stmtTag->execute();
 				
@@ -201,7 +188,7 @@
 				}
 				else
 				{
-					$data[] = array($result[0], $result[1], $result[2], $result[3], $result[4],$encryptedPtID, $tagStr);
+					$data[] = array($result[0],$result[1],$result[2],$result[3],$result[4],$encryptedPtID,$tagStr);
 				}
 			}
 			//var_dump($data);

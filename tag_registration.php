@@ -4,24 +4,14 @@
 	include("common.php");
 	require_once('class/validator.class.php');
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables 
-	//------------------------------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------------------
+	// Import $_POST variables and validation
+	//-----------------------------------------------------------------------------------------------------------------
 	$mode = (isset($_POST['mode']) && ($_POST['mode']==="add" || $_POST['mode']==="delete")) ? $_POST['mode'] : "";
-	
-	$request = array('sid'         => (isset($_POST['sid'])) ? $_POST['sid'] : "",
-	                 'category'    => (isset($_POST['category'])) ? $_POST['category'] : "",
-					 'referenceID' => (isset($_POST['referenceID'])) ? $_POST['referenceID'] : "",
-					 'tagStr'      => (isset($_POST['tagStr'])) ? $_POST['tagStr'] : "");
-	
 	$userID = $_SESSION['userID'];
 	$params = array();
 	$message == "";
-	//------------------------------------------------------------------------------------------------------------------	
 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
 	$validator = new FormValidator();
 	
 	$validator->addRules(array(
@@ -62,14 +52,14 @@
 		$message = "'mode' is invalid. ";
 	}
 	
-	if($validator->validate($request))
+	if($validator->validate($_POST))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = sprintf("%s%s", $message, implode('<br/>', $validator->errors));
 	}
 	$params['mode'] = $mode;

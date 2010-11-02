@@ -14,17 +14,15 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For news block
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC LIMIT 5");
-		$stmt->execute();
-		$newsData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC LIMIT 5";
+		$newsData = PdoQueryOne($pdo, $sqlStr, null, 'ALL_ASSOC');
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
 		// For CAD execution block
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list");
-		$stmt->execute();
-		$result = $stmt->fetch(PDO::FETCH_NUM);
+		$sqlStr = "SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list";
+		$result = PdoQueryOne($pdo, $sqlStr, null, 'ARRAY_NUM');
 
 		$executionNum = $result[0];
 		$oldestExecDate = substr($result[1], 0, 10);

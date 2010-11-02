@@ -8,37 +8,18 @@
 	require_once('class/validator.class.php');
 
 	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables (set $request array)
+	// Import $_GET variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$mode = (isset($_GET['mode']) && $_GET['mode'] == 'patient') ? 'patient' : "";
-	
-	$request = array('encryptedPtID'  => (isset($_GET['encryptedPtID']))  ? $_GET['encryptedPtID']  : "",
-	                 'filterPtID'     => (isset($_GET['filterPtID']))     ? $_GET['filterPtID']     : "",
-				     'filterPtName'   => (isset($_GET['filterPtName']))   ? $_GET['filterPtName']   : "",
-				     'filterSex'      => (isset($_GET['filterSex']))      ? $_GET['filterSex']      : "all",
-				     'filterAgeMin'   => (isset($_GET['filterAgeMin']))   ? $_GET['filterAgeMin']   : "",
-				     'filterAgeMax'   => (isset($_GET['filterAgeMax']))   ? $_GET['filterAgeMax']   : "",
-				     'filterModality' => (isset($_GET['filterModality'])) ? $_GET['filterModality'] : "all",
-				     'stDateFrom'     => (isset($_GET['stDateFrom']))     ? $_GET['stDateFrom']     : "",
-				     'stDateTo'       => (isset($_GET['stDateTo']))       ? $_GET['stDateTo']       : "",
-				     'stTimeTo'       => (isset($_GET['stTimeTo']))       ? $_GET['stTimeTo']       : "",
-				     'orderCol'       => (isset($_GET['orderCol']))       ? $_GET['orderCol']       : "Study date",
-				     'orderMode'      => (isset($_GET['orderMode']) && $_GET['orderMode'] === "ASC") ? "ASC" : "DESC",
-				     'showing'        => (isset($_REQUEST['showing']))  ? $_REQUEST['showing']  : 10);
-					 
 	$params = array();
-	//-----------------------------------------------------------------------------------------------------------------
-					 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Validation
-	//-----------------------------------------------------------------------------------------------------------------
+
 	$validator = new FormValidator();
 
 	if($mode == 'patient')
 	{
 		$validator->addRules(array(
 			"encryptedPtID" => array(
-				"type" => "regexp",
+				"type" => "pgregexp",
 				"required" => 1,
 				"errorMes" => "URL is incorrect.")));
 	}
@@ -46,16 +27,16 @@
 	{
 		$validator->addRules(array(
 			"filterPtID" => array(
-				"type" => "regexp",
+				"type" => "pgregexp",
 				"errorMes" => "'Patient ID' is invalid."),
 			"filterPtName" => array(
-				"type" => "regexp",
+				"type" => "pgregexp",
 				"errorMes" => "'Patient name' is invalid."),
-		"filterSex" => array(
-			"type" => "adjselect",
-			"options" => array('M', 'F', 'all'),
-			"default" => "all",
-			"adjVal" => "all")
+			"filterSex" => array(
+				"type" => "select",
+				"options" => array('M', 'F', 'all'),
+				"default" => "all",
+				"otherwise" => "all")
 			));
 	}
 	
@@ -69,10 +50,10 @@
 			'min' => '0',
 			'errorMes' => "'Age' is invalid."),
 		"filterModality" => array(
-			'type' => 'adjselect', 
+			'type' => 'select', 
 			"options" => $modalityList,
 			"default" => "all",
-			"adjVal" => "all"),
+			"otherwise" => "all"),
 		"stDateFrom" => array(
 			"type" => "date",
 			"errorMes" => "'Study date' is invalid."),
@@ -83,23 +64,23 @@
 			"type" => "time",
 			"errorMes" => "'Study time' is invalid."),
 		"orderCol" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('Patient ID','Name','Age','Sex','ID','Study ID','Study date'),
 			"default" => 'Study date',
-			"adjVal" => 'Study date'),
+			"otherwise" => 'Study date'),
 		"orderMode" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('DESC', 'ASC'),
 			"default"=> 'DESC',
-			"adjVal" => 'DESC'),
+			"otherwise" => 'DESC'),
 		"showing" => array(
-			"type" => "adjselect",
+			"type" => "select",
 			"options" => array('10', '25', '50', 'all'),
 			"default" => '10',
-			"adjVal" => '10')
+			"otherwise" => '10')
 		));
 	
-	if($validator->validate($request))
+	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "&nbsp;";
@@ -112,7 +93,7 @@
 	}
 	else
 	{
-		$params = $request;
+		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	$params['mode'] = $mode;
@@ -288,11 +269,9 @@
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT COUNT(*) FROM patient_list pt, study_list st " . $sqlCond);
-			$stmt->execute($sqlParams);		
-			
-			$params['totalNum'] = $stmt->fetchColumn();
-			$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+			$sqlStr = "SELECT COUNT(*) FROM patient_list pt, study_list st " . $sqlCond;
+			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
+			$params['maxPageNum']   = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
 			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
 			//----------------------------------------------------------------------------------------------------------
@@ -318,6 +297,9 @@
 			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
 			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
 			
+			$sqlStr = "SELECT tag FROM tag_list WHERE category=2 AND reference_id=?";
+			$stmtTag = $pdo->prepare($sqlStr);
+
 			while ($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
 				if($_SESSION['anonymizeFlg'])
@@ -325,9 +307,7 @@
 					$result[2] = PinfoScramble::encrypt($result[2], $_SESSION['key']);
 					$result[3] = PinfoScramble::scramblePtName();
 				}
-				
-				$sqlStr = "SELECT tag FROM tag_list WHERE category=2 AND reference_id=?";
-				$stmtTag = $pdo->prepare($sqlStr);
+
 				$stmtTag->bindValue(1, $result[0]);
 				$stmtTag->execute();
 				

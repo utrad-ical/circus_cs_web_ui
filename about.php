@@ -13,16 +13,14 @@
 		$data = array();
 
 		// For plug-in block
-		$stmt = $pdo->prepare("SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC");
-		$stmt->execute();
-		$pluginData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC";
+		$pluginData = PdoQueryOne($pdo, $sqlStr, null, 'ALL_ASSOC');
 		
 		//----------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//----------------------------------------------------------------------------------------------------
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
-		
 
 		$smarty->assign('params',     $params);
 		$smarty->assign('pluginData', $pluginData);
