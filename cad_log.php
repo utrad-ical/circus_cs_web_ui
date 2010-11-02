@@ -53,13 +53,13 @@
 		$validator->addRules(array(
 			"cadDateFrom" => array(
 				"type" => "date",
-				"errorMes" => "'CAD date (from)' is invalid."),
+				"errorMes" => "'CAD date' is invalid."),
 			"cadDateTo" => array(
 				"type" => "date",
-				"errorMes" => "'CAD date (to)' is invalid."),
+				"errorMes" => "'CAD date' is invalid."),
 			"cadTimeTo" => array(
 				"type" => "time",
-				"errorMes" => "'CAD time (to)' is invalid.")
+				"errorMes" => "'CAD time' is invalid.")
 			));	
 	}
 
@@ -88,11 +88,11 @@
 		"filterAgeMin" => array(
 			"type" => "int", 
 			"min" => "0",
-			"errorMes" => "'Age (min)' is invalid."),
+			"errorMes" => "'Age' is invalid."),
 		"filterAgeMax" => array(
 			"type" => "int", 
 			"min" => "0",
-			"errorMes" => "'Age (max)' is invalid."),
+			"errorMes" => "'Age' is invalid."),
 		"filterModality" => array(
 			"type" => "adjselect", 
 			"options" => $modalityList,
@@ -100,13 +100,13 @@
 			"adjVal" => "all"),
 		"srDateFrom" => array(
 			"type" => "date",
-			"errorMes" => "'Series date (from)' is invalid."),
+			"errorMes" => "'Series date' is invalid."),
 		"srDateTo" => array(
 			"type" => "date",
-			"errorMes" => "'Series date (to)' is invalid."),
+			"errorMes" => "'Series date' is invalid."),
 		"srTimeTo" => array(
 			"type" => "time",
-			"errorMes" => "'Series time (to)' is invalid."),
+			"errorMes" => "'Series time' is invalid."),
 		"filterTag"=> array(
 			"type" => "regexp",
 			"errorMes" => "'Tag' is invalid."),

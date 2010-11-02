@@ -4,7 +4,7 @@
 		<table class="search-tbl">
 			<tr>
 	            <th style="width: 8.5em"><span class="trim01">CAD date</span></th>
-				<td style="width: 180px;">
+				<td style="width: 220px;">
 					<input name="cadDateFrom" type="text" style="width:72px;" value="{$params.cadDateFrom|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 					-&nbsp;
 					<input name="cadDateTo" type="text" style="width:72px;" value="{$params.cadDateTo|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
@@ -118,8 +118,76 @@
 		<div class="al-l mt10 ml20" style="width: 100%;">
 			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
 			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage|escape}</p>
+			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
+{literal}
+<script language="javascript">
+<!-- 
+
+$(function() {
+	$("#cadSearch input[name='srDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#cadSearch input[name='srDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#cadSearch input[name='srDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#cadSearch input[name='srDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+
+	$("#cadSearch input[name='cadDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#cadSearch input[name='cadDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#cadSearch input[name='cadDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#cadSearch input[name='cadDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+});
+-->
+</script>
+{/literal}

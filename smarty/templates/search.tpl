@@ -13,6 +13,7 @@
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
+<script language="javascript" type="text/javascript" src="jq/ui/ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
@@ -29,6 +30,7 @@
 
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
+<link href="jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <!-- InstanceEndEditable -->
 <!-- InstanceParam name="class" type="text" value="search" -->

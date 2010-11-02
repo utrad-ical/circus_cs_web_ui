@@ -4,13 +4,13 @@
 		<table class="search-tbl">
 			<tr>
 				<th style="width: 8.5em;"><span class="trim01">Study date</span></th>
-				<td style="width: 200px;">
+				<td style="width: 220px;">
 					<input name="stDateFrom" type="text" style="width:72px;" value="{$params.stDateFrom|escape}" />
 					-&nbsp;
 					<input name="stDateTo" type="text" style="width:72px;" value="{$params.stDateTo|escape}" />
 				</td>
 				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
-				<td style="width: 200px;">
+				<td style="width: 180px;">
 					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" {if $params.mode=='patient'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 6em;"><span class="trim01">Modality</span></th>
@@ -59,7 +59,48 @@
 		<div class="al-l mt10 ml20" style="width: 100%;">
 			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('study', '{$params.mode|escape}');" />
 			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('study', '{$params.mode|escape}');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage|escape}</p>
+			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
+
+{literal}
+<script language="javascript">
+<!-- 
+
+$(function() {
+	$("#studySearch input[name='stDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#studySearch input[name='stDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#studySearch input[name='stDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#studySearch input[name='stDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+});
+
+
+-->
+</script>
+{/literal}

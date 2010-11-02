@@ -54,6 +54,7 @@
 			<table class="col-tbl" style="width:100%;">
 				<thead>
 					<tr>
+						{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
 						<th>
 							{if $params.orderCol == 'Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Patient ID', '{if $params.orderCol == "Patient ID" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 						</th>
@@ -77,6 +78,7 @@
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
+							{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if}
 							<td class="al-l">{$item[1]|escape}</td>
 							<td class="al-l">{$item[2]|escape}</td>
 							<td>{$item[3]|escape}</td>
@@ -87,7 +89,7 @@
 							</td>
 							{if $smarty.session.personalFBFlg}
 							<td>
-								<input type="button" value="tag" class="s-btn form-btn" onclick="EditTag(1, '{$item[0]|escape}')" />
+								<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="EditTag(1, '{$item[0]|escape}')" title="{$item[6]|escape}" />
 							</td>
 							{/if}
 						</tr>

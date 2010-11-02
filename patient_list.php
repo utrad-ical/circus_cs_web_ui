@@ -175,6 +175,19 @@
 			
 			while ($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
+				$sqlStr = "SELECT tag FROM tag_list WHERE category=1 AND reference_id=?";
+				$stmtTag = $pdo->prepare($sqlStr);
+				$stmtTag->bindValue(1, $result[0]);
+				$stmtTag->execute();
+				
+				$tagArray = array();
+				
+				while($tmpTag = $stmtTag->fetchColumn())
+				{
+					$tagArray[] = $tmpTag;
+				}
+				$tagStr = implode(',', $tagArray);
+
 				$encryptedPtID = PinfoScramble::encrypt($result[1], $_SESSION['key']);
 	
 				if($_SESSION['anonymizeFlg'] == 1)
@@ -183,11 +196,12 @@
 					                PinfoScramble::scramblePtName(),
 				                    $result[3],
 					                PinfoScramble::scrambleBirthDate(),
-				                    $encryptedPtID);
+				                    $encryptedPtID,
+									$tagStr);
 				}
 				else
 				{
-					$data[] = array($result[0], $result[1], $result[2], $result[3], $result[4],$encryptedPtID);
+					$data[] = array($result[0], $result[1], $result[2], $result[3], $result[4],$encryptedPtID, $tagStr);
 				}
 			}
 			//var_dump($data);

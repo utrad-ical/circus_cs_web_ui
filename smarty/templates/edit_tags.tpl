@@ -40,6 +40,10 @@ function EditTag(mode, sid)
 						{
 							opener.document.getElementById('tagArea').innerHTML = data.parentTagHtml;
 						}
+						else
+						{
+							opener.document.getElementById('tagBtn' + $("#referenceID").val()).title = data.parentTagHtml;
+						}
 					}
 		  	}, "json");
 	}

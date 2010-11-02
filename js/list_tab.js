@@ -1,6 +1,30 @@
 
 //--------------------------------------------------------------------------------------------------
-// Show sub window for editing tag 
+// Delete data (common function)
+//--------------------------------------------------------------------------------------------------
+function DeleteData(type)
+{
+	//選択されたチェックボックスの値を配列に保存
+	var sids=[];
+
+    $("[name='sidList[]']:checked").each(function(){ sids.push(this.value); });
+
+	if(sids.length == 0)
+	{
+	   alert('Please select at least one' + type + '!');
+	}
+	else if(confirm('Do you delete selected' + type + '?'))
+	{
+
+		//$.post("./administration/delete_list.php",
+        //       {type: type, sidArr: sids}, function(data){ alert(data.message); }, "json");
+	}
+}
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+// Show sub window for editing tag (common function)
 //--------------------------------------------------------------------------------------------------
 function EditTag(category, sid)
 {
@@ -18,13 +42,15 @@ function EditTag(category, sid)
 	var dstAddress = "edit_tags.php?category=" + category + "&reference_id=" + sid;
 	window.open(dstAddress, title, "width=400,height=250,location=no,resizable=no,scrollbars=1");
 }
+//--------------------------------------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------------------------------------
 // For patient list
 //--------------------------------------------------------------------------------------------------
 function ShowStudyList(idNum, encryptedPtID)
 {
-	location.href = 'study_list.php?mode=patient&encryptedPtID=' + encryptedPtID;
+	location.href = 'study_list.php?mode=patient&encryptedPtID=' + encodeURIComponent(encryptedPtID);
 }
 
 function ChangeOrderOfPatientList(orderCol, orderMode)
@@ -45,6 +71,7 @@ function ChangeOrderOfPatientList(orderCol, orderMode)
 	location.replace(address);
 }
 //--------------------------------------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------------------------------------
 // For study list
@@ -205,28 +232,18 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 
 	if(execCADFlg==1)
 	{
-		if(flg == 0)
-		{
-			$("#execButton"+seriesID).removeAttr("disabled")
-								     .removeClass('form-btn-disabled')
-									 .addClass('form-btn-normal');
-		}
-		else
-		{
-			$("#execButton"+seriesID).attr("disabled", "disabled")
-									 .removeClass('form-btn-normal')
-									 .addClass('form-btn-disabled');
-		}
+		if(flg == 0)	$("#execButton"+seriesID).show();
+		else			$("#execButton"+seriesID).hide()
 	}
 
 	if(flg == 2)
 	{
-		$("#resultButton" + seriesID).removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		$("#cadInfo"+seriesID).html('Executed at: ' + dateTime).show();
+		$("#resultButton" + seriesID).show();
+		$("#cadInfo"+seriesID).html('Executed at ' + dateTime).show();
 	}
 	else
 	{
-		$("#resultButton" + seriesID).attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		$("#resultButton" + seriesID).hide();
 	
 		if(flg == 1)
 		{
@@ -267,8 +284,6 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 
 	location.href=address;
 }
-
-
 //--------------------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 		<table class="search-tbl">
 			<tr>
 				<th style="width: 8.5em;"><span class="trim01">Series date</span></th>
-				<td style="width: 200px;">
+				<td style="width: 220px;">
 					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
 					-&nbsp;
 					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
@@ -68,7 +68,48 @@
 		<div class="al-l mt10 ml20" style="width: 100%;">
 			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('series', '{$params.mode|escape}');" />
 			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('series', '{$params.mode|escape}');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage|escape}</p>
+			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .m20 END -->
 </div><!-- / .search-panel END -->
+
+{literal}
+<script language="javascript">
+<!-- 
+
+$(function() {
+	$("#seriesSearch input[name='srDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#seriesSearch input[name='srDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#seriesSearch input[name='srDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#seriesSearch input[name='srDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+});
+
+
+-->
+</script>
+{/literal}

@@ -12,6 +12,7 @@
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
+<script language="javascript" type="text/javascript" src="jq/ui/ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
@@ -19,6 +20,7 @@
 
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
+<link href="./jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/popup.css" rel="stylesheet" type="text/css" media="all" />
@@ -86,6 +88,7 @@
 				<table class="col-tbl" style="width: 100%;">
 					<thead>
 						<tr>
+							{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
 							<th>
 								{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 							</th>
@@ -136,56 +139,55 @@
 					<tbody>
 						{foreach from=$data item=item name=cnt}
 							<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-								<td class="al-l"><a href="series_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</a></td>
-								<td class="al-l">{$item[3]|escape}</td>
-								<td>{$item[4]|escape}</td>
+								{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if}
+								<td class="al-l"><a href="series_list.php?filterPtID={$item[3]|escape}">{$item[3]|escape}</a></td>
+								<td class="al-l">{$item[4]|escape}</td>
 								<td>{$item[5]|escape}</td>
-								{if $params.mode!='today'}<td>{$item[6]|escape}</td>{/if}
-								<td>{$item[7]|escape}</td>
+								<td>{$item[6]|escape}</td>
+								{if $params.mode!='today'}<td>{$item[7]|escape}</td>{/if}
 								<td>{$item[8]|escape}</td>
 								<td>{$item[9]|escape}</td>
-								<td class="al-r">{$item[10]|escape}</td>
-								<td class="al-l">{$item[11]|escape}</td>
+								<td>{$item[10]|escape}</td>
+								<td class="al-r">{$item[11]|escape}</td>
+								<td class="al-l">{$item[12]|escape}</td>
 								<td>
-									<input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail('{$smarty.session.colorSet}', '{$item[0]|escape}', '{$item[1]|escape}');"/>
+									<input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail('{$smarty.session.colorSet}', '{$item[1]|escape}', '{$item[2]|escape}');"/>
 								</td>
 
 								{* ----- CAD column ----- *}
 								<td class="al-l">
-									{if $item[12] > 0}
+									{if $item[13] > 0}
 										{* ----- pull-down menu ----- *}
 										<select id="cadMenu{$smarty.foreach.cnt.iteration}" onchange="ChangeCADMenu({if $params.mode=='today'}'todaysSeriesList'{else}'seriesList'{/if},'{$smarty.foreach.cnt.iteration}', this.selectedIndex, {$smarty.session.execCADFlg})" style="width:100px;">
-											{section name=i start=0 loop=$item[12]}
+											{section name=i start=0 loop=$item[13]}
 										
 												{assign var="i"         value=$smarty.section.i.index}
 												{assign var="optionFlg" value=0}
-												{assign var="tmp"       value=$item[13][$i][3]*2+$item[13][$i][4]}
+												{assign var="tmp"       value=$item[14][$i][3]*2+$item[14][$i][4]}
 
-												{if $item[13][$i][2] == 1 || $item[13][$i][3] == 1}
+												{if $item[14][$i][2] || $item[14][$i][3]}
 
-													<option value="{$item[13][$i][0]}^{$item[13][$i][1]}^{$tmp}^{$item[13][$i][5]}" 
+													<option value="{$item[14][$i][0]}^{$item[14][$i][1]}^{$tmp}^{$item[14][$i][5]}" 
 							
-													{if $item[13][$i][2] && $optionFlg == 0 && $item[13][$i][6] == $item[10]}
+													{if $item[14][$i][2] && $optionFlg == 0 && $item[14][$i][6] == $item[11]}
 												 		selected="selected"
 										 				{assign var="optionFlg" value=1}
 													{/if}
 													>
-													{$item[13][$i][0]} v.{$item[13][$i][1]}</option>
+													{$item[14][$i][0]} v.{$item[14][$i][1]}</option>
 												{/if}
 											{/section}
 										</select>
 
 										{if $smarty.session.execCADFlg == 1}
-											<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="Exec" onClick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[0]}', '{$item[1]}');"
-											{if $item[13][$selectedID][2] || $item[13][0][3] == 1 || $item[13][0][4] == 1} disabled="disabled"{/if}
-								 			class="s-btn form-btn{if $item[13][$selectedID][2] || $item[13][0][3] == 1 || $item[13][0][4] == 1} form-btn-disabled{/if}" />
+											<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="&nbsp;Exec&nbsp;" onClick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[1]}', '{$item[2]}');" class="s-btn form-btn"{if $item[14][$selectedID][2] || $item[14][0][3] || $item[14][0][4]} style="display:none;"{/if} />
 										{/if}
 
-										<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onClick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[0]}', '{$item[1]}', {$smarty.session.personalFBFlg});" {if $item[13][0][3] == 0}disabled="disabled"{/if} class="s-btn form-btn {if $item[13][0][3] == 0} form-btn-disabled{/if}" />
+										<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onClick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[1]}', '{$item[2]}', {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
 										<div id="cadInfo{$smarty.foreach.cnt.iteration}">
-											{if $item[13][0][5] != ''}
-												Executed at: {$item[13][0][5]}
-											{elseif $item[13][0][3] == 0 && $item[13][0][4] == 1}
+											{if $item[14][0][5] != ''}
+												Executed at {$item[14][0][5]}
+											{elseif $item[14][0][3] == 0 && $item[14][0][4] == 1}
 												Registered in CAD job list
 											{/if}
 										</div>
@@ -199,6 +201,12 @@
 						{/foreach}
 					</tbody>
 				</table>
+			
+				{if $smarty.session.dataDeleteFlg}
+					<div class="mt10 ml10">
+						<input type="button" value="Delete" class="s-btn form-btn"  onclick="DeleteSeries('series');" />
+					</div>
+				{/if}
 				
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">

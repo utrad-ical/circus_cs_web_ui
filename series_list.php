@@ -61,11 +61,11 @@
 			"filterAgeMin" => array(
 				'type' => 'int', 
 				'min' => '0',
-				'errorMes' => "'Age (min)' is invalid."),
+				'errorMes' => "'Age' is invalid."),
 			"filterAgeMax" => array(
 				'type' => 'int', 
 				'min' => '0',
-				'errorMes' => "'Age (max)' is invalid.")
+				'errorMes' => "'Age' is invalid.")
 			));				
 	}
 
@@ -74,13 +74,13 @@
 		$validator->addRules(array(
 			"srDateFrom" => array(
 				"type" => "date",
-				"errorMes" => "'Series date (from)' is invalid."),
+				"errorMes" => "'Series date' is invalid."),
 			"srDateTo" => array(
 				"type" => "date",
-				"errorMes" => "'Series date (to)' is invalid."),
+				"errorMes" => "'Series date' is invalid."),
 			"srTimeTo" => array(
 				"type" => "time",
-				"errorMes" => "'Series time (to)' is invalid.")
+				"errorMes" => "'Series time' is invalid.")
 			));	
 	}
 
@@ -369,10 +369,10 @@
 			//----------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//----------------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid, sr.series_number, pt.patient_id,"
-					. " pt.patient_name, pt.sex, st.age, sr.series_date, sr.series_time, sr.modality,"
-					. " sr.image_number, sr.series_description"
-					. " FROM patient_list pt, study_list st, series_list sr "
+			$sqlStr = 'SELECT sr.sid, st.study_instance_uid, sr.series_instance_uid, sr.series_number,'
+					. ' pt.patient_id, pt.patient_name, pt.sex, st.age, sr.series_date, sr.series_time,'
+					. ' sr.modality, sr.image_number, sr.series_description'
+					. ' FROM patient_list pt, study_list st, series_list sr '
 					. $sqlCond . " ORDER BY " . $orderColStr;
 					
 			if($params['showing'] != "all")
@@ -483,7 +483,8 @@
 					$ptName = $result['patient_name'];
 				}			
 	
-				array_push($data, array($result['study_instance_uid'],
+				array_push($data, array($result['sid'],
+										$result['study_instance_uid'],
 				                        $result['series_instance_uid'],
 										$ptID,
 										$ptName,

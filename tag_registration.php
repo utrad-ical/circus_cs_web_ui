@@ -76,6 +76,7 @@
 	//-----------------------------------------------------------------------------------------------------------------
 
 	$dstData = array('message'        => $params['errorMessage'],
+					 'referenceID'    => $params['referenceID'],
 					 'parentTagHtml'  => "",
 					 'popupTableHtml' => "");
 					 
@@ -152,6 +153,7 @@
 				}
 				
 				$cnt = 1;
+				$tmpTagArray = array();
 				
 				while($result = $stmt->fetch(PDO::FETCH_NUM))
 				{
@@ -165,6 +167,11 @@
 						$dstData['parentTagHtml']  .= ' <a href="cad_log.php?filterTag=' . $result[1] . '">'
 												   .  $result[1] . '</a> ';
 					}
+					else
+					{
+						$tmpTagArray[] = $result[1] ;
+					}
+					
 					$dstData['popupTableHtml'] .= '<tr><td>' . $cnt . '</td>'
 					                           .  '<td id="tagStr' . $result[0] . '" class="al-l">' . $result[1] . '</td>'
 					                           .  '<td class="al-l">' . $result[2] . '</td>'
@@ -179,6 +186,10 @@
 				if($params['category'] >=3)
 				{	
 					$dstData['parentTagHtml'] .= '<a href="#" onclick="EditTag(' . $params['sid'] . ');">(Edit)</a>';
+				}
+				else
+				{
+					$dstData['parentTagHtml'] = implode(', ', $tmpTagArray);
 				}
 			}
 		}

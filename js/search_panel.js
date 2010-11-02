@@ -48,7 +48,7 @@ function DoSearch(list, mode)
 
 		if(sex == "M" || sex == "F")
 		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterSex=' + encodeURIComponent(sex;
+			address += ((conditionNum == 0) ? '?' : '&') + 'filterSex=' + encodeURIComponent(sex);
 			conditionNum++;
 		}
 	}

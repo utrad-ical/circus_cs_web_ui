@@ -63,11 +63,11 @@
 		"filterAgeMin" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age (min)' is invalid."),
+			'errorMes' => "'Age' is invalid."),
 		"filterAgeMax" => array(
 			'type' => 'int', 
 			'min' => '0',
-			'errorMes' => "'Age (max)' is invalid."),
+			'errorMes' => "'Age' is invalid."),
 		"filterModality" => array(
 			'type' => 'adjselect', 
 			"options" => $modalityList,
@@ -75,13 +75,13 @@
 			"adjVal" => "all"),
 		"stDateFrom" => array(
 			"type" => "date",
-			"errorMes" => "'Study date (from)' is invalid."),
+			"errorMes" => "'Study date' is invalid."),
 		"stDateTo" => array(
 			"type" => "date",
-			"errorMes" => "'Study date (to)' is invalid."),
+			"errorMes" => "'Study date' is invalid."),
 		"stTimeTo" => array(
 			"type" => "time",
-			"errorMes" => "'Study time (to)' is invalid."),
+			"errorMes" => "'Study time' is invalid."),
 		"orderCol" => array(
 			"type" => "adjselect",
 			"options" => array('Patient ID','Name','Age','Sex','ID','Study ID','Study date'),
@@ -325,6 +325,19 @@
 					$result[2] = PinfoScramble::encrypt($result[2], $_SESSION['key']);
 					$result[3] = PinfoScramble::scramblePtName();
 				}
+				
+				$sqlStr = "SELECT tag FROM tag_list WHERE category=2 AND reference_id=?";
+				$stmtTag = $pdo->prepare($sqlStr);
+				$stmtTag->bindValue(1, $result[0]);
+				$stmtTag->execute();
+				
+				$tagArray = array();
+				
+				while($tmpTag = $stmtTag->fetchColumn())
+				{
+					$tagArray[] = $tmpTag;
+				}
+				$result[] = implode(',', $tagArray);
 	
 				$data[] = $result;
 			}
