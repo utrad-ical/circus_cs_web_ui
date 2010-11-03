@@ -5,20 +5,17 @@
 	include_once('common.php');
 	include_once("auto_logout.php");
 	
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables and set $params array
-	//-----------------------------------------------------------------------------------------------------------------
-	$params = array('mode'         => "",
-				    'filterSex'    => "all",
-				    'personalFB'   => "all",
-				    'consensualFB' => "all",
-				    'filterTP'     => "all",
-				    'filterFN'     => "all",
-				    'showing'      => 10);
-	//-----------------------------------------------------------------------------------------------------------------
-
 	try
 	{
+
+		$params = array('mode'         => "",
+					    'filterSex'    => "all",
+					    'personalFB'   => "all",
+					    'consensualFB' => "all",
+					    'filterTP'     => "all",
+					    'filterFN'     => "all",
+					    'showing'      => 10);
+
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 

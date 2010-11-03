@@ -18,34 +18,18 @@
 				. " WHERE el.plugin_name=cm.cad_name AND el.version=cm.version AND cm.result_type=1"
 				. " ORDER BY el.plugin_name ASC";
 				
-		$stmtCad = $pdo->prepare($sqlStr);
-		$stmtCad->execute();
-		$rowNum = $stmtCad->rowCount();
-		$resultCad = $stmtCad->fetchAll(PDO::FETCH_NUM);
-		
-		if($rowNum > 0)
+		$resultCad = PdoQueryOne($pdo, $sqlStr, null, 'ALL_COLUMN');
+				
+		if(count($resultCad) > 0)
 		{
-			foreach($resultCad as $j => $itemCad)
+			foreach($resultCad as $key => $item)
 			{
-				$cadList[$j][0] = $itemCad[0];
+				$cadList[$key][0] = $item;
 			
 				$sqlStr  = "SELECT DISTINCT version FROM executed_plugin_list WHERE plugin_name=?";
+				$resultVersion = PdoQueryOne($pdo, $sqlStr, $item, 'ALL_COLUMN');
 
-				$stmtVersion = $pdo->prepare($sqlStr);
-				$stmtVersion->bindValue(1, $itemCad[0]);
-				$stmtVersion->execute();
-
-				$resultVersion = $stmtVersion->fetchAll(PDO::FETCH_NUM);
-				
-				$tmpStr = "";
-			
-				foreach($resultVersion as $i => $itemVersion)
-				{
-					if($i > 0) $tmpStr .= '^';
-					$tmpStr .= $itemVersion[0];
-				}
-				
-				$cadList[$j][1] = $tmpStr;
+				$cadList[$key][1] = implode('^', $resultVersion);
 			}
 		}
 	
@@ -53,14 +37,7 @@
 		{
 			$sqlStr = "SELECT DISTINCT entered_by FROM lesion_feedback WHERE consensual_flg='f' AND interrupt_flg='f'"
 					. "ORDER BY entered_by ASC";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute();
-			$result = $stmt->fetchAll(PDO::FETCH_NUM);
-		
-			foreach($result as $i => $item)
-			{
-				$userList[$i] = $item[0];
-			}
+			$userList = PdoQueryOne($pdo, $sqlStr, null, 'ALL_COLUMN');
 		}	
 
 		//----------------------------------------------------------------------------------------------------

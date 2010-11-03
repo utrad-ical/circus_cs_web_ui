@@ -6,66 +6,69 @@
 	include("auto_logout.php");
 	require_once('class/PersonalInfoScramble.class.php');
 	require_once('class/validator.class.php');
-	
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables and validation
-	//-----------------------------------------------------------------------------------------------------------------
-	$params = array();
-	$validator = new FormValidator();
 
-	$validator->addRules(array(
-		"filterPtID" => array(
-			"type" => "pgregexp",
-			"errorMes" => "'Patient ID' is invalid."),
-		"filterPtName" => array(
-			"type" => "pgregexp",
-			"errorMes" => "'Patient name' is invalid."),
-		"filterSex" => array(
-			"type" => "select",
-			"options" => array('M', 'F', 'all'),
-			"default" => "all",
-			"oterwise" => "all"),
-		"orderCol" => array(
-			"type" => "select",
-			"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
-			"default"=> 'Patient ID',
-			"oterwise" => 'Patient ID'),
-		"orderMode" => array(
-			"type" => "select",
-			"options" => array('DESC', 'ASC'),
-			"default" => 'ASC',
-			"oterwise" => 'ASC'),
-		"showing" => array(
-			"type" => "select",
-			"options" => array('10', '25', '50', 'all'),
-			"default" => '10',
-			"oterwise" => '10')
-		));
-	
-	if($validator->validate($_GET))
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = "&nbsp;";
-		
-		$params['pageNum']  = (ctype_digit($_GET['pageNum']) && $_GET['pageNum'] > 0) ? $_GET['pageNum'] : 1;
-		$params['startNum'] = 0;
-		$params['endNum'] = 0;
-		$params['totalNum'] = 0;
-		$params['maxPageNum'] = 1;
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
-	}
-	//-----------------------------------------------------------------------------------------------------------------
-	
-	$data = array();
-	
 	try
-	{	
+	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
+
+		//-------------------------------------------------------------------------------------------------------------
+		// Import $_GET variables and validation
+		//-------------------------------------------------------------------------------------------------------------
+		$params = array();
+
+		PgValidator::$conn = $pdo;
+		$validator = new FormValidator();
+		$validator->registerValidator('pgregex', 'PgRegexValidator');
+	
+		$validator->addRules(array(
+			"filterPtID" => array(
+				"type" => "pgregex",
+				"errorMes" => "'Patient ID' is invalid."),
+			"filterPtName" => array(
+				"type" => "pgregex",
+				"errorMes" => "'Patient name' is invalid."),
+			"filterSex" => array(
+				"type" => "select",
+				"options" => array('M', 'F', 'all'),
+				"default" => "all",
+				"oterwise" => "all"),
+			"orderCol" => array(
+				"type" => "select",
+				"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
+				"default"=> 'Patient ID',
+				"oterwise" => 'Patient ID'),
+			"orderMode" => array(
+				"type" => "select",
+				"options" => array('DESC', 'ASC'),
+				"default" => 'ASC',
+				"oterwise" => 'ASC'),
+			"showing" => array(
+				"type" => "select",
+				"options" => array('10', '25', '50', 'all'),
+				"default" => '10',
+				"oterwise" => '10')
+			));
+		
+		if($validator->validate($_GET))
+		{
+			$params = $validator->output;
+			$params['errorMessage'] = "&nbsp;";
+			
+			$params['pageNum']  = (ctype_digit($_GET['pageNum']) && $_GET['pageNum'] > 0) ? $_GET['pageNum'] : 1;
+			$params['startNum'] = 0;
+			$params['endNum'] = 0;
+			$params['totalNum'] = 0;
+			$params['maxPageNum'] = 1;
+		}
+		else
+		{
+			$params = $validator->output;;
+			$params['errorMessage'] = implode('<br/>', $validator->errors);
+		}
+		//---------------------------------------------------------------------------------------------------------------
+		
+		$data = array();
 
 		if($params['errorMessage'] == "&nbsp;")
 		{

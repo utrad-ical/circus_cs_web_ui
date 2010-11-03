@@ -89,6 +89,8 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 			  presetName:  presetName },
   			  function(data){
 
+				if(data.errorMessage != "")  alert(data.errorMessage);
+
 				if(data.imgFname != "")
 				{
 					$("#imgBox img").attr("src", data.imgFname);

@@ -20,7 +20,7 @@ class FormValidator
 		'integer'   => 'IntegerValidator',
 		'str'       => 'StringValidator',
 		'string'    => 'StringValidator',
-		'pgregexp'  => 'PgRegexpValidator',
+		//'pgregexp'  => 'PgRegexpValidator',
 		'date'      => 'DateValidator',
 		'datetime'  => 'DateTimeValidator',
 		'time'      => 'TimeValidator',
@@ -341,33 +341,6 @@ class StringValidator extends ScalarValidator
 }
 
 /**
- * Validator for strings including regular expression (POSIX).
- * ereg() function is not recommend for PHP 5.3.X
- */
-class PgRegexpValidator extends ScalarValidator
-{
-	public function validate($input) {
-		set_error_handler(array("PgRegexpValidator", "errorHandler"));
-		try {
-			ereg($input, "dummy");
-		} catch(Exception $e) {
-			restore_error_handler();
-			$this->error = "Invalid regular expression";
-			return false;
-		}
-		restore_error_handler();
-		$this->output = $input;
-		return true;
-	}
-	
-	public static function errorHandler($errno, $errstr) {
-		throw new Exception();
-		return true;
-	}	
-	
-}
-
-/**
  * Validator for date and time.
  * This checks if the passed string is the valid expression which
  * PHP's internal DateTime::__construct can understand.
@@ -635,8 +608,8 @@ class CadNameValidator extends ScalarValidator
 		if ($input==='all' || !preg_match("/[^\\w-]/", $input)) {
 			$this->output = $input;
 			return true;
-		} else if ($this->params['adjVal']) {
-			$this->output = $this->params['adjVal'];
+		} else if ($this->params['otherwise']) {
+			$this->output = $this->params['otherwise'];
 			return true;
 		} else {
 			$this->error = "Input data '$this->label' is invalid.";
@@ -655,14 +628,48 @@ class CadVersionValidator extends ScalarValidator
 		if ($input==='all' || !preg_match("/[^\\w.]/", $input)) {
 			$this->output = $input;
 			return true;
-		} else if ($this->params['adjVal']) {
-			$this->output = $this->params['adjVal'];
+		} else if ($this->params['otherwise']) {
+			$this->output = $this->params['otherwise'];
 			return true;
 		} else {
 			$this->error = "Input data '$this->label' is invalid.";
 			return false;
 		}
 	}	
+}
+
+/**
+ * Base class that utilizes PDO and PostgreSQL for validating something.
+ */
+abstract class PgValidator extends ScalarValidator
+{
+	public static $conn; // DBハンドル。静的に設定する
+}
+
+/**
+ * Validates if the given input is a well-formed regular expression.
+ */
+class PgRegexValidator extends PgValidator
+{
+	public function validate($input)
+	{
+		try {
+			$st = self::$conn->prepare("select 'dummy' ~ ?");
+			$st->bindParam(1, $input);
+			$st->execute();
+			// throw a new exception regardless of the value of PDO::ATTR_ERRMODE
+			if ($st->errorCode() != '00000') {
+				throw new PDOException();
+			}
+		} catch (Exception $e) {
+			$this->error = $this->label . ": ";
+			$arr = $st->errorInfo();
+			$this->error .= $arr[2];
+			return false;
+		}
+		$this->output = $input;
+		return true;
+	}
 }
 
 ?>

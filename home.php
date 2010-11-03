@@ -3,7 +3,8 @@
 	
 	include_once('common.php');
 	include_once("auto_logout.php");
-
+	require_once('class/DcmExport.class.php');
+	
 	$data = array();
 
 	try
@@ -31,9 +32,7 @@
 		{
 			$sqlStr = "SELECT plugin_name, version, COUNT(exec_id) as cnt FROM executed_plugin_list "
 			        . " GROUP BY plugin_name, version ORDER BY COUNT(exec_id) DESC LIMIT 3";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute();
-			$cadExecutionData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$cadExecutionData = PdoQueryOne($pdo, $sqlStr, null, 'ALL_ASSOC');
 		}
 		//--------------------------------------------------------------------------------------------------------------
 
@@ -98,13 +97,12 @@
 				$webPathOfCADReslut = $webPathOfseriesDir . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB
 									. $item['plugin_name'] . '_v.' . $item['version'];
 				
-				$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $item['lesion_id']);
-				$srcFnameWeb = sprintf("%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $item['lesion_id']);
+				$dstFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $item['lesion_id']);
+				$dstFnameWeb = sprintf("%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $item['lesion_id']);
 						
-				if(!is_file($srcFname))
+				if(!is_file($dstFname))
 				{
-					dcm2png($cmdForProcess, $cmdDcmToPng, $DIR_SEPARATOR, $srcFname,
-					        $item['location_z'], $item['lesion_id'], $item['window_level'], $item['window_width']);
+					DcmExport::dcm2png($dstFname, $item['location_z'], $item['window_level'], $item['window_width']);
 				}
 			
 				$dispWidth = 256;
@@ -112,7 +110,7 @@
 				$scale = $dispWidth/$item['crop_width'];
 			
 				$img = new Imagick();
-				$img->readImage($srcFname);			
+				$img->readImage($dstFname);			
 				$width  = $img->getImageWidth();
 				$height = $img->getImageHeight();
 				$img->destroy();
@@ -133,7 +131,7 @@
 							.  '<img class="transparent" src="cad_results/images/magenta_circle.png"'
 							.  ' style="position:absolute; left:' .  (($item['location_x']-$item['org_x'])*$scale-12) . 'px;'
 							.  ' top:' .(($item['location_y']-$item['org_y'])*$scale-12) . 'px; z-index:2;">'
-							.  '<img src="' . $srcFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
+							.  '<img src="' . $dstFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
 							.  ' style="position:absolute; left:' . (-$item['org_x']*$scale) . 'px; top:' . (-$item['org_y']*$scale) . 'px;'
 							.  ' z-index:1;">'
 							.  '</div>'

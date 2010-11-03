@@ -160,11 +160,12 @@
 		{
 			switch($outputType)
 			{
-				case 'SCALAR':       return $stmt->fetchColumn();				break;
-				case 'ARRAY_ASSOC':  return $stmt->fetch(PDO::FETCH_ASSOC);		break;
-				case 'ARRAY_NUM':    return $stmt->fetch(PDO::FETCH_NUM);		break;
-				case 'ALL_ASSOC':    return $stmt->fetchAll(PDO::FETCH_ASSOC);	break;
-				case 'ALL_NUM':      return $stmt->fetchAll(PDO::FETCH_NUM);	break;
+				case 'SCALAR':       return $stmt->fetchColumn();                break;
+				case 'ARRAY_ASSOC':  return $stmt->fetch(PDO::FETCH_ASSOC);      break;
+				case 'ARRAY_NUM':    return $stmt->fetch(PDO::FETCH_NUM);        break;
+				case 'ALL_ASSOC':    return $stmt->fetchAll(PDO::FETCH_ASSOC);   break;
+				case 'ALL_NUM':      return $stmt->fetchAll(PDO::FETCH_NUM);     break;
+				case 'ALL_COLUMN':   return $stmt->fetchAll(PDO::FETCH_COLUMN);  break;
 				default:             return null;
 			}
 		}

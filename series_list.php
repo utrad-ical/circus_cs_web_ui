@@ -7,118 +7,120 @@
 	require_once('class/PersonalInfoScramble.class.php');
 	require_once('class/validator.class.php');
 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables and validation
-	//-----------------------------------------------------------------------------------------------------------------
-	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "";
-
-	$params = array();
-	$validator = new FormValidator();
-	
-	if($mode == 'study')
-	{
-		$validator->addRules(array(
-			"studyInstanceUID" => array(
-				"type" => "uid",
-				"required" => 1,
-				"errorMes" => "URL is incorrect.")));
-	}
-	else
-	{
-		$validator->addRules(array(
-			"filterPtID" => array(
-				"type" => "pgregexp",
-				"errorMes" => "'Patient ID' is invalid."),
-			"filterPtName" => array(
-				"type" => "pgregexp",
-				"errorMes" => "'Patient name' is invalid."),
-			"filterSex" => array(
-				"type" => "select",
-				"options" => array('M', 'F', 'all'),
-				"default" => "all",
-				"otherwise" => "all"),
-			"filterAgeMin" => array(
-				'type' => 'int', 
-				'min' => '0',
-				'errorMes' => "'Age' is invalid."),
-			"filterAgeMax" => array(
-				'type' => 'int', 
-				'min' => '0',
-				'errorMes' => "'Age' is invalid.")
-			));				
-	}
-
-	if($mode != 'today')
-	{
-		$validator->addRules(array(
-			"srDateFrom" => array(
-				"type" => "date",
-				"errorMes" => "'Series date' is invalid."),
-			"srDateTo" => array(
-				"type" => "date",
-				"errorMes" => "'Series date' is invalid."),
-			"srTimeTo" => array(
-				"type" => "time",
-				"errorMes" => "'Series time' is invalid.")
-			));	
-	}
-
-	$validator->addRules(array(
-		"filterModality" => array(
-			'type' => 'select', 
-			"options" => $modalityList,
-			"default" => 'all',
-			"otherwise" => "all"),
-		"filterSrDescription"=> array(
-			"type" => "pgregexp",
-			"errorMes" => "'Series description' is invalid."),
-		"filterTag"=> array(
-			"type" => "pgregexp",
-			"errorMes" => "'Tag' is invalid."),
-		"orderCol" => array(
-			"type" => "select",
-			"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
-			"default" => 'Date'),
-		"orderMode" => array(
-			"type" => "select",
-			"options" => array('DESC', 'ASC'),
-			"default" => 'DESC',
-			"otherwise" => 'DESC'),
-		"showing" => array(
-			"type" => "select",
-			"options" => array('10', '25', '50', 'all'),
-			"default" => '10',
-			"otherwise" => '10')
-		));
-	
-	if($validator->validate($_GET))
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = "&nbsp;";
-		
-		$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
-		$params['startNum'] = 0;
-		$params['endNum'] = 0;
-		$params['totalNum'] = 0;
-		$params['maxPageNum'] = 1;
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
-	}
-	$params['mode'] = $mode;
-
-	// ”N—î‚Ì”ÍˆÍ‚Ì®‡«‚ÍŒã“úŒŸ“¢
-	//-----------------------------------------------------------------------------------------------------------------
-
-	$data = array();
-	
 	try
 	{	
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
+		//-----------------------------------------------------------------------------------------------------------------
+		// Import $_GET variables and validation
+		//-----------------------------------------------------------------------------------------------------------------
+		$mode = (isset($_GET['mode']) && ($_GET['mode']=='today' || $_GET['mode']=='study')) ? $_GET['mode'] : "";
+		$params = array();
+		
+		PgValidator::$conn = $pdo;
+		$validator = new FormValidator();
+		$validator->registerValidator('pgregex', 'PgRegexValidator');		
+		
+		if($mode == 'study')
+		{
+			$validator->addRules(array(
+				"studyInstanceUID" => array(
+					"type" => "uid",
+					"required" => 1,
+					"errorMes" => "URL is incorrect.")));
+		}
+		else
+		{
+			$validator->addRules(array(
+				"filterPtID" => array(
+					"type" => "pgregex",
+					"errorMes" => "'Patient ID' is invalid."),
+				"filterPtName" => array(
+					"type" => "pgregex",
+					"errorMes" => "'Patient name' is invalid."),
+				"filterSex" => array(
+					"type" => "select",
+					"options" => array('M', 'F', 'all'),
+					"default" => "all",
+					"otherwise" => "all"),
+				"filterAgeMin" => array(
+					'type' => 'int', 
+					'min' => '0',
+					'errorMes' => "'Age' is invalid."),
+				"filterAgeMax" => array(
+					'type' => 'int', 
+					'min' => '0',
+					'errorMes' => "'Age' is invalid.")
+				));				
+		}
+	
+		if($mode != 'today')
+		{
+			$validator->addRules(array(
+				"srDateFrom" => array(
+					"type" => "date",
+					"errorMes" => "'Series date' is invalid."),
+				"srDateTo" => array(
+					"type" => "date",
+					"errorMes" => "'Series date' is invalid."),
+				"srTimeTo" => array(
+					"type" => "time",
+					"errorMes" => "'Series time' is invalid.")
+				));	
+		}
+	
+		$validator->addRules(array(
+			"filterModality" => array(
+				'type' => 'select', 
+				"options" => $modalityList,
+				"default" => 'all',
+				"otherwise" => "all"),
+			"filterSrDescription"=> array(
+				"type" => "pgregex",
+				"errorMes" => "'Series description' is invalid."),
+			"filterTag"=> array(
+				"type" => "pgregex",
+				"errorMes" => "'Tag' is invalid."),
+			"orderCol" => array(
+				"type" => "select",
+				"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
+				"default" => 'Date'),
+			"orderMode" => array(
+				"type" => "select",
+				"options" => array('DESC', 'ASC'),
+				"default" => 'DESC',
+				"otherwise" => 'DESC'),
+			"showing" => array(
+				"type" => "select",
+				"options" => array('10', '25', '50', 'all'),
+				"default" => '10',
+				"otherwise" => '10')
+			));
+		
+		if($validator->validate($_GET))
+		{
+			$params = $validator->output;
+			$params['errorMessage'] = "&nbsp;";
+			
+			$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
+			$params['startNum'] = 0;
+			$params['endNum'] = 0;
+			$params['totalNum'] = 0;
+			$params['maxPageNum'] = 1;
+		}
+		else
+		{
+			$params = $validator->output;
+			$params['errorMessage'] = implode('<br/>', $validator->errors);
+		}
+		$params['mode'] = $mode;
+	
+		// ”N—î‚Ì”ÍˆÍ‚Ì®‡«‚ÍŒã“úŒŸ“¢
+		//-----------------------------------------------------------------------------------------------------------------
+	
+		$data = array();
+	
 		if($params['errorMessage'] == "&nbsp;")
 		{
 			//----------------------------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@
 			"adjValue" => "Series list")
 		));				
 
-	if($validator->validate($_GET)
+	if($validator->validate($_GET))
 	{
 		$data = $validator->output;
 		$data['errorMessage'] = "";
@@ -61,11 +61,8 @@
 			        . " AND sr.study_instance_uid=st.study_instance_uid" 
 			        . " AND pt.patient_id=st.patient_id" 
 			        . " AND sr.storage_id=sm.storage_id;";
-		
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($data['studyInstanceUID'], $data['seriesInstanceUID']));
-	
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+					
+			$result = PdoQueryOne($pdo, $sqlStr, array($data['studyInstanceUID'], $data['seriesInstanceUID']), 'ARRAY_NUM');
 					
 			$data['sid']               = $result[0];
 			$data['patientID']         = $result[1];
@@ -119,34 +116,39 @@
 			
 			$data['imgNum'] = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 		
-			$data['windowLevel']  = isset($_REQUEST['windowLevel']) ? $_REQUEST['windowLevel'] : 0;
-			$data['windowWidth']  = isset($_REQUEST['windowWidth']) ? $_REQUEST['windowWidth'] : 0;
-			$data['presetName']   = isset($_REQUEST['presetName'])  ? $_REQUEST['presetName']  : "";
-			$data['grayscaleStr'] = isset($_REQUEST['grayscaleStr']) ? $_REQUEST['grayscaleStr'] : "";
+			//---------------------------------------------------------------------------------------------------------
+			// Set default window level, window width, and preset name
+			//---------------------------------------------------------------------------------------------------------
+			$data['windowLevel']  = 0;
+			$data['windowWidth']  = 0;
+			$data['presetName']   = "";
 	
-			if($data['grayscaleStr'] == "")
-			{	
-				$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
-				$stmt->bindParam(1, $data['modality']);
-				$stmt->execute();
+			$sqlStr = "SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC";
+			$result = PdoQueryOne($pdo, $sqlStr, $data['modality'], 'ALL_ASSOC');
 				
-				$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$data['presetArr'] = array();
 				
-				foreach($result as $key => $item)
+			foreach($result as $key=>$item)
+			{
+				if($item['priolity'] == 1)
 				{
-					if($item['priolity'] == 1)
-					{
-						$data['windowLevel'] = $item['window_level'];
-						$data['windowWidth'] = $item['window_width'];
-						$data['presetName']  = $item['preset_name'];
-					}
-				
-					if($key > 0)  $data['grayscaleStr'] .= '^';
-				
-					$data['grayscaleStr'] .= $item['preset_name'] . '^' . $item['window_level'] . '^' . $item['window_width'];
+					$data['windowLevel'] = $item['window_level'];
+					$data['windowWidth'] = $item['window_width'];
+					$data['presetName']  = $item['preset_name'];
 				}
+				
+				$data['presetArr'][$key*3]   = $item['preset_name'];
+				$data['presetArr'][$key*3+1] = $item['window_level'];
+				$data['presetArr'][$key*3+2] = $item['window_width'];
 			}
-		
+			
+			$data['grayscaleStr'] = implode('^', $data['presetArr']);
+			$data['presetNum'] = count($data['presetArr'])/3;
+			//---------------------------------------------------------------------------------------------------------
+
+			//---------------------------------------------------------------------------------------------------------
+			// Set file name of thumbnail image or Create thumbnail image
+			//---------------------------------------------------------------------------------------------------------
 			if(!is_dir($data['seriesDir']))
 			{
 				$data['errorMessage'] = '[ERROR] Series dir is not exist.';
@@ -215,31 +217,16 @@
 				
 					fclose($fp);
 				}
-				
-				//echo $data['listTabAddress'];
-			
-				if($data['grayscaleStr'] != "")
-				{
-					$data['presetArr'] = explode("^", $data['grayscaleStr']);
-				}
-				$data['presetNum'] = count($data['presetArr'])/3;
-			
-				//------------------------------------------------------------------------------------------------------
-				// Retrieve tag data
-				//------------------------------------------------------------------------------------------------------
-				$tagArray = array();
-			
-				$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=3 AND reference_id=? ORDER BY sid ASC";
-			
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $data['sid']);
-				$stmt->execute();
-				$tagNum = $stmt->rowCount();
-				
-				$tagArray = $stmt->fetchAll(PDO::FETCH_NUM);
-				//------------------------------------------------------------------------------------------------------
-			}
-			//var_dump($data);	
+			}	
+
+			//----------------------------------------------------------------------------------------------------------
+			// Retrieve tag data
+			//----------------------------------------------------------------------------------------------------------
+			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=3 AND reference_id=? ORDER BY sid ASC";
+			$tagArray = PdoQueryOne($pdo, $sqlStr, $data['sid'], 'ALL_NUM');
+			//----------------------------------------------------------------------------------------------------------
+
+			//var_dump($data);
 		}
 		
 		//--------------------------------------------------------------------------------------------------------------

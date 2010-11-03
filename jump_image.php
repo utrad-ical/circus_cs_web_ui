@@ -4,25 +4,45 @@
 
 	include_once("common.php");
 	require_once('class/DcmExport.class.php');
+	require_once('class/validator.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables 
+	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
-	$studyInstanceUID  = (isset($_REQUEST['studyInstanceUID']))  ? $_REQUEST['studyInstanceUID']  : "";
-	$seriesInstanceUID = (isset($_REQUEST['seriesInstanceUID'])) ? $_REQUEST['seriesInstanceUID'] : "";
-	
-	$imgNum = (is_numeric($_REQUEST['imgNum']) && $_REQUEST['imgNum'] > 0) ? $_REQUEST['imgNum'] : 1;
-	
-	$windowLevel = (isset($_REQUEST['windowLevel']) && is_numeric($_REQUEST['windowLevel'])) ? $_REQUEST['windowLevel'] : 0;
-	$windowWidth = (isset($_REQUEST['windowWidth']) && is_numeric($_REQUEST['windowWidth'])) ? $_REQUEST['windowWidth'] : 0;
-	$presetName  = (isset($_REQUEST['presetName'])) ? $_REQUEST['presetName'] : "";	
+	$params = array();
+	$validator = new FormValidator();
+
+	$validator->addRules(array(
+		"studyInstanceUID"  => array("type" => "uid"),
+		"seriesInstanceUID" => array("type" => "uid"),
+		"imgNum" => array(
+			"type" => "int",
+			"min" => "1",
+			"errorMes" => "Image number is invalid.")
+		));
+		
+	if($validator->validate($_POST))
+	{
+		$params = $validator->output;
+		$params['errorMessage'] = "";
+		
+		$params['windowLevel'] = (isset($_POST['windowLevel']) && is_numeric($_POST['windowLevel'])) ? $_POST['windowLevel'] : 0;
+		$params['windowWidth'] = (isset($_POST['windowWidth']) && is_numeric($_POST['windowWidth'])) ? $_POST['windowWidth'] : 0;
+		$params['presetName']  = (isset($_POST['presetName'])) ? $_POST['presetName'] : "";
+	}
+	else
+	{
+		$params = $validator->output;
+		$params['errorMessage'] = implode('<br/>', $validator->errors);
+	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	$dstData = array('imgFname'  => '',
-	                 'imgNumStr' => sprintf("Img. No. %04d", $imgNum));
+	$dstData = array('errorMessage' => $params['errorMessage'],
+					 'imgFname'     => '',
+	                 'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum']));
 	try
 	{	
-		if(!preg_match('/[^\d\\.]/', $studyInstanceUID) && !preg_match('/[^\d\\.]/', $seriesInstanceUID))
+		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);	
@@ -34,17 +54,17 @@
 				    . " AND sr.study_instance_uid=st.study_instance_uid" 
 				    . " AND sr.storage_id=sm.storage_id;";
 	
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($studyInstanceUID, $seriesInstanceUID));
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+			$result = PdoQueryOne($pdo, $sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
 	
 			$patientID = $result[0];
 		
-			$seriesDir = $result[1] . $DIR_SEPARATOR . $patientID . $DIR_SEPARATOR . $studyInstanceUID
-					   . $DIR_SEPARATOR . $seriesInstanceUID;
+			$seriesDir = $result[1] . $DIR_SEPARATOR . $patientID
+					   . $DIR_SEPARATOR . $params['studyInstanceUID']
+					   . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 					   
-			$seriesDirWeb = $result[2]. $patientID . $DIR_SEPARATOR_WEB . $studyInstanceUID
-					      . $DIR_SEPARATOR_WEB . $seriesInstanceUID;		   
+			$seriesDirWeb = $result[2]. $patientID
+					      . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
+					      . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];		   
 
 			$flist = array();
 			$flist = GetDicomFileListInPath($seriesDir);
@@ -54,7 +74,7 @@
 			$subDir = $seriesDir . $DIR_SEPARATOR . $SUBDIR_JPEG;
 			if(!is_dir($subDir))	mkdir($subDir);
 			
-			$tmpFname = $flist[$imgNum-1];
+			$tmpFname = $flist[$params['imgNum']-1];
 	
 			$srcFname = $seriesDir . $DIR_SEPARATOR . $tmpFname;
 	
@@ -67,19 +87,23 @@
 		
 			$dumpFname = $dstFname . ".txt";
 		
-			if($presetName != "" && $presetName != "Auto") 
+			if($params['presetName'] != "" && $params['presetName'] != "Auto") 
 			{
-				$dstFname .= "_" . $presetName;
-				$dstFnameWeb .= "_" . $presetName;
+				$dstFname .= "_" . $params['presetName'];
+				$dstFnameWeb .= "_" . $params['presetName'];
 			}
 			$dstFname .= '.jpg';
 			$dstFnameWeb .= '.jpg';		
 	
 			// Create thumbnail image
 			if(is_file($dstFname)
-			   || DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $windowLevel, $windowWidth))
+			   || DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $params['windowLevel'], $params['windowWidth']))
 			{	
 				$dstData['imgFname'] = $dstFnameWeb;
+			}
+			else
+			{
+				$dstData['errorMessage'] = "[ERROR] Fail to create thumbnail image.";
 			}
 					
 			$fp = fopen($dumpFname, "r");
@@ -102,6 +126,10 @@
 							$dstData['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
 							break;
 					}
+				}
+				else
+				{
+					$dstData['errorMessage'] = "[ERROR] Fail to open DICOM dump file.";
 				}
 			
 				fclose($fp);

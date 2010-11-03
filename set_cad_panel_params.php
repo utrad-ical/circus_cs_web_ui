@@ -13,12 +13,10 @@
 	            . " WHERE cs.cad_name=el.plugin_name AND cs.version=el.version AND cs.series_id=1";
 
 		if($modalityList[$i] != 'all')  $sqlStr .= " AND cs.modality=?";
-		$sqlStr .= " ORDER BY el.plugin_name ASC, el.version ASC";
+		$sqlStr .= " ORDER BY el.plugin_name ASC, el.version DESC";
 		
 		$stmt = $pdo->prepare($sqlStr);
-		
 		if($modalityList[$i] != 'all')  $stmt->bindParam(1, $modalityList[$i]);
-
 		$stmt->execute();
 	
 		while($result = $stmt->fetch(PDO::FETCH_NUM))
@@ -31,7 +29,7 @@
 			}
 			$tmpStr .= '^' . $result[1];
 		}
-		array_push($modalityMenuVal, $tmpStr);
+		$modalityMenuVal[] = $tmpStr;
 	
 	}
 	

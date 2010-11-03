@@ -7,146 +7,150 @@
 	require_once('class/PersonalInfoScramble.class.php');	
 	require_once('class/validator.class.php');	
 
-	$userID = $_SESSION['userID'];
-
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables and validation
-	//-----------------------------------------------------------------------------------------------------------------
-	$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";	
-	$params = array();
-
-	$validator = new FormValidator();
-
-	if($mode != "today")
-	{
-		$validator->addRules(array(
-			"cadDateFrom" => array(
-				"type" => "date",
-				"errorMes" => "'CAD date' is invalid."),
-			"cadDateTo" => array(
-				"type" => "date",
-				"errorMes" => "'CAD date' is invalid."),
-			"cadTimeTo" => array(
-				"type" => "time",
-				"errorMes" => "'CAD time' is invalid.")
-			));	
-	}
-
-	$validator->addRules(array(
-		"filterCadID" => array(
-			"type" => "int", 
-			"min" => '0',
-			"errorMes" => "'CAD ID' is invalid."),
-		"filterCAD" => array(
-			"type" => "cadname",
-			"errorMes" => "'CAD' is invalid."),
-		"filterVersion" => array(
-			"type" => "version",
-			"errorMes" => "'Version' is invalid."),
-		"filterPtID" => array(
-			"type" => "pgregexp",
-			"errorMes" => "'Patient ID' is invalid."),
-		"filterPtName" => array(
-			"type" => "pgregexp",
-			"errorMes" => "'Patient name' is invalid."),
-		"filterSex" => array(
-			"type" => "select",
-			"options" => array('M', 'F', 'all'),
-			"default" => "all",
-			"otherwise" => "all"),
-		"filterAgeMin" => array(
-			"type" => "int", 
-			"min" => "0",
-			"errorMes" => "'Age' is invalid."),
-		"filterAgeMax" => array(
-			"type" => "int", 
-			"min" => "0",
-			"errorMes" => "'Age' is invalid."),
-		"filterModality" => array(
-			"type" => "select", 
-			"options" => $modalityList,
-			"default" => "all",
-			"otherwise" => "all"),
-		"srDateFrom" => array(
-			"type" => "date",
-			"errorMes" => "'Series date' is invalid."),
-		"srDateTo" => array(
-			"type" => "date",
-			"errorMes" => "'Series date' is invalid."),
-		"srTimeTo" => array(
-			"type" => "time",
-			"errorMes" => "'Series time' is invalid."),
-		"filterTag"=> array(
-			"type" => "pgregexp",
-			"errorMes" => "'Tag' is invalid."),
-		"filterFBUser"=> array(
-			"type" => "pgregexp",
-			"errorMes" => "'Series description' is invalid."),
-		"personalFB" => array(
-			"type" => "select",
-			"options" => array("entered", "notEntered", "all"),
-			"default" => "all",
-			"otherwise"  => "all"),
-		"consensualFB" => array(
-			"type" => "select",
-			"options" => array("entered", "notEntered", "all"),
-			"default" => "all",
-			"otherwise"  => "all"),
-		"filterTP" => array(
-			"type" => "select",
-			"options" => array("with", "withour", "all"),
-			"default" => "all",
-			"otherwise"  => "all"),
-		"filterFN" => array(
-			"type" => "select",
-			"options" => array("with", "without", "all"),
-			"default" => "all",
-			"otherwise"  => "all"),
-		"orderCol" => array(
-			"type" => "select",
-			"options" => array("Patient ID","Name","Age","Sex","Series","CAD","CAD date"),
-			"default" => "CAD date",
-			"otherwise" => "CAD date"),
-		"orderMode" => array(
-			"type" => "select",
-			"options" => array('DESC', 'ASC'),
-			"default" => "DESC",
-			"otherwise"  => "DESC"),
-		"showing" => array(
-			"type" => "select",
-			"options" => array("10", "25", "50", "all"),
-			"default" => "10",
-			"otherwise" => "10")
-		));
-	
-	if($validator->validate($_GET))
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = "&nbsp;";
-		
-		$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
-		$params['startNum'] = 0;
-		$params['endNum'] = 0;
-		$params['totalNum'] = 0;
-		$params['maxPageNum'] = 1;
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
-	}
-	$params['mode'] = $mode;
-
-	// 年齢の範囲・日付の整合性は後日検討
-	//-----------------------------------------------------------------------------------------------------------------
-
-	$data = array();
-
 	try
 	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
+	
+		$userID = $_SESSION['userID'];
+	
+		//-----------------------------------------------------------------------------------------------------------------
+		// Import $_GET variables and validation
+		//-----------------------------------------------------------------------------------------------------------------
+		$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";	
+		$params = array();
+	
+		PgValidator::$conn = $pdo;
+		$validator = new FormValidator();
+		$validator->registerValidator('pgregex', 'PgRegexValidator');		
+	
+		if($mode != "today")
+		{
+			$validator->addRules(array(
+				"cadDateFrom" => array(
+					"type" => "date",
+					"errorMes" => "'CAD date' is invalid."),
+				"cadDateTo" => array(
+					"type" => "date",
+					"errorMes" => "'CAD date' is invalid."),
+				"cadTimeTo" => array(
+					"type" => "time",
+					"errorMes" => "'CAD time' is invalid.")
+				));	
+		}
+	
+		$validator->addRules(array(
+			"filterCadID" => array(
+				"type" => "int", 
+				"min" => '0',
+				"errorMes" => "'CAD ID' is invalid."),
+			"filterCAD" => array(
+				"type" => "cadname",
+				"otherwise"=> "all",
+				"errorMes" => "'CAD' is invalid."),
+			"filterVersion" => array(
+				"type" => "version",
+				"otherwise" => "all"
+				"errorMes" => "'Version' is invalid."),
+			"filterPtID" => array(
+				"type" => "pgregex",
+				"errorMes" => "'Patient ID' is invalid."),
+			"filterPtName" => array(
+				"type" => "pgregex",
+				"errorMes" => "'Patient name' is invalid."),
+			"filterSex" => array(
+				"type" => "select",
+				"options" => array('M', 'F', 'all'),
+				"default" => "all",
+				"otherwise" => "all"),
+			"filterAgeMin" => array(
+				"type" => "int", 
+				"min" => "0",
+				"errorMes" => "'Age' is invalid."),
+			"filterAgeMax" => array(
+				"type" => "int", 
+				"min" => "0",
+				"errorMes" => "'Age' is invalid."),
+			"filterModality" => array(
+				"type" => "select", 
+				"options" => $modalityList,
+				"default" => "all",
+				"otherwise" => "all"),
+			"srDateFrom" => array(
+				"type" => "date",
+				"errorMes" => "'Series date' is invalid."),
+			"srDateTo" => array(
+				"type" => "date",
+				"errorMes" => "'Series date' is invalid."),
+			"srTimeTo" => array(
+				"type" => "time",
+				"errorMes" => "'Series time' is invalid."),
+			"filterTag"=> array(
+				"type" => "pgregex",
+				"errorMes" => "'Tag' is invalid."),
+			"filterFBUser"=> array(
+				"type" => "pgregex",
+				"errorMes" => "'Series description' is invalid."),
+			"personalFB" => array(
+				"type" => "select",
+				"options" => array("entered", "notEntered", "all"),
+				"default" => "all",
+				"otherwise"  => "all"),
+			"consensualFB" => array(
+				"type" => "select",
+				"options" => array("entered", "notEntered", "all"),
+				"default" => "all",
+				"otherwise"  => "all"),
+			"filterTP" => array(
+				"type" => "select",
+				"options" => array("with", "withour", "all"),
+				"default" => "all",
+				"otherwise"  => "all"),
+			"filterFN" => array(
+				"type" => "select",
+				"options" => array("with", "without", "all"),
+				"default" => "all",
+				"otherwise"  => "all"),
+			"orderCol" => array(
+				"type" => "select",
+				"options" => array("Patient ID","Name","Age","Sex","Series","CAD","CAD date"),
+				"default" => "CAD date",
+				"otherwise" => "CAD date"),
+			"orderMode" => array(
+				"type" => "select",
+				"options" => array('DESC', 'ASC'),
+				"default" => "DESC",
+				"otherwise"  => "DESC"),
+			"showing" => array(
+				"type" => "select",
+				"options" => array("10", "25", "50", "all"),
+				"default" => "10",
+				"otherwise" => "10")
+			));
 		
+		if($validator->validate($_GET))
+		{
+			$params = $validator->output;
+			$params['errorMessage'] = "&nbsp;";
+			
+			$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
+			$params['startNum'] = 0;
+			$params['endNum'] = 0;
+			$params['totalNum'] = 0;
+			$params['maxPageNum'] = 1;
+		}
+		else
+		{
+			$params = $validator->output;
+			$params['errorMessage'] = implode('<br/>', $validator->errors);
+		}
+		$params['mode'] = $mode;
+	
+		// 年齢の範囲・日付の整合性は後日検討
+		//-----------------------------------------------------------------------------------------------------------------
+	
+		$data = array();
+
 		//--------------------------------------------------------------------------------------------------------
 		// Create SQL queries 
 		//--------------------------------------------------------------------------------------------------------

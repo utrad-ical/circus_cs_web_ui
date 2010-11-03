@@ -30,10 +30,10 @@
 				// Connect to SQL Server
 				$pdo = new PDO($connStrPDO);
 				
-				$stmt = $pdo->prepare("SELECT * FROM users WHERE user_id=? AND passcode=?");
-				$stmt->execute(array($_POST['userID'], MD5($_POST['pswd'])));
+				$sqlStr = "SELECT * FROM users WHERE user_id=? AND passcode=?";
+				$result = PdoQueryOne($pdo, $sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
 
-    			if(($result = $stmt->fetch(PDO::FETCH_ASSOC)) == FALSE)
+    			if($result == null)
 				{
 					$message = 'Authentication credentials not accepted!!';
 							 
