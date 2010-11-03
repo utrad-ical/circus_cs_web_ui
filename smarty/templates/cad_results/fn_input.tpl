@@ -23,15 +23,15 @@
 
 $(function() {ldelim}
 	$("#slider").slider({ldelim}
-		value:{$imgNum},
+		value:1,
 		min:{$sliceOffset+1},
-		max:{$fNum},
+		max:{$params.fNum},
 		step: 1,
 		slide: function(event, ui) {ldelim}
-			jQuery("#sliderValue").html(ui.value);
+			$("#sliderValue").html(ui.value);
 		{rdelim},
 		change: function(event, ui) {ldelim}
-			jQuery("#sliderValue").html(ui.value);
+			$("#sliderValue").html(ui.value);
 			JumpImgNumber(ui.value);
 		{rdelim}
 	{rdelim});
@@ -55,6 +55,32 @@ $(function() {ldelim}
 {/if}
 
 {rdelim});
+
+{literal}
+function Plus()
+{
+	var value = $("#slider").slider("value");
+
+	if(value < $("#slider").slider("option", "max"))
+	{
+		value++;
+		$("#sliderValue").html(value);
+		$("#slider").slider("value", value);
+	}
+}
+
+function Minus()
+{
+	var value = $("#slider").slider("value");
+
+	if($("#slider").slider("option", "min") <= value)
+	{
+		value--;
+		$("#sliderValue").html(value);
+		$("#slider").slider("value", value);
+	}
+}
+{/literal}
 
 -->
 </script>
@@ -105,59 +131,49 @@ $(function() {ldelim}
 		<div class="tab-content">
 			<div id="fnInput">
 				<form id="form1" name="form1">
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
-				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
-				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}">
-				<input type="hidden" id="version"           name="version"           value="{$params.version}">
-				<input type="hidden" id="imgNum"            name="imgNum"            value="{$imgNum}">
-				<input type="hidden" id="rowNum"            name="rowNum"            value="">
+				<input type="hidden" id="execID"            name="execID"            value="{$params.execID|escape}">
+				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID|escape}">
+				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}">
+				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName|escape}">
+				<input type="hidden" id="version"           name="version"           value="{$params.version|escape}">
 				<input type="hidden" id="posStr"            name="posStr"            value="">
-				<input type="hidden" id="userStr"           name="userStr"           value="{$userStr}">
-				<input type="hidden" id="candStr"           name="candStr"           value="{$candStr}">
-				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">	
+				<input type="hidden" id="userStr"           name="userStr"           value="{$params.userStr|escape}">
+				<input type="hidden" id="candPosStr"        name="candPosStr"        value="{$params.candPosStr|escape}">
+				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode|escape}">	
 				<input type="hidden" id="userID"            name="userID"            value="{$userID}">	
-				<input type="hidden" id="encryptedPatientID"   name="encryptedPatientID"   value="{$encryptedPatientID}">
-				<input type="hidden" id="encryptedPatientName" name="encryptedPatientName" value="{$encryptedPatientName}">
-				<input type="hidden" id="sex"            name="sex"            value="{$sex}">
-				<input type="hidden" id="age"            name="age"            value="{$age}">
-				<input type="hidden" id="seriesDate"     name="seriesDate"     value="{$seriesDate}">
-				<input type="hidden" id="modality"       name="modality"       value="{$modality}">	
 
-				<input type="hidden" id="tableName"      name="tableName"      value="{$tableName}">
-				<input type="hidden" id="grayscaleStr"   name="grayscaleStr"   value="{$grayscaleStr}">
-				<input type="hidden" id="presetName"     name="presetName"     value="{$presetName}">
-				<input type="hidden" id="windowLevel"    name="windowLevel"    value="{$windowLevel}">
-				<input type="hidden" id="windowWidth"    name="windowWidth"    value="{$windowWidth}">
-					
-				<input type="hidden" id="sliceOrigin"    name="sliceOrigin"    value="{$sliceOrigin}">
-				<input type="hidden" id="slicePitch"     name="slicePitch"     value="{$slicePitch}">
-				<input type="hidden" id="sliceOffset"    name="sliceOffset"    value="{$sliceOffset}">
-					
-				<input type="hidden" id="distTh"         name="distTh"         value="{$distTh}">
-				<input type="hidden" id="orgWidth"       name="orgWidth"       value="{$orgWidth}">
-				<input type="hidden" id="orgHeight"      name="orgHeight"      value="{$orgHeight}">
-				<input type="hidden" id="dispWidth"      name="dispWidth"      value="{$dispWidth}">
-				<input type="hidden" id="dispHeight"     name="dispHeight"     value="{$dispHeight}">
-					
-				<input type="hidden" id="registFNFlg"    name="registFNFlg"    value="{$registFNFlg}">
+				<input type="hidden" id="tableName"      name="tableName"      value="{$params.tableName|escape}">
+				<input type="hidden" id="grayscaleStr"   name="grayscaleStr"   value="{$params.grayscaleStr|escape}">
+				<input type="hidden" id="presetName"     name="presetName"     value="{$params.presetName|escape}">
+				<input type="hidden" id="windowLevel"    name="windowLevel"    value="{$params.windowLevel|escape}">
+				<input type="hidden" id="windowWidth"    name="windowWidth"    value="{$params.windowWidth|escape}">
+
 				<input type="hidden" id="visibleFlg"     name="visibleFlg"     value="{$visibleFlg}">
-				<input type="hidden" id="interruptFNFlg" name="interruptFNFlg" value="{$interruptFNFlg}">	
+					
+				<input type="hidden" id="sliceOrigin"    name="sliceOrigin"    value="{$params.sliceOrigin|escape}">
+				<input type="hidden" id="slicePitch"     name="slicePitch"     value="{$params.slicePitch|escape}">
+				<input type="hidden" id="sliceOffset"    name="sliceOffset"    value="{$params.sliceOffset|escape}">
+					
+				<input type="hidden" id="distTh"         name="distTh"         value="{$params.distTh|escape}">
+				<input type="hidden" id="orgWidth"       name="orgWidth"       value="{$params.orgWidth|escape}">
+				<input type="hidden" id="orgHeight"      name="orgHeight"      value="{$params.orgHeight|escape}">
+				<input type="hidden" id="dispWidth"      name="dispWidth"      value="{$params.dispWidth|escape}">
+				<input type="hidden" id="dispHeight"     name="dispHeight"     value="{$params.dispHeight|escape}">
+					
+				<input type="hidden" id="registTime"   name="registTime"   value="{$params.registTime|escape}">
+				<input type="hidden" id="ticket"       name="ticket"       value="{$ticket|escape}">
 
-				<input type="hidden" id="registTime"   name="registTime"   value="{$registTime}">
-				<input type="hidden" id="ticket"       name="ticket"       value="{$ticket}">
-
-				<h2>FN input&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]&nbsp;&nbsp;({$params.feedbackMode} mode)</h2>
+				<h2>FN input&nbsp;[{$params.cadName|escape} v.{$params.version|escape} ID:{$params.execID|escape}]&nbsp;&nbsp;({$params.feedbackMode|escape} mode)</h2>
 
 				<div class="headerArea">
-					<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}">{$studyDate}&nbsp;({$studyID})</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
+					<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID|escape}">{$params.patientName|escape}&nbsp;({$params.patientID|escape})&nbsp;{$params.age|escape}{$params.sex|escape}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID|escape}">{$params.studyDate|escape}&nbsp;({$params.studyID|escape})</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality|escape},&nbsp;{$params.seriesDescription|escape}&nbsp;({$params.seriesID|escape})</div>
 				</div>
 
 				<p class="mb10">
-				{if $registTime != ""}Location of false negatives were registered at {$registTime}{if $params.feedbackMode =="consensual" && $enteredBy != ""} (by {$enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
-				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name=id="checkVisibleFN" onclick="ChangeVisibleFN();"{if $visibleFlg == 1} checked="checked"{/if} />&nbsp;Show FN</p>
+				{if $params.registTime != ""}Location of false negatives were registered at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
+				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name="id="checkVisibleFN" "onclick="ChangeVisibleFN();" checked="checked" />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">
 					{* ----- Display image with slider ----- *}
@@ -166,45 +182,45 @@ $(function() {ldelim}
 						<tr>
 							<td colspan="3" valign="top">
 								<div id="imgBlock" style="margin:0px;padding:0px;width:{$dispWidth}px;height:{$dispHeight}px;position:relative;">
-									<img id="imgArea" class="{if $registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$dstFnameWeb}" width="{$dispWidth}" "height={$dispHeight}" />
+									<img id="imgArea" class="{if $params.registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
 								</div>
 							</td>
 						</tr>
 
 						<tr>
-							<td align="right" style="{if $dispWidth >=256}width:{$widthOfPlusButton}{/if}px;">
-								<input type="button" value="-" onClick="JumpImgNumber({$imgNum-1});" {if $imgNum == ($sliceOffset+1)} disabled{/if}>
+							<td align="right" style="{if $params.dispWidth >=256}width:{$widthOfPlusButton|escape}{/if}px;">
+								<input type="button" value="-" onClick="Minus();" {if $params.imgNum == ($params.sliceOffset+1)} disabled="disabled"{/if} />
 							</td>
 				
 							<td align=center style="width:256px;"><div id="slider"></div></td>
 
-							<td align=left  style="{if $dispWidth >=256}width:{$widthOfPlusButton}{/if}px;">
-						 		<input type="button" value="+" onClick="JumpImgNumber({$imgNum+1});" {if $imgNum == $fNum} disabled{/if}>
+							<td align=left  style="{if $params.dispWidth >=256}width:{$params.widthOfPlusButton|escape}{/if}px;">
+						 		<input type="button" value="+" onClick="Plus();" {if $params.imgNum == $params.fNum} disabled="disabled"{/if} />
 							</td>
 						</tr>
 
 						<tr>
 							<td align=center colspan=3>
-								<b>Image number: <span id="sliderValue">{$imgNum}</span></b>
+								<b>Image number: <span id="sliderValue">{$params.imgNum|escape}</span></b>
 							</td>
 						</tr>
 
-						<tr>
+						{*<tr>
 							<td align=center colspan=3>
 								<b>Slice location [mm]: </b>
-								<input type="text" id="sliceLoc" name="sliceLoc" value={$sliceLoc} style="width:64px; text-align:right" onKeyPress="return submitStop(event);" />
-								<input type="button" id="applySL" name="applySL" value="Jump" onclick="JumpImgNumBySliceLocation({$sliceOrigin}, {$slicePitch}, {$sliceOffset}, {$fNum});" />
-					</td></tr>
+								<input type="text" id="sliceLocation" value="{$params.sliceLocation|escape}" style="width:64px; text-align:right" onKeyPress="return submitStop(event);" />
+								<input type="button" id="applySL" class="form-btn" value="Jump" onclick="JumpImgNumBySliceLocation({$params.sliceOrigin}, {$params.slicePitch}, {$params.sliceOffset}, {$params.fNum});" />
+					</td></tr>*}
 
-						{if $grayscaleStr != ""}
+						{if $params.grayscaleStr != ""}
 							<tr>
 								<td align=center colspan=3>
 									<b>Grayscale preset: </b>
-									<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu({$imgNum});">
+									<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu({$params.imgNum});">
 
-										{section name=i start=0 loop=$presetNum}
+										{section name=i start=0 loop=$params.presetNum}
 											{assign var="i" value=$smarty.section.i.index}	
-											<option value="{$presetArr[$i][1]}^{$presetArr[$i][2]}" {if $presetName == $presetArr[$i][0]} selected{/if}>{$presetArr[$i][0]}</option>
+											<option value="{$presetArr[$i][1]}^{$presetArr[$i][2]}" {if $params.presetName == $presetArr[$i][0]} selected{/if}>{$presetArr[$i][0]}</option>
 										{/section}
 									</select>
 								</td>
@@ -220,7 +236,7 @@ $(function() {ldelim}
 					{section name=j start=0 loop=$enteredFnNum}
 						{assign var="j" value=$smarty.section.j.index}
 						
-						{if $imgNum == $locationList[$j][3]}
+						{if $params.imgNum == $locationList[$j][3]}
 							plotClickedLocation({$j+1}, {$locationList[$j][1]}, {$locationList[$j][2]}, {$locationList[$j][7]});
 						{/if}
 					{/section}
@@ -232,7 +248,7 @@ $(function() {ldelim}
 		
 					{if $smarty.session.groupID != 'demo'}
 						<div style="text-align:center; margin-bottom:10px;">
-							<input type="button" id="confirmButton" class="w100 form-btn" value="Confirm" onclick="ConfirmFNLocation();"{if $registTime != ""} disabled="disabled"{/if}>
+							<input type="button" id="confirmButton" class="w100 form-btn form-btn-normal" value="Confirm" onclick="ConfirmFNLocation();"{if $params.registTime != ""} disabled="disabled"{/if}>
 						</div>
 					{/if}
 
@@ -241,7 +257,7 @@ $(function() {ldelim}
 					<table id="posTable" class="col-tbl mb10" style="width:100%">
 						<thead>
 							<tr>
-								{if $registTime == ""}<th>&nbsp;</th>{/if}
+								{if $params.registTime == ""}<th>&nbsp;</th>{/if}
 								<th>ID</th>
 								<th>Pos X</th>
 								<th>Pos Y</th>
@@ -254,7 +270,7 @@ $(function() {ldelim}
 							</tr>
 						</thead>
 						<tbody>
-							{section name=j start=0 loop=$enteredFnNum}
+							{section name=j start=0 loop=$params.enteredFnNum}
 							
 								{assign var="j" value=$smarty.section.j.index}	
 
@@ -266,19 +282,19 @@ $(function() {ldelim}
 									</td>
 								{/if}
 						
-								<td class="al-r" onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$j+1}</td>
+								<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$j+1}</td>
 
 								{section name=i start=1 loop=4}
 									{assign var="i" value=$smarty.section.i.index}
 
-									<td class="al-r" onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][$i]}</td>
+									<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][$i]}</td>
 								{/section}
 							
-								<td align=center onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][4]}</td>
+								<td align=center onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][4]}</td>
 
 								{if $params.feedbackMode == "consensual"}
-									<td align=center onclick="ClickPositionTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][5]}</td>
-									<td align=center style=display:none;">{$locationList[$j][6]}</td>
+									<td align=center onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][5]}</td>
+									<td align=center style="display:none;">{$locationList[$j][6]}</td>
 								{/if}
 							
 								</tr>

@@ -267,7 +267,7 @@ function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
 					$("#imgBox img").attr("src", '../' + data.imgFname);
 					$("#imgBox span").html(data.imgNumStr);
 					$("#sliceNumber").html(data.sliceNumber);
-					$("#sliceLocation").html(data.sliceLocation);
+					$("#sliceLocation").html(data.sliceLocation + ' [mm]');
 				}
 			}, "json");
 }

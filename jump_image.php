@@ -39,6 +39,7 @@
 
 	$dstData = array('errorMessage' => $params['errorMessage'],
 					 'imgFname'     => '',
+					 'imgNum'    => $params['imgNum'],
 	                 'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum']));
 	try
 	{	
@@ -123,16 +124,15 @@
 							break;
 			
 						case 'Slice location':
-							$dstData['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
+							$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
 							break;
 					}
 				}
-				else
-				{
-					$dstData['errorMessage'] = "[ERROR] Fail to open DICOM dump file.";
-				}
-			
 				fclose($fp);
+			}	
+			else
+			{
+				$dstData['errorMessage'] = "[ERROR] Fail to open DICOM dump file.";
 			}
 		}
 		echo json_encode($dstData);

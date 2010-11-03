@@ -11,7 +11,7 @@ function CreatePosStr()
 	var startCol = 2;
 	var endCol   = 4;
 	
-	if(registTime != "")
+	if(registTime != "")	// Modify用
 	{
 		startCol = 1;
 		endCol   = 3;
@@ -26,7 +26,6 @@ function CreatePosStr()
 		
 		var tmpStr = tObj.rows[j].cells[endCol+1].innerHTML.substr(0,6);
 		
-		//if(tmpStr == 'check')  posStr += 'BT^';
 		if(tmpStr == 'check')  posStr += CheckNearestHiddenTP(j) + '^';
 		else                   posStr += (tObj.rows[j].cells[endCol+1].innerHTML + '^');
 	
@@ -46,42 +45,54 @@ function CreatePosStr()
 
 function JumpImgNumber(imgNum)
 {
-	var posStr = CreatePosStr();
+	$.post("../jump_image.php",
+			{ studyInstanceUID: $("#studyInstanceUID").val(),
+			  seriesInstanceUID: $("#seriesInstanceUID").val(),
+			  imgNum: imgNum,
+			  windowLevel: $("#windowLevel").val(),
+			  windowWidth: $("#windowWidth").val(),
+			  presetName:  $("#presetName").val() },
+  			  function(data){
 
-	var tObj= document.getElementById("posTable");
-	var rowNum = tObj.rows["length"]-1;
+				if(data.errorMessage != "")
+				{
+					alert(data.errorMessage);
+				}
+				else if(data.imgFname != "")
+				{
+					$("#imgArea").attr("src", '../' + data.imgFname);
+					$("#imgBlock span").remove();
+					$("#sliceLocation").val(data.sliceLocation);
 
-	var address = 'fn_input.php'
-                + '?execID=' + $("#execID").val()
-                + '&cadName=' + $("#cadName").val()
-                + '&version=' + $("#version").val()
-                + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-                + '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
-                + '&feedbackMode=' + $("#feedbackMode").val()
-				+ '&posStr=' + posStr
-                + '&rowNum=' + rowNum
-                + '&imgNum=' + imgNum
-                + '&interruptFNFlg=' + $("#interruptFNFlg").val()
-                + '&registFNFlg=' + $("#registFNFlg").val()
-                + '&registTime=' + $("#registTime").val()
-                + '&visibleFlg=' + $("#visibleFlg").val()
-				+ '&grayscaleStr=' + $("#grayscaleStr").val()
-				+ '&presetName=' + $("#presetName").val()
-				+ '&windowLevel=' + $("#windowLevel").val()
-				+ '&windowWidth=' + $("#windowWidth").val()
-                + '&ticket=' + $("#ticket").val();
+					if($('#checkVisibleFN').attr('checked'))
+					{
+						var tbody= document.getElementById("posTable").tBodies.item(0);
+						var rowNum = tbody.rows["length"];
 
-	if($("#feedbackMode").val() == "consensual")
-	{
-		address += '&userStr=' + $("#userStr").val();
-	}
+						var colOffset = ($("#registTime").val() == "") ? 1 : 0;
+						var posX, posY, posZ;
 
-	location.replace(address);
+						for(var j=0; j<rowNum; j++)
+						{
+							posID = tbody.rows[j].cells[colOffset].innerHTML;
+							posX  = tbody.rows[j].cells[colOffset+1].innerHTML;
+							posY  = tbody.rows[j].cells[colOffset+2].innerHTML;
+							posZ  = tbody.rows[j].cells[colOffset+3].innerHTML;
+	
+							if(posZ == data.imgNum)
+							{
+								plotClickedLocation(posID, posX, posY, 0);
+							}
+						}
+					}
+				}
+			}, "json");
+
 }
 
 function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
 {
-	var sliceLoc = $("#sliceLoc").val();
+	var sliceLoc = $("#sliceLocation").val();
 	
 	var imgNum = parseInt(((sliceLoc - origin) / pitch) + offset + 1.5);
 	
@@ -91,9 +102,8 @@ function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
 	JumpImgNumber(imgNum);
 }
 
-function ClickPositionTable(id, imgNum)
+function ClickPosTable(id, imgNum)
 {
-	//ChangeBgColor(id);
 
 	if(!$('#checkVisibleFN').attr('checked'))
 	{
@@ -118,7 +128,7 @@ function plotDots(id, x, y, set)
 
 	switch(set)
 	{
-		case 1:
+		case 1: 
 			labelBaseX = 3;
 			labelBaseY = -20;
 			color = "#228b22";
@@ -148,8 +158,9 @@ function plotDots(id, x, y, set)
 		labelOffsetY = 1;
 	}
 
-	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; left:' + (x+dotOffsetX) + 'px; '
-        	    + 'height:3px; width:3px; padding:0px; background-color:' + color + ';position:absolute;"></span>'
+	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; '
+                + 'left:' + (x+dotOffsetX) + 'px; height:3px; width:3px; padding:0px; '
+                + 'background-color:' + color + ';position:absolute;"></span>'
 				+ '<span id="label' + id + '" class="dot" style="top:' + (y+labelBaseY+labelOffsetY) + 'px;'
 				+ ' left:' + (x+labelBaseX+labelOffsetX) + 'px; color:' + color + ';'
 				+ ' filter:dropshadow(color=#000000 offX=1 offY=0) dropshadow(color=#000000 offX=-1 offY=0)'
@@ -172,73 +183,28 @@ function plotClickedLocation(id, x, y, set)
 
 function DeleteLocationRows()
 {
-	var checkObj = document.form1.elements['rowCheckList[]'];
-	if(checkObj == null)		return;	
+	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
 
-	//----------------------------------------------------------------------------------------------
-	// チェックボックスが最低1個でも選択されていることを確認する
-	//----------------------------------------------------------------------------------------------
-	var flg = false;
-	var checkCnt = 0;
-	var checkedId = new Array();
-
-	if(checkObj.length == null)
+	if(checkCnt == 0)
 	{
-		if(checkObj.checked)
-		{
-			 flg = true;
-			 checkedId[checkCnt] = checkObj.value;
-			 checkCnt++;
-		}
+	   alert('[ERROR] Please select at least one location.');
 	}
 	else
 	{
-		for(var i=0; i<checkObj.length; i++)
-		{
-			if(checkObj[i].checked)
-			{
-				flg = true;
-			 checkedId[checkCnt] = checkObj[i].value;
-			 checkCnt++;
-			}
-		}
-	}
-	//----------------------------------------------------------------------------------------------
-
-	if(!flg)
-	{
-	   alert('Please select at least one location!');
-	}
-	else
-	{
-		var str = 'Do you delete selected location';
-		if(checkCnt > 1)  str += 's?';
-		else		 	  str += '?';
+		var str = 'Do you delete selected location' + ((checkCnt > 1) ? 's?' : '?');
 	
 		if(confirm(str))
 		{
-			var imgNum   = $('#imgNum').val();
-			var mode     = $("#feedbackMode").val();
+			$("input[name='rowCheckList[]']:checked").each(function() {
+				$("#row" + $(this).val()).remove();
+			});
 
-			for(var j=0; j<checkCnt; j++)
-			{
-				$("#row" + checkedId[j]).remove();
-			}
-			$('#interruptFNFlg').val(1);
-
-			if($('#checkVisibleFN').attr('checked') == false)
-			{
-				$('#checkVisibleFN').attr('checked', true);
-				$('#visibleFlg').val(1);
-			}
-			JumpImgNumber(imgNum);
+			$('#checkVisibleFN').attr('checked', 'checked');
+			JumpImgNumber($("#slider").slider("value"));
 		}
 		else
 		{
-			for(var i=0; i<checkObj.length; i++)
-			{
-				checkObj[i].checked = false;
-			}
+			$("input[name='rowCheckList[]']").removeAttr("checked");
 		}
 	}
 }
@@ -247,39 +213,15 @@ function DeleteLocationRows()
 
 function IntegrateLocationRows()
 {
-	var checkObj = document.form1.elements['rowCheckList[]'];
-	if(checkObj == null)		return;	
+	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
 
-	//----------------------------------------------------------------------------------------------
-	// チェックボックスにチェックが入っている個数をカウント
-	//----------------------------------------------------------------------------------------------
-	var checkCnt = 0;
-	var checkedId = new Array();
+	// チェックされたcheckboxの値を取得
+	var checkedIdArr = $("input[name='rowCheckList[]']:checked").map(function() { return $(this).val(); })
+                                                                .get().join(",").split(',');
 
-	if(checkObj.length == null)
-	{
-		if(checkObj.checked)
-		{
-			 checkedId[checkCnt] = checkObj.value;
-			 checkCnt++;
-		}
-	}
-	else
-	{
-		for(var i=0; i<checkObj.length; i++)
-		{
-			if(checkObj[i].checked)
-			{
-				 checkedId[checkCnt] = checkObj[i].value;
-				 checkCnt++;
-			}
-		}
-	}
-	//----------------------------------------------------------------------------------------------
-	
 	if(checkCnt < 2)
 	{
-	   alert('Please select at least two locations!');
+	   alert('Please select at least two locations.');
 	}
 	else
 	{
@@ -289,12 +231,7 @@ function IntegrateLocationRows()
 		{
 			var registTime = $("#registTime").val();
 
-			if(registTime == "")
-			{
-				$("#interruptFNFlg").val(1);
-			}
-
-			var tObj = document.getElementById("posTable")
+			var tbody = document.getElementById("posTable").tBodies.item(0);
 		
 			var xTmp = 0;
 			var yTmp = 0;
@@ -309,7 +246,7 @@ function IntegrateLocationRows()
 			for(var j=0; j<checkCnt; j++)
 			{
 				// ↓Consensusモードで新たに追加した行を含む統合は行わない
-				if(tObj.rows[checkedId[j]].cells[7].innerHTML == "")
+				if(tObj.rows[checkedIdArr[j]].cells[7].innerHTML == "")
 				{
 					alert('Error: The integration including the row that you newly added in consensual mode is impossible.');
 					JumpImgNumber($("#imgNum").val());
@@ -317,11 +254,11 @@ function IntegrateLocationRows()
 				}
 				else
 				{
-					xTmp += parseInt(tObj.rows[checkedId[j]].cells[2].innerHTML);
-					yTmp += parseInt(tObj.rows[checkedId[j]].cells[3].innerHTML);
-					zTmp += parseInt(tObj.rows[checkedId[j]].cells[4].innerHTML);
+					xTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[2].innerHTML);
+					yTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[3].innerHTML);
+					zTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[4].innerHTML);
 					if(j>=1)  idStr += ',';
-					idStr += tObj.rows[checkedId[j]].cells[7].innerHTML;
+					idStr += tObj.rows[checkedIdArr[j]].cells[7].innerHTML;
 				}
 			}
 
@@ -331,26 +268,35 @@ function IntegrateLocationRows()
 
 			for(var j=0; j<checkCnt; j++)
 			{
-				$("#row" + checkedId[j]).remove();
+				$("#row" + checkedIdArr[j]).remove();
 			}
 
-			//alert(xPos + ', ' + yPos + ', ' + zPos + ', ' + idStr);			
-			
-			// parseIntは応急処置
 			var xOffset = parseInt($("#imgArea").position().left);
 			var yOffset = parseInt($("#imgArea").position().top);
-        
+
+			//----------------------------------------------------------------------
+			// For mobile safari (iPad/iPhone iOS:3.2 or 4.0.x)
+			//----------------------------------------------------------------------
+			var iOSPattern = /; CPU\sOS\s(?:3_2|4_0)/i;
+
+			if(iOSPattern.test(navigator.userAgent) )
+			{
+				xOffset -= window.scrollX;
+				yOffset -= window.scrollY;
+			}
+			//----------------------------------------------------------------------
+
 			var xPos2 = parseInt(xPos * parseFloat(dispWidth) / parseFloat(orgWidth)   + 0.5);
 			var yPos2 = parseInt(yPos * parseFloat(dispHeight) / parseFloat(orgHeight) + 0.5);
 
-			var rowNum   = tObj.rows["length"];	
+			var rowNum   = tbody.rows["length"];	
 	
 			plotDots(rowNum, xPos2+xOffset, yPos2+yOffset, 0);
 
-			var candStr = $("#candStr").val();
-			var mode    = $("#feedbackMode").val();
+			var candPosStr = $("#candPosStr").val();
+			var mode       = $("#feedbackMode").val();
     
-			var insObj=tObj.insertRow(rowNum);
+			var insObj=tbody.insertRow(rowNum);
 			insObj.id = "row" + rowNum;
 			insObj.onclick = "ClickPositionTable('" + insObj.id + "'," + zPos + ");";
 
@@ -389,11 +335,7 @@ function IntegrateLocationRows()
 			colIntegratedId.innerHTML = idStr;
 			insObj.style.display ='none';
 			
-			if($("#checkVisibleFN").attr('checkVisibleFN') == false)
-			{
-				$("#checkVisibleFN").attr('checked') = true;
-				$("#visibleFlg").val(1);
-			}
+			$("#checkVisibleFN").attr('checked', 'checked');
 			JumpImgNumber(zPos);
 		}
 
@@ -401,43 +343,32 @@ function IntegrateLocationRows()
 }
 
 
-function CheckNearestHiddenTP(rowNum)
+function CheckNearestHiddenTP(posX, posY, posZ)
 {
-
-	var tObj=document.getElementById("posTable");
-	
-	var posX = tObj.rows[rowNum].cells[2].innerHTML;
-	var posY = tObj.rows[rowNum].cells[3].innerHTML;
-	var posZ = tObj.rows[rowNum].cells[4].innerHTML;
-
 	var distTh = $("#distTh").val();
 	distTh = distTh * distTh;
 
-	var candPos = $("#candStr").val().split('^');
+	var candPos = $("#candPosStr").val().split('^');
 	var candNum = candPos.length/4;
 	
 	var distMin = 10000;
 	var minId = 0;
-	var ret = "";
+	var ret = '- / -';
 		
 	for(var i=0; i<candNum; i++)
 	{
-		var candX = candPos[ i * 4 + 1 ];
-		var candY = candPos[ i * 4 + 2 ];
-		var candZ = candPos[ i * 4 + 3 ];
+		var candX = candPos[i * 4 + 1] - posX;
+		var candY = candPos[i * 4 + 2] - posY;
+		var candZ = candPos[i * 4 + 3] - posZ;
 				
-		var dist = (candX-posX)*(candX-posX)+(candY-posY)*(candY-posY)+(candZ-posZ)*(candZ-posZ);
-		
+		var dist = candX * candX + candY * candY + candZ * candZ;
+
 		if(dist < distMin)
 		{
 			distMin = dist;
-			minId = i * 4;
+			if(distMin < distTh) ret = candPos[i*4] + ' / ' + Math.sqrt(distMin).toFixed(2);
 		}
 	}
-
-	if(distMin < distTh)  ret = candPos[minId] + ' / ' + Math.sqrt(distMin).toFixed(2);
-	else  				  ret = '- / -';
-
 	return ret;
 }
 
@@ -449,7 +380,7 @@ function ConfirmFNLocation()
 		$("#registFNFlg").val(1);
 		$("#interruptFNFlg").val(0);
 		
-		JumpImgNumber($("#imgNum").val());
+		JumpImgNumber($("#slider").slider("value"));
 	}
 }
 
@@ -457,10 +388,11 @@ function ChangeVisibleFN()
 {
 	$("#visibleFlg").val($("#checkVisibleFN").is(':checked') ? 1 : 0);
 
-	JumpImgNumber($("#imgNum").val());
+	if($("#checkVisibleFN").is(':checked'))	JumpImgNumber($("#slider").slider("value"));
+	else									$("#imgBlock span").remove();
 }
 
-function ChangePresetMenu(imgNum)
+function ChangePresetMenu()
 {
 	var tmpStr = $("#presetMenu option:selected").val().split("^");
 	
@@ -468,25 +400,28 @@ function ChangePresetMenu(imgNum)
 	$("#windowLevel").val(tmpStr[0]);
 	$("#windowWidth").val(tmpStr[1]);
 	
-	JumpImgNumber(imgNum);
+	JumpImgNumber($("#slider").slider("value"));
 }
 
 $(document).ready(function(){
 	
 	$("img#imgArea.enter").click(function(e){
 
-		var tObj    = document.getElementById("posTable");
-		var candStr = $("#candStr").val();
-		var mode    = $("#feedbackMode").val();
-		var imgNum  = $("#imgNum").val();
+		var table = document.getElementById('posTable');
+		var tbody = table.tBodies.item(0);
 
 		// Number of rows
-    	var rowNum=tObj.rows["length"];
+    	var rowNum=tbody.rows["length"];
 
+		//------------------------------------------------------------------------------------------
+		// Retrieve clicked position and plot dot
+		//------------------------------------------------------------------------------------------
 		var x = e.pageX - $("#imgBlock").offset().left;
 		var y = e.pageY - $("#imgBlock").offset().top;
 
-		// iPad対策(iPhoneも？) iOS4.2になれば不要
+		//----------------------------------------------------------------------
+		// For mobile safari (iPad/iPhone iOS:3.2 or 4.0.x)
+		//----------------------------------------------------------------------
 		var iOSPattern = /; CPU\sOS\s(?:3_2|4_0)/i;
 
 		if(iOSPattern.test(navigator.userAgent) )
@@ -494,70 +429,63 @@ $(document).ready(function(){
 			x += window.scrollX;
 			y += window.scrollY;
 		}
-
-		plotDots(rowNum, x, y, 0);
+		//----------------------------------------------------------------------
 
 		var xPos = parseInt(x*parseFloat($("#orgWidth").val())/parseFloat($("#dispWidth").val())+0.5);
 		var yPos = parseInt(y*parseFloat($("#orgHeight").val())/parseFloat($("#dispHeight").val())+0.5);
-	
-		var insObj=tObj.insertRow(rowNum);
-		insObj.id = "row" + rowNum;
-		insObj.onclick = "ClickPositionTable('" + insObj.id + "'," + imgNum + ");";
 
-		var colCheck   = insObj.insertCell(0);
-		var colId      = insObj.insertCell(1);
-		var colX       = insObj.insertCell(2);
-		var colY       = insObj.insertCell(3);
-		var colZ       = insObj.insertCell(4);
-		var colNearest = insObj.insertCell(5);
-	
-		// 挿入行の文字色を決定(consensual feedback)
-		if(mode == "consensual")
+		plotDots(rowNum+1, x, y, 0);
+		//------------------------------------------------------------------------------------------
+
+		var feedbackMode = $("#feedbackMode").val();
+		var imgNum       = $("#slider").slider("value");
+
+		var htmlStr = '<tr id="row' + (rowNum+1) + '"';
+		htmlStr += (rowNum%2==1) ? ' class="column">' : '>';
+
+		if($("#registTime").val() == "")
 		{
-			insObj.style.color ='#ff00ff';
+			htmlStr += '<td><input type="checkbox" name="rowCheckList[]" value="' + (rowNum+1) + '"></td>';
 		}
 
-		colCheck.align="center";
-		colCheck.innerHTML = '<input type="checkbox" name="rowCheckList[]" value="' + rowNum + '">';
-	
-    	colId.align = "right";
-		colX.align = colY.align = colZ.align = colId.align;
-		colNearest.align = "center";	
-	
-		colId.innerHTML = rowNum;
-		colX.innerHTML  = xPos;
-		colY.innerHTML  = yPos;
-		colZ.innerHTML  = imgNum;
-	
-		colNearest.style.color ='#ffffff';
-		colNearest.innerHTML = 'check';
+		var tdBaseStr = ' onclick="ClickPosTable(\'row' + (rowNum+1) + '\',' + imgNum + ');"';
+		tdBaseStr += (feedbackMode == "consensual") ? ' style="color:#ff00ff;">' : '>';
 
-		if(mode == "consensual")
+		htmlStr += '<td class="al-r"' + tdBaseStr + (rowNum+1) + '</td>'
+                +  '<td class="al-r"' + tdBaseStr + xPos + '</td>'
+                +  '<td class="al-r"' + tdBaseStr + yPos + '</td>'
+                +  '<td class="al-r"'  + tdBaseStr + imgNum + '</td>'
+                +  '<td' + tdBaseStr + CheckNearestHiddenTP(xPos, yPos, imgNum) + '</td>';
+
+		if(feedbackMode == "consensual")
 		{
-			var colEnteredBy =insObj.insertCell(6);
-		    colEnteredBy.align="center";
-			colEnteredBy.innerHTML = $("#userID").val();
-		
-			var colIntegratedId = insObj.insertCell(7);
-			colIntegratedId.style.display ='none';
+			htmlStr += '<td' + tdBaseStr + $("#userID").val() + '</td>'
+					+  '<td style="display:none;"></td>';
 		}
-	
-		if(rowNum == 1)
-		{
-			$("#blockDeleteButton").html('<input type="button" id="delButton" value="delete" onclick="DeleteLocationRows();">');
 
-			if(mode == "consensual")
+		$("#posTable tbody").append(htmlStr);
+
+
+		if(rowNum == 0)
+		{
+			var tmpStr = '<input type="button" id="delButton" value="delete"'
+                       + ' class="form-btn" onclick="DeleteLocationRows();" />';
+
+			if(feedbackMode == "consensual")
 			{
-				$("#blockDeleteButton").append('&nbsp;&nbsp;<input type="button" id="integrationButton" value="integration">');
+				tmpStr += '&nbsp;&nbsp;<input type="button" id="integrationButton"'
+                       +  ' class="form-btn" value="integration" />';
 			}
+
+			$("#blockDeleteButton").html(tmpStr);
+			$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 		}	
 	
-		if($("#checkVisibleFN").attr('checkVisibleFN') == false)
+		if(!$("#checkVisibleFN").is(':checked'))
 		{
-			$("#checkVisibleFN").attr('checked') = true;
-			$("#visibleFlg").val(1);
+			$("#checkVisibleFN").attr('checked', 'checked');
+			JumpImgNumber(imgNum);
 		}
-		JumpImgNumber(imgNum);
 	});
 });
 
