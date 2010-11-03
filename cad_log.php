@@ -50,7 +50,7 @@
 				"errorMes" => "'CAD' is invalid."),
 			"filterVersion" => array(
 				"type" => "version",
-				"otherwise" => "all"
+				"otherwise" => "all",
 				"errorMes" => "'Version' is invalid."),
 			"filterPtID" => array(
 				"type" => "pgregex",
