@@ -131,37 +131,34 @@ function Minus()
 		<div class="tab-content">
 			<div id="fnInput">
 				<form id="form1" name="form1">
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID|escape}">
-				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID|escape}">
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}">
-				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName|escape}">
-				<input type="hidden" id="version"           name="version"           value="{$params.version|escape}">
-				<input type="hidden" id="posStr"            name="posStr"            value="">
-				<input type="hidden" id="userStr"           name="userStr"           value="{$params.userStr|escape}">
-				<input type="hidden" id="candPosStr"        name="candPosStr"        value="{$params.candPosStr|escape}">
-				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode|escape}">	
-				<input type="hidden" id="userID"            name="userID"            value="{$userID}">	
+				<input type="hidden" id="execID"            value="{$params.execID|escape}" />
+				<input type="hidden" id="studyInstanceUID"  value="{$params.studyInstanceUID|escape}" />
+				<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}" />
+				<input type="hidden" id="cadName"           value="{$params.cadName|escape}" />
+				<input type="hidden" id="version"           value="{$params.version|escape}" />
+				<input type="hidden" id="posStr"            value="{$params.posStr|escape}" />
+				<input type="hidden" id="userStr"           value="{$params.userStr|escape}" />
+				<input type="hidden" id="candPosStr"        value="{$params.candPosStr|escape}" />
+				<input type="hidden" id="feedbackMode"      value="{$params.feedbackMode|escape}" />
+				<input type="hidden" id="userID"            value="{$userID}">	
 
-				<input type="hidden" id="tableName"      name="tableName"      value="{$params.tableName|escape}">
-				<input type="hidden" id="grayscaleStr"   name="grayscaleStr"   value="{$params.grayscaleStr|escape}">
-				<input type="hidden" id="presetName"     name="presetName"     value="{$params.presetName|escape}">
-				<input type="hidden" id="windowLevel"    name="windowLevel"    value="{$params.windowLevel|escape}">
-				<input type="hidden" id="windowWidth"    name="windowWidth"    value="{$params.windowWidth|escape}">
+				<input type="hidden" id="grayscaleStr"      value="{$params.grayscaleStr|escape}" />
+				<input type="hidden" id="presetName"        value="{$params.presetName|escape}" />
+				<input type="hidden" id="windowLevel"       value="{$params.windowLevel|escape}" />
+				<input type="hidden" id="windowWidth"       value="{$params.windowWidth|escape}" />
 
-				<input type="hidden" id="visibleFlg"     name="visibleFlg"     value="{$visibleFlg}">
+				<input type="hidden" id="sliceOrigin"    value="{$params.sliceOrigin|escape}" />
+				<input type="hidden" id="slicePitch"     value="{$params.slicePitch|escape}" />
+				<input type="hidden" id="sliceOffset"    value="{$params.sliceOffset|escape}" />
 					
-				<input type="hidden" id="sliceOrigin"    name="sliceOrigin"    value="{$params.sliceOrigin|escape}">
-				<input type="hidden" id="slicePitch"     name="slicePitch"     value="{$params.slicePitch|escape}">
-				<input type="hidden" id="sliceOffset"    name="sliceOffset"    value="{$params.sliceOffset|escape}">
+				<input type="hidden" id="distTh"         value="{$params.distTh|escape}" />
+				<input type="hidden" id="orgWidth"       value="{$params.orgWidth|escape}" />
+				<input type="hidden" id="orgHeight"      value="{$params.orgHeight|escape}" />
+				<input type="hidden" id="dispWidth"      value="{$params.dispWidth|escape}" />
+				<input type="hidden" id="dispHeight"     value="{$params.dispHeight|escape}" />
 					
-				<input type="hidden" id="distTh"         name="distTh"         value="{$params.distTh|escape}">
-				<input type="hidden" id="orgWidth"       name="orgWidth"       value="{$params.orgWidth|escape}">
-				<input type="hidden" id="orgHeight"      name="orgHeight"      value="{$params.orgHeight|escape}">
-				<input type="hidden" id="dispWidth"      name="dispWidth"      value="{$params.dispWidth|escape}">
-				<input type="hidden" id="dispHeight"     name="dispHeight"     value="{$params.dispHeight|escape}">
-					
-				<input type="hidden" id="registTime"   name="registTime"   value="{$params.registTime|escape}">
-				<input type="hidden" id="ticket"       name="ticket"       value="{$ticket|escape}">
+				<input type="hidden" id="registTime"   value="{$params.registTime|escape}" />
+				<input type="hidden" id="ticket"       value="{$ticket|escape}" />
 
 				<h2>FN input&nbsp;[{$params.cadName|escape} v.{$params.version|escape} ID:{$params.execID|escape}]&nbsp;&nbsp;({$params.feedbackMode|escape} mode)</h2>
 
@@ -172,7 +169,7 @@ function Minus()
 				</div>
 
 				<p class="mb10">
-				{if $params.registTime != ""}Location of false negatives were registered at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button after definition of all FN.{/if}</p>
+				{if $params.registTime != ""}Location of false negatives were registered at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button to save FN locations.{/if}</p>
 				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name="id="checkVisibleFN" "onclick="ChangeVisibleFN();" checked="checked" />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">
@@ -230,31 +227,30 @@ function Minus()
 				</div>
 
 				{* --- Add FN plots --- *}
-				{if $visibleFlg == 1}
-					<script language="Javascript">
-					<!--
-					{section name=j start=0 loop=$enteredFnNum}
-						{assign var="j" value=$smarty.section.j.index}
-						
-						{if $params.imgNum == $locationList[$j][3]}
-							plotClickedLocation({$j+1}, {$locationList[$j][1]}, {$locationList[$j][2]}, {$locationList[$j][7]});
-						{/if}
+
+				<script language="Javascript">
+				<!--
+				{section name=j start=0 loop=$params.enteredFnNum}
+					{assign var="j" value=$smarty.section.j.index}
+					{if $locationList[$j][3] == 1}
+						plotClickedLocation({$j+1}, {$locationList[$j][1]}, {$locationList[$j][2]}, {$locationList[$j][7]});
+					{/if}
 					{/section}
-					-->
-					</script>
-				{/if}
+				-->
+				</script>
 
 				<div class="fl-l" style="width: 40%;">
 		
-					{if $smarty.session.groupID != 'demo'}
-						<div style="text-align:center; margin-bottom:10px;">
-							<input type="button" id="confirmButton" class="w100 form-btn form-btn-normal" value="Confirm" onclick="ConfirmFNLocation();"{if $params.registTime != ""} disabled="disabled"{/if}>
-						</div>
+					{if $params.registTime == ""}
+					<div style="margin-bottom:10px;">
+						<select id="actionMenu" onchange="ChangeAction();" disabled="disabled">
+							<option value="">(action)</option>
+						</select>
+						<input type="button" id="actionBtn" class="form-btn form-btn-disabled" value="action" onclick="TableOperation();" disabled="disabled">
+					</div>
 					{/if}
 
-<!--					<p class="mb10"><input name="" type="button form-btn" value="Confirm" class="w100" /></p> -->
-			
-					<table id="posTable" class="col-tbl mb10" style="width:100%">
+					<table id="posTable" class="col-tbl mb10" style="width:100%; background:#ffffff;">
 						<thead>
 							<tr>
 								{if $params.registTime == ""}<th>&nbsp;</th>{/if}
@@ -276,25 +272,25 @@ function Minus()
 
 								<tr id="row{$j+1}" {if $j%2==1}class="column"{/if}>
 
-								{if $registTime == ""}
+								{if $params.registTime == ""}
 									<td align=center>
-									<input type="checkbox" name="rowCheckList[]" value="{$j+1}">
+									<input type="checkbox" name="rowCheckList[]" onclick="ClickRowCheckList();" value="{$j+1}">
 									</td>
 								{/if}
 						
-								<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$j+1}</td>
+								<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$j+1}</td>
 
 								{section name=i start=1 loop=4}
 									{assign var="i" value=$smarty.section.i.index}
 
-									<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][$i]}</td>
+									<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][$i]}</td>
 								{/section}
 							
-								<td align=center onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][4]}</td>
+								<td onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][4]}</td>
 
 								{if $params.feedbackMode == "consensual"}
-									<td align=center onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});"{if $locationList[$j][0]!='black'} style="color:{$locationList[$j][0]};"{/if}>{$locationList[$j][5]}</td>
-									<td align=center style="display:none;">{$locationList[$j][6]}</td>
+									<td onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][5]}</td>
+									<td style="display:none;">{$locationList[$j][6]}</td>
 								{/if}
 							
 								</tr>
@@ -302,14 +298,13 @@ function Minus()
 						</tbody>
 					</table>
 
-					<div id="blockDeleteButton" style="margin-top:7px; font-size:14px;">
-						{if $registTime == "" && $enteredFnNum > 0 && $smarty.session.groupID != 'demo'}
-							<input type="button" id="delButton" class="s-btn form-btn" value="delete the checked" onclick="DeleteLocationRows();">
-							{if $params.feedbackMode == "consensual"}
-								&nbsp;&nbsp;<input type="button" id="integrationButton" class="s-btn form-btn" value="integrate the checked" onclick="IntegrateLocationRows();">
-							{/if}
-						{/if}
+					{if $params.registTime == ""}
+					<div id="blockDeleteButton" style="text-align:right; margin-top:5px; font-size:14px;">
+						<input type="button" id="undoBtn" class="form-btn form-btn-normal" value="undo" onclick="UndoFnTable();"{if $params.posStr == "" || $smarty.session.groupID == 'demo'} style="display:none;"{/if} />
+						<input type="button" id="resetBtn" class="form-btn form-btn-normal" value="Reset" onclick="ResetFnTable();"{if $params.posStr != "" && $smarty.session.groupID != 'demo'} style="display:none;"{/if} />
+						<input type="button" id="confirmBtn" class="form-btn form-btn-normal" value="Confirm" onclick="ConfirmFNLocation();"{if $registTime != ""} disabled="disabled"{/if} />
 					</div>
+					{/if}
 
 				</div><!-- / .fl-l END -->
 			</div>

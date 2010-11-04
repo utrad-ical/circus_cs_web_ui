@@ -37,16 +37,15 @@ function CreateEvalStr(lesionArr)
 
 	for(var j=0; j<(lesionArr.length-1); j++)
 	{
-		if($("#lesionBlock" + lesionArr[j] + " input[name:'radio_" + lesionArr[j] + "']:checked").val() == undefined)
+		if($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() == undefined)
 		{
 			evalStr += "99^";
 		}
 		else 
 		{
-			evalStr += $("#lesionBlock" + lesionArr[j] + " input[name:'radio_" + lesionArr[j] + "']:checked").val() + "^";
+			evalStr += $("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() + "^";
 		}
 	}
-
 	return evalStr;
 }
 
@@ -165,7 +164,16 @@ function ChangeFeedbackMode(feedbackMode)
 
 function DispRegistCaution()
 {
-	var tmpStr = 'Please press the [Registration] button,<br> or your changes will be discarded.';
+	var checkCnt = $("input[name^='radioCand']:checked").length;
+
+	var tmpStr = 'Lesion classification: '
+               + (($("#candNum").val()==checkCnt) ? 'complete' : 'incomplete') + '<br/>'
+	           + 'FN input: ' + (($("#fnInputFlg").val()==1) ? 'complete' : 'incomplete');
+
+	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt)
+	{
+		$("#registBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+	}
 
 	if($("#groupID").val() != 'demo')
 	{
@@ -188,7 +196,6 @@ function DispRegistCaution()
 			});
 	}
 }
-
 
 function ShowCADDetail(imgNum)
 {
@@ -301,8 +308,9 @@ $(function() {ldelim}
 	$("#sliderValue").html(jQuery("#slider").slider("value"));	
 
 {if $fnConsCheck == 1}
+{literal}
 	$.event.add(window, "load", 
-				function(){ldelim}
+				function(){
 					 alert("[CAUTION] Please confirm FN list!");
 
 					var address = 'fn_input.php'
@@ -314,8 +322,8 @@ $(function() {ldelim}
                 				+ '&feedbackMode=' + $("#feedbackMode").val();
 					
 					location.href = address;
-
-				{rdelim});
+				});
+{/literal}
 {/if}
 
 
@@ -383,13 +391,14 @@ $(function() {ldelim}
 			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
 			<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}" />	
 			<input type="hidden" id="version"           name="version"           value="{$params.version}" />
-			<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}" />
 			<input type="hidden" id="ticket"            name="ticket"            value="{$ticket}" />
-			<input type="hidden" id="registTime"        name="registTime"        value="{$registTime}" />
+			<input type="hidden" id="registTime"        name="registTime"        value="{$params.registTime}" />
 			<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}" />
-			<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}" />
-			<input type="hidden" id="tagEnteredBy"      name="tagEnteredBy"      value="{$params.tagEnteredBy}" />
 			<input type="hidden" id="remarkCand"        name="remarkCand"        value="{$params.remarkCand}" />
+
+			<input type="hidden" id="candNum"        value="{$params.candNum}" />
+			<input type="hidden" id="fnInputFlg"     value="{$params.fnInputFlg}" />
+			<input type="hidden" id="fnPersonalCnt"  value="{$params.fnPersonalCnt}" />
 
 			<div id="cadResult">
 
@@ -397,9 +406,9 @@ $(function() {ldelim}
 				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 
 			<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
+					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$params.studyDate}&nbsp;({$params.studyID})</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality},&nbsp;{$params.seriesDescription}&nbsp;({$params.seriesID})</div>
 				</div>
 		
 				<div class="hide-on-guest">
@@ -445,13 +454,14 @@ $(function() {ldelim}
 
 					<div class="hide-on-guest fl-clr" style="width: 780px;">
 						<div class="fl-l">
-							<span style="font-weight:bold;">Number of false negatives: </span><input id="fnNum" name="fnNum" type="text" class="al-r" style="width: 30px;" value={$fnNum} {if $registTime != "" || $fnCountStatus == 2}disabled="disabled"{/if} />
-							<input name="" type="button" class="form-btn" value="FN input" onclick="ShowFNinput();" />
+							<span style="font-weight:bold;">Number of false negatives: </span><input id="fnNum" type="text" class="al-r" style="width: 30px;" value={$params.fnNum}{if $params.fnInputFlg} disabled="disabled"{/if} />
+							<input type="button" class="form-btn" value="FN input" onclick="ShowFNinput();" />
+							&nbsp;<input id="noFnCheck" type="checkbox" {if $params.fnInputFlg} disabled="disabled"{/if}/><span style="font-weight:bold;">&nbsp;No false negative</span>
 						</div>
 						<p class="fl-r" style="width:255px;">
-							<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
+							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" disabled="disabled" />
 							<br />
-							<span id="registCaution" class="regist-caution">{if $params.interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{/if}</span>
+							<span id="registCaution" class="regist-caution">{if $registTime==""}{$params.registStr}{else}&nbsp;{/if}</span>
 						</p>
 					</div>
 				{/if}
@@ -522,43 +532,43 @@ $(function() {ldelim}
 						<table class="detail-tbl">
 							<tr>
 								<th style="width: 12em;"><span class="trim01">Patient ID</span></th>
-								<td>{$patientID}</td>
+								<td>{$params.patientID}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Patient name</span></th>
-								<td>{$patientName}</td>
+								<td>{$params.patientName}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Sex</span></th>
-								<td>{$sex}</td>
+								<td>{$params.sex}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Age</span></th>
-								<td>{$age}</td>
+								<td>{$params.age}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Study ID</span></th>
-								<td>{$studyID}</td>
+								<td>{$params.studyID}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Series date</span></th>
-								<td>{$seriesDate}</td>
+								<td>{$params.seriesDate}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Series time</span></th>
-								<td>{$seriesTime}</td>
+								<td>{$params.seriesTime}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Modality</span></th>
-								<td>{$modality}</td>
+								<td>{$params.modality}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Series description</span></th>
-								<td>{$seriesDescription}</td>
+								<td>{$params.seriesDescription}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Body part</span></th>
-								<td>{$bodyPart}</td>
+								<td>{$params.bodyPart}</td>
 							</tr>
 							<tr>
 								<th><span class="trim01">Image number</span></th>

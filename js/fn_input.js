@@ -1,93 +1,62 @@
-function CreatePosStr()
-{
-	var tObj= document.getElementById("posTable");
-	var registTime = $("#registTime").val();
-	
-	rowNum = tObj.rows["length"]-1;
-	var colNum = tObj.rows[0].cells["length"];
-	var mode = $("#feedbackMode").val();
-	var posStr = "";
-	
-	var startCol = 2;
-	var endCol   = 4;
-	
-	if(registTime != "")	// Modify用
-	{
-		startCol = 1;
-		endCol   = 3;
-	}
-	
-	for(var j=1; j<=rowNum; j++)
-	{
-		for(var i=startCol; i<=endCol; i++)
-		{
-			posStr += (tObj.rows[j].cells[i].innerHTML + '^');
-		}
-		
-		var tmpStr = tObj.rows[j].cells[endCol+1].innerHTML.substr(0,6);
-		
-		if(tmpStr == 'check')  posStr += CheckNearestHiddenTP(j) + '^';
-		else                   posStr += (tObj.rows[j].cells[endCol+1].innerHTML + '^');
-	
-		if(mode == "consensual")
-		{
-			posStr += (tObj.rows[j].cells[endCol+2].innerHTML.replace(' ','') + '^');
-			posStr += (tObj.rows[j].cells[endCol+3].innerHTML.replace(' ','') + '^');
-		}
-		else
-		{
-			 posStr += ($("#userID").val() + '^^');
-		}
-	}
-
-	return posStr;
-}
-
 function JumpImgNumber(imgNum)
 {
 	$.post("../jump_image.php",
-			{ studyInstanceUID: $("#studyInstanceUID").val(),
-			  seriesInstanceUID: $("#seriesInstanceUID").val(),
-			  imgNum: imgNum,
-			  windowLevel: $("#windowLevel").val(),
-			  windowWidth: $("#windowWidth").val(),
-			  presetName:  $("#presetName").val() },
-  			  function(data){
+		{ studyInstanceUID: $("#studyInstanceUID").val(),
+		  seriesInstanceUID: $("#seriesInstanceUID").val(),
+		  imgNum: imgNum,
+		  windowLevel: $("#windowLevel").val(),
+		  windowWidth: $("#windowWidth").val(),
+		  presetName:  $("#presetName").val() },
+  		  function(data){
 
-				if(data.errorMessage != "")
-				{
-					alert(data.errorMessage);
-				}
-				else if(data.imgFname != "")
-				{
-					$("#imgArea").attr("src", '../' + data.imgFname);
-					$("#imgBlock span").remove();
-					$("#sliceLocation").val(data.sliceLocation);
+			if(data.errorMessage != "")
+			{
+				alert(data.errorMessage);
+			}
+			else if(data.imgFname != "")
+			{
+				$("#imgArea").attr("src", '../' + data.imgFname);
+				$("#imgBlock span").remove();
+				$("#sliceLocation").val(data.sliceLocation);
 
-					if($('#checkVisibleFN').attr('checked'))
+				if($('#checkVisibleFN').attr('checked'))
+				{
+					var tbody= document.getElementById("posTable").tBodies.item(0);
+					var rowNum = tbody.rows["length"];
+
+					var colOffset = ($("#registTime").val() == "") ? 1 : 0;
+					var posX, posY, posZ;
+
+					for(var j=0; j<rowNum; j++)
 					{
-						var tbody= document.getElementById("posTable").tBodies.item(0);
-						var rowNum = tbody.rows["length"];
-
-						var colOffset = ($("#registTime").val() == "") ? 1 : 0;
-						var posX, posY, posZ;
-
-						for(var j=0; j<rowNum; j++)
-						{
-							posID = tbody.rows[j].cells[colOffset].innerHTML;
-							posX  = tbody.rows[j].cells[colOffset+1].innerHTML;
-							posY  = tbody.rows[j].cells[colOffset+2].innerHTML;
-							posZ  = tbody.rows[j].cells[colOffset+3].innerHTML;
+						posID = tbody.rows[j].cells[colOffset].innerHTML;
+						posX  = tbody.rows[j].cells[colOffset+1].innerHTML;
+						posY  = tbody.rows[j].cells[colOffset+2].innerHTML;
+						posZ  = tbody.rows[j].cells[colOffset+3].innerHTML;
 	
-							if(posZ == data.imgNum)
-							{
-								plotClickedLocation(posID, posX, posY, 0);
-							}
+						if(posZ == data.imgNum)
+						{
+							plotClickedLocation(posID, posX, posY, 0);
 						}
 					}
 				}
-			}, "json");
+			}
+		}, "json");
+}
 
+function plotClickedLocation(id, x, y, set)
+{
+	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
+	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
+	
+	 plotDots(id, xPos, yPos, set);
+	 
+}
+
+function ClickPosTable(id, imgNum)
+{
+	$('#checkVisibleFN').attr('checked', 'checked');
+	JumpImgNumber(imgNum);
 }
 
 function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
@@ -96,24 +65,11 @@ function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
 	
 	var imgNum = parseInt(((sliceLoc - origin) / pitch) + offset + 1.5);
 	
-	if(imgNum < (offset + 1))    imgNum = offset + 1;
-	else if(imgNum > fNum)  imgNum = fNum;
+	if(imgNum < (offset + 1))   imgNum = offset + 1;
+	else if(imgNum > fNum)  	imgNum = fNum;
 	
 	JumpImgNumber(imgNum);
 }
-
-function ClickPosTable(id, imgNum)
-{
-
-	if(!$('#checkVisibleFN').attr('checked'))
-	{
-		$('#checkVisibleFN').attr('checked', true);
-		$("#visibleFlg").val(1);
-	}
-
-	JumpImgNumber(imgNum);
-}
-
 
 function plotDots(id, x, y, set)
 {
@@ -170,46 +126,210 @@ function plotDots(id, x, y, set)
 	$("#imgBlock").append(htmlStr);
 }
 
-
-function plotClickedLocation(id, x, y, set)
+function ChangeVisibleFN()
 {
-	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
-	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
-	
-	 plotDots(id, xPos, yPos, set);
-	 
+	$("#visibleFlg").val($("#checkVisibleFN").is(':checked') ? 1 : 0);
+
+	if($("#checkVisibleFN").is(':checked'))	JumpImgNumber($("#slider").slider("value"));
+	else									$("#imgBlock span").remove();
 }
 
 
-function DeleteLocationRows()
+//--------------------------------------------------------------------------------------------------
+// Fnuctions for location table
+//--------------------------------------------------------------------------------------------------
+function ResetFnTable()
+{
+	if(confirm('Do you remove all FN locations?'))
+	{
+		ClickRowCheckList();
+		JumpImgNumber($("#slider").slider("value"));
+		$("#checkVisibleFN").attr('checked', 'checked');
+		$("#posTable tbody").html("");
+	}
+}
+
+function UndoFnTable()
+{
+	if(confirm('Undo FN locations?'))
+	{
+		var posArr = $("#posStr").val().split('^');
+		var enteredFnNum = posArr.length / 6;
+
+		$("#posTable tbody").html("");
+
+		for(i=0; i<enteredFnNum; i++)
+		{
+			AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
+                        posArr[i*6+4], posArr[i*6+5]);
+		}
+		ClickRowCheckList();
+		JumpImgNumber($("#slider").slider("value"));
+		$("#checkVisibleFN").attr('checked', 'checked');
+		$("#undoBtn").hide();
+	}
+}
+
+function ConfirmFNLocation()
+{
+   	var rowNum= document.getElementById('posTable').tBodies.item(0).rows["length"];
+	var posStr = CreatePosStr();
+
+	if(confirm('Do you save entered FN locations?'))
+	{
+		$.post("fn_registration.php",
+			{ execID: $("#execID").val(),
+			  posStr: posStr,
+			  rowNum: rowNum,
+			  feedbackMode: $("#feedbackMode").val()},
+  			  function(data){
+
+				if(data.errorMessage != "")
+				{
+					alert(data.errorMessage);
+				}
+				else
+				{
+					var address = "fn_input.php";
+
+					if(confirm('Do you back to CAD result?'))
+					{
+						address = 'show_cad_results.php';
+					}
+
+					address += '?execID=' + $("#execID").val()
+                            + '&feedbackMode=' + $("#feedbackMode").val();
+
+					location.replace(address);
+				}
+			}, "json");
+	}
+}
+
+function ClickRowCheckList()
 {
 	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
+	var htmlStr = '<option value="">(action)</option>';
 
-	if(checkCnt == 0)
+	if(checkCnt > 0)
 	{
-	   alert('[ERROR] Please select at least one location.');
+		$("#confirmBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		
+		htmlStr += '<option value="delete">delete</option>';
+
+		if (checkCnt>=2 && $("#feedbackMode").val()=="consensual")
+		{
+			htmlStr += '<option value="integrate">integrate</option>'
+		}
+
+		$("#actionMenu").removeAttr("disabled").html(htmlStr);
 	}
 	else
 	{
-		var str = 'Do you delete selected location' + ((checkCnt > 1) ? 's?' : '?');
-	
-		if(confirm(str))
-		{
-			$("input[name='rowCheckList[]']:checked").each(function() {
-				$("#row" + $(this).val()).remove();
-			});
-
-			$('#checkVisibleFN').attr('checked', 'checked');
-			JumpImgNumber($("#slider").slider("value"));
-		}
-		else
-		{
-			$("input[name='rowCheckList[]']").removeAttr("checked");
-		}
+		$("#confirmBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+		$("#actionMenu").attr("disabled", "disabled").html(htmlStr);
+		$("#actionBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
 	}
 }
 
 
+function ChangePresetMenu()
+{
+	var tmpStr = $("#presetMenu option:selected").val().split("^");
+	
+	$("#presetName").val($("#presetMenu option:selected").text());
+	$("#windowLevel").val(tmpStr[0]);
+	$("#windowWidth").val(tmpStr[1]);
+	
+	JumpImgNumber($("#slider").slider("value"));
+}
+
+function AddPosTable(rowNum, xPos, yPos, zPos, enteredBy, idStr)
+{
+	var feedbackMode = $("#feedbackMode").val();
+	var htmlStr = '<tr id="row' + rowNum + '"';
+	htmlStr += (rowNum%2==0) ? ' class="column">' : '>';
+
+	if($("#registTime").val() == "")
+	{
+		htmlStr += '<td><input type="checkbox" name="rowCheckList[]"'
+                +  ' onclick="ClickRowCheckList();"value="' + rowNum + '"></td>';
+	}
+
+	var tdBaseStr = ' onclick="ClickPosTable(\'row' + rowNum + '\',' + zPos + ');" style="color:';
+	tdBaseStr += (feedbackMode == "consensual") ? '#ff00ff;">' : 'black;">';
+
+	htmlStr += '<td class="al-r"' + tdBaseStr + rowNum + '</td>'
+            +  '<td class="al-r"' + tdBaseStr + xPos + '</td>'
+            +  '<td class="al-r"' + tdBaseStr + yPos + '</td>'
+            +  '<td class="al-r"' + tdBaseStr + zPos + '</td>'
+            +  '<td' + tdBaseStr + CheckNearestHiddenTP(xPos, yPos, zPos) + '</td>';
+
+	if(feedbackMode == "consensual")
+	{
+		htmlStr += '<td' + tdBaseStr + enteredBy + '</td>'
+				+  '<td style="display:none;">' + idStr + '</td>';
+	}
+
+	$("#posTable tbody").append(htmlStr);
+	$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
+}
+
+function ChangeAction()
+{
+	var actionVal = $("#actionMenu").val();
+
+	if(actionVal != "")
+	{
+		$("#actionBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+	}
+	else
+	{
+		$("#actionBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+	}
+}
+
+function TableOperation()
+{
+	var actionVal = $("#actionMenu").val();
+	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
+	
+	switch(actionVal)
+	{
+		case "delete":
+			var str = 'Do you delete selected location' + ((checkCnt > 1) ? 's?' : '?');
+			if(confirm(str))	DeleteLocationRows();
+			else				$("input[name='rowCheckList[]']").removeAttr("checked");
+		    break;
+		
+		case "integrate":
+			IntegrateLocationRows();
+			break;
+	}
+	ClickRowCheckList();
+}
+
+function DeleteLocationRows()
+{
+	$("input[name='rowCheckList[]']:checked").each(function() {
+		$("#row" + $(this).val()).remove();
+	});
+
+	var posArr = CreatePosStr().split('^');
+	var enteredFnNum = (posArr.length-1) / 6;
+
+	$("#posTable tbody").html("");
+
+	for(i=0; i<enteredFnNum; i++)
+	{
+		AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
+                   posArr[i*6+4], posArr[i*6+5]);
+	}
+
+	ClickRowCheckList();
+	JumpImgNumber($("#slider").slider("value"));
+	$("#checkVisibleFN").attr('checked', 'checked');
+}
 
 function IntegrateLocationRows()
 {
@@ -246,7 +366,7 @@ function IntegrateLocationRows()
 			for(var j=0; j<checkCnt; j++)
 			{
 				// ↓Consensusモードで新たに追加した行を含む統合は行わない
-				if(tObj.rows[checkedIdArr[j]].cells[7].innerHTML == "")
+				if(tbody.rows[checkedIdArr[j]-1].cells[7].innerHTML == "")
 				{
 					alert('Error: The integration including the row that you newly added in consensual mode is impossible.');
 					JumpImgNumber($("#imgNum").val());
@@ -254,22 +374,17 @@ function IntegrateLocationRows()
 				}
 				else
 				{
-					xTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[2].innerHTML);
-					yTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[3].innerHTML);
-					zTmp += parseInt(tObj.rows[checkedIdArr[j]].cells[4].innerHTML);
+					xTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[2].innerHTML);
+					yTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[3].innerHTML);
+					zTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[4].innerHTML);
 					if(j>=1)  idStr += ',';
-					idStr += tObj.rows[checkedIdArr[j]].cells[7].innerHTML;
+					idStr += tbody.rows[checkedIdArr[j]-1].cells[7].innerHTML;
 				}
 			}
 
 			var xPos = parseInt(parseFloat(xTmp) / parseFloat(checkCnt) + 0.5);
 			var yPos = parseInt(parseFloat(yTmp) / parseFloat(checkCnt) + 0.5);
 			var zPos = parseInt(parseFloat(zTmp) / parseFloat(checkCnt) + 0.5);
-
-			for(var j=0; j<checkCnt; j++)
-			{
-				$("#row" + checkedIdArr[j]).remove();
-			}
 
 			var xOffset = parseInt($("#imgArea").position().left);
 			var yOffset = parseInt($("#imgArea").position().top);
@@ -289,52 +404,14 @@ function IntegrateLocationRows()
 			var xPos2 = parseInt(xPos * parseFloat(dispWidth) / parseFloat(orgWidth)   + 0.5);
 			var yPos2 = parseInt(yPos * parseFloat(dispHeight) / parseFloat(orgHeight) + 0.5);
 
-			var rowNum   = tbody.rows["length"];	
-	
-			plotDots(rowNum, xPos2+xOffset, yPos2+yOffset, 0);
 
-			var candPosStr = $("#candPosStr").val();
-			var mode       = $("#feedbackMode").val();
-    
-			var insObj=tbody.insertRow(rowNum);
-			insObj.id = "row" + rowNum;
-			insObj.onclick = "ClickPositionTable('" + insObj.id + "'," + zPos + ");";
+			DeleteLocationRows();
+			var rowNum = tbody.rows["length"];	
+	
+			plotDots(rowNum+1, xPos2+xOffset, yPos2+yOffset, 0);
 
-			var colCheck        = insObj.insertCell(0);
-			var colId           = insObj.insertCell(1);
-			var colX            = insObj.insertCell(2);
-			var colY            = insObj.insertCell(3);
-			var colZ            = insObj.insertCell(4);
-			var colNearest      = insObj.insertCell(5);
-			var colEnteredBy    = insObj.insertCell(6);
-			var colIntegratedId = insObj.insertCell(7);
-	
-			// 挿入行の文字色を決定(consensual feedback)
-			if(mode == "consensual")
-			{
-				insObj.style.color ='#ff00ff';
-			}
+			AddPosTable(rowNum+1, xPos, yPos, zPos, $("#userID").val(), idStr);
 
-			colCheck.align="center";
-			colCheck.innerHTML = '<input type="checkbox" name="rowCheckList[]" value="' + rowNum + '">';
-	
-    		colId.align = "right";
-			colX.align = colY.align = colZ.align = colId.align;
-			colNearest.align = colEnteredBy.align = "center";	
-	
-			colId.innerHTML = rowNum;
-			colX.innerHTML  = xPos;
-			colY.innerHTML  = yPos;
-			colZ.innerHTML  = zPos;
-	
-			colNearest.style.color ='#ffffff';
-			colNearest.innerHTML += 'check';
-
-			colEnteredBy.innerHTML = $("#userID").val();
-		
-			colIntegratedId.innerHTML = idStr;
-			insObj.style.display ='none';
-			
 			$("#checkVisibleFN").attr('checked', 'checked');
 			JumpImgNumber(zPos);
 		}
@@ -372,36 +449,42 @@ function CheckNearestHiddenTP(posX, posY, posZ)
 	return ret;
 }
 
-
-function ConfirmFNLocation()
+function CreatePosStr()
 {
-	if(confirm('Do you define all FN(s)?'))
+	var tbody= document.getElementById("posTable").tBodies.item(0);
+	var rowNum = tbody.rows["length"];
+	var startCol = 2;
+	var endCol   = 5;
+	
+	if($("#registTime").val() != "")	// Modify用
 	{
-		$("#registFNFlg").val(1);
-		$("#interruptFNFlg").val(0);
-		
-		JumpImgNumber($("#slider").slider("value"));
+		startCol = 1;
+		endCol   = 4;
 	}
-}
 
-function ChangeVisibleFN()
-{
-	$("#visibleFlg").val($("#checkVisibleFN").is(':checked') ? 1 : 0);
-
-	if($("#checkVisibleFN").is(':checked'))	JumpImgNumber($("#slider").slider("value"));
-	else									$("#imgBlock span").remove();
-}
-
-function ChangePresetMenu()
-{
-	var tmpStr = $("#presetMenu option:selected").val().split("^");
+	var posStr = "";
 	
-	$("#presetName").val($("#presetMenu option:selected").text());
-	$("#windowLevel").val(tmpStr[0]);
-	$("#windowWidth").val(tmpStr[1]);
-	
-	JumpImgNumber($("#slider").slider("value"));
+	for(var j=0; j<rowNum; j++)
+	{
+		for(var i=startCol; i<=endCol; i++)
+		{
+			posStr += (tbody.rows[j].cells[i].innerHTML + '^');
+		}
+		
+		if($("#feedbackMode").val() == "consensual")
+		{
+			posStr += (tbody.rows[j].cells[endCol+1].innerHTML.replace(' ','') + '^');
+			posStr += (tbody.rows[j].cells[endCol+2].innerHTML.replace(' ','') + '^');
+		}
+		else
+		{
+			 posStr += ($("#userID").val() + '^^');
+		}
+	}
+	return posStr;
 }
+
+//--------------------------------------------------------------------------------------------------
 
 $(document).ready(function(){
 	
@@ -440,46 +523,7 @@ $(document).ready(function(){
 		var feedbackMode = $("#feedbackMode").val();
 		var imgNum       = $("#slider").slider("value");
 
-		var htmlStr = '<tr id="row' + (rowNum+1) + '"';
-		htmlStr += (rowNum%2==1) ? ' class="column">' : '>';
-
-		if($("#registTime").val() == "")
-		{
-			htmlStr += '<td><input type="checkbox" name="rowCheckList[]" value="' + (rowNum+1) + '"></td>';
-		}
-
-		var tdBaseStr = ' onclick="ClickPosTable(\'row' + (rowNum+1) + '\',' + imgNum + ');"';
-		tdBaseStr += (feedbackMode == "consensual") ? ' style="color:#ff00ff;">' : '>';
-
-		htmlStr += '<td class="al-r"' + tdBaseStr + (rowNum+1) + '</td>'
-                +  '<td class="al-r"' + tdBaseStr + xPos + '</td>'
-                +  '<td class="al-r"' + tdBaseStr + yPos + '</td>'
-                +  '<td class="al-r"'  + tdBaseStr + imgNum + '</td>'
-                +  '<td' + tdBaseStr + CheckNearestHiddenTP(xPos, yPos, imgNum) + '</td>';
-
-		if(feedbackMode == "consensual")
-		{
-			htmlStr += '<td' + tdBaseStr + $("#userID").val() + '</td>'
-					+  '<td style="display:none;"></td>';
-		}
-
-		$("#posTable tbody").append(htmlStr);
-
-
-		if(rowNum == 0)
-		{
-			var tmpStr = '<input type="button" id="delButton" value="delete"'
-                       + ' class="form-btn" onclick="DeleteLocationRows();" />';
-
-			if(feedbackMode == "consensual")
-			{
-				tmpStr += '&nbsp;&nbsp;<input type="button" id="integrationButton"'
-                       +  ' class="form-btn" value="integration" />';
-			}
-
-			$("#blockDeleteButton").html(tmpStr);
-			$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
-		}	
+		AddPosTable(rowNum+1, xPos, yPos, imgNum, $("#userID").val(), '');
 	
 		if(!$("#checkVisibleFN").is(':checked'))
 		{

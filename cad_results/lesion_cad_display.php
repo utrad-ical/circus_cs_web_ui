@@ -1,9 +1,9 @@
 <?php
 
-	$candNum = 0;
+	$params['candNum'] = 0;
 	$candArr = array();
 	
-	$stmt = $pdo->prepare('SELECT COUNT(*) FROM "' . $resultTableName . '" WHERE exec_id=?');
+	$stmt = $pdo->prepare('SELECT COUNT(*) FROM "' . $params['resultTableName'] . '" WHERE exec_id=?');
 	$stmt->bindValue(1, $params['execID']);
 	$stmt->execute();
 	
@@ -13,7 +13,8 @@
 		
 	if($params['feedbackMode'] == "consensual")
 	{
-		$sqlStr = 'SELECT * FROM "' . $resultTableName . '" WHERE exec_id= :execID'
+		$sqlStr = 'SELECT * FROM "' . $params['resultTableName'] . '"'
+				. " WHERE exec_id= :execID"
 				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_feedback"
 				. " WHERE exec_id=:execID AND consensual_flg='f' AND interrupt_flg='f')"
 				. ' ORDER BY ';
@@ -32,7 +33,7 @@
 	}	
 	else // for personal
 	{
-		$sqlStr = 'SELECT * FROM (SELECT * FROM "' . $resultTableName . '"'
+		$sqlStr = 'SELECT * FROM (SELECT * FROM "' . $params['resultTableName'] . '"'
 				. " WHERE exec_id=? AND confidence >= ? ORDER BY confidence DESC"
 				. " LIMIT ?) set1 ORDER BY set1.";
 				  
@@ -49,18 +50,18 @@
 		//var_dump($stmt);
 	}	
 	
-	$candNum = $stmt->rowCount();
+	$params['candNum'] = $stmt->rowCount();
 	
 	$params['resultColNum'] = 3;  // 3 candidates per row
 	
-	if($candNum < 5 && $mainModality == 'CT')   // for HIMEDIC
-	//if($candNum < 5)					      // for other case...
+	if($params['candNum'] < 5 && $params['mainModality'] == 'CT')   // for HIMEDIC
+	//if($params['candNum'] < 5)					      // for other case...
 	{
 		$params['resultColNum'] = 2;
-		$dispWidth = 384;	
+		$params['dispWidth'] = 384;	
 	}
 
-	$dispHeight = (int)($cropHeight * ($dispWidth / $cropWidth) + 0.5);	
+	$params['dispHeight'] = (int)($params['cropHeight'] * ($params['dispWidth'] / $params['cropWidth']) + 0.5);	
 
 	//--------------------------------------------------------------------------------------------------------
 	// Make one-time ticket
@@ -75,47 +76,22 @@
 	
 	if($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg'] || $_SESSION['groupID'] == 'demo')
 	{
-		if($registTime != "")
+		if($params['registTime'] != "")
 		{
-			$registMsg = 'registered at ' . $registTime;
+			$registMsg = 'registered at ' . $params['registTime'];
 			if($params['feedbackMode'] == "consensual")
 			{
 				$registMsg .= ' (by ' . $enteredBy . ')';
 			}
 		}
-		
-		//------------------------------------------------------------------------------------------------
-		// Personal mode で誰かがFN入力している場合、Consensual modeのFN input入力が済むまでは
-		// 正式登録にせず、FN入力画面へ遷移する
-		//------------------------------------------------------------------------------------------------		
-		if($params['feedbackMode'] == "consensual" && $params['interruptFlg'] == 1)
-		{		
-			$sqlStr = "SELECT COUNT(*) FROM false_negative_location"
-					. " WHERE exec_id=? AND consensual_flg='f' AND interrupt_flg='f'";
-			$stmtFn = $pdo->prepare($sqlStr);
-			$stmtFn->bindValue(1, $params['execID']);
-			$stmtFn->execute();
-
-			$fnPersonalCnt = $stmtFn->fetchColumn();
-			
-			$sqlStr = "SELECT COUNT(*) FROM false_negative_count"
-					. " WHERE exec_id=? AND consensual_flg='t' AND status=2";
-			$stmtFn = $pdo->prepare($sqlStr);
-			$stmtFn->bindValue(1, $params['execID']);
-			$stmtFn->execute();
-
-			$fnConsCnt = $stmtFn->fetchColumn();
-			
-			if($fnPersonalCnt > 0 && $fnConsCnt != 1)  $fnConsCheck = 1;
-		}
-		//--------------------------------------------------------------------------------------------
 	}
 	
 	$candHtml = array();
 	
 	$k = 0;
 	
-	$scale = $dispWidth/$cropWidth;
+	$params['scale'] = $params['dispWidth']/$params['cropWidth'];
+	$params['lesionCheckCnt'] = 0;	
 
 	while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 	{
@@ -128,10 +104,10 @@
 		$candStr .= $candID . "^";
 		array_push($candArr,  $candID);
 	
-		$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $candID);
-		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $candID);
+		$srcFname = sprintf("%s%sresult%03d.png", $params['pathOfCADReslut'], $DIR_SEPARATOR, $candID);
+		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB, $candID);
 
-		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $windowLevel, $windowWidth);
+		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
 
 		$img = new Imagick();
 		$img->readImage($srcFname);			
@@ -149,47 +125,47 @@
 		//$candHtml[$k] .= sprintf("<b>&nbsp;Confidence: </b>%.3f<br>", $confidence);
 		$candHtml[$k] .= '</div>';
 
-		$candHtml[$k] .= '<div style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;'
+		$candHtml[$k] .= '<div style="width:' . $params['dispWidth'] . 'px; height:' .  $params['dispHeight'] . 'px;'
 		              .  ' overflow:hidden; position:relative; margin-bottom:7px;" class="block-al-c" ondblclick="ShowCADDetail(' . $posZ . ')">';
 					  
-		if($confidence >= $doubleCircleTh)
+		if($confidence >= $params['doubleCircleTh'])
 		{
 		 	$candHtml[$k] .= '<img class="transparent" src="images/double_circle.png"'
-		                  .  ' style="position:absolute; left:' . (($posX-$orgX)*$scale-15)
-						  .  'px; top:' . (($posY-$orgY)*$scale-15) . 'px; z-index:2;">';		
+		                  .  ' style="position:absolute; left:' . (($posX-$params['orgX'])*$params['scale']-15)
+						  .  'px; top:' . (($posY-$params['orgY'])*$params['scale']-15) . 'px; z-index:2;">';		
 		}
-		else if($confidence < $yellowCircleTh)
+		else if($confidence < $params['yellowCircleTh'])
 		{
 		 	$candHtml[$k] .= '<img class="transparent" src="images/yellow_circle.png"'
-		                  .  ' style="position:absolute; left:' . (($posX-$orgX)*$scale-12)
-						  .  'px; top:' . (($posY-$orgY)*$scale-12) . 'px; z-index:2;">';
+		                  .  ' style="position:absolute; left:' . (($posX-$params['orgX'])*$params['scale']-12)
+						  .  'px; top:' . (($posY-$params['orgY'])*$params['scale']-12) . 'px; z-index:2;">';
 		}
 		else
 		{
 		 	$candHtml[$k] .= '<img class="transparent" src="images/magenta_circle.png"'
-		                  .  ' style="position:absolute; left:' . (($posX-$orgX)*$scale-12)
-						  .  'px; top:' . (($posY-$orgY)*$scale-12) . 'px; z-index:2;">';
+		                  .  ' style="position:absolute; left:' . (($posX-$params['orgX'])*$params['scale']-12)
+						  .  'px; top:' . (($posY-$params['orgY'])*$params['scale']-12) . 'px; z-index:2;">';
 		}
 		
-		$candHtml[$k] .= '<img src="' . $srcFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
-		              .  ' style="position:absolute; left:' . (-$orgX*$scale) . 'px; top:' . (-$orgY*$scale) . 'px; z-index:1;">'
+		$candHtml[$k] .= '<img src="' . $srcFnameWeb . '" width=' . $width*$params['scale'] . ' height=' . $height*$params['scale']
+		              .  ' style="position:absolute; left:' . (-$params['orgX']*$params['scale']) . 'px; top:' . (-$params['orgY']*$params['scale']) . 'px; z-index:1;">'
 					  .  '</div>';
 		
 		// MRA with axial MIP display
 		//if($params['cadName'] == "MRA-CAD")
 		//{
-		//	$srcMIPFnameWeb = sprintf("../%s%sMIP_axial.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB);
+		//	$srcMIPFnameWeb = sprintf("../%s%sMIP_axial.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB);
 		//
-		//	$candHtml[$k] .= '<div style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;'
+		//	$candHtml[$k] .= '<div style="width:' . $params['dispWidth'] . 'px; height:' .  $params['dispHeight'] . 'px;'
 		//	              .  ' overflow:hidden; position:relative; margin-bottom:7px;" class="block-al-c">'
 		//	              .  '<img class="transparent" src="images/magenta_circle.png"'
-		//	              .  ' style="position:absolute; left:' . (($posX-$orgX)*$scale-12) . 'px; top:' . (($posY-$orgY)*$scale-12) . 'px; z-index:2;">'
-		//	              .  '<img src="' . $srcMIPFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
-		//	              .  ' style="position:absolute; left:' . (-$orgX*$scale) . 'px; top:' . (-$orgY*$scale) . 'px; z-index:1;">'
+		//	              .  ' style="position:absolute; left:' . (($posX-$params['orgX'])*$params['scale']-12) . 'px; top:' . (($posY-$params['orgY'])*$params['scale']-12) . 'px; z-index:2;">'
+		//	              .  '<img src="' . $srcMIPFnameWeb . '" width=' . $width*$params['scale'] . ' height=' . $height*$params['scale']
+		//	              .  ' style="position:absolute; left:' . (-$params['orgX']*$params['scale']) . 'px; top:' . (-$params['orgY']*$params['scale']) . 'px; z-index:1;">'
 		//	              .  '</div>';
 		//}
 		
-		if($resultType == 1 && ($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg']))
+		if($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg'])
 		{
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 :0;
 		
@@ -232,7 +208,7 @@
 			$candHtml[$k] .= '<div class="hide-on-guest js-personal-or-consensual ' . $params['feedbackMode'] . '">';
 			
 			//$maxNum = 0;
-	
+			
 			for($j=0; $j<count($radioButtonList[$consensualFlg]); $j++)
 			{
 				$evalStr = "";
@@ -274,17 +250,21 @@
 					}
 				}
 				
-				$candHtml[$k] .= '<span class=""><input type="radio" name="radio' . $candID . '"'
+				$candHtml[$k] .= '<span class=""><input type="radio" name="radioCand' . $candID . '"'
 				                .  ' value="' . $radioButtonList[$consensualFlg][$j][1] . '"'
 				                .  ' label="' . $radioButtonList[$consensualFlg][$j][0] . $evalStr . '"'
 								.  ' class="radio-to-button"';
 
-				if($registTime == "")  $candHtml[$k] .= ' onclick="DispRegistCaution()"';
+				if($params['registTime'] == "")  $candHtml[$k] .= ' onclick="DispRegistCaution()"';
 			
-				if($evalVal == $radioButtonList[$consensualFlg][$j][1])		$candHtml[$k] .= ' checked="checked"';
+				if($evalVal == $radioButtonList[$consensualFlg][$j][1])
+				{
+					$candHtml[$k] .= ' checked="checked"';
+					$params['lesionCheckCnt']++;
+				}				
 				
 				if(($params['feedbackMode'] != "personal" && $params['feedbackMode'] != "consensual")
-				   || ($registTime != "" && $evalVal != $radioButtonList[$consensualFlg][$j][1]))	 $candHtml[$k] .= ' disabled="disabled"';
+				   || ($params['registTime'] != "" && $evalVal != $radioButtonList[$consensualFlg][$j][1]))	 $candHtml[$k] .= ' disabled="disabled"';
 				
 				if($params['feedbackMode'] == "consensual" && $titleStr != "")	$candHtml[$k] .= ' title="' . $titleStr . '" /></span><!-- -->';
 				else													        $candHtml[$k] .= ' /></span><!-- -->';
@@ -295,28 +275,7 @@
 		//----------------------------------------------------------------------------------------------------
 		// Tag list
 		//----------------------------------------------------------------------------------------------------
-		//$sqlStr = "SELECT tag FROM tag_list WHERE exec_id=? AND candidate_id=?";
-		//
-		//	$stmtTag = $pdo->prepare($sqlStr);
-		//	$stmtTag->bindParam(1, $params['execID']);
-		//	$stmtTag->bindParam(2, $candID);
-		//	if($params['feedbackMode'] == "personal")  $stmtTag->bindParam(3, $userID);
-		//		
-		//	$stmtTag->execute();
-		//	$tagNum = $stmtTag->rowCount();
-		//	
-		//	$candHtml[$k] .= '<p id="candidateTagArea' . $candID . '" class="fs-xs" style="margin-top:3px;"> Tags:';
-		//	
-		//	while($resCandTag = $stmtTag->fetch(PDO::FETCH_NUM))
-		//	{
-		//		$candHtml[$k] .= " " . $resCandTag[0];
-		//	}
-		//	
-		//	if($_SESSION['researchFlg']==1)
-		//	{			
-		//		$candHtml[$k] .= ' <a href="#" onclick="EditCandidateTag(' . $params['execID'] . ',' . $candID
-		//					  .  ',\'' . $params['feedbackMode'] . '\',\'' . $userID . '\');">(Edit)</a></p>';
-		//	}
+
 		}
 		
 		$candHtml[$k] .= '</div>';
@@ -326,40 +285,50 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Input FN number
+	// Retrieve the number of FNs
 	//------------------------------------------------------------------------------------------------------------------
-	if($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg'] || $_SESSION['groupID'] == 'demo')
-	{
-		$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=?";
-			
-		if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
-		else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
-		
-		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['execID']);
-		if($params['feedbackMode']=="personal")  $stmt->bindParam(2, $userID);
-		
-		$stmt->execute();
-		
-		$fnNum = 0;
-		$fnCountStatus = 0;
+	$params['fnInputFlg'] = 0;
+	$params['fnNum'] = 0;
+	$params['fnPersonalCnt'] = 0;	
 	
-		if($stmt->rowCount() == 1)
-		{
-			$result = $stmt->fetch(PDO::FETCH_ASSOC);
-			$fnNum = $result['false_negative_num'];
-			$fnCountStatus = $result['status'];
-		}
+	$sqlStr = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=? AND status>=1";
+		
+	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
+	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
+		
+	$stmt = $pdo->prepare($sqlStr);
+	$stmt->bindParam(1, $params['execID']);
+	if($params['feedbackMode']=="personal")  $stmt->bindParam(2, $userID);
+
+	$stmt->execute();
+		
+	if($stmt->rowCount() == 1)
+	{
+		$params['fnNum'] = $stmt->fetchColumn();
+		$params['fnInputFlg'] = 1;
+	}
+		
+	if($params['feedbackMode']=="consensual")
+	{
+		$sqlStr = "SELECT SUM(false_naegative_num) FROM false_negative_count"
+				. " WHERE exec_id=? AND consensual_flg='f' AND status=2";
+			
+		$params['fnPersonalCnt'] = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'SCALAR');
 	}
 	//------------------------------------------------------------------------------------------------------------------
+
+	$params['registStr'] = 'Lesion classification: '
+	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'complete' : 'incomplete')
+						 . '<br/>FN input: '
+						 . (($params['fnInputFlg']) ? 'complete' : 'incomplete');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// For CAD detail
 	//------------------------------------------------------------------------------------------------------------------
-	$detailData = array( 'orgWidth'     => $orgWidth,
-	                     'orgHeight'    => $orgHeight,
-						 'dispWidth'    => $orgWidth,
-						 'dispHeight'   => $orgHeight,
+	$detailData = array( 'orgWidth'     => $params['orgWidth'],
+	                     'orgHeight'    => $params['orgHeight'],
+						 'dispWidth'    => $params['orgWidth'],
+						 'dispHeight'   => $params['orgHeight'],
 						 'windowLevel'  => 0,
 						 'windowWidth'  => 0,
 						 'presetName'   => "",
@@ -383,7 +352,7 @@
 	$detailData['imgNumStrLeftPos'] = $detailData['imgLeftPos'] + 5;
 		
 	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
-	$stmt->bindParam(1, $modality);
+	$stmt->bindParam(1, $params['modality']);
 	$stmt->execute();
 			
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -402,14 +371,14 @@
 	}
 	
 	$flist = array();
-	$flist = GetDicomFileListInPath($seriesDir);
+	$flist = GetDicomFileListInPath($params['seriesDir']);
 	$detailData['fNum'] = count($flist);
 		
-	$subDir = $seriesDir . $DIR_SEPARATOR . $SUBDIR_JPEG;
+	$subDir = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_JPEG;
 	
 	$tmpFname = $flist[$detailData['imgNum']-1];
 
-	$srcFname = $seriesDir . $DIR_SEPARATOR . $tmpFname;
+	$srcFname = $params['seriesDir'] . $DIR_SEPARATOR . $tmpFname;
 
 	// For compresed DICOM file
 	$tmpFname = str_ireplace("c_", "_", $tmpFname);
@@ -470,9 +439,6 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	//エラーが発生した場合にエラー表示をする設定
-	ini_set( 'display_errors', 1 );
-
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
@@ -482,32 +448,15 @@
 	$smarty->assign('sliceOffset',     $sliceOffset);
 
 	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
-
-	$smarty->assign('patientID',         $patientID);
-	$smarty->assign('patientName',       $patientName);	
-	$smarty->assign('sex',               $sex);
-	$smarty->assign('age',               $age);
-	$smarty->assign('studyID',           $studyID);
-	$smarty->assign('studyDate',         $studyDate);
-	$smarty->assign('seriesID',          $seriesID);
-	$smarty->assign('modality',          $modality);
-	$smarty->assign('seriesDescription', $seriesDescription);
-	$smarty->assign('seriesDate',        $seriesDate);
-	$smarty->assign('seriesTime',        $seriesTime);
-	$smarty->assign('bodyPart',          $bodyPart);
 	
 	$smarty->assign('registTime',    $registTime);	
 	$smarty->assign('registMsg',     $registMsg);
 
 	$smarty->assign('fnConsCheck',   $fnConsCheck);
-	
-	$smarty->assign('candNum',       $candNum);	
 
 	$smarty->assign('candArr',       $candArr);	
 	$smarty->assign('candHtml',      $candHtml);	
 	
-	$smarty->assign('fnNum',         $fnNum);
-	$smarty->assign('fnCountStatus', $fnCountStatus);
 	$smarty->assign('candStr',       $candStr);
 
 	// For CAD detail

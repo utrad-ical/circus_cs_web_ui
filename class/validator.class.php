@@ -605,7 +605,7 @@ class UIDValidator extends ScalarValidator
 class CadNameValidator extends ScalarValidator
 {
 	public function validate($input) {
-		if ($input==='all' || !preg_match("/[^\\w-]/", $input)) {
+		if ($input==='all' || !preg_match("/[^\w-_]/", $input)) {
 			$this->output = $input;
 			return true;
 		} else if ($this->params['otherwise']) {
@@ -625,7 +625,7 @@ class CadNameValidator extends ScalarValidator
 class CadVersionValidator extends ScalarValidator
 {
 	public function validate($input) {
-		if ($input==='all' || !preg_match("/[^\\w.]/", $input)) {
+		if ($input==='all' || !preg_match("/[^\w-_\.]/", $input)) {
 			$this->output = $input;
 			return true;
 		} else if ($this->params['otherwise']) {

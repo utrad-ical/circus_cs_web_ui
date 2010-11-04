@@ -43,6 +43,7 @@
 	$params['toTopDir'] = '../';
 	$params['registTime'] = "";
 	$params['distTh'] = $DIST_THRESHOLD;
+	$params['enteredFnNum'] = 0;
 	//------------------------------------------------------------------------------------------------------------------
 
 	$userID = $_SESSION['userID'];
@@ -209,11 +210,11 @@
 			$stmt->bindValue(1, $params['execID']);
 			if($params['feedbackMode'] == "personal")  $stmt->bindValue(2, $userID);
 			$stmt->execute();
-			$enteredFnNum = $stmt->rowCount();
-	
+			$params['enteredFnNum'] = $stmt->rowCount();
+			
 			$fnPosArray = array();
 		
-			if($enteredFnNum >= 1)
+			if($params['enteredFnNum'] >= 1)
 			{		
 				while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 				{
@@ -264,7 +265,6 @@
 				$stmt->execute();
 		
 				if($stmt->fetchColumn()>0)	$params['registTime'] ="";
-		
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
@@ -293,9 +293,9 @@
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindValue(1, $params['execID']);
 					$stmt->execute();
-					$enteredFnNum = $stmt->rowCount();
+					$params['enteredFnNum'] = $stmt->rowCount();
 					
-					if($enteredFnNum >= 1)
+					if($params['enteredFnNum'] >= 1)
 					{
 						$nearestLesionCnt = 0;
 						$nearestLesionArr = array();
@@ -339,7 +339,7 @@
 								{
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
-									$enteredFnNum--; // 重複分を減算
+									$params['enteredFnNum']--; // 重複分を減算
 								}
 							}
 							else // 近傍病変候補がない場合
@@ -379,7 +379,7 @@
 								{
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
-									$enteredFnNum--; // 重複分を減算
+									$params['enteredFnNum']--; // 重複分を減算
 								}
 							}
 						}
@@ -413,6 +413,8 @@
 					}
 				}
 			}
+			
+			$params['posStr'] = implode('^', $fnPosArray);
 		
 			$tmpArr = explode('^', $params['userStr']);
 			$params['userArr'] = array();
@@ -515,7 +517,7 @@
 			//--------------------------------------------------------------------------------------------------------
 			$locationList = array();
 		
-			for($j=0; $j<$enteredFnNum; $j++)
+			for($j=0; $j<$params['enteredFnNum']; $j++)
 			{
 				$fontColor = "black";
 				
@@ -528,16 +530,16 @@
 					else
 					{
 						$tmpUserID = strtok($fnPosArray[$j * $DEFAULT_COL_NUM + 4], ',');
-						$fontColor = $colorList[$userArr[$tmpUserID]];	
+						$fontColor = $colorList[$params['userArr'][$tmpUserID]];	
 					}
 				}
 			
 				$locationList[$j][0] = $fontColor;
-				$locationList[$j][1] = $fnPosArray[$j*$DEFAULT_COL_NUM];											// posX
-				$locationList[$j][2] = $fnPosArray[$j*$DEFAULT_COL_NUM+1];											// posY
-				$locationList[$j][3] = $fnPosArray[$j*$DEFAULT_COL_NUM+2];											// posZ
-				$locationList[$j][4] = $fnPosArray[$j*$DEFAULT_COL_NUM+3];											// information of nearest cand.
-				$locationList[$j][5] = ($consRegistSucessFlg != 1) ? $fnPosArray[$j*$DEFAULT_COL_NUM+4] : $userID;	// entered by
+				$locationList[$j][1] = $fnPosArray[$j*$DEFAULT_COL_NUM];		// posX
+				$locationList[$j][2] = $fnPosArray[$j*$DEFAULT_COL_NUM+1];		// posY
+				$locationList[$j][3] = $fnPosArray[$j*$DEFAULT_COL_NUM+2];		// posZ
+				$locationList[$j][4] = $fnPosArray[$j*$DEFAULT_COL_NUM+3];		// information of nearest cand.
+				$locationList[$j][5] = $fnPosArray[$j*$DEFAULT_COL_NUM+4];		// entered by
 				$locationList[$j][6] = $fnPosArray[$j*$DEFAULT_COL_NUM+5];
 				
 				// Position for label
@@ -545,7 +547,7 @@
 				if($params['feedbackMode'] == "consensual")
 				{
 					$tmpUserID = strtok($fnPosArray[$j * $DEFAULT_COL_NUM + 4], ',');
-					$locationList[$j][7] = $userArr[$tmpUserID];
+					$locationList[$j][7] = $params['userArr'][$tmpUserID];
 				}
 			}
 		}
@@ -563,7 +565,6 @@
 		}
 	
 		$smarty->assign('params',   $params);
-		$smarty->assign('userStr',  $userStr);
 		
 		$smarty->assign('userID',   $userID);
 		$smarty->assign('ticket',   $_SESSION['ticket']);
@@ -571,7 +572,6 @@
 		$smarty->assign('presetArr', $presetArr);
 		$smarty->assign('presetNum', $presetNum);
 	
-		$smarty->assign('enteredFnNum',  $enteredFnNum);
 		$smarty->assign('locationList', $locationList);
 		
 		if($params['dispWidth'] >=256)
