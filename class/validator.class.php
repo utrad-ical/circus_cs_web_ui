@@ -248,7 +248,7 @@ abstract class ScalarValidator extends ValidatorBase
 	abstract function validate($input);
 
 	public function check($input) {
-		if (!$input) {
+		if (!isset($input)) {
 			if ($this->params['required']) {
 				if ($this->params['errorMes']) {
 					$this->error = $this->params['errorMes'];
@@ -293,7 +293,7 @@ class IntegerValidator extends ScalarValidator
 	public function validate($input) {
 		$input = preg_replace('/\,|\.|\s/', '', $input); // removes optional characters
 
-		if (preg_match('/^\-?[1-9][0-9]*$/', $input)) {
+		if (preg_match('/^(0|\-?[1-9]\d*)$/', $input)) {
 			if (isset($this->params['min']) && $input < $this->params['min']) {
 				$this->error = "Input data '$label' must be at least $min.";
 				return false;
