@@ -248,7 +248,7 @@ abstract class ScalarValidator extends ValidatorBase
 	abstract function validate($input);
 
 	public function check($input) {
-		if (!isset($input)) {
+		if (!$input && $input!="0") {
 			if ($this->params['required']) {
 				if ($this->params['errorMes']) {
 					$this->error = $this->params['errorMes'];
