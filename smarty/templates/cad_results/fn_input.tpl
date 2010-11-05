@@ -215,10 +215,9 @@ function Minus()
 									<b>Grayscale preset: </b>
 									<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu({$params.imgNum});">
 
-										{section name=i start=0 loop=$params.presetNum}
-											{assign var="i" value=$smarty.section.i.index}	
-											<option value="{$presetArr[$i][1]}^{$presetArr[$i][2]}" {if $params.presetName == $presetArr[$i][0]} selected{/if}>{$presetArr[$i][0]}</option>
-										{/section}
+										{foreach from=$presetArr item=item}
+											<option value="{$item[1]|escape}^{$item[2]|escape}" {if $params.presetName == $item[0]} selected{/if}>{$item[0]|escape}</option>
+										{/foreach}
 									</select>
 								</td>
 							</tr>

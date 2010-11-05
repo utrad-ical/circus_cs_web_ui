@@ -83,7 +83,8 @@
 			$tmpFname = str_ireplace("c_", "_", $tmpFname);
 			$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
 	
-			$dstFname    = $subDir . $DIR_SEPARATOR . $tmpFname;
+			$dstBase   = $subDir . $DIR_SEPARATOR . $tmpFname;
+			$dstFname  = $dstBase;
 			$dstFnameWeb = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
 		
 			$dumpFname = $dstFname . ".txt";
@@ -98,7 +99,8 @@
 	
 			// Create thumbnail image
 			if(is_file($dstFname)
-			   || DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $params['windowLevel'], $params['windowWidth']))
+			   || DcmExport::createThumbnailJpg($srcFname, $dstBase, $params['presetName'], 
+			                                    $JPEG_QUALITY, 1, $params['windowLevel'], $params['windowWidth']))
 			{	
 				$dstData['imgFname'] = $dstFnameWeb;
 			}

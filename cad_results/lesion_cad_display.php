@@ -385,6 +385,7 @@
 	$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
 
 	$dstFname = $subDir . $DIR_SEPARATOR . $tmpFname;
+	$dstBase  = $dstFname;
 	$detailData['dstFnameWeb'] = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
 	
 	$dumpFname = $dstFname . ".txt";
@@ -399,7 +400,8 @@
 	
 	if(!is_file($dstFname))
 	{
-		CreateThumbnail($cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname, $JPEG_QUALITY, 1, $data['windowLevel'], $data['windowWidth']);
+		DcmExport::createThumbnailJpg($srcFname, $dstBase, $detailData['presetName'], $JPEG_QUALITY, 1,
+		                              $detailData['windowLevel'], $detailData['windowWidth']);
 	}
 				
 	$fp = fopen($dumpFname, "r");

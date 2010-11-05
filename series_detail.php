@@ -171,6 +171,7 @@
 				$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
 	
 				$data['dstFname']    .= $subDir . $DIR_SEPARATOR . $tmpFname;
+				$dstBase = $data['dstFname'];
 				$data['dstFnameWeb'] .= $data['seriesDirWeb'] . $DIR_SEPARATOR_WEB
 				                     .  $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
 		
@@ -186,8 +187,8 @@
 				
 				if(!is_file($data['dstFname']))
 				{
-					DcmExport::createThumbnailJpg($data['srcFname'], $data['dstFname'], $JPEG_QUALITY, 1, 
-												  $data['windowLevel'], $data['windowWidth']);
+					DcmExport::createThumbnailJpg($data['srcFname'], $dstBase, $data['presetName'], $JPEG_QUALITY,
+					                               1, $data['windowLevel'], $data['windowWidth']);
 				}
 						
 				$fp = fopen($dumpFname, "r");

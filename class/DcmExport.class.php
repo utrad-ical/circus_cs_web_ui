@@ -43,7 +43,7 @@
 		}
 		
 		// CreateThumbnail
-		public static function createThumbnailJpg($srcFname, $dstFname, $quality, $dumpFlg, $windowLevel, $windowWidth)
+		public static function createThumbnailJpg($srcFname, $dstBase, $presetName, $quality, $dumpFlg, $windowLevel, $windowWidth)
 		{
 			// validation
 			if(!is_numeric($sliceNum)    || $dumpFlg != 0)  $dumpFlg = 1;
@@ -57,9 +57,17 @@
 		
 			if(!is_file($srcFname) || $pathInfo['extension'] != 'dcm')	return false;
 	
-			$cmdStr = sprintf('%s "%s %s %s %d %d %d %d"', $cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname, 
-				                                           $quality, $dumpFlg, $windowLevel, $windowWidth);		
+			$cmdStr = sprintf('%s "%s %s %s %s %d %d %d %d"', $cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstBase, 
+				                                              $presetName, $quality, $dumpFlg, $windowLevel, $windowWidth);		
 			shell_exec($cmdStr);
+			
+			$dstFname = $dstBase;
+			
+			if($presetName != "" && $presetName != "Auto") 
+			{
+				$dstFname .= "_" . $presetName;
+			}
+			$dstFname .= '.jpg';
 		
 			$img = new Imagick();
 	

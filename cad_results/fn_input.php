@@ -125,7 +125,7 @@
 			// Retrieve preset grayscales
 			//----------------------------------------------------------------------------------------------------
 			$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
-			$stmt->bindParam(1, $modality);
+			$stmt->bindParam(1, $params['modality']);
 			$stmt->execute();
 
 			$grayscaleArray = array(); 
@@ -444,29 +444,30 @@
 				
 			$tmpFname = $flist[$params['imgNum']-1];
 		
-			$srcFname  = $seriesDir . $DIR_SEPARATOR . $tmpFname;
+			$srcFname  = $params['seriesDir'] . $DIR_SEPARATOR . $tmpFname;
 			
 			// For compresed DICOM file
 			$tmpFname = str_ireplace("c_", "_", $tmpFname);
 			$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
 	
 			$dstFname .= $subDir . $DIR_SEPARATOR . $tmpFname;
+			$dstBase = $dstFname;
 			$params['dstFnameWeb'] .= $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG
 								   .  $DIR_SEPARATOR_WEB . $tmpFname;
 
 			$dumpFname = $dstFname . ".txt";
-	
 			if($params['presetName'] != "" && $params['presetName'] != "Auto") 
 			{
 				$dstFname .= "_" . $params['presetName'];
 				$params['dstFnameWeb'] .= "_" . $params['presetName'];
 			}
 			$dstFname .= '.jpg';
-			$params['dstFnameWeb'] .= '.jpg';		
+			$params['dstFnameWeb'] .= '.jpg';
 			
-			if(!is_file($data['dstFname']))
+			if(!is_file($dstFname))
 			{
-				DcmExport::createThumbnailJpg($srcFname, $dstFname, $JPEG_QUALITY, 1, $windowLevel, $windowWidth);
+				DcmExport::createThumbnailJpg($srcFname, $dstBase, $params['presetName'], $JPEG_QUALITY,
+		        		                      1, $params['windowLevel'], $params['windowWidth']);
 			}
 			
 			$fp = fopen($dumpFname, "r");
@@ -496,10 +497,10 @@
 			//--------------------------------------------------------------------------------------------------------
 			$presetArr = array();
 			$presetNum = 0;
-		
-			if($grayscaleStr != "")
+			
+			if($params['grayscaleStr'] != "")
 			{
-				$tmpArr = explode("^", $grayscaleStr);
+				$tmpArr = explode("^", $params['grayscaleStr']);
 				
 				$presetNum = (int)(count($tmpArr)/3);
 			
