@@ -1,5 +1,7 @@
 <?php
 
+	include_once("lesion_candidate_display_private.php");
+
 	$params['candNum'] = 0;
 	$candArr = array();
 	
