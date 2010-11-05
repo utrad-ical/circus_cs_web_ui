@@ -120,7 +120,7 @@ function Minus()
 		<!-- ***** TAB ***** -->
 		<div class="tabArea">
 			<ul>
-				<li><a href="href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+				<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 				<li><a href="show_cad_results.php?cadName={$params.cadName}&version={$params.version}&studyInstanceUID={$params.studyInstanceUID}&seriesInstanceUID={$params.seriesInstanceUID}&feedbackMode={$params.feedbackMode}" class="btn-tab" title="CAD result">CAD result</a></li>
 				<li><a href="#" class="btn-tab" title="FN input" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">FN input</a></li>
 			</ul>
@@ -134,8 +134,6 @@ function Minus()
 				<input type="hidden" id="execID"            value="{$params.execID|escape}" />
 				<input type="hidden" id="studyInstanceUID"  value="{$params.studyInstanceUID|escape}" />
 				<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}" />
-				<input type="hidden" id="cadName"           value="{$params.cadName|escape}" />
-				<input type="hidden" id="version"           value="{$params.version|escape}" />
 				<input type="hidden" id="posStr"            value="{$params.posStr|escape}" />
 				<input type="hidden" id="userStr"           value="{$params.userStr|escape}" />
 				<input type="hidden" id="candPosStr"        value="{$params.candPosStr|escape}" />
@@ -158,6 +156,7 @@ function Minus()
 				<input type="hidden" id="dispHeight"     value="{$params.dispHeight|escape}" />
 					
 				<input type="hidden" id="registTime"   value="{$params.registTime|escape}" />
+				<input type="hidden" id="status"       value="{$params.status|escape}" />
 				<input type="hidden" id="ticket"       value="{$ticket|escape}" />
 
 				<h2>FN input&nbsp;[{$params.cadName|escape} v.{$params.version|escape} ID:{$params.execID|escape}]&nbsp;&nbsp;({$params.feedbackMode|escape} mode)</h2>
@@ -169,7 +168,7 @@ function Minus()
 				</div>
 
 				<p class="mb10">
-				{if $params.registTime != ""}Location of false negatives were registered at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button to save FN locations.{/if}</p>
+				{if $params.registTime != ""}Location of false negatives were {if $params.status==1}saved{else}registered{/if} at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button to save FN locations.{/if}</p>
 				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name="id="checkVisibleFN" "onclick="ChangeVisibleFN();" checked="checked" />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">
@@ -179,7 +178,7 @@ function Minus()
 						<tr>
 							<td colspan="3" valign="top">
 								<div id="imgBlock" style="margin:0px;padding:0px;width:{$dispWidth}px;height:{$dispHeight}px;position:relative;">
-									<img id="imgArea" class="{if $params.registTime == "" && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
+									<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2) && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
 								</div>
 							</td>
 						</tr>
@@ -240,7 +239,7 @@ function Minus()
 
 				<div class="fl-l" style="width: 40%;">
 		
-					{if $params.registTime == ""}
+					{if $params.registTime == "" || $params.status != 2}
 					<div style="margin-bottom:10px;">
 						<select id="actionMenu" onchange="ChangeAction();" disabled="disabled">
 							<option value="">(action)</option>
@@ -252,7 +251,7 @@ function Minus()
 					<table id="posTable" class="col-tbl mb10" style="width:100%; background:#ffffff;">
 						<thead>
 							<tr>
-								{if $params.registTime == ""}<th>&nbsp;</th>{/if}
+								{if $params.registTime == "" || $params.status != 2}<th>&nbsp;</th>{/if}
 								<th>ID</th>
 								<th>Pos X</th>
 								<th>Pos Y</th>
@@ -271,7 +270,7 @@ function Minus()
 
 								<tr id="row{$j+1}" {if $j%2==1}class="column"{/if}>
 
-								{if $params.registTime == ""}
+								{if !($params.registTime == "" && $params.status == 2)}
 									<td align=center>
 									<input type="checkbox" name="rowCheckList[]" onclick="ClickRowCheckList();" value="{$j+1}">
 									</td>
@@ -290,6 +289,7 @@ function Minus()
 								{if $params.feedbackMode == "consensual"}
 									<td onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][5]}</td>
 									<td style="display:none;">{$locationList[$j][6]}</td>
+									<td style="display:none;">{$locationList[$j][7]}</td>
 								{/if}
 							
 								</tr>
@@ -297,11 +297,11 @@ function Minus()
 						</tbody>
 					</table>
 
-					{if $params.registTime == ""}
+					{if $params.registTime == "" || $params.status != 2}
 					<div id="blockDeleteButton" style="text-align:right; margin-top:5px; font-size:14px;">
-						<input type="button" id="undoBtn" class="form-btn form-btn-normal" value="undo" onclick="UndoFnTable();"{if $params.posStr == "" || $smarty.session.groupID == 'demo'} style="display:none;"{/if} />
-						<input type="button" id="resetBtn" class="form-btn form-btn-normal" value="Reset" onclick="ResetFnTable();"{if $params.posStr != "" && $smarty.session.groupID != 'demo'} style="display:none;"{/if} />
-						<input type="button" id="confirmBtn" class="form-btn form-btn-normal" value="Confirm" onclick="ConfirmFNLocation();"{if $registTime != ""} disabled="disabled"{/if} />
+						<input type="button" id="undoBtn" class="form-btn form-btn-normal" value="undo" onclick="UndoFnTable();"{if $params.status!=1} style="display:none;"{/if} />
+						<input type="button" id="resetBtn" class="form-btn form-btn-normal" value="Reset" onclick="ResetFnTable();"{if $params.status!=0} style="display:none;"{/if} />
+						<input type="button" id="confirmBtn" class="form-btn form-btn-normal" value="Confirm" onclick="ConfirmFNLocation('');"{if $smarty.session.groupID == 'demo'} disabled="disabled"{/if} />
 					</div>
 					{/if}
 

@@ -51,22 +51,22 @@ function CreateEvalStr(lesionArr)
 
 function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress)
 {
-	var execID  = $("#execID").val();
-	var cadName = $("#cadName").val();
-	var version = $("#version").val();
-	var fnNum   = $("#fnNum").val();
-
+	var noFnFlg = ($(this).attr('checked') == true) ? 1 : 0;
 
 	$.post("feedback_registration.php",
-			{ execID: execID,
-	  		  cadName: cadName,
-	          version: version,
+			{ execID:  $("#execID").val(),
+	  		  cadName: $("#cadName").val(),
+	          version: $("#version").val(),
 	          interruptFlg: interruptFlg,
+			  noFnFlg: noFnFlg,
 	          feedbackMode: feedbackMode,
 	  		  candStr: candStr,
 	          evalStr: evalStr,
-       		  fnNum: fnNum},
+       		  fnNum: $("#fnNum").val()},
 			  function(data){
+
+				if(interruptFlg == 0)	alert(data.message);
+
 				if(dstAddress != "")
 				{
 					if(dstAddress == "historyBack")  history.back();
@@ -104,10 +104,7 @@ function ShowFNinput()
 
 function ChangeCondition(mode, feedbackMode)
 {
-	var address = 'show_cad_results.php?cadName=' + $("#cadName").val()
-	            + '&version=' + $("#version").val()
-    	        + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-      			+ '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
+	var address = 'show_cad_results.php?execID=' + $("#execID").val()
 			    + '&feedbackMode=' + feedbackMode
 				+ '&sortKey=' + $("#sortKey").val()
 				+ '&sortOrder=' + $(".sort-by input[name='sortOrder']:checked").val();
@@ -123,22 +120,7 @@ function ChangeCondition(mode, feedbackMode)
 		if(mode == 'registration')
 		{
 			evalArr = evalStr.split("^");
-			errFlg = 0;
-			
-			for(var j=0; j<(evalArr.length-1); j++)
-			{
-				if(evalArr[j] == 99)
-				{
-					alert("[ERROR] Lesion classification is not completed!");
-					errFlg = 1;
-					break;
-				}
-			}
-
-			if(errFlg == 0)
-			{
-				RegistFeedback(feedbackMode, 0, candStr, evalStr, address);
-			}
+			RegistFeedback(feedbackMode, 0, candStr, evalStr, address);
 		}
 		else if(mode == 'changeSort' && $("#interruptFlg").val()==1)
 		{
@@ -151,10 +133,7 @@ function ChangeCondition(mode, feedbackMode)
 
 function ChangeFeedbackMode(feedbackMode)
 {
-	var address = 'show_cad_results.php?cadName=' + $("#cadName").val()
-                + '&version=' + $("#version").val()
-                + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-                + '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
+	var address = 'show_cad_results.php?execID=' + $("#execID").val()
                 + '&feedbackMode=' + feedbackMode;
 
 	if($("#remarkCand").val() > 0)  address += '&remarkCand=' + $("#remarkCand").val();
@@ -162,7 +141,7 @@ function ChangeFeedbackMode(feedbackMode)
 	MovePageWithTempRegistration(address);
 }
 
-function DispRegistCaution()
+function ChangeRegistCondition()
 {
 	var checkCnt = $("input[name^='radioCand']:checked").length;
 
@@ -170,9 +149,15 @@ function DispRegistCaution()
                + (($("#candNum").val()==checkCnt) ? 'complete' : 'incomplete') + '<br/>'
 	           + 'FN input: ' + (($("#fnInputFlg").val()==1) ? 'complete' : 'incomplete');
 
-	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt)
+	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt && $("#fnInputFlg").val()==1)
 	{
 		$("#registBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+		$("#interruptFlg").val(0);
+	}
+	else
+	{
+		$("#registBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		$("#interruptFlg").val(1);
 	}
 
 	if($("#groupID").val() != 'demo')
@@ -288,9 +273,9 @@ function EditCandidateTag(execID, candID, feedbackMode, userID)
 }
 
 
+$(function() {
 {/literal}
 
-$(function() {ldelim}
 	$("#slider").slider({ldelim}
 		value:{$detailData.imgNum},
 		min: 1,
@@ -307,27 +292,32 @@ $(function() {ldelim}
 	$("#slider").css("width", "220px");
 	$("#sliderValue").html(jQuery("#slider").slider("value"));	
 
-{if $fnConsCheck == 1}
 {literal}
-	$.event.add(window, "load", 
-				function(){
-					 alert("[CAUTION] Please confirm FN list!");
+	$("#noFnCheck").click(function() {
 
-					var address = 'fn_input.php'
-								+ '?execID=' + $("#execID").val()
-              				    + '&cadName=' + $("#cadName").val()
-                				+ '&version=' + $("#version").val()
-                				+ '&studyInstanceUID=' + $("#studyInstanceUID").val()
-                				+ '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
-                				+ '&feedbackMode=' + $("#feedbackMode").val();
-					
-					location.href = address;
-				});
+		if($(this).attr('checked') == true)
+		{
+			if(confirm('Is there no false negative?'))
+			{
+				$("#fnInputFlg").val(1);
+				$("#fnNum").val(0).attr('disabled', 'disabled');
+			}
+			else
+			{
+			    $(this).removeAttr('checked');
+				$("#fnNum").removeAttr('disabled');
+			}
+		}
+		else
+		{
+		    $("#fnInputFlg").val(0);
+			$("#fnNum").removeAttr('disabled');
+		}
+
+		ChangeRegistCondition();
+	});
+});
 {/literal}
-{/if}
-
-
-{rdelim});
 
 
 -->
@@ -383,6 +373,9 @@ $(function() {ldelim}
 
 		
 		<div class="tab-content">
+		{if $data.errorMessage != ""}
+			<div style="color:#f00;font-weight:bold;">{$data.errorMessage}</div>
+		{else}
 			<form id="form1" name="form1">
 			<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}" />
 			<input type="hidden" id="execID"            name="execID"            value="{$params.execID}" />
@@ -454,14 +447,14 @@ $(function() {ldelim}
 
 					<div class="hide-on-guest fl-clr" style="width: 780px;">
 						<div class="fl-l">
-							<span style="font-weight:bold;">Number of false negatives: </span><input id="fnNum" type="text" class="al-r" style="width: 30px;" value={$params.fnNum}{if $params.fnInputFlg} disabled="disabled"{/if} />
+							<span style="font-weight:bold;">Number of false negatives: </span><input id="fnNum" type="text" class="al-r" style="width: 30px;" value={$params.fnNum}{if $params.fnInputFlg || $params.fnPersonalCnt} disabled="disabled"{/if} />
 							<input type="button" class="form-btn" value="FN input" onclick="ShowFNinput();" />
-							&nbsp;<input id="noFnCheck" type="checkbox" {if $params.fnInputFlg} disabled="disabled"{/if}/><span style="font-weight:bold;">&nbsp;No false negative</span>
+							{if $params.registTime==""}<input id="noFnCheck" type="checkbox" style="margin-left:10px;"{if $params.fnInputFlg || $params.fnPersonalCnt} disabled="disabled"{/if}/><span style="font-weight:bold;">&nbsp;No false negative</span>{/if}
 						</div>
 						<p class="fl-r" style="width:255px;">
-							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" disabled="disabled" />
+							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $params.registTime!="" || !($params.candNum==$params.lesionCheckCnt && $params.fnInputFlg)} disabled="disabled"{/if} />
 							<br />
-							<span id="registCaution" class="regist-caution">{if $registTime==""}{$params.registStr}{else}&nbsp;{/if}</span>
+							<span id="registCaution" class="regist-caution">{if $params.registTime==""}{$params.registStr}{else}&nbsp;{/if}</span>
 						</p>
 					</div>
 				{/if}
@@ -593,7 +586,7 @@ $(function() {ldelim}
 			<div class="al-r">
 				<p class="pagetop"><a href="#page">page top</a></p>
 			</div>
-
+		{/if}
 		</div><!-- / .tab-content END -->
 
 		<!-- darkroom button -->

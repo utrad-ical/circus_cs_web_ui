@@ -24,7 +24,7 @@ function JumpImgNumber(imgNum)
 					var tbody= document.getElementById("posTable").tBodies.item(0);
 					var rowNum = tbody.rows["length"];
 
-					var colOffset = ($("#registTime").val() == "") ? 1 : 0;
+					var colOffset = ($("#registTime").val() == "" || $("#status").val() != 2) ? 1 : 0;
 					var posX, posY, posZ;
 
 					for(var j=0; j<rowNum; j++)
@@ -33,10 +33,12 @@ function JumpImgNumber(imgNum)
 						posX  = tbody.rows[j].cells[colOffset+1].innerHTML;
 						posY  = tbody.rows[j].cells[colOffset+2].innerHTML;
 						posZ  = tbody.rows[j].cells[colOffset+3].innerHTML;
+
+						var colorSet = ($("#feedbackMode").val()=="consensual") ? parseInt(tbody.rows[j].cells[colOffset+7].innerHTML) : 0;
 	
 						if(posZ == data.imgNum)
 						{
-							plotClickedLocation(posID, posX, posY, 0);
+							plotClickedLocation(posID, posX, posY, colorSet);
 						}
 					}
 				}
@@ -44,12 +46,12 @@ function JumpImgNumber(imgNum)
 		}, "json");
 }
 
-function plotClickedLocation(id, x, y, set)
+function plotClickedLocation(id, x, y, colorSet)
 {
 	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
 	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
 	
-	 plotDots(id, xPos, yPos, set);
+	 plotDots(id, xPos, yPos, colorSet);
 	 
 }
 
@@ -71,7 +73,7 @@ function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
 	JumpImgNumber(imgNum);
 }
 
-function plotDots(id, x, y, set)
+function plotDots(id, x, y, colorSet)
 {
 	var dotOffsetX = -1;
 	var dotOffsetY = -1;
@@ -82,7 +84,7 @@ function plotDots(id, x, y, set)
 	var labelBaseY = 0;
 	var color = "#ff00ff";
 
-	switch(set)
+	switch(colorSet)
 	{
 		case 1: 
 			labelBaseX = 3;
@@ -113,6 +115,8 @@ function plotDots(id, x, y, set)
 		labelOffsetX = 3;
 		labelOffsetY = 1;
 	}
+
+
 
 	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; '
                 + 'left:' + (x+dotOffsetX) + 'px; height:3px; width:3px; padding:0px; '
@@ -170,10 +174,11 @@ function UndoFnTable()
 	}
 }
 
-function ConfirmFNLocation()
+function ConfirmFNLocation(address)
 {
    	var rowNum= document.getElementById('posTable').tBodies.item(0).rows["length"];
 	var posStr = CreatePosStr();
+	var that = this;
 
 	if(confirm('Do you save entered FN locations?'))
 	{
@@ -181,26 +186,29 @@ function ConfirmFNLocation()
 			{ execID: $("#execID").val(),
 			  posStr: posStr,
 			  rowNum: rowNum,
-			  feedbackMode: $("#feedbackMode").val()},
+			  feedbackMode: $("#feedbackMode").val(),
+			  dstAddress:address},
   			  function(data){
-
 				if(data.errorMessage != "")
 				{
 					alert(data.errorMessage);
 				}
 				else
 				{
-					var address = "fn_input.php";
-
-					if(confirm('Do you back to CAD result?'))
+					if(data.dstAddress=="")
 					{
-						address = 'show_cad_results.php';
+						data.dstAddress = "fn_input.php";
+
+						if(confirm('Successfully saved in feedback database. Do you back to CAD result?'))
+						{
+							data.dstAddress = 'show_cad_results.php';
+						}
+
+						data.dstAddress += '?execID=' + $("#execID").val()
+	                                    + '&feedbackMode=' + $("#feedbackMode").val();
+
 					}
-
-					address += '?execID=' + $("#execID").val()
-                            + '&feedbackMode=' + $("#feedbackMode").val();
-
-					location.replace(address);
+					location.href=data.dstAddress;
 				}
 			}, "json");
 	}
@@ -250,7 +258,7 @@ function AddPosTable(rowNum, xPos, yPos, zPos, enteredBy, idStr)
 	var htmlStr = '<tr id="row' + rowNum + '"';
 	htmlStr += (rowNum%2==0) ? ' class="column">' : '>';
 
-	if($("#registTime").val() == "")
+	if($("#registTime").val() == "" || $("#status").val() != 2)
 	{
 		htmlStr += '<td><input type="checkbox" name="rowCheckList[]"'
                 +  ' onclick="ClickRowCheckList();"value="' + rowNum + '"></td>';
@@ -269,6 +277,7 @@ function AddPosTable(rowNum, xPos, yPos, zPos, enteredBy, idStr)
 	{
 		htmlStr += '<td' + tdBaseStr + enteredBy + '</td>'
 				+  '<td style="display:none;">' + idStr + '</td>';
+				+  '<td style="display:none;">0</td>';
 	}
 
 	$("#posTable tbody").append(htmlStr);
@@ -307,6 +316,24 @@ function TableOperation()
 			break;
 	}
 	ClickRowCheckList();
+
+	if($("#status").val()==0)			$("#resetBtn").show();
+	else if($("#status").val()==1)		$("#undoBtn").show();
+
+	// 候補分類入力中にメニューバーを押された場合の対策
+	$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
+		function(event){ 
+
+		if(!event.isDefaultPrevented())
+		{
+			event.preventDefault();  // prevent link action
+
+			if(confirm("Do you want to save the changes?"))
+			{
+				ConfirmFNLocation(event.currentTarget.href);
+			}
+		}
+	});
 }
 
 function DeleteLocationRows()
@@ -456,7 +483,7 @@ function CreatePosStr()
 	var startCol = 2;
 	var endCol   = 5;
 	
-	if($("#registTime").val() != "")	// Modify用
+	if($("#registTime").val() != "" && $("#status").val() == 2)	// Modify用
 	{
 		startCol = 1;
 		endCol   = 4;
@@ -530,6 +557,25 @@ $(document).ready(function(){
 			$("#checkVisibleFN").attr('checked', 'checked');
 			JumpImgNumber(imgNum);
 		}
+
+		if($("#status").val()==0)			$("#resetBtn").show();
+		else if($("#status").val()==1)		$("#undoBtn").show();
+
+		// 候補分類入力中にメニューバーを押された場合の対策
+		$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
+			function(event){ 
+
+			if(!event.isDefaultPrevented())
+			{
+				event.preventDefault();  // prevent link action
+					
+				if(confirm("Do you want to save the changes?"))
+				{
+					ConfirmFNLocation(event.currentTarget.href);
+				}
+			}
+		});
+
 	});
 });
 

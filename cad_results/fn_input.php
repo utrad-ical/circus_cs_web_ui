@@ -44,6 +44,7 @@
 	$params['registTime'] = "";
 	$params['distTh'] = $DIST_THRESHOLD;
 	$params['enteredFnNum'] = 0;
+	$params['status'] = 0;
 	//------------------------------------------------------------------------------------------------------------------
 
 	$userID = $_SESSION['userID'];
@@ -194,81 +195,85 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve entered FN locations
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?";
+			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
+			$sqlParams = array();
+
+			$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND consensual_flg=?";
 	
-			if($params['feedbackMode'] == "personal")
-			{
-				$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
-			}
-			else
-			{
-				$sqlStr .= " AND consensual_flg='t'";
-			}
-			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
-				
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $params['execID']);
-			if($params['feedbackMode'] == "personal")  $stmt->bindValue(2, $userID);
-			$stmt->execute();
-			$params['enteredFnNum'] = $stmt->rowCount();
+			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
+
+			$sqlParams[] = $params['execID'];
+			$sqlParams[] = $consensualFlg;
+			if($params['feedbackMode'] == "personal")  $sqlParams[] = $userID;
 			
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute($sqlParams);
+			
+			if($stmt->rowCount() == 1)
+			{
+				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+				$params['enteredFnNum'] = $result['false_negative_num'];
+				$params['status'] = $result['status'];
+				$params['registTime'] = $result['registered_at'];
+				$params['enteredBy']  = $result['entered_by'];
+			}
+			
+			$sqlStr = "SELECT * FROM false_negative_location"
+					. " WHERE exec_id=? AND consensual_flg=?";
+			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
+			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
+
+			$result = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_ASSOC');
+
 			$fnPosArray = array();
 		
-			if($params['enteredFnNum'] >= 1)
+			if(count($result) >= 1)
 			{		
-				while($result = $stmt->fetch(PDO::FETCH_ASSOC))
+				foreach($result as $item)
 				{
-					$params['registTime'] = $result['registered_at'];
-					$params['enteredBy']  = $result['entered_by'];
-				
-					$fnPosArray[] = $result['location_x'];
-					$fnPosArray[] = $result['location_y'];
-					$fnPosArray[] = $result['location_z'];
+					$fnPosArray[] = $item['location_x'];
+					$fnPosArray[] = $item['location_y'];
+					$fnPosArray[] = $item['location_z'];
 						
-					if($result['nearest_lesion_id'] > 0)
+					if($item['nearest_lesion_id'] > 0)
 					{
 						$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
 								. ' WHERE exec_id=? AND sub_id=?';
-										
-						$stmt2 = $pdo->prepare($sqlStr);
-						$stmt2->bindValue(1, $params['execID']);
-						$stmt2->bindValue(2, $result['nearest_lesion_id']);
-						$stmt2->execute();
-						$result2 = $stmt2->fetch(PDO::FETCH_NUM);
+						$result2 = PdoQueryOne($pdo, $sqlStr,
+						                       array($params['execID'], $item['nearest_lesion_id']),
+											   'ARRAY_NUM');
 									
-						$dist = (($result['location_x']-$result2[0])*($result['location_x']-$result2[0])
-						      + ($result['location_y']-$result2[1])*($result['location_y']-$result2[1]))
-						      + ($result['location_z']-$result2[2])*($result['location_z']-$result2[2]);
+						$dist = (($item['location_x']-$result2[0])*($item['location_x']-$result2[0])
+						      + ($item['location_y']-$result2[1])*($item['location_y']-$result2[1]))
+						      + ($item['location_z']-$result2[2])*($item['location_z']-$result2[2]);
 							
-						$fnPosArray[] = sprintf("%d / %.2f", $result['nearest_lesion_id'],  sqrt($dist));
+						$fnPosArray[] = sprintf("%d / %.2f", $item['nearest_lesion_id'],  sqrt($dist));
 					}
 					else
 					{
 						$fnPosArray[] = '- / -';
 					}
 		
-					$fnPosArray[] = $result['entered_by'];
-					$fnPosArray[] = $result['location_id'];
+					$fnPosArray[] = $item['entered_by'];
+					$fnPosArray[] = $item['location_id'];
 				}
 				
 				$params['userStr'] = $params['enteredBy'] . "^0";
 					
-				$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
-						. " AND entered_by=? AND interrupt_flg='t'";	
-				
-				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
-				else										$sqlStr .= " AND consensual_flg='t'";
-						
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $params['execID']);
-				$stmt->bindValue(2, $userID);		
-				$stmt->execute();
-		
-				if($stmt->fetchColumn()>0)	$params['registTime'] ="";
+				//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
+				//		. " AND entered_by=? AND interrupt_flg='t'";	
+				//
+				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
+				//else										$sqlStr .= " AND consensual_flg='t'";
+				//		
+				//if(PdoQueryOne($pdo, $sqlStr, array($params['execID'], $userID), 'SCALAR') > 0)
+				//{
+				//	$params['registTime'] ="";
+				//}
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT registered_at, entered_by FROM false_negative_count WHERE exec_id=?"
+				$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=?"
 						. " AND consensual_flg='t' AND status=2";	
 								
 				$stmt = $pdo->prepare($sqlStr);
@@ -277,14 +282,17 @@
 				
 				if($stmt->rowCount() == 1)
 				{
-					$result = $stmt->fetch(PDO::FETCH_NUM);
-					$params['registTime'] = $result[0];
-					$params['userStr'] = $result[1] . "^0";
-					$params['enteredBy'] = $result[1];
+					$result = $stmt->fetch(PDO::FETCH_ASSOC);
+					$params['enteredFnNum'] = $result['false_negative_num'];
+					$params['status'] = $result['status'];					
+					$params['registTime'] = $result['registered_at'];
+					$params['userStr'] = $result['entered_by'] . "^0";
+					$params['enteredBy'] = $result['entered_by'];
 				}
 				else
 				{
 					$params['userStr'] = $userID . "^0";
+					$params['registTime'] = "";
 				
 					$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?"
 					        . " AND consensual_flg='f' AND interrupt_flg='f'"
@@ -293,6 +301,7 @@
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindValue(1, $params['execID']);
 					$stmt->execute();
+					
 					$params['enteredFnNum'] = $stmt->rowCount();
 					
 					if($params['enteredFnNum'] >= 1)
@@ -402,14 +411,14 @@
 							}
 						}
 							
-						$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
-								. " AND consensual_flg='t'" . " AND interrupt_flg='t'";	
-									
-						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindValue(1, $params['execID']);
-						$stmt->execute();
-					
-						if($stmt->fetchColumn()>0)	$params['registTime'] ="";
+						//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
+						//		. " AND consensual_flg='t'" . " AND interrupt_flg='t'";	
+						//			
+						//$stmt = $pdo->prepare($sqlStr);
+						//$stmt->bindValue(1, $params['execID']);
+						//$stmt->execute();
+						//
+						//if($stmt->fetchColumn()>0)	$params['registTime'] ="";
 					}
 				}
 			}
@@ -524,7 +533,7 @@
 				
 				if($params['feedbackMode'] == "consensual")
 				{
-					if($registTime != "")
+					if($params['registTime'] != "")
 					{
 						$fontColor = "#ff00ff";
 					}
@@ -552,7 +561,7 @@
 				}
 			}
 		}
-		
+
 		//--------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------

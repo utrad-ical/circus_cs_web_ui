@@ -48,15 +48,18 @@
 		"rowNum" => array(
 			"type" => "int",
 			"required" => 1,
-			"min" => 0,
-			"errorMes" => "[ERROR] The Number of rows is invalid."),
+			"min" => 1),
 		"posStr" => array(
 			"type" => "string",
-			"required" => 1,
-			"regex" => "/^[\w\s-\/\.\^]+$/",
-			"errorMes" => "[ERROR] 'Postion string' is invalid.")
-		));				
-
+			"regex" => "/^[\w\s-\/\,\.\^]+$/",
+			"errorMes" => "[ERROR] 'Postion string' is invalid."),
+		"dstAddress" => array(
+			"type" => "string",
+			"regex" => "/^[-_.!~*\'()\w;\/?:\@&=+\$,%#]+$/",
+			"default" => "undefined",
+			"errorMes" => "[ERROR] 'dstAddress' is invalid.")
+		));	
+		
 	if($validator->validate($_POST))
 	{
 		$params = $validator->output;
@@ -65,13 +68,14 @@
 	else
 	{
 		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
+		$params['errorMessage'] = implode(' ', $validator->errors);
 	}
 
-	$params['toTopDir'] = '../';
+	if($params['dstAddress'] == "undefined" || !isset($params['dstAddress'])) $params['dstAddress'] = "";
 	//------------------------------------------------------------------------------------------------------------------
 
-	$dstData = array('errorMessage' => $params['errorMessage']);
+	$dstData = array('errorMessage' => $params['errorMessage'],
+	                 'dstAddress'   => $params['dstAddress']);
 
 	try
 	{
@@ -217,7 +221,7 @@
 			
 			//if($dstData['errorMessage'] == "")
 			//{
-			//	$dstData['errorMessage'] = 'Successfully registered in feedback database.';
+			//	$dstData['errorMessage'] = 'Successfully saved in feedback database.';
 			//}
 		
 		}

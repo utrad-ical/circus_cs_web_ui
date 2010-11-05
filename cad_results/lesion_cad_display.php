@@ -255,7 +255,7 @@
 				                .  ' label="' . $radioButtonList[$consensualFlg][$j][0] . $evalStr . '"'
 								.  ' class="radio-to-button"';
 
-				if($params['registTime'] == "")  $candHtml[$k] .= ' onclick="DispRegistCaution()"';
+				if($params['registTime'] == "")  $candHtml[$k] .= ' onclick="ChangeRegistCondition()"';
 			
 				if($evalVal == $radioButtonList[$consensualFlg][$j][1])
 				{
@@ -310,7 +310,7 @@
 		
 	if($params['feedbackMode']=="consensual")
 	{
-		$sqlStr = "SELECT SUM(false_naegative_num) FROM false_negative_count"
+		$sqlStr = "SELECT SUM(false_negative_num) FROM false_negative_count"
 				. " WHERE exec_id=? AND consensual_flg='f' AND status=2";
 			
 		$params['fnPersonalCnt'] = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'SCALAR');
@@ -386,7 +386,7 @@
 
 	$dstFname = $subDir . $DIR_SEPARATOR . $tmpFname;
 	$dstBase  = $dstFname;
-	$detailData['dstFnameWeb'] = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
+	$detailData['dstFnameWeb'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
 	
 	$dumpFname = $dstFname . ".txt";
 	
@@ -451,7 +451,7 @@
 
 	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
 	
-	$smarty->assign('registTime',    $registTime);	
+	//$smarty->assign('registTime',    $registTime);	
 	$smarty->assign('registMsg',     $registMsg);
 
 	$smarty->assign('fnConsCheck',   $fnConsCheck);

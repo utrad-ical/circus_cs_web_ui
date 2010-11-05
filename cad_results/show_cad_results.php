@@ -29,12 +29,10 @@
 		"cadName" => array(
 			"type" => "string",
 			"regex" => "/^[\w-_]+$/",
-			"required" => 1,
 			"errorMes" => "[ERROR] 'CAD name' is invalid."),
 		"version" => array(
 			"type" => "string",
 			"regex" => "/^[\w-_\.]+$/",
-			"required" => 1,
 			"errorMes" => "[ERROR] 'Version' is invalid."),
 		"studyInstanceUID" => array(
 			"type" => "uid",
@@ -78,6 +76,7 @@
 
 	try
 	{	
+	
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server

@@ -38,6 +38,11 @@
 			"required" => 1,
 			"options" => array("0", "1"),
 			"errorMes" => "[ERROR] 'interruptFlg' is invalid."),
+		"noFnFlg" => array(
+			"type" => "select",
+			"required" => 1,
+			"options" => array("0", "1"),
+			"otherwise" => "0"),
 		"fnNum" => array(
 			"type" => "int",
 			"required" => 1,
@@ -70,7 +75,8 @@
 	$userID = $_SESSION['userID'];
 	//------------------------------------------------------------------------------------------------------------------
 
-	$dstData = array('message' => "");
+	$dstData = array('message'      => $params['errorMessage'],
+					 'interruptFlg' => $params['interruptFlg']);
 
 	try
 	{
@@ -111,7 +117,7 @@
 				$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, consensual_flg, "
 					        . "evaluation, interrupt_flg, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
 						
-				$sqlParams[0] = $params['execID']
+				$sqlParams[0] = $params['execID'];
 				$sqlParams[1] = $candArr[$i];
 				$sqlParams[2] = $userID;
 				$sqlParams[3] = $consensualFlg;
@@ -136,110 +142,192 @@
 			//----------------------------------------------------------------------------------------------------
 			if($dstData['message'] == "")
 			{
+				$status = ($params['interruptFlg']) ? 1 : 2;
+
 				$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND consensual_flg=?";
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 		
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(1, $params['execID']);
 				$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
-				if($params['feedbackMode'] == "personal")   $stmt->bindValue(3, $userID);		
-		
+				if($params['feedbackMode'] == "personal")   $stmt->bindValue(3, $userID);
+
 				$stmt->execute();
 				$rowNum = $stmt->rowCount();
 				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-						
-				$fnCntStatus = ($params['interruptFlg']) ? 0 : 2;
 				
-				$sqlStr = "";
 				$sqlParams = array();
-				
+
 				if($rowNum == 0)
-				{		
+				{
 					$sqlStr = "INSERT INTO false_negative_count "
 					        . "(exec_id, entered_by, consensual_flg, false_negative_num, status, registered_at)"
 					        . " VALUES (?, ?, ?, ?, ?, ?);";
-					$sqlParams[0] = $params['execID'];
-					$sqlParams[1] = $userID;
-					$sqlParams[2] = $consensualFlg;
-					$sqlParams[3] = $params['fnNum'];
-					$sqlParams[4] = $fnCntStatus;
-					$sqlParams[5] = $registeredAt;
+					$sqlParams[] = $params['execID'];
+					$sqlParams[] = $userID;
+					$sqlParams[] = $consensualFlg;
+					$sqlParams[] = $params['fnNum'];
+					$sqlParams[] = $status;
+					$sqlParams[] = $registeredAt;
+					
+					$stmtFN = $pdo->prepare($sqlStr);
+					$stmtFN->execute($sqlParams);
+
+					if($stmtFN->rowCount() != 1) $dstData['message'] .= "Fail to save the number of FN.";
 				}
 				else if($rowNum == 1)
 				{
-					$sqlStr = "UPDATE false_negative_count SET status=2, registered_at=?";
-					$sqlParams[] = $registeredAt;
+					$savedFnNum = $result['false_negative_num'];
+					$savedStatus= $result['status'];
 					
-					if($feedbackMode == "consensual")
+					if($savedFnNum == 0)
 					{
-						$sqlStr .= ", entered_by=?";
-						$sqlParams[] = $userID;
-					}
-				
-					$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
-					$sqlParams[] = $params['execID'];
-					$sqlParams[] = $consensualFlg;
-				
-					if($feedbackMode == "personal")
-					{
-						$sqlStr .= " AND entered_by=?";
-						$sqlParams[] = $userID;
-					}
-				}
-
-				if($sqlStr != "")
-				{			
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($sqlParams);
-
-					if($stmt->rowCount() != 1)
-					{
-						$tmp = $stmt->errorInfo();
-						$dstData['message'] .= $tmp[2];
-					}
-				}
-				
-				if($result['false_negative_num'] > 0)
-				{
-					$sqlParams = array();
+						if($savedStatus != $status)
+						{
+							$sqlStr = "UPDATE false_negative_count SET status=?, registered_at=?";
+							$sqlParams[] = $status;
+							$sqlParams[] = $registeredAt;
 					
-					$sqlStr = "UPDATE false_negative_location SET intrrupt_flg='f', registered_at=?";
-					$sqlParams[] = $registeredAt;				
+							if($params['feedbackMode'] == "consensual")
+							{
+								$sqlStr .= ", entered_by=?";
+								$sqlParams[] = $userID;
+							}
 				
-					if($feedbackMode == "consensual")
-					{
-						$sqlStr .= ", entered_by=?";
-						$sqlParams[] = $userID;
-					}
+							$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+							$sqlParams[] = $params['execID'];
+							$sqlParams[] = $consensualFlg;
 				
-					$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
-					$sqlParams[] = $params['execID'];
-					$sqlParams[] = $consensualFlg;
-				
-					if($feedbackMode == "personal")
-					{
-						$sqlStr .= " AND entered_by=?";
-						$sqlParams[] = $userID;
-					}				
-				
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($sqlParams);
+							if($params['feedbackMode'] == "personal")
+							{
+								$sqlStr .= " AND entered_by=?";
+								$sqlParams[] = $userID;
+							}
 
-					if($stmt->rowCount() != $result['false_negative_num'])
+							$stmt = $pdo->prepare($sqlStr);
+							$stmt->execute($sqlParams);
+							
+							if($stmt->rowCount() != 1) $dstData['message'] .= "Fail to update FN table.";
+						}
+					}
+					else
 					{
-						$tmp = $stmt->errorInfo();
-						$dstData['message'] .= $tmp[2];
-					}				
+						$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
+								. " AND consensual_flg=?";
+						if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
+		
+						$stmt = $pdo->prepare($sqlStr);
+						$stmt->bindValue(1, $params['execID']);
+						$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
+						if($params['feedbackMode'] == "personal")   $stmt->bindValue(3, $userID);
+						$stmt->execute();
+						
+						if($stmt->fetchColumn() == $savedFnNum)
+						{
+						 	if($savedStatus != $status)
+						 	{						
+								$sqlStr = "UPDATE false_negative_count SET status=?, registered_at=?";
+								$sqlParams[] = $status;
+								$sqlParams[] = $registeredAt;
+					
+								if($params['feedbackMode'] == "consensual")
+								{
+									$sqlStr .= ", entered_by=?";
+									$sqlParams[] = $userID;
+								}
+							
+								$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+								$sqlParams[] = $params['execID'];
+								$sqlParams[] = $consensualFlg;
+							
+								if($params['feedbackMode'] == "personal")
+								{
+									$sqlStr .= " AND entered_by=?";
+									$sqlParams[] = $userID;
+								}
+			
+								$stmt = $pdo->prepare($sqlStr);
+								$stmt->execute($sqlParams);
+
+								if($stmt->rowCount() != 1) 	$dstData['message'] .= "Fail to update FN table.";
+				
+								if($dstData['message'] == "")
+								{
+									$sqlParams = array();
+					
+									$sqlStr = "UPDATE false_negative_location SET interrupt_flg=?,"
+									        . " registered_at=?";
+									$sqlParams[] = ($params['interruptFlg']) ? 't' : 'f';
+									$sqlParams[] = $registeredAt;				
+				
+									if($params['feedbackMode'] == "consensual")
+									{
+										$sqlStr .= ", entered_by=?";
+										$sqlParams[] = $userID;
+									}
+				
+									$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+									$sqlParams[] = $params['execID'];
+									$sqlParams[] = $consensualFlg;
+				
+									if($params['feedbackMode'] == "personal")
+									{
+										$sqlStr .= " AND entered_by=?";
+										$sqlParams[] = $userID;
+									}
+				
+									$stmt = $pdo->prepare($sqlStr);
+									$stmt->execute($sqlParams);
+
+									if($stmt->rowCount() != $result['false_negative_num'])
+									{
+										$dstData['message'] .= "Fail to update FN table.";
+									}
+								}
+							}	
+						}
+						else
+						{
+						 	if($savedStatus != $status || $savedFnNum != $params['fnNum'])
+						 	{						
+								$sqlStr = "UPDATE false_negative_count SET false_negative_num=?,"
+										. " status=?, registered_at=?";
+								$sqlParams[] = $params['fnNum'];
+								$sqlParams[] = $registeredAt;
+					
+								if($params['feedbackMode'] == "consensual")
+								{
+									$sqlStr .= ", entered_by=?";
+									$sqlParams[] = $userID;
+								}
+							
+								$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+								$sqlParams[] = $params['execID'];
+								$sqlParams[] = $consensualFlg;
+							
+								if($params['feedbackMode'] == "personal")
+								{
+									$sqlStr .= " AND entered_by=?";
+									$sqlParams[] = $userID;
+								}
+			
+								$stmt = $pdo->prepare($sqlStr);
+								$stmt->execute($sqlParams);
+
+								if($stmt->rowCount() != 1) 	$dstData['message'] .= "Fail to update FN table.";
+							}	
+						}  
+					}
 				}
 			}
 			//----------------------------------------------------------------------------------------------------------
 
-			if($dstData['message'] == "" && $interruptFlg == 0)
+			if($dstData['message'] == "" && $params['interruptFlg'] == 0)
 			{
 				$dstData['message'] .= 'Successfully registered in feedback database.';
 			}
 		}
-		else if($resultType == 2)
+		else if($resultType == 2)  // ñ¢èCê≥(2010.11.5)
 		{
 			$scoreTableName = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
 		

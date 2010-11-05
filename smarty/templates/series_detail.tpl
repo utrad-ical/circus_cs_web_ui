@@ -151,9 +151,6 @@ function DownloadVolume()
 			<div id="series_detail">
 				<h2>Series detail</h2>
 
-
-
-					
 				<div class="series-detail-img">
 					<form id="form1" name="form1" action="series_detail.php" method="POST">
 
