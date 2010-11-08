@@ -43,7 +43,7 @@
 
 		if($_SESSION['personalFBFlg']==1 && $_SESSION['latestResults']=='own')
 		{
-			include('cad_results/show_cad_results_private.php');
+			include('cad_results/lesion_candidate_display_private.php');
 		
 			$sqlStr = "SELECT lf.exec_id, lf.lesion_id, el.plugin_name, el.version, pt.patient_id, pt.patient_name,"
 					. " st.study_date, st.study_time, es.study_instance_uid, es.series_instance_uid,"
