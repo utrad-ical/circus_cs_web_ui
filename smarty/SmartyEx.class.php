@@ -10,7 +10,7 @@
 	{
 		if ($boolean) return 'O'; else return '-';
 	}
-
+	
 	//function modifier_1or0 ($boolean)
 	//{
 	//	if ($boolean) return '1'; else return '0';

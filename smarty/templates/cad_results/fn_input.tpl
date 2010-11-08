@@ -17,14 +17,25 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
-<script language="javascript" type="text/javascript" src="../js/fn_input.js"></script>
+<script language="javascript" type="text/javascript" src="../js/json2.min.js"></script>
 <script language="Javascript">
 <!--
 
-$(function() {ldelim}
+var fnData  = {$fnData|@json_encode};
+var candPos = {$candPos|@json_encode};
+
+{literal}
+$(function() {
+
+	for(var i=0; i<fnData.length; i++)
+	{
+		AddFnTable(i, fnData[i]);
+	}
+{/literal}
+
 	$("#slider").slider({ldelim}
-		value:1,
-		min:{$sliceOffset+1},
+		value:{$params.sliceOffset+1},
+		min:{$params.sliceOffset+1},
 		max:{$params.fNum},
 		step: 1,
 		slide: function(event, ui) {ldelim}
@@ -84,6 +95,7 @@ function Minus()
 
 -->
 </script>
+<script language="javascript" type="text/javascript" src="../js/fn_input.js"></script>
 
 <link rel="shortcut icon" href="favicon.ico" />
 
@@ -226,25 +238,17 @@ function Minus()
 
 				{* --- Add FN plots --- *}
 
-				<script language="Javascript">
-				<!--
-				{section name=j start=0 loop=$params.enteredFnNum}
-					{assign var="j" value=$smarty.section.j.index}
-					{if $locationList[$j][3] == 1}
-						plotClickedLocation({$j+1}, {$locationList[$j][1]}, {$locationList[$j][2]}, {$locationList[$j][7]});
-					{/if}
-					{/section}
-				-->
-				</script>
-
 				<div class="fl-l" style="width: 40%;">
 		
 					{if $params.registTime == "" || $params.status != 2}
-					<div style="margin-bottom:10px;">
-						<select id="actionMenu" onchange="ChangeAction();" disabled="disabled">
-							<option value="">(action)</option>
+					<div style="margin-bottom:5px;">
+						Action for checked item(s)
+						<select id="actionMenu" onchange="ChangeActionForChackedItems();" disabled="disabled">
+							<option value="delete">delete</option>
+							{if $params.feedbackMode=="consensual"}<option value="integrate">integrate</option>{/if}
 						</select>
-						<input type="button" id="actionBtn" class="form-btn form-btn-disabled" value="action" onclick="TableOperation();" disabled="disabled">
+						<input type="button" id="actionBtn" class="form-btn form-btn-disabled" value="do" onclick="TableOperation();" disabled="disabled"><br/>
+						<span id="tableActionMsg">&nbsp;</span>
 					</div>
 					{/if}
 
@@ -260,19 +264,20 @@ function Minus()
 								{if $params.feedbackMode == "consensual"}
 									<th>Entered by</th>
 									<th style="display:none;">&nbsp;</th>
+									<th style="display:none;">&nbsp;</th>
 								{/if}
 							</tr>
 						</thead>
 						<tbody>
-							{section name=j start=0 loop=$params.enteredFnNum}
+						{*	{section name=j start=0 loop=$params.enteredFnNum}
 							
 								{assign var="j" value=$smarty.section.j.index}	
 
 								<tr id="row{$j+1}" {if $j%2==1}class="column"{/if}>
 
-								{if !($params.registTime == "" && $params.status == 2)}
+								{if $params.registTime == "" || $params.status != 2}
 									<td align=center>
-									<input type="checkbox" name="rowCheckList[]" onclick="ClickRowCheckList();" value="{$j+1}">
+									<input type="checkbox" name="rowCheckList[]" onclick="ChangeActionForChackedItems();" value="{$j+1}">
 									</td>
 								{/if}
 						
@@ -293,7 +298,7 @@ function Minus()
 								{/if}
 							
 								</tr>
-							{/section}
+							{/section} *}
 						</tbody>
 					</table>
 

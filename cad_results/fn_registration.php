@@ -45,14 +45,10 @@
 			"required" => 1,
 			"options" => array("personal", "consensual"),
 			"errorMes" => "[ERROR] 'Feedback mode' is invalid."),
-		"rowNum" => array(
-			"type" => "int",
-			"required" => 1,
-			"min" => 1),
-		"posStr" => array(
-			"type" => "string",
-			"regex" => "/^[\w\s-\/\,\.\^]+$/",
-			"errorMes" => "[ERROR] 'Postion string' is invalid."),
+		//"posStr" => array(
+		//	"type" => "string",
+		//	"regex" => "/^[\w\s-\/\,\.\^]+$/",
+		//	"errorMes" => "[ERROR] 'Postion string' is invalid."),
 		"dstAddress" => array(
 			"type" => "string",
 			"regex" => "/^[-_.!~*\'()\w;\/?:\@&=+\$,%#]+$/",
@@ -60,7 +56,11 @@
 			"errorMes" => "[ERROR] 'dstAddress' is invalid.")
 		));	
 		
-	if($validator->validate($_POST))
+	$fnData = json_decode($_POST['fnData']);
+	
+	//var_dump($fnData);
+
+	if($validator->validate($_POST) && $fnData != null)
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
@@ -69,6 +69,7 @@
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = implode(' ', $validator->errors);
+		if($fnData == null)  $params['errorMessage'] .= " fnData is invalid.";
 	}
 
 	if($params['dstAddress'] == "undefined" || !isset($params['dstAddress'])) $params['dstAddress'] = "";
@@ -103,14 +104,14 @@
 			$stmt->bindValue(2, $userID);
 			$stmt->bindValue(3, ($params['feedbackMode'] == "consensual") ? 't' : 'f');
 			
-			for($j=0; $j<$params['rowNum']; $j++)
+			foreach($fnData as $item)
 			{
-				$tmpStr = explode(' ', $posArr[$j * $DEFAULT_COL_NUM + 3]);	
+				$tmpStr = explode(' ', $item->rank);	
 				if(strcmp($tmpStr[0],'-')==0) $tmpStr[0] = 0;
 
-				$stmt->bindValue(4, $posArr[$j * $DEFAULT_COL_NUM]);
-				$stmt->bindValue(5, $posArr[$j * $DEFAULT_COL_NUM + 1]);
-				$stmt->bindValue(6, $posArr[$j * $DEFAULT_COL_NUM + 2]);
+				$stmt->bindValue(4, $item->x);
+				$stmt->bindValue(5, $item->y);
+				$stmt->bindValue(6, $item->z);
 				$stmt->bindValue(7, $tmpStr[0]);
 				$stmt->bindValue(8, $registTime);
 				$stmt->execute();
@@ -132,9 +133,9 @@
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND consensual_flg='t'"
 						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
 					$sqlParams = array($params['execID'],
-									   $posArr[$j * $DEFAULT_COL_NUM],
-									   $posArr[$j * $DEFAULT_COL_NUM + 1],
-									   $posArr[$j * $DEFAULT_COL_NUM + 2],
+									   $item->x,
+									   $item->y,
+									   $item->z,
 									   $registTime);
 
 					$dstID = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
@@ -164,9 +165,9 @@
 						}
 					}
 			
-					if($posArr[$j * $DEFAULT_COL_NUM + 5] != "")
+					if($item->idStr != "")
 					{
-						$idArr = explode(',', $posArr[$j * $DEFAULT_COL_NUM + 5]);
+						$idArr = explode(',', $item->idStr);
 						$idNum = count($idArr);
 		
 						$sqlStr = "UPDATE false_negative_location SET integrate_location_id=? WHERE location_id=?";
@@ -189,7 +190,7 @@
 					}
 				}
 				//-------------------------------------------------------------------------------------------------------
-			} // end for : j
+			} // end foreach
 		
 			if($dstData['errorMessage'] == "")
 			{
@@ -204,7 +205,7 @@
 				$sqlParams[] = $params['execID'];
 				$sqlParams[] = $userID;
 				$sqlParams[] = $consensualFlg;
-				$sqlParams[] = $params['rowNum'];
+				$sqlParams[] = count($fnData);
 				$sqlParams[] = $registTime;
 	
 				$stmt = $pdo->prepare($sqlStr);

@@ -8,7 +8,6 @@ function JumpImgNumber(imgNum)
 		  windowWidth: $("#windowWidth").val(),
 		  presetName:  $("#presetName").val() },
   		  function(data){
-
 			if(data.errorMessage != "")
 			{
 				alert(data.errorMessage);
@@ -21,24 +20,18 @@ function JumpImgNumber(imgNum)
 
 				if($('#checkVisibleFN').attr('checked'))
 				{
-					var tbody= document.getElementById("posTable").tBodies.item(0);
-					var rowNum = tbody.rows["length"];
-
-					var colOffset = ($("#registTime").val() == "" || $("#status").val() != 2) ? 1 : 0;
-					var posX, posY, posZ;
-
-					for(var j=0; j<rowNum; j++)
+					for(var i=0; i<fnData.length; i++)
 					{
-						posID = tbody.rows[j].cells[colOffset].innerHTML;
-						posX  = tbody.rows[j].cells[colOffset+1].innerHTML;
-						posY  = tbody.rows[j].cells[colOffset+2].innerHTML;
-						posZ  = tbody.rows[j].cells[colOffset+3].innerHTML;
-
-						var colorSet = ($("#feedbackMode").val()=="consensual") ? parseInt(tbody.rows[j].cells[colOffset+7].innerHTML) : 0;
-	
-						if(posZ == data.imgNum)
+						if(fnData[i].z == data.imgNum)
 						{
-							plotClickedLocation(posID, posX, posY, colorSet);
+							var colorSet = ($("#feedbackMode").val()=="consensual") ? fnData[i].colorSet : "0";
+
+							var xPos = parseInt(fnData[i].x * parseFloat($("#dispWidth").val())
+				                                 / parseFloat($("#orgWidth").val())  + 0.5);
+							var yPos = parseInt(fnData[i].y * parseFloat($("#dispHeight").val())
+                                                 / parseFloat($("#orgHeight").val()) + 0.5);
+
+							plotDots(i+1, xPos, yPos, colorSet);
 						}
 					}
 				}
@@ -46,32 +39,17 @@ function JumpImgNumber(imgNum)
 		}, "json");
 }
 
-function plotClickedLocation(id, x, y, colorSet)
-{
-	var xPos = parseInt(x * parseFloat($("#dispWidth").val())  / parseFloat($("#orgWidth").val())  + 0.5);
-	var yPos = parseInt(y * parseFloat($("#dispHeight").val()) / parseFloat($("#orgHeight").val()) + 0.5);
-	
-	 plotDots(id, xPos, yPos, colorSet);
-	 
-}
-
-function ClickPosTable(id, imgNum)
-{
-	$('#checkVisibleFN').attr('checked', 'checked');
-	JumpImgNumber(imgNum);
-}
-
-function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
-{
-	var sliceLoc = $("#sliceLocation").val();
-	
-	var imgNum = parseInt(((sliceLoc - origin) / pitch) + offset + 1.5);
-	
-	if(imgNum < (offset + 1))   imgNum = offset + 1;
-	else if(imgNum > fNum)  	imgNum = fNum;
-	
-	JumpImgNumber(imgNum);
-}
+//function JumpImgNumBySliceLocation(origin, pitch, offset, fNum)
+//{
+//	var sliceLoc = $("#sliceLocation").val();
+//	
+//	var imgNum = parseInt(((sliceLoc - origin) / pitch) + offset + 1.5);
+//	
+//	if(imgNum < (offset + 1))   imgNum = offset + 1;
+//	else if(imgNum > fNum)  	imgNum = fNum;
+//	
+//	JumpImgNumber(imgNum);
+//}
 
 function plotDots(id, x, y, colorSet)
 {
@@ -86,19 +64,19 @@ function plotDots(id, x, y, colorSet)
 
 	switch(colorSet)
 	{
-		case 1: 
+		case "1": 
 			labelBaseX = 3;
 			labelBaseY = -20;
 			color = "#228b22";
 			break;
 	
-		case 2:
+		case "2":
 			labelBaseX = (id < 10) ? -11 : -20;
 			labelBaseY = -20;
 			color = "#ff8000";
 			break;
 	
-		case 3:
+		case "3":
 			labelBaseX = (id < 10) ? -11 : -20;
 			color = "#ff0000";
 			break;
@@ -115,8 +93,6 @@ function plotDots(id, x, y, colorSet)
 		labelOffsetX = 3;
 		labelOffsetY = 1;
 	}
-
-
 
 	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; '
                 + 'left:' + (x+dotOffsetX) + 'px; height:3px; width:3px; padding:0px; '
@@ -142,50 +118,45 @@ function ChangeVisibleFN()
 //--------------------------------------------------------------------------------------------------
 // Fnuctions for location table
 //--------------------------------------------------------------------------------------------------
-function ResetFnTable()
-{
-	if(confirm('Do you remove all FN locations?'))
-	{
-		ClickRowCheckList();
-		JumpImgNumber($("#slider").slider("value"));
-		$("#checkVisibleFN").attr('checked', 'checked');
-		$("#posTable tbody").html("");
-	}
-}
+//function ResetFnTable()
+//{
+//	if(confirm('Do you remove all FN locations?'))
+//	{
+//		ChangeActionForChackedItems();
+//		JumpImgNumber($("#slider").slider("value"));
+//		$("#checkVisibleFN").attr('checked', 'checked');
+//		$("#posTable tbody").html("");
+//	}
+//}
 
-function UndoFnTable()
-{
-	if(confirm('Undo FN locations?'))
-	{
-		var posArr = $("#posStr").val().split('^');
-		var enteredFnNum = posArr.length / 6;
-
-		$("#posTable tbody").html("");
-
-		for(i=0; i<enteredFnNum; i++)
-		{
-			AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
-                        posArr[i*6+4], posArr[i*6+5]);
-		}
-		ClickRowCheckList();
-		JumpImgNumber($("#slider").slider("value"));
-		$("#checkVisibleFN").attr('checked', 'checked');
-		$("#undoBtn").hide();
-	}
-}
+//function UndoFnTable()
+//{
+//	if(confirm('Undo FN locations?'))
+//	{
+//		var posArr = $("#posStr").val().split('^');
+//		var enteredFnNum = posArr.length / 6;
+//
+//		$("#posTable tbody").html("");
+//
+//		for(i=0; i<enteredFnNum; i++)
+//		{
+//			AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
+//                      posArr[i*6+4], posArr[i*6+5]);
+//		}
+//		ChangeActionForChackedItems();
+//		JumpImgNumber($("#slider").slider("value"));
+//		$("#checkVisibleFN").attr('checked', 'checked');
+//		$("#undoBtn").hide();
+//	}
+//}
 
 function ConfirmFNLocation(address)
 {
-   	var rowNum= document.getElementById('posTable').tBodies.item(0).rows["length"];
-	var posStr = CreatePosStr();
-	var that = this;
-
 	if(confirm('Do you save entered FN locations?'))
 	{
 		$.post("fn_registration.php",
 			{ execID: $("#execID").val(),
-			  posStr: posStr,
-			  rowNum: rowNum,
+			  fnData: JSON.stringify(fnData),
 			  feedbackMode: $("#feedbackMode").val(),
 			  dstAddress:address},
   			  function(data){
@@ -214,33 +185,6 @@ function ConfirmFNLocation(address)
 	}
 }
 
-function ClickRowCheckList()
-{
-	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
-	var htmlStr = '<option value="">(action)</option>';
-
-	if(checkCnt > 0)
-	{
-		$("#confirmBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
-		
-		htmlStr += '<option value="delete">delete</option>';
-
-		if (checkCnt>=2 && $("#feedbackMode").val()=="consensual")
-		{
-			htmlStr += '<option value="integrate">integrate</option>'
-		}
-
-		$("#actionMenu").removeAttr("disabled").html(htmlStr);
-	}
-	else
-	{
-		$("#confirmBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		$("#actionMenu").attr("disabled", "disabled").html(htmlStr);
-		$("#actionBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
-	}
-}
-
-
 function ChangePresetMenu()
 {
 	var tmpStr = $("#presetMenu option:selected").val().split("^");
@@ -252,49 +196,77 @@ function ChangePresetMenu()
 	JumpImgNumber($("#slider").slider("value"));
 }
 
-function AddPosTable(rowNum, xPos, yPos, zPos, enteredBy, idStr)
+function AddFnTable(id, item)
 {
 	var feedbackMode = $("#feedbackMode").val();
-	var htmlStr = '<tr id="row' + rowNum + '"';
-	htmlStr += (rowNum%2==0) ? ' class="column">' : '>';
+
+	var htmlStr = '<tr id="row' + id + '"' + ((id%2==1) ? ' class="column">' : '>');
 
 	if($("#registTime").val() == "" || $("#status").val() != 2)
 	{
-		htmlStr += '<td><input type="checkbox" name="rowCheckList[]"'
-                +  ' onclick="ClickRowCheckList();"value="' + rowNum + '"></td>';
+		htmlStr += '<td class="operationColumn"><input type="checkbox" name="rowCheckList[]"'
+                +  ' onclick="ChangeActionForChackedItems();"value="' + id + '"></td>';
 	}
 
-	var tdBaseStr = ' onclick="ClickPosTable(\'row' + rowNum + '\',' + zPos + ');" style="color:';
-	tdBaseStr += (feedbackMode == "consensual") ? '#ff00ff;">' : 'black;">';
+	var tdBaseStr = ' style="color:' + ((feedbackMode == "consensual") ? '#ff00ff;">' : 'black;">');
 
-	htmlStr += '<td class="al-r"' + tdBaseStr + rowNum + '</td>'
-            +  '<td class="al-r"' + tdBaseStr + xPos + '</td>'
-            +  '<td class="al-r"' + tdBaseStr + yPos + '</td>'
-            +  '<td class="al-r"' + tdBaseStr + zPos + '</td>'
-            +  '<td' + tdBaseStr + CheckNearestHiddenTP(xPos, yPos, zPos) + '</td>';
+	htmlStr += '<td class="id"' + tdBaseStr + (id+1) + '</td>'
+            +  '<td class="x"' + tdBaseStr + item.x + '</td>'
+            +  '<td class="y"' + tdBaseStr + item.y + '</td>'
+            +  '<td class="z"' + tdBaseStr + item.z + '</td>'
+            +  '<td class="rank"' + tdBaseStr + item.rank + '</td>';
 
 	if(feedbackMode == "consensual")
 	{
-		htmlStr += '<td' + tdBaseStr + enteredBy + '</td>'
-				+  '<td style="display:none;">' + idStr + '</td>';
-				+  '<td style="display:none;">0</td>';
+		htmlStr += '<td class="enteredBy"' + tdBaseStr + item.enteredBy + '</td>'
+				+  '<td class="idStr" style="display:none;">' + item.idStr + '</td>';
+				+  '<td class="colorSet" style="display:none;">' + item.colorSet + '</td>';
 	}
 
 	$("#posTable tbody").append(htmlStr);
 	$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 }
 
-function ChangeAction()
+function ChangeActionForChackedItems()
 {
 	var actionVal = $("#actionMenu").val();
+	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
+	var htmlStr = "&nbsp;";
 
-	if(actionVal != "")
+	if(checkCnt > 0)
 	{
-		$("#actionBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+		if(actionVal == "delete") {
+			htmlStr = '<span style="color:blue;">checked ' + checkCnt + ' item(s) delete.</span>';
+		} else if(actionVal == "integrate") {
+			if(checkCnt >= 2) {
+				htmlStr = '<span style="color:blue;">checked ' + checkCnt + ' items itegrate to one.</span>';
+			} else {
+				htmlStr = '<span style="color:red;">more than 2 items required.</span>';
+			}
+		}
+	}
+
+	$("#tableActionMsg").html(htmlStr);
+
+	if(checkCnt > 0)
+	{
+		$("#confirmBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		$("#actionMenu").removeAttr("disabled");
+
+		if((actionVal == "delete" && checkCnt > 0) || (actionVal == "integrate" && checkCnt >= 2))
+		{
+			$("#actionBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
+		}
+		else
+		{
+			$("#actionBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		}
 	}
 	else
 	{
+		$("#confirmBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 		$("#actionBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+		$("#actionMenu").attr("disabled", "disabled");
 	}
 }
 
@@ -306,7 +278,7 @@ function TableOperation()
 	switch(actionVal)
 	{
 		case "delete":
-			var str = 'Do you delete selected location' + ((checkCnt > 1) ? 's?' : '?');
+			var str = 'Do you delete selected location(s)?';
 			if(confirm(str))	DeleteLocationRows();
 			else				$("input[name='rowCheckList[]']").removeAttr("checked");
 		    break;
@@ -315,7 +287,7 @@ function TableOperation()
 			IntegrateLocationRows();
 			break;
 	}
-	ClickRowCheckList();
+	ChangeActionForChackedItems();
 
 	if($("#status").val()==0)			$("#resetBtn").show();
 	else if($("#status").val()==1)		$("#undoBtn").show();
@@ -336,113 +308,112 @@ function TableOperation()
 	});
 }
 
+function refreshTable()
+{
+	$('#posTable tbody tr').remove();
+
+    for (var i=0; i< fnData.length; i++)
+	{
+		AddFnTable(i, fnData[i]);
+    }
+    //refreshOperationButtons();
+	$("#checkVisibleFN").attr('checked', 'checked');
+	JumpImgNumber($("#slider").slider("value"));
+
+}
+
 function DeleteLocationRows()
 {
-	$("input[name='rowCheckList[]']:checked").each(function() {
-		$("#row" + $(this).val()).remove();
-	});
+    var checks = $("input[name='rowCheckList[]']:checked");
+    var indexes = checks.map(function() {
+      return $(this).val();
+    });
 
-	var posArr = CreatePosStr().split('^');
-	var enteredFnNum = (posArr.length-1) / 6;
-
-	$("#posTable tbody").html("");
-
-	for(i=0; i<enteredFnNum; i++)
-	{
-		AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
-                   posArr[i*6+4], posArr[i*6+5]);
-	}
-
-	ClickRowCheckList();
-	JumpImgNumber($("#slider").slider("value"));
-	$("#checkVisibleFN").attr('checked', 'checked');
+    for (i = indexes.length-1; i >=0; i--) {
+		$("#row" + indexes[i]).remove();
+		fnData.splice(indexes[i], 1);
+    }
+    refreshTable();
 }
+
 
 function IntegrateLocationRows()
 {
-	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
+    var indexes = $("input[name='rowCheckList[]']:checked").map(function() { return $(this).val(); });
 
-	// チェックされたcheckboxの値を取得
-	var checkedIdArr = $("input[name='rowCheckList[]']:checked").map(function() { return $(this).val(); })
-                                                                .get().join(",").split(',');
-
-	if(checkCnt < 2)
+	if(confirm('Do you integrate selected items?'))
 	{
-	   alert('Please select at least two locations.');
-	}
-	else
-	{
-		var str = 'Do you integrate selected locations?';
+		var registTime = $("#registTime").val();
 		
-		if(confirm(str))
+		var xTmp = 0;
+		var yTmp = 0;
+		var zTmp = 0;
+		var idStr = "";
+
+		for(var i=0; i<indexes.length; i++)
 		{
-			var registTime = $("#registTime").val();
-
-			var tbody = document.getElementById("posTable").tBodies.item(0);
-		
-			var xTmp = 0;
-			var yTmp = 0;
-			var zTmp = 0;
-			var idStr = "";
-			
-			var orgWidth   = $("#orgWidth").val();
-			var orgHeight  = $("#orgHeight").val();
-			var dispWidth  = $("#dispWidth").val();
-			var dispHeight = $("#dispHeight").val();
-
-			for(var j=0; j<checkCnt; j++)
+			// ↓Consensusモードで新たに追加した行を含む統合は行わない
+			if(fnData[i].idStr == "")
 			{
-				// ↓Consensusモードで新たに追加した行を含む統合は行わない
-				if(tbody.rows[checkedIdArr[j]-1].cells[7].innerHTML == "")
-				{
-					alert('Error: The integration including the row that you newly added in consensual mode is impossible.');
-					JumpImgNumber($("#imgNum").val());
-					return false;
-				}
-				else
-				{
-					xTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[2].innerHTML);
-					yTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[3].innerHTML);
-					zTmp += parseInt(tbody.rows[checkedIdArr[j]-1].cells[4].innerHTML);
-					if(j>=1)  idStr += ',';
-					idStr += tbody.rows[checkedIdArr[j]-1].cells[7].innerHTML;
-				}
+				alert('[ERROR] The integration including the row that you newly added in consensual mode is impossible.');
+				JumpImgNumber($("#imgNum").val());
+				return false;
 			}
-
-			var xPos = parseInt(parseFloat(xTmp) / parseFloat(checkCnt) + 0.5);
-			var yPos = parseInt(parseFloat(yTmp) / parseFloat(checkCnt) + 0.5);
-			var zPos = parseInt(parseFloat(zTmp) / parseFloat(checkCnt) + 0.5);
-
-			var xOffset = parseInt($("#imgArea").position().left);
-			var yOffset = parseInt($("#imgArea").position().top);
-
-			//----------------------------------------------------------------------
-			// For mobile safari (iPad/iPhone iOS:3.2 or 4.0.x)
-			//----------------------------------------------------------------------
-			var iOSPattern = /; CPU\sOS\s(?:3_2|4_0)/i;
-
-			if(iOSPattern.test(navigator.userAgent) )
+			else
 			{
-				xOffset -= window.scrollX;
-				yOffset -= window.scrollY;
+				xTmp += fnData[indexes[i]].x;
+				yTmp += fnData[indexes[i]].y;
+				zTmp += fnData[indexes[i]].z;
+				if(i>0)  idStr += ',';
+				idStr += fnData[indexes[i]].idStr;
 			}
-			//----------------------------------------------------------------------
-
-			var xPos2 = parseInt(xPos * parseFloat(dispWidth) / parseFloat(orgWidth)   + 0.5);
-			var yPos2 = parseInt(yPos * parseFloat(dispHeight) / parseFloat(orgHeight) + 0.5);
-
-
-			DeleteLocationRows();
-			var rowNum = tbody.rows["length"];	
-	
-			plotDots(rowNum+1, xPos2+xOffset, yPos2+yOffset, 0);
-
-			AddPosTable(rowNum+1, xPos, yPos, zPos, $("#userID").val(), idStr);
-
-			$("#checkVisibleFN").attr('checked', 'checked');
-			JumpImgNumber(zPos);
 		}
 
+		alert(xTmp +' ' + yTmp + ' ' +zTmp);
+
+		var xPos = parseInt(parseFloat(xTmp) / parseFloat(indexes.length) + 0.5);
+		var yPos = parseInt(parseFloat(yTmp) / parseFloat(indexes.length) + 0.5);
+		var zPos = parseInt(parseFloat(zTmp) / parseFloat(indexes.length) + 0.5);
+
+		var xOffset = parseInt($("#imgArea").position().left);
+		var yOffset = parseInt($("#imgArea").position().top);
+
+		//----------------------------------------------------------------------
+		// For mobile safari (iPad/iPhone iOS:3.2 or 4.0.x)
+		//----------------------------------------------------------------------
+		var iOSPattern = /; CPU\sOS\s(?:3_2|4_0)/i;
+
+		if(iOSPattern.test(navigator.userAgent) )
+		{
+			xOffset -= window.scrollX;
+			yOffset -= window.scrollY;
+		}
+		//----------------------------------------------------------------------
+
+		var xPos2 = parseInt(xPos * parseFloat($("#dispWidth").val())
+                             / parseFloat($("#orgWidth").val())   + 0.5);
+		var yPos2 = parseInt(yPos * parseFloat($("#dispHeight").val())
+                             / parseFloat($("#orgHeight").val()) + 0.5);
+    
+		for (i = indexes.length-1; i >=0; i--) {
+			$("#row" + indexes[i]).remove();
+			fnData.splice(indexes[i], 1);
+    	}
+
+		var item = {
+			"x": xPos,
+      		"y": yPos,
+     	 	"z": zPos,
+      		"rank": CheckNearestHiddenTP(xPos, yPos, zPos),
+      		"enteredBy": $("#userID").val(),
+			"idStr": idStr,
+			"colorSet": 0
+		};
+
+		//plotDots(fnData.length+1, xPos2+xOffset, yPos2+yOffset, 0);
+		AddFnTable(fnData.length, item);
+		fnData.push(item);
+	    refreshTable();
 	}
 }
 
@@ -452,76 +423,54 @@ function CheckNearestHiddenTP(posX, posY, posZ)
 	var distTh = $("#distTh").val();
 	distTh = distTh * distTh;
 
-	var candPos = $("#candPosStr").val().split('^');
-	var candNum = candPos.length/4;
-	
 	var distMin = 10000;
-	var minId = 0;
 	var ret = '- / -';
-		
-	for(var i=0; i<candNum; i++)
+
+	for(var i=0; i<candPos.length; i++)
 	{
-		var candX = candPos[i * 4 + 1] - posX;
-		var candY = candPos[i * 4 + 2] - posY;
-		var candZ = candPos[i * 4 + 3] - posZ;
-				
+		var candX = candPos[i].x - posX;
+		var candY = candPos[i].y - posY;
+		var candZ = candPos[i].z - posZ;
+
 		var dist = candX * candX + candY * candY + candZ * candZ;
 
 		if(dist < distMin)
 		{
 			distMin = dist;
-			if(distMin < distTh) ret = candPos[i*4] + ' / ' + Math.sqrt(distMin).toFixed(2);
+			if(distMin < distTh) ret = candPos[i].id + ' / ' + Math.sqrt(distMin).toFixed(2);
 		}
 	}
 	return ret;
 }
 
-function CreatePosStr()
-{
-	var tbody= document.getElementById("posTable").tBodies.item(0);
-	var rowNum = tbody.rows["length"];
-	var startCol = 2;
-	var endCol   = 5;
-	
-	if($("#registTime").val() != "" && $("#status").val() == 2)	// Modify用
-	{
-		startCol = 1;
-		endCol   = 4;
-	}
-
-	var posStr = "";
-	
-	for(var j=0; j<rowNum; j++)
-	{
-		for(var i=startCol; i<=endCol; i++)
-		{
-			posStr += (tbody.rows[j].cells[i].innerHTML + '^');
-		}
-		
-		if($("#feedbackMode").val() == "consensual")
-		{
-			posStr += (tbody.rows[j].cells[endCol+1].innerHTML.replace(' ','') + '^');
-			posStr += (tbody.rows[j].cells[endCol+2].innerHTML.replace(' ','') + '^');
-		}
-		else
-		{
-			 posStr += ($("#userID").val() + '^^');
-		}
-	}
-	return posStr;
-}
-
 //--------------------------------------------------------------------------------------------------
 
+var rowClickHandler = function(event) {
+	// targetが「操作」列の内部にある要素の場合は処理しない。
+	// それ以外の行のどこかをクリックした場合のみ反応する。
+
+	if ($(event.target).parents('td.operationColumn').length == 0)
+	{
+		$('#checkVisibleFN').attr('checked', 'checked');
+
+		// for jQuery 1.3.2
+		var imgNum = $(event.target).parents('tr').children('td.z').html();
+		$("#slider").slider("value", imgNum);
+
+		// for jQuery 1.4.3
+		//var idx = $(event.target).parents('tr').index();
+		//var item = fnData[idx];
+		//$("#slider").slider("value", item.z);
+	}
+}
+
+
+
 $(document).ready(function(){
+
+	$('#posTable tbody tr').live('click', rowClickHandler);
 	
 	$("img#imgArea.enter").click(function(e){
-
-		var table = document.getElementById('posTable');
-		var tbody = table.tBodies.item(0);
-
-		// Number of rows
-    	var rowNum=tbody.rows["length"];
 
 		//------------------------------------------------------------------------------------------
 		// Retrieve clicked position and plot dot
@@ -544,14 +493,24 @@ $(document).ready(function(){
 		var xPos = parseInt(x*parseFloat($("#orgWidth").val())/parseFloat($("#dispWidth").val())+0.5);
 		var yPos = parseInt(y*parseFloat($("#orgHeight").val())/parseFloat($("#dispHeight").val())+0.5);
 
-		plotDots(rowNum+1, x, y, 0);
 		//------------------------------------------------------------------------------------------
 
-		var feedbackMode = $("#feedbackMode").val();
-		var imgNum       = $("#slider").slider("value");
+		var imgNum = $("#slider").slider("value");
 
-		AddPosTable(rowNum+1, xPos, yPos, imgNum, $("#userID").val(), '');
-	
+		var item = {
+			"x": xPos,
+      		"y": yPos,
+     	 	"z": imgNum,
+      		"rank": CheckNearestHiddenTP(xPos, yPos, imgNum),
+      		"enteredBy": $("#userID").val(),
+			"idStr": "",
+			"colorSet": 0
+		};
+
+		plotDots(fnData.length+1, x, y, 0);
+		AddFnTable(fnData.length, item);
+		fnData.push(item);
+		
 		if(!$("#checkVisibleFN").is(':checked'))
 		{
 			$("#checkVisibleFN").attr('checked', 'checked');

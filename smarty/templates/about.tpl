@@ -39,6 +39,7 @@
   overflow-y:absolute;
   overflow-x:hidden;
   height: 100px;
+  margin-left: 10px;
 }
 
 -->
@@ -67,7 +68,7 @@
 
 				<p class="mt5">CIRCUS CS is based as follows:</p>
 				<ul class="mt5 ml10">
-					<li>- Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery-UI
+					<li>- Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
 					<li>- DICOM storage server: DCMTK 3.5.4, PostgreSQL
 					<li>- External application for research function: R 2.10.2, gnuplot 4.4
 				</ul>				
@@ -75,7 +76,7 @@
 				<p class="mt5">Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
 
 				<p class="mt5">CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
-				A plug-in development kit will be released in the autum 2010.</p> 
+				A plug-in development kit will be released in the winter 2011.</p> 
 
 				<h4 class="mt20">Developer team:</h4>
 				<table class="ml10 mt5 mb10">
@@ -127,7 +128,7 @@
 
 
 			<h2>Installed plug-ins</h2>
-			<div class="plug-in ml10">
+			<div class="plug-in">
 				<ul>
 					{foreach from=$pluginData item=item}
 						<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})

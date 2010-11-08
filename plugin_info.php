@@ -12,14 +12,14 @@
 
 <link rel="stylesheet" type="text/css" href="css/base_style.css">
 
-<script type="text/javascript" src="js/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="js/search_condition.js"></script>
 
 <script language="Javascript">;
 <!--
-jQuery(function(){
+$(function(){
 
-	jQuery("#cadMenu").change(function(){
+	$("#cadMenu").change(function(){
 		
 		var tmp = jQuery("#cadMenu").val().split('^');
 		var address = 'plugin_info.php?cadName=' + tmp[0] + '&version=' + tmp[1];

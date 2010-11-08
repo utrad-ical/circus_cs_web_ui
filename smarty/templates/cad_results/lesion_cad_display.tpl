@@ -51,18 +51,15 @@ function CreateEvalStr(lesionArr)
 
 function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress)
 {
-	var noFnFlg = ($(this).attr('checked') == true) ? 1 : 0;
-
 	$.post("feedback_registration.php",
 			{ execID:  $("#execID").val(),
 	  		  cadName: $("#cadName").val(),
 	          version: $("#version").val(),
 	          interruptFlg: interruptFlg,
-			  noFnFlg: noFnFlg,
+			  fnFoundFlg: $('input[name="fnFoundFlg"]:checked').val(),
 	          feedbackMode: feedbackMode,
 	  		  candStr: candStr,
-	          evalStr: evalStr,
-       		  fnNum: $("#fnNum").val()},
+	          evalStr: evalStr},
 			  function(data){
 
 				if(interruptFlg == 0)	alert(data.message);
@@ -145,9 +142,10 @@ function ChangeRegistCondition()
 {
 	var checkCnt = $("input[name^='radioCand']:checked").length;
 
-	var tmpStr = 'Lesion classification: '
-               + (($("#candNum").val()==checkCnt) ? 'complete' : 'incomplete') + '<br/>'
-	           + 'FN input: ' + (($("#fnInputFlg").val()==1) ? 'complete' : 'incomplete');
+	var tmpStr = 'Lesion classification: <span style="color:' 
+               + (($("#candNum").val()==checkCnt) ? 'blue;">complete' : 'red;">incomplete') + '</span><br/>'
+	           + 'FN input: <span style="color:'
+		       + (($("#fnInputFlg").val()==1) ? 'blue;">complete' : 'red;">incomplete') + '</span>';
 
 	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt && $("#fnInputFlg").val()==1)
 	{
@@ -293,25 +291,19 @@ $(function() {
 	$("#sliderValue").html(jQuery("#slider").slider("value"));	
 
 {literal}
-	$("#noFnCheck").click(function() {
 
-		if($(this).attr('checked') == true)
+	$("input[name='fnFoundFlg']").change(function() {
+
+		if($(this).val() == 0)
 		{
 			if(confirm('Is there no false negative?'))
 			{
 				$("#fnInputFlg").val(1);
-				$("#fnNum").val(0).attr('disabled', 'disabled');
-			}
-			else
-			{
-			    $(this).removeAttr('checked');
-				$("#fnNum").removeAttr('disabled');
 			}
 		}
 		else
 		{
-		    $("#fnInputFlg").val(0);
-			$("#fnNum").removeAttr('disabled');
+		    $("#fnInputFlg").val(($("#fnNum").val() > 0) ? 1 : 0);
 		}
 
 		ChangeRegistCondition();
@@ -407,7 +399,7 @@ $(function() {
 				<div class="hide-on-guest">
 					<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
 					<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
-					<div class="fl-l" style="margin-left:5px;">{$registMsg}</div>
+					<div class="fl-l" style="margin-left:5px;font-size:80%;"><a href="#">about classification types</a></div>
 				</div>
 			
 				<div class="fl-clr"></div>
@@ -445,16 +437,15 @@ $(function() {
 					<input type="hidden" id="interruptFlg" name="interruptFlg" value="{$params.interruptFlg}">
 					<input type="hidden" id="registFlg"    name="registFlg"    value="{$params.registFlg}">
 
-					<div class="hide-on-guest fl-clr" style="width: 780px;">
-						<div class="fl-l">
-							<span style="font-weight:bold;">Number of false negatives: </span><input id="fnNum" type="text" class="al-r" style="width: 30px;" value={$params.fnNum}{if $params.fnInputFlg || $params.fnPersonalCnt} disabled="disabled"{/if} />
-							<input type="button" class="form-btn" value="FN input" onclick="ShowFNinput();" />
-							{if $params.registTime==""}<input id="noFnCheck" type="checkbox" style="margin-left:10px;"{if $params.fnInputFlg || $params.fnPersonalCnt} disabled="disabled"{/if}/><span style="font-weight:bold;">&nbsp;No false negative</span>{/if}
+					<div class="hide-on-guest fl-clr" style="width: 820px;">
+						<div class="fl-l" style="width:570px;">
+							<input type="radio" name="fnFoundFlg" value="1"{if !$params.fnInputFlg ||$params.fnNum>0 || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} checked="checked"{/if} {if $params.fnInputFlg} disabled="disabled"{/if}/> False negative found&nbsp;&nbsp;<input type="button" class="form-btn" value="input" onclick="ShowFNinput();" />&nbsp;&nbsp;(<span id="fnNum" style="font-weight:bold;color:red;">{$params.fnNum}</span> entered)<br/>
+							<input type="radio" name="fnFoundFlg" value="0"{if $params.fnInputFlg && $params.fnNum==0} checked="checked"{/if}{if $params.fnInputFlg || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} disabled="disabled"{/if} /> FN&nbsp;&nbsp;NOT&nbsp;&nbsp;found
 						</div>
-						<p class="fl-r" style="width:255px;">
+						<p class="fl-r" style="width:250px;">
 							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $params.registTime!="" || !($params.candNum==$params.lesionCheckCnt && $params.fnInputFlg)} disabled="disabled"{/if} />
 							<br />
-							<span id="registCaution" class="regist-caution">{if $params.registTime==""}{$params.registStr}{else}&nbsp;{/if}</span>
+							<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || !$params.fnInputFlg}{$params.registStr}{else}{$registMsg}{/if}</span>
 						</p>
 					</div>
 				{/if}

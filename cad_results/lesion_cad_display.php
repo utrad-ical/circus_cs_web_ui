@@ -319,10 +319,10 @@
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	$params['registStr'] = 'Lesion classification: '
-	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'complete' : 'incomplete')
-						 . '<br/>FN input: '
-						 . (($params['fnInputFlg']) ? 'complete' : 'incomplete');
+	$params['registStr'] = 'Lesion classification: <span style="color:'
+	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'blue;">complete' : 'red;">incomplete')
+						 . '</span><br/>FN input: <span style="color:'
+						 . (($params['fnInputFlg']) ? 'blue;">complete' : 'red;">incomplete') . '</span>';
 
 	//------------------------------------------------------------------------------------------------------------------
 	// For CAD detail

@@ -179,17 +179,15 @@
 			$stmt->execute();
 			$lesionNum = $stmt->rowCount(); 
 				
-			$candPosArr = array();
+			$candPos = array();
 				
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
-				$candPosArr[] = $result[0];
-				$candPosArr[] = $result[1];
-				$candPosArr[] = $result[2];
-				$candPosArr[] = $result[3];
+				$candPos[] = array('id' => $result[0],
+								   'x'  => $result[1],
+				                   'y'  => $result[2],
+								   'z'  => $result[3]);
 			}
-	
-			$params['candPosStr'] = implode('^', $candPosArr);
 			//----------------------------------------------------------------------------------------------------
 	
 			//----------------------------------------------------------------------------------------------------
@@ -451,7 +449,7 @@
 			$subDir = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_JPEG;
 			if(!is_dir($subDir))	mkdir($subDir);
 				
-			$tmpFname = $flist[$params['imgNum']-1];
+			$tmpFname = $flist[$params['imgNum']+$params['sliceOffset']-1];
 		
 			$srcFname  = $params['seriesDir'] . $DIR_SEPARATOR . $tmpFname;
 			
@@ -525,7 +523,7 @@
 			//--------------------------------------------------------------------------------------------------------
 			// Location list
 			//--------------------------------------------------------------------------------------------------------
-			$locationList = array();
+			$fnData = array();
 		
 			for($j=0; $j<$params['enteredFnNum']; $j++)
 			{
@@ -543,22 +541,22 @@
 						$fontColor = $colorList[$params['userArr'][$tmpUserID]];	
 					}
 				}
-			
-				$locationList[$j][0] = $fontColor;
-				$locationList[$j][1] = $fnPosArray[$j*$DEFAULT_COL_NUM];		// posX
-				$locationList[$j][2] = $fnPosArray[$j*$DEFAULT_COL_NUM+1];		// posY
-				$locationList[$j][3] = $fnPosArray[$j*$DEFAULT_COL_NUM+2];		// posZ
-				$locationList[$j][4] = $fnPosArray[$j*$DEFAULT_COL_NUM+3];		// information of nearest cand.
-				$locationList[$j][5] = $fnPosArray[$j*$DEFAULT_COL_NUM+4];		// entered by
-				$locationList[$j][6] = $fnPosArray[$j*$DEFAULT_COL_NUM+5];
 				
 				// Position for label
-				$locationList[$j][7] = 0;
+				$colorSet = 0;
 				if($params['feedbackMode'] == "consensual")
 				{
 					$tmpUserID = strtok($fnPosArray[$j * $DEFAULT_COL_NUM + 4], ',');
-					$locationList[$j][7] = $params['userArr'][$tmpUserID];
-				}
+					$colorSet = $params['userArr'][$tmpUserID];
+				}				
+			
+				$fnData[] = array("x"         => $fnPosArray[$j*$DEFAULT_COL_NUM],		// posX
+				                  "y"         => $fnPosArray[$j*$DEFAULT_COL_NUM+1],	// posY
+								  "z"         => $fnPosArray[$j*$DEFAULT_COL_NUM+2],	// posZ
+								  "rank"      => $fnPosArray[$j*$DEFAULT_COL_NUM+3],
+								  "enteredBy" => $fnPosArray[$j*$DEFAULT_COL_NUM+4],	// entered by
+								  "idStr"     => $fnPosArray[$j*$DEFAULT_COL_NUM+5],
+								  "colorSet"  => $colorSet);
 			}
 		}
 
@@ -579,11 +577,12 @@
 		$smarty->assign('userID',   $userID);
 		$smarty->assign('ticket',   $_SESSION['ticket']);
 		
+		$smarty->assign('fnData',   $fnData);
+		$smarty->assign('candPos',  $candPos);
+		
 		$smarty->assign('presetArr', $presetArr);
 		$smarty->assign('presetNum', $presetNum);
 	
-		$smarty->assign('locationList', $locationList);
-		
 		if($params['dispWidth'] >=256)
 		{
 			$smarty->assign('widthOfPlusButton', (int)(($params['dispWidth']-256)/2));	
