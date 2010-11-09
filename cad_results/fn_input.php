@@ -45,9 +45,9 @@
 	$params['distTh'] = $DIST_THRESHOLD;
 	$params['enteredFnNum'] = 0;
 	$params['status'] = 0;
+	$params['userID'] = $_SESSION['userID'];
 	//------------------------------------------------------------------------------------------------------------------
 
-	$userID = $_SESSION['userID'];
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Get parameters from database
@@ -202,7 +202,7 @@
 
 			$sqlParams[] = $params['execID'];
 			$sqlParams[] = $consensualFlg;
-			if($params['feedbackMode'] == "personal")  $sqlParams[] = $userID;
+			if($params['feedbackMode'] == "personal")  $sqlParams[] = $params['userID'];
 			
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
@@ -264,7 +264,7 @@
 				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
 				//else										$sqlStr .= " AND consensual_flg='t'";
 				//		
-				//if(PdoQueryOne($pdo, $sqlStr, array($params['execID'], $userID), 'SCALAR') > 0)
+				//if(PdoQueryOne($pdo, $sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
 				//{
 				//	$params['registTime'] ="";
 				//}
@@ -289,7 +289,7 @@
 				}
 				else
 				{
-					$params['userStr'] = $userID . "^0";
+					$params['userStr'] = $params['userID'] . "^0";
 					$params['registTime'] = "";
 				
 					$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?"
@@ -402,7 +402,7 @@
 						
 						while($result = $stmt->fetch(PDO::FETCH_NUM))
 						{			
-							if($result[0] != $userID)
+							if($result[0] != $params['userID'])
 							{
 								$userCnt = (++$userCnt % 4);
 								$params['userStr'] .= "^" . $result[0] . "^" . $userCnt;
@@ -573,15 +573,14 @@
 		}
 	
 		$smarty->assign('params',   $params);
-		
-		$smarty->assign('userID',   $userID);
-		$smarty->assign('ticket',   $_SESSION['ticket']);
-		
+
 		$smarty->assign('fnData',   $fnData);
 		$smarty->assign('candPos',  $candPos);
 		
 		$smarty->assign('presetArr', $presetArr);
 		$smarty->assign('presetNum', $presetNum);
+
+		$smarty->assign('ticket',   $_SESSION['ticket']);
 	
 		if($params['dispWidth'] >=256)
 		{

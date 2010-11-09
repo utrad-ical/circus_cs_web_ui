@@ -96,7 +96,13 @@
 			$params['startNum'] = 0;
 			$params['endNum'] = 0;
 			$params['totalNum'] = 0;
-			$params['maxPageNum'] = 1;
+			$params['maxPageNum'] = 1
+			
+			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
+			   && $params['filterAgeMin'] > $params['filterAgeMax'])
+			{
+				$params['errorMessage'] = "Range of 'Age' is invalid."; 
+			}
 		}
 		else
 		{
@@ -104,8 +110,6 @@
 			$params['errorMessage'] = implode('<br/>', $validator->errors);
 		}
 		$params['mode'] = $mode;
-	
-		// ”N—î‚Ì”ÍˆÍ‚Ì®‡«‚ÍŒã“úŒŸ“¢
 		//--------------------------------------------------------------------------------------------------------------
 
 		$data = array();

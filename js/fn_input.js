@@ -118,37 +118,41 @@ function ChangeVisibleFN()
 //--------------------------------------------------------------------------------------------------
 // Fnuctions for location table
 //--------------------------------------------------------------------------------------------------
-//function ResetFnTable()
-//{
-//	if(confirm('Do you remove all FN locations?'))
-//	{
-//		ChangeActionForChackedItems();
-//		JumpImgNumber($("#slider").slider("value"));
-//		$("#checkVisibleFN").attr('checked', 'checked');
-//		$("#posTable tbody").html("");
-//	}
-//}
+function ResetFnTable()
+{
+	if(confirm('Do you remove all item(s)?'))
+	{
+		$("#checkVisibleFN").attr('checked', 'checked');
+		fnData.splice(0);
+		RefreshTable();
+		$("#resetBtn").hide();
+	}
+}
 
-//function UndoFnTable()
-//{
-//	if(confirm('Undo FN locations?'))
-//	{
-//		var posArr = $("#posStr").val().split('^');
-//		var enteredFnNum = posArr.length / 6;
-//
-//		$("#posTable tbody").html("");
-//
-//		for(i=0; i<enteredFnNum; i++)
-//		{
-//			AddPosTable(i+1, posArr[i*6], posArr[i*6+1], posArr[i*6+2], 
-//                      posArr[i*6+4], posArr[i*6+5]);
-//		}
-//		ChangeActionForChackedItems();
-//		JumpImgNumber($("#slider").slider("value"));
-//		$("#checkVisibleFN").attr('checked', 'checked');
-//		$("#undoBtn").hide();
-//	}
-//}
+function UndoFnTable()
+{
+	if(confirm('Undo FN locations?'))
+	{
+		fnData.splice(0);
+
+		for(var i=0; i<oldFnData.length; i++)
+		{
+			var item = {
+				"x": oldFnData[i].x,
+      			"y": oldFnData[i].y,
+     	 		"z": oldFnData[i].z,
+      			"rank": oldFnData[i].rank,
+      			"enteredBy": oldFnData[i].enteredBy,
+				"idStr": oldFnData[i].idStr,
+				"colorSet": oldFnData[i].colorSet
+			};
+	
+			fnData.push(item);
+		}
+		RefreshTable();
+		$("#undoBtn").hide();
+	}
+}
 
 function ConfirmFNLocation(address)
 {
@@ -205,7 +209,7 @@ function AddFnTable(id, item)
 	if($("#registTime").val() == "" || $("#status").val() != 2)
 	{
 		htmlStr += '<td class="operationColumn"><input type="checkbox" name="rowCheckList[]"'
-                +  ' onclick="ChangeActionForChackedItems();"value="' + id + '"></td>';
+                +  ' onclick="RefreshOperationButtons();"value="' + id + '"></td>';
 	}
 
 	var tdBaseStr = ' style="color:' + ((feedbackMode == "consensual") ? '#ff00ff;">' : 'black;">');
@@ -227,7 +231,7 @@ function AddFnTable(id, item)
 	$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 }
 
-function ChangeActionForChackedItems()
+function RefreshOperationButtons()
 {
 	var actionVal = $("#actionMenu").val();
 	var checkCnt = $("input[name='rowCheckList[]']:checked").length;
@@ -287,7 +291,7 @@ function TableOperation()
 			IntegrateLocationRows();
 			break;
 	}
-	ChangeActionForChackedItems();
+	RefreshOperationButtons();
 
 	if($("#status").val()==0)			$("#resetBtn").show();
 	else if($("#status").val()==1)		$("#undoBtn").show();
@@ -308,7 +312,7 @@ function TableOperation()
 	});
 }
 
-function refreshTable()
+function RefreshTable()
 {
 	$('#posTable tbody tr').remove();
 
@@ -316,8 +320,8 @@ function refreshTable()
 	{
 		AddFnTable(i, fnData[i]);
     }
-    //refreshOperationButtons();
 	$("#checkVisibleFN").attr('checked', 'checked');
+    RefreshOperationButtons();
 	JumpImgNumber($("#slider").slider("value"));
 
 }
@@ -333,7 +337,7 @@ function DeleteLocationRows()
 		$("#row" + indexes[i]).remove();
 		fnData.splice(indexes[i], 1);
     }
-    refreshTable();
+    RefreshTable();
 }
 
 
@@ -413,7 +417,7 @@ function IntegrateLocationRows()
 		//plotDots(fnData.length+1, xPos2+xOffset, yPos2+yOffset, 0);
 		AddFnTable(fnData.length, item);
 		fnData.push(item);
-	    refreshTable();
+	    RefreshTable();
 	}
 }
 
@@ -452,7 +456,6 @@ var rowClickHandler = function(event) {
 	if ($(event.target).parents('td.operationColumn').length == 0)
 	{
 		$('#checkVisibleFN').attr('checked', 'checked');
-
 		// for jQuery 1.3.2
 		var imgNum = $(event.target).parents('tr').children('td.z').html();
 		$("#slider").slider("value", imgNum);
@@ -537,8 +540,4 @@ $(document).ready(function(){
 
 	});
 });
-
-
-
-
 

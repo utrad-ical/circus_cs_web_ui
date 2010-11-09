@@ -177,7 +177,7 @@
 		
 			switch($plotData[$j][0])
 			{
-				case 0:  // FP
+				case -1:  // FP
 					if($fpFlg == 1)
 					{
 						$color->setColor($FP_COLOR);
@@ -213,7 +213,7 @@
 					}
 					break;
 			
-				case -1: // pending
+				case 0: // pending
 					if($pendingFlg == 1)
 					{			
 						$color->setColor($PENDING_COLOR);

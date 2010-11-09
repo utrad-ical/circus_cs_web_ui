@@ -8,6 +8,7 @@
 <!-- InstanceEndEditable -->
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="jq/ui/jquery-ui-1.7.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
@@ -31,23 +32,32 @@ function ShowPersonalStatResult()
 
 			function(data){
 
-				$("#statRes .col-tbl tbody").html(data.tblHtml);
-				$("#scatterPlotAx").attr("src", data.XY);
-				$("#scatterPlotCoro").attr("src", data.XZ);
-				$("#sactterPlotSagi").attr("src", data.YZ);
+				$("#errorMessage").html(data.errorMessage);
 
-				$("#statRes").show();
-				if(version == 'all' || evalUser == 'all' || data.caseNum == 0)
+				if(data.errorMessage == "&nbsp;")
 				{
-					$("#scatterPlot").hide();
+					$("#statRes .col-tbl tbody").html(data.tblHtml);
+					$("#scatterPlotAx").attr("src", data.XY);
+					$("#scatterPlotCoro").attr("src", data.XZ);
+					$("#sactterPlotSagi").attr("src", data.YZ);
+
+					$("#statRes").show();
+					if(version == 'all' || evalUser == 'all' || data.caseNum == 0)
+					{
+						$("#scatterPlot").hide();
+					}
+					else
+					{
+						$("#scatterPlot").show();
+						$("#scatterPlot [name^=check]").attr("checked", "checked");
+					}
+
+					$("#container").height( $(document).height() - 10 );
 				}
 				else
 				{
-					$("#scatterPlot").show();
-					$("#scatterPlot [name^=check]").attr("checked", "checked");
+					$("#statRes").hide();
 				}
-
-				$("#container").height( $(document).height() - 10 );
 
 			}, "json");
 }
@@ -152,6 +162,41 @@ function ResetCondition()
 
 	ChangeCadMenu();
 }
+
+$(function() {
+	$("#dateFrom").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#dateTo").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#dateTo").datepicker({
+			showOn: "button",
+			buttonImage: "images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#dateFrom").datepicker("option", "maxDate", date);
+				}
+		});
+});
+
 {/literal}
 -->
 </script>
@@ -160,6 +205,7 @@ function ResetCondition()
 
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
+<link href="./jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <!-- InstanceEndEditable -->
 <!-- InstanceParam name="class" type="text" value="personal-statistics" -->
@@ -187,7 +233,7 @@ function ResetCondition()
 					<table class="search-tbl">
 						<tr>
 							<th style="width: 3.5em;"><span class="trim01">Date</span></th>
-							<td style="width: 180px;">
+							<td style="width: 220px;">
 								<input id="dateFrom" type="text" style="width:72px;" />
 								-
 								<input id="dateTo" type="text" style="width:72px;" />
@@ -234,6 +280,7 @@ function ResetCondition()
 					<div class="al-l mt10 ml20" style="width: 100%;">
 						<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
 						<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
+						<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
 					</div>
 				</div><!-- / .m20 END -->
 			</div><!-- / #statSearch END -->

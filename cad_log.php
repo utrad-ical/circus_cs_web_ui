@@ -138,6 +138,12 @@
 			$params['endNum'] = 0;
 			$params['totalNum'] = 0;
 			$params['maxPageNum'] = 1;
+			
+			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
+			   && $params['filterAgeMin'] > $params['filterAgeMax'])
+			{
+				$params['errorMessage'] = "Range of 'Age' is invalid."; 
+			}
 		}
 		else
 		{
@@ -145,8 +151,6 @@
 			$params['errorMessage'] = implode('<br/>', $validator->errors);
 		}
 		$params['mode'] = $mode;
-	
-		// 年齢の範囲・日付の整合性は後日検討
 		//-----------------------------------------------------------------------------------------------------------------
 	
 		$data = array();
@@ -552,16 +556,16 @@
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg='f'"
-		         . " AND interrupt_flg='f' AND entered_by=?";
+		$sqlStr = "SELECT evaluation, interrupt_flg FROM lesion_feedback WHERE exec_id=?"
+				. " AND consensual_flg='f' AND entered_by=? ORDER BY lesion_id ASC";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
 
 		// SQL statement to count the number of personal feedback
-		//$sqlStr  = "SELECT COUNT(*) FROM false_negative_count WHERE exec_id=? AND consensual_flg='f'"
-		//         . " AND status=2 AND entered_by=?";
-		//$stmtPersonalFN = $pdo->prepare($sqlStr);
-		//$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
+		$sqlStr  = "SELECT status FROM false_negative_count WHERE exec_id=? AND consensual_flg='f'"
+		         . " AND entered_by=?";
+		$stmtPersonalFN = $pdo->prepare($sqlStr);
+		$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
 		//------------------------------------------------------------------------------------------
 		
 		//------------------------------------------------------------------------------------------
@@ -637,11 +641,50 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
+					$registStatus = array('cand' => 0,
+					                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
+				
 					$stmtPersonalFB->bindParam(1, $result['exec_id']);
 					$stmtPersonalFB->execute();
-						
-					$colArr[] = ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-';
-				}				
+
+					if($rowCntPersonalFB > 0)
+					{
+						$registStatus['cand'] = 2;
+					
+						while($resultPersonalFB = $stmt->fetch(PDO::FETCH_ASSOC))
+						{
+							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
+							{
+								$registStatus['cand'] = 1;
+								break;
+							}		
+						}
+					}
+					
+					$stmtPersonalFN->bindParam(1, $result['exec_id']);
+					$stmtPersonalFN->execute();
+					
+					if($stmtPersonalFN == 1)
+					{
+						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
+						else									 $registStatus['FN'] = 1;
+					}
+					
+					echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
+					
+					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
+					{
+						$colArr[] = '-';
+					}
+					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
+					{
+						$colArr[] = 'Registered';
+					}
+					else
+					{
+						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
+					}
+				}
 			}
 			else
 			{
@@ -669,10 +712,50 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
+					$registStatus = array('cand' => 0,
+					                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
+					
 					$stmtPersonalFB->bindParam(1, $result['exec_id']);
 					$stmtPersonalFB->execute();
-						
-					$colArr[] = ($stmtPersonalFB->fetchColumn() > 0) ? 'Registered' : '-';
+
+					if($stmtPersonalFB->rowCount() > 0)
+					{
+						$registStatus['cand'] = 2;
+					
+						while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
+						{
+							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
+							{
+								$registStatus['cand'] = 1;
+								break;
+							}		
+						}
+					}
+					
+					$stmtPersonalFN->bindParam(1, $result['exec_id']);
+					$stmtPersonalFN->execute();
+					
+					if($stmtPersonalFN->rowCOunt() == 1)
+					{
+						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
+						else									 $registStatus['FN'] = 1;
+					}
+					
+					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
+					
+					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
+					{
+						$colArr[] = '-';
+					}
+					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
+					{
+						$colArr[] = 'Registered';
+					}
+					else
+					{
+						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
+					}					
+					
 				}							
 
 				$tpColStr = "-";

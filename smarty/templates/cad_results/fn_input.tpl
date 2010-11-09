@@ -23,6 +23,10 @@
 var fnData  = {$fnData|@json_encode};
 var candPos = {$candPos|@json_encode};
 
+{if $params.status==1}
+var oldFnData = {$fnData|@json_encode};
+{/if}
+
 {literal}
 $(function() {
 
@@ -147,9 +151,8 @@ function Minus()
 				<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}" />
 				<input type="hidden" id="posStr"            value="{$params.posStr|escape}" />
 				<input type="hidden" id="userStr"           value="{$params.userStr|escape}" />
-				<input type="hidden" id="candPosStr"        value="{$params.candPosStr|escape}" />
 				<input type="hidden" id="feedbackMode"      value="{$params.feedbackMode|escape}" />
-				<input type="hidden" id="userID"            value="{$userID}">	
+				<input type="hidden" id="userID"            value="{$params.userID}">	
 
 				<input type="hidden" id="grayscaleStr"      value="{$params.grayscaleStr|escape}" />
 				<input type="hidden" id="presetName"        value="{$params.presetName|escape}" />
@@ -268,36 +271,6 @@ function Minus()
 							</tr>
 						</thead>
 						<tbody>
-						{*	{section name=j start=0 loop=$params.enteredFnNum}
-							
-								{assign var="j" value=$smarty.section.j.index}	
-
-								<tr id="row{$j+1}" {if $j%2==1}class="column"{/if}>
-
-								{if $params.registTime == "" || $params.status != 2}
-									<td align=center>
-									<input type="checkbox" name="rowCheckList[]" onclick="ChangeActionForChackedItems();" value="{$j+1}">
-									</td>
-								{/if}
-						
-								<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$j+1}</td>
-
-								{section name=i start=1 loop=4}
-									{assign var="i" value=$smarty.section.i.index}
-
-									<td class="al-r" onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][$i]}</td>
-								{/section}
-							
-								<td onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][4]}</td>
-
-								{if $params.feedbackMode == "consensual"}
-									<td onclick="ClickPosTable('row{$j+1}', {$locationList[$j][3]});" style="color:{$locationList[$j][0]};">{$locationList[$j][5]}</td>
-									<td style="display:none;">{$locationList[$j][6]}</td>
-									<td style="display:none;">{$locationList[$j][7]}</td>
-								{/if}
-							
-								</tr>
-							{/section} *}
 						</tbody>
 					</table>
 

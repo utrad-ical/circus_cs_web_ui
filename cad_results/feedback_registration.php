@@ -412,7 +412,6 @@
 						$sqlParam[] = $userID;
 					}		
 				}
-				
 				//echo $sqlStr;
 			}
 			
