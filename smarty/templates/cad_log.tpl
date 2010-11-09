@@ -11,15 +11,15 @@
 <!-- InstanceEndEditable -->
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="jq/ui/jquery-ui-1.7.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="jq/ui/ui.datepicker.js"></script>
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
 <script language="javascript" type="text/javascript" src="js/list_tab.js"></script>
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
-<link href="./jq/ui/css/ui.all.css" rel="stylesheet" type="text/css" media="all" />
+<link href="./jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/popup.css" rel="stylesheet" type="text/css" media="all" />
