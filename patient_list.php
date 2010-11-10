@@ -63,7 +63,7 @@
 		}
 		else
 		{
-			$params = $validator->output;;
+			$params = $validator->output;
 			$params['errorMessage'] = implode('<br/>', $validator->errors);
 		}
 		//---------------------------------------------------------------------------------------------------------------

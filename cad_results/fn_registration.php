@@ -37,30 +37,42 @@
 	$validator->addRules(array(
 		"execID" => array(
 			"type" => "int",
-			"required" => 1,
+			"required" => true,
 			"min" => 1,
-			"errorMes" => "[ERROR] CAD ID is invalid."),
+			"errorMes" => "[ERROR] Input data (CAD ID) is invalid."),
 		"feedbackMode" => array(
 			"type" => "select",
-			"required" => 1,
+			"required" => true,
 			"options" => array("personal", "consensual"),
-			"errorMes" => "[ERROR] 'Feedback mode' is invalid."),
-		//"posStr" => array(
-		//	"type" => "string",
-		//	"regex" => "/^[\w\s-\/\,\.\^]+$/",
-		//	"errorMes" => "[ERROR] 'Postion string' is invalid."),
+			"errorMes" => "[ERROR] Input data (feedbackMode) is invalid."),
+		"fnData" => array(
+			'type' => 'json',
+			'rule' => array(
+				'type' => 'array',
+				'childrenRule' => array(
+					'type' => 'assoc',
+					'rule' => array(
+						"x" => array('type' => 'int', 'min' => 0, 'required' => true),
+						"y" => array('type' => 'int', 'min' => 0, 'required' => true),
+						"z" => array('type' => 'int', 'min' => 0, 'required' => true),
+						"rank" => array('type' => 'string', 'regrex' => "/^[-\d\s\.\/]+$", 'required' => true),
+						"enteredBy" => array('type' => 'string'),
+						"idStr" => array('type' => 'string'),
+						"colorSet" => array('type' => 'int', 'min' => 0)
+					),
+				),
+				'minLength' => 0
+			),
+			'required' => true,
+			"errorMes" => "[ERROR] Input data (fnData) is invalid."),
 		"dstAddress" => array(
 			"type" => "string",
 			"regex" => "/^[-_.!~*\'()\w;\/?:\@&=+\$,%#]+$/",
 			"default" => "undefined",
-			"errorMes" => "[ERROR] 'dstAddress' is invalid.")
+			"errorMes" => "[ERROR] Input data (dstAddress) is invalid.")
 		));	
 		
-	$fnData = json_decode($_POST['fnData']);
-	
-	//var_dump($fnData);
-
-	if($validator->validate($_POST) && $fnData != null)
+	if($validator->validate($_POST))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
@@ -69,7 +81,6 @@
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = implode(' ', $validator->errors);
-		if($fnData == null)  $params['errorMessage'] .= " fnData is invalid.";
 	}
 
 	if($params['dstAddress'] == "undefined" || !isset($params['dstAddress'])) $params['dstAddress'] = "";
@@ -104,22 +115,23 @@
 			$stmt->bindValue(2, $userID);
 			$stmt->bindValue(3, ($params['feedbackMode'] == "consensual") ? 't' : 'f');
 			
-			foreach($fnData as $item)
+			foreach($params['fnData'] as $item)
 			{
-				$tmpStr = explode(' ', $item->rank);	
+				$tmpStr = explode(' ', $item["rank"]);	
 				if(strcmp($tmpStr[0],'-')==0) $tmpStr[0] = 0;
 
-				$stmt->bindValue(4, $item->x);
-				$stmt->bindValue(5, $item->y);
-				$stmt->bindValue(6, $item->z);
+				$stmt->bindValue(4, $item["x"]);
+				$stmt->bindValue(5, $item["y"]);
+				$stmt->bindValue(6, $item["z"]);
 				$stmt->bindValue(7, $tmpStr[0]);
 				$stmt->bindValue(8, $registTime);
 				$stmt->execute();
 
 				if($stmt->rowCount() != 1)
 				{
-					$err = $stmt->errorInfo();
-					$dstData['errorMessage'] = $err[2];
+					//$err = $stmt->errorInfo();
+					//$dstData['errorMessage'] = $err[2];
+					$dstData['errorMessage'] = 'Fail to savr FN location';
 
 					DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 					break;
@@ -133,9 +145,9 @@
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND consensual_flg='t'"
 						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
 					$sqlParams = array($params['execID'],
-									   $item->x,
-									   $item->y,
-									   $item->z,
+									   $item["x"],
+									   $item["y"],
+									   $item["z"],
 									   $registTime);
 
 					$dstID = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
@@ -159,15 +171,16 @@
 						
 						if($stmtUpdate->rowCount() != 1)
 						{
-							$err = $stmtUpdate->errorInfo();
-							$dstData['errorMessage'] = $err[2];
+							//$err = $stmtUpdate->errorInfo();
+							//$dstData['errorMessage'] = $err[2];
+							$dstData['errorMessage'] = 'Fail to savr FN location';
 							break;
 						}
 					}
 			
-					if($item->idStr != "")
+					if($item["idStr"] != "")
 					{
-						$idArr = explode(',', $item->idStr);
+						$idArr = explode(',', $item["idStr"]);
 						$idNum = count($idArr);
 		
 						$sqlStr = "UPDATE false_negative_location SET integrate_location_id=? WHERE location_id=?";
@@ -181,8 +194,9 @@
 			
 							if($stmtUpdate->rowCount() != 1)
 							{
-								$err = $stmtUpdate->errorInfo();
-								$dstData['errorMessage'] = $err[2];
+								//$err = $stmtUpdate->errorInfo();
+								//$dstData['errorMessage'] = $err[2];
+								$dstData['errorMessage'] = 'Fail to save FN location';
 								break;
 							}
 						}
@@ -205,7 +219,7 @@
 				$sqlParams[] = $params['execID'];
 				$sqlParams[] = $userID;
 				$sqlParams[] = $consensualFlg;
-				$sqlParams[] = count($fnData);
+				$sqlParams[] = count($params['fnData']);
 				$sqlParams[] = $registTime;
 	
 				$stmt = $pdo->prepare($sqlStr);
@@ -219,12 +233,6 @@
 					DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 				}
 			}
-			
-			//if($dstData['errorMessage'] == "")
-			//{
-			//	$dstData['errorMessage'] = 'Successfully saved in feedback database.';
-			//}
-		
 		}
 		echo json_encode($dstData);
 	

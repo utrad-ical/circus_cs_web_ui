@@ -7,8 +7,10 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
+	$mode = (isset($_GET['mode']) && $_GET['mode'] == 'redraw') ? 'redraw' : "";
+
 	$params = array();
-	$validator = new FormValidator();	
+	$validator = new FormValidator();
 	
 	$validator->addRules(array(
 		"dateFrom" => array(
@@ -26,15 +28,39 @@
 			"otherwise" => "all",
 			"errorMes" => "'Version' is invalid."),
 		"minSize" => array(
-			'type' => 'int', 
-			'min' => '0',
-			'default' => '0',
-			'errorMes' => "'Size (diameter)' is invalid."),
+			'type' => 'numeric', 
+			'min' => '0.0',
+			'default' => '0.0',
+			'errorMes' => "'Size' is invalid."),
 		"maxSize" => array(
-			'type' => 'int', 
-			'min' => '0',
+			'type' => 'numeric', 
+			'min' => '0.0',
 			'default' => '100000',
-			'errorMes' => "'Size (diameter)' is invalid.")
+			'errorMes' => "'Size' is invalid."),
+		"dataStr" => array(
+			"type" => "string",
+			"regex" => "/^[-\d\s\^]+$/",
+			"errorMes" => "[ERROR] Input data (dataStr) is invalid."),
+		"knownTpFlg" => array(
+			"type" => "select",
+			"options" => array('0', '1'),
+			"default" => "1",
+			"otherwise" => "1"),
+		"missedTpFlg" => array(
+			"type" => "select",
+			"options" => array('0', '1'),
+			"default" => "1",
+			"otherwise" => "1"),
+		"fpFlg" => array(
+			"type" => "select",
+			"options" => array('0', '1'),
+			"default" => "1",
+			"otherwise" => "1"),
+		"pendingFlg" => array(
+			"type" => "select",
+			"options" => array('0', '1'),
+			"default" => "1",
+			"otherwise" => "1")
 		));	
 
 	if($validator->validate($_POST))
@@ -204,7 +230,8 @@
 		
 				if($params['version'] != "all")
 				{
-				  	$sqlStrCntEval .= " AND cad.exec_id=el.exec_id AND cad.sub_id =lf.lesion_id"
+				  	$sqlStrCntEval .= " AND cad.exec_id=el.exec_id"
+								   .  " AND (cad.sub_id =lf.lesion_id OR lf.lesion_id=0)"
 						           .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 									 
 					$sqlParamCntEval[] = $minVolume;
@@ -415,11 +442,9 @@
 			//--------------------------------------------------------------------------------------------------------------
 			if($userNum == 1 && $params['version'] != "All")
 			{
-				$dataStr = (isset($_REQUEST['dataStr'])) ? $_REQUEST['dataStr'] : "";
-				
 				if($evaluation["1"][0]>0 || $evaluation["2"][0]>0 || $evaluation["-1"][0]>0 || $evaluation["0"][0]>0)
 				{
-					if($dataStr == "")
+					if($params['dataStr'] == "")
 					{
 						$sqlParams = array($minVolume, $maxVolume, $params['cadName'], $params['version'], $userList[0]);
 					
@@ -459,36 +484,28 @@
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute($sqlParams);
 						
-						$cnt = $stmt->rowCount();
-		
-						for($i=0; $i<$cnt; $i++)
+						$tmpDataArr = array();
+
+						while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 						{
-							$result = $stmt->fetch(PDO::FETCH_ASSOC);
-			
-							if($i>0)	$dataStr .= '^';
-							$dataStr .= $result['evaluation'] . '^' . $result['pos_x']
-							          . '^' . $result['pos_y'] . '^' . $result['pos_z']; 
-						
-							//echo $result['evaluation'] . ' ' . $result['pos_x'] . ' ';
-							//echo $result['pos_y'] . ' ' . $result['pos_z'] . '<br>';
+							$tmpDataArr[] = $result['evaluation'];
+							$tmpDataArr[] = $result['pos_x'];
+							$tmpDataArr[] = $result['pos_y'];
+							$tmpDataArr[] = $result['pos_z']; 
 						}
 					}
+					
+					$params['dataStr'] = implode('^', $tmpDataArr);
 								
-					$tmpArr = explode('^', $dataStr);
-					$length = count($tmpArr)/4;
+					$length = count($tmpDataArr)/4;
 					$plotData = array();
 					
 					for($j=0; $j<$length; $j++)
 					for($i=0; $i<4; $i++)
 					{
-						$plotData[$j][$i] = $tmpArr[$j * 4 + $i];
+						$plotData[$j][$i] = $tmpDataArr[$j * 4 + $i];
 					}
 					
-					$knownTpFlg  = (isset($_REQUEST['knownTpFlg']))  ? $_REQUEST['knownTpFlg']  : 1;
-					$missedTpFlg = (isset($_REQUEST['missedTpFlg'])) ? $_REQUEST['missedTpFlg'] : 1;
-					$fpFlg       = (isset($_REQUEST['fpFlg']))       ? $_REQUEST['fpFlg']       : 1;
-					$pendingFlg  = (isset($_REQUEST['pendingFlg']))  ? $_REQUEST['pendingFlg']  : 1;
-		
 					$section = array('XY', 'XZ', 'YZ');
 					include('create_scatter_plot.php');
 					
@@ -497,14 +514,14 @@
 						$tmpFname = '../tmp/plot' . $val . '_' . microtime(true) . '.png';
 					
 						CreateScatterPlot($plotData, $val, $tmpFname,
-				                            $knownTpFlg, $missedTpFlg, $fpFlg, $pendingFlg);
+				                          $params['knownTpFlg'], $params['missedTpFlg'],
+										  $params['fpFlg'], $params['pendingFlg']);
 			
 						$dstData[$val] = 'personal_stat/show_scatter_plot.php?fname=' . $tmpFname;
-						//$dstData[$val] = $tmpFname;
 					}
 				}
 				
-				$dstdata['dataStr'] = $dataStr;
+				$dstdata['dataStr'] = $params['dataStr'];
 			}
 			//--------------------------------------------------------------------------------------------------------------
 		}

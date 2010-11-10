@@ -15,42 +15,42 @@
 	$validator->addRules(array(
 		"execID" => array(
 			"type" => "int",
-			"required" => 1,
+			"required" => true,
 			"min" => 1,
 			"errorMes" => "[ERROR] CAD ID is invalid."),
 		"cadName" => array(
 			"type" => "string",
 			"regex" => "/^[\w-_]+$/",
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "'CAD name' is invalid."),
 		"version" => array(
 			"type" => "string",
 			"regex" => "/^[\w-_\.]+$/",
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "'Version' is invalid."),			
 		"feedbackMode" => array(
 			"type" => "select",
-			"required" => 1,
+			"required" => true,
 			"options" => array("personal", "consensual"),
 			"errorMes" => "[ERROR] 'Feedback mode' is invalid."),
 		"interruptFlg" => array(
 			"type" => "select",
-			"required" => 1,
+			"required" => true,
 			"options" => array("0", "1"),
 			"errorMes" => "[ERROR] 'interruptFlg' is invalid."),
 		"fnFoundFlg" => array(
 			"type" => "select",
-			"required" => 1,
+			"required" => true,
 			"options" => array("0", "1"),
 			"otherwise" => "1"),
 		"candStr" => array(
 			"type" => "string",
-			"required" => 1,
+			//"required" => true,
 			"regex" => "/^[\d\^]+$/",
 			"errorMes" => "[ERROR] 'Candidate string' is invalid."),
 		"evalStr" => array(
 			"type" => "string",
-			"required" => 1,
+			//"required" => true,
 			"regex" => "/^[\d-\^]+$/",
 			"errorMes" => "[ERROR] 'Evaluation string' is invalid.")
 		));				
@@ -107,27 +107,50 @@
 			if($params['feedbackMode'] == "personal")   $stmt->bindParam(3, $userID);
 			$stmt->execute();
 
-			for($i=0; $i<($candNum-1); $i++)
+			$sqlParams = array();
+			
+			if($candNum<=1 && strlen($params['candStr'])==0)
 			{
 				$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, consensual_flg, "
-					        . "evaluation, interrupt_flg, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
+				        . "evaluation, interrupt_flg, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
 						
-				$sqlParams[0] = $params['execID'];
-				$sqlParams[1] = $candArr[$i];
-				$sqlParams[2] = $userID;
-				$sqlParams[3] = $consensualFlg;
-				$sqlParams[4] = $evalArr[$i];
-				$sqlParams[5] = ($params['interruptFlg']) ? "t" : "f";
-				$sqlParams[6] = $registeredAt;
+				$sqlParams[] = $params['execID'];
+				$sqlParams[] = $userID;
+				$sqlParams[] = $consensualFlg;
+				$sqlParams[] = ($params['interruptFlg']) ? "t" : "f";
+				$sqlParams[] = $registeredAt;
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 				
 				if($stmt->rowCount() != 1)
 				{
-					$err = $stmt->errorInfo();
-					$dstData['message'] .= $err[2];
-					break;
+					$dstData['message'] .= "Fail to register lesion classification.";
+				}
+			}
+			else
+			{
+				for($i=0; $i<$candNum; $i++)
+				{
+					$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, consensual_flg, "
+						        . "evaluation, interrupt_flg, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
+						
+					$sqlParams[0] = $params['execID'];
+					$sqlParams[1] = $candArr[$i];
+					$sqlParams[2] = $userID;
+					$sqlParams[3] = $consensualFlg;
+					$sqlParams[4] = $evalArr[$i];
+					$sqlParams[5] = ($params['interruptFlg']) ? "t" : "f";
+					$sqlParams[6] = $registeredAt;
+
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+				
+					if($stmt->rowCount() != 1)
+					{
+						$dstData['message'] .= "Fail to register lesion classification;";
+						break;
+					}
 				}
 			}
 			//----------------------------------------------------------------------------------------------------

@@ -32,20 +32,20 @@
 
 function CreateEvalStr(lesionArr)
 {
-	var evalStr = "";
+	var evalArr = new Array();
 
-	for(var j=0; j<(lesionArr.length-1); j++)
+	for(var j=0; j<lesionArr.length; j++)
 	{
 		if($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() == undefined)
 		{
-			evalStr += "99^";
+			evalArr.push(99);
 		}
 		else 
 		{
-			evalStr += $("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() + "^";
+			evalArr.push($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val());
 		}
 	}
-	return evalStr;
+	return evalArr.join("^");
 }
 
 function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress)
@@ -421,10 +421,11 @@ $(function() {
 				</div>
 
 				<!-- CAD result (lesionBlock) -->
-
-				{foreach from=$candHtml item=htmlStr}
-					{$htmlStr}
-				{/foreach}
+				{if $params.candNum==0}
+					<div style="margin:10px;">&nbsp;</div>
+				{else}
+					{foreach from=$candHtml item=htmlStr}{$htmlStr}{/foreach}
+				{/if}
 
 				{*<div class="fl-clr mb10" style="margin-top:-50px; border-top: 1px solid #888;"></div>*}
 

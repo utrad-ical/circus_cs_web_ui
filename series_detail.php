@@ -17,11 +17,11 @@
 	$validator->addRules(array(
 		"studyInstanceUID" => array(
 			"type" => "uid",
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
 		"seriesInstanceUID" => array(
 			"type" => "uid",
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid."),
 		"listTabName" => array(
 			"type" => "select",
@@ -37,7 +37,7 @@
 	}
 	else
 	{
-		$data = $request;
+		$data = $validator->output;
 		$data['errorMessage'] = implode('<br/>', $validator->errors);
 	}
 	

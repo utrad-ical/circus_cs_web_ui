@@ -20,7 +20,7 @@
 	$validator->addRules(array(
 		"execID" => array(
 			"type" => "int",
-			"required" => 1,
+			"required" => true,
 			"min" => 1,
 			"errorMes" => "[ERROR] CAD ID is invalid."),
 		"feedbackMode" => array(

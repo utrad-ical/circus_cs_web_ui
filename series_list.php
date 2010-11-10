@@ -27,7 +27,7 @@
 			$validator->addRules(array(
 				"studyInstanceUID" => array(
 					"type" => "uid",
-					"required" => 1,
+					"required" => true,
 					"errorMes" => "URL is incorrect.")));
 		}
 		else

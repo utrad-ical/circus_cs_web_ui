@@ -16,12 +16,12 @@
 			"type" => "int",
 			"min" => 1,
 			"max" => 5,
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "Cagegory is invalid."),
 		"referenceID" => array(
 			"type" => "int",
 			"min" => 1,
-			"required" => 1,
+			"required" => true,
 			"errorMes" => "Reference ID is invalid."),
 		));	
 

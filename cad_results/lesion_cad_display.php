@@ -103,8 +103,7 @@
 		$posY       = $result['location_y'];
 		$posZ       = $result['location_z'];
 		
-		$candStr .= $candID . "^";
-		array_push($candArr,  $candID);
+		$candArr[] = $candID;
 	
 		$srcFname = sprintf("%s%sresult%03d.png", $params['pathOfCADReslut'], $DIR_SEPARATOR, $candID);
 		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB, $candID);
@@ -283,6 +282,8 @@
 		$candHtml[$k] .= '</div>';
 		$k++;
 	}
+	
+	$candStr = implode("^", $candArr);
 
 	//------------------------------------------------------------------------------------------------------------------
 

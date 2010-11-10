@@ -27,7 +27,7 @@
 			$validator->addRules(array(
 				"encryptedPtID" => array(
 					"type" => "pgregex",
-					"required" => 1,
+					"required" => true,
 					"errorMes" => "URL is incorrect.")));
 		}
 		else
