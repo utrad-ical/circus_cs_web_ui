@@ -3,7 +3,7 @@
 /**
  * Very simple web form validator classes.
  * This is a part of CIRCUS CS project.
- * @author Soichiro Miki <smiki-tky@umin.ac.jp>
+ * @author S. Miki <smiki-tky@umin.ac.jp>
  * @package formValidators
  */
 
@@ -18,6 +18,7 @@ class FormValidator
 	private $validators = array(
 		'int'       => 'IntegerValidator',
 		'integer'   => 'IntegerValidator',
+		'numeric'   => 'NumericValidator',
 		'str'       => 'StringValidator',
 		'string'    => 'StringValidator',
 		//'pgregexp'  => 'PgRegexpValidator',
@@ -29,8 +30,10 @@ class FormValidator
 		'version'   => 'CadVersionValidator',
 		'select'    => 'SelectValidator',
 		'array'     => 'ArrayValidator',
+		'assoc'     => 'AssociativeArrayValidator',
 		'callback'  => 'CallBackValidator',
 		'pass'      => 'PassThroughValidator',
+		'json'      => 'JsonValidator'
 	);
 
 	/**
@@ -58,7 +61,7 @@ class FormValidator
 		$validator = $this->validators[$rule['type']];
 		if (class_exists($validator)) {
 			$ruleObj = new $validator;
-			$ruleObj->init($keyName, $rule);
+			$ruleObj->init($keyName, $rule, $this);
 		} else {
 			throw new Exception(
 				"FormValidator exception. " .
@@ -173,6 +176,15 @@ class FormValidator
 			);
 		}
 	}
+	
+	/**
+	 * Creates new FormValidator instance having the same configuration as this.
+	 */
+	public function createChildValidator() {
+		$result = new FormValidator();
+		$result->validators = $this->validators;
+		return $result;
+	}
 }
 
 
@@ -190,6 +202,11 @@ class FormValidator
  */
 abstract class ValidatorBase
 {
+	/**
+	 * The FormValidator instance associated to this validator.
+	 */
+	protected $owner;
+	
 	/**
 	 * Corresponding key of the processing data.
 	 */
@@ -217,7 +234,8 @@ abstract class ValidatorBase
 	/**
 	 * Initializes the validator.
 	 */
-	public function init($key, $params) {
+	public function init($key, $params, $owner) {
+		$this->owner = $owner;
 		$this->params = $params;
 		$this->setKey($key);
 	}
@@ -264,6 +282,10 @@ abstract class ScalarValidator extends ValidatorBase
 				return true;
 			}
 		}
+		if (!is_scalar($input)) {
+			$this->error = "The field '$this->label' is invalid (non-scalar value)";
+			return false;
+		}
 		$preFilter = $this->params['preFilter'];
 		if (is_callable($preFilter)) {
 			$input = $preFilter($input);
@@ -291,29 +313,63 @@ abstract class ScalarValidator extends ValidatorBase
 class IntegerValidator extends ScalarValidator
 {
 	public function validate($input) {
-		$input = preg_replace('/\,|\.|\s/', '', $input); // removes optional characters
+		$input = preg_replace('/\,|\s/', '', $input); // removes optional characters
 
 		$label = $this->label;
 
 		if (preg_match('/^(0|\-?[1-9]\d*)$/', $input)) {
 			$min = $this->params['min'];
 			if (isset($this->params['min']) && $input < $this->params['min']) {
-				$this->error = "Input data '$this->label' must be at least $min";
+				$this->error = "Input data '$label' must be at least $min";
 				return false;
 			}
 			$max = $this->params['max'];
 			if (isset($this->params['max']) && $input > $this->params['max']) {
-				$this->error = "Input data '$this->label' must be no more than $max.";
+				$this->error = "Input data '$label' must be no more than $max.";
 				return false;
 			}
 			$this->output = $input;
 			return true;
 		} else {
-			$this->error = "Input data '$this->label' is not a valid number.";
+			$this->error = "Input data '$label' is not a valid number.";
 			return false;
 		}
 	}
 }
+
+
+/**
+ * Validator for number or a numeric string
+ * @package formValidators
+ */
+class NumericValidator extends ScalarValidator
+{
+	public function validate($input) {
+		$input = preg_replace('/\,|\s/', '', $input); // removes optional characters
+
+		$label = $this->label;
+
+		if (is_numeric($input)) {
+			$min = $this->params['min'];
+			if (isset($this->params['min']) && $input < $this->params['min']) {
+				$this->error = "Input data '$label' must be at least $min";
+				return false;
+			}
+			$max = $this->params['max'];
+			if (isset($this->params['max']) && $input > $this->params['max']) {
+				$this->error = "Input data '$label' must be no more than $max.";
+				return false;
+			}
+			$this->output = $input;
+			return true;
+		} else {
+			$this->error = "Input data '$label' is not a valid number.";
+			return false;
+		}
+	}
+}
+
+
 
 /**
  * Validator for strings.
@@ -415,7 +471,7 @@ class DateValidator extends DateTimeValidator
 
 /**
  * Validator for time.
- * by Y.Nomura
+ * @author Y.Nomura
  */
 class TimeValidator extends ScalarValidator
 {
@@ -478,16 +534,17 @@ class ArrayValidator extends ValidatorBase
 {
 	protected $childValidator;
 	
-	public function init($key, $params) {
-		parent::init($key, $params);
+	public function init($key, $params, $owner) {
+		parent::init($key, $params, $owner);
 		if (is_array($params['childrenRule'])) {
-			$this->childValidator = new FormValidator();
+			$this->childValidator = $this->owner->createChildValidator();
 			$this->childValidator->addRule('data', $params['childrenRule']);
 		}
 	}
 	
 	public function check($input) {
 		$label = $this->label;
+		$result = array();
 		if (is_array($input)) {
 			if ($this->childValidator) {
 				foreach ($input as $item) {
@@ -496,7 +553,10 @@ class ArrayValidator extends ValidatorBase
 						$this->error = "Array '$label' contains invalid data.";
 						return false;
 					}
+					array_push($result, $this->childValidator->output['data']);
 				}
+			} else {
+				$result = array_values($input);
 			}
 			$min = $this->params['minLength'];
 			if ($min > 0 && count($input) < $min) {
@@ -508,16 +568,59 @@ class ArrayValidator extends ValidatorBase
 				$this->error = "Array '$label' must not have more than $max items.";
 				return false;
 			}
-			$this->output = array_values($input);
+			$this->output = $result;
 			return true;
 		} else {
 			if ($this->params['required'] || $this->params['minLength'] > 0) {
 				$this->error = "Array '$label' is empty.";
 				return false;
-			} else {
+			} else if (strlen(trim($input)) == 0) {
 				$this->output = array();
 				return true;
+			} else {
+				$this->error = "'$label' is invalid. (non-array data is passed)";
+				return false;
 			}
+		}
+	}
+}
+
+/**
+ * Validator for associative array.
+ * With this validator you can validate nested data structure.
+ * @package formValidators
+ */
+class AssociativeArrayValidator extends ValidatorBase
+{
+	protected $childValidator;
+	
+	public function init($key, $params, $owner)
+	{
+		parent::init($key, $params, $owner);
+		if ($params['rule']) {
+			$this->childValidator = $this->owner->createChildValidator();
+			$this->childValidator->addRules($params['rule']);
+		}
+	}
+	
+	public function check($input)
+	{
+		$cv = $this->childValidator;
+		if (is_array($input)) {
+			if ($cv) {
+				if ($cv->validate($input)) {
+					$this->output = $cv->output;
+					return true;
+				} else {
+					$this->error = "$this->label is invalid.";
+					return false;
+				}
+			}
+			$this->output = $input;
+			return true;
+		} else {
+			$this->error = "$this->label is invalid.";
+			return false;
 		}
 	}
 }
@@ -537,8 +640,8 @@ class ArrayValidator extends ValidatorBase
  */
 class CallbackValidator extends ValidatorBase
 {
-	public function init($key, $params) {
-		parent::init($key, $params);
+	public function init($key, $params, $owner) {
+		parent::init($key, $params, $owner);
 		if (!is_callable($this->params['callback'])) {
 			throw new Exception(
 				"FormValidator exception. " .
@@ -588,7 +691,8 @@ class PassThroughValidator extends ValidatorBase
 
 /**
  * Validator for DICOM UID (allowed characters: 0-9 and period).
- * by Y.Nomura
+ * @package formValidators
+ * @author Y. Nomura
  */
 class UIDValidator extends ScalarValidator
 {
@@ -604,7 +708,8 @@ class UIDValidator extends ScalarValidator
 
 /**
  * Validator for CAD name (allowed characters: 'all' or (\w and '-')).
- * by Y.Nomura
+ * @package formValidators
+ * @author Y. Nomura
  */
 class CadNameValidator extends ScalarValidator
 {
@@ -624,7 +729,8 @@ class CadNameValidator extends ScalarValidator
 
 /**
  * Validator for CAD name (allowed characters: 'all' or (\w and '.')).
- * by Y.Nomura
+ * @package formValidators
+ * @author Y. Nomura
  */
 class CadVersionValidator extends ScalarValidator
 {
@@ -644,6 +750,7 @@ class CadVersionValidator extends ScalarValidator
 
 /**
  * Base class that utilizes PDO and PostgreSQL for validating something.
+ * @package formValidators
  */
 abstract class PgValidator extends ScalarValidator
 {
@@ -652,6 +759,7 @@ abstract class PgValidator extends ScalarValidator
 
 /**
  * Validates if the given input is a well-formed regular expression.
+ * @package formValidators
  */
 class PgRegexValidator extends PgValidator
 {
@@ -675,5 +783,59 @@ class PgRegexValidator extends PgValidator
 		return true;
 	}
 }
+
+/**
+ * Validator which confirms that the input is well-formed JSON string.
+ * Output is converted into (associative) array representing the input string.
+ * Validating the internal structure of JSON string is also available using
+ * 'rule' option.
+ * @package formValidators
+ */
+class JsonValidator extends ValidatorBase
+{
+	protected $childValidator;
+	
+	public function init($key, $params, $owner) {
+		$this->childVaidator = null;
+		parent::init($key, $params, $owner);
+		if (is_array($params['rule'])) {
+			$this->childValidator = $this->owner->createChildValidator();
+			$this->childValidator->addRule("result", $params['rule']);
+		}
+	}
+
+	public function check($input) {
+		$label = $this->label;
+		$cv = $this->childValidator;
+		$result = json_decode($input, true); // decode as (associative) array
+		if ($result !== null) {
+			if ($cv) {
+				if ($cv->validate(array("result" => $result))) {
+					$this->output = $cv->output['result'];
+					return true;
+				} else {
+					$this->error = "'$label' contains invalid data: " .
+						implode('', $cv->errors);
+					return false;
+				}
+			}
+			$this->output = $result;
+			return true;
+		} else {
+			if (strlen($input) > 0) {
+				$this->error = "'$label' is invalid. (JSON parse failure)";
+				return false;
+			}
+			if ($this->params['required']) {
+				$this->error = "'$label' is empty.";
+				return false;
+			} else {
+				$this->output = null;
+				return true;
+			}
+		}
+	}
+}
+
 
 ?>
