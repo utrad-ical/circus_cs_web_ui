@@ -298,10 +298,13 @@ $(function() {
 			if(confirm('Is there no false negative?'))
 			{
 				$("#fnInputFlg").val(1);
+				$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+				
 			}
 		}
 		else
 		{
+			$("#fnInputBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 		    $("#fnInputFlg").val(($("#fnNum").val() > 0) ? 1 : 0);
 		}
 
@@ -439,7 +442,7 @@ $(function() {
 
 					<div class="hide-on-guest fl-clr" style="width: 820px;">
 						<div class="fl-l" style="width:570px;">
-							<input type="radio" name="fnFoundFlg" value="1"{if !$params.fnInputFlg ||$params.fnNum>0 || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} checked="checked"{/if} {if $params.fnInputFlg} disabled="disabled"{/if}/> False negative found&nbsp;&nbsp;<input type="button" class="form-btn" value="input" onclick="ShowFNinput();" />&nbsp;&nbsp;(<span id="fnNum" style="font-weight:bold;color:red;">{$params.fnNum}</span> entered)<br/>
+							<input type="radio" name="fnFoundFlg" value="1"{if !$params.fnInputFlg ||$params.fnNum>0 || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} checked="checked"{/if} {if $params.fnInputFlg} disabled="disabled"{/if}/> False negative found&nbsp;&nbsp;<input id="fnInputBtn" type="button" class="form-btn {if $params.fnInputFlg && $params.fnNum==0}form-btn-disabled{else}form-btn-normai{/if}" value="input" onclick="ShowFNinput();"{if $params.fnInputFlg && $params.fnNum==0} disabled="disabled"{/if} />&nbsp;&nbsp;(<span id="fnNum" style="font-weight:bold;color:red;">{$params.fnNum}</span> entered)<br/>
 							<input type="radio" name="fnFoundFlg" value="0"{if $params.fnInputFlg && $params.fnNum==0} checked="checked"{/if}{if $params.fnInputFlg || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} disabled="disabled"{/if} /> FN&nbsp;&nbsp;NOT&nbsp;&nbsp;found
 						</div>
 						<p class="fl-r" style="width:250px;">

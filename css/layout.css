@@ -308,14 +308,14 @@ table.search-tbl td {
 
 .sort-by {
 	clear: both;
-	width: 785px;
+	width: 830px;
 	padding-top: 3px;
 	/*text-align: right;*/
 }
 
 .sort-by div.total-cand
 {
-	width:380px;
+	width:435px;
 	margin-left:15px;
 	text-align:left;
 	float:left;
@@ -324,7 +324,7 @@ table.search-tbl td {
 
 .sort-by div.sort-btn
 {
-	width:390px;
+	width:380px;
 	float:left;
 	text-align:right;
 }

@@ -19,13 +19,11 @@
 			"min" => 1,
 			"errorMes" => "[ERROR] CAD ID is invalid."),
 		"cadName" => array(
-			"type" => "string",
-			"regex" => "/^[\w-_]+$/",
+			"type" => "cadname",
 			"required" => true,
 			"errorMes" => "'CAD name' is invalid."),
 		"version" => array(
-			"type" => "string",
-			"regex" => "/^[\w-_\.]+$/",
+			"type" => "version",
 			"required" => true,
 			"errorMes" => "'Version' is invalid."),			
 		"feedbackMode" => array(

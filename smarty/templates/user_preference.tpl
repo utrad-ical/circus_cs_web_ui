@@ -67,24 +67,32 @@ function ShowCadPreferenceDetail()
 
 	$.post("./preference/show_cad_preference_detail.php",
             {cadName: cadName, version: version},
-             function(json){
-				$("#cadName").val(json.cadName);
-				$("#version").val(json.version);
-				$("#preferenceFlg").val(json.preferenceFlg);
-				$("#defaultSortKey").val(json.defaultSortKey);
-				$("#defaultSortOrder").val(json.defaultSortOrder);
-				$("#defaultMaxDispNum").val(json.defaultMaxDispNum);
-				$("#defaultConfidenceTh").val(json.defaultConfidenceTh);
-				$("#message").html(json.message);
-				$("#maxDispNum").val(json.maxDispNum);
-				$("#confidenceTh").val(json.confidenceTh);
-				$("#sortKey").val(json.sortKey);
-				$("input[name='sortOrder']").val([json.sortOrder]);
-				$("#preferenceFlg").val(json.preferenceFlg);
+             function(data){
+				$("#cadName").val(data.cadName);
+				$("#version").val(data.version);
+				$("#preferenceFlg").val(data.preferenceFlg);
+				$("#defaultSortKey").val(data.defaultSortKey);
+				$("#defaultSortOrder").val(data.defaultSortOrder);
+				$("#defaultMaxDispNum").val(data.defaultMaxDispNum);
+				$("#defaultConfidenceTh").val(data.defaultConfidenceTh);
+				$("#message").html(data.message);
+				$("#maxDispNum").val(data.maxDispNum);
+				$("#confidenceTh").val(data.confidenceTh);
+				$("#sortKey").val(data.sortKey);
+				$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
+					return ($(this).val() == data.sortOrder)
+				}).attr("checked", true);
+				$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
+					return ($(this).val() == data.dispConfidence)
+				}).attr("checked", true);
+				$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+					return ($(this).val() == data.dispCandidateTag)
+				}).attr("checked", true);
+				$("#preferenceFlg").val(data.preferenceFlg);
 
-				$("#detail").removeAttr("style", "display:none;");
-				$("#updateCADPrefBtn").css("visibility", "visible");
-				if(json.preferenceFlg == 1)  $("#deleteCADPrefBtn").css("visibility", "visible");
+				$("#detailCadPrefrence").show();
+				$("#updateCADPrefBtn").show();
+				if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
 				$("#container").height( $(document).height() - 10 );
 
 			   }, "json");
@@ -102,10 +110,12 @@ function RegisterCadPreference(mode)
 			$.post("./preference/regist_cad_preference.php",
                    { mode: mode, cadName: cadName, version: version,
 				     sortKey: $("#sortKey").val(),
-					 sortOrder: $("input[name='sortOrder']:checked").val(),
+					 sortOrder: $('#detailCadPrefrence input[name="sortOrder"]:checked').val(),
                      maxDispNum: $("#maxDispNum").val(),
                      confidenceTh: $("#confidenceTh").val(),
-					 preferenceFlg: $("#preferenceFlg").val()},
+					 preferenceFlg: $("#preferenceFlg").val(),
+					 dispConfidenceFlg: $('#detailCadPrefrence input[name="dispConfidence"]:checked').val(),
+					 dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()},
   					 function(data){
 
 						if(data.message != null)
@@ -122,13 +132,21 @@ function RegisterCadPreference(mode)
 									$("#maxDispNum").val($("#defaultMaxDispNum").val());
 									$("#confidenceTh").val($("#defaultConfidenceTh").val());
 									$("#sortKey").val($("#defaultSortKey").val());
-									$("input[name='sortOrder']").val([$("#defaultSortOrder").val()]);
-									$("#deleteCADPrefBtn").css("visibility", "hidden");
+									$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
+										return ($(this).val() == $("#defaultSortOrder").val())
+									}).attr("checked", true);
+									$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
+										return ($(this).val() == "f")
+									}).attr("checked", true);
+									$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+										return ($(this).val() == "f")
+									}).attr("checked", true);
+									$("#deleteCADPrefBtn").hide();
 								}
 								else
 								{
 									$("#message").html("&nbsp;");
-									if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").css("visibility", "visible");
+									if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
 
 									if(data.newMaxDispNum==0)	$("#maxDispNum").val("all");
 									else						$("#maxDispNum").val(data.newMaxDispNum);
@@ -296,7 +314,7 @@ function ChangeCadMenu()
 						<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onClick="ShowCadPreferenceDetail();" /></p>
 					</div>
 
-					<div id="detail" style="display:none;">
+					<div id="detailCadPrefrence" style="display:none;">
 						<h4 id="message" class="upSec">&nbsp;</h4>
 					
 						<table class="detail-tbl" style="width: 100%;">
@@ -313,8 +331,8 @@ function ChangeCadMenu()
 							<tr>
 								<th><span class="trim01">Sort order</span></th>
 								<td>
-									<input type="radio" name="sortOrder" value="f">Asc.
-					    			<input type="radio" name="sortOrder" value="t" checked="checked">Desc.
+									<input type="radio" name="sortOrder" value="f" />Asc.
+					    			<input type="radio" name="sortOrder" value="t" />Desc.
 								</td>
 							</tr>
 							<tr>
@@ -329,11 +347,25 @@ function ChangeCadMenu()
 									<input id="confidenceTh" type="text" class="al-r" style="width: 100px;" />
 								</td>
 							</tr>
+							<tr>
+								<th><span class="trim01">Disp confidence</span></th>
+								<td>
+									<input type="radio" name="dispConfidence" value="t" />True
+					    			<input type="radio" name="dispConfidence" value="f" />False
+								</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Disp tags for lesion candidate</span></th>
+								<td>
+									<input type="radio" name="dispCandidateTag" value="t" />True
+					    			<input type="radio" name="dispCandidateTag" value="f" />False
+								</td>
+							</tr>
 						</table>
 					
 						<div class="pl20 mb20 mt10">
 								<input id="updateCADPrefBtn" type="button" value="Update" class="w100 form-btn" onclick="RegisterCadPreference('update');">
-			   					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="visibility:hidden;">
+			   					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
 						</div>
 					</div>
 				</div>

@@ -26,12 +26,10 @@
 			"options" => array("personal", "consensual"),
 			'oterwise' => "personal"),
 		"cadName" => array(
-			"type" => "string",
-			"regex" => "/^[\w-_]+$/",
+			"type" => "cadname",
 			"errorMes" => "[ERROR] 'CAD name' is invalid."),
 		"version" => array(
-			"type" => "string",
-			"regex" => "/^[\w-_\.]+$/",
+			"type" => "version",
 			"errorMes" => "[ERROR] 'Version' is invalid."),
 		"studyInstanceUID" => array(
 			"type" => "uid",
@@ -139,6 +137,9 @@
 		
 			if($params['errorMessage'] == "")
 			{
+				$params['dispConfidenceFlg'] = 0;
+				$params['dispCandidateTagFlg']  = 0;
+
 				$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?");
 				$stmt->execute(array($userID, $params['cadName'], $params['version']));
 				 
@@ -154,6 +155,9 @@
 
 					if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
 					else                               $params['sortOrder'] = ($result['default_sort_order']) ? 't' : 'f';
+
+					$params['dispConfidenceFlg'] = ($result['disp_confidence_flg']) ? 1 : 0;
+					$params['dispCandidateTagFlg']  = ($result['disp_candidate_tag_flg']) ? 1 : 0;
 				}
 	
 				$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.age, st.study_id, st.study_date,"
