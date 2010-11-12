@@ -1,8 +1,9 @@
 <?
 
 	include('drawRocCurve.php');
-	include("../cad_results/show_cad_results_private.php");
-	
+	include("../cad_results/lesion_candidate_display_private.php");
+	require_once('../class/DcmExport.class.php');
+		
 	$data = array();
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -157,8 +158,7 @@
 
 			if(!is_file($srcFname))
 			{
-				dcm2png($cmdForProcess, $cmdDcmToPng, $DIR_SEPARATOR, $srcFname, $posZ, $candList[$k][1],
-						$windowLevel, $windowWidth);
+				DcmExport::dcm2png($srcFname, $posZ, $windowLevel, $windowWidth);
 			}
 
 			$img = new Imagick();

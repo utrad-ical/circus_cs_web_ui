@@ -31,7 +31,7 @@
 	$dstHtml .= '<input type="hidden" id="xPos"       value="' . $xPos . '">';
 	$dstHtml .= '<input type="hidden" id="yPos"       value="' . $yPos . '">';
 	$dstHtml .= '<input type="hidden" id="zPos"       value="' . $zPos . '">';
-	$dstHtml .= '<input type="hidden" id="webPathOfCADReslut" value="../' . $webPathOfCADReslut . '">';
+	$dstHtml .= '<input type="hidden" id="webPathOfCADReslut" value="../' . $params['webPathOfCADReslut'] . '">';
 	
 	$dstHtml .= '<div id="resultBody" class="resultBody" style="background-color:#f0f;">';
 	
@@ -45,7 +45,7 @@
 	// Axial
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;">';
-	$dstHtml .='<img id="axial" src="../' . $webPathOfCADReslut . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
+	$dstHtml .='<img id="axial" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
 	$dstHtml .=' width=' . $dispWidth . ' height=' . $dispHeight . '>';
 	$dstHtml .= '<img id="axialCross" src="images/magenta_cross.png"';
 	$dstHtml .= ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . (-$yPos/2-25) . 'px;">';
@@ -60,7 +60,7 @@
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div id="axialEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative;  top:0px; left:0px;">';	
 	$dstHtml .= '<img id="axialEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';
-	$dstHtml .= '<img id="axialEnlarge" src="../' . $webPathOfCADReslut . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
+	$dstHtml .= '<img id="axialEnlarge" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
 	$dstHtml .= ' width=' . $width . ' height=' . $height;
 	$dstHtml .= ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$yPos+50) . 'px; z-index:1;">';
 	$dstHtml .= '</div>';
@@ -109,7 +109,7 @@
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div id="coronalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">';	
 	$dstHtml .= '<img id="coronalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';
-	$dstHtml .= '<img id="coronalEnlarge" src="../' . $webPathOfCADReslut . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
+	$dstHtml .= '<img id="coronalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
 	$dstHtml .= ' width=' . $width . ' height=' . $depth;
 	$dstHtml .= ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">';	
 	$dstHtml .= '</div>';
@@ -118,7 +118,7 @@
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div id="sagittalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">';	
 	$dstHtml .= '<img id="sagittalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';		
-	$dstHtml .= '<img id="sagittalEnlarge" src="../' . $webPathOfCADReslut . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
+	$dstHtml .= '<img id="sagittalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
 	$dstHtml .= ' width=' . $height . ' height=' . $depth;
 	$dstHtml .= ' style="position:absolute; left:' . (-$yPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">';
 	$dstHtml .= '</div>';
@@ -139,7 +139,7 @@
 	// Coronal
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispDepth . 'px;">';
-	$dstHtml .= '<img id="coronal" src="../' . $webPathOfCADReslut . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
+	$dstHtml .= '<img id="coronal" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
 	$dstHtml .= ' width=' . $dispWidth . ' height=' . $dispDepth . '>';
 	$dstHtml .= '<img id="coronalCross" src="images/magenta_cross.png"';
 	$dstHtml .= ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">';
@@ -149,7 +149,7 @@
 	// Saggittal
 	$dstHtml .= '<td>';
 	$dstHtml .= '<div class="imgArea" style="width:' . $dispHeight . 'px; height:' .  $dispDepth . 'px;">';
-	$dstHtml .= '<img id="sagittal" src="../' . $webPathOfCADReslut . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
+	$dstHtml .= '<img id="sagittal" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
 	$dstHtml .= ' width=' . $dispHeight . ' height=' . $dispDepth . '>';
 	$dstHtml .= '<img id="sagittalCross" src="images/magenta_cross.png" ';
 	$dstHtml .= ' style="position:relative; left:' . ($yPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">';
@@ -226,19 +226,6 @@
 
 	$smarty->assign('params', $params);
 
-	$smarty->assign('patientID',         $patientID);
-	$smarty->assign('patientName',       $patientName);	
-	$smarty->assign('sex',               $sex);
-	$smarty->assign('age',               $age);
-	$smarty->assign('studyID',           $studyID);
-	$smarty->assign('studyDate',         $studyDate);
-	$smarty->assign('seriesID',          $seriesID);
-	$smarty->assign('modality',          $modality);
-	$smarty->assign('seriesDescription', $seriesDescription);
-	$smarty->assign('seriesDate',        $seriesDate);
-	$smarty->assign('seriesTime',        $seriesTime);
-	$smarty->assign('bodyPart',          $bodyPart);
-
 	$smarty->assign('width',              $width);
 	$smarty->assign('height',             $height);	
 	$smarty->assign('depth',              $depth);
@@ -249,7 +236,7 @@
 	$smarty->assign('xPos',               $xPos);
 	$smarty->assign('yPos',               $yPos);
 	$smarty->assign('zPos',               $zPos);
-	$smarty->assign('webPathOfCADReslut', $webPathOfCADReslut);
+	$smarty->assign('webPathOfCADReslut', $params['webPathOfCADReslut']);
 	$smarty->assign('maxID',              $maxID);
 
 	$smarty->assign('dstHtml', $dstHtml);	

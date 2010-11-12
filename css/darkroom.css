@@ -41,7 +41,7 @@ body.darkroom table.col-tbl tr.column td {
 }
 
 #container.menu-darkroom {
-	background: url(img_common/item/menu_bk.black.gif) left repeat-y;
+	background: url(../img_common/item/menu_bk.black.gif) left repeat-y;
 }
 
 #container h1.darkroom {

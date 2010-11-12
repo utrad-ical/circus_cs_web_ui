@@ -79,7 +79,7 @@
 			$params['seriesInstanceUID'] = $result[2];
 			$params['patientName']       = $result[3];
 			$params['orgWidth']          = $result[4];
-			$params['orgHeight']         = $result[5];		
+			$params['orgHeight']         = $result[5];
 			$params['sex']               = $result[6];
 			$params['age']               = $result[7];
 			$params['studyID']           = $result[8];
@@ -128,8 +128,9 @@
 			$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
 			$stmt->bindParam(1, $params['modality']);
 			$stmt->execute();
-
+		
 			$grayscaleArray = array(); 
+			$detailParams['presetArr'] = array();
 			
 			while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
@@ -143,10 +144,15 @@
 				$grayscaleArray[] = $result['preset_name'];
 				$grayscaleArray[] = $result['window_level'];
 				$grayscaleArray[] = $result['window_width'];
+				
+				$params['presetArr'][] = array($result['preset_name'],
+													 $result['window_level'],
+													 $result['window_width']);
 			}
 		
 			$params['grayscaleStr'] = implode('^', $grayscaleArray);
-			//----------------------------------------------------------------------------------------------------
+			$params['presetNum'] = count($detailParams['presetArr']);	
+			//----------------------------------------------------------------------------------------------------	
 
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve slice origin, slice pitch, slice offset
@@ -500,27 +506,6 @@
 			//--------------------------------------------------------------------------------------------------------
 		
 			//--------------------------------------------------------------------------------------------------------
-			// Grascale preset
-			//--------------------------------------------------------------------------------------------------------
-			$presetArr = array();
-			$presetNum = 0;
-			
-			if($params['grayscaleStr'] != "")
-			{
-				$tmpArr = explode("^", $params['grayscaleStr']);
-				
-				$presetNum = (int)(count($tmpArr)/3);
-			
-				for($i=0; $i<$presetNum; $i++)
-				{
-					$presetArr[$i][0] = $tmpArr[$i * 3];
-					$presetArr[$i][1] = $tmpArr[$i * 3 + 1];
-					$presetArr[$i][2] = $tmpArr[$i * 3 + 2];
-				}
-			}
-			//--------------------------------------------------------------------------------------------------------
-		
-			//--------------------------------------------------------------------------------------------------------
 			// Location list
 			//--------------------------------------------------------------------------------------------------------
 			$fnData = array();
@@ -577,8 +562,8 @@
 		$smarty->assign('fnData',   $fnData);
 		$smarty->assign('candPos',  $candPos);
 		
-		$smarty->assign('presetArr', $presetArr);
-		$smarty->assign('presetNum', $presetNum);
+	//	$smarty->assign('presetArr', $presetArr);
+	//	$smarty->assign('presetNum', $presetNum);
 
 		$smarty->assign('ticket',   $_SESSION['ticket']);
 	

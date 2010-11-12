@@ -169,14 +169,7 @@
 			{
 				$stmtTag->bindValue(1, $result[0]);
 				$stmtTag->execute();
-				
-				$tagArray = array();
-				
-				while($tmpTag = $stmtTag->fetchColumn())
-				{
-					$tagArray[] = $tmpTag;
-				}
-				$tagStr = implode(',', $tagArray);
+				$tagStr = implode(',', $stmtTag->fetchAll(PDO::FETCH_COLUMN));
 
 				$encryptedPtID = PinfoScramble::encrypt($result[1], $_SESSION['key']);
 	

@@ -17,11 +17,12 @@
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
 <script language="javascript" type="text/javascript" src="js/list_tab.js"></script>
+<script language="javascript" type="text/javascript" src="js/edit_tag.js"></script>
+
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
 <link href="./jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="./css/monochrome.css" rel="stylesheet" type="text/css" media="all" />
 <link href="./css/popup.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="js/radio-to-button.js"></script>
 <!-- InstanceEndEditable -->

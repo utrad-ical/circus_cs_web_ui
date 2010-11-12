@@ -3,6 +3,7 @@
 	
 	include_once('common.php');
 	include_once("auto_logout.php");
+	require_once('class/PersonalInfoScramble.class.php');	
 	require_once('class/DcmExport.class.php');
 	
 	$data = array();
@@ -116,9 +117,19 @@
 				$img->destroy();
 
 				$latestHtml .= '<div class="result-record-3cols al-c">'
-							.  '<div class="al-l" style="font-size:12px;">'
-							.  '<b>&nbsp;Pt.: </b>' . $item['patient_name'] . ' (' . $item['patient_id'] . ')<br>'
-							.  '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br>'
+							.  '<div class="al-l" style="font-size:12px;">';
+				
+				if($_SESSION['anonymizeFlg'] == 1)
+				{
+					$latestHtml .= '<b>&nbsp;Pt.: </b>' . PinfoScramble::scramblePtName()
+								.  ' (' . PinfoScramble::encrypt($item['patient_id'], $_SESSION['key']) . ')<br>';
+				}
+				else
+				{
+					$latestHtml .= '<b>&nbsp;Pt.: </b>' . $item['patient_name'] . ' (' . $item['patient_id'] . ')<br>';
+				}
+
+				$latestHtml .= '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br>'
 							.  '<b>&nbsp;CAD: </b>' . $item['plugin_name'] . ' v.' . $item['version']
 							.  '<input name="" type="button" value="detail" class="form-btn"'
 							.  ' onclick="location.href=\'cad_results/show_cad_results.php?execID=' . $item['exec_id']

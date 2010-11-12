@@ -3,16 +3,16 @@
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
 	$img = new Imagick();
-	$img->readImage($pathOfCADReslut . $DIR_SEPARATOR . 'in' . sprintf("%04d", $imgNum) . '.jpg');
+	$img->readImage($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'in' . sprintf("%04d", $imgNum) . '.jpg');
 	$dispWidth  = $img->getImageWidth()*0.75;
 	$dispHeight = $img->getImageHeight()*0.75;
 	
 	$consensualFBFlg = ($_SESSION['groupID'] == 'admin') ? 1 : 0;
 
-	$orgImg = $webPathOfCADReslut . '/in' . sprintf("%04d", $imgNum) . '.jpg';
-	$resImg = $webPathOfCADReslut . '/out' . sprintf("%04d", $imgNum) . '.jpg';
+	$orgImg = $params['webPathOfCADReslut'] . '/in' . sprintf("%04d", $imgNum) . '.jpg';
+	$resImg = $params['webPathOfCADReslut'] . '/out' . sprintf("%04d", $imgNum) . '.jpg';
 	
-	$segResultFile = '../' . $webPathOfCADReslut . '/' . $params['seriesInstanceUID'] . '_opt.zip';
+	$segResultFile = '../' . $params['webPathOfCADReslut'] . '/' . $params['seriesInstanceUID'] . '_opt.zip';
 	
 	$maxImgNum = 101;
 
@@ -36,19 +36,6 @@
 	$smarty->assign('segResultFile',      $segResultFile);
 	$smarty->assign('webPathOfCADReslut', $webPathOfCADReslut);
 
-	$smarty->assign('patientID',         $patientID);
-	$smarty->assign('patientName',       $patientName);	
-	$smarty->assign('sex',               $sex);
-	$smarty->assign('age',               $age);
-	$smarty->assign('studyID',           $studyID);
-	$smarty->assign('studyDate',         $studyDate);
-	$smarty->assign('seriesID',          $seriesID);
-	$smarty->assign('modality',          $modality);
-	$smarty->assign('seriesDescription', $seriesDescription);
-	$smarty->assign('seriesDate',        $seriesDate);
-	$smarty->assign('seriesTime',        $seriesTime);
-	$smarty->assign('bodyPart',          $bodyPart);
-	
 	$smarty->assign('orgImg', $orgImg);	
 	$smarty->assign('resImg', $resImg);	
 

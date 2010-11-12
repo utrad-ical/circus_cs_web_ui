@@ -487,46 +487,51 @@ function RegistrationCADJob()
 			<!-- Error display -->
 			<div id="error" {if $params.mode!='error'}style="display:none;"{/if}> 
 				<h2>Error</h2>
-				<p class="mb10">{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
-</p>
-				<table class="col-tbl mb30">
-					<thead>
-						<tr>
-							<th>Series</th>
-							<th>Modality</th>
-							<th>Condition</th>
-						</tr>
-					</thead>
-					<tbody>
-						{assign var="cnt" value=0}
 
-						{section name=j start=0 loop=$seriesNum}
+				{if $params.errorMessage != ""}
+					<p class="mb10">{$params.errorMessage}</p>
+				{else}
+					<p class="mb10">{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
+	</p>
+					<table class="col-tbl mb30">
+						<thead>
+							<tr>
+								<th>Series</th>
+								<th>Modality</th>
+								<th>Condition</th>
+							</tr>
+						</thead>
+						<tbody>
+							{assign var="cnt" value=0}
 
-							{assign var="j" value=$smarty.section.j.index}
+							{section name=j start=0 loop=$seriesNum}
 
-							{section name=i start=0 loop=$descriptionNumArr[$j]}
+								{assign var="j" value=$smarty.section.j.index}
 
-								<tr>
-									{assign var="i" value=$smarty.section.i.index}
-									{assign var="tmp" value=$cnt+$i}
+								{section name=i start=0 loop=$descriptionNumArr[$j]}
 
-									{if $i==0}
-										<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$j+1}</td>
-										<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$modalityArr[$j]}</td>
-									{/if}
+									<tr>
+										{assign var="i" value=$smarty.section.i.index}
+										{assign var="tmp" value=$cnt+$i}
 
-									{if $seriesDescriptionArr[$tmp] == '(default)'}
-										<td>#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}</td>
-									{else}
-										<td>series description: {$seriesDescriptionArr[$tmp]}</td>
-									{/if}
-								</tr>
+										{if $i==0}
+											<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$j+1}</td>
+											<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$modalityArr[$j]}</td>
+										{/if}
+
+										{if $seriesDescriptionArr[$tmp] == '(default)'}
+											<td>#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}</td>
+										{else}
+											<td>series description: {$seriesDescriptionArr[$tmp]}</td>
+										{/if}
+									</tr>
+								{/section}
+
+								{assign var="cnt" value=$cnt+$descriptionNumArr[$j]}
 							{/section}
-
-							{assign var="cnt" value=$cnt+$descriptionNumArr[$j]}
-						{/section}
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				{/if}
 			</div>
 			<!-- / Error END -->
 

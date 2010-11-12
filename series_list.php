@@ -298,7 +298,7 @@
 			
 			if($params['filterTag'] != "")
 			{		
-			 	$sqlCond .= "sr.series_instance_uid IN (SELECT DISTINCT series_instance_uid FROM series_tag WHERE tag~*?)";
+			 	$sqlCondArray[] = "sr.sid IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=3 AND tag~*?)";
 				$sqlParams[] = $params['filterTag'];
 				$addressParams['filterTag'] = $params['filterTag'];
 			}			
@@ -363,7 +363,7 @@
 				$sqlParams[] = $params['showing'];
 				$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 			}
-	
+
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 	

@@ -8,6 +8,7 @@
 <!-- InstanceEndEditable -->
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
@@ -66,6 +67,40 @@ function ResetSearchBlock()
 	$(".search-panel select[name='researchMenu'], .search-panel select[name='showing']").children().removeAttr("selected");
 }
 
+$(function() {
+	$("#resSearch input[name='resDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#resSearch input[name='resDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#resSearch input[name='resDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#resSearch input[name='resDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+});
+
 
 {/literal}
 
@@ -75,6 +110,7 @@ function ResetSearchBlock()
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
 
+<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 
@@ -103,13 +139,13 @@ function ResetSearchBlock()
 				<form id="form1" name="form1">
 
 				<!-- ***** ðŒÝ’è ***** -->
-				<div class="search-panel">
+				<div id="resSearch" class="search-panel">
 					<h3>Search</h3>
 					<div class="p20">
 						<table class="search-tbl">
 							<tr>
 								<th style="width: 10em;"><span class="trim01">Research</span></th>
-								<td style="width: 210px;">
+								<td style="width: 220px;">
 									<select id="researchMenu" name="researchMenu" style="width: 150px;">
 											<option value="all">all</option>
 										{foreach from=$pluginList item=item}

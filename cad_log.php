@@ -46,10 +46,12 @@
 				"errorMes" => "'CAD ID' is invalid."),
 			"filterCAD" => array(
 				"type" => "cadname",
+				"default" => "all",
 				"otherwise"=> "all",
 				"errorMes" => "'CAD' is invalid."),
 			"filterVersion" => array(
 				"type" => "version",
+				"default" => "all",
 				"otherwise" => "all",
 				"errorMes" => "'Version' is invalid."),
 			"filterPtID" => array(
@@ -337,7 +339,7 @@
 		
 		if($params['filterTag'] != "")
 		{		
-			$sqlCondArray[] = "el.exec_id IN (SELECT DISTINCT exec_id FROM executed_plugin_tag WHERE tag~*?)";
+			$sqlCondArray[] = "el.exec_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
 			$sqlParams[] = $params['filterTag'];
 			$addressParams['filterTag'] = $params['filterTag'];
 		}

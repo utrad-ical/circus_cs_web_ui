@@ -18,7 +18,7 @@
 		"category" => array(
 			"type" => "int",
 			"min" => 1,
-			"max" => 5,
+			"max" => 7,
 			"required" => true,
 			"errorMes" => "Cagegory is invalid."),
 			"referenceID" => array(
@@ -43,7 +43,7 @@
 			"sid" => array(
 			"type" => "int",
 			"min" => 1,
-			"required" => true
+			"required" => true,
 			"errorMes" => "[ERROR] SID is invalid."),
 		));	
 	}
@@ -154,7 +154,12 @@
 					}
 					else if($params['category']==4)
 					{				
-						$dstData['parentTagHtml']  .= ' <a href="cad_log.php?filterTag=' . $result[1] . '">'
+						$dstData['parentTagHtml']  .= ' <a href="../cad_log.php?filterTag=' . $result[1] . '">'
+												   .  $result[1] . '</a> ';
+					}
+					else if($params['category']==6)
+					{				
+						$dstData['parentTagHtml']  .= ' <a href="../research/research_list.php?filterTag=' . $result[1] . '">'
 												   .  $result[1] . '</a> ';
 					}
 					else
@@ -173,9 +178,12 @@
 					$cnt++;
 				}
 				
-				if($params['category'] >=3)
+				if($params['category']==3 || $params['category']==4 || $params['category']==6)
 				{	
-					$dstData['parentTagHtml'] .= '<a href="#" onclick="EditTag(' . $params['sid'] . ');">(Edit)</a>';
+					$dstData['parentTagHtml'] .= '<a href="#" onclick="EditTag(' . $params['category'] . ','
+											  .  $params['referenceID'] . ','
+											  . (($params['category']==4 || $params['category']==6) ? "'../'" : "''")
+											  . ');">(Edit)</a>';
 				}
 				else
 				{

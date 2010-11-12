@@ -54,14 +54,14 @@
 			$srcImgFname = sprintf("result%03d.png",  $k * 5 + $j);
 			$thumbnailFname = sprintf("result%03d_thumb.png", $k * 5 + $j);
 		
-			$ifname = $pathOfCADReslut . $DIR_SEPARATOR . $srcImgFname;
-			$ofname = $pathOfCADReslut . $DIR_SEPARATOR . $thumbnailFname;
+			$ifname = $params['pathOfCADReslut'] . $DIR_SEPARATOR . $srcImgFname;
+			$ofname = $params['pathOfCADReslut'] . $DIR_SEPARATOR . $thumbnailFname;
 			$dstWidth = $COL_WIDTH;
 			
 			if(!is_file($ofname))	CreateThumbnailMPR($ifname, $ofname, $dstWidth);
 		
-			$orgImgFname[$k][$j-1] = '../' . $webPathOfCADReslut . $DIR_SEPARATOR_WEB . $srcImgFname;
-			$thumbnailImgFname[$k][$j-1] = '../' . $webPathOfCADReslut . $DIR_SEPARATOR_WEB . $thumbnailFname;
+			$orgImgFname[$k][$j-1] = '../' . $params['webPathOfCADReslut'] . $DIR_SEPARATOR_WEB . $srcImgFname;
+			$thumbnailImgFname[$k][$j-1] = '../' . $params['webPathOfCADReslut'] . $DIR_SEPARATOR_WEB . $thumbnailFname;
 		}
 	} // end for : $k
 	//----------------------------------------------------------------------------------------------
@@ -90,19 +90,6 @@
 
 	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
 
-	$smarty->assign('patientID',         $patientID);
-	$smarty->assign('patientName',       $patientName);	
-	$smarty->assign('sex',               $sex);
-	$smarty->assign('age',               $age);
-	$smarty->assign('studyID',           $studyID);
-	$smarty->assign('studyDate',         $studyDate);
-	$smarty->assign('seriesID',          $seriesID);
-	$smarty->assign('modality',          $modality);
-	$smarty->assign('seriesDescription', $seriesDescription);
-	$smarty->assign('seriesDate',        $seriesDate);
-	$smarty->assign('seriesTime',        $seriesTime);
-	$smarty->assign('bodyPart',          $bodyPart);
-	
 	$smarty->assign('registTime',    $registTime);	
 	$smarty->assign('registMsg',     $registMsg);
 	

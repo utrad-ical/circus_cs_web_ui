@@ -8,6 +8,7 @@
 <!-- InstanceEndEditable -->
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
@@ -18,45 +19,17 @@
 
 function RegistResearchJob()
 {
-	var checkObj = document.form1.elements['cadCheckList[]'];
-	if(checkObj == null)		return;
+	var checkCnt = $("input[name='cadCheckList[]']:checked").length;
 
-	//----------------------------------------------------------------------------------------------
-	// チェックボックスにチェックが入っている個数をカウント
-	//----------------------------------------------------------------------------------------------
-	var checkCnt = 0;
-	var checkedCadIdStr = "";
-	
-
-	if(checkObj.length == null)
-	{
-		if(checkObj.checked)
-		{
-			if(checkCnt>0)  checkedCadIdStr += "^";
-			checkedCadIdStr += checkObj.value;
-			checkCnt++;
-		}
-	}
-	else
-	{
-		for(var i=0; i<checkObj.length; i++)
-		{
-			if(checkObj[i].checked)
-			{
-				if(checkCnt>0)  checkedCadIdStr += "^";
-				checkedCadIdStr += checkObj[i].value;
-				checkCnt++;
-			}
-		}
-	}
-	//----------------------------------------------------------------------------------------------
-
-	//alert(checkedCadIdStr);
+    var checks = $("input[name='cadCheckList[]']:checked");
+    var checkedCadIdStr = checks.map(function() {
+      return $(this).val();
+    }).get().join('^');
 
 	$.post("research_job_registration.php",
-            { pluginName: $("#researchJob select[name='researchMenu'] option:selected").text(),
-			  checkedCadIdStr: checkedCadIdStr},
-  			function(data){
+          { pluginName: $("#researchJob select[name='researchMenu'] option:selected").text(),
+			checkedCadIdStr: checkedCadIdStr},
+			function(data){
 				$("#registMessage").html(data.message).show();
 		 }, "json");
 }
@@ -126,7 +99,7 @@ function ResetCondition()
 
 function ShowCadList()
 {
-	$.post("create_cad_list.php",
+	$.post("show_cad_list.php",
        		{ cadName:     $("#cadMenu option:selected").text(),
 			  version:     $("#versionMenu").val(),
 			  cadDateFrom: $("#researchJob input[name='cadDateFrom']").val(),
@@ -214,14 +187,80 @@ function ShowResearchList()
 	$('#container').height( $(document).height() - 10 );
 }
 
-{/literal}
+$(function() {
+	$("#researchCondition input[name='srDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#researchCondition input[name='srDateTo']").datepicker("option", "minDate", date);
+				}
+		});
 
+	$("#researchCondition input[name='srDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#researchCondition input[name='srDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+
+	$("#researchCondition input[name='cadDateFrom']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#researchCondition input[name='cadDateTo']").datepicker("option", "minDate", date);
+				}
+		});
+
+	$("#researchCondition input[name='cadDateTo']").datepicker({
+			showOn: "button",
+			buttonImage: "../images/calendar_view_month.png",
+			buttonImageOnly: true,
+			buttonText:'',
+			changeMonth: true,
+			changeYear: true,
+			dateFormat: 'yy-mm-dd',
+			maxDate: 0,
+			onSelect: function(selectedDate, instance){
+					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+					$("#researchCondition input[name='cadDateFrom']").datepicker("option", "maxDate", date);
+				}
+		});
+});
+
+{/literal}
 -->
 </script>
 
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
 
+<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 
@@ -262,7 +301,7 @@ function ShowResearchList()
 						<table class="search-tbl">
 							<tr>
 								<th style="width: 8.0em;"><span class="trim01">Research</span></th>
-								<td style="width: 200px;">
+								<td style="width: 220px;">
 									<select id="researchMenu" name="researchMenu" style="width: 120px;" onchange="ChangeResearchMenu();">
 										{foreach from=$pluginList item=item}
 											<option value="{$item[0]}">{$item[0]} v.{$item[1]}</option>

@@ -16,6 +16,7 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
+<script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
 
 <link rel="shortcut icon" href="favicon.ico" />
 
@@ -55,12 +56,11 @@
 			<div id="cadResult">
 
 				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
-			
+
 				<div class="headerArea">
-					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$patientName}&nbsp;({$patientID})&nbsp;{$age}{$sex}</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$studyDate}&nbsp;({$studyID})</a></div>
-					<div class="fl-l"><img src="../img_common/share/path.gif" />{$modality},&nbsp;{$seriesDescription}&nbsp;({$seriesID})</div>
+					<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}">{$params.studyDate}&nbsp;({$params.studyID})</a></div>
+					<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality},&nbsp;{$params.seriesDescription}&nbsp;({$params.seriesID})</div>
 				</div>
 		
 				<div class="hide-on-guest">

@@ -16,6 +16,7 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
+<script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
 
 {literal}
 <script language="Javascript">

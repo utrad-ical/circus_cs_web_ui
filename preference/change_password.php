@@ -7,9 +7,9 @@
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables
 	//--------------------------------------------------------------------------------------------------------
-	$oldPassword     = (isset($_REQUEST['oldPassword']))     ? $_REQUEST['oldPassword']     : "";
-	$newPassword     = (isset($_REQUEST['newPassword']))     ? $_REQUEST['newPassword']     : "";
-	$reenterPassword = (isset($_REQUEST['reenterPassword'])) ? $_REQUEST['reenterPassword'] : "";
+	$oldPassword     = (isset($_POST['oldPassword']))     ? $_POST['oldPassword']     : "";
+	$newPassword     = (isset($_POST['newPassword']))     ? $_POST['newPassword']     : "";
+	$reenterPassword = (isset($_POST['reenterPassword'])) ? $_POST['reenterPassword'] : "";
 	$userID = $_SESSION['userID'];
 	//--------------------------------------------------------------------------------------------------------
 
@@ -19,21 +19,28 @@
 		$pdo = new PDO($connStrPDO);
 
 		$message = "";
-		
-		$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE user_id=? AND passcode=?"); 
-		$stmt->execute(array($userID, MD5($oldPassword)));
 
-		if($stmt->fetchColumn() != 1)
+		if($oldPassword == "" || $newPassword == "" || $reenterPassword == "")
 		{
-			$message = "Current password you have entered is incorrect. Please try again.";
+			$message = "Please fill all text boxes.";
 		}
-		else if($newPassword != $reenterPassword)
+		else
 		{
-			$message = "New password and Re-enter password should be the same.";
-		}
-		else if($oldPassword == $newPassword || $oldPassword == md5($newPassword))
-		{
-			$message = "New password is the same as current password.";
+			$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE user_id=? AND passcode=?"); 
+			$stmt->execute(array($userID, MD5($oldPassword)));
+
+			if($stmt->fetchColumn() != 1)
+			{
+				$message = "Entered current password is incorrect. Please try again.";
+			}
+			else if($newPassword != $reenterPassword)
+			{
+				$message = "New password and Re-enter password should be the same.";
+			}
+			//else if($oldPassword == $newPassword || $oldPassword == md5($newPassword))
+			//{
+			//	$message = "New password is the same as current password.";
+			//}
 		}
 		
 		if($message == "")

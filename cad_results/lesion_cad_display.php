@@ -221,7 +221,7 @@
 					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE exec_id=?"
 				            . " AND lesion_id=? AND consensual_flg='f' AND interrupt_flg='f'";
 							
-					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND evaluation>0";
+					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (evaluation=1 OR evaluation=2)";
 					else                                                 $sqlStr .= " AND evaluation=?";
 									
 					$stmtFeedback = $pdo->prepare($sqlStr);
@@ -320,7 +320,7 @@
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	$params['registStr'] = 'Lesion classification: <span style="color:'
+	$params['registStr'] = 'Candidate classification: <span style="color:'
 	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'blue;">complete' : 'red;">incomplete')
 						 . '</span><br/>FN input: <span style="color:'
 						 . (($params['fnInputFlg']) ? 'blue;">complete' : 'red;">incomplete') . '</span>';
@@ -328,58 +328,75 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// For CAD detail
 	//------------------------------------------------------------------------------------------------------------------
-	$detailData = array( 'orgWidth'     => $params['orgWidth'],
-	                     'orgHeight'    => $params['orgHeight'],
-						 'dispWidth'    => $params['orgWidth'],
-						 'dispHeight'   => $params['orgHeight'],
-						 'windowLevel'  => 0,
-						 'windowWidth'  => 0,
-						 'presetName'   => "",
-						 'grayscaleStr' => "",
-						 'imgNum'       => 1);
+	$detailParams = array('orgWidth'     => $params['orgWidth'],
+	                      'orgHeight'    => $params['orgHeight'],
+						  'dispWidth'    => $params['orgWidth'],
+						  'dispHeight'   => $params['orgHeight'],
+						  'windowLevel'  => 0,
+						  'windowWidth'  => 0,
+						  'presetName'   => "",
+						  'grayscaleStr' => "",
+						  'imgNum'       => 1);
 			
-	if($detailData['dispWidth'] >= $detailData['dispHeight'] && $detailData['dispWidth'] > 256)
+	if($detailParams['dispWidth'] >= $detailParams['dispHeight'] && $detailParams['dispWidth'] > 256)
 	{
-		$detailData['dispWidth']  = 256;
-		$detailData['dispHeight'] = (int)((float)$detailData['orgHeight'] * (float)$detailData['dispWidth']/(float)$detailData['orgWidth']);
+		$detailParams['dispWidth']  = 256;
+		$detailParams['dispHeight'] = (int)((float)$detailParams['orgHeight'] * (float)$detailParams['dispWidth']/(float)$detailParams['orgWidth']);
 	}
-	else if($detailData['dispHeight'] > 256)
+	else if($detailParams['dispHeight'] > 256)
 	{
-		$detailData['dispHeight'] = 256;
-		$detailData['dispWidth']  = (int)((float)$detailData['orgWidth'] * (float)$detailData['dispHeight']/(float)$detailData['orgHeight']);
+		$detailParams['dispHeight'] = 256;
+		$detailParams['dispWidth']  = (int)((float)$detailParams['orgWidth'] * (float)$detailParams['dispHeight']/(float)$detailParams['orgHeight']);
 	}	
-	$detailData['dispWidth']  = (int)($detailData['dispWidth']  * $RESCALE_RATIO_OF_SERIES_DETAIL);
-	$detailData['dispHeight'] = (int)($detailData['dispHeight'] * $RESCALE_RATIO_OF_SERIES_DETAIL);
+	$detailParams['dispWidth']  = (int)($detailParams['dispWidth']  * $RESCALE_RATIO_OF_SERIES_DETAIL);
+	$detailParams['dispHeight'] = (int)($detailParams['dispHeight'] * $RESCALE_RATIO_OF_SERIES_DETAIL);
 
-	$detailData['imgLeftPos'] = (256 * $RESCALE_RATIO_OF_SERIES_DETAIL / 2) - ($detailData['dispWidth'] / 2);
-	$detailData['imgNumStrLeftPos'] = $detailData['imgLeftPos'] + 5;
+	$detailParams['imgLeftPos'] = (256 * $RESCALE_RATIO_OF_SERIES_DETAIL / 2) - ($detailParams['dispWidth'] / 2);
+	$detailParams['imgNumStrLeftPos'] = $detailParams['imgLeftPos'] + 5;
 		
 	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
 	$stmt->bindParam(1, $params['modality']);
 	$stmt->execute();
-			
-	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-			
-	foreach($result as $key => $item)
+	
+	//----------------------------------------------------------------------------------------------------
+	// Retrieve preset grayscales
+	//----------------------------------------------------------------------------------------------------
+	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
+	$stmt->bindParam(1, $params['modality']);
+	$stmt->execute();
+
+	$grayscaleArray = array(); 
+	$detailParams['presetArr'] = array();
+	
+	while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 	{
-		if($item['priolity'] == 1)
+		if($result['priolity'] == 1)
 		{
-			$detailData['windowLevel'] = $item['window_level'];
-			$detailData['windowWidth'] = $item['window_width'];
-			$detailData['presetName']  = $item['preset_name'];
+			$detailParams['windowLevel'] = $result['window_level'];
+			$detailParams['windowWidth'] = $result['window_width'];
+			$detailParams['presetName']  = $result['preset_name'];
 		}
-		if($key > 0)  $detailData['grayscaleStr'] .= '^';
 		
-		$detailData['grayscaleStr'] .= $item['preset_name'].'^'.$item['window_level'].'^'.$item['window_width'];
+		$grayscaleArray[] = $result['preset_name'];
+		$grayscaleArray[] = $result['window_level'];
+		$grayscaleArray[] = $result['window_width'];
+		
+		$detailParams['presetArr'][] = array($result['preset_name'],
+											 $result['window_level'],
+											 $result['window_width']);
 	}
+
+	$detailParams['grayscaleStr'] = implode('^', $grayscaleArray);
+	$detailParams['presetNum'] = count($detailParams['presetArr']);	
+	//----------------------------------------------------------------------------------------------------	
 	
 	$flist = array();
 	$flist = GetDicomFileListInPath($params['seriesDir']);
-	$detailData['fNum'] = count($flist);
+	$detailParams['fNum'] = count($flist);
 		
 	$subDir = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_JPEG;
 	
-	$tmpFname = $flist[$detailData['imgNum']-1];
+	$tmpFname = $flist[$detailParams['imgNum']-1];
 
 	$srcFname = $params['seriesDir'] . $DIR_SEPARATOR . $tmpFname;
 
@@ -389,56 +406,62 @@
 
 	$dstFname = $subDir . $DIR_SEPARATOR . $tmpFname;
 	$dstBase  = $dstFname;
-	$detailData['dstFnameWeb'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
+	$detailParams['dstFnameWeb'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;	
 	
 	$dumpFname = $dstFname . ".txt";
 	
-	if($detailData['presetName'] != "" && $detailData['presetName'] != "Auto") 
+	if($detailParams['presetName'] != "" && $detailParams['presetName'] != "Auto") 
 	{
-		$dstFname .= "_" . $detailData['presetName'];
-		$detailData['dstFnameWeb'] .= "_" . $detailData['presetName'];
+		$dstFname .= "_" . $detailParams['presetName'];
+		$detailParams['dstFnameWeb'] .= "_" . $detailParams['presetName'];
 	}
 	$dstFname .= '.jpg';
-	$detailData['dstFnameWeb'] .= '.jpg';		
+	$detailParams['dstFnameWeb'] .= '.jpg';
 	
 	if(!is_file($dstFname))
 	{
-		DcmExport::createThumbnailJpg($srcFname, $dstBase, $detailData['presetName'], $JPEG_QUALITY, 1,
-		                              $detailData['windowLevel'], $detailData['windowWidth']);
+		DcmExport::createThumbnailJpg($srcFname, $dstBase, $detailParams['presetName'], $JPEG_QUALITY, 1,
+		                              $detailParams['windowLevel'], $detailParams['windowWidth']);
 	}
 				
-	$fp = fopen($dumpFname, "r");
+	//$fp = fopen($dumpFname, "r");
 	
-	$detailData['sliceNumber'] = 0;
-	$detailData['sliceLocation'] = 0;
+	//$detailParams['sliceNumber'] = 0;
+	//$detailParams['sliceLocation'] = 0;
 		
-	if($fp != NULL)
-	{
-		while($str = fgets($fp))
-		{
-			$dumpTitle   = strtok($str,":");
-			$dumpContent = strtok("\r\n");
-	
-			switch($dumpTitle)
-			{
-				case 'Img. No.':
-				case 'Image No.':
-					$detailData['sliceNumber'] = $dumpContent;
-					break;
+	//if($fp != NULL)
+	//{
+	//	while($str = fgets($fp))
+	//	{
+	//		$dumpTitle   = strtok($str,":");
+	//		$dumpContent = strtok("\r\n");
+	//
+	//		switch($dumpTitle)
+	//		{
+	//			case 'Img. No.':
+	//			case 'Image No.':
+	//				$detailParams['sliceNumber'] = $dumpContent;
+	//				break;
+	//
+	//			case 'Slice location':
+	//				$detailParams['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
+	//				break;
+	//		}
+	//	}
+	//	fclose($fp);
+	//}
+		
 
-				case 'Slice location':
-					$detailData['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
-					break;
-			}
-		}
-		fclose($fp);
-	}
-		
-	if($detailData['grayscaleStr'] != "")
+	$sqlStr = 'SELECT sid, sub_id, location_x, location_y, location_z, slice_location, volume_size, confidence'
+			. ' FROM "' . $params['resultTableName'] . '" WHERE exec_id=? ORDER BY confidence DESC';
+			
+	$detailData = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
+	
+	for($i=0; $i<count($detailData); $i++)
 	{
-		$detailData['presetArr'] = explode("^", $detailData['grayscaleStr']);
+		$sqlStr = "SELECT tag FROM tag_list WHERE category=5 AND reference_id=?";
+		$detailData[$i][] = implode(', ', PdoQueryOne($pdo, $sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
 	}
-	$detailData['presetNum'] = count($detailData['presetArr'])/3;
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -454,7 +477,6 @@
 
 	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
 	
-	//$smarty->assign('registTime',    $registTime);	
 	$smarty->assign('registMsg',     $registMsg);
 
 	$smarty->assign('fnConsCheck',   $fnConsCheck);
@@ -465,7 +487,8 @@
 	$smarty->assign('candStr',       $candStr);
 
 	// For CAD detail
-	$smarty->assign('detailData', $detailData);
+	$smarty->assign('detailData',   $detailData);
+	$smarty->assign('detailParams', $detailParams);
 
 	$smarty->display('cad_results/lesion_cad_display.tpl');
 	//------------------------------------------------------------------------------------------------------------------		

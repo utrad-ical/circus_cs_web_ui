@@ -16,6 +16,7 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
+<script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
 
 {literal}
 
@@ -29,7 +30,9 @@
 
 <script language="Javascript">
 <!--
-
+{/literal}
+var candData = {$detailData|@json_encode};
+{literal}
 function CreateEvalStr(lesionArr)
 {
 	var evalArr = new Array();
@@ -141,7 +144,7 @@ function ChangeRegistCondition()
 {
 	var checkCnt = $("input[name^='radioCand']:checked").length;
 
-	var tmpStr = 'Lesion classification: <span style="color:' 
+	var tmpStr = 'Candidate classification: <span style="color:' 
                + (($("#candNum").val()==checkCnt) ? 'blue;">complete' : 'red;">incomplete') + '</span><br/>'
 	           + 'FN input: <span style="color:'
 		       + (($("#fnInputFlg").val()==1) ? 'blue;">complete' : 'red;">incomplete') + '</span>';
@@ -163,7 +166,7 @@ function ChangeRegistCondition()
 		$("#interruptFlg").val(1);
 
 		// 候補分類入力中にメニューバーを押された場合の対策
-		$("#linkAbout, #menu a").click(
+		$("#linkAbout, #menu a, #listTab").click(
 			function(event){ 
 
 				if(!event.isDefaultPrevented())
@@ -232,35 +235,83 @@ function Minus()
 function ChangePresetMenu()
 {
 	var tmpStr = $("#presetMenu").val().split("^");
-	var presetName = $("#presetMenu option:selected").text();
 	$("#windowLevel").val(tmpStr[0]);
 	$("#windowWidth").val(tmpStr[1]);
-	$("#presetName").val(presetName);
+	$("#presetName").val($("#presetMenu option:selected").text());
 
-	JumpImgNumber($("#slider").slider("value"), tmpStr[0], tmpStr[1], presetName);
+	JumpImgNumber($("#slider").slider("value"));
 }
 
-function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
+function JumpImgNumber(imgNum)
 {
 	$.post("../jump_image.php",
-			{ studyInstanceUID: $("#studyInstanceUID").val(),
-			  seriesInstanceUID: $("#seriesInstanceUID").val(),
-			  imgNum: imgNum,
-			  windowLevel: windowLevel,
-			  windowWidth: windowWidth,
-			  presetName:  presetName },
-  			  function(data){
+		{ studyInstanceUID: $("#studyInstanceUID").val(),
+		  seriesInstanceUID: $("#seriesInstanceUID").val(),
+		  imgNum: imgNum,
+		  windowLevel: $("#windowLevel").val(),
+		  windowWidth: $("#windowWidth").val(),
+		  presetName:  $("#presetName").val()},
+		  function(data){
 
-				if(data.imgFname != "")
+			if(data.errorMessage != "")
+			{
+				alert(data.errorMessage);
+			}
+			else if(data.imgFname != "")
+			{
+				$("#imgArea").attr("src", '../' + data.imgFname);
+				$("#imgBlock span").remove();
+				$("#sliceLocation").val(data.sliceLocation);
+
+				if($("#checkVisibleCand").is(':checked'))
 				{
-					$("#imgBox img").attr("src", '../' + data.imgFname);
-					$("#imgBox span").html(data.imgNumStr);
-					$("#sliceNumber").html(data.sliceNumber);
-					$("#sliceLocation").html(data.sliceLocation + ' [mm]');
+					for(var i=0; i<candData.length; i++)
+					{
+						if(candData[i][4] == data.imgNum)
+						{
+							var xPos = parseInt(candData[i][2] * parseFloat($("#detailDispWidth").val())
+				                                 / parseFloat($("#detailOrgWidth").val())  + 0.5);
+							var yPos = parseInt(candData[i][3] * parseFloat($("#detailDispHeight").val())
+       		                                     / parseFloat($("#detailOrgHeight").val()) + 0.5);
+
+							plotDots(i+1, xPos, yPos, 0);
+						}
+					}
 				}
-			}, "json");
+			}
+		}, "json");
 }
 
+function plotDots(id, x, y, colorSet)
+{
+	var dotOffsetX = -1;
+	var dotOffsetY = -1;
+	var labelOffsetX = 0;
+	var labelOffsetY = 0;
+
+	var labelBaseX = 3;
+	var labelBaseY = 0;
+	var color = "#ff00ff";
+
+	// for IE
+	if (document.all)
+	{
+		dotOffsetX = 2;
+		labelOffsetX = 3;
+		labelOffsetY = 1;
+	}
+
+	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; '
+                + 'left:' + (x+dotOffsetX) + 'px; height:3px; width:3px; padding:0px; '
+                + 'background-color:' + color + ';position:absolute;"></span>'
+				+ '<span id="label' + id + '" class="dot" style="top:' + (y+labelBaseY+labelOffsetY) + 'px;'
+				+ ' left:' + (x+labelBaseX+labelOffsetX) + 'px; color:' + color + ';'
+				+ ' filter:dropshadow(color=#000000 offX=1 offY=0) dropshadow(color=#000000 offX=-1 offY=0)'
+				+ ' dropshadow(color=#000000 offX=0 offY=1) dropshadow(color=#000000 offX=0 offY=-1);'
+				+ ' font-weight:bold;position:absolute;">' + id + '</span>';
+
+	$("#imgBlock").append(htmlStr);
+}
 
 function EditCandidateTag(execID, candID, feedbackMode, userID)
 {
@@ -269,21 +320,44 @@ function EditCandidateTag(execID, candID, feedbackMode, userID)
 	window.open(dstAddress,"Edit lesion candidate tag", "width=400,height=250,location=no,resizable=no,scrollbars=1");
 }
 
+function ChangeVisibleCand()
+{
+	if($("#checkVisibleCand").is(':checked'))	JumpImgNumber($("#slider").slider("value"));
+	else										$("#imgBlock span").remove();
+}
+
+var rowClickHandler = function(event) {
+
+	if ($(event.target).parents('td.tagColumn').length == 0)
+	{
+		$('#checkVisibleFN').attr('checked', 'checked');
+		// for jQuery 1.3.2
+		var imgNum = $(event.target).parents('tr').children('td.z').html();
+		$("#slider").slider("value", imgNum);
+
+		// for jQuery 1.4.3
+		//var idx = $(event.target).parents('tr').index();
+		//var item = fnData[idx];
+		//$("#slider").slider("value", item.z);
+	}
+}
 
 $(function() {
 {/literal}
 
+	$('#posTable tbody tr').live('click', rowClickHandler);
+
 	$("#slider").slider({ldelim}
-		value:{$detailData.imgNum},
-		min: 1,
-		max: {$detailData.fNum},
+		value:{$params.sliceOffset+1},
+		min: {$params.sliceOffset+1},
+		max: {$detailParams.fNum},
 		step: 1,
 		slide: function(event, ui) {ldelim}
 			$("#sliderValue").html(ui.value);
 		{rdelim},
 		change: function(event, ui) {ldelim}
 			$("#sliderValue").html(ui.value);
-			JumpImgNumber(ui.value, $("#windowLevel").val(), $("#windowWidth").val(), $("#presetName").val());
+			JumpImgNumber(ui.value);
 		{rdelim}
 	{rdelim});
 	$("#slider").css("width", "220px");
@@ -295,12 +369,8 @@ $(function() {
 
 		if($(this).val() == 0)
 		{
-			if(confirm('Is there no false negative?'))
-			{
-				$("#fnInputFlg").val(1);
-				$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
-				
-			}
+			$("#fnInputFlg").val(1);
+			$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
 		}
 		else
 		{
@@ -343,11 +413,13 @@ $(function() {
 		<div id="cadResultTab" class="tabArea">
 			<ul>
 				{if $params.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="#" onclick="MovePageWithTempRegistration('../{$smarty.session.listAddress}');" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
+					<li><a id="listTab" href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
 				{else}
-					<li><a href="#" onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');" class="btn-tab" title="Series list">Series list</a></li>
+					<li><a id="listTab" href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 				{/if}
 				<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD result</a></li>
+				<li><a href="#" onclick="ShowCADDetail({$params.sliceOffset+1});" class="btn-tab" title="CAD detail">CAD detail</a></li>
+
 			</ul>
 			<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
 		</div><!-- / .tabArea END -->
@@ -390,7 +462,6 @@ $(function() {
 			<div id="cadResult">
 
 				<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
-				{* <h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version}]<span class="ml10" style="font-size:12px;">(ID:{$params.execID})</span></h2> *}
 
 			<div class="headerArea">
 					<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
@@ -458,20 +529,32 @@ $(function() {
 
 			<!-- CAD detail -->
 			<div id="cadDetail" style="display:none;">
-				<input type="hidden" id="presetName"   name="presetName"   value="{$detailData.presetName}" />
-				<input type="hidden" id="windowLevel"  name="windowLevel"  value="{$detailData.windowLevel}" />
-				<input type="hidden" id="windowWidth"  name="windowWidth"  value="{$detailData.windowWidth}" />
+				<input type="hidden" id="detailOrgWidth"     value="{$detailParams.orgWidth|escape}" />
+				<input type="hidden" id="detailOrgHeight"    value="{$detailParams.orgHeight|escape}" />
+				<input type="hidden" id="detailDispWidth"    value="{$detailParams.dispWidth|escape}" />
+				<input type="hidden" id="detailDispHeight"   value="{$detailParams.dispHeight|escape}" />
 
-				<h2>CAD Detail</h2>
+				<input type="hidden" id="presetName"   name="presetName"   value="{$detailParams.presetName}" />
+				<input type="hidden" id="windowLevel"  name="windowLevel"  value="{$detailParams.windowLevel}" />
+				<input type="hidden" id="windowWidth"  name="windowWidth"  value="{$detailParams.windowWidth}" />
 
-				<div class="detailArea fl-clr">
+				<h2>CAD Detail&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+				<div class="headerArea">
+						<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
+						<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$params.studyDate}&nbsp;({$params.studyID})</a></div>
+						<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality},&nbsp;{$params.seriesDescription}&nbsp;({$params.seriesID})</div>
+				</div>
+				<div class="fl-clr"></div>
+				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleCand" name="checkVisibleCand" "onclick="ChangeVisibleCand();" checked="checked" />&nbsp;Show lesion candidate</p>
+
+				<div class="detailArea">
 					<div class="series-detail-img">
-						<table>
+						<table cellspacing=0>
 							<tr>
-								<td valign=top align=left width="320" height="{$detailData.dispHeight}">
-									<div id="imgBox" style="width:{$detailData.dispWidth}; height:{$detailData.dispHeight}; position:relative;">
-										<img src="../{$detailData.dstFnameWeb}" width="{$detailData.dispWidth}" height="{$detailData.dispHeight}" style="position:absolute; left:{$detailData.imgLeftPos}px; top:0px; z-index:1;" />
-										<span style="color:#fff; font-weight:bold; position:absolute; left:{$detailData.imgNumStrLeftPos}px; top:0px; z-index:2;">Img. No. {$detailData.imgNum|string_format:"%04d"}</span>
+								<td colspan="3" valign="top">
+									<div id="imgBlock" style="margin:0px;padding:0px;width:{$detailParams.dispWidth}px;height:{$detailParams.dispHeight}px;position:relative;">
+										<img id="imgArea" src="../{$detailParams.dstFnameWeb}" width="{$detailParams.dispWidth}" height="{$detailParams.dispHeight}" style="position:absolute; left:{$detailParams.imgLeftPos}px; top:0px;" />
+										{*<span style="color:#fff; font-weight:bold; position:absolute; left:{$detailParams.imgNumStrLeftPos}px; top:0px; z-index:2;">Img. No. {$detailParams.imgNum|string_format:"%04d"}</span>*}
 									</div>
 								</td>
 							</tr>
@@ -479,11 +562,11 @@ $(function() {
 								<td valign=top align=center>
 									<table cellpadding=0 cellspacing=0>
 										<tr>
-											<td align="right" {if $detailData.dispWidth>=300}width={math equation="(x-256)/2" x=$detailData.dispWidth}"{/if}>
+											<td align="right" {if $detailParams.dispWidth>=300}width={math equation="(x-256)/2" x=$detailParams.dispWidth}"{/if}>
  												<input type="button" value="-" onClick="Minus();" />
 											</td>
 											<td align="center" width="256"><div id="slider"></div></td>
-											<td align="left" {if $detailData.dispWidth>=300}width="{math equation="(x-256)/2" x=$detailData.dispWidth}"{/if}>
+											<td align="left" {if $detailParams.dispWidth>=300}width="{math equation="(x-256)/2" x=$detailParams.dispWidth}"{/if}>
 	 											<input type="button" value="+" onClick="Plus();" />
 											</td>
 										</tr>
@@ -492,22 +575,17 @@ $(function() {
 												<span style="font-weight:bold;">Image number: <span id="sliderValue">1</span></span>
 											</td>
 										</tr>
-										{if $detailData.grayscaleStr != ""}
-											<tr>
-												<td align=center colspan=3>
-													<span style="font-weight:bold;">Grayscale preset: </span>
-													<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu();">
-														{section name=i start=0 loop=$detailData.presetNum}
-															{assign var="i" value=$smarty.section.i.index}
-															{assign var="tmp0" value=$i*3}
-															{assign var="tmp1" value=$i*3+1}
-															{assign var="tmp2" value=$i*3+2}
-
-															<option value="{$detailData.presetArr[$tmp1]}^{$detailData.presetArr[$tmp2]}" {if $detailData.presetName == $detailData.presetArr[$tmp0]}selected="selected"{/if}>{$detailData.presetArr[$tmp0]}</option>
-														{/section}
-													</select>
-												</td>
-											</tr>
+										{if $detailParams.grayscaleStr != ""}
+										<tr>
+											<td align=center colspan=3>
+												<span style="font-weight:bold;">Grayscale preset: </span>
+												<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu();">
+												{foreach from=$detailParams.presetArr item=item}
+													<option value="{$item[1]|escape}^{$item[2]|escape}"{if $detailParams.presetName == $item[0]} selected="selected"{/if}>{$item[0]|escape}</option>
+												{/foreach}
+												</select>
+											</td>
+										</tr>
 										{/if}
 									</table>
 								</td>
@@ -515,56 +593,35 @@ $(function() {
 						</table>
 					</div>
 					
-					<div class="detail-panel">
-						<table class="detail-tbl">
-							<tr>
-								<th style="width: 12em;"><span class="trim01">Patient ID</span></th>
-								<td>{$params.patientID}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Patient name</span></th>
-								<td>{$params.patientName}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Sex</span></th>
-								<td>{$params.sex}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Age</span></th>
-								<td>{$params.age}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Study ID</span></th>
-								<td>{$params.studyID}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Series date</span></th>
-								<td>{$params.seriesDate}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Series time</span></th>
-								<td>{$params.seriesTime}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Modality</span></th>
-								<td>{$params.modality}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Series description</span></th>
-								<td>{$params.seriesDescription}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Body part</span></th>
-								<td>{$params.bodyPart}</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Image number</span></th>
-								<td><span id="sliceNumber">{$detailData.imgNum}</span></td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Slice location</span></th>
-								<td><span id="sliceLocation">{$detailData.sliceLocation}</span></td>
-							</tr>
+					<div class="fl-l" style="overflow-y:scroll; overflow-x:hidden; width: 330px; height: 400px;">
+						<table id="posTable" class="col-tbl mb10">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Pos X</th>
+									<th>Pos Y</th>
+									<th>Pos Z</th>
+									<th style="width:4em;">Volume [mm3]</th>
+									<th>Confidence</th>
+									<th>Tag</th>
+								</tr>
+							</thead>
+							<tbody>
+								{foreach from=$detailData item=item name=detailData}
+									<tr {if $smarty.foreach.detailData.index%2==1}class="column"{/if}>
+										<td class="id">{$item[1]|escape}</td>
+										<td class="x">{$item[2]|escape}</td>
+										<td class="y">{$item[3]|escape}</td>
+										<td class="z">{$item[4]|escape}</td>
+										<td class="volume">{$item[6]|string_format:"%.1f"|escape}</td>
+										<td class="confidence">{$item[7]|string_format:"%.3f"|escape}</td>
+										<td class="tagColumn">
+											<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn"
+												    onclick="EditTag(5, '{$item[0]|escape}', '../')" title="{$item[8]|escape}" />
+										</td>
+									</tr>
+								{/foreach}
+							</tbody>
 						</table>
 					</div><!-- / .detail-panel END -->
 				</div><!-- / .detailArea END -->

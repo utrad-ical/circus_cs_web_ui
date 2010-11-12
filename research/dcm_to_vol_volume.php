@@ -3,13 +3,41 @@
 	session_start();
 
 	include("../common.php");
+	require_once('../class/validator.class.php');	
+	
+	$errorFlg = 0;
 	
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables 
+	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
-	$studyInstanceUID  = $_POST['studyInstanceUID'];
-	$seriesInstanceUID = $_POST['seriesInstanceUID'];
-	//------------------------------------------------------------------------------------------------------------------
+	$params = array();
+	$validator = new FormValidator();
+	
+	$validator->addRules(array(
+		"studyInstanceUID" => array(
+			"type" => "uid",
+			"required" => true,
+			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
+		"seriesInstanceUID" => array(
+			"type" => "uid",
+			"required" => true,
+			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
+		));				
+
+	if($validator->validate($_POST))
+	{
+		$params = $validator->output;
+		//$params['message'] = "";
+	}
+	else
+	{
+		$params = $validator->output;
+		//$params['message'] = implode('<br/>', $validator->errors);
+		$errorFlg = 1;
+	}
+	
+	$params['toTopDir'] = "../";
+	//-----------------------------------------------------------------------------------------------------------------	
 
 	try
 	{
@@ -25,7 +53,7 @@
 				. " AND sr.storage_id=sm.storage_id;";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($seriesInstanceUID, $studyInstanceUID));
+		$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
 
 		if($stmt->rowCount() != 1)
 		{
@@ -33,28 +61,25 @@
 		}
 		else
 		{
-			$result = $stmt->fetch(PDO::FETCH_NUM);
-	
-			$patientID   = $result[0];
-			$storagePath = $result[1];
-
 			// Prevent timeout error
 			set_time_limit(0);
 
-			$seriesDir = $storagePath . $DIR_SEPARATOR . $patientID
-			           . $DIR_SEPARATOR . $studyInstanceUID
-			           . $DIR_SEPARATOR . $seriesInstanceUID;
+			$result = $stmt->fetch(PDO::FETCH_NUM);
 
-			$baseName = $seriesDir . $DIR_SEPARATOR . $seriesInstanceUID;
+			$seriesDir = $result[1] . $DIR_SEPARATOR . $result[0]
+			           . $DIR_SEPARATOR . $params['studyInstanceUID']
+			           . $DIR_SEPARATOR .  $params['seriesInstanceUID'];
+
+			$baseName = $seriesDir . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 			$dstFileName = $baseName . ".zip";
-		
 		
 			if(!is_file($dstFileName))
 			{
 				//------------------------------------------------------------------------------------------------------
 				// Convert DICOM files to Volume-One data
 				//------------------------------------------------------------------------------------------------------
-				$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir . ' ' . $seriesInstanceUID . '"';
+				$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir
+						. ' ' . $params['seriesInstanceUID'] . '"';
 				shell_exec($cmdStr);
 				//------------------------------------------------------------------------------------------------------
 	
@@ -65,12 +90,12 @@
 		
 				if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
 				{
-					$errorFlg == 1;
+					$errorFlg = 1;
 				}
 				else
 				{
-					if($zip->addFile($baseName . ".vol", "/" . $seriesInstanceUID . ".vol") !== TRUE
-					    || $zip->addFile($baseName . ".txt", "/" . $seriesInstanceUID . ".txt") !== TRUE)
+					if($zip->addFile($baseName . ".vol", "/" .  $params['seriesInstanceUID'] . ".vol") !== TRUE
+					    || $zip->addFile($baseName . ".txt", "/" .  $params['seriesInstanceUID'] . ".txt") !== TRUE)
 					{
 						$errorFlg = 1;
 					}
@@ -91,6 +116,5 @@
 		var_dump($e->getMessage());
 	}
 
-	$pdo = null;		
-		
+	$pdo = null;
 ?>

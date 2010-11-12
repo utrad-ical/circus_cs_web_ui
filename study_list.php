@@ -96,7 +96,7 @@
 			$params['startNum'] = 0;
 			$params['endNum'] = 0;
 			$params['totalNum'] = 0;
-			$params['maxPageNum'] = 1
+			$params['maxPageNum'] = 1;
 			
 			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
 			   && $params['filterAgeMin'] > $params['filterAgeMax'])
@@ -316,15 +316,8 @@
 
 				$stmtTag->bindValue(1, $result[0]);
 				$stmtTag->execute();
-				
-				$tagArray = array();
-				
-				while($tmpTag = $stmtTag->fetchColumn())
-				{
-					$tagArray[] = $tmpTag;
-				}
-				$result[] = implode(',', $tagArray);
-	
+				$result[] = implode(',', $stmtTag->fetchAll(PDO::FETCH_COLUMN));
+
 				$data[] = $result;
 			}
 			//----------------------------------------------------------------------------------------------------------

@@ -16,6 +16,7 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
+<script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
 <script language="javascript" type="text/javascript" src="../js/json2.min.js"></script>
 <script language="Javascript">
 <!--
@@ -170,6 +171,7 @@ function Minus()
 				<input type="hidden" id="dispHeight"     value="{$params.dispHeight|escape}" />
 					
 				<input type="hidden" id="registTime"   value="{$params.registTime|escape}" />
+			{*	<input type="hidden" id="darkroomFlg"  value="{$smarty.session.darkroomFlg}" /> *}
 				<input type="hidden" id="status"       value="{$params.status|escape}" />
 				<input type="hidden" id="ticket"       value="{$ticket|escape}" />
 
@@ -183,7 +185,7 @@ function Minus()
 
 				<p class="mb10">
 				{if $params.registTime != ""}Location of false negatives were {if $params.status==1}saved{else}registered{/if} at {$params.registTime}{if $params.feedbackMode =="consensual" && $params.enteredBy != ""} (by {$params.enteredBy}){/if}.{else}Click location of FN, and press the <span class="clr-blue fw-bold">[Confirm]</span> button to save FN locations.{/if}</p>
-				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name="id="checkVisibleFN" "onclick="ChangeVisibleFN();" checked="checked" />&nbsp;Show FN</p>
+				<p style="margin-top:-10px; margin-left:10px; font-size:14px;"><input type="checkbox" id="checkVisibleFN" name="checkVisibleFN" "onclick="ChangeVisibleFN();" checked="checked" />&nbsp;Show FN</p>
 
 				<div class="series-detail-img">
 					{* ----- Display image with slider ----- *}
@@ -199,13 +201,13 @@ function Minus()
 
 						<tr>
 							<td align="right" style="{if $params.dispWidth >=256}width:{$widthOfPlusButton|escape}{/if}px;">
-								<input type="button" value="-" onClick="Minus();" {if $params.imgNum == ($params.sliceOffset+1)} disabled="disabled"{/if} />
+								<input type="button" value="-" onClick="Minus();"  />
 							</td>
 				
 							<td align=center style="width:256px;"><div id="slider"></div></td>
 
 							<td align=left  style="{if $params.dispWidth >=256}width:{$params.widthOfPlusButton|escape}{/if}px;">
-						 		<input type="button" value="+" onClick="Plus();" {if $params.imgNum == $params.fNum} disabled="disabled"{/if} />
+						 		<input type="button" value="+" onClick="Plus();" />
 							</td>
 						</tr>
 
@@ -223,17 +225,16 @@ function Minus()
 					</td></tr>*}
 
 						{if $params.grayscaleStr != ""}
-							<tr>
-								<td align=center colspan=3>
-									<b>Grayscale preset: </b>
-									<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu({$params.imgNum});">
-
-										{foreach from=$presetArr item=item}
-											<option value="{$item[1]|escape}^{$item[2]|escape}" {if $params.presetName == $item[0]} selected{/if}>{$item[0]|escape}</option>
-										{/foreach}
-									</select>
-								</td>
-							</tr>
+						<tr>
+							<td align=center colspan=3>
+								<span style="font-weight:bold;">Grayscale preset: </span>
+								<select id="presetMenu" name="presetMenu" onchange="ChangePresetMenu();">
+								{foreach from=$params.presetArr item=item}
+									<option value="{$item[1]|escape}^{$item[2]|escape}"{if $detailParams.presetName == $item[0]} selected="selected"{/if}>{$item[0]|escape}</option>
+								{/foreach}
+								</select>
+							</td>
+						</tr>
 						{/if}
 					</table>
 				</div>
@@ -254,7 +255,7 @@ function Minus()
 					</div>
 					{/if}
 
-					<table id="posTable" class="col-tbl mb10" style="width:100%; background:#ffffff;">
+					<table id="posTable" class="col-tbl mb10" style="width:100%;">
 						<thead>
 							<tr>
 								{if $params.registTime == "" || $params.status != 2}<th>&nbsp;</th>{/if}

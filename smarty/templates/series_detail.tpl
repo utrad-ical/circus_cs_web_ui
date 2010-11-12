@@ -16,7 +16,7 @@
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
-<script language="javascript" type="text/javascript" src="js/list_tab.js"></script>
+<script language="javascript" type="text/javascript" src="js/edit_tag.js"></script>
 
 <script language="Javascript">
 <!--
@@ -151,7 +151,7 @@ function DownloadVolume()
 				<h2>Series detail</h2>
 
 				<div class="series-detail-img">
-					<form id="form1" name="form1" action="series_detail.php" method="POST">
+					<form id="form1" name="form1">
 
 					<input type="hidden" id="dispMode"          name="dispMode"           value="{$data.dispMode|escape}" />
 					<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"   value="{$data.studyInstanceUID|escape}" />
@@ -161,8 +161,8 @@ function DownloadVolume()
 					<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName|escape}" />
 					<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel|escape}" />
 					<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth|escape}" />
-					<input type="hidden" name="orgWidth"        value="{$data.orgWidth}" />
-					<input type="hidden" name="orgHeight"       value="{$data.orgHeight}" />
+					<input type="hidden" id="orgWidth"          name="orgWidth"           value="{$data.orgWidth}" />
+					<input type="hidden" id="orgHeight"         name="orgHeight"          value="{$data.orgHeight}" />
 					<input type="hidden" id="dispWidth"         name="dispWidth"          value="{$data.dispWidth}" />
 					<input type="hidden" id="dispHeight"        name="dispheight"         value="{$data.dispHeight}" />
 					<input type="hidden" id="imgNum"            name="imgNum"             value="">
@@ -273,7 +273,7 @@ function DownloadVolume()
 							<td><span id="sliceLocation">{$data.sliceLocation}</span></td>
 						</tr>
 					</table>
-					{if $smarty.session.dlVolumeFlg}
+					{if $smarty.session.volumeDLFlg}
 						<div class="mt15 ml10">
 							<input name="" value="Download volume data" type="button" class="form-btn" style="width: 200px;" onclick="DownloadVolume();" />
 						</div>
@@ -288,7 +288,7 @@ function DownloadVolume()
 				{foreach from=$tagArray item=item}
 					<a href="series_list.php?filterTag={$item[0]|escape}" title="Entered by {$item[1]|escape}">{$item[0]|escape}</a>&nbsp;
 				{/foreach}
-				{if $smarty.session.personalFBFlg==1}<a href="#" onclick="EditTag(3,'{$data.sid|escape}');">(Edit)</a>{/if}
+				{if $smarty.session.personalFBFlg==1}<a href="#" onclick="EditTag(3,'{$data.sid|escape}', '');">(Edit)</a>{/if}
 			</div>
 
 			<div class="al-r ">

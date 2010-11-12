@@ -15,7 +15,7 @@
 		"category" => array(
 			"type" => "int",
 			"min" => 1,
-			"max" => 5,
+			"max" => 6,
 			"required" => true,
 			"errorMes" => "Cagegory is invalid."),
 		"referenceID" => array(
@@ -51,6 +51,18 @@
 		else
 		{
 			$params['errorMessage'] = "[ERROR] URL is invalid.";
+		}
+		
+		$params['title'] = 'Tag for ';
+		
+		switch($params['category'])
+		{
+			case 1:  $params['title'] .= 'patient';           break;
+			case 2:  $params['title'] .= 'study';             break;
+			case 3:  $params['title'] .= 'series';            break;
+			case 4:  $params['title'] .= 'CAD';               break;
+			case 5:  $params['title'] .= 'lesion candidate';  break;
+			case 6:  $params['title'] .= 'research';          break;
 		}
 		
 		//--------------------------------------------------------------------------------------------------------------

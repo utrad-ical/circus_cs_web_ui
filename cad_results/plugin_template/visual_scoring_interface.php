@@ -4,16 +4,16 @@
 		
 	if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 	{
-		$sqlParam = array();
+		$sqlParams = array();
 		
 		$sqlStr = "SELECT score FROM visual_assessment WHERE exec_id=?";
-		$sqlParam[0] = $params['execID'];
+		$sqlParams[] = $params['execID'];
 		
 		
 		if($params['feedbackMode'] == "personal")
 		{
 			$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
-			$sqlParam[1] = $userID;
+			$sqlParams[] = $userID;
 		}
 		else
 		{
@@ -21,7 +21,7 @@
 		}
 			
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute($sqlParam);
+		$stmt->execute($sqlParams);
 
 		if($stmt->rowCount() == 1)
 		{

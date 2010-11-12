@@ -17,6 +17,7 @@
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
 <script language="javascript" type="text/javascript" src="js/list_tab.js"></script>
+<script language="javascript" type="text/javascript" src="js/edit_tag.js"></script>
 
 <link rel="shortcut icon" href="favicon.ico" />
 <!-- InstanceBeginEditable name="head" -->
@@ -117,7 +118,7 @@
 							</td>
 							{if $smarty.session.personalFBFlg}
 							<td>
-								<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="EditTag(2,'{$item[0]|escape}')" title="{$item[11]|escape}" />
+								<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="EditTag(2,'{$item[0]|escape}', '')" title="{$item[11]|escape}" />
 							</td>
 							{/if}
 						</tr>

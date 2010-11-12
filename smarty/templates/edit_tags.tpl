@@ -36,7 +36,7 @@ function EditTag(mode, sid)
 						$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 						$("#addTagText").removeAttr("value");
 
-						if($("#category").val() >= 3)
+						if($("#category").val() == 3 || $("#category").val() == 4 || $("#category").val() == 6)
 						{
 							opener.document.getElementById('tagArea').innerHTML = data.parentTagHtml;
 						}
@@ -70,7 +70,7 @@ function EditTag(mode, sid)
 	<input type="hidden" id="category"    value="{$params.category|escape}" />
 	<input type="hidden" id="referenceID" value="{$params.referenceID|escape}" />
 
-	<!-- <h4 class="mb10">Tags for execID: {$param.execID}</h4> -->
+	<h4 class="mb10">{$params.title}</h4>
 
 	<div id="tagList" class="block-al-c" style="width:350px;">
 

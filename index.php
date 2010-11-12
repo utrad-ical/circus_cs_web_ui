@@ -78,7 +78,7 @@
 					$_SESSION['modifyConsensualFlg'] = ($result['modify_consensual'] == 't') ? 1 : 0;
 					$_SESSION['allStatFlg']          = ($result['view_all_statistics'] == 't') ? 1 : 0;
 					$_SESSION['researchFlg']         = ($result['research'] == 't') ? 1 : 0;
-					$_SESSION['dlVolumeFlg']         = ($result['download_volume'] == 't') ? 1 : 0;
+					$_SESSION['volumeDLFlg']         = ($result['volume_download'] == 't') ? 1 : 0;
 					$_SESSION['dataDeleteFlg']       = ($result['data_delete'] == 't') ? 1 : 0;
 					$_SESSION['serverOperationFlg']  = ($result['server_operation'] == 't') ? 1 : 0;
 					$_SESSION['serverSettingsFlg']   = ($result['server_settings'] == 't') ? 1 : 0;

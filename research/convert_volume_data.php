@@ -10,7 +10,7 @@
 	require_once('../class/validator.class.php');
 	
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_GET variables and validation
+	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();

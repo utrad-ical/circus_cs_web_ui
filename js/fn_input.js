@@ -212,7 +212,7 @@ function AddFnTable(id, item)
                 +  ' onclick="RefreshOperationButtons();"value="' + id + '"></td>';
 	}
 
-	var tdBaseStr = ' style="color:' + ((feedbackMode == "consensual") ? '#ff00ff;">' : 'black;">');
+	var tdBaseStr = (feedbackMode == "consensual") ? ' style="color:#ff00ff;">' : '>';
 
 	htmlStr += '<td class="id"' + tdBaseStr + (id+1) + '</td>'
             +  '<td class="x"' + tdBaseStr + item.x + '</td>'
