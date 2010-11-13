@@ -35,7 +35,8 @@
 	// Definition of windows service
 	//-------------------------------------------------------------------------------------------------------
 	$APACHE_SERVICE = "Apache2.2";
-	$POSTGRESQL_SERVICE = "postgresql-8.4";
+	$POSTGRESQL_SERVICE = "postgresql-9.0";
+	//$POSTGRESQL_SERVICE = "postgresql-8.4";			// for HIMEDIC
 	$DICOM_STORAGE_SERVICE = "DICOM Storage Server";
 	$CAD_JOB_MANAGER_SERVICE = "CAD Job Manager";
 	//-------------------------------------------------------------------------------------------------------
@@ -45,10 +46,11 @@
 	//-------------------------------------------------------------------------------------------------------
 	$dbName       = "circus_cs";
 	$dbAccessUser = "circus";
-	$dbAccessPass = "cad";
+	//$dbAccessPass = "cad";    // for RC1 or HIMEDIC
+	$dbAccessPass = "sucRic";   // for RC2
 	
-	$connStr = "host=localhost port=5432 dbname=" . $dbName
-             . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
+	//$connStr = "host=localhost port=5432 dbname=" . $dbName
+    //         . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
 	$connStrPDO = "pgsql:host=localhost port=5432 dbname=" . $dbName
                 . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
 	//-------------------------------------------------------------------------------------------------------
@@ -144,15 +146,14 @@
 	function PdoQueryOne($pdo, $sqlStr, $bindValues, $outputType)
 	{
 		$stmt = $pdo->prepare($sqlStr);
-		$cnt =count($bindValues);
 		
-		if($cnt > 1)
+		if(is_array($bindValues))
 		{
 			$stmt->execute($bindValues);
 		}
 		else 
 		{
-			if($cnt ==1)	$stmt->bindValue(1, $bindValues);
+			if(strlen($bindValues) > 0)  $stmt->bindValue(1, $bindValues);
 			$stmt->execute();
 		}
 		
