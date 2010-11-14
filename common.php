@@ -49,8 +49,8 @@
 	//$dbAccessPass = "cad";    // for RC1 or HIMEDIC
 	$dbAccessPass = "sucRic";   // for RC2
 	
-	//$connStr = "host=localhost port=5432 dbname=" . $dbName
-    //         . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
+	$connStr = "host=localhost port=5432 dbname=" . $dbName
+             . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
 	$connStrPDO = "pgsql:host=localhost port=5432 dbname=" . $dbName
                 . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
 	//-------------------------------------------------------------------------------------------------------

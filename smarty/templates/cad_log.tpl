@@ -195,7 +195,7 @@
 						{/foreach}
 					</tbody>
 				</table>
-					
+
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">
 					{if $params.maxPageNum > 1}

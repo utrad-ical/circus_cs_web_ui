@@ -131,15 +131,15 @@ function ChangeServerStatus(baseName, serviceName, mode)
 									 onClick="location.href='add_plugin.php';" />
 							</td>
 						</tr>
-					<!--
+
 						<tr>
-							<td class="pt5">Plug-in</td>
+							<td class="pt5">Basic configuration for plug-ins</td>
 							<td class="pt5 pl10">
 								<input type="button" id="pluginConfButton" value="config" class="form-btn"
-					 				onClick="location.href='plugin_config.php';">
+					 				onClick="location.href='plugin_basic_configuration.php';">
 							</td>
 						</tr>
-
+					<!--
 						<tr>
 							<td class="pt5">Grayscale preset</td>
 							<td class="pt5 pl10">
@@ -157,14 +157,16 @@ function ChangeServerStatus(baseName, serviceName, mode)
 								 onClick="location.href='user_config.php';" />
 						</td>
 					</tr>
-
-					<tr>
-						<td class="pt5">Groups</td>
-						<td class="pt5 pl10">
-							<input type="button" id="groupConfButton" value="config" class="form-btn"
-					 				onClick="location.href='group_config.php';" />
-						</td>
-					</tr>
+					
+					{if $smarty.session.serverSettingsFlg==1}
+						<tr>
+							<td class="pt5">Groups</td>
+							<td class="pt5 pl10">
+								<input type="button" id="groupConfButton" value="config" class="form-btn"
+					 					onClick="location.href='group_config.php';" />
+							</td>
+						</tr>
+					{/if}
 
 					<tr>
 						<td class="pt5">Server logs</td>
@@ -175,6 +177,19 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					</tr>
 					
 					</table>
+			</div>
+
+			<h3>Server settings</h3>
+			<div class="p5 ml10 mb10">
+				<table>
+					<tr>
+						<td class="pt5">Show plug-in jobs</td>
+						<td class="pt5 pl10">
+							<input type="button" id="groupConfButton" value="show" class="form-btn"
+					 				onClick="location.href='show_plugin_job_list.php';" />
+						</td>
+					</tr>
+				</table>
 			</div>
 
 			<h3>Server status</h3>

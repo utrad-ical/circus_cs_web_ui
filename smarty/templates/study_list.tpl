@@ -63,7 +63,7 @@
 			<table class="col-tbl" style="width: 100%;">
 				<thead>
 					<tr>
-						{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
+						{* {if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if} *}
 						<th>
 							{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 						</th>
@@ -102,7 +102,7 @@
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-							{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if}
+						{*	{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if} *}
 							<td class="al-l"><a href="study_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</td>
 							<td class="al-l">{$item[3]|escape}</td>
 							<td class="al-r">{$item[4]|escape}</td>
@@ -126,6 +126,12 @@
 					</tr>
 				</tbody>
 			</table>
+
+		{*	{if $smarty.session.dataDeleteFlg}
+				<div class="mt10 ml10">
+					<input type="button" value="Delete" class="s-btn form-btn"  onclick="DeleteData('study');" />
+				</div>
+			{/if} *}
 
 			{* ------ Hooter with page list --- *}
 			<div id="serp-paging" class="al-c mt10">
