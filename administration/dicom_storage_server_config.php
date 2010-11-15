@@ -21,6 +21,12 @@
 		$newErrLogFname  = (isset($_REQUEST['newErrLogFname']))  ? $_REQUEST['newErrLogFname']  : "";
 		$newThumbnailFlg = (isset($_REQUEST['newThumbnailFlg'])) ? $_REQUEST['newThumbnailFlg'] : "";
 		$newCompressFlg  = (isset($_REQUEST['newCompressFlg']))  ? $_REQUEST['newCompressFlg']  : "";
+		
+		$newDbConnectAddress = (isset($_REQUEST['newDbConnectAddress'])) ? $_REQUEST['newDbConnectAddress'] : "";
+		$newDbConnectPort    = (isset($_REQUEST['newDbConnectPort']))    ? $_REQUEST['newDbConnectPort']    : "";
+		$newDbName           = (isset($_REQUEST['newDbName']))           ? $_REQUEST['newDbName']           : "";
+		$newDbUserName       = (isset($_REQUEST['newDbUserName']))       ? $_REQUEST['newDbUserName']       : "";
+		$newDbPassword       = (isset($_REQUEST['newDbPassword']))       ? $_REQUEST['newDbPassword']       : "";
 		//--------------------------------------------------------------------------------------------------------------
 
 		$restartFlg = 0;
@@ -37,7 +43,14 @@
 				fprintf($fp, "%s\r\n", $newLogFname);
 				fprintf($fp, "%s\r\n", $newErrLogFname);
 				fprintf($fp, "%s\r\n", $newThumbnailFlg);
-				fprintf($fp, "%s", $newCompressFlg);
+				fprintf($fp, "%s\r\n", $newCompressFlg);
+				
+				fprintf($fp, "%s\r\n", $newDbConnectAddress);
+				fprintf($fp, "%s\r\n", $newDbConnectPort);
+				fprintf($fp, "%s\r\n", $newDbName);
+				fprintf($fp, "%s\r\n", $newDbUserName);
+				fprintf($fp, "%s\r\n", $newDbPassword);
+				
 			}
 			else
 			{
@@ -80,12 +93,17 @@
 		
 		if($fp != NULL)
 		{
-			$configData['aeTitle']      = rtrim(fgets($fp), "\r\n");
-			$configData['portNumber']   = rtrim(fgets($fp), "\r\n");
-			$configData['logFname']     = rtrim(fgets($fp), "\r\n");
-			$configData['errLogFname']  = rtrim(fgets($fp), "\r\n");
-			$configData['thumbnailFlg'] = rtrim(fgets($fp), "\r\n");
-			$configData['compressFlg']  = rtrim(fgets($fp), "\r\n");
+			$configData['aeTitle']          = rtrim(fgets($fp), "\r\n");
+			$configData['portNumber']       = rtrim(fgets($fp), "\r\n");
+			$configData['logFname']         = rtrim(fgets($fp), "\r\n");
+			$configData['errLogFname']      = rtrim(fgets($fp), "\r\n");
+			$configData['thumbnailFlg']     = rtrim(fgets($fp), "\r\n");
+			$configData['compressFlg']      = rtrim(fgets($fp), "\r\n");
+			$configData['dbConnectAddress'] = rtrim(fgets($fp), "\r\n");
+			$configData['dbConnectPort']    = rtrim(fgets($fp), "\r\n");
+			$configData['dbName']           = rtrim(fgets($fp), "\r\n");
+			$configData['dbUserName']       = rtrim(fgets($fp), "\r\n");
+			$configData['dbPassword']       = rtrim(fgets($fp), "\r\n");
 		}
 		fclose($fp);
 		//----------------------------------------------------------------------------------------------------

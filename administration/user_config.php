@@ -35,70 +35,72 @@
 			//----------------------------------------------------------------------------------------------------
 			// Add / Update / Delete user
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "";
-			$sqlParams = array();
-			
-			if(($mode == 'delete' && $newUserID != $longinUser) || $mode ='update')	// delete user
-			{
-				$sqlStr = "DELETE FROM users WHERE user_id=?;";
-				$sqlParams[] = $newUserID;
-			}
-
-			if(($mode == 'add' && $newUserID != "" && $newPassword != "" ) || $mode == 'update')
-			{
-				$sqlStr  .= "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
-				         .  " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-						 
-				$sqlParams[] = $newUserID;
-				$sqlParams[] = $newUserName;
-				$sqlParams[] = md5($newPassword);
-				$sqlParams[] = $newGroupID;
-				$sqlParams[] = $newTodayDisp;
-				$sqlParams[] = $newDarkroomFlg;
-				$sqlParams[] = $newAnonymizeFlg;
-				$sqlParams[] = $newLatestResults;
-			}
-
-			if($mode ='update' && $oldUserID == $longinUser && $newUserID != $oldUserID)
+			if($mode != "")
 			{
 				$sqlStr = "";
-				$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
-			}			
-
-			if($params['message'] == "&nbsp;" && $sqlStr != "")
-			{
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParams);
-				$errorMessage = $stmt->errorInfo();
-
-				if($errorMessage[2] == "")
+				$sqlParams = array();
+						
+				if(($mode == 'delete' && $newUserID != $longinUser) || $mode ='update')	// delete user
 				{
-					$params['message'] = '<span style="color: #0000ff;" >';
-					
-					switch($mode)
-					{
-						case 'add'    :  $params['message'] .= '"' . $newUserID . '" was successfully added.'; break;
-						case 'update' :  $params['message'] .= '"' . $oldUserID . '" was successfully updated.'; break;
-						case 'delete' :  $params['message'] .= '"' . $newUserID . '" was successfully deleted.'; break;
-					}
-					$params['message'] .= '</span>';
+					$sqlStr = "DELETE FROM users WHERE user_id=?;";
+					$sqlParams[] = $newUserID;
 				}
-				else
+
+				if(($mode == 'add' && $newUserID != "" && $newPassword != "" ) || $mode == 'update')
 				{
-					$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
-					
-					if($mode == 'update')
+					$sqlStr  .= "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
+					         .  " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+						 
+					$sqlParams[] = $newUserID;
+					$sqlParams[] = $newUserName;
+					$sqlParams[] = md5($newPassword);
+					$sqlParams[] = $newGroupID;
+					$sqlParams[] = $newTodayDisp;
+					$sqlParams[] = $newDarkroomFlg;
+					$sqlParams[] = $newAnonymizeFlg;
+					$sqlParams[] = $newLatestResults;
+				}
+
+				if($mode ='update' && $oldUserID == $longinUser && $newUserID != $oldUserID)
+				{
+					$sqlStr = "";
+					$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
+				}			
+
+				if($params['message'] == "&nbsp;" && $sqlStr != "")
+				{
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+					$errorMessage = $stmt->errorInfo();
+
+					if($errorMessage[2] == "")
 					{
-						$params['message'] .= $oldUserID;
+						$params['message'] = '<span style="color: #0000ff;" >';
+					
+						switch($mode)
+						{
+							case 'add'    :  $params['message'] .= '"' . $newUserID . '" was successfully added.'; break;
+							case 'update' :  $params['message'] .= '"' . $oldUserID . '" was successfully updated.'; break;
+							case 'delete' :  $params['message'] .= '"' . $newUserID . '" was successfully deleted.'; break;
+						}
+						$params['message'] .= '</span>';
 					}
 					else
 					{
-						$params['message'] .= $newUserID;
+						$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
+					
+						if($mode == 'update')
+						{
+							$params['message'] .= $oldUserID;
+						}
+						else
+						{
+							$params['message'] .= $newUserID;
+						}
 					}
 				}
+				else $params['message'] = '<span style="color: #ff0000;">' . $params['message'] . '</span>';
 			}
-			else $params['message'] = '<span style="color: #ff0000;">' . $params['message'] . '</span>';
-		
 			//------------------------------------------------------------------------------------------------
 
 			//------------------------------------------------------------------------------------------------

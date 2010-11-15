@@ -33,6 +33,11 @@ function UpdateConfig()
 				    + '&newErrLogFname='  + encodeURIComponent($("#newErrLogFname").val())
 				    + '&newThumbnailFlg=' + $('input[name="newThumbnailFlg"]:checked').val()
 				    + '&newCompressFlg='  + $('input[name="newCompressFlg"]:checked').val()
+				    + '&newDbConnectAddress=' + encodeURIComponent($("#newDbConnectAddress").val())
+				    + '&newDbConnectPort='    + encodeURIComponent($("#newDbConnectPort").val())
+				    + '&newDbName='           + encodeURIComponent($("#newDbName").val())
+				    + '&newDbUserName='       + encodeURIComponent($("#newDbUserName").val())
+				    + '&newDbPassword='       + encodeURIComponent($("#newDbPassword").val())
 					+ '&ticket=' + $("#ticket").val();
 		location.replace(address);	
 	}
@@ -82,20 +87,25 @@ function RestartStorageSv()
 			<h2>Configuration of DICOM storage server</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket"          value="{$ticket|escape}" />
-				<input type="hidden" id="oldAETitle"      value="{$configData.aeTitle|escape}">
-				<input type="hidden" id="oldPortNumber"   value="{$configData.portNumber|escape}">
-				<input type="hidden" id="oldLogFname"     value="{$configData.logFname|escape}">
-				<input type="hidden" id="oldErrLogFname"  value="{$configData.errLogFname|escape}">
-				<input type="hidden" id="oldThumbnailFlg" value="{$configData.thumbnailFlg}">
-				<input type="hidden" id="oldCompressFlg"  value="{$configData.compressFlg}">
+				<input type="hidden" id="ticket"               value="{$ticket|escape}" />
+				<input type="hidden" id="oldAETitle"           value="{$configData.aeTitle|escape}">
+				<input type="hidden" id="oldPortNumber"        value="{$configData.portNumber|escape}">
+				<input type="hidden" id="oldLogFname"          value="{$configData.logFname|escape}">
+				<input type="hidden" id="oldErrLogFname"       value="{$configData.errLogFname|escape}">
+				<input type="hidden" id="oldThumbnailFlg"      value="{$configData.thumbnailFlg}">
+				<input type="hidden" id="oldCompressFlg"       value="{$configData.compressFlg}">
+				<input type="hidden" id="oldDbConnectAddress"  value="{$configData.dbConnectAddress}">
+				<input type="hidden" id="oldDbConnectPort"     value="{$configData.dbConnectPort}">
+				<input type="hidden" id="oldDbName"            value="{$configData.dbName}">
+				<input type="hidden" id="oldDbUserName"        value="{$configData.dbUserName}">
+				<input type="hidden" id="oldDbPassword"        value="{$configData.dbPassword}">
 
 				<div id="message" class="mt5 ml20">{$params.message}</div>
 
 				<div class="mt20 ml20">
 					<table class="detail-tbl">
 						<tr>
-							<th style="width: 15em;"><span class="trim01">AE title</th>
+							<th style="width: 20em;"><span class="trim01">AE title</th>
 							<td><input id="newAETitle" size="20" type="text" value="{$configData.aeTitle|escape}" /></td>
 						</tr>
 
@@ -131,6 +141,30 @@ function RestartStorageSv()
 							</td>
 						</tr>
 
+						<tr>
+							<th><span class="trim01">IP address of DB server</th>
+							<td><input id="newDbConnectAddress" size="20" type="text" value="{$configData.dbConnectAddress|escape}" disabled="disabled" /></td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Port number of DB server</th>
+							<td><input id="newDbConnectPort" size="20" type="text" value="{$configData.dbConnectPort|escape}" disabled="disabled" /></td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Database name of DB server</th>
+							<td><input id="newDbName" size="20" type="text" value="{$configData.dbName|escape}" disabled="disabled" /></td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">User name to connect DB server</th>
+							<td><input id="newDbUserName" size="20" type="text" value="{$configData.dbUserName|escape}" disabled="disabled" /></td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Password to connect DB server</th>
+							<td><input id="newDbPassword" size="20" type="text" value="{$configData.dbPassword|escape}" disabled="disabled" /></td>
+						</tr>
 					</table>
 
 					<div class="pl20 mb20 mt10">
