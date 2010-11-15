@@ -13,16 +13,23 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables
 		//--------------------------------------------------------------------------------------------------------------
-		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
-		$oldUserID         = (isset($_REQUEST['oldUserID']))        ? $_REQUEST['oldUserID']        : "";
-		$newUserID         = (isset($_REQUEST['newUserID']))        ? $_REQUEST['newUserID']        : "";
-		$newUserName       = (isset($_REQUEST['newUserName']))      ? $_REQUEST['newUserName']      : "";
-		$newPassword       = (isset($_REQUEST['newPassword']))      ? $_REQUEST['newPassword']      : "";
-		$newGroupID        = (isset($_REQUEST['newGroupID']))       ? $_REQUEST['newGroupID']       : "";
-		$newTodayDisp      = (isset($_REQUEST['newTodayDisp']))     ? $_REQUEST['newTodayDisp']     : "";
-		$newDarkroomFlg    = (isset($_REQUEST['newDarkroomFlg']))   ? $_REQUEST['newDarkroomFlg']   : "";
-		$newAnonymizeFlg   = (isset($_REQUEST['newAnonymizeFlg']))  ? $_REQUEST['newAnonymizeFlg']  : "";
-		$newLatestResults  = (isset($_REQUEST['newLatestResults'])) ? $_REQUEST['newLatestResults'] : "";
+		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_GET['ticket'])) ? $_GET['mode'] : "";
+		$oldUserID         = (isset($_GET['oldUserID']))        ? $_GET['oldUserID']        : "";
+		$oldUserName       = (isset($_GET['oldUserName']))      ? $_GET['oldUserName']      : "";
+		$oldPassword       = (isset($_GET['oldPassword']))      ? $_GET['oldPassword']      : "";
+		$oldGroupID        = (isset($_GET['oldGroupID']))       ? $_GET['oldGroupID']       : "";
+		$oldTodayDisp      = (isset($_GET['oldTodayDisp']))     ? $_GET['oldTodayDisp']     : "";
+		$oldDarkroomFlg    = (isset($_GET['oldDarkroomFlg']))   ? $_GET['oldDarkroomFlg']   : "";
+		$oldAnonymizeFlg   = (isset($_GET['oldAnonymizeFlg']))  ? $_GET['oldAnonymizeFlg']  : "";
+		$oldLatestResults  = (isset($_GET['oldLatestResults'])) ? $_GET['oldLatestResults'] : "";
+		$newUserID         = (isset($_GET['newUserID']))        ? $_GET['newUserID']        : "";
+		$newUserName       = (isset($_GET['newUserName']))      ? $_GET['newUserName']      : "";
+		$newPassword       = (isset($_GET['newPassword']))      ? $_GET['newPassword']      : "";
+		$newGroupID        = (isset($_GET['newGroupID']))       ? $_GET['newGroupID']       : "";
+		$newTodayDisp      = (isset($_GET['newTodayDisp']))     ? $_GET['newTodayDisp']     : "";
+		$newDarkroomFlg    = (isset($_GET['newDarkroomFlg']))   ? $_GET['newDarkroomFlg']   : "";
+		$newAnonymizeFlg   = (isset($_GET['newAnonymizeFlg']))  ? $_GET['newAnonymizeFlg']  : "";
+		$newLatestResults  = (isset($_GET['newLatestResults'])) ? $_GET['newLatestResults'] : "";
 		//--------------------------------------------------------------------------------------------------------------
 
 		$longinUser = $_SESSION['userID'];
@@ -39,17 +46,11 @@
 			{
 				$sqlStr = "";
 				$sqlParams = array();
-						
-				if(($mode == 'delete' && $newUserID != $longinUser) || $mode ='update')	// delete user
+				
+				if($mode == 'add')
 				{
-					$sqlStr = "DELETE FROM users WHERE user_id=?;";
-					$sqlParams[] = $newUserID;
-				}
-
-				if(($mode == 'add' && $newUserID != "" && $newPassword != "" ) || $mode == 'update')
-				{
-					$sqlStr  .= "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
-					         .  " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
+					         . " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 						 
 					$sqlParams[] = $newUserID;
 					$sqlParams[] = $newUserName;
@@ -59,21 +60,116 @@
 					$sqlParams[] = $newDarkroomFlg;
 					$sqlParams[] = $newAnonymizeFlg;
 					$sqlParams[] = $newLatestResults;
+			
+					if($newUserID == "" || $newPassword == "")  $sqlStr = "";
 				}
-
-				if($mode ='update' && $oldUserID == $longinUser && $newUserID != $oldUserID)
+				else if($mode == 'update') // update user config
 				{
-					$sqlStr = "";
-					$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
-				}			
+					$updateCnt = 0;
+				
+					$sqlStr = 'UPDATE users SET ';
+					if($oldUserID == $longinUser && $newUserID != $oldUserID)
+					{
+						$sqlStr = "";
+						$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
+					}
+					else if($newUserID != $oldUserID)
+					{
+						$sqlStr .= "user_id=?";
+						$sqlParams[] = $newUserID;
+						$updateCnt++;
+					}
 
+					if($params['message'] == "&nbsp;")
+					{
+						if($oldUserName != $newUserName)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "user_name=?";
+							$sqlParams[] = $newUserName;
+							$updateCnt++;
+						}
+
+						if($oldPassword != $newPassword && $oldPassword != md5($newPassword))
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "passcode=?";
+							$sqlParams[] = md5($newPassword);
+							$updateCnt++;
+						}
+	
+						if($oldUserID == $longinUser && $oldGroupID != $newGroupID)
+						{
+							$msg = "You can't change your group ID (" . $oldGroupID . " -> " . $newGroupID . ")";
+						}
+						else if($oldGroupID != $newGroupID)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "group_id=?";
+							$sqlParams[] = $newGroupID;
+							$updateCnt++;
+						}
+	
+						if($oldTodayDisp != $newTodayDisp)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "today_disp=?";
+							$sqlParams[] = $newTodayDisp;
+							$updateCnt++;
+						}
+						
+						if($oldDarkroomFlg != $newDarkroomFlg)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "darkroom_flg=?";
+							$sqlParams[] = $newDarkroomFlg;
+							$updateCnt++;
+						}
+	
+						if($oldAnonymizeFlg != $newAnonymizeFlg)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "anonymize_flg=?";
+							$sqlParams[] = $newAnonymizeFlg;
+							$updateCnt++;
+						}
+	
+						if($oldLatestResults != $newLatestResults)
+						{
+							if($updateCnt > 0)	$sqlStr .= ",";
+							$sqlStr .= "latest_results=?";
+							$sqlParams[] = $newLatestResults;
+							$updateCnt++;
+						}
+					
+						$sqlStr .= " WHERE user_id=?";
+						$sqlParams[] = $oldUserID;
+	
+						if($updateCnt == 0)  $sqlStr  = "";
+					}
+				}
+				else if($mode == 'delete')	// delete user
+				{
+					if($newUserID == $longinUser)
+					{
+						$params['message'] = "You can't delete own user ID (" . $longinUser . ")";
+					}
+					else if($newUserID != "")
+					{
+						$sqlStr = "DELETE FROM users WHERE user_id=?";
+						$sqlParams[0] = $newUserID;
+					}
+				}
+		
 				if($params['message'] == "&nbsp;" && $sqlStr != "")
 				{
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
-					$errorMessage = $stmt->errorInfo();
+				
+					$tmp = $stmt->errorInfo();
+					$message = $tmp[2];
 
-					if($errorMessage[2] == "")
+					if($stmt->errorCode() == '00000')
 					{
 						$params['message'] = '<span style="color: #0000ff;" >';
 					
@@ -87,16 +183,9 @@
 					}
 					else
 					{
-						$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
-					
-						if($mode == 'update')
-						{
-							$params['message'] .= $oldUserID;
-						}
-						else
-						{
-							$params['message'] .= $newUserID;
-						}
+						$params['message'] = '<span style="color: #ff0000;">Fail to ' . $mode
+						                   . 'user (userID:' . (($mode=='update') ? $oldUserID : $newUserID)
+										   . '</span>';
 					}
 				}
 				else $params['message'] = '<span style="color: #ff0000;">' . $params['message'] . '</span>';
