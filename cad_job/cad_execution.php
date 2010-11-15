@@ -335,7 +335,7 @@
 						if($_SESSION['anonymizeFlg'] == 1)
 						{
 							$patientID   = PinfoScramble::encrypt($patientID, $_SESSION['key']);
-							$patientName = PinfoScramble::scriptPtName();
+							$patientName = PinfoScramble::scramblePtName();
 						}
 					}
 		

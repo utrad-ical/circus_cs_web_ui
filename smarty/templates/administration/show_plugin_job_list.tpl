@@ -105,7 +105,7 @@ div.line{
 								<th>Patient ID</th>
 								<th>Study ID</th>
 								<th>Series ID</th>
-								<th>Detail</th>
+								{*<th>Detail</th>*}
 								<th>Status</th>
 							</tr>
 						</thead>
@@ -120,9 +120,9 @@ div.line{
 									<td>{$item[5]}</td>
 									<td>{$item[6]}</td>
 									<td>{$item[7]}</td>
-									<td>
+								{*	<td>
 										<input type="button" class="form-btn" value="detail" onClick="ShowJobDetail({$item[0]});" />
-									</td>
+									</td>*}
 
 									{if $item[8] == 't'}
 										<td>Processing</td>

@@ -104,7 +104,7 @@
 
 			<h2>Help</h2>
 			<div class="help mb20">
-				<a href="manual/CIRCUS-CS1.0RC1_SimpleManual.pdf">Simple manual (in Japanese)</a> is available (PDF format, 740 kByte).
+				<a href="manual/CIRCUS-CS1.0RC2_SimpleManual.pdf">Simple manual (in Japanese)</a> is available (PDF format, 2.2 MByte).
 			</div>
 
 <!-- InstanceEndEditable -->

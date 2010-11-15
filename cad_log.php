@@ -367,7 +367,7 @@
 		
 						while($tmpStr2 = strtok('"'))
 						{
-							echo $tmpStr2;
+							//echo $tmpStr2;
 							if($tmpStr2 != ")")  array_push($fbUserArr, $tmpStr2);
 						}
 						
@@ -666,13 +666,13 @@
 					$stmtPersonalFN->bindParam(1, $result['exec_id']);
 					$stmtPersonalFN->execute();
 					
-					if($stmtPersonalFN == 1)
+					if($stmtPersonalFN->rowCount() == 1)
 					{
 						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
 						else									 $registStatus['FN'] = 1;
 					}
 					
-					echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
+					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
 					
 					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
 					{
@@ -737,7 +737,7 @@
 					$stmtPersonalFN->bindParam(1, $result['exec_id']);
 					$stmtPersonalFN->execute();
 					
-					if($stmtPersonalFN->rowCOunt() == 1)
+					if($stmtPersonalFN->rowCount() == 1)
 					{
 						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
 						else									 $registStatus['FN'] = 1;
