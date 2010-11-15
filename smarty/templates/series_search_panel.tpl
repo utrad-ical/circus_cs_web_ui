@@ -73,10 +73,11 @@
 	</div><!-- / .m20 END -->
 </div><!-- / .search-panel END -->
 
-{literal}
+
 <script language="javascript">
 <!-- 
-
+{if $params.mode!='today'}
+{literal}
 $(function() {
 	$("#seriesSearch input[name='srDateFrom']").datepicker({
 			showOn: "button",
@@ -110,8 +111,8 @@ $(function() {
 				}
 		});
 });
-
+{/literal}
+{/if}
 
 -->
 </script>
-{/literal}

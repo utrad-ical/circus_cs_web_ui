@@ -123,11 +123,12 @@
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
+{if $params.mode!='today'}
 {literal}
 <script language="javascript">
 <!-- 
-
 $(function() {
+
 	$("#cadSearch input[name='srDateFrom']").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",
@@ -191,7 +192,9 @@ $(function() {
 					$("#cadSearch input[name='cadDateFrom']").datepicker("option", "maxDate", date);
 				}
 		});
+
 });
 -->
 </script>
 {/literal}
+{/if}
