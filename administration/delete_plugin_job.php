@@ -93,11 +93,11 @@
 										.  '<td>' . $item[4] . '</td>'
 										.  '<td>' . $item[5] . '</td>'
 										.  '<td>' . $item[6] . '</td>'
-										.  '<td>' . $item[7] . '</td>'
-										.  '<td>'
-										.  '<input type="button" class="form-btn" value="detail"'
-										.  ' onClick="ShowJobDetail(' . $item[0] . ');" />'
-										.  '</td>';
+										.  '<td>' . $item[7] . '</td>';
+										//.  '<td>'
+										//. '<input type="button" class="form-btn" value="detail"'
+										//.  ' onClick="ShowJobDetail(' . $item[0] . ');" />'
+										//.  '</td>';
 	
 				if($item[8] == 't')
 				{

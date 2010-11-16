@@ -7,6 +7,61 @@
 	require_once('class/PersonalInfoScramble.class.php');	
 	require_once('class/validator.class.php');	
 
+	//-----------------------------------------------------------------------------------------------------------------
+	//
+	//-----------------------------------------------------------------------------------------------------------------
+	function CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $execID)
+	{
+		$registStatus = array('cand' => 0,
+							  'FN'   => 0);  // 0：未入力、1：途中、2：入力済
+
+		$stmtPersonalFB->bindParam(1, $execID);
+		$stmtPersonalFB->execute();
+
+		if($stmtPersonalFB->rowCount() > 0)
+		{
+			$registStatus['cand'] = 2;
+	
+			while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
+			{
+				if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
+				{
+					$registStatus['cand'] = 1;
+					break;
+				}		
+			}
+		}
+	
+		$stmtPersonalFN->bindParam(1, $execID);
+		$stmtPersonalFN->execute();
+		
+		if($stmtPersonalFN->rowCount() == 1)
+		{
+			if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
+			else									 $registStatus['FN'] = 1;
+		}
+	
+		//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
+	
+		if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
+		{
+			$ret = '-';
+		}
+		else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
+		{
+			$ret = 'Registered';
+		}
+		else
+		{
+			$ret = '<span style="font-weight:bold;color:red;">Incomplete</span>';
+		}
+		return $ret;
+	}
+	//-----------------------------------------------------------------------------------------------------------------
+
+
+
+
 	try
 	{
 		// Connect to SQL Server
@@ -643,49 +698,7 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$registStatus = array('cand' => 0,
-					                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
-				
-					$stmtPersonalFB->bindParam(1, $result['exec_id']);
-					$stmtPersonalFB->execute();
-
-					if($rowCntPersonalFB > 0)
-					{
-						$registStatus['cand'] = 2;
-					
-						while($resultPersonalFB = $stmt->fetch(PDO::FETCH_ASSOC))
-						{
-							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
-							{
-								$registStatus['cand'] = 1;
-								break;
-							}		
-						}
-					}
-					
-					$stmtPersonalFN->bindParam(1, $result['exec_id']);
-					$stmtPersonalFN->execute();
-					
-					if($stmtPersonalFN->rowCount() == 1)
-					{
-						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
-						else									 $registStatus['FN'] = 1;
-					}
-					
-					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
-					
-					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
-					{
-						$colArr[] = '-';
-					}
-					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
-					{
-						$colArr[] = 'Registered';
-					}
-					else
-					{
-						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
-					}
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['exec_id']);	
 				}
 			}
 			else
@@ -714,50 +727,53 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$registStatus = array('cand' => 0,
-					                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
-					
-					$stmtPersonalFB->bindParam(1, $result['exec_id']);
-					$stmtPersonalFB->execute();
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['exec_id']);	
 
-					if($stmtPersonalFB->rowCount() > 0)
-					{
-						$registStatus['cand'] = 2;
-					
-						while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
-						{
-							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
-							{
-								$registStatus['cand'] = 1;
-								break;
-							}		
-						}
-					}
-					
-					$stmtPersonalFN->bindParam(1, $result['exec_id']);
-					$stmtPersonalFN->execute();
-					
-					if($stmtPersonalFN->rowCount() == 1)
-					{
-						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
-						else									 $registStatus['FN'] = 1;
-					}
-					
-					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
-					
-					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
-					{
-						$colArr[] = '-';
-					}
-					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
-					{
-						$colArr[] = 'Registered';
-					}
-					else
-					{
-						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
-					}					
-					
+				
+				//	$registStatus = array('cand' => 0,
+				//	                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
+				//	
+				//	$stmtPersonalFB->bindParam(1, $result['exec_id']);
+				//	$stmtPersonalFB->execute();
+//
+//					if($stmtPersonalFB->rowCount() > 0)
+//					{
+//						$registStatus['cand'] = 2;
+//					
+//						while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
+//						{
+//							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
+//							{
+//								$registStatus['cand'] = 1;
+//								break;
+//							}		
+//						}
+//					}
+//					
+//					$stmtPersonalFN->bindParam(1, $result['exec_id']);
+//					$stmtPersonalFN->execute();
+//					
+//					if($stmtPersonalFN->rowCount() == 1)
+//					{
+//						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
+//						else									 $registStatus['FN'] = 1;
+//					}
+//					
+//					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
+//					
+//					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
+//					{
+//						$colArr[] = '-';
+//					}
+//					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
+//					{
+//						$colArr[] = 'Registered';
+//					}
+//					else
+//					{
+//						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
+//					}					
+//					
 				}							
 
 				$tpColStr = "-";

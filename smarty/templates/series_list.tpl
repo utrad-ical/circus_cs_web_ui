@@ -185,7 +185,7 @@
 
 										<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onClick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[1]}', '{$item[2]}', {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
 										<div id="cadInfo{$smarty.foreach.cnt.iteration}">
-											{if $item[14][0][5] != ''}Executed at {$item[14][0][5]|escape}{elseif !$item[14][0][3] && $item[14][0][4]}Registered in CAD job list{elseif $params.mode == 'today'}<span style="color:#fff;">Not executed</span>{else}&nbsp;{/if}
+											{if $item[14][0][5] != ''}Executed at {$item[14][0][5]|escape}{elseif !$item[14][0][3] && $item[14][0][4]}Registered in CAD job list{elseif $params.mode == 'today'}<span style="color:#f00;">Not executed</span>{else}&nbsp;{/if}
 										</div>
 
 									{else}
