@@ -21,8 +21,9 @@
 <script language="Javascript">
 <!--
 
-var fnData  = {$fnData|@json_encode};
-var candPos = {$candPos|@json_encode};
+var fnData    = {$fnData|@json_encode};
+var candPos   = {$candPos|@json_encode};
+var colorList = {$colorList|@json_encode};
 
 {if $params.status==1}
 var oldFnData = {$fnData|@json_encode};

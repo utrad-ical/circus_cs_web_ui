@@ -60,25 +60,25 @@ function plotDots(id, x, y, colorSet)
 
 	var labelBaseX = 0;
 	var labelBaseY = 0;
-	var color = "#ff00ff";
+	var color = colorList[0];
 
 	switch(colorSet)
 	{
 		case "1": 
 			labelBaseX = 3;
 			labelBaseY = -20;
-			color = "#228b22";
+			color = colorList[1];
 			break;
-	
+
 		case "2":
 			labelBaseX = (id < 10) ? -11 : -20;
 			labelBaseY = -20;
-			color = "#ff8000";
+			color = colorList[2];
 			break;
 	
 		case "3":
 			labelBaseX = (id < 10) ? -11 : -20;
-			color = "#ff0000";
+			color = colorList[3];
 			break;
 
 		default: // case 0
@@ -203,26 +203,32 @@ function ChangePresetMenu()
 function AddFnTable(id, item)
 {
 	var feedbackMode = $("#feedbackMode").val();
+	var registTime   = $("#registTime").val();
 
 	var htmlStr = '<tr id="row' + id + '"' + ((id%2==1) ? ' class="column">' : '>');
 
-	if($("#registTime").val() == "" || $("#status").val() != 2)
+	if(registTime == "" || $("#status").val() != 2)
 	{
 		htmlStr += '<td class="operationColumn"><input type="checkbox" name="rowCheckList[]"'
                 +  ' onclick="RefreshOperationButtons();"value="' + id + '"></td>';
 	}
 
-	var tdBaseStr = (feedbackMode == "consensual") ? ' style="color:#ff00ff;">' : '>';
+	var tdColor = "";
 
-	htmlStr += '<td class="id"' + tdBaseStr + (id+1) + '</td>'
-            +  '<td class="x"' + tdBaseStr + item.x + '</td>'
-            +  '<td class="y"' + tdBaseStr + item.y + '</td>'
-            +  '<td class="z"' + tdBaseStr + item.z + '</td>'
-            +  '<td class="rank"' + tdBaseStr + item.rank + '</td>';
+	if(feedbackMode == "consensual" && registTime == "")
+	{
+		tdColor = ' style="color:' + colorList[item.colorSet] + ';"';
+	}
+
+	htmlStr += '<td class="id"' + tdColor + '>' + (id+1) + '</td>'
+            +  '<td class="x"' + tdColor + '>' + item.x + '</td>'
+            +  '<td class="y"' + tdColor + '>' + item.y + '</td>'
+            +  '<td class="z"' + tdColor + '>' + item.z + '</td>'
+            +  '<td class="rank"' + tdColor + '>' + item.rank + '</td>';
 
 	if(feedbackMode == "consensual")
 	{
-		htmlStr += '<td class="enteredBy"' + tdBaseStr + item.enteredBy + '</td>'
+		htmlStr += '<td class="enteredBy"' + tdColor + '>' + item.enteredBy + '</td>'
 				+  '<td class="idStr" style="display:none;">' + item.idStr + '</td>';
 				+  '<td class="colorSet" style="display:none;">' + item.colorSet + '</td>';
 	}

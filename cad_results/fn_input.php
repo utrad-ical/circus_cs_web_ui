@@ -6,11 +6,21 @@
 
 	include_once("../common.php");
 	include_once("../auto_logout.php");	
-	include_once("fn_input_private.php");
 	require_once('../class/PersonalInfoScramble.class.php');
 	require_once('../class/DcmExport.class.php');	
 	require_once('../class/validator.class.php');	
-		
+	
+	//------------------------------------------------------------------------------------------------------------------
+	// Definitions
+	//------------------------------------------------------------------------------------------------------------------
+	//$colorList = array ("#ff00ff", "#228b22", "#ff8000", "#ff0000");
+	$colorList = array ("#ff00ff", "#ff8000", "#1e90ff", "#32cd32");
+	
+	$RESCALE_RATIO = 1.25;
+	$DEFAULT_COL_NUM = 6;
+	$DIST_THRESHOLD = 5.0;	
+	//------------------------------------------------------------------------------------------------------------------
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation
 	//------------------------------------------------------------------------------------------------------------------
@@ -441,7 +451,7 @@
 			//--------------------------------------------------------------------------------------------------------
 			// Make one-time ticket
 			//--------------------------------------------------------------------------------------------------------
-			//$_SESSION['ticket'] = md5(uniqid().mt_rand());
+			$_SESSION['ticket'] = md5(uniqid().mt_rand());
 			//--------------------------------------------------------------------------------------------------------
 		
 			//--------------------------------------------------------------------------------------------------------
@@ -512,24 +522,9 @@
 		
 			for($j=0; $j<$params['enteredFnNum']; $j++)
 			{
-				$fontColor = "black";
-				
-				if($params['feedbackMode'] == "consensual")
-				{
-					if($params['registTime'] != "")
-					{
-						$fontColor = "#ff00ff";
-					}
-					else
-					{
-						$tmpUserID = strtok($fnPosArray[$j * $DEFAULT_COL_NUM + 4], ',');
-						$fontColor = $colorList[$params['userArr'][$tmpUserID]];	
-					}
-				}
-				
 				// Position for label
 				$colorSet = 0;
-				if($params['feedbackMode'] == "consensual")
+				if($params['feedbackMode'] == "consensual" && $params['registTime'] == "")
 				{
 					$tmpUserID = strtok($fnPosArray[$j * $DEFAULT_COL_NUM + 4], ',');
 					$colorSet = $params['userArr'][$tmpUserID];
@@ -559,11 +554,10 @@
 	
 		$smarty->assign('params',   $params);
 
-		$smarty->assign('fnData',   $fnData);
-		$smarty->assign('candPos',  $candPos);
-		
-	//	$smarty->assign('presetArr', $presetArr);
-	//	$smarty->assign('presetNum', $presetNum);
+		$smarty->assign('fnData',     $fnData);
+		$smarty->assign('candPos',    $candPos);
+
+		$smarty->assign('colorList',  $colorList);
 
 		$smarty->assign('ticket',   $_SESSION['ticket']);
 	

@@ -93,7 +93,9 @@
 	$k = 0;
 	
 	$params['scale'] = $params['dispWidth']/$params['cropWidth'];
-	$params['lesionCheckCnt'] = 0;	
+	$params['lesionCheckCnt'] = 0;
+	
+	$dispSid = array();
 
 	while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 	{
@@ -104,6 +106,7 @@
 		$posZ       = $result['location_z'];
 		
 		$candArr[] = $candID;
+		$dispSid[] = $result['sid'];
 	
 		$srcFname = sprintf("%s%sresult%03d.png", $params['pathOfCADReslut'], $DIR_SEPARATOR, $candID);
 		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB, $candID);
@@ -424,43 +427,58 @@
 		                              $detailParams['windowLevel'], $detailParams['windowWidth']);
 	}
 				
-	//$fp = fopen($dumpFname, "r");
-	
-	//$detailParams['sliceNumber'] = 0;
-	//$detailParams['sliceLocation'] = 0;
-		
-	//if($fp != NULL)
-	//{
-	//	while($str = fgets($fp))
-	//	{
-	//		$dumpTitle   = strtok($str,":");
-	//		$dumpContent = strtok("\r\n");
-	//
-	//		switch($dumpTitle)
-	//		{
-	//			case 'Img. No.':
-	//			case 'Image No.':
-	//				$detailParams['sliceNumber'] = $dumpContent;
-	//				break;
-	//
-	//			case 'Slice location':
-	//				$detailParams['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
-	//				break;
-	//		}
-	//	}
-	//	fclose($fp);
-	//}
-		
-
 	$sqlStr = 'SELECT sid, sub_id, location_x, location_y, location_z, slice_location, volume_size, confidence'
-			. ' FROM "' . $params['resultTableName'] . '" WHERE exec_id=? ORDER BY confidence DESC';
+			. ' FROM "' . $params['resultTableName'] . '" WHERE exec_id=? ORDER BY ';
 			
+	$detailParams['sortStr'] ='Sort by ';
+			
+	switch($params['sortKey'])
+	{
+		case 0:  // confidence
+			$sqlStr .= 'confidence';
+			$detailParams['sortStr'] .= 'confidence';
+			break;
+			 
+		case 1: // slice number
+			$sqlStr .= 'location_z';
+			$detailParams['sortStr'] .= 'Image number';
+			break;
+			
+		case 2: // volume of candidate
+			$sqlStr .= 'volume_size';
+			$detailParams['sortStr'] .= 'volume';
+			break;
+	}	
+	
+	if($params['sortOrder'] == 'f')
+	{
+		$sqlStr .= ' ASC';
+		$detailParams['sortStr'] .= '(ascending order)';
+	}
+	else
+	{
+		$sqlStr .= ' DESC';
+		$detailParams['sortStr'] .= '(descending order)';
+	}
+
 	$detailData = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
 	
 	for($i=0; $i<count($detailData); $i++)
 	{
+		$dispCandFlg = 0;
+		
+		foreach($dispSid as $item)
+		{
+			if($detailData[$i][0] == $item)
+			{
+				$dispCandFlg =1;
+				break;
+			}
+		}
+		
 		$sqlStr = "SELECT tag FROM tag_list WHERE category=5 AND reference_id=?";
 		$detailData[$i][] = implode(', ', PdoQueryOne($pdo, $sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
+		$detailData[$i][] = $dispCandFlg;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

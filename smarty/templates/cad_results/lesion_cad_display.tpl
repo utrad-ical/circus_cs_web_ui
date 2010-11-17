@@ -593,36 +593,39 @@ $(function() {
 						</table>
 					</div>
 					
-					<div class="fl-l" style="overflow-y:scroll; overflow-x:hidden; width: 330px; height: 400px;">
-						<table id="posTable" class="col-tbl mb10">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Pos X</th>
-									<th>Pos Y</th>
-									<th>Pos Z</th>
-									<th style="width:4em;">Volume [mm3]</th>
-									<th>Confidence</th>
-									<th>Tag</th>
-								</tr>
-							</thead>
-							<tbody>
-								{foreach from=$detailData item=item name=detailData}
-									<tr {if $smarty.foreach.detailData.index%2==1}class="column"{/if}>
-										<td class="id">{$item[1]|escape}</td>
-										<td class="x">{$item[2]|escape}</td>
-										<td class="y">{$item[3]|escape}</td>
-										<td class="z">{$item[4]|escape}</td>
-										<td class="volume">{$item[6]|string_format:"%.1f"|escape}</td>
-										<td class="confidence">{$item[7]|string_format:"%.3f"|escape}</td>
-										<td class="tagColumn">
-											<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn"
-												    onclick="EditTag(5, '{$item[0]|escape}', '../')" title="{$item[8]|escape}" />
-										</td>
+					<div div class="fl-l">
+						<p style="margin:0px 0px 3px 10px;">{$detailParams.sortStr}</p>
+						<div style="overflow-y:scroll; overflow-x:hidden; width: 330px; height: 400px;">
+							<table id="posTable" class="col-tbl mb10">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Pos X</th>
+										<th>Pos Y</th>
+										<th>Pos Z</th>
+										<th style="width:4em;">Volume [mm3]</th>
+										<th>Confidence</th>
+										<th>Tag</th>
 									</tr>
-								{/foreach}
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									{foreach from=$detailData item=item name=detailData}
+										<tr {if $smarty.foreach.detailData.index%2==1}class="column"{/if}>
+											<td class="id"{if $item[9]} style="font-weight:bold;"{/if}>{$smarty.foreach.detailData.iteration}</td>
+											<td class="x"{if $item[9]} style="font-weight:bold;"{/if}>{$item[2]|escape}</td>
+											<td class="y"{if $item[9]} style="font-weight:bold;"{/if}>{$item[3]|escape}</td>
+											<td class="z"{if $item[9]} style="font-weight:bold;"{/if}>{$item[4]|escape}</td>
+											<td class="volume"{if $item[9]} style="font-weight:bold;"{/if}>{$item[6]|string_format:"%.1f"|escape}</td>
+											<td class="confidence"{if $item[9]} style="font-weight:bold;"{/if}>{$item[7]|string_format:"%.3f"|escape}</td>
+											<td class="tagColumn">
+												<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn"
+													    onclick="EditTag(5, '{$item[0]|escape}', '../')" title="{$item[8]|escape}" />
+											</td>
+										</tr>
+									{/foreach}
+								</tbody>
+							</table>
+						</div>
 					</div><!-- / .detail-panel END -->
 				</div><!-- / .detailArea END -->
 				<div class="fl-clr"></div>

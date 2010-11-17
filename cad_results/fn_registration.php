@@ -7,7 +7,6 @@
 
 	include_once("../common.php");
 	include_once("../auto_logout.php");	
-	include_once("fn_input_private.php");
 	require_once('../class/validator.class.php');
 	
 	function DeleteFnTables($pdo, $execID, $consensualFlg, $userID)
