@@ -164,37 +164,29 @@ function ResetCondition()
 }
 
 $(function() {
-	$("#dateFrom").datepicker({
+	$("#dateFrom, #dateTo").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",
 			buttonImageOnly: true,
 			buttonText:'',
+			constrainInput: false,
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+			maxDate: 0}
+		);
+
+	$("#dateFrom").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#dateTo").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#dateTo").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#dateTo").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#dateFrom").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 });
 
 {/literal}

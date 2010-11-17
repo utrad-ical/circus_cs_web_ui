@@ -61,7 +61,7 @@
 					$newStorageID = $stmt->fetchColumn();
 					$newAlias = sprintf("store%d/", $newStorageID);
 
-					echo $newStorageID;
+					//echo $newStorageID;
 
 					$sqlStr = "INSERT INTO storage_master(storage_id, path, apache_alias, current_flg, type)"
 							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?, ?)";
@@ -137,7 +137,7 @@
 				{
 					if(mkdir($newPath) == FALSE)
 					{
-						$message = '<span style="color:#ff0000;"> Can\'t create dir: ' . $newPath . '</span>';
+						$message = '<span style="color:#ff0000;"> Fail to create directory: ' . $newPath . '</span>';
 					}
 				
 					if($message == "&nbsp;")
@@ -145,7 +145,7 @@
 						if(mkdir($newPath.$DIR_SEPARATOR."tmp") == FALSE)
 						{
 							rmdir($newPath);
-							$message = '<span style="color:#ff0000;"> Can\'t create dir: ' . $newPath . $DIR_SEPARATOR . 'tmp</span>';
+							$message = '<span style="color:#ff0000;"> Fail to create directory: ' . $newPath . $DIR_SEPARATOR . 'tmp</span>';
 						}
 					}
 				}

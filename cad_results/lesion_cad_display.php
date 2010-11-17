@@ -453,32 +453,32 @@
 	if($params['sortOrder'] == 'f')
 	{
 		$sqlStr .= ' ASC';
-		$detailParams['sortStr'] .= '(ascending order)';
+		$detailParams['sortStr'] .= ' (ascending order)';
 	}
 	else
 	{
 		$sqlStr .= ' DESC';
-		$detailParams['sortStr'] .= '(descending order)';
+		$detailParams['sortStr'] .= ' (descending order)';
 	}
 
 	$detailData = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
 	
 	for($i=0; $i<count($detailData); $i++)
 	{
-		$dispCandFlg = 0;
+		$candClass = "";
 		
 		foreach($dispSid as $item)
 		{
 			if($detailData[$i][0] == $item)
 			{
-				$dispCandFlg =1;
+				$candClass = " emphasis";
 				break;
 			}
 		}
 		
 		$sqlStr = "SELECT tag FROM tag_list WHERE category=5 AND reference_id=?";
 		$detailData[$i][] = implode(', ', PdoQueryOne($pdo, $sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
-		$detailData[$i][] = $dispCandFlg;
+		$detailData[$i][] = $candClass;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

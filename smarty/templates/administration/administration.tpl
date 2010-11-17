@@ -179,7 +179,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 					</table>
 			</div>
 
-			<h3>Server settings</h3>
+			<h3>Plug-in jobs</h3>
 			<div class="p5 ml10 mb10">
 				<table>
 					<tr>

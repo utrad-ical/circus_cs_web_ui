@@ -247,7 +247,7 @@ function Minus()
 					{if $params.registTime == "" || $params.status != 2}
 					<div style="margin-bottom:5px;">
 						Action for checked item(s)
-						<select id="actionMenu" onchange="ChangeActionForChackedItems();" disabled="disabled">
+						<select id="actionMenu" onchange="RefreshOperationButtons();" disabled="disabled">
 							<option value="delete">delete</option>
 							{if $params.feedbackMode=="consensual"}<option value="integrate">integrate</option>{/if}
 						</select>

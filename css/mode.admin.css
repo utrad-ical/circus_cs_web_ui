@@ -103,7 +103,7 @@ table.row-tbl tr td {
 }
 
 table.img-tbl {
-	background: url(../img_common/item/imgbk_top.jpg) top no-repeat;
+	/*background: url(../img_common/item/imgbk_top.jpg) top no-repeat;*/
 	overflow: hidden;
 	width: 408px;
 	margin: 0;

@@ -70,7 +70,10 @@
 			
 		if(isset($params['minSize']) && isset($params['maxSize']) && $params['minSize'] > $params['maxSize'])
 		{
-			$params['errorMessage'] = "Range of 'Size (diameter)' is invalid."; 
+			//$params['errorMessage'] = "Range of 'Size (diameter)' is invalid."; 
+			$tmp = $params['minSize'];
+			$params['minSize'] = $params['maxSize'];
+			$params['maxSize'] = $tmp;
 		}
 	}
 	else

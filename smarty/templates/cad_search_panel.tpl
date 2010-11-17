@@ -129,69 +129,44 @@
 <!-- 
 $(function() {
 
-	$("#cadSearch input[name='srDateFrom']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#cadSearch input[name='srDateTo']").datepicker("option", "minDate", date);
-				}
-		});
 
-	$("#cadSearch input[name='srDateTo']").datepicker({
+
+	$("#cadSearch input[name^='srDate'], #cadSearch input[name^='cadDate']").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",
 			buttonImageOnly: true,
 			buttonText:'',
+			constrainInput: false,
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+			maxDate: 0});
+
+	$("#cadSearch input[name='srDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
+					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+						                          selectedDate, instance.settings );
+
+					alert(date);
+					$("#cadSearch input[name='srDateTo']").datepicker("option", "minDate", date);
+				}});
+
+	$("#cadSearch input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
+					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#cadSearch input[name='srDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 
-	$("#cadSearch input[name='cadDateFrom']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+	$("#cadSearch input[name='cadDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
+					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#cadSearch input[name='cadDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#cadSearch input[name='cadDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
+	$("#cadSearch input[name='cadDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
+					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#cadSearch input[name='cadDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 
 });
 -->

@@ -68,7 +68,7 @@ function ResetSearchBlock()
 }
 
 $(function() {
-	$("#resSearch input[name='resDateFrom']").datepicker({
+	$("#resSearch input[name^='resDate']").datepicker({
 			showOn: "button",
 			buttonImage: "../images/calendar_view_month.png",
 			buttonImageOnly: true,
@@ -76,29 +76,20 @@ $(function() {
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+			maxDate: 0}
+		);
+
+	$("#resSearch input[name='resDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#resSearch input[name='resDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#resSearch input[name='resDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#resSearch input[name='resDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#resSearch input[name='resDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 });
 
 

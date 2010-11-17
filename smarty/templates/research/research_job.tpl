@@ -188,69 +188,41 @@ function ShowResearchList()
 }
 
 $(function() {
-	$("#researchCondition input[name='srDateFrom']").datepicker({
+	$("#researchCondition input[name^='srDateFrom'], #researchCondition input[name^='cadDate']").datepicker({
 			showOn: "button",
 			buttonImage: "../images/calendar_view_month.png",
 			buttonImageOnly: true,
 			buttonText:'',
+			constrainInput: false,
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+			maxDate: 0}
+		);
+
+	$("#researchCondition input[name='srDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#researchCondition input[name='srDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#researchCondition input[name='srDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#researchCondition input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#researchCondition input[name='srDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 
-	$("#researchCondition input[name='cadDateFrom']").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#researchCondition input[name='cadDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#researchCondition input[name='cadDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#researchCondition input[name='cadDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#researchCondition input[name='cadDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#researchCondition input[name='cadDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 });
 
 {/literal}

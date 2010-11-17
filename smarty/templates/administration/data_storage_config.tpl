@@ -112,15 +112,17 @@ function ResetCurrentID()
 
 				<div id="storageList" class="ml10 mb20">
 					<table class="col-tbl">
-						<tr>
-							<th>ID</th>
-							<th>Path</th>
-							<th>Alias</th>
-							<th>Type</th>
-							<th>Current Flg</th>
-							<th>&nbsp;</th>
-						</tr>
-
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Path</th>
+								<th>Alias</th>
+								<th>Type</th>
+								<th>Current Flg</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
 						{foreach from=$storageList item=item name=cnt}
 							<tr {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 								<td>{$item[0]}</td>
@@ -138,6 +140,7 @@ function ResetCurrentID()
 								</td>
 							</tr>
 						{/foreach}
+						</tbody>
 					</table>
 				</div>
 

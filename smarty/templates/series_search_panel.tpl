@@ -79,37 +79,29 @@
 {if $params.mode!='today'}
 {literal}
 $(function() {
-	$("#seriesSearch input[name='srDateFrom']").datepicker({
+	$("#seriesSearch input[name^='srDate']").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",
 			buttonImageOnly: true,
 			buttonText:'',
+			constrainInput: false,
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+			maxDate: 0});
+
+
+	$("#seriesSearch input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#seriesSearch input[name='srDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#seriesSearch input[name='srDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#seriesSearch input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#seriesSearch input[name='srDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 });
 {/literal}
 {/if}

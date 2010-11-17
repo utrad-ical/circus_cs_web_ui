@@ -69,37 +69,29 @@
 <!-- 
 
 $(function() {
-	$("#studySearch input[name='stDateFrom']").datepicker({
+	$("#studySearch input[name^='stDate']").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",
 			buttonImageOnly: true,
 			buttonText:'',
+			constrainInput: false,
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+			maxDate: 0}
+		);
+
+	$("#studySearch input[name='stDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#studySearch input[name='stDateTo']").datepicker("option", "minDate", date);
-				}
-		});
+				}});
 
-	$("#studySearch input[name='stDateTo']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0,
-			onSelect: function(selectedDate, instance){
+	$("#studySearch input[name='stDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
 					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 					$("#studySearch input[name='stDateFrom']").datepicker("option", "maxDate", date);
-				}
-		});
+				}});
 });
 
 

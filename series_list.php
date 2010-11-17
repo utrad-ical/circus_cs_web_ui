@@ -112,7 +112,10 @@
 			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
 			   && $params['filterAgeMin'] > $params['filterAgeMax'])
 			{
-				$params['errorMessage'] = "Range of 'Age' is invalid."; 
+				//$params['errorMessage'] = "Range of 'Age' is invalid."; 
+				$tmp = $params['filterAgeMin'];
+				$params['filterAgeMin'] = $params['filterAgeMax'];
+				$params['filterAgeMax'] = $tmp;
 			}
 		}
 		else
