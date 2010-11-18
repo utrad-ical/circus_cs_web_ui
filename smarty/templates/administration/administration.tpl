@@ -125,7 +125,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 						</tr>
 
 						<tr>
-							<td class="pt5">Add plug-in from pakaged file</td>
+							<td class="pt5">Add plug-in from packaged file</td>
 							<td class="pt5 pl10">
 								<input type="button" id="pluginConfButton" value="config" class="form-btn"
 									 onClick="location.href='add_plugin.php';" />

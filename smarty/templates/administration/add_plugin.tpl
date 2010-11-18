@@ -71,7 +71,7 @@ div.line{
 		</div><!-- / #leftside END -->
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
-			<h2>Add plug-in from pakaged file</h2>
+			<h2>Add plug-in from packaged file</h2>
 
 			<form id="form1" name="form1">
 				<input type="hidden" id="ticket" name="ticket" value="{$params.ticket|escape}" />
