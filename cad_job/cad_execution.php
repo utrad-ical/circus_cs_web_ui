@@ -219,7 +219,7 @@
 							. " AND sr.modality=?"
 							. " AND (";
 						
-					$colArr[] = $patientID;
+					$colArr[] = $params['patientID'];
 					$colArr[] = $modalityArr[$j];
 				
 					for($i=0; $i<$descriptionNumArr[$j]; $i++)
@@ -329,14 +329,8 @@
 		
 					if($j==0)
 					{
-						$patientID   = $result[0];
-						$patientName = $result[1];
-		
-						if($_SESSION['anonymizeFlg'] == 1)
-						{
-							$patientID   = PinfoScramble::encrypt($patientID, $_SESSION['key']);
-							$patientName = PinfoScramble::scramblePtName();
-						}
+						$params['patientID']   = $result[0];
+						$params['patientName'] = $result[1];
 					}
 		
 					for($i=0; $i<7;$i++)
@@ -448,7 +442,7 @@
 									. " AND sr.modality=?"
 									. " AND (";
 	
-							$colArr[] = $patientID;
+							$colArr[] = $params['patientID'];
 							$colArr[] = $modalityArr[$k];
 									
 							for($j=0; $j<$descriptionNumArr[$k]; $j++)
@@ -526,6 +520,11 @@
 			$params['mode'] = 'error';
 		}
 		
+		if($_SESSION['anonymizeFlg'] == 1)
+		{
+			$params['patientID']   = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
+			$params['patientName'] = PinfoScramble::scramblePtName();
+		}		
 		
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty

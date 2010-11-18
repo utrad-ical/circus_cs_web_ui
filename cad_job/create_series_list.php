@@ -38,7 +38,7 @@
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($seriesUIDArr[$j], $studyUIDArr[$j]));
 
-			array_push($seriesList, $stmt->fetch(PDO::FETCH_ASSOC));
+			$seriesList[] = $stmt->fetch(PDO::FETCH_ASSOC);
 		}
 		
 		echo json_encode($seriesList);
