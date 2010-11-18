@@ -59,9 +59,6 @@
 	}
 	//-----------------------------------------------------------------------------------------------------------------
 
-
-
-
 	try
 	{
 		// Connect to SQL Server
@@ -560,19 +557,6 @@
 		$_SESSION['listAddress'] = $params['pageAddress'];
 
 		//--------------------------------------------------------------------------------------------------------------
-		// count total number
-		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare("SELECT COUNT(*) " . $sqlCond);
-		$stmt->execute($sqlParams);
-		
-		$params['totalNum'] = $stmt->fetchColumn();
-		//$params['totalNum'] = $stmt->rowCount();
-		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
-		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
-		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
-		//--------------------------------------------------------------------------------------------------------------
-
-		//--------------------------------------------------------------------------------------------------------------
 		// Set $data array
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
@@ -580,7 +564,18 @@
 		        . " es.study_instance_uid, es.series_instance_uid,"
 		        . " MAX(lf.evaluation) as tp_max,"
 		        . " MAX(fn.false_negative_num) as fn_max"
-				. $sqlCond . " ORDER BY " . $orderColStr;
+				. $sqlCond;
+				
+		$stmt = $pdo->prepare($sqlStr);
+		$stmt->execute($sqlParams);
+		
+		// count total number
+		$params['totalNum'] = $stmt->rowCount();
+		$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
+		$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
+		$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);				
+				
+		$sqlStr .= " ORDER BY " . $orderColStr;
 				
 		//echo $sqlStr;
 		
