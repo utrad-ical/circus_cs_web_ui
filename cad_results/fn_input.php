@@ -548,7 +548,7 @@
 
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
-			$params['patientID']   = $params['encryptedPtID'];
+			$params['patientID']   = $params['encryptedPatientID'];
 			$params['patientName'] = PinfoScramble::scramblePtName();
 		}
 	
