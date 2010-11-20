@@ -621,7 +621,7 @@ $(function() {
 								</thead>
 								<tbody>
 									{foreach from=$detailData item=item name=detailData}
-										<tr {if $smarty.foreach.detailData.index%2==1}class="column{$item[9]}"{/if}>
+										<tr class="{if $smarty.foreach.detailData.index%2==1}column{/if}{$item[9]}">
 											<td class="id">{$smarty.foreach.detailData.iteration}</td>
 											<td class="x">{$item[2]|escape}</td>
 											<td class="y">{$item[3]|escape}</td>
