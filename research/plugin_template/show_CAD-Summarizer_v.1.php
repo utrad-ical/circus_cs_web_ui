@@ -161,11 +161,16 @@
 				DcmExport::dcm2png($srcFname, $posZ, $windowLevel, $windowWidth);
 			}
 
-			$img = new Imagick();
-			$img->readImage($srcFname);			
-			$width  = $img->getImageWidth();
-			$height = $img->getImageHeight();
-			$img->destroy();
+			//$img = new Imagick();
+			//$img->readImage($srcFname);			
+			//$width  = $img->getImageWidth();
+			//$height = $img->getImageHeight();
+			//$img->destroy();
+			
+			$img = @imagecreatefrompng($srcFname);
+			$width  = imagesx($img);
+			$height = imagesy($img);
+			imagedestroy($img);			
 		
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
 			              .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]

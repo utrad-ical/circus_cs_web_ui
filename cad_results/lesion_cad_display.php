@@ -113,11 +113,16 @@
 
 		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
 
-		$img = new Imagick();
-		$img->readImage($srcFname);			
-		$width  = $img->getImageWidth();
-		$height = $img->getImageHeight();
-		$img->destroy();
+		//$img = new Imagick();
+		//$img->readImage($srcFname);			
+		//$width  = $img->getImageWidth();
+		//$height = $img->getImageHeight();
+		//$img->destroy();
+		
+		$img = @imagecreatefrompng($srcFname);
+		$width  = imagesx($img);
+		$height = imagesy($img);
+		imagedestroy($img);
 		
 		$candHtml[$k]  = '<div id="lesionBlock' . $candID . '" class="result-record-' . $params['resultColNum'] . 'cols al-c"';
 		if($candID == $params['remarkCand'])  $candHtml[$k] .= ' style="border: 1px solid #F00;"';

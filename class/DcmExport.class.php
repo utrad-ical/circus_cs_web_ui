@@ -31,11 +31,9 @@
 				$cmdStr = sprintf('%s "%s %s %s %d %d"', $cmdForProcess, $cmdDcmToPng, $srcFname, $dstFname, $windowLevel, $windowWidth);
 				shell_exec($cmdStr);
 	
-				$img = new Imagick();
-
 				for($i=0; $i<100; $i++)
 				{
-					if($img->readImage($dstFname) == true)	return true;
+					if(!(@imagecreatefromjpeg($dstFname)))	return true;
 					else                                    sleep(100000);
 				}
 			}
@@ -69,11 +67,9 @@
 			}
 			$dstFname .= '.jpg';
 		
-			$img = new Imagick();
-	
 			for($i=0; $i<100; $i++)
 			{
-				if($img->readImage($dstFname) == TRUE)	return true;
+				if(!(@imagecreatefrompng($dstFname)))	return true;
 				else                                    sleep(100000);
 			}
 			return false;
