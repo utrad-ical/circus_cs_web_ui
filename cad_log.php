@@ -471,15 +471,18 @@
 			$tmpCond = "el.exec_id " . $operator . " ANY"
 					 . " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='t' AND interrupt_flg='f')";
 
-			$sqlCondArray[] = $tmpCond;
+			//if($params['filterTP'] == "all" && $params['filterFN'] == "all")
+			//{
+				$sqlCondArray[] = $tmpCond;
+			//}
 			$addressParams['consensualFB'] = $params['consensualFB'];
 		}		
 	
 		if($params['filterTP'] == "with" || $params['filterTP'] == "without")
 		{
-			$operator = ($params['filterTP'] == "with") ? '>=' : '<';
+			$condition = ($params['filterTP'] == "with") ? '>0' : '<=0';
 		
-			$tmpCond .= " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupt_flg='f'";
+			$tmpCond = " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupt_flg='f'";
 	
 			if($params['consensualFB'] == "entered")
 			{
@@ -489,7 +492,7 @@
 			{
 				$tmpCond .= " AND consensual_flg='f'";
 			}
-			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $tmpCond . "1)";
+			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $condition . ")";
 
 			$sqlCondArray[] = $tmpCond;
 			$addressParams['filterTP'] = $params['filterTP'];
@@ -515,7 +518,9 @@
 			$addressParams['filterFN'] = $params['filterFN'];
 		}
 		
-		if(count($sqlParams) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));		
+		//var_dump($sqlCondArray);
+		
+		if(count($sqlCondArray) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));		
 		
 		$sqlCond .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version, el.executed_at,"
