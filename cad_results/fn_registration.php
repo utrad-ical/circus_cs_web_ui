@@ -231,6 +231,16 @@
 					
 					DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 				}
+				else if($params['feedbackMode'] == "personal") // Write action log table (personal feedback only)
+				{
+					$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
+							. " VALUES (?,?,?,'save','FN input')";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->bindValue(1, $params['execID']);
+					$stmt->bindValue(2, $userID);
+					$stmt->bindValue(3, date('Y-m-d H:i:s'));
+					$stmt->execute();
+				}
 			}
 		}
 		echo json_encode($dstData);

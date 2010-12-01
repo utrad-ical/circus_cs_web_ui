@@ -264,8 +264,13 @@
 				                .  ' label="' . $radioButtonList[$consensualFlg][$j][0] . $evalStr . '"'
 								.  ' class="radio-to-button"';
 
-				if($params['registTime'] == "")  $candHtml[$k] .= ' onclick="ChangeRegistCondition()"';
-			
+				//if($params['registTime'] == "")  $candHtml[$k] .= ' onclick="ChangeRegistCondition()"';
+				if($params['registTime'] == "")
+				{
+					$candHtml[$k] .= ' onclick="ChangeLesionClassification('.$candID.','
+					              .  '\''. str_replace('&nbsp;', '', $radioButtonList[$consensualFlg][$j][0]) .'\')"';
+				}
+				
 				if($evalVal == $radioButtonList[$consensualFlg][$j][1])
 				{
 					$candHtml[$k] .= ' checked="checked"';
@@ -484,6 +489,24 @@
 		$sqlStr = "SELECT tag FROM tag_list WHERE category=5 AND reference_id=?";
 		$detailData[$i][] = implode(', ', PdoQueryOne($pdo, $sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
 		$detailData[$i][] = $candClass;
+	}
+	//------------------------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------------------------
+	// Write action log table (personal feedback only)
+	//------------------------------------------------------------------------------------------------------------------
+	if($params['feedbackMode'] == "personal" && $params['registTime'] == "")
+	{
+		$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
+				. " VALUES (?,?,?,'open','CAD results')";
+		$stmt = $pdo->prepare($sqlStr);
+		$stmt->bindParam(1, $params['execID']);
+		$stmt->bindParam(2, $userID);
+		$stmt->bindParam(3, date('Y-m-d H:i:s'));
+		$stmt->execute();
+		
+		$tmp = $stmt->errorInfo();
+		echo $tmp[2];
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

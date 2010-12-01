@@ -291,6 +291,22 @@
 					}
 				}
 			}
+			
+			//----------------------------------------------------------------------------------------------------------
+			// Write action log table (personal feedback only)
+			//----------------------------------------------------------------------------------------------------------
+			if($params['feedbackMode'] == "personal")
+			{
+				$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action) VALUES (?,?,?,'register')";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->bindParam(1, $params['execID']);
+				$stmt->bindParam(2, $userID);
+				$stmt->bindParam(3, $registeredAt);
+				$stmt->execute();
+				
+				//$tmp = $stmt->errorInfo();
+				//echo $tmp[2];
+			}
 			//----------------------------------------------------------------------------------------------------------
 
 			if($dstData['message'] == "" && $params['interruptFlg'] == 0)

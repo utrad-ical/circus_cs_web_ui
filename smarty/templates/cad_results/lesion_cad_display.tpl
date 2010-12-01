@@ -163,6 +163,7 @@ function ChangeRegistCondition()
 	if($("#groupID").val() != 'demo')
 	{
 		$("#registCaution").html(tmpStr);
+
 		$("#interruptFlg").val(1);
 
 		// 候補分類入力中にメニューバーを押された場合の対策
@@ -181,6 +182,24 @@ function ChangeRegistCondition()
 			});
 	}
 }
+
+
+function ChangeLesionClassification(candID, label)
+{
+	if($("#feedbackMode").val()=="personal" && $("#registTime").val()=="")
+	{
+		var options = "Candidate " + candID + ":" + label;
+
+		$.post("write_feedback_action_log.php",
+				{ execID: $("#execID").val(),
+				  action: 'classify',
+				  options: options
+				});
+	}
+
+	ChangeRegistCondition();
+}
+
 
 function ShowCADDetail(imgNum)
 {
@@ -366,16 +385,29 @@ $(function() {
 {literal}
 
 	$("input[name='fnFoundFlg']").change(function() {
+	
+		var options = "";
 
 		if($(this).val() == 0)
 		{
 			$("#fnInputFlg").val(1);
 			$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
+			options = "FN  not found";
 		}
 		else
 		{
 			$("#fnInputBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 		    $("#fnInputFlg").val(($("#fnNum").val() > 0) ? 1 : 0);
+			options = "FN  found";
+		}
+
+		if($("#feedbackMode").val()=="personal")
+		{
+			$.post("write_feedback_action_log.php",
+					{ execID: $("#execID").val(),
+					  action: 'select',
+					  options: options
+					});
 		}
 
 		ChangeRegistCondition();
