@@ -21,7 +21,7 @@ function ShowPersonalStatResult()
 	var version  = $("#versionMenu").val();
 	var evalUser = $("#userMenu").val()
 
-	$.post("personal_stat/show_personal_stat_detail.php",
+	$.post("statistics/show_personal_stat_detail.php",
 		   { dateFrom: $("#dateFrom").val(),
 			 dateTo:   $("#dateTo").val(),
 			 cadName:  $("#cadMenu option:selected").text(),
@@ -64,7 +64,7 @@ function ShowPersonalStatResult()
 
 function RedrawScatterPlot()
 {
-	$.post("personal_stat/show_personal_stat_detail.php",
+	$.post("statistics/show_personal_stat_detail.php",
 		   { dateFrom:    $("#dateFrom").val(),
 			 dateTo:      $("#dateTo").val(),
 			 cadName:     $("#cadMenu option:selected").text(),
@@ -307,16 +307,16 @@ $(function() {
 				<table class="block-al-r mb10">
 					<tr>
 						<td>
-							<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/personal_stat/knownTP.png" />
+							<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
 						</td>
 						<td>
-							<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/personal_stat/missedTP.png" />
+							<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/statistics/missedTP.png" />
 						</td>
 						<td>
-							<input name="checkFP" type="checkbox" checked="checked" /><img src="images/personal_stat/FP.png" />
+							<input name="checkFP" type="checkbox" checked="checked" /><img src="images/statistics/FP.png" />
 						</td>
 						<td>
-							<input name="checkPending" type="checkbox" checked="checked" /><img src="images/personal_stat/pending.png" />
+							<input name="checkPending" type="checkbox" checked="checked" /><img src="images/statistics/pending.png" />
 						</td>
 						<td><input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" /></td>
 					</tr>
@@ -324,9 +324,9 @@ $(function() {
 
 				<table class="ml10">
 					<tr>
-						<td style="width: 330px;"><img id="scatterPlotAx"   src="images/personal_stat/ps_scatter_plot_base_xy.png" /></td>
-						<td style="width: 330px;"><img id="scatterPlotCoro" src="images/personal_stat/ps_scatter_plot_base_xz.png" /></td>
-						<td style="width: 330px;"><img id="sactterPlotSagi" src="images/personal_stat/ps_scatter_plot_base_yz.png" /></td>
+						<td style="width: 330px;"><img id="scatterPlotAx"   src="images/statistics/ps_scatter_plot_base_xy.png" /></td>
+						<td style="width: 330px;"><img id="scatterPlotCoro" src="images/statistics/ps_scatter_plot_base_xz.png" /></td>
+						<td style="width: 330px;"><img id="sactterPlotSagi" src="images/statistics/ps_scatter_plot_base_yz.png" /></td>
 					</tr>
 				</table>
 			</div>

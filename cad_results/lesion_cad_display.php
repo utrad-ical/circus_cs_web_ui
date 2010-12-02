@@ -498,7 +498,7 @@
 	if($params['feedbackMode'] == "personal" && $params['registTime'] == "")
 	{
 		$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
-				. " VALUES (?,?,?,'open','CAD results')";
+				. " VALUES (?,?,?,'open','CAD result')";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindParam(1, $params['execID']);
 		$stmt->bindParam(2, $userID);

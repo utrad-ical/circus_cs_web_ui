@@ -785,7 +785,7 @@
 				if($result['tp_max']>=1)
 				{
 					$stmtTP->bindValue(1, $result['exec_id']);
-					$stmtTP->bindValue(2, 'f', PDO::PARAM_BOOL);
+					$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
 					$stmtTP->execute();
 					
 					if($stmtTP->fetchColumn() > 0)	$tpColStr = '<span style="font-weight:bold;">+</span>';
