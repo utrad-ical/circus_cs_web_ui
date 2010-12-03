@@ -303,11 +303,11 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Retrieve the number of FNs
 	//------------------------------------------------------------------------------------------------------------------
-	$params['fnInputFlg'] = 0;
+	$params['fnInputStatus'] = 0;
 	$params['fnNum'] = 0;
 	$params['fnPersonalCnt'] = 0;	
 	
-	$sqlStr = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=? AND status>=1";
+	$sqlStr = "SELECT false_negative_num, status FROM false_negative_count WHERE exec_id=? AND status>=1";
 		
 	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
 	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
@@ -320,8 +320,9 @@
 		
 	if($stmt->rowCount() == 1)
 	{
-		$params['fnNum'] = $stmt->fetchColumn();
-		$params['fnInputFlg'] = 1;
+		$result = $stmt->fetch(PDO::FETCH_NUM);
+		$params['fnNum'] = $result[0];
+		$params['fnInputStatus'] = $result[1];
 	}
 		
 	if($params['feedbackMode']=="consensual")
@@ -336,7 +337,7 @@
 	$params['registStr'] = 'Candidate classification: <span style="color:'
 	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'blue;">complete' : 'red;">incomplete')
 						 . '</span><br/>FN input: <span style="color:'
-						 . (($params['fnInputFlg']) ? 'blue;">complete' : 'red;">incomplete') . '</span>';
+						 . (($params['fnInputStatus']==1) ? 'blue;">complete' : 'red;">incomplete') . '</span>';
 
 	//------------------------------------------------------------------------------------------------------------------
 	// For CAD detail

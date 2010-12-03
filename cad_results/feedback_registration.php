@@ -297,7 +297,11 @@
 			//----------------------------------------------------------------------------------------------------------
 			if($params['feedbackMode'] == "personal")
 			{
-				$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action) VALUES (?,?,?,'register')";
+				$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options) VALUES ";
+
+				if($params['interruptFlg']==1)	$sqlStr .= "(?,?,?,'save', 'candidate classification')";
+				else							$sqlStr .= "(?,?,?,'register','')";
+				
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindParam(1, $params['execID']);
 				$stmt->bindParam(2, $userID);

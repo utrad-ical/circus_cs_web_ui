@@ -192,14 +192,16 @@ $(function() {
 						<th colspan="2">Series</th>
 						<th rowspan="2">CAD</th>
 						<th rowspan="2">CAD date</th>
-						<th colspan="3">Feedback</th>
+						<th colspan="2">Elapsed time [sec]</th>
+						<th colspan="2">Number of</th>
 					</tr>
 					<tr>
 						<th>Date</th>
 						<th>Time</th>
-						<th>Time [sec]</th>
-						<th>TP</th>
-						<th>FN</th>
+						<th>Cand. classify</th>
+						<th>FN input</th>
+						<th>Disp. cand.</th>
+						<th>Entered FN</th>
 					</tr>
 				</thead>
 				<tbody>

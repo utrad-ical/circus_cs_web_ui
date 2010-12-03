@@ -104,13 +104,17 @@
 						. " AND fa.exec_id=el.exec_id AND es.series_id=1"
 						. " AND sr.series_instance_uid = es.series_instance_uid"
 						. " AND st.study_instance_uid = es.study_instance_uid"
-						. " ORDER BY fa.act_time ASC";
+						. " ORDER BY fa.sid ASC";
 
 				$results = PdoQueryOne($pdo, $sqlStr, $execIdList[$j], 'ALL_NUM');
 
 				$startFlg = 0;
-				$startTime = "";
-				$endTime = "";
+				$fnInputFlg = 0;
+				$totalStartTime = "";
+				$totalEndTime = "";
+				$fnStartTime = "";
+				$fnEndTime = "";
+				$fnTime = 0;
 				$tmpStr = "";
 
 				for($i=0; $i<count($results); $i++)
@@ -133,7 +137,7 @@
 					{
 						if($results[$i][6] == 'open' && $results[$i][7] == 'CAD result')
 						{
-							$startTime = $results[$i][8];
+							$totalStartTime = $results[$i][8];
 						}
 					}
 					
@@ -143,18 +147,40 @@
 						$startFlg=1;
 					}
 					
+					if($fnInputFlg == 0 && $results[$i][6] == 'open' &&  $results[$i][7] == 'FN input')
+					{
+						$fnInputFlg = 1;
+						$fnStartTime = $results[$i][8];
+					}
+					
+					if($fnInputFlg == 1 && $results[$i][6] == 'open' &&  $results[$i][7] == 'CAD result')
+					{
+						$fnInputFlg = 0;
+						$fnEndTime = $results[$i][8];
+						
+						$fnTime += (strtotime($fnEndTime)-strtotime($fnStartTime));
+					}
+					
 					if($results[$i][6] == 'register')
 					{
-						$endTime = $results[$i][8];
+						$totalEndTime = $results[$i][8];
 					}
 				
 					if($i == count($results)-1)
 					{
-						if($startTime != "" && $endTime != "")
+						if($totalStartTime != "" && $totalEndTime != "")
 						{
 							//------------------------------------------------------------------------------------------
 							// For TP and FN column
 							//------------------------------------------------------------------------------------------
+							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND entered_by=?"
+									. " AND consensual_flg='f' AND interrupt_flg='f' AND lesion_id>0";
+							$dispCandNum = PdoQueryOne($pdo, $sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+
+							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
+									. " WHERE exec_id=? AND entered_by=? AND consensual_flg='f' AND status=2";
+							$enterFnNum = PdoQueryOne($pdo, $sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+							
 							// SQL statement for count No. of TP
 							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?"
 							         . " AND interrupt_flg='f' AND evaluation>=1";
@@ -163,7 +189,7 @@
 					
 							// SQL statement for count No. of FN
 							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
-								     . " AND consensual_flg=? AND false_negative_num>0 AND status>=1";
+								     . " AND consensual_flg=? AND false_negative_num>0 AND status=2";
 					
 							$stmtFN = $pdo->prepare($sqlStr);
 
@@ -195,13 +221,16 @@
 							}
 							//------------------------------------------------------------------------------------------
 						
-							$tmpStr .= '<td>' . (strtotime($endTime)-strtotime($startTime)) . '</td>'
-									.  '<td>' . $tpColStr . '</td>'
-									.  '<td>' . $fnColStr . '</td>'
+							$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime) . '</td>'
+									.  '<td>' . $fnTime . '</td>'
+									.  '<td>' . $dispCandNum . '</td>'
+									.  '<td>' . $enterFnNum . '</td>'
+								//	.  '<td>' . $tpColStr . '</td>'
+								//	.  '<td>' . $fnColStr . '</td>'
 									.  '</tr>';
 
-							//$tmpStr .= '<td>' . $startTime  . ' - ' . $endTime . '='
-							//        . (strtotime($endTime)-strtotime($startTime)) . '</td></tr>';
+							//$tmpStr .= '<td>' . $totalStartTime  . ' - ' . $totalEndTime . '='
+							//        . (strtotime($totalEndTime)-strtotime($totalStartTime)) . '</td></tr>';
 						}
 						else $tmpStr = "";
 							

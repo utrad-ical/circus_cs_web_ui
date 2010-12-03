@@ -543,7 +543,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Write action log table (personal feedback only)
 		//--------------------------------------------------------------------------------------------------------------
-		if($params['feedbackMode'] == "personal" && $params['registTime'] == "")
+		if($params['feedbackMode'] == "personal" && ($params['registTime'] == "" || $params['status'] != 2))
 		{
 			$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
 					. " VALUES (?,?,?,'open','FN input')";
@@ -552,6 +552,9 @@
 			$stmt->bindValue(2, $params['userID']);
 			$stmt->bindValue(3, date('Y-m-d H:i:s'));
 			$stmt->execute();
+			
+			//$tmp = $stmt->errorInfo();
+			//echo $tmp[2];			
 		}
 		//--------------------------------------------------------------------------------------------------------------
 		

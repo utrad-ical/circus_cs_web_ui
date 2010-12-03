@@ -502,7 +502,7 @@
 		{
 			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
 			
-			$tmpCond = "el.exec_id IN (SELECT DISTINCT exec_id FROM false_negative_count WHERE status>0";
+			$tmpCond = "el.exec_id IN (SELECT DISTINCT exec_id FROM false_negative_count WHERE status=2";
 			
 			if($params['consensualFB'] == "entered")
 			{
@@ -639,7 +639,7 @@
 
 		// SQL statement for count No. of FN
 		$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
-			     . " AND consensual_flg=? AND false_negative_num>0 AND status>=1";
+			     . " AND consensual_flg=? AND false_negative_num>0 AND status=2";
 
 		$stmtFN = $pdo->prepare($sqlStr);
 		//------------------------------------------------------------------------------------------
@@ -731,52 +731,6 @@
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
 					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['exec_id']);	
-
-				
-				//	$registStatus = array('cand' => 0,
-				//	                      'FN'   => 0);  // 0：未入力、1：途中、2：入力済
-				//	
-				//	$stmtPersonalFB->bindParam(1, $result['exec_id']);
-				//	$stmtPersonalFB->execute();
-//
-//					if($stmtPersonalFB->rowCount() > 0)
-//					{
-//						$registStatus['cand'] = 2;
-//					
-//						while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
-//						{
-//							if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
-//							{
-//								$registStatus['cand'] = 1;
-//								break;
-//							}		
-//						}
-//					}
-//					
-//					$stmtPersonalFN->bindParam(1, $result['exec_id']);
-//					$stmtPersonalFN->execute();
-//					
-//					if($stmtPersonalFN->rowCount() == 1)
-//					{
-//						if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
-//						else									 $registStatus['FN'] = 1;
-//					}
-//					
-//					//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
-//					
-//					if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
-//					{
-//						$colArr[] = '-';
-//					}
-//					else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
-//					{
-//						$colArr[] = 'Registered';
-//					}
-//					else
-//					{
-//						$colArr[] = '<span style="font-weight:bold;color:red;">Incomplete</span>';
-//					}					
-//					
 				}							
 
 				$tpColStr = "-";

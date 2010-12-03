@@ -41,7 +41,7 @@ function CreateEvalStr(lesionArr)
 	{
 		if($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() == undefined)
 		{
-			evalArr.push(99);
+			evalArr.push(-99);
 		}
 		else 
 		{
@@ -147,9 +147,9 @@ function ChangeRegistCondition()
 	var tmpStr = 'Candidate classification: <span style="color:' 
                + (($("#candNum").val()==checkCnt) ? 'blue;">complete' : 'red;">incomplete') + '</span><br/>'
 	           + 'FN input: <span style="color:'
-		       + (($("#fnInputFlg").val()==1) ? 'blue;">complete' : 'red;">incomplete') + '</span>';
+		       + (($("#fnInputStatus").val()==1) ? 'blue;">complete' : 'red;">incomplete') + '</span>';
 
-	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt && $("#fnInputFlg").val()==1)
+	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt && $("#fnInputStatus").val()==1)
 	{
 		$("#registBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 		$("#interruptFlg").val(0);
@@ -390,14 +390,14 @@ $(function() {
 
 		if($(this).val() == 0)
 		{
-			$("#fnInputFlg").val(1);
+			$("#fnInputStatus").val(1);
 			$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
 			options = "FN  not found";
 		}
 		else
 		{
 			$("#fnInputBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		    $("#fnInputFlg").val(($("#fnNum").val() > 0) ? 1 : 0);
+		    $("#fnInputStatus").val(($("#fnNum").val() > 0) ? 1 : 0);
 			options = "FN  found";
 		}
 
@@ -499,7 +499,7 @@ $(function() {
 			<input type="hidden" id="remarkCand"        name="remarkCand"        value="{$params.remarkCand}" />
 
 			<input type="hidden" id="candNum"        value="{$params.candNum}" />
-			<input type="hidden" id="fnInputFlg"     value="{$params.fnInputFlg}" />
+			<input type="hidden" id="fnInputStatus"  value="{$params.fnInputStatus}" />
 			<input type="hidden" id="fnPersonalCnt"  value="{$params.fnPersonalCnt}" />
 
 			<div id="cadResult">
@@ -556,13 +556,13 @@ $(function() {
 
 					<div class="hide-on-guest fl-clr" style="width: 820px;">
 						<div class="fl-l" style="width:570px;">
-							<input type="radio" name="fnFoundFlg" value="1"{if !$params.fnInputFlg ||$params.fnNum>0 || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} checked="checked"{/if} {if $params.fnInputFlg} disabled="disabled"{/if}/> False negative found&nbsp;&nbsp;<input id="fnInputBtn" type="button" class="form-btn {if $params.fnInputFlg && $params.fnNum==0}form-btn-disabled{else}form-btn-normai{/if}" value="input" onclick="ShowFNinput();"{if $params.fnInputFlg && $params.fnNum==0} disabled="disabled"{/if} />&nbsp;&nbsp;(<span id="fnNum" style="font-weight:bold;color:red;">{$params.fnNum}</span> entered)<br/>
-							<input type="radio" name="fnFoundFlg" value="0"{if $params.fnInputFlg && $params.fnNum==0} checked="checked"{/if}{if $params.fnInputFlg || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} disabled="disabled"{/if} /> FN&nbsp;&nbsp;NOT&nbsp;&nbsp;found
+							<input type="radio" name="fnFoundFlg" value="1"{if !$params.fnInputStatus>=1 ||$params.fnNum>0 || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} checked="checked"{/if} {if $params.fnInputStatus==2} disabled="disabled"{/if}/> False negative found&nbsp;&nbsp;<input id="fnInputBtn" type="button" class="form-btn {if $params.fnInputStatus>=1 && $params.fnNum==0}form-btn-disabled{else}form-btn-normai{/if}" value="input" onclick="ShowFNinput();"{if $params.fnInputStatus>=1 && $params.fnNum==0} disabled="disabled"{/if} />&nbsp;&nbsp;(<span id="fnNum" style="font-weight:bold;color:red;">{$params.fnNum}</span> entered)<br/>
+							<input type="radio" name="fnFoundFlg" value="0"{if $params.fnInputStatus>=1 && $params.fnNum==0} checked="checked"{/if}{if ($params.fnInputStatus>=1 && $params.fnNum>0) || ($params.feedbackMode=="consensual" && $params.fnPersonalCnt>0)} disabled="disabled"{/if} /> FN&nbsp;&nbsp;NOT&nbsp;&nbsp;found
 						</div>
 						<p class="fl-r" style="width:250px;">
-							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $params.registTime!="" || !($params.candNum==$params.lesionCheckCnt && $params.fnInputFlg)} disabled="disabled"{/if} />
+							<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $params.registTime!="" || !($params.candNum==$params.lesionCheckCnt && $params.fnInputStatus==1)} disabled="disabled"{/if} />
 							<br />
-							<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || !$params.fnInputFlg}{$params.registStr}{else}{$registMsg}{/if}</span>
+							<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || $params.fnInputStatus!=2}{$params.registStr}{else}{$registMsg}{/if}</span>
 						</p>
 					</div>
 				{/if}
