@@ -95,7 +95,7 @@
 			$optionNum = 0;
 			$condArr = array();
 
-			$sqlStr = "SELECT exec_id, plugin_name, version, executed_at FROM executed_plugin_list ";
+			$sqlStr = "SELECT exec_id, plugin_name, version, executed_at, exec_user FROM executed_plugin_list ";
 		
 			$sqlCond =" WHERE plugin_type=2";
 
@@ -206,6 +206,7 @@
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
 				$colArr = array($result[0], $result[1].' v.'.$result[2], $result[3]);
+				if($_SESSION['colorSet'] == "admin") $colArr[] = $result[4];
 				$data[] = $colArr;
 			}
 			//----------------------------------------------------------------------------------------------------------
