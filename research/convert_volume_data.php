@@ -3,9 +3,9 @@
 	session_start();
 
 	$params = array('toTopDir' => "../");
-
+	
 	include_once("../common.php");
-	include_once("../auto_logout.php");	
+	include_once("auto_logout_research.php");	
 	require_once('../class/PersonalInfoScramble.class.php');
 	require_once('../class/validator.class.php');
 	

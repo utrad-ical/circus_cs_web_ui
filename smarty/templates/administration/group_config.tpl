@@ -65,7 +65,8 @@ function GroupSetting(mode, ticket)
 		        + '&newConsensualFB='     + $("input[name='newConsensualFB']:checked").val()
 		        + '&newModifyConsensual=' + $("input[name='newModifyConsensual']:checked").val()
 		        + '&newAllStatistics='    + $("input[name='newAllStatistics']:checked").val()
-		        + '&newResearch='         + $("input[name='newResearch']:checked").val()
+		        + '&newResearchShow='     + $("input[name='newResearchShow']:checked").val()
+		        + '&newResearchExec='     + $("input[name='newResearchExec']:checked").val()
 		        + '&newVolumeDL='         + $("input[name='newVolumeDL']:checked").val()
 		        + '&newAnonymizeFlg='     + $("input[name='newAnonymizeFlg']:checked").val()
 		        + '&newDataDelete='       + $("input[name='newDataDelete']:checked").val()
@@ -78,7 +79,7 @@ function GroupSetting(mode, ticket)
 }
 
 function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modifyConsensual, 
-                    allStatistics, research, volumeDL, anonymizeFlg, dataDelete,
+                    allStatistics, researchShow, researchExec, volumeDL, anonymizeFlg, dataDelete,
                     serverOperation, serverSettings)
 {
 	$("#oldGroupID").val(groupID);
@@ -88,7 +89,8 @@ function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modify
 	$("#oldConsensualFB").val(consensualFB);
 	$("#oldModifyConsensual").val(modifyConsensual);
 	$("#oldAllStatistics").val(allStatistics);
-	$("#oldResearch").val(research);
+	$("#oldResearchShow").val(researchShow);
+	$("#oldResearchExec").val(researchExec);
 	$("#oldVolumeDL").val(volumeDL);
 	$("#oldAnonymizeFlg").val(anonymizeFlg);
 	$("#oldDataDelete").val(dataDelete);
@@ -105,7 +107,8 @@ function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modify
 	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == consensualFB) }).attr("checked", true);
 	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == modifyConsensual) }).attr("checked", true);
 	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == allStatistics) }).attr("checked", true);
-	$("input[name='newResearch']").filter(function(){ return ($(this).val() == research) }).attr("checked", true);
+	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == researchShow) }).attr("checked", true);
+	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == researchExec) }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == volumeDL) }).attr("checked", true);
 	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == anonymizeFlg) }).attr("checked", true);
 	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == dataDelete) }).attr("checked", true);
@@ -129,7 +132,8 @@ function CancelUpdate()
 	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
 	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newResearch']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
@@ -176,7 +180,8 @@ function CancelUpdate()
 				<input type="hidden" id="oldConsensualFB"     value="" />
 				<input type="hidden" id="oldModifyConsensual" value="" />
 				<input type="hidden" id="oldAllStatistics"    value="" />
-				<input type="hidden" id="oldResearch"         value="" />
+				<input type="hidden" id="oldResearchShow"     value="" />
+				<input type="hidden" id="oldResearchExec"     value="" />
 				<input type="hidden" id="oldVolumeDL"         value="" />
 				<input type="hidden" id="oldAnonymizeFlg"     value="" />
 				<input type="hidden" id="oldDataDelete"       value="" />
@@ -196,10 +201,11 @@ function CancelUpdate()
 							<th style="width:6em;">Consensual feedback</th>
 							<th style="width:4.5em;">Modify cons.</th>
 							<th style="width:3em;">All stat.</th>
-							<th>Research</th>
+							<th style="width:4.5em;">Show research</th>
+							<th style="width:4.5em;">Exec research</th>
 							<th style="width:5em;">Download volume</th>
 							<th>Anonymize</th>
-							<th style="width:5em;">Data delete</th>
+							<th style="width:4em;">Data delete</th>
 							<th style="width:5em;">Server operation</th>
 							<th style="width:5em;">Server settings</th>
 							<th>&nbsp;</th>
@@ -221,12 +227,14 @@ function CancelUpdate()
 								<td>{$item[10]|OorMinus}</td>
 								<td>{$item[11]|OorMinus}</td>
 								<td>{$item[12]|OorMinus}</td>
+								<td>{$item[13]|OorMinus}</td>
 								{if $item[0] != "admin"}
 									<td>
 										<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
                                    		  onClick="SetEditBox('{$item[0]}','{$item[1]}','{$item[2]|TorF}', '{$item[3]|TorF}', '{$item[4]|TorF}',
                                                               '{$item[5]|TorF}','{$item[6]|TorF}','{$item[7]|TorF}','{$item[8]|TorF}',
-                                                              '{$item[9]|TorF}','{$item[10]|TorF}','{$item[11]|TorF}', '{$item[12]|TorF}');" />
+                                                              '{$item[9]|TorF}','{$item[10]|TorF}','{$item[11]|TorF}',
+                                                              '{$item[12]|TorF}', '{$item[13]|TorF}');" />
 										<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 											{if $item[0] != $smarty.session.userID}
 									 			class="s-btn form-btn" onClick="deleteGroup('{$item[0]}');" />
@@ -301,10 +309,18 @@ function CancelUpdate()
 						</tr>
 
 						<tr>
-							<th><span class="trim01">Research</span></th>
+							<th><span class="trim01">Show research</span></th>
 							<td>
-								<input name="newResearch" type="radio" value="t" />TRUE
-								<input name="newResearch" type="radio" value="f" checked="checked" />FALSE
+								<input name="newResearchShow" type="radio" value="t" />TRUE
+								<input name="newResearchShow" type="radio" value="f" checked="checked" />FALSE
+							</td>
+						</tr>
+
+						<tr>
+							<th><span class="trim01">Exec research</span></th>
+							<td>
+								<input name="newResearchExec" type="radio" value="t" />TRUE
+								<input name="newResearchExec" type="radio" value="f" checked="checked" />FALSE
 							</td>
 						</tr>
 

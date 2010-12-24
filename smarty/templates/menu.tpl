@@ -72,7 +72,7 @@
 		<li><a href="{$params.toTopDir}search.php" class="jq-btn jq-btn-search" title="search"></a></li>
 		<li class="hide-on-guest"><a id="linkStatistics" href="{$params.toTopDir}personal_statistics.php" class="jq-btn jq-btn-statistics" title="statistics"></a></li>
 		
-		{if $smarty.session.researchFlg==1}
+		{if $smarty.session.researchShowFlg==1 || $smarty.session.researchExecFlg==1}
 			<li><a href="{$params.toTopDir}research/research_list.php" class="jq-btn jq-btn-research" title="research"></a></li>
 		{/if}
 	</ul>

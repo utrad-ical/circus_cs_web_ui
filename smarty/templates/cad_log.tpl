@@ -127,6 +127,8 @@
 								{if $params.orderCol=='CAD date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD date', '{if $params.orderCol=='CAD date' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
 							</th>
 
+							{if $smarty.session.colorSet == "admin"}<th rowspan="2">Executed<br />by</th>{/if}
+
 							<th rowspan="2">Result</th>
 
 							{if $params.mode=='today'}
@@ -174,21 +176,21 @@
 								<td>{$item[5]|escape}</td>
 								<td>{$item[6]|escape}</td>
 								<td>{$item[7]|escape}</td>
-								<!-- <td class="al-r">{$item[8]|escape}</td> -->
-								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[8]|escape}', '{$item[9]|escape}', '{$item[10]|escape}', '{$item[11]|escape}', {$smarty.session.personalFBFlg});" /></td>
+								{if $smarty.session.colorSet == "admin"}<td>{$item[8]|escape}</td>{/if}
+								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[9]|escape}', '{$item[10]|escape}', '{$item[11]|escape}', '{$item[12]|escape}', {$smarty.session.personalFBFlg});" /></td>
 								
 								{if $params.mode=='today'}
 									{if $smarty.session.colorSet == "admin"}
-										<td>{$item[12]}</td>
 										<td>{$item[13]}</td>
+										<td>{$item[14]}</td>
 									{elseif $smarty.session.colorSet == "user" && $smarty.session.personalFBFlg == 1}
-										<td>{$item[12]}</td>
+										<td>{$item[13]}</td>
 									{/if}
 								{else}
-									<td>{$item[12]}</td>
 									<td>{$item[13]}</td>
+									<td>{$item[14]}</td>
 									{if $smarty.session.colorSet == "admin" || ($smarty.session.colorSet == "user" && $smarty.session.personalFBFlg == 1)}
-										<td>{$item[14]}</td>
+										<td>{$item[15]}</td>
 									{/if}
 								{/if}
 							</tr>

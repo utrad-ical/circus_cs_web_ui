@@ -523,8 +523,8 @@
 		if(count($sqlCondArray) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));		
 		
 		$sqlCond .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
-				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version, el.executed_at,"
-				 .  " es.study_instance_uid, es.series_instance_uid";
+				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version,"
+				 .  " el.exec_user, el.executed_at, es.study_instance_uid, es.series_instance_uid";
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -565,7 +565,8 @@
 		// Set $data array
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
-		        . " sr.series_date, sr.series_time, el.plugin_name, el.version, el.executed_at,"
+		        . " sr.series_date, sr.series_time, el.plugin_name, el.version,"
+				. " el.exec_user, el.executed_at,"
 		        . " es.study_instance_uid, es.series_instance_uid,"
 		        . " MAX(lf.evaluation) as tp_max,"
 		        . " MAX(fn.false_negative_num) as fn_max"
@@ -665,6 +666,7 @@
 							$result['series_time'],
 							($result['plugin_name'].' v.'.$result['version']),
 							(($params['mode'] == 'today') ? substr($result['executed_at'], 11) : $result['executed_at']),
+							$result['exec_user'],
 							$result['plugin_name'],
 							$result['version'],
 							$result['study_instance_uid'],
@@ -727,6 +729,7 @@
 					
 					if($numTP > 0)	$colArr[] = '<span style="color:#0000ff; font-weight:bold;">'.$numFeedback.'</span>';
 					else			$colArr[] = $numFeedback;
+					
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{

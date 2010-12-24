@@ -22,7 +22,8 @@
 		$newConsensualFB     = (isset($_REQUEST['newConsensualFB']))     ? $_REQUEST['newConsensualFB']     : "";
 		$newModifyConsensual = (isset($_REQUEST['newModifyConsensual'])) ? $_REQUEST['newModifyConsensual'] : "";
 		$newAllStatistics    = (isset($_REQUEST['newAllStatistics']))    ? $_REQUEST['newAllStatistics']    : "";
-		$newResearch         = (isset($_REQUEST['newResearch']))         ? $_REQUEST['newResearch']         : "";
+		$newResearchShow     = (isset($_REQUEST['newResearchShow']))     ? $_REQUEST['newResearchShow']     : "";
+		$newResearchExec     = (isset($_REQUEST['newResearchExec']))     ? $_REQUEST['newResearchExec']     : "";
 		$newVolumeDL         = (isset($_REQUEST['newVolumeDL']))         ? $_REQUEST['newVolumeDL']         : "";
 		$newAnonymizeFlg     = (isset($_REQUEST['newAnonymizeFlg']))     ? $_REQUEST['newAnonymizeFlg']     : "";
 		$newDataDelete       = (isset($_REQUEST['newDataDelete']))       ? $_REQUEST['newDataDelete']       : "";
@@ -56,9 +57,9 @@
 				else
 				{
 					$sqlStr .= 'INSERT INTO groups(group_id, color_set, exec_cad, personal_feedback, consensual_feedback,'
-							.  'modify_consensual, view_all_statistics, research, volume_download, anonymize_flg,'
-							.  'data_delete, server_operation, server_settings)'
-							.  ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+							.  ' modify_consensual, view_all_statistics, research_show, research_exec, volume_download,'
+							.  ' anonymize_flg, data_delete, server_operation, server_settings)'
+							.  ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 						
 					$sqlParams[]  = $newGroupID;
 					$sqlParams[]  = $newColorSet;
@@ -67,7 +68,8 @@
 					$sqlParams[]  = $newConsensualFB;
 					$sqlParams[]  = $newModifyConsensual;
 					$sqlParams[]  = $newAllStatistics;
-					$sqlParams[]  = $newResearch;
+					$sqlParams[]  = $newResearchShow;
+					$sqlParams[]  = $newResearchExec;
 					$sqlParams[]  = $newVolumeDL;
 					$sqlParams[]  = $newAnonymizeFlg;
 					$sqlParams[]  = $newDataDelete;
@@ -122,11 +124,12 @@
 			// Retrieve group lists
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = 'SELECT group_id, color_set, exec_cad, personal_feedback, consensual_feedback,'
-					. 'modify_consensual, view_all_statistics, research, volume_download, anonymize_flg,'
-					. 'data_delete, server_operation, server_settings, '
+					. ' modify_consensual, view_all_statistics, research_show, research_exec, volume_download,'
+					. ' anonymize_flg, data_delete, server_operation, server_settings, '
 					. 'cast(exec_cad as integer)+cast(personal_feedback as integer)+cast(consensual_feedback as integer)'
-					. '+cast(modify_consensual as integer)+cast(view_all_statistics as integer)+cast(research as integer)'
-					. '+cast(volume_download as integer)+cast(anonymize_flg as integer)+cast(data_delete as integer)'
+					. '+cast(modify_consensual as integer)+cast(view_all_statistics as integer)'
+					. '+cast(research_show as integer)+cast(research_exec as integer)+cast(volume_download as integer)'
+					. '+cast(anonymize_flg as integer)+cast(data_delete as integer)'
 					. '+cast(server_operation as integer)+cast(server_settings as integer) as true_cnt'
 					. ' FROM groups ORDER BY true_cnt DESC';
 

@@ -122,7 +122,9 @@ $(function() {
 			<div id="researchListTab" class="tabArea">
 				<ul>
 					<li><a href="#" id="listTab" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Research list</a></li>
-					<li><a href="research_job.php" class="btn-tab" title="job">Research job</a></li>
+					{if $smarty.session.researchExecFlg}
+						<li><a href="research_job.php" class="btn-tab" title="job">Research job</a></li>
+					{/if}
 				</ul>
 			</div><!-- / .tabArea END -->
 

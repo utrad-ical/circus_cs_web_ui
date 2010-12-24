@@ -7,6 +7,11 @@
 	
 	$errorFlg = 0;
 	
+	if($_SESSION['researchShowFlg'] == 0 && $_SESSION['researchExecFlg'] == 0)
+	{
+		$errorFlg = 1;
+	}
+	
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
@@ -44,71 +49,71 @@
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
-		$errorFlg = 0;
-
-		$sqlStr = "SELECT st.patient_id, sm.path" 
-				. " FROM study_list st, series_list sr, storage_master sm " 
-				. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?" 
-				. " AND sr.study_instance_uid=st.study_instance_uid" 
-				. " AND sr.storage_id=sm.storage_id;";
-
-		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
-
-		if($stmt->rowCount() != 1)
+		if(!$errorFlg)
 		{
-			$errorFlg = 1;
-		}
-		else
-		{
-			// Prevent timeout error
-			set_time_limit(0);
+			$sqlStr = "SELECT st.patient_id, sm.path" 
+					. " FROM study_list st, series_list sr, storage_master sm " 
+					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?" 
+					. " AND sr.study_instance_uid=st.study_instance_uid" 
+					. " AND sr.storage_id=sm.storage_id;";
 
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
 
-			$seriesDir = $result[1] . $DIR_SEPARATOR . $result[0]
-			           . $DIR_SEPARATOR . $params['studyInstanceUID']
-			           . $DIR_SEPARATOR .  $params['seriesInstanceUID'];
-
-			$baseName = $seriesDir . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-			$dstFileName = $baseName . ".zip";
-		
-			if(!is_file($dstFileName))
+			if($stmt->rowCount() != 1)
 			{
-				//------------------------------------------------------------------------------------------------------
-				// Convert DICOM files to Volume-One data
-				//------------------------------------------------------------------------------------------------------
-				$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir
-						. ' ' . $params['seriesInstanceUID'] . '"';
-				shell_exec($cmdStr);
-				//------------------------------------------------------------------------------------------------------
-	
-				//------------------------------------------------------------------------------------------------------
-				// create a zip archive
-				//------------------------------------------------------------------------------------------------------
-				$zip = new ZipArchive();
+				$errorFlg = 1;
+			}
+			else
+			{
+				// Prevent timeout error
+				set_time_limit(0);
+
+				$result = $stmt->fetch(PDO::FETCH_NUM);
+
+				$seriesDir = $result[1] . $DIR_SEPARATOR . $result[0]
+				           . $DIR_SEPARATOR . $params['studyInstanceUID']
+				           . $DIR_SEPARATOR .  $params['seriesInstanceUID'];
+
+				$baseName = $seriesDir . $DIR_SEPARATOR . $params['seriesInstanceUID'];
+				$dstFileName = $baseName . ".zip";
 		
-				if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
+				if(!is_file($dstFileName))
 				{
-					$errorFlg = 1;
-				}
-				else
-				{
-					if($zip->addFile($baseName . ".vol", "/" .  $params['seriesInstanceUID'] . ".vol") !== TRUE
-					    || $zip->addFile($baseName . ".txt", "/" .  $params['seriesInstanceUID'] . ".txt") !== TRUE)
+					//--------------------------------------------------------------------------------------------------
+					// Convert DICOM files to Volume-One data
+					//--------------------------------------------------------------------------------------------------
+					$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir
+							. ' ' . $params['seriesInstanceUID'] . '"';
+					shell_exec($cmdStr);
+					//--------------------------------------------------------------------------------------------------
+	
+					//--------------------------------------------------------------------------------------------------
+					// create a zip archive
+					//--------------------------------------------------------------------------------------------------
+					$zip = new ZipArchive();
+			
+					if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
 					{
 						$errorFlg = 1;
 					}
+					else
+					{
+						if($zip->addFile($baseName . ".vol", "/" .  $params['seriesInstanceUID'] . ".vol") !== TRUE
+						    || $zip->addFile($baseName . ".txt", "/" .  $params['seriesInstanceUID'] . ".txt") !== TRUE)
+						{
+							$errorFlg = 1;
+						}
+					}
+					$zip->close();
+	
+					if($errorFlg == 1 && is_file($dstFileName))  unlink($dstFileName);
+					if(is_file($baseName . ".vol"))  unlink($baseName . ".vol");
+					if(is_file($baseName . ".txt"))  unlink($baseName . ".txt");
 				}
-				$zip->close();
-	
-				if($errorFlg == 1 && is_file($dstFileName))  unlink($dstFileName);
-				if(is_file($baseName . ".vol"))  unlink($baseName . ".vol");
-				if(is_file($baseName . ".txt"))  unlink($baseName . ".txt");
+				//------------------------------------------------------------------------------------------------------
 			}
-			//----------------------------------------------------------------------------------------------------------
 		}
-	
 		echo $errorFlg;
 	}
 	catch (PDOException $e)
