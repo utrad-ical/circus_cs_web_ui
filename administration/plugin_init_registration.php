@@ -304,7 +304,6 @@
 						DropTableIfExists($pdo, $resultTableName);
 
 						$sqlStr = 'CREATE TABLE "' . $resultTableName . '"('
-								. 'sid        SERIAL NOT NULL,'
 								. 'exec_id    INT NOT NULL,'
 								. 'sub_id     SMALLINT NOT NULL,';
 	
@@ -346,7 +345,8 @@
 							} // end switch
 						}
 	
-						$sqlStr .= ' CONSTRAINT "' . $resultTableName . '_pkey" PRIMARY KEY (sid),'
+						$sqlStr .= 'sid SERIAL NOT NULL,'
+								.  ' CONSTRAINT "' . $resultTableName . '_pkey" PRIMARY KEY (sid),'
 								.  ' CONSTRAINT "' . $resultTableName . '_ukey" UNIQUE (exec_id, sub_id),'
 								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
 								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
