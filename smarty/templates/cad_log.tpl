@@ -127,7 +127,7 @@
 								{if $params.orderCol=='CAD date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD date', '{if $params.orderCol=='CAD date' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
 							</th>
 
-							{if $smarty.session.colorSet == "admin"}<th rowspan="2">Executed<br />by</th>{/if}
+							{if $smarty.session.colorSet != "guest"}<th rowspan="2">Executed<br />by</th>{/if}
 
 							<th rowspan="2">Result</th>
 
@@ -176,7 +176,7 @@
 								<td>{$item[5]|escape}</td>
 								<td>{$item[6]|escape}</td>
 								<td>{$item[7]|escape}</td>
-								{if $smarty.session.colorSet == "admin"}<td>{$item[8]|escape}</td>{/if}
+								{if $smarty.session.colorSet != "guest"}<td>{$item[8]|escape}</td>{/if}
 								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[9]|escape}', '{$item[10]|escape}', '{$item[11]|escape}', '{$item[12]|escape}', {$smarty.session.personalFBFlg});" /></td>
 								
 								{if $params.mode=='today'}

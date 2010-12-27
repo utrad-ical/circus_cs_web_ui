@@ -191,7 +191,7 @@ $(function() {
 							<th>Research</th>
 							<th>Executed at</th>
 							<!-- <th>Tag</th> -->
-							{if $smarty.session.colorSet == "admin"}<th>Executed by</th>{/if}
+							{if $smarty.session.colorSet != "guest"}<th>Executed by</th>{/if}
 							<th>&nbsp;</th>
 						</tr>
 					</thead>
@@ -202,7 +202,7 @@ $(function() {
 								<td>{$item[0]|escape}</td>
 			                	<td>{$item[1]|escape}</td>
 			                	<td>{$item[2]|escape}</td>
-								{if $smarty.session.colorSet == "admin"}<td>{$item[3]|escape}</td>{/if}
+								{if $smarty.session.colorSet != "guest"}<td>{$item[3]|escape}</td>{/if}
 								<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowResearchResult('{$item[0]|escape}');" /></td>
 							</tr>
 						{/foreach}

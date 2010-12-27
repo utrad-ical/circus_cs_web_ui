@@ -1,6 +1,5 @@
 <?php
 	
-	$SESSION_TIME_LIMIT = 1800;
 	$toTopDir = (!isset($params['toTopDir'])) ? $params['toTopDir'] : '../';
 
 	//-----------------------------------------------------------------------------------------------------------------
@@ -13,7 +12,7 @@
 	}
 	else
 	{
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
+		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT_ADMIN_PAGES;
 	}
 	//-----------------------------------------------------------------------------------------------------------------
 
