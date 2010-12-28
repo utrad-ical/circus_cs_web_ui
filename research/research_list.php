@@ -206,7 +206,7 @@
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
 				$colArr = array($result[0], $result[1].' v.'.$result[2], $result[3]);
-				if($_SESSION['colorSet'] == "admin") $colArr[] = $result[4];
+				if($_SESSION['colorSet'] != "guest") $colArr[] = $result[4];
 				$data[] = $colArr;
 			}
 			//----------------------------------------------------------------------------------------------------------
