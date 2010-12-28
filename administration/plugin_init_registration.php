@@ -111,40 +111,39 @@
 				//------------------------------------------------------------------------------------------------------
 				// Retrieve common parameters from xml file
 				//------------------------------------------------------------------------------------------------------
-				$pluginDefine        = $xml->PluginDefine[0];
-				$cadDefine           = $xml->CadDefine[0];
-				$researchDefine      = $xml->ResearchDefine[0];
-				$groupResearchDefine = $xml->GroupResearchDefine[0];
+				$pluginDefinition        = $xml->PluginDefinition[0];
+				$cadDefinition           = $xml->CadDefinition[0];
+				$researchDefinition      = $xml->ResearchDefinition[0];
+				$groupResearchDefinition = $xml->GroupResearchDefinition[0];
 
-				$resultDBDefine   = $xml->ResultDBDefine[0];
-				$scoreDBDefine    = $xml->ScoreDBDefine[0];
-				$seriesDefine     = $xml->SeriesDefine[0];
-				$classifierDefine = $xml->ClassifierDefine[0];
+				$resultDBDefinition = $xml->ResultDBDefinition[0];
+				$scoreDBDefifition  = $xml->ScoreDBDefifition[0];
+				$seriesDefifition   = $xml->SeriesDefifition[0];
 				
-				$resultTableName = $resultDBDefine->ResultTableName[0];
-				$scoreTableName  = $scoreDBDefine->ScoreTableName[0];
+				$resultTableName = $resultDBDefifition->ResultTableName[0];
+				$scoreTableName  = $scoreDBDefifition->ScoreTableName[0];
 				
-				$pluginName       = $pluginDefine->PluginName[0];
-				$version          = $pluginDefine->Version[0];
-				$pluginType       = $pluginDefine->PluginType[0];				
-				$description      = addslashes($pluginDefine->Description[0]);
+				$pluginName       = $pluginDefifition->PluginName[0];
+				$version          = $pluginDefifition->Version[0];
+				$pluginType       = $pluginDefifition->PluginType[0];				
+				$description      = addslashes($pluginDefifition->Description[0]);
 				//------------------------------------------------------------------------------------------------------
 				
 				if($pluginType == 1)    // for CAD
 				{
-					$inputType        = $cadDefine->InputType[0];
-					$resultType       = $cadDefine->ResultType[0];
-					$presentType      = $cadDefine->PresentType[0];
-					$exportType       = $cadDefine->ExportType[0];
-					$timeLimit        = $cadDefine->TimeLimit[0];
-					$defaultSortKey   = $cadDefine->DefaultSortKey[0];
-					$defaultSortOrder = ($cadDefine->DefaultSortOrder[0] == 1) ? 't' : 'f';
-					$maxDispNum       = $cadDefine->MaxDispNum[0];
-					$confidenceTh     = $cadDefine->ConfidenceTh[0];
-					$yellowCircleTh   = $cadDefine->YellowCircleTh[0];
-					$doubleCircleTh   = $cadDefine->DoubleCircleTh[0];
-					$windowLevel      = $cadDefine->WindowLevel[0];
-					$windowWidth      = $cadDefine->WindowWidth[0];
+					$inputType        = $cadDefifition->InputType[0];
+					$resultType       = $cadDefifition->ResultType[0];
+					$presentType      = $cadDefifition->PresentType[0];
+					$exportType       = $cadDefifition->ExportType[0];
+					$timeLimit        = $cadDefifition->TimeLimit[0];
+					$defaultSortKey   = $cadDefifition->DefaultSortKey[0];
+					$defaultSortOrder = ($cadDefifition->DefaultSortOrder[0] == 1) ? 't' : 'f';
+					$maxDispNum       = $cadDefifition->MaxDispNum[0];
+					$confidenceTh     = $cadDefifition->ConfidenceTh[0];
+					$yellowCircleTh   = $cadDefifition->YellowCircleTh[0];
+					$doubleCircleTh   = $cadDefifition->DoubleCircleTh[0];
+					$windowLevel      = $cadDefifition->WindowLevel[0];
+					$windowWidth      = $cadDefifition->WindowWidth[0];
 				
 					$mainModality   = "";
 
@@ -152,7 +151,7 @@
 					$cadSeriesSqlStr = "";
 					$cadSeriesSqlParams = array();
 		
-					foreach($seriesDefine->SeriesItem as $item)
+					foreach($seriesDefifition->SeriesItem as $item)
 					{	
 						if($cnt = 0 || $item->SeriesID[0] == 1)  $mainModality = $item->Modality[0];
 
@@ -182,35 +181,6 @@
 										 
 						$cnt++;
 					}
-				
-					$classifierName = array();
-					foreach($classifierDefine->ClassifierItem as $item)
-					{				
-						//echo $item->FileName[0];
-						$classifierName[] = $item->FileName[0];
-					}
-				
-					//--------------------------------------------------------------------------------------------------
-					// Create configure file
-					//--------------------------------------------------------------------------------------------------
-					$confFname = $dstPath . $baseName . $DIR_SEPARATOR . $baseName . ".conf";
-				
-					if(($fp = fopen($confFname,"w")) == FALSE)
-					{
-						$message = '<span style="color:red;">[ERROR] '
-								 . 'Fail to create configure file (' . $confFname . ').</span>';
-						$errorFlg = 1;
-					}
-					else
-					{
-						fprintf($fp, "%d;\r\n", count($classifierName));
-						fprintf($fp, "%s;\r\n", implode(",", $classifierName));
-						fprintf($fp, "%d;\r\n", $maxDispNum);
-						fprintf($fp, "%d;\r\n", $windowLevel);
-						fprintf($fp, "%d;\r\n", $windowWidth);
-						fclose($fp);
-					}
-					//--------------------------------------------------------------------------------------------------
 				
 					//--------------------------------------------------------------------------------------------------
 					// Add plug-in information to plugin_master, cad_master, and cad_series table
@@ -307,7 +277,7 @@
 								. 'exec_id    INT NOT NULL,'
 								. 'sub_id     SMALLINT NOT NULL,';
 	
-						foreach($resultDBDefine->DBItem as $item)
+						foreach($resultDBDefifition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
 					
@@ -385,7 +355,7 @@
 								. 'consensual_flg BOOLEAN NOT NULL DEFAULT false,'
 								. 'interrupt_flg BOOLEAN NOT NULL DEFAULT false,';
 					
-						foreach($scoreDBDefine->DBItem as $item)
+						foreach($scoreDBDefifition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
 				

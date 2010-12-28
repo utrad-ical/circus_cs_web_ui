@@ -21,10 +21,10 @@ function EditTag(mode, sid)
 	{
 		$.post('tag_registration.php', 
            	   {mode: mode,
- 				category: encodeURIComponent($("#category").val()),
- 				referenceID: encodeURIComponent($("#referenceID").val()),
+ 				category: $("#category").val(),
+ 				referenceID: $("#referenceID").val(),
 				sid: sid,
-				tagStr: encodeURIComponent($("#addTagText").val()) },
+				tagStr: $("#addTagText").val() },
 				function(data){
 		    		if(data.message != "")
 					{
