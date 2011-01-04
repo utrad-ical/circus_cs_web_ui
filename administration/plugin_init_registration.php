@@ -103,7 +103,7 @@
 			if(!is_file($xmlFname) || ($xml = simplexml_load_file($xmlFname)) == false)
 			{
 				$message .= '<span style="color:red;">Fail to load xml file (' . $xmlFname . ')</span><br/>';
-				//DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName, $DIR_SEPARATOR);
+				DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName);
 				$errorFlg = 1;
 			}
 			else
@@ -260,7 +260,7 @@
 							$stmt = $pdo->prepare($sqlStr);
 							$stmt->execute(array($pluginName, $version));
 	
-							//DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName, $DIR_SEPARATOR);
+							DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName);
 							$errorFlg = 1;
 						}
 					}
@@ -335,7 +335,7 @@
 							$stmt = $pdo->prepare($sqlStr);
 							$stmt->execute(array($pluginName, $version));
 	
-							//DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName, $DIR_SEPARATOR);
+							DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName);
 							$errorFlg = 1;
 						}
 					
@@ -413,7 +413,7 @@
 							$stmt = $pdo->prepare($sqlStr);
 							$stmt->execute(array($pluginName, $version));
 	
-							//DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName, $DIR_SEPARATOR);
+							DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName);
 							$errorFlg = 1;
 						}
 					} // end if($errorFlg == 0 && $scoreTableName != "")
