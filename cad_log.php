@@ -444,17 +444,31 @@
 					}
 					else
 					{
-						$tmpCond .= ' AND entered_by~*?)';
-						$sqlParams[] = $params['filterFBUser'];
+						if($_SESSION[''] == "admin")
+						{
+							$tmpCond .= ')';
+						}
+						else
+						{
+							$tmpCond .= ' AND entered_by~*?)';
+							$sqlParams[] = $params['filterFBUser'];
+						}
 					}
 			
 					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
 					$addressParams['filterFBUser'] = $params['filterFBUser'];
 				}
-				else
+				else	//　entered by 欄に何も入力されていない場合
 				{
-					$tmpCond .= ' AND entered_by=?)';
-					array_push($condArr, $userID);
+					if($_SESSION['colorSet'] == 'admin')	// 管理者は全ユーザのpersonal feedbackをcheck
+					{
+						$tmpCond .= ')';
+					}
+					else									
+					{
+						$tmpCond .= ' AND entered_by=?)';
+						$sqlParams[] = $userID;
+					}
 				}
 			}
 			else
@@ -596,7 +610,7 @@
 		$stmt->execute($sqlParams);
 
 		//var_dump($stmt);
-		//var_dump($condArr);
+		//var_dump($sqlParams);
 		
 		$rowNum = $stmt->rowCount();
 		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
