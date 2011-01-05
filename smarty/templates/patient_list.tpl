@@ -42,6 +42,8 @@
 				<input type="hidden" id="hiddenFilterPtName" value="{$params.filterPtName|escape}" />
 				<input type="hidden" id="hiddenFilterSex"    value="{$params.filterSex|escape}" />
 				<input type="hidden" id="hiddenShowing"      value="{$params.showing|escape}" />
+				{* {if $smarty.session.dataDeleteFlg}<input type="hidden" id="ticket" value="{$params.ticket|escape}" />{/if}*}
+
 				{include file='patient_search_panel.tpl'}
 			</form>
 		<!-- / End of search -->
@@ -80,7 +82,7 @@
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-						{*	{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if} *}
+						{* {if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if} *}
 							<td class="al-l">{$item[1]|escape}</td>
 							<td class="al-l">{$item[2]|escape}</td>
 							<td>{$item[3]|escape}</td>
@@ -99,9 +101,9 @@
 				</tbody>
 			</table>
 			
-		{*	{if $smarty.session.dataDeleteFlg}
+			{* {if $smarty.session.dataDeleteFlg}
 				<div class="mt10 ml10">
-					<input type="button" value="Delete" class="s-btn form-btn"  onclick="DeleteData('patient');" />
+					<input type="button" value="delete" class="s-btn form-btn"  onclick="DeleteData('patient');" />
 				</div>
 			{/if} *}
 

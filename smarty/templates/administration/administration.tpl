@@ -100,7 +100,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
 			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="ticket" value="{$params.ticket}" />
+			<input type="hidden" id="ticket" value="{$params.ticket|escape}" />
 
 			<h2>Administration</h2>
 			

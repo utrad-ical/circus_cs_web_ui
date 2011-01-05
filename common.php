@@ -194,7 +194,7 @@
 				if($object != "." && $object != "..")
 				{
 					$fname = $dir . "/" . $object;
-					if(filetype($fname) == "dir")		rrmdir($fname);
+					if(filetype($fname) == "dir")		DeleteDirRecursively($fname);
 					else								unlink($fname); 
 				}
 			}

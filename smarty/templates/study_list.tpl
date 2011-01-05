@@ -51,6 +51,8 @@
 				<input type="hidden" id="hiddenStDateTo"       value="{$params.stDateTo|escape}" />
 				<input type="hidden" id="hiddenStTimeTo"       value="{$params.stTimeTo|escape}" />
 				<input type="hidden" id="hiddenShowing"        value="{$params.showing|escape}" />
+				{* {if $smarty.session.dataDeleteFlg}<input type="hidden" id="ticket" value="{$params.ticket|escape}" />{/if}*}
+
 				{include file='study_search_panel.tpl'}
 			</form>
 		<!-- / Search End -->
@@ -102,7 +104,7 @@
 				<tbody>
 					{foreach from=$data item=item name=cnt}
 						<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-						{*	{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if} *}
+							{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if}
 							<td class="al-l"><a href="study_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</td>
 							<td class="al-l">{$item[3]|escape}</td>
 							<td class="al-r">{$item[4]|escape}</td>
@@ -127,9 +129,9 @@
 				</tbody>
 			</table>
 
-		{*	{if $smarty.session.dataDeleteFlg}
+			{* {if $smarty.session.dataDeleteFlg}
 				<div class="mt10 ml10">
-					<input type="button" value="Delete" class="s-btn form-btn"  onclick="DeleteData('study');" />
+					<input type="button" value="delete" class="s-btn form-btn"  onclick="DeleteData('study');" />
 				</div>
 			{/if} *}
 

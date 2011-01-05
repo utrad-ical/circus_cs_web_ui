@@ -2,22 +2,25 @@
 //--------------------------------------------------------------------------------------------------
 // Delete data (common function)
 //--------------------------------------------------------------------------------------------------
-function DeleteData(type)
+function DeleteData(mode)
 {
 	//選択されたチェックボックスの値を配列に保存
 	var sids=[];
-
     $("[name='sidList[]']:checked").each(function(){ sids.push(this.value); });
 
 	if(sids.length == 0)
 	{
-	   alert('Please select at least one' + type + '!');
+	   alert('Please select at least one ' + mode + '!');
 	}
-	else if(confirm('Do you delete selected' + type + '?'))
+	else if(confirm('Do you delete selected ' + mode + '?'))
 	{
 
-		//$.post("./administration/delete_list.php",
-        //       {type: type, sidArr: sids}, function(data){ alert(data.message); }, "json");
+		$.post("delete_list.php",
+               {mode: mode, 'sidArr[]': sids, ticket: $("#ticket").val()},
+				function(data){ 
+					alert(data.message);
+					location.reload();
+				}, "json");
 	}
 }
 //--------------------------------------------------------------------------------------------------

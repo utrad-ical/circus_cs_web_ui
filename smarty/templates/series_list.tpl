@@ -76,6 +76,9 @@
 					<input type="hidden" id="orderMode"        value="{$params.orderMode|escape}" />
 					<input type="hidden" id="orderCol"         value="{$params.orderCol|escape}" />
 
+					{if $smarty.session.dataDeleteFlg}<input type="hidden" id="ticket" value="{$params.ticket|escape}" />{/if}
+
+
 					{include file='series_search_panel.tpl'}
 				</form>
 			<!-- / Search End -->
@@ -88,7 +91,7 @@
 				<table class="col-tbl" style="width: 100%;">
 					<thead>
 						<tr>
-							{* {if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if} *}
+							{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
 							<th>
 								{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 							</th>
@@ -139,7 +142,7 @@
 					<tbody>
 						{foreach from=$data item=item name=cnt}
 							<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-							{*	{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if} *}
+								{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"'></td>{/if}
 								<td class="al-l"><a href="series_list.php?filterPtID={$item[3]|escape}">{$item[3]|escape}</a></td>
 								<td class="al-l">{$item[4]|escape}</td>
 								<td>{$item[5]|escape}</td>
@@ -198,11 +201,11 @@
 					</tbody>
 				</table>
 			
-			{*	{if $smarty.session.dataDeleteFlg}
+				{if $smarty.session.dataDeleteFlg}
 					<div class="mt10 ml10">
-						<input type="button" value="Delete" class="s-btn form-btn"  onclick="DeleteData('series');" />
+						<input type="button" value="delete" class="s-btn form-btn"  onclick="DeleteData('series');" />
 					</div>
-				{/if} *}
+				{/if}
 				
 				{* ------ Hooter with page list --- *}
 				<div id="serp-paging" class="al-c mt10">
