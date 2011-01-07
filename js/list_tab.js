@@ -1,5 +1,33 @@
 
 //--------------------------------------------------------------------------------------------------
+// Get today string (format:YYYY-MM-DD)
+//--------------------------------------------------------------------------------------------------
+function GetTodayString()
+{
+	var objDate = new Date();
+	var ret = "";
+	var tmp;
+
+	// Get year
+	ret  = objDate.getFullYear();
+	ret += "-";
+
+Å@	// Get month
+	tmp = "0" + (objDate.getMonth() + 1);
+	tmp = tmp.substr(tmp.length - 2, tmp.length);
+	ret += tmp + "-";
+Å@
+	// Get date
+	tmp = "0" + objDate.getDate();
+	tmp = tmp.substr(tmp.length - 2, tmp.length);
+	ret += tmp;
+
+	return ret;
+
+}
+//--------------------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------------------
 // Delete data (common function)
 //--------------------------------------------------------------------------------------------------
 function DeleteData(mode)
@@ -228,9 +256,7 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 	var flg      = parseInt(tmpStr[2]);
 	var dateTime = tmpStr[3];
 
-	//alert(execCADFlg + ' ' + flg);
-
-	if(source == 'todaysSeriesList')	dateTime = dateTime.substr(11);
+	//alert($("#cadMenu"+seriesID).val() + ' ' + flg );
 
 	if(execCADFlg==1)
 	{
@@ -255,7 +281,7 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 		{
 			if(source == 'todaysSeriesList')
 			{
-				$("#cadInfo"+seriesID).html('<span style="color:#fff;">Not executed</span>');
+				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Not executed</span>');
 			}
 			else
 			{

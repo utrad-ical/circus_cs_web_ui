@@ -444,7 +444,17 @@
 					if($stmtCADExec->rowCount() == 1) // PostgreSQL以外に適用する場合は要動作確認(特にMySQL)
 					{
 						$cadColSettings[$cadNum][3] = 1;
-						$cadColSettings[$cadNum][5] = substr($stmtCADExec->fetchColumn(), 0, 10);
+						$tmpDate = $stmtCADExec->fetchColumn();
+						
+						// 2つ目の条件は自明だが念のために
+						if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d')) 
+						{
+							$cadColSettings[$cadNum][5] = substr($tmpDate, 11);
+						}
+						else
+						{
+							$cadColSettings[$cadNum][5] = substr($tmpDate, 0, 10);
+						}
 					}
 					else
 					{

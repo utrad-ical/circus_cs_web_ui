@@ -136,7 +136,7 @@
 				if($params['cadDateFrom'] != "")
 				{
 					$sqlStr .= " AND ?<=el.executed_at";
-					$condArr[] = $params['cadDateFrom'].' 00:00:00';
+					$condArr[] = $params['cadDateFrom'] .' 00:00:00';
 				}
 		
 				if($params['cadDateTo'] != "")
@@ -149,7 +149,7 @@
 					}
 					else
 					{
-						$condArr[] = $params['cadDateTo'] . '23:59:59';
+						$condArr[] = $params['cadDateTo'] . ' 23:59:59';
 					}
 				}
 			}
