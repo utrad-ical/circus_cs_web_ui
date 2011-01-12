@@ -64,18 +64,18 @@
 		{
 			$img->newImage($width, $height, 'white');
 			$img->setImageFormat('png');
-	
+			
 			$mainColor = new ImagickPixel();
 			$mainColor->setColor("black");
-	
+			
 			$subColor = new ImagickPixel();
 			$subColor->setColor("#dfdfdf");
-	
+			
 			$drawBase = new ImagickDraw($width, $height);
 			$drawBase->setFillAlpha(0.0);
 			$drawBase->setStrokeColor($mainColor);
 			$drawBase->setStrokeWidth(2.0);
-		
+			
 			$drawLabel = new ImagickDraw($width, $height);
 			$drawLabel->setStrokeColor($mainColor);
 			$drawLabel->setFont('Arial-Bold');
@@ -84,46 +84,46 @@
 			$drawLabel->setStrokeAlpha(0.0);
 			$drawLabel->setFillColor($mainColor);
 			$drawLabel->setTextAntialias(TRUE);	
-	
+			
 			$drawBase->rectangle($plotOrgX, $plotOrgY,
 							  $plotOrgX+$plotWidth, $plotOrgY+$plotHeight);
-	
+			
 			$drawBase->line($plotOrgX+$plotWidth-25, 10, $plotOrgX+$plotWidth-5, 10);
 			$drawBase->line($plotOrgX+$plotWidth-10, 5, $plotOrgX+$plotWidth-5, 10);
-			$drawBase->line($plotOrgX+$plotWidth-10, 15, $plotOrgX+$plotWidth-5, 10);	
-						
+			$drawBase->line($plotOrgX+$plotWidth-10, 15, $plotOrgX+$plotWidth-5, 10);
+			
 			$drawBase->line(10, $plotOrgY+$plotHeight-25, 10, $plotOrgY+$plotHeight-5);
 			$drawBase->line(15, $plotOrgY+$plotHeight-10, 10, $plotOrgY+$plotHeight-5);
-			$drawBase->line(5, $plotOrgY+$plotHeight-10, 10, $plotOrgY+$plotHeight-5);		
-	
+			$drawBase->line(5, $plotOrgY+$plotHeight-10, 10, $plotOrgY+$plotHeight-5);
+			
 			$drawLabel->setTextAlignment(imagick::ALIGN_CENTER);
-	
+			
 			for($x = $minX; $x<=$maxX; $x+=$stepX)
 			{
 				$tmp = $plotWidth / ($maxX - $minX) * $x + $plotOrgX;
-	
+				
 				$drawLabel->annotation($tmp, $plotOrgY-7, $x);
-		
+				
 				if($x > $minX && $x < $maxX)
 				{
 					$drawBase->setStrokeColor($mainColor);
 					$drawBase->setStrokeWidth(2.0);
-					$drawBase->line($tmp, $plotOrgY, $tmp, $plotOrgY+5);	
-		
+					$drawBase->line($tmp, $plotOrgY, $tmp, $plotOrgY+5);
+					
 					$drawBase->setStrokeColor($subColor);
 					$drawBase->setStrokeWidth(1.0);		
 					$drawBase->line($tmp, $plotOrgY+6, $tmp, $plotOrgY+$plotHeight-2);
 				}
 			}
-		
+			
 			$drawLabel->setTextAlignment(imagick::ALIGN_RIGHT);
-		
+			
 			for($y = $minY; $y<=$maxY; $y+=$stepY)
 			{
 				$tmp = $plotHeight / ($maxY - $minY) * $y + $plotOrgY;
-	
+				
 				$drawLabel->annotation($plotOrgX-2, $tmp+6, $y);
-	
+				
 				if($y > $minY && $y < $maxY)
 				{
 					$drawBase->setStrokeColor($mainColor);
@@ -139,7 +139,7 @@
 			$img->drawImage($drawBase);
 			$drawBase->destroy();
 	
-			$drawLabel->setTextAlignment(imagick::ALIGN_CENTER);	
+			$drawLabel->setTextAlignment(imagick::ALIGN_CENTER);
 			$drawLabel->annotation($plotOrgX+$plotWidth/2,15, $xlabel);
 	
 			$drawLabel->setTextAlignment(imagick::ALIGN_RIGHT);	
@@ -147,8 +147,8 @@
 	
 			$drawLabel->rotate(-90);
 	
-			$drawLabel->setTextAlignment(imagick::ALIGN_CENTER);	
-			$drawLabel->annotation(-($plotOrgY+$plotHeight/2), 15, $ylabel);	
+			$drawLabel->setTextAlignment(imagick::ALIGN_CENTER);
+			$drawLabel->annotation(-($plotOrgY+$plotHeight/2), 15, $ylabel);
 		
 			$drawLabel->setTextAlignment(imagick::ALIGN_LEFT);	
 			$drawLabel->annotation(-($plotOrgY+$plotHeight-27), 15, $yDistLabel);
@@ -158,18 +158,18 @@
 		}
 		
 		//---------------------------------------------------------------------------------------------
-	
+		
 		//---------------------------------------------------------------------------------------------
 		$color = new ImagickPixel();
 		$drawPlot = new ImagickDraw($width, $height);
-	
+		
 		$drawPlot->setFillAlpha(1.0);
 		$drawPlot->setStrokeAlpha(0.0);	
 		
 		$length = count($plotData);
 		
 		$count = 0;
-	
+		
 		for($j=0; $j<$length; $j++)
 		{
 			$posX = $plotData[$j][$xId] * $plotWidth + $plotOrgX;
@@ -227,17 +227,17 @@
 					break;
 			}
 		}
-	
+		
 		if($count > 0)  $img->drawImage($drawPlot);
 		$drawPlot->destroy();
-	
+		
 		//header("Content-type: image/png");
-		//header("Cache-control: no-cache");	
+		//header("Cache-control: no-cache");
 		//echo $img;
 		
 		//$img->setImageDepth(8); // 16bit -> 8bit
 		//$img->setImageColorspace(1);
-	
+		
 		$img->writeImage($ofname);
 		$img->destroy();
 		

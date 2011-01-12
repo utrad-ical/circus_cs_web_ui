@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -60,43 +60,43 @@
 
 			<br class="fl-clr">
 			
-		<!-- ***** 検索パネル ******************************************** -->
+		<!-- ***** Search panel ******************************************** -->
 		
 		<!-- ***** Patient ***** -->
 			<form name="" onsubmit="return false;">
 				{include file='patient_search_panel.tpl'}
 			</form>
-		<!-- / Patient　ここまで -->
+		<!-- / Patient END -->
 
 		<!-- ***** Study ***** -->
 			<form name="" onsubmit="return false;">
 				{include file='study_search_panel.tpl'}
 			</form>
-		<!-- / Study　ここまで -->
+		<!-- / Study END -->
 
 		<!-- ***** Series ***** -->
 			<form name="" onsubmit="return false;">
 				{include file='series_search_panel.tpl'}
 			</form>
-		<!-- / Series　ここまで -->
+		<!-- / Series END -->
 	
 		<!-- ***** CAD ***** -->
 			<form name="" onsubmit="return false;">
 				{include file='cad_search_panel.tpl'}
 			</form>
-		<!-- / CAD　ここまで -->			
+		<!-- / CAD END -->
 
 		<!-- ***** Reserach ***** -->
 		{*	<form name="" onsubmit="return false;">
 				{include file='research_search_panel.tpl'}
 			</form>*}
-		<!-- / Research ここまで -->
+		<!-- / Research END -->
 
 		<!-- ***** Group reserach ***** -->
 		{*	<form name="" onsubmit="return false;">
 				{include file='group_research_search_panel.tpl'}
 			</form>*}
-		<!-- / Group research ここまで -->
+		<!-- / Group research END -->
 
 		<!-- <div class="al-r">
 			<p class="pagetop"><a href="#page">page top</a></p>

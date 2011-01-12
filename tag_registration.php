@@ -69,7 +69,7 @@
 					 'referenceID'    => $params['referenceID'],
 					 'parentTagHtml'  => "",
 					 'popupTableHtml' => "");
-					 
+	
 	try
 	{	
 	
@@ -197,6 +197,6 @@
 	{
 		var_dump($e->getMessage());
 	}
-	$pdo = null;	
+	$pdo = null;
 
 ?>

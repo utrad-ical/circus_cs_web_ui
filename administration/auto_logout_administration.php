@@ -5,7 +5,8 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	// Auto logout (session timeout)
 	//-----------------------------------------------------------------------------------------------------------------
-	if(time() > $_SESSION['timeLimit'] || ($_SESSION['serverOperationFlg'] == 0 && $_SESSION['serverSettingsFlg'] == 0))
+	if(time() > $_SESSION['timeLimit'] 
+	    || ($_SESSION['serverOperationFlg'] == 0 && $_SESSION['serverSettingsFlg'] == 0))
 	{
 		header('location: ' . $toTopDir . 'index.php?mode=timeout');
 		exit();

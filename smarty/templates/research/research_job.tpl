@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -265,7 +265,7 @@ $(function() {
 
 				<form name="form1" onsubmit="return false;">
 				
-				<!-- ***** 条件設定 ***** -->
+				<!-- ***** 譚｡莉ｶ險ｭ螳� ***** -->
 
 				<div id="researchCondition" class="search-panel">
 					<h3>Step 1: Set condition</h3>
@@ -341,7 +341,7 @@ $(function() {
 						</div>
 					</div><!-- / .m20 END -->
 				</div><!-- / .search-panel END -->
-				<!-- / 条件設定　ここまで -->
+				<!-- / 譚｡莉ｶ險ｭ螳壹縺薙％縺ｾ縺ｧ -->
 
 				<div id="cadList" style="display:none;">
 

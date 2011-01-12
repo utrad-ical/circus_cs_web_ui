@@ -85,8 +85,8 @@
 		{
 			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute($sqlParams);			
-		
+			$stmt->execute($sqlParams);
+			
 			if($stmt->rowCount() == 1)
 			{
 				$dstData['message'] = 'Succeeded!';
@@ -101,7 +101,7 @@
 		{
 			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute($sqlParams);			
+			$stmt->execute($sqlParams);
 
 			$sqlParams[] = $params['sortKey'];
 			$sqlParams[] = $params['sortOrder'];
@@ -130,13 +130,10 @@
 		}
 		
 		echo json_encode($dstData);
-		
 	}
 	catch (PDOException $e)
 	{
 		var_dump($e->getMessage());
 	}
-	$pdo = null;	
+	$pdo = null;
 ?>
-
-

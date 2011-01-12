@@ -6,7 +6,7 @@
 
 	include_once("../common.php");
 	include("auto_logout_administration.php");	
-	require_once('../class/validator.class.php');		
+	require_once('../class/validator.class.php');
 	require_once('../class/PersonalInfoScramble.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
@@ -31,9 +31,9 @@
 		$dstData = $validator->output;
 		$dstData['message'] = implode('<br/>', $validator->errors);
 	}
-
+	
 	$userID = $_SESSION['userID'];
-	//-----------------------------------------------------------------------------------------------------------------			
+	//-----------------------------------------------------------------------------------------------------------------	
 	
 	try
 	{
@@ -48,10 +48,10 @@
 			//----------------------------------------------------------------------------------------------------
 			$sqlStr  = "SELECT exec_flg, plugin_type FROM plugin_job_list where job_id=?";
 			$result = PdoQueryOne($pdo, $sqlStr, $dstData['jobID'], 'ARRAY_NUM');
-	
+			
 			$execFlg = $result[0];
 			$pluginType = $result[1];
-
+			
 			if(!$execFlg)
 			{
 				switch($pluginType)

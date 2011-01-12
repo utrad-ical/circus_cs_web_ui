@@ -2,11 +2,7 @@
 
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
-	//$img = new Imagick();
-	//$img->readImage($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
-	//$dispWidth  = $img->getImageWidth();
-	//$dispHeight = $img->getImageHeight();
-	
+	// Get width and height of PNG image Using GD library
 	$img = @imagecreatefrompng($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
 	$dispWidth  = imagesx($img);
 	$dispHeight = imagesy($img);
@@ -54,5 +50,5 @@
 	$smarty->assign('resImg', $resImg);	
 	
 	$smarty->display('cad_results/fat_volumetry_v1.tpl');
-	//------------------------------------------------------------------------------------------------------------------		
+	//------------------------------------------------------------------------------------------------------------------
 ?>

@@ -1,3 +1,4 @@
+<!-- Tabs for displaying CAD result -->
 <div id="cadResultTab" class="tabArea">
 	<ul>
 		{if $params.srcList!="" && $smarty.session.listAddress!=""}
@@ -8,8 +9,9 @@
 		<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD result</a></li>
 	</ul>
 	<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
-</div><!-- / .tabArea END -->
+</div>
 
+<!-- Tabs for displaying CAD detail -->
 <div id="cadDetailTab" class="tabArea" style="display:none;">
 	<ul>
 		{if $params.srcList!="" && $smarty.session.listAddress!=""}
@@ -21,4 +23,4 @@
 		<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD detail</a></li>
 	</ul>
 	<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
-</div><!-- / .tabArea END -->
+</div>

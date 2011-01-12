@@ -49,8 +49,8 @@
 		if($data['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);	
-	
+			$pdo = new PDO($connStrPDO);
+		
 			$sqlStr = "SELECT sr.sid, pt.patient_id, pt.patient_name, sm.path, sm.apache_alias," 
 			        . " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality,"
@@ -78,13 +78,13 @@
 			$data['bodyPart']          = $result[15];
 				
 			$data['encryptedPtID']   = PinfoScramble::encrypt($data['patientID'], $_SESSION['key']);
-			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);			
+			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);
 				
 			$data['seriesDir'] = $result[3] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
 					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
 						   
 			$data['seriesDirWeb'] = $result[4]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
-					              . $DIR_SEPARATOR_WEB . $data['seriesInstanceUID'];		   
+					              . $DIR_SEPARATOR_WEB . $data['seriesInstanceUID'];
 						   
 			$data['orgWidth'] = $result[5];
 			$data['orgHeight'] = $result[6];
@@ -183,14 +183,14 @@
 					$data['dstFnameWeb'] .= "_" . $data['presetName'];
 				}
 				$data['dstFname'] .= '.jpg';
-				$data['dstFnameWeb'] .= '.jpg';		
+				$data['dstFnameWeb'] .= '.jpg';
 				
 				if(!is_file($data['dstFname']))
 				{
 					DcmExport::createThumbnailJpg($data['srcFname'], $dstBase, $data['presetName'], $JPEG_QUALITY,
 					                               1, $data['windowLevel'], $data['windowWidth']);
 				}
-						
+				
 				$fp = fopen($dumpFname, "r");
 			
 				$data['sliceNumber'] = 0;
@@ -202,14 +202,14 @@
 					{
 						$dumpTitle   = strtok($str,":");
 						$dumpContent = strtok("\r\n");
-			
+						
 						switch($dumpTitle)
 						{
 							case 'Img. No.':
 							case 'Image No.':
 								$data['sliceNumber'] = $dumpContent;
 								break;
-		
+								
 							case 'Slice location':
 								$data['sliceLocation'] = sprintf("%.2f [mm]", $dumpContent);
 								break;
@@ -218,16 +218,14 @@
 				
 					fclose($fp);
 				}
-			}	
-
+			}
+			
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve tag data
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=3 AND reference_id=? ORDER BY sid ASC";
 			$tagArray = PdoQueryOne($pdo, $sqlStr, $data['sid'], 'ALL_NUM');
 			//----------------------------------------------------------------------------------------------------------
-
-			//var_dump($data);
 		}
 		
 		//--------------------------------------------------------------------------------------------------------------
@@ -235,10 +233,10 @@
 		//--------------------------------------------------------------------------------------------------------------
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
-	
+		
 		$smarty->assign('data',     $data);
 		$smarty->assign('tagArray', $tagArray);
-	
+		
 		$smarty->display('series_detail.tpl');
 		//-------------------------------------------------------------------------------------------------------------
 	}
@@ -248,5 +246,4 @@
 	}
 	$pdo = null;
 
-	
 ?>

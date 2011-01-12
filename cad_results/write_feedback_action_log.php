@@ -25,7 +25,7 @@
 		"options" => array(
 			"type" => "string",
 			"required" => true)
-		));				
+		));
 
 	if($validator->validate($_POST))
 	{
@@ -47,7 +47,7 @@
 		if($params['errorMessage']=="")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);	
+			$pdo = new PDO($connStrPDO);
 	
 			$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options) VALUES (?,?,?,?,?)";
 			$stmt = $pdo->prepare($sqlStr);

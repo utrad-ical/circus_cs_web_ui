@@ -129,8 +129,6 @@
 <!-- 
 $(function() {
 
-
-
 	$("#cadSearch input[name^='srDate'], #cadSearch input[name^='cadDate']").datepicker({
 			showOn: "button",
 			buttonImage: "images/calendar_view_month.png",

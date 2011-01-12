@@ -37,8 +37,8 @@
 			"type" => "select",
 			"options" => array("personal", "consensual"),
 			"errorMes" => "[ERROR] 'Feedback mode' is invalid.")
-		));				
-
+		));
+	
 	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
@@ -326,7 +326,7 @@
 						while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 						{
 		
-							if($result['nearest_lesion_id'] > 0) // ‹ß–T•a•ÏŒó•â‚ª‚ ‚éê‡
+							if($result['nearest_lesion_id'] > 0) // in the case of undisplayed candidate is exist
 							{
 								$dupePos = -1;
 									
@@ -339,7 +339,7 @@
 									}
 								}
 	
-								if($dupePos == -1) // ‹ß–T•a•ÏŒó•â‚ªŠù‚ÉposArr‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚È‚¢ê‡
+								if($dupePos == -1) // è¿‘å‚ç—…å¤‰å€™è£œãŒæ—¢ã«posArrã«å«ã¾ã‚Œã¦ã„ãªã„å ´åˆ
 								{
 									$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
 											. ' WHERE exec_id=? AND sub_id=?';
@@ -358,17 +358,17 @@
 									$nearestLesionArr[$nearestLesionCnt] = $result['nearest_lesion_id'];
 									$nearestLesionCnt++;
 								}
-								else // ‹ß–T•a•ÏŒó•â‚ªŠù‚ÉposArr‚ÉŠÜ‚Ü‚ê‚Ä‚¢‚éê‡i©“®“‡j
+								else // è¿‘å‚ç—…å¤‰å€™è£œãŒæ—¢ã«posArrã«å«ã¾ã‚Œã¦ã„ã‚‹å ´åˆï¼ˆè‡ªå‹•çµ±åˆï¼‰
 								{
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
-									$params['enteredFnNum']--; // d•¡•ª‚ğŒ¸Z
+									$params['enteredFnNum']--; // é‡è¤‡åˆ†ã‚’æ¸›ç®—
 								}
 							}
-							else // ‹ß–T•a•ÏŒó•â‚ª‚È‚¢ê‡
+							else // è¿‘å‚ç—…å¤‰å€™è£œãŒãªã„å ´åˆ
 							{
 								//----------------------------------------------------------------------------
-								// “¯ˆêÀ•W‚Ì—L–³‚ğƒ`ƒFƒbƒN
+								// åŒä¸€åº§æ¨™ã®æœ‰ç„¡ã‚’ãƒã‚§ãƒƒã‚¯
 								//----------------------------------------------------------------------------
 								$posCnt = count($fnPosArray) / $DEFAULT_COL_NUM;
 									
@@ -386,7 +386,7 @@
 								}
 								//----------------------------------------------------------------------------
 								
-								if($dupePos == -1) // d•¡‚ª‚È‚¢ê‡
+								if($dupePos == -1) // é‡è¤‡ãŒãªã„å ´åˆ
 								{
 									$fnPosArray[] = $result['location_x'];
 									$fnPosArray[] = $result['location_y'];
@@ -398,11 +398,11 @@
 									$fnPosArray[] = $result['entered_by'];
 									$fnPosArray[] = $result['location_id'];
 								}
-								else // d•¡‚ª‚ ‚éê‡i©“®“‡j
+								else // é‡è¤‡ãŒã‚ã‚‹å ´åˆï¼ˆè‡ªå‹•çµ±åˆï¼‰
 								{
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 4] .= ', ' . $result['entered_by'];
 									$fnPosArray[$dupePos * $DEFAULT_COL_NUM + 5] .= ', ' . $result['location_id'];
-									$params['enteredFnNum']--; // d•¡•ª‚ğŒ¸Z
+									$params['enteredFnNum']--; // é‡è¤‡åˆ†ã‚’æ¸›ç®—
 								}
 							}
 						}
@@ -442,7 +442,7 @@
 			$tmpArr = explode('^', $params['userStr']);
 			$params['userArr'] = array();
 			
-			for($i=0; $i<count($tmpArr)/2; $i++)
+			for($i = 0; $i < count($tmpArr)/2; $i++)
 			{
 				$params['userArr'][$tmpArr[$i*2]] = $tmpArr[$i*2+1];
 			}
@@ -455,7 +455,7 @@
 			//--------------------------------------------------------------------------------------------------------
 		
 			//--------------------------------------------------------------------------------------------------------
-			// FN“ü—Í‰æ–Ê‚Ì2D‰æ‘œƒtƒ@ƒCƒ‹–¼‚Ì¶¬
+			// FNå…¥åŠ›ç”»é¢ã®2Dç”»åƒãƒ•ã‚¡ã‚¤ãƒ«åã®ç”Ÿæˆ
 			//--------------------------------------------------------------------------------------------------------
 			$flist = array();
 			$flist = GetDicomFileListInPath($params['seriesDir']);

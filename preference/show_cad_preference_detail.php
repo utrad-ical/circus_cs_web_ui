@@ -20,7 +20,6 @@
 			"required" => true,
 			"errorMes" => "[ERROR] 'Version' is invalid."),	
 		));
-		
 	
 	if($validator->validate($_POST))
 	{
@@ -31,7 +30,7 @@
 	{
 		$params = $validator->output;
 		$params['message'] = implode('<br/>', $validator->errors);
-	}	
+	}
 	
 	$params['userID'] = $_SESSION['userID'];
 	$params['preferenceFlg'] = 0;
@@ -44,7 +43,7 @@
 	$params['defaultMaxDispNum']   = "";
 	$params['defaultConfidenceTh'] = "";
 	$params['dispConfidence']      = "f";
-	$params['dispCandidateTag']    = "f";	
+	$params['dispCandidateTag']    = "f";
 	//--------------------------------------------------------------------------------------------------------
 
 	try
@@ -93,8 +92,6 @@
 	{
 		var_dump($e->getMessage());
 	}
-	$pdo = null;	
+	$pdo = null;
 
 ?>
-
-

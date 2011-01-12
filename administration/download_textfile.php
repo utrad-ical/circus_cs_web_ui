@@ -11,5 +11,4 @@
 	header("Content-type: text/plain");
 	header("Content-Disposition: attachment; filename=". $filename);
 	readfile($LOG_DIR . $DIR_SEPARATOR . $filename);
-
 ?>

@@ -47,7 +47,7 @@
 				{
 					$message = '<span style="color:#ff0000;">[ERROR] Entered path (' . $newPath . ') was already exist.</span>';
 				}
-				else 
+				else
 				{
 					// Set current flg
 					$stmt = $pdo->prepare("SELECT COUNT(*) FROM storage_master WHERE type=?");
@@ -65,7 +65,7 @@
 
 					$sqlStr = "INSERT INTO storage_master(storage_id, path, apache_alias, current_flg, type)"
 							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?, ?)";
-							
+					
 					$sqlParams[] = $newPath;
 					$sqlParams[] = $newAlias;
 					$sqlParams[] = $currentFlg;

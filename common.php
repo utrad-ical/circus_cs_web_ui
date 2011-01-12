@@ -61,6 +61,7 @@
 	$SESSION_TIME_LIMIT = 3600;
 	$SESSION_TIME_LIMIT_ADMIN_PAGES = 1800;
 	//-------------------------------------------------------------------------------------------------------
+
 	//-------------------------------------------------------------------------------------------------------
 	// Variables for conversion from DICOM to JPEG
 	//-------------------------------------------------------------------------------------------------------
@@ -94,7 +95,7 @@
 		$flist = scandir($path);
 		$imgCnt = 0;
 	
-		for($i = 0; $i<count($flist); $i++)
+		for($i = 0; $i < count($flist); $i++)
 		{
 			if(preg_match('/\\.dcm$/i', $flist[$i]))  $imgCnt++;
 		}
@@ -112,7 +113,7 @@
 		
 		$flist = array();
 		
-		for($i=0; $i<count($tmpFlist); $i++)
+		for($i=0; $i < count($tmpFlist); $i++)
 		{
 			if(preg_match('/\\.dcm$/i', $tmpFlist[$i]))  $flist[] = $tmpFlist[$i];
 		}

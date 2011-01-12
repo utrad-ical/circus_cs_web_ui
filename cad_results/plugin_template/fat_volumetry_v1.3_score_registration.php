@@ -67,7 +67,8 @@
 		}
 		else
 		{
-			$sqlStr = "INSERT INTO \"fat_volumetry_v1.3_score\" VALUES (?, ?, 'f', 'f', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$sqlStr = 'INSERT INTO "fat_volumetry_v1.3_score"'
+					. " VALUES (?, ?, 'f', 'f', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $execID);
 			$stmt->bindValue(2, $userID);
@@ -92,7 +93,7 @@
 			}
 		}
 		
-		echo json_encode($dstData);		
+		echo json_encode($dstData);
 
 	}
 	catch (PDOException $e)
@@ -100,6 +101,5 @@
 		var_dump($e->getMessage());
 	}
 
-	$pdo = null;	
-
+	$pdo = null;
 ?>

@@ -1,5 +1,5 @@
 <?php
-	//session_cache_limiter('none');
+	session_cache_limiter('none');
 	session_start();
 
 	include_once("../common.php");
@@ -14,10 +14,10 @@
 	$validator->addRules(array(
 		"executableStr" => array(
 			"type" => "string",
-			"regex" => "/^[\w\s-_\.\^]+$/"),	
+			"regex" => "/^[\w\s-_\.\^]+$/"),
 		"hiddenStr" => array(
 			"type" => "string",
-			"regex" => "/^[\w\s-_\.\^]+$/"),	
+			"regex" => "/^[\w\s-_\.\^]+$/"),
 		));
 		
 	if($validator->validate($_POST))
@@ -47,7 +47,7 @@
 			$sqlParams = array();
 			$order = 1;
 			
-			for($i=0; $i<count($executableList); $i++)
+			for($i=0; $i < count($executableList); $i++)
 			{
 				$pos = strpos($executableList[$i], "_v.");
 				$cadName = substr($executableList[$i], 0, $pos);
@@ -62,7 +62,7 @@
 				$order++;
 			}
 		
-			for($i=0; $i<count($hiddenList); $i++)
+			for($i=0; $i < count($hiddenList); $i++)
 			{
 				$pos = strpos($hiddenList[$i], "_v.");
 				$cadName = substr($hiddenList[$i], 0, $pos);

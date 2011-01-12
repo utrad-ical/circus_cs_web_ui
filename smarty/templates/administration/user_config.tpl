@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -148,7 +148,7 @@ function CancelUpdate()
 			<h2>User configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket"            value="{$ticket|escape}" />
+				<input type="hidden" id="ticket"            value="{$params.ticket|escape}" />
 				<input type="hidden" id="oldUserID"         value="" />
 				<input type="hidden" id="oldUserName"       value="" />
 				<input type="hidden" id="oldPassword"       value="" />

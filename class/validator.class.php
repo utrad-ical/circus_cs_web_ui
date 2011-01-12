@@ -754,7 +754,7 @@ class CadVersionValidator extends ScalarValidator
  */
 abstract class PgValidator extends ScalarValidator
 {
-	public static $conn; // DBハンドル。静的に設定する
+	public static $conn; // DB handle (static variable)
 }
 
 /**
@@ -836,6 +836,5 @@ class JsonValidator extends ValidatorBase
 		}
 	}
 }
-
 
 ?>

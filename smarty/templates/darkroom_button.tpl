@@ -3,7 +3,7 @@
 </div>
 
 <script language="javascript">
-<!-- 
+<!--
 {literal}
 function ToggleDarkroomBtn()
 {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -131,7 +131,7 @@ $(function() {
 			<div class="tab-content">
 				<form id="form1" name="form1">
 
-				<!-- ***** 条件設定 ***** -->
+				<!-- ***** Search conditions ***** -->
 				<div id="resSearch" class="search-panel">
 					<h3>Search</h3>
 					<div class="p20">
@@ -177,7 +177,7 @@ $(function() {
 						</div>
 					</div><!-- / .m20 END -->
 				</div><!-- / .search-panel END -->
-				<!-- / 条件設定　ここまで -->
+				<!-- / Search conditions END -->
 
 				<!-- ***** List ***** -->
 				<div class="serp">

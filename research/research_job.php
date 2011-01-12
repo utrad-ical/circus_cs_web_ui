@@ -10,10 +10,10 @@
 	try
 	{	
 		$pluginList = array();
-
+		
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
-
+		
 		$sqlStr = "SELECT pm.plugin_name, pm.version, rm.research_type, rm.target_cad_name, rm.target_version_min,"
 				. " rm.target_version_max, rm.time_limit, rm.result_table FROM plugin_master pm, research_master rm"
 		        . " WHERE pm.plugin_name=rm.plugin_name AND pm.version=rm.version"
@@ -24,11 +24,11 @@
 		$stmtCad->execute();
 		$pluginNum = $stmtCad->rowCount();
 		$resultPlugin = $stmtCad->fetchAll(PDO::FETCH_NUM);
-
+		
 		$pluginMenuVal = array();
 		$cadList = array();
 		$versionList = array();
-
+		
 		for($i=0; $i<$pluginNum; $i++)
 		{
 			if($resultPlugin[$i][2] == 1)
@@ -80,7 +80,7 @@
 			
 			if($j==0)
 			{
-				for($i=1; $i<count($tmpStr); $i++)
+				for($i = 1; $i < count($tmpStr); $i++)
 				{
 					$versionList[$i-1] = $tmpStr[$i];
 				}
@@ -108,6 +108,4 @@
 	}
 
 	$pdo = null;
-	//--------------------------------------------------------------------------------------------------------
 ?>
-

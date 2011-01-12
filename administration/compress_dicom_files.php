@@ -6,7 +6,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Content-Style-Type" content="text/css">
 <title>Compress DICOM files</title>
 <link rel="stylesheet" type="text/css" href="../css/base_style.css">
@@ -24,7 +24,7 @@
 <?php
 
 	include("../common.php");
-	include("auto_logout_administration.php");	
+	include("auto_logout_administration.php");
 
 	// Prevent timeout error
 	set_time_limit(0);
@@ -63,12 +63,10 @@
 	
 		echo $flist[$i] . "...";
 		flush();
-
+		
 		$cmdStr  = $cmdForProcess . ' "' . $cmdDcmCompress . ' ' . $seriesDir . ' ' . $flist[$i] . '"';
-		//$cmdStr  = $cmdDcmCompress . ' ' . $seriesDir . ' ' . $flist[$i];
-		//echo $cmdStr;
 		flush();
-
+		
 		$res = shell_exec($cmdStr);
 		echo $res . "<br>";
 		flush();

@@ -65,7 +65,7 @@
 					   
 			$seriesDirWeb = $result[2]. $patientID
 					      . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-					      . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];		   
+					      . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
 
 			$flist = array();
 			$flist = GetDicomFileListInPath($seriesDir);
@@ -95,7 +95,7 @@
 				$dstFnameWeb .= "_" . $params['presetName'];
 			}
 			$dstFname .= '.jpg';
-			$dstFnameWeb .= '.jpg';		
+			$dstFnameWeb .= '.jpg';
 	
 			// Create thumbnail image
 			if(is_file($dstFname)

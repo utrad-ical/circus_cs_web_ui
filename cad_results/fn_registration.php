@@ -155,11 +155,11 @@
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=?"
 							. " AND consensual_flg='f' AND interrupt_flg='f'"
 						    . " AND location_x=? AND location_y=? AND location_z=?";
-							
+					
 					array_pop($sqlParams);
 					$stmtUpdate = $pdo->prepare($sqlStr);
 					$stmtUpdate->execute($sqlParams);
-			
+					
 					if($stmtUpdate->rowCount() == 1)
 					{
 						$srcID = $stmtUpdate->fetchColumn();
@@ -176,21 +176,21 @@
 							break;
 						}
 					}
-			
+					
 					if($item["idStr"] != "")
 					{
 						$idArr = explode(',', $item["idStr"]);
 						$idNum = count($idArr);
-		
+						
 						$sqlStr = "UPDATE false_negative_location SET integrate_location_id=? WHERE location_id=?";
 						$stmtUpdate = $pdo->prepare($sqlStr);
 						$stmtUpdate->bindParam(1, $dstID);
-			
+						
 						foreach($idArr as $value)
 						{
 							$stmtUpdate->bindParam(2, $value);
 							$stmtUpdate->execute();
-			
+							
 							if($stmtUpdate->rowCount() != 1)
 							{
 								//$err = $stmtUpdate->errorInfo();
@@ -222,7 +222,7 @@
 				$sqlParams[] = $registTime;
 	
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParams);		
+				$stmt->execute($sqlParams);
 		
 				if($stmt->rowCount() != 1)
 				{
@@ -250,7 +250,6 @@
 	{
 		var_dump($e->getMessage());
 	}
-	$pdo = null;	
-
+	$pdo = null;
 
 ?>

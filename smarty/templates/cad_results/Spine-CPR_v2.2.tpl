@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -143,7 +143,7 @@ function ShowCADResult()
 			<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}">	
 			<input type="hidden" id="version"           name="version"           value="{$params.version}">
 			<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
-			<input type="hidden" id="ticket"            name="ticket"            value="{$ticket}">
+			<input type="hidden" id="ticket"            name="ticket"            value="{$params.ticket|escape}">
 			<input type="hidden" id="registTime"        name="registTime"        value="{$registTime}">
 			<input type="hidden" id="interruptFlg"      name="interruptFlg"      value="{$params.interruptFlg}">
 			<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}">
@@ -166,7 +166,8 @@ function ShowCADResult()
 					<div class="fl-l" style="margin-left:5px;">{$registMsg}</div>
 				</div>
 
-				<div class="fl-clr"><!-- 処理結果 -->
+				<!-- Display results -->
+				<div class="fl-clr">
 					<table style="border-collapse: separate; border-spacing: 5px;">
 						<tr>
 							<td colspan="3" class="al-l">

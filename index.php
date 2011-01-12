@@ -60,7 +60,7 @@
 					$_SESSION['groupID']       = $result['group_id'];
 					$_SESSION['todayDisp']     = $result['today_disp'];
 					$_SESSION['darkroomFlg']   = ($result['darkroom_flg'] == 't') ? 1 : 0;
-					$_SESSION['anonymizeFlg']    = ($result['anonymize_flg'] == 't') ? 1 : 0;
+					$_SESSION['anonymizeFlg']  = ($result['anonymize_flg'] == 't') ? 1 : 0;
 					$_SESSION['latestResults'] = $result['latest_results'];
 				
 					$stmt = $pdo->prepare("UPDATE users SET last_login_dt=?, ip_address=? WHERE user_id=?");

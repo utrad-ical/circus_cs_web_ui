@@ -1,4 +1,4 @@
-@charset "shift_jis";
+@charset "utf-8";
 /* ===================================================================
 CSS information
 
@@ -33,7 +33,7 @@ a:active {
 }
 
 input[type=button] {
-	font-family: verdana,"‚l‚r ‚oƒSƒVƒbƒN",sans-serif;
+	font-family: verdana,"ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯",sans-serif;
 	padding: 0; 
 }
 input.s-btn {

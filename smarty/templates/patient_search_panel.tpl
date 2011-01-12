@@ -13,8 +13,8 @@
 				</td>
 				<th style="width: 4em;"><span class="trim01">Sex</span></th>
 				<td style="width: 180px;">
-					<label><input name="filterSex" type="radio" value="M" {if $params.filterSex=="M"}checked="checked"{/if} />male</label>
-					<label><input name="filterSex" type="radio" value="F" {if $params.filterSex=="F"}checked="checked"{/if} />female</label>
+					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} />male</label>
+					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} />female</label>
 					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked"{/if} />all</label>
 				</td>
 			</tr>

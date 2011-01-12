@@ -168,7 +168,7 @@
 						. " AND sr.study_instance_uid=st.study_instance_uid" 
 						. " AND pt.patient_id=st.patient_id" 
 						. " AND sr.storage_id=sm.storage_id";
-	
+				
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
 				 
@@ -190,21 +190,21 @@
 				$params['orgHeight']         = $result[13];
 				$params['storagePath']       = $result[14];
 				$params['webPath']           = $result[15];
-		
+				
 				$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
-				$stmt->execute(array($params['cadName'], $params['version']));		
-		
+				$stmt->execute(array($params['cadName'], $params['version']));
+				
 				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		
+				
 				$params['resultType']  = $result['result_type'];
 				$params['presentType'] = $result['present_type'];
-	
+				
 				$params['resultTableName'] = $result['result_table'];
 				$params['scoreTableName']  = $result['score_table'];
-	
+				
 				$params['yellowCircleTh'] = $result['yellow_circle_th'];
 				$params['doubleCircleTh'] = $result['double_circle_th'];
-		
+				
 				if($cadPreferenceFlg == 0)
 				{
 					$params['maxDispNum']   = $result['max_disp_num'];
@@ -341,4 +341,3 @@
 	}
 	$pdo = null;
 ?>
-

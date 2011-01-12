@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -23,7 +23,7 @@ function ChangeCheckbox(sid, val)
 	var numSelectedSeries = jQuery("#selectedSeriesStr").val().split("^");
 	var selectedValue = jQuery('#series' + sid + 'Selected').val();
 
-	// チェックボックスの調整
+	// Display series rows depending on checked state
 	for(var j=2; j<numSelectedSeries.length; j++)
 	{
 		 document.getElementById('series' + j + 'Selected').value = "";
@@ -44,6 +44,7 @@ function ChangeCheckbox(sid, val)
 		}
 	}
 	
+	// Hide series rows depending on checked state
 	for(var k=2; k<numSelectedSeries.length; k++)
 	{
 		selectedValue = document.getElementById('series' + k + 'Selected').value;

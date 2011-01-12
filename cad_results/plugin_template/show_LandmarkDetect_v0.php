@@ -22,154 +22,154 @@
 	$stmt->execute();
 	$posData = $stmt->fetchAll();
 
-	$dstHtml .= '<input type="hidden" id="orgWidth"   value="' . $width . '">';
-	$dstHtml .= '<input type="hidden" id="orgHeight"  value="' . $height . '">';
-	$dstHtml .= '<input type="hidden" id="orgDepth"   value="' . $depth . '">';
-	$dstHtml .= '<input type="hidden" id="dispWidth"  value="' . $dispWidth . '">';
-	$dstHtml .= '<input type="hidden" id="dispHeight" value="' . $dispHeight . '">';
-	$dstHtml .= '<input type="hidden" id="dispDepth"  value="' . $dispDepth . '">';
-	$dstHtml .= '<input type="hidden" id="xPos"       value="' . $xPos . '">';
-	$dstHtml .= '<input type="hidden" id="yPos"       value="' . $yPos . '">';
-	$dstHtml .= '<input type="hidden" id="zPos"       value="' . $zPos . '">';
-	$dstHtml .= '<input type="hidden" id="webPathOfCADReslut" value="../' . $params['webPathOfCADReslut'] . '">';
+	$dstHtml .= '<input type="hidden" id="orgWidth"   value="' . $width . '">'
+	         .   '<input type="hidden" id="orgHeight"  value="' . $height . '">'
+	         .  '<input type="hidden" id="orgDepth"   value="' . $depth . '">'
+	         .  '<input type="hidden" id="dispWidth"  value="' . $dispWidth . '">'
+	         .  '<input type="hidden" id="dispHeight" value="' . $dispHeight . '">'
+	         .  '<input type="hidden" id="dispDepth"  value="' . $dispDepth . '">'
+	         .  '<input type="hidden" id="xPos"       value="' . $xPos . '">'
+	         .  '<input type="hidden" id="yPos"       value="' . $yPos . '">'
+	         .  '<input type="hidden" id="zPos"       value="' . $zPos . '">';
+	         .  '<input type="hidden" id="webPathOfCADReslut" value="../' . $params['webPathOfCADReslut'] . '">';
 	
 	$dstHtml .= '<div id="resultBody" class="resultBody" style="background-color:#f0f;">';
 	
-	//----------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	// Main table
-	//----------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	$dstHtml  = '<div class="imgDisp">'
 	          . '<table>'
 	          . '<tr>';
 
 	// Axial
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;">';
-	$dstHtml .='<img id="axial" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
-	$dstHtml .=' width=' . $dispWidth . ' height=' . $dispHeight . '>';
-	$dstHtml .= '<img id="axialCross" src="images/magenta_cross.png"';
-	$dstHtml .= ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . (-$yPos/2-25) . 'px;">';
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';	
+	$dstHtml .= '<td>'
+	         .  '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;">'
+	         .  '<img id="axial" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"'
+	         .  ' width=' . $dispWidth . ' height=' . $dispHeight . '>'
+	         .  '<img id="axialCross" src="images/magenta_cross.png"'
+	         .  ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . (-$yPos/2-25) . 'px;">'
+	         .  '</div>'
+	         .  '</td>';
 	
 	$dstHtml .= '<td width=10 rowspan=5></td>';
 
-	$dstHtml .= '<td rowspan=3 align=left>';
-	$dstHtml .= '<table>';
-	$dstHtml .= '<tr valign=top>';
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div id="axialEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative;  top:0px; left:0px;">';	
-	$dstHtml .= '<img id="axialEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';
-	$dstHtml .= '<img id="axialEnlarge" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"';
-	$dstHtml .= ' width=' . $width . ' height=' . $height;
-	$dstHtml .= ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$yPos+50) . 'px; z-index:1;">';
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';
-	$dstHtml .= '<td rowspan=2; width=3></td>';
+	$dstHtml .= '<td rowspan=3 align=left>'
+	         .  '<table>'
+	         .  '<tr valign=top>'
+	         .  '<td>'
+	         .  '<div id="axialEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative;  top:0px; left:0px;">'
+	         .  '<img id="axialEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">'
+	         .  '<img id="axialEnlarge" src="../' . $params['webPathOfCADReslut'] . '/axialSectionAbdomen_' . sprintf("%04d", $zPos) . '.jpg"'
+	         .  ' width=' . $width . ' height=' . $height
+	         .  ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$yPos+50) . 'px; z-index:1;">'
+	         .  '</div>'
+	         .  '</td>'
+	         .  '<td rowspan=2; width=3></td>';
 
-	$dstHtml .= '<td>';
-	$dstHtml .= '<table>';
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td width=40><span id="xPosDisp">X:' . $xPos . '</span></td>';
-	$dstHtml .= '<td><img id="xPosPlusButton" src="images/plus.gif">';
-	$dstHtml .= '&nbsp;<img id="xPosMinusButton" src="images/minus.gif"></td>';
-	$dstHtml .= '</tr>';
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td><span id="yPosDisp">Y:' . $yPos . '</span></td>';
-	$dstHtml .= '<td><img id="yPosPlusButton" src="images/plus.gif">';
-	$dstHtml .= '&nbsp;<img id="yPosMinusButton" src="images/minus.gif"></td>';
-	$dstHtml .= '</tr>';
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td><span id="zPosDisp">Z:' . $zPos . '</span></td>';
-	$dstHtml .= '<td><img id="zPosPlusButton" src="images/plus.gif">';
-	$dstHtml .= '&nbsp;<img id="zPosMinusButton" src="images/minus.gif"></td>';
-	$dstHtml .= '</tr>';
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td colspan=2>Grayscale:&nbsp;';
-	$dstHtml .= '<select id="presetMenu">';
-	$dstHtml .= '<option value="Abdomen">Abdomen</option>'; 
-	$dstHtml .= '<option value="Lung">Lung</option>'; 
-	$dstHtml .= '<option value="Bone">Bone</option>';
-	$dstHtml .= '</select>'; 
-	$dstHtml .= '</td></tr>';
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td colspan=2>Scale:&nbsp;';
-	$dstHtml .= '<select id="scaleMenu">';
-	$dstHtml .= '<option value="1">&times;1</option>'; 
-	$dstHtml .= '<option value="2">&times;2</option>'; 
-	$dstHtml .= '<option value="3">&times;3</option>';
-	$dstHtml .= '<option value="4">&times;4</option>';
-	$dstHtml .= '</select>'; 
-	$dstHtml .= '</td></tr>';
-	$dstHtml .= '</table>';
-	$dstHtml .= '</td>';
-	$dstHtml .= '</tr>';
+	$dstHtml .= '<td>'
+	         .  '<table>'
+	         .  '<tr>'
+	         .  '<td width=40><span id="xPosDisp">X:' . $xPos . '</span></td>'
+	         .  '<td><img id="xPosPlusButton" src="images/plus.gif">'
+	         .  '&nbsp;<img id="xPosMinusButton" src="images/minus.gif"></td>'
+	         .  '</tr>'
+	         .  '<tr>'
+	         .  '<td><span id="yPosDisp">Y:' . $yPos . '</span></td>'
+	         .  '<td><img id="yPosPlusButton" src="images/plus.gif">'
+	         .  '&nbsp;<img id="yPosMinusButton" src="images/minus.gif"></td>'
+	         .  '</tr>'
+	         .  '<tr>'
+	         .  '<td><span id="zPosDisp">Z:' . $zPos . '</span></td>'
+	         .  '<td><img id="zPosPlusButton" src="images/plus.gif">'
+	         .  '&nbsp;<img id="zPosMinusButton" src="images/minus.gif"></td>'
+	         .  '</tr>'
+	         .  '<tr>'
+	         .  '<td colspan=2>Grayscale:&nbsp;'
+	         .  '<select id="presetMenu">'
+	         .  '<option value="Abdomen">Abdomen</option>'
+	         .  '<option value="Lung">Lung</option>'
+	         .  '<option value="Bone">Bone</option>'
+	         .  '</select>'
+	         .  '</td></tr>'
+	         .  '<tr>'
+	         .  '<td colspan=2>Scale:&nbsp;'
+	         .  '<select id="scaleMenu">'
+	         .  '<option value="1">&times;1</option>'
+	         .  '<option value="2">&times;2</option>'
+	         .  '<option value="3">&times;3</option>'
+	         .  '<option value="4">&times;4</option>'
+	         .  '</select>'
+	         .  '</td></tr>'
+	         .  '</table>'
+	         .  '</td>'
+	         .  '</tr>';
 
-	$dstHtml .= '<tr valign=top>';
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div id="coronalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">';	
-	$dstHtml .= '<img id="coronalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';
-	$dstHtml .= '<img id="coronalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
-	$dstHtml .= ' width=' . $width . ' height=' . $depth;
-	$dstHtml .= ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">';	
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';
+	$dstHtml .= '<tr valign=top>'
+	         .  '<td>'
+	         .  '<div id="coronalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
+	         .  '<img id="coronalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">'
+	         .  '<img id="coronalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"'
+	         .  ' width=' . $width . ' height=' . $depth
+	         .  ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">'
+	         .  '</div>'
+	         .  '</td>';
 	
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div id="sagittalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">';	
-	$dstHtml .= '<img id="sagittalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">';		
-	$dstHtml .= '<img id="sagittalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
-	$dstHtml .= ' width=' . $height . ' height=' . $depth;
-	$dstHtml .= ' style="position:absolute; left:' . (-$yPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">';
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';	
-	$dstHtml .= '</tr>';
-	$dstHtml .= '</table>';	
-	$dstHtml .= '</td>';	
-	$dstHtml .= '</tr>';
+	$dstHtml .= '<td>'
+	         .  '<div id="sagittalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
+	         .  '<img id="sagittalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">'
+	         .  '<img id="sagittalEnlarge" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"'
+	         .  ' width=' . $height . ' height=' . $depth
+	         .  ' style="position:absolute; left:' . (-$yPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">'
+	         .  '</div>'
+	         .  '</td>'
+	         .  '</tr>'
+	         .  '</table>'
+	         .  '</td>'
+	         .  '</tr>';
 	
-	$dstHtml .= '<tr>';
-	$dstHtml .= '<td align=center><div id="axialSlider" class="mt5 mb5"></div></td>';	
-	$dstHtml .= '</tr>';
+	$dstHtml .= '<tr>'
+	         .  '<td align=center><div id="axialSlider" class="mt5 mb5"></div></td>'
+	         .  '</tr>';
 	
 	$dstHtml .= '<tr><td height=5></td></tr>';
 	
 	$dstHtml .= '<tr>';
 	
 	// Coronal
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispDepth . 'px;">';
-	$dstHtml .= '<img id="coronal" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"';
-	$dstHtml .= ' width=' . $dispWidth . ' height=' . $dispDepth . '>';
-	$dstHtml .= '<img id="coronalCross" src="images/magenta_cross.png"';
-	$dstHtml .= ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">';
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';	
+	$dstHtml .= '<td>'
+	         .  '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispDepth . 'px;">'
+	         .  '<img id="coronal" src="../' . $params['webPathOfCADReslut'] . '/coronalSectionAbdomen_' . sprintf("%04d", $yPos) . '.jpg"'
+	         .  ' width=' . $dispWidth . ' height=' . $dispDepth . '>'
+	         .  '<img id="coronalCross" src="images/magenta_cross.png"'
+	         .  ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">'
+	         .  '</div>'
+	         .  '</td>';
 	
 	// Saggittal
-	$dstHtml .= '<td>';
-	$dstHtml .= '<div class="imgArea" style="width:' . $dispHeight . 'px; height:' .  $dispDepth . 'px;">';
-	$dstHtml .= '<img id="sagittal" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"';
-	$dstHtml .= ' width=' . $dispHeight . ' height=' . $dispDepth . '>';
-	$dstHtml .= '<img id="sagittalCross" src="images/magenta_cross.png" ';
-	$dstHtml .= ' style="position:relative; left:' . ($yPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">';
-	$dstHtml .= '</div>';
-	$dstHtml .= '</td>';	
+	$dstHtml .= '<td>'
+	         .  '<div class="imgArea" style="width:' . $dispHeight . 'px; height:' .  $dispDepth . 'px;">'
+	         .  '<img id="sagittal" src="../' . $params['webPathOfCADReslut'] . '/sagittalSectionAbdomen_' . sprintf("%04d", $xPos) . '.jpg"'
+	         .  ' width=' . $dispHeight . ' height=' . $dispDepth . '>'
+	         .  '<img id="sagittalCross" src="images/magenta_cross.png" '
+	         .  ' style="position:relative; left:' . ($yPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">'
+	         .  '</div>'
+	         .  '</td>';
 
 	$dstHtml .= '</tr>';
 	
 	$dstHtml .= '<tr>';
-	$dstHtml .= '<td align=center><div id="coronalSlider"  class="mt5 mb5"></div></td>';	
-	$dstHtml .= '<td align=center><div id="sagittalSlider" class="mt5 mb5"></div></td>';	
+	$dstHtml .= '<td align=center><div id="coronalSlider"  class="mt5 mb5"></div></td>';
+	$dstHtml .= '<td align=center><div id="sagittalSlider" class="mt5 mb5"></div></td>';
 	$dstHtml .= '</tr>';
 	$dstHtml .= '</table>';
 	$dstHtml .= '</div>';
-	//----------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	// Position table
-	//----------------------------------------------------------------------------------------------
-	$dstHtml .='<div class="rightColumn">';	
+	//------------------------------------------------------------------------------------------------------------------
+	$dstHtml .= '<div class="rightColumn">';
 	$dstHtml .= '<div class="posTable">';
 	$dstHtml .= '<table class="scrollTable">';
 	$dstHtml .= '<thead>';
@@ -213,14 +213,11 @@
 
 	$dstHtml .= '</div>';
 	$dstHtml .= '</div>';
-	//----------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	//エラーが発生した場合にエラー表示をする設定
-	ini_set( 'display_errors', 1 );
-
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
@@ -243,7 +240,5 @@
 
 	$smarty->display('cad_results/landmark_detect_v0.tpl');
 	//------------------------------------------------------------------------------------------------------------------
-
-
 
 ?>

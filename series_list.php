@@ -20,7 +20,7 @@
 		
 		PgValidator::$conn = $pdo;
 		$validator = new FormValidator();
-		$validator->registerValidator('pgregex', 'PgRegexValidator');		
+		$validator->registerValidator('pgregex', 'PgRegexValidator');
 		
 		if($mode == 'study')
 		{
@@ -52,7 +52,7 @@
 					'type' => 'int', 
 					'min' => '0',
 					'errorMes' => "'Age' is invalid.")
-				));				
+				));
 		}
 	
 		if($mode != 'today')
@@ -67,7 +67,7 @@
 				"srTimeTo" => array(
 					"type" => "time",
 					"errorMes" => "'Series time' is invalid.")
-				));	
+				));
 		}
 	
 		$validator->addRules(array(
@@ -112,7 +112,6 @@
 			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
 			   && $params['filterAgeMin'] > $params['filterAgeMax'])
 			{
-				//$params['errorMessage'] = "Range of 'Age' is invalid."; 
 				$tmp = $params['filterAgeMin'];
 				$params['filterAgeMin'] = $params['filterAgeMax'];
 				$params['filterAgeMax'] = $tmp;
@@ -188,7 +187,7 @@
 				$addressParams['mode'] = 'study';
 				$addressParams['studyInstanceUID'] = $params['studyInstanceUID'];
 			}
-			else		
+			else
 			{
 				if($params['filterPtID'] != "")
 				{
@@ -197,7 +196,7 @@
 					{
 						$patientID = PinfoScramble::decrypt($params['filterPtID'], $_SESSION['key']);
 					}
-	
+					
 					// Search by regular expression
 					$sqlCondArray[] = "pt.patient_id~*?";
 					$sqlParams[] = $patientID;
@@ -242,7 +241,7 @@
 						$sqlParams[] = $params['filterAgeMax'];
 						$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 					}
-				}		
+				}
 			}
 			
 			if($params['mode'] != 'today')
@@ -304,8 +303,8 @@
 			 	$sqlCondArray[] = "sr.sid IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=3 AND tag~*?)";
 				$sqlParams[] = $params['filterTag'];
 				$addressParams['filterTag'] = $params['filterTag'];
-			}			
-				
+			}
+			
 			$sqlCondArray[] = "st.study_instance_uid=sr.study_instance_uid";
 			$sqlCondArray[] = "pt.patient_id=st.patient_id";
 			$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
@@ -313,7 +312,7 @@
 	
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve mode of display order (Default: ascending order of series number)
-			//----------------------------------------------------------------------------------------------------------	
+			//----------------------------------------------------------------------------------------------------------
 			$orderColStr = "";
 		
 			switch($params['orderCol'])
@@ -348,9 +347,9 @@
 			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');	
 			$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
-			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
+			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);
 			//----------------------------------------------------------------------------------------------------------
-	
+			
 			//----------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//----------------------------------------------------------------------------------------------------------
@@ -388,31 +387,31 @@
 					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
 					. " GROUP BY cm.cad_name, cm.version, cm.exec_flg, cm.label_order"
 					. " ORDER BY cm.label_order ASC";
-						
+			
 			$stmtCADMaster = $pdo->prepare($sqlStr);
-	
+			
 			$sqlStr = "SELECT executed_at FROM executed_plugin_list el, executed_series_list esr, cad_master cm"
-			        . " WHERE cm.cad_name=? AND cm.version=?"
-			        . " AND cm.cad_name=el.plugin_name"
-			        . " AND cm.version=el.version"
+					. " WHERE cm.cad_name=? AND cm.version=?"
+					. " AND cm.cad_name=el.plugin_name"
+					. " AND cm.version=el.version"
 					. " AND el.exec_id=esr.exec_id"
-			        . " AND esr.series_id=1"
-			        . " AND esr.study_instance_uid=?"
-			        . " AND esr.series_instance_uid=?";
-	
+					. " AND esr.series_id=1"
+					. " AND esr.study_instance_uid=?"
+					. " AND esr.series_instance_uid=?";
+			
 			$stmtCADExec = $pdo->prepare($sqlStr);
-	
+			
 			$sqlStr = "SELECT COUNT(*) FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
-			        . " WHERE cm.cad_name=? AND cm.version=?"
-			        . " AND cm.cad_name=pjob.plugin_name"
-			        . " AND cm.version=pjob.version"
+					. " WHERE cm.cad_name=? AND cm.version=?"
+					. " AND cm.cad_name=pjob.plugin_name"
+					. " AND cm.version=pjob.version"
 					. " AND pjob.job_id = jsr.job_id"
 					. " AND jsr.series_id=1"
 					. " AND jsr.study_instance_uid=?"
 					. " AND jsr.series_instance_uid=?";
-	
+			
 			$stmtCADJob = $pdo->prepare($sqlStr);
-	
+			
 			while ($result = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
 			
@@ -438,15 +437,15 @@
 					$cadColSettings[$cadNum][4] = 0;					// queue flg
 					$cadColSettings[$cadNum][5] = '';
 					$cadColSettings[$cadNum][6] = $resultCADMaster[3];
-									
-					$stmtCADExec->execute($cadCondArr);						
-			
-					if($stmtCADExec->rowCount() == 1) // PostgreSQL以外に適用する場合は要動作確認(特にMySQL)
+					
+					$stmtCADExec->execute($cadCondArr);
+					
+					if($stmtCADExec->rowCount() == 1)
 					{
 						$cadColSettings[$cadNum][3] = 1;
 						$tmpDate = $stmtCADExec->fetchColumn();
 						
-						// 2つ目の条件は自明だが念のために
+						// 2縺､逶ｮ縺ｮ譚｡莉ｶ縺ｯ閾ｪ譏弱□縺悟ｿｵ縺ｮ縺溘ａ縺ｫ
 						if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d')) 
 						{
 							$cadColSettings[$cadNum][5] = substr($tmpDate, 11);
@@ -466,7 +465,7 @@
 					$cadNum++;
 					
 				} // end while
-	
+				
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
 					$ptID   = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
@@ -476,18 +475,18 @@
 				{
 					$ptID   = $result['patient_id'];
 					$ptName = $result['patient_name'];
-				}			
+				}
 	
 				array_push($data, array($result['sid'],
 										$result['study_instance_uid'],
-				                        $result['series_instance_uid'],
+										$result['series_instance_uid'],
 										$ptID,
 										$ptName,
 										$result['age'],
 										$result['sex'],
 										$result['series_date'],
 										$result['series_time'],
-				                        $result['series_number'],
+										$result['series_number'],
 										$result['modality'],
 										$result['image_number'],
 										$result['series_description'],
@@ -528,5 +527,5 @@
 	{
 		var_dump($e->getMessage());
 	}
-	$pdo = null;	
+	$pdo = null;
 ?>

@@ -20,7 +20,7 @@
 			"otherwise" => "series"),	
 		"newTodayDisp" => array(
 			"type" => "select",
-			"options" => array('series', 'cad')),	
+			"options" => array('series', 'cad')),
 		"oldDarkroomFlg" => array(
 			"type" => "select",
 			"options" => array('t', 'f'),
@@ -44,7 +44,7 @@
 			"otherwise" => 'none'),
 		"newLatestResults" => array(
 			"type" => "select",
-			"options" => array('own', 'all', 'none'))			
+			"options" => array('own', 'all', 'none'))
 		));	
 	
 

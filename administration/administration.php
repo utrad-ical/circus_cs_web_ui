@@ -5,7 +5,7 @@
 	include("auto_logout_administration.php");
 	include("server_status_private.php");
 
-	$params = array('toTopDir' => "../");	
+	$params = array('toTopDir' => "../");
 	$cadList = array();
 
 	$userID = $_SESSION['userID'];
@@ -15,7 +15,7 @@
 
 	// Connect to SQL Server
 	$pdo = new PDO($connStrPDO);
-		
+	
 	//-------------------------------------------------------------------------------------------------------------
 	// Check server status
 	//-------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@
 	//--------------------------------------------------------------------------------------------------------------
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
-			
+	
 	$smarty->assign('params',           $params);
 	$smarty->assign('storageSvStatus',  $storageSvStatus);
 	$smarty->assign('jobManagerStatus', $jobManagerStatus);

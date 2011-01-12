@@ -1,4 +1,4 @@
-@charset "shift_jis";
+@charset "utf-8";
 /* ===================================================================
 CSS information
 
@@ -419,3 +419,4 @@ input.form-btn {
 h4.upSec {
 	color: #09F;
 	font-weight: bold;
+}

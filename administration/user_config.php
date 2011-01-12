@@ -8,7 +8,7 @@
 	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{
 		$params = array('toTopDir' => "../",
-		                'message'  => "&nbsp;");	
+		                'message'  => "&nbsp;");
 	
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables
@@ -97,7 +97,7 @@
 							$sqlParams[] = md5($newPassword);
 							$updateCnt++;
 						}
-	
+						
 						if($oldUserID == $longinUser && $oldGroupID != $newGroupID)
 						{
 							$msg = "You can't change your group ID (" . $oldGroupID . " -> " . $newGroupID . ")";
@@ -144,7 +144,7 @@
 					
 						$sqlStr .= " WHERE user_id=?";
 						$sqlParams[] = $oldUserID;
-	
+						
 						if($updateCnt == 0)  $sqlStr  = "";
 					}
 				}
@@ -196,6 +196,7 @@
 			// Make one-time ticket
 			//------------------------------------------------------------------------------------------------
 			$_SESSION['ticket'] = md5(uniqid().mt_rand());
+			$params['ticklet'] = $_SESSION['ticket'] ;
 			//------------------------------------------------------------------------------------------------
 
 			//------------------------------------------------------------------------------------------------
@@ -225,14 +226,12 @@
 			// Settings for Smarty
 			//------------------------------------------------------------------------------------------------
 			require_once('../smarty/SmartyEx.class.php');
-			$smarty = new SmartyEx();	
+			$smarty = new SmartyEx();
 
 			$smarty->assign('params',    $params);
 			$smarty->assign('userList',  $userList);
 			$smarty->assign('groupList', $groupList);
 			
-			$smarty->assign('ticket',    $_SESSION['ticket']);
-	
 			$smarty->display('administration/user_config.tpl');
 			//------------------------------------------------------------------------------------------------
 		}

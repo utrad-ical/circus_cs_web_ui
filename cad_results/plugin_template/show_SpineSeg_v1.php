@@ -2,11 +2,7 @@
 
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
-	//$img = new Imagick();
-	//$img->readImage($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'in' . sprintf("%04d", $imgNum) . '.jpg');
-	//$dispWidth  = $img->getImageWidth()*0.75;
-	//$dispHeight = $img->getImageHeight()*0.75;
-
+	// Get width and height of PNG image Using GD library
 	$img = @imagecreatefromjpeg($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'in' . sprintf("%04d", $imgNum) . '.jpg');
 	$dispWidth  = imagesx($img) * 0.75;
 	$dispHeight = imagesy($img) * 0.75
@@ -49,7 +45,6 @@
 	//$smarty->assign('scoreStr',    $scoreStr);
 	//$smarty->assign('evalComment',  $evalComment);
 	
-		
 	$smarty->display('cad_results/spine_seg_v1.tpl');
-	//------------------------------------------------------------------------------------------------------------------		
+	//------------------------------------------------------------------------------------------------------------------
 ?>

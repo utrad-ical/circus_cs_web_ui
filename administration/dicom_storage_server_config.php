@@ -28,9 +28,9 @@
 		$newDbUserName       = (isset($_REQUEST['newDbUserName']))       ? $_REQUEST['newDbUserName']       : "";
 		$newDbPassword       = (isset($_REQUEST['newDbPassword']))       ? $_REQUEST['newDbPassword']       : "";
 		//--------------------------------------------------------------------------------------------------------------
-
+		
 		$restartFlg = 0;
-
+		
 		if($mode == "update")
 		{
 			// Update 
@@ -50,7 +50,6 @@
 				fprintf($fp, "%s\r\n", $newDbName);
 				fprintf($fp, "%s\r\n", $newDbUserName);
 				fprintf($fp, "%s\r\n", $newDbPassword);
-				
 			}
 			else
 			{
@@ -62,8 +61,8 @@
 			if($params['message'] == "&nbsp;")
 			{
 				$params['message'] = '<span style="color:#0000ff;">'
-					  			   . 'Configuration file was successfully updated. Please restart DICOM storage server!!'
-					               . '</span>';
+								   . 'Configuration file was successfully updated. Please restart DICOM storage server!!'
+								   . '</span>';
 				$restartFlg = 1;
 			}
 		}
@@ -112,6 +111,7 @@
 		// Make one-time ticket
 		//----------------------------------------------------------------------------------------------------
 		$_SESSION['ticket'] = md5(uniqid().mt_rand());
+		$configData['ticket'] = $_SESSION['ticket'];
 		//----------------------------------------------------------------------------------------------------
 
 		//----------------------------------------------------------------------------------------------------
@@ -124,8 +124,6 @@
 		$smarty->assign('configData', $configData);
 		$smarty->assign('restartFlg', $restartFlg);
 		
-		$smarty->assign('ticket',     rawurlencode($_SESSION['ticket']));
-
 		$smarty->display('administration/dicom_storage_server_config.tpl');
 		//----------------------------------------------------------------------------------------------------
 	

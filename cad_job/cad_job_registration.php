@@ -27,7 +27,7 @@
 	{
 		$dstData = array('message'      => "",
 				         'registeredAt' => date("Y-m-d H:i:s"),
-						 'executedAt'   => "");	
+				         'executedAt'   => "");	
 
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
@@ -38,7 +38,7 @@
 					. " WHERE pjob.plugin_name=? AND pjob.version=?"
 					. " AND pjob.job_id=js.job_id"
 					. " AND (";
-					
+		
 		array_push($colArr, $cadName);
 		array_push($colArr, $version);
 
@@ -55,7 +55,7 @@
 		$sqlStr .= ")";
 				
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute($colArr);		
+		$stmt->execute($colArr);
 				
 		if($stmt->rowCount() == $seriesNum)
 		{
@@ -83,7 +83,7 @@
 
 				array_push($colArr, $i+1);
 				array_push($colArr, $studyUIDArr[$i]);
-				array_push($colArr, $seriesUIDArr[$i]);		
+				array_push($colArr, $seriesUIDArr[$i]);
 			}
 			$sqlStr .= ");";
 			

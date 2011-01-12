@@ -2,11 +2,7 @@
 
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
-	//$img = new Imagick();
-	//$img->readImage($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
-	//$dispWidth  = $img->getImageWidth();
-	//$dispHeight = $img->getImageHeight();
-	
+	// Get width and height of PNG image Using GD library
 	$img = @imagecreatefrompng($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
 	$dispWidth  = imagesx($img);
 	$dispHeight = imagesy($img);
@@ -103,8 +99,7 @@
 			$scoringHTML .= '>' . $i . '</option>';
 		}
 		
-		$scoringHTML .= '</select>';
-		$scoringHTML .= '&nbsp;</td>';
+		$scoringHTML .= '</select>&nbsp;</td>';
 				
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'sat"';
@@ -118,8 +113,7 @@
 			$scoringHTML .= '>' . $i . '</option>';
 		}
 		
-		$scoringHTML .= '</select>';
-		$scoringHTML .= '&nbsp;</td>';
+		$scoringHTML .= '</select>&nbsp;</td>';
 
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'bound"';
@@ -133,9 +127,7 @@
 			$scoringHTML .= '>' . $i . '</option>';
 		}
 		
-		$scoringHTML .= '</select>';
-		$scoringHTML .= '&nbsp;</td>';
-
+		$scoringHTML .= '</select>&nbsp;</td>';
 		
 		if($j%2 == 1)   $scoringHTML .= '</tr>';
 		else if($j==4)  $scoringHTML .= '<td></td><td>&nbsp;</td></tr>';
@@ -148,11 +140,13 @@
 				 .  '<tr align=left valign=top>'
 				 .  '<th>Comment:</th>'
 				 .  '<td><textarea id="evalComment" cols="60" rows="3"';
+
 	if($registTime != "")  $scoringHTML .= ' disabled="disabled"';
+
 	$scoringHTML .= '>' . $evalComment . '</textarea></td>'
-	             . '</tr>'
-	             . '</table>'
-				 . '</div>';
+	             .  '</tr>'
+	             .  '</table>'
+				 .  '</div>';
 	//------------------------------------------------------------------------------------------------------------------
 
 
@@ -178,13 +172,13 @@
 	$smarty->assign('orgImg', $orgImg);	
 	$smarty->assign('resImg', $resImg);	
 
-	$smarty->assign('scoringHTML', $scoringHTML);	
+	$smarty->assign('scoringHTML', $scoringHTML);
 	$smarty->assign('registTime',  $registTime);
 	$smarty->assign('scoreStr',    $scoreStr);
 	$smarty->assign('evalComment',  $evalComment);
 	
-		
 	//$smarty->display('cad_results/fat_volumetry_v1.tpl');
 	$smarty->display('cad_results/fat_volumetry_v1_with_score.tpl');
-	//------------------------------------------------------------------------------------------------------------------		
+	//------------------------------------------------------------------------------------------------------------------
+
 ?>

@@ -30,7 +30,6 @@
 			$tmpStr .= '^' . $result[1];
 		}
 		$modalityMenuVal[] = $tmpStr;
-	
 	}
 	
 	$cadMenuStr = explode('/', $modalityMenuVal[0]);
@@ -41,7 +40,7 @@
 	{
 		$tmpStr = explode('^', $cadMenuStr[$i]);
 
-		$cadList[$i][0] =  $tmpStr[0]; // CAD name
-		$cadList[$i][1] =  substr($cadMenuStr[$i], strlen($tmpStr[0])+1); // version str
+		$cadList[$i][0] =  $tmpStr[0];                                     // CAD name
+		$cadList[$i][1] =  substr($cadMenuStr[$i], strlen($tmpStr[0])+1);  // version str
 	}
 ?>

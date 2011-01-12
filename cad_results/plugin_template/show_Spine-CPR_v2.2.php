@@ -93,33 +93,29 @@
 	}
 	//----------------------------------------------------------------------------------------------
 
+	//----------------------------------------------------------------------------------------------
+	// Make one-time ticket
+	//----------------------------------------------------------------------------------------------
+	$_SESSION['ticket'] = md5(uniqid().mt_rand());
+	$params['ticket'] = $_SESSION['ticket'];
+	//----------------------------------------------------------------------------------------------
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	//エラーが発生した場合にエラー表示をする設定
-	ini_set( 'display_errors', 1 );
-
 	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params', $params);
 
-	$smarty->assign('consensualFBFlg', $consensualFBFlg);
-
-	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
-
-	$smarty->assign('registTime',    $registTime);	
-	$smarty->assign('registMsg',     $registMsg);
-	
+	$smarty->assign('consensualFBFlg',   $consensualFBFlg);
+	$smarty->assign('registTime',        $registTime);	
+	$smarty->assign('registMsg',         $registMsg);
 	$smarty->assign('orgImgFname',       $orgImgFname);	
-	$smarty->assign('thumbnailImgFname', $thumbnailImgFname);	
-
+	$smarty->assign('thumbnailImgFname', $thumbnailImgFname);
 	$smarty->assign('scoringHtml',       $scoringHtml);	
 
-	// For CAD detail
-
 	$smarty->display('cad_results/Spine-CPR_v2.2.tpl');
-	//------------------------------------------------------------------------------------------------------------------		
-
+	//------------------------------------------------------------------------------------------------------------------
 
 ?>

@@ -47,7 +47,7 @@
 			"options" => array("todaysSeries", "series"),
 			'default'  => "series",
 			'oterwise' => "series")
-		));				
+		));
 
 	if($validator->validate($_GET))
 	{
@@ -91,10 +91,9 @@
 					
 			$params['patientID']   = $result['patient_id'];
 			$params['patientName'] = $result['patient_name'];
-		
+			
 			$encryptedPatientID   = PinfoScramble::encrypt($params['patientID'] , $_SESSION['key']);
-		//	$encryptedPatientName = PinfoScramble::encrypt($params['patientName'], $_SESSION['key']);	
-	
+			
 			$stmt = $pdo->prepare("SELECT input_type FROM cad_master WHERE cad_name=? AND version=?");
 			$stmt->execute(array($params['cadName'], $params['version']));
 			
@@ -121,7 +120,7 @@
 			$stmt->execute(array($params['cadName'], $params['version']));
 			
 			$seriesNum = $stmt->rowCount();
-		
+			
 			$cnt = 0;
 
 			for($j=0; $j<$seriesNum; $j++)
@@ -207,8 +206,6 @@
 						}
 					}				
 					$sqlStr .= " ORDER BY series_date ASC, series_time ASC";
-
-					//echo $sqlStr . '<br>';
 				}
 				else if($params['inputType'] == 2) // multi series in mulit studies
 				{
@@ -247,16 +244,14 @@
 						if($modalityArr[$i] == $modalityArr[$j])
 						{
 							$sqlStr .= " AND NOT (st.study_instance_uid=? AND sr.series_instance_uid=?)";
-							array_push($colArr, $studyUIDArr[$i]);					
-							array_push($colArr, $seriesUIDArr[$i]);					
+							array_push($colArr, $studyUIDArr[$i]);
+							array_push($colArr, $seriesUIDArr[$i]);
 						}
 					}
-					$sqlStr .= " ORDER BY sr.series_date ASC, sr.series_time ASC";		
+					$sqlStr .= " ORDER BY sr.series_date ASC, sr.series_time ASC";
 				}
 				//--------------------------------------------------------------------------------------------------
 
-				//echo $sqlStr;
-		
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($colArr);
 				$rowNum = $stmt->rowCount();
@@ -274,7 +269,7 @@
 						{			
 							$result = $stmt->fetch(PDO::FETCH_NUM);
 							array_push($studyUIDArr,  $result[0]);
-							array_push($seriesUIDArr, $result[1]);			
+							array_push($seriesUIDArr, $result[1]);
 						}
 						else
 						{
@@ -333,7 +328,7 @@
 						$params['patientName'] = $result[1];
 					}
 		
-					for($i=0; $i<7;$i++)
+					for($i=0; $i<7; $i++)
 					{
 						$seriesList[$j][$i] = $result[$i+2];
 					}
@@ -371,12 +366,12 @@
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute(array($seriesUIDArr[0], $studyUIDArr[0]));
 	
-						$result = $stmt->fetch(PDO::FETCH_NUM);	
+						$result = $stmt->fetch(PDO::FETCH_NUM);
 								
 						$seriesList[0][0][0] = $studyUIDArr[0] . "^" . $seriesUIDArr[0];
 						$seriesNumArr[0] = 1;
 					
-						for($i=1; $i<7; $i++)
+						for($i=1; $i < 7; $i++)
 						{
 							$seriesList[0][0][$i] = $result[$i-1];
 						}
@@ -397,7 +392,7 @@
 									. " sr.image_number, sr.series_description"
 									. " FROM study_list st, series_list sr"
 									. " WHERE st.study_instance_uid=?" 
-									. " AND st.study_instance_uid=sr.study_instance_uid"		
+									. " AND st.study_instance_uid=sr.study_instance_uid"
 									. " AND sr.modality=?"
 									. " AND (";
 									
@@ -445,7 +440,7 @@
 							$colArr[] = $params['patientID'];
 							$colArr[] = $modalityArr[$k];
 									
-							for($j=0; $j<$descriptionNumArr[$k]; $j++)
+							for($j = 0; $j<$descriptionNumArr[$k]; $j++)
 							{
 								if($j > 0)  $sqlStr .= " OR ";
 						
@@ -459,9 +454,9 @@
 								{
 									$sqlStr .= "sr.series_description=?";
 									$colArr[] = $seriesDescriptionArr[$cnt+$j];
-								}	
+								}
 							}
-				
+							
 							if($modalityArr[$k] == $modalityArr[0])
 							{
 								$sqlStr .= " AND NOT (st.study_instance_uid=? AND sr.series_instance_uid=?)";
@@ -477,7 +472,7 @@
 						$rowNum = $stmt->rowCount();
 						$selectedSeriesArr[$k+1] = $rowNum;
 						
-						for($j=0; $j<$rowNum; $j++)
+						for($j = 0; $j < $rowNum; $j++)
 						{
 							$result = $stmt->fetch(PDO::FETCH_NUM);
 						
@@ -504,7 +499,7 @@
 				
 				if(count($defaultSelectedSeries) > 0)
 				{
-					for($i=0; $i<count($defaultSelectedSeries); $i++)
+					for($i = 0; $i < count($defaultSelectedSeries); $i++)
 					{
 						$tmpArr = explode('_', $defaultSelectedSeries[$i]);
 						$defaultSelectedSeriesList[$i][0] = $tmpArr[0];
@@ -546,11 +541,11 @@
 		$smarty->assign('selectedSeriesArr',     $selectedSeriesArr);
 		
 		$smarty->assign('studyUIDStr',          $studyUIDStr);
-		$smarty->assign('seriesUIDStr',         $seriesUIDStr);		
+		$smarty->assign('seriesUIDStr',         $seriesUIDStr);
 		
 		$smarty->assign('selectedSeriesStr',         $selectedSeriesStr);
 		$smarty->assign('defaultSelectedSeriesNum',  count($defaultSelectedSeries));
-		$smarty->assign('defaultSelectedSeriesList', $defaultSelectedSeriesList);		
+		$smarty->assign('defaultSelectedSeriesList', $defaultSelectedSeriesList);
 	
 		$smarty->display('cad_job/cad_execution.tpl');
 		//--------------------------------------------------------------------------------------------------------------

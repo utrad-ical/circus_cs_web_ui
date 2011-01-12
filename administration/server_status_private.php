@@ -13,7 +13,7 @@
 	
 		switch($statusArr['CurrentState'])
 		{
-			case WIN32_SERVICE_CONTINUE_PENDING: 
+			case WIN32_SERVICE_CONTINUE_PENDING:
 				$result['str'] = 'Continue pending';
 				break;
 				

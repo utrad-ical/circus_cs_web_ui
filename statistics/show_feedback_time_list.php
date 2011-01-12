@@ -2,7 +2,7 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../class/validator.class.php');	
+	require_once('../class/validator.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
@@ -93,7 +93,7 @@
 				
 			$execIdList = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_COLUMN');
 
-			for($j=0; $j<count($execIdList); $j++)
+			for($j = 0; $j < count($execIdList); $j++)
 			{
 				$sqlStr = "SELECT st.patient_id, sr.series_date, sr.series_time,"
 						. " el.plugin_name, el.version, el.executed_at,"
@@ -117,7 +117,7 @@
 				$fnTime = 0;
 				$tmpStr = "";
 
-				for($i=0; $i<count($results); $i++)
+				for($i = 0; $i < count($results); $i++)
 				{
 					if($i==0)
 					{
@@ -250,4 +250,3 @@
 	
 	echo json_encode($dstData);	
 ?>
-

@@ -33,13 +33,13 @@
 		
 		if($stmt->rowCount()==1)
 		{
-			$sqlStr = "UPDATE \"fat_volumetry_v1.2_score\""
-					. " SET heart_vat=?, heart_sat=?, heart_bound=?,"
-					. " cavity_vat=?, cavity_sat=?, cavity_bound=?,"
-					. " wall_vat=?, wall_sat=?, wall_bound=?,"
-					. " pelvic_vat=?, pelvic_sat=?, pelvic_bound=?,"
-					. " other_vat=?, other_sat=?, other_bound=?,"
-					. " eval_comment=?, registered_at=?"
+			$sqlStr = 'UPDATE "fat_volumetry_v1.2_score"'
+					. ' SET heart_vat=?, heart_sat=?, heart_bound=?,'
+					. ' cavity_vat=?, cavity_sat=?, cavity_bound=?,'
+					. ' wall_vat=?, wall_sat=?, wall_bound=?,'
+					. ' pelvic_vat=?, pelvic_sat=?, pelvic_bound=?,'
+					. ' other_vat=?, other_sat=?, other_bound=?,'
+					. ' eval_comment=?, registered_at=?'
 					. " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
 			
 			$stmt = $pdo->prepare($sqlStr);
@@ -67,7 +67,8 @@
 		}
 		else
 		{
-			$sqlStr = "INSERT INTO \"fat_volumetry_v1.2_score\" VALUES (?, ?, 'f', 'f', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$sqlStr = 'INSERT INTO "fat_volumetry_v1.2_score"'
+					. " VALUES (?, ?, 'f', 'f', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $execID);
 			$stmt->bindValue(2, $userID);
@@ -92,7 +93,7 @@
 			}
 		}
 		
-		echo json_encode($dstData);		
+		echo json_encode($dstData);
 
 	}
 	catch (PDOException $e)
@@ -100,6 +101,6 @@
 		var_dump($e->getMessage());
 	}
 
-	$pdo = null;	
+	$pdo = null;
 
 ?>

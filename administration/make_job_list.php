@@ -1,15 +1,10 @@
 <?
-
 	//----------------------------------------------------------------------------------------------
 	// Create job list
 	//----------------------------------------------------------------------------------------------
 	$jobList = array();
-		
-	$sqlStr  = "SELECT * FROM plugin_job_list ORDER BY registered_at ASC;";
-	//$stmt = $pdo->prepare($sqlStr);
-	//$stmt->execute();
-	//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	
+	$sqlStr  = "SELECT * FROM plugin_job_list ORDER BY registered_at ASC;";
 	$result = PdoQueryOne($pdo, $sqlStr, null, 'ALL_ASSOC');
 
 	foreach($result as $item)
@@ -20,7 +15,7 @@
 		{
 			case 1: $pluginType = 'CAD';             break;
 			case 2: $pluginType = 'Research';        break;
-				case 3: $pluginType = 'Group research';  break;
+			case 3: $pluginType = 'Group research';  break;
 		}
 		
 		$patientID    = "";
@@ -66,9 +61,5 @@
 						   $item['exec_flg']);
 	}
 	//--------------------------------------------------------------------------------------------------------
-
-
-
-
 
 ?>

@@ -3,7 +3,7 @@
 	session_start();
 
 	include("common.php");
-	require_once('class/validator.class.php');	
+	require_once('class/validator.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation

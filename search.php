@@ -7,7 +7,7 @@
 	
 	try
 	{
-
+		
 		$params = array('mode'         => "",
 					    'filterSex'    => "all",
 					    'personalFB'   => "all",
@@ -31,9 +31,9 @@
 		$smarty->assign('params', $params);
 
 		$smarty->assign('modalityList',    $modalityList);
-		$smarty->assign('modalityMenuVal', $modalityMenuVal);	
+		$smarty->assign('modalityMenuVal', $modalityMenuVal);
 		$smarty->assign('cadList',         $cadList);
-		$smarty->assign('versionList',     $versionList);		
+		$smarty->assign('versionList',     $versionList);
 
 		$smarty->display('search.tpl');
 		//----------------------------------------------------------------------------------------------------

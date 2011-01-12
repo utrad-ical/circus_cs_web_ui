@@ -1,4 +1,4 @@
-@charset "shift_jis";
+@charset "utf-8";
 /* ===================================================================
 CSS information
 
@@ -50,9 +50,9 @@ body {
 	background: #FFF;
 	color: #333;
 	font-size: small;
-	font-family: verdana,"ƒqƒ‰ƒMƒmŠpƒS Pro W3","Hiragino Kaku Gothic Pro",Osaka,"‚l‚r ‚oƒSƒVƒbƒN","MS PGothic",Sans-Serif;
+	font-family: verdana,"ãƒ’ãƒ©ã‚®ãƒè§’ã‚´ Pro W3","Hiragino Kaku Gothic Pro",Osaka,"ï¼­ï¼³ ï¼°ã‚´ã‚·ãƒƒã‚¯","MS PGothic",Sans-Serif;
 	line-height: 1.5;
 }
 *:first-child + html body {	/* for IF7 */
-	font-family: "ƒƒCƒŠƒI","Meiryo";
+	font-family: "ãƒ¡ã‚¤ãƒªã‚ª","Meiryo";
 }

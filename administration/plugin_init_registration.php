@@ -9,8 +9,8 @@
 		if($tableName != "")
 		{
 			$sqlStr = "SELECT count(*) FROM pg_class c"
-			        . " WHERE c.relkind = 'r' AND c.relname = ?";
-							
+					. " WHERE c.relkind = 'r' AND c.relname = ?";
+			
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $tableName);
 			$stmt->execute();
@@ -29,28 +29,28 @@
 				}
 			}
 		}	
-	}	
+	}
 
 	try
 	{
 		$message = "";
-
+		
 		//----------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables 
 		//----------------------------------------------------------------------------------------------------
 		$uploadFile = $_FILES["upfile"]["name"];
 		//----------------------------------------------------------------------------------------------------
-
+		
 		$baseName = substr($uploadFile, 0, strlen($uploadFile)-4);
 		$errorFlg = 0;
 
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);	
-	
+		$pdo = new PDO($connStrPDO);
+		
 		$dstPath = $PLUGIN_DIR . $DIR_SEPARATOR;
 		
 		$installDate = date("Y-m-d H:i:s");
-	
+		
 		//----------------------------------------------------------------------------------------------------
 		//  unzip the pakcage file
 		//----------------------------------------------------------------------------------------------------
@@ -144,30 +144,30 @@
 					$doubleCircleTh   = $cadDefifition->DoubleCircleTh[0];
 					$windowLevel      = $cadDefifition->WindowLevel[0];
 					$windowWidth      = $cadDefifition->WindowWidth[0];
-				
+					
 					$mainModality   = "";
-
+					
 					$cnt = 0;
 					$cadSeriesSqlStr = "";
 					$cadSeriesSqlParams = array();
-		
+					
 					foreach($seriesDefifition->SeriesItem as $item)
 					{	
 						if($cnt = 0 || $item->SeriesID[0] == 1)  $mainModality = $item->Modality[0];
-
+						
 						$cadSeriesSqlStr .= "INSERT INTO cad_series (cad_name, version, series_id,"
 										 .  " series_description, manufacturer, model_name, station_name,"
 										 .  " modality, min_slice, max_slice, isotropic_type, start_img_num,"
 										 .  " end_img_num, export_series_number)"
 										 .  " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-										 
+						
 						$cadSeriesSqlParams[] = $pluginName;
 						$cadSeriesSqlParams[] = $version;
 						$cadSeriesSqlParams[] = $item->SeriesID[0];
-
+						
 						$tmpStr = $item->DefaultSeriesDescription[0];
 						$cadSeriesSqlParams[] = ($tmpStr == "") ? $tmpStr : '(default)';
-
+						
 						$cadSeriesSqlParams[] = $item->Manufacturer[0];
 						$cadSeriesSqlParams[] = $item->ModelName[0];
 						$cadSeriesSqlParams[] = $item->StationName[0];
@@ -178,38 +178,38 @@
 						$cadSeriesSqlParams[] = $item->StartImgNum[0]; 
 						$cadSeriesSqlParams[] = $item->EndImgNum[0];
 						$cadSeriesSqlParams[] = $item->ExportSeriesNum[0];
-										 
+						
 						$cnt++;
 					}
-				
+					
 					//--------------------------------------------------------------------------------------------------
 					// Add plug-in information to plugin_master, cad_master, and cad_series table
 					//--------------------------------------------------------------------------------------------------
 					if(!$errorFlg)
 					{
 						$sqlStr = "SELECT COUNT(*) FROM plugin_master WHERE plugin_name=? AND version=?";
-					
+						
 						if(PdoQueryOne($pdo, $sqlStr, array($pluginName, $version), 'SCALAR') == 1)
 						{
 							$sqlStr = "SELECT result_table, score_table FROM cad_master"
 									. " WHERE plugin_name=? AND version=?";
 							$result = PdoQueryOne($pdo, $sqlStr, array($pluginName, $version), 'ARRAY_ASSOC');
-						
+							
 							if($result[0] != "")	DropTableIfExists($pdo, $esult[0]);
 							if($result[1] != "")	DropTableIfExists($pdo, $esult[1]);
-						
+							
 							$sqlStr = "DELETE FROM plugin_master WHERE plugin_name=? AND version=?";
 							$stmt = $pdo->prepare($sqlStr);
 							$stmt->execute(array($pluginName, $version));
 						}
-
+						
 						$sqlStr = "SELECT MAX(cm.label_order) FROM cad_master cm, cad_series cs"
 								. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"
 								. " AND cm.exec_flg='t' AND cs.series_id=1 AND cs.modality=?";
 						$maxLabelOrder = PdoQueryOne($pdo, $sqlStr, $mainModality, 'SCALAR');
-
+						
 						$sqlParams = array();
-
+						
 						$sqlStr = "INSERT INTO plugin_master (plugin_name, version, type, exec_flg,"
 								. " description, install_dt) VALUES (?, ?, 1, 't', ?, ?);";
 						$sqlParams[] = $pluginName;
@@ -224,7 +224,7 @@
 								.  " window_level, window_width, result_table, score_table,"
 								.  " description) VALUES "
 								.  "(?,?,'t',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-
+						
 						$sqlParams[] = $pluginName;
 						$sqlParams[] = $version;
 						$sqlParams[] = $maxLabelOrder+1;
@@ -244,12 +244,12 @@
 						$sqlParams[] = $resultTableName;
 						$sqlParams[] = $scoreTableName;
 						$sqlParams[] = $description;
-							
+						
 						$sqlStr .= $cadSeriesSqlStr;
-
+						
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute(array_merge($sqlParams, $cadSeriesSqlParams));
-
+						
 						if($stmt->errorCode() != '00000')
 						{
 							$message .= '<span style="color:red;">[ERROR] Fail to register plugin table.</span><br/>';
@@ -272,28 +272,26 @@
 					if(!$errorFlg && $resultTableName != "")
 					{
 						DropTableIfExists($pdo, $resultTableName);
-
+						
 						$sqlStr = 'CREATE TABLE "' . $resultTableName . '"('
 								. 'exec_id    INT NOT NULL,'
 								. 'sub_id     SMALLINT NOT NULL,';
-	
+						
 						foreach($resultDBDefifition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
-					
-							//echo $item->DBColumnName[0] . " " . $item->DBColumnType[0] . "<br>";
-					
+							
 							switch($item->DBColumnType[0])
 							{
-								case 'int':      
+								case 'int':
 									$sqlStr .= $colName . ' INT NOT NULL,';
 									break;
-					
+								
 								case 'smallint':
 									$sqlStr .= $colName . ' SMALLINT NOT NULL,';
 									break;
-					
-								case 'text':      
+								
+								case 'text':
 									$colSize = $item->DBColumnSize[0];
 									if($colSize > 255)
 									{
@@ -304,27 +302,27 @@
 										$sqlStr .= $colName . ' CHARACTER VARYING(' . $colSize . ') NOT NULL,';
 									}
 									break;
-					
+								
 								case 'boolean':
 									$sqlStr .= $colName . ' BOOLEAN NOT NULL,';
 									break;
-				
+								
 								default: // case 'real'
 									$sqlStr .= $colName . ' REAL NOT NULL,';
-									break;			
+									break;
 							} // end switch
 						}
-	
+						
 						$sqlStr .= 'sid SERIAL NOT NULL,'
 								.  ' CONSTRAINT "' . $resultTableName . '_pkey" PRIMARY KEY (sid),'
 								.  ' CONSTRAINT "' . $resultTableName . '_ukey" UNIQUE (exec_id, sub_id),'
 								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
 								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
 								.  ' ON UPDATE RESTRICT ON DELETE CASCADE)';
-	
+						
 						$stmt =$pdo->prepare($sqlStr);
 						$stmt->execute();
-
+						
 						if($stmt->errorCode() != '00000')
 						{
 							$message .= '<span style="color:red;">[ERROR] Fail to create result table.</span><br/>';
@@ -334,42 +332,42 @@
 							$sqlStr = "DELETE FROM plugin_master WHERE plugin_name=? AND version=?";
 							$stmt = $pdo->prepare($sqlStr);
 							$stmt->execute(array($pluginName, $version));
-	
+							
 							DeleteDirRecursively($PLUGIN_DIR . $DIR_SEPARATOR . $baseName);
 							$errorFlg = 1;
 						}
 					
 					} // end if($errorFlg == 0 && $resultTableName != "")
 					//--------------------------------------------------------------------------------------------------
-										
+					
 					//--------------------------------------------------------------------------------------------------
 					// Create score table
 					//--------------------------------------------------------------------------------------------------
 					if(!$errorFlg && $scoreTableName != "")
 					{
 						DropTableIfExists($pdo, $scoreTableName);
-
+						
 						$sqlStr = 'CREATE TABLE "' . $scoreTableName . '"('
 								. 'exec_id        INT NOT NULL,'
 								. 'entered_by     CHARACTER VARYING(32) NOT NULL,'
 								. 'consensual_flg BOOLEAN NOT NULL DEFAULT false,'
 								. 'interrupt_flg BOOLEAN NOT NULL DEFAULT false,';
-					
+						
 						foreach($scoreDBDefifition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
-				
+							
 							switch($item->DBColumnType[0])
 							{
-								case 'int':      
+								case 'int':
 									$sqlStr .= $colName . ' INT NOT NULL,';
 									break;
-				
+								
 								case 'smallint':
 									$sqlStr .= $colName . ' SMALLINT NOT NULL,';
 									break;
-				
-								case 'text':      
+								
+								case 'text':
 									$colSize = $item->DBColumnSize[0];
 									if($colSize > 255)
 									{
@@ -383,11 +381,11 @@
 					
 								case 'boolean':
 									$sqlStr .= $colName . ' BOOLEAN NOT NULL,';
-									break;								
+									break;
 				
 								default: // case 'real'
 									$sqlStr .= $colName . ' REAL NOT NULL,';
-									break;			
+									break;
 							} // end switch
 						}
 	
@@ -397,7 +395,7 @@
 								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
 								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
 								.  ' ON UPDATE RESTRICT ON DELETE CASCADE);';
-	
+						
 						$stmt =$pdo->prepare($sqlStr);
 						$stmt->execute();
 

@@ -21,8 +21,8 @@
 			"type" => "uid",
 			"required" => true,
 			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
-		));				
-
+		));
+	
 	if($validator->validate($_GET))
 	{
 		$params = $validator->output;
@@ -64,12 +64,12 @@
 				$webPathOfseriesDir = $result[1] . $result[0]
 				                    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
 		    		                . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
-						
+				
 				$params['fileName'] = "../" . $webPathOfseriesDir . $DIR_SEPARATOR_WEB
 								    . $params['seriesInstanceUID'] . ".zip";
 			}
 		}
-
+		
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@
 		$smarty = new SmartyEx();
 		
 		$smarty->assign('params', $params);
-
+		
 		$smarty->display('research/download_volume.tpl');
 		//--------------------------------------------------------------------------------------------------------------
 		

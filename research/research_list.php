@@ -162,9 +162,9 @@
 				$optionNum++;
 			}
 	
-			//---------------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------------
 			// count total number
-			//---------------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------------
 			$stmt = $pdo->prepare("SELECT COUNT(*) FROM executed_plugin_list" . $sqlCond);
 			$stmt->execute($condArr);
 			
@@ -179,8 +179,8 @@
 			switch($params['orderCol'])
 			{
 				case 'Plugin':	$sqlStr .= " plugin_name ".$params['orderMode'].", version ".$params['orderMode'];  break;
-				case 'Time':	$sqlStr .= " executed_at ".$params['orderMode'];									  break;
-				default:		$sqlStr .= " exec_id ".$params['orderMode'];										  break;
+				case 'Time':	$sqlStr .= " executed_at ".$params['orderMode'];									break;
+				default:		$sqlStr .= " exec_id ".$params['orderMode'];										break;
 			}
 
 			if(0<$optionNum)  $params['pageAddress'] .= "&";
@@ -201,7 +201,7 @@
 		
 			$rowNum = $stmt->rowCount();
 			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
-			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;			
+			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
 		
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
@@ -235,6 +235,4 @@
 	}
 
 	$pdo = null;
-	//--------------------------------------------------------------------------------------------------------
 ?>
-

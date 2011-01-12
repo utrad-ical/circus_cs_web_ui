@@ -7,6 +7,7 @@
 			<a href="research_list.php?filterTag={$item[0]|escape}" title="Entered by {$item[1]|escape}">{$item[0]|escape}</a>&nbsp;
 		{/if}
 	{/foreach}
+
 	{if $smarty.session.personalFBFlg}
 		<a href="#" onclick="EditTag({if $params.pluginType == 1}4{else if $params.pluginType == 2}6{/if}, '{$params.execID|escape}', '../');">(Edit)</a>
 	{/if}

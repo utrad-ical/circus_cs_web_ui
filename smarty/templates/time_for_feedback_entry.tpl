@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="shift_jis"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
@@ -130,7 +130,7 @@ $(function() {
 		<input type="hidden" id="dataStr" name="dataStr" value="">
 
 			
-		<!-- ***** 検索部分 ***** -->
+		<!-- ***** Search conditions ***** -->
 			<div class="statSearch">
 				<h3>Search</h3>
 				<div class="p20">
@@ -180,7 +180,7 @@ $(function() {
 					</div>
 				</div><!-- / .m20 END -->
 			</div><!-- / #statSearch END -->
-		<!-- / 検索部分　ここまで -->
+		<!-- / Search conditions END -->
 		
 		<div id="statRes" style="display:none;">
 			<h3>Time for feedback entry</h3>

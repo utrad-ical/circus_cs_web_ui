@@ -25,7 +25,7 @@
 		"version" => array(
 			"type" => "version",
 			"required" => true,
-			"errorMes" => "'Version' is invalid."),			
+			"errorMes" => "'Version' is invalid."),
 		"feedbackMode" => array(
 			"type" => "select",
 			"required" => true,
@@ -43,12 +43,10 @@
 			"otherwise" => "1"),
 		"candStr" => array(
 			"type" => "string",
-			//"required" => true,
 			"regex" => "/^[\d\^]+$/",
 			"errorMes" => "[ERROR] 'Candidate string' is invalid."),
 		"evalStr" => array(
 			"type" => "string",
-			//"required" => true,
 			"regex" => "/^[\d-\^]+$/",
 			"errorMes" => "[ERROR] 'Evaluation string' is invalid.")
 		));				
@@ -74,8 +72,8 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);	
-	
+		$pdo = new PDO($connStrPDO);
+		
 		$registeredAt = date('Y-m-d H:i:s');
 		$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
@@ -318,7 +316,7 @@
 				$dstData['message'] .= 'Successfully registered in feedback database.';
 			}
 		}
-		else if($resultType == 2)  // –¢C³(2010.11.5)
+		else if($resultType == 2)  // under modified (2010.11.5)
 		{
 			$scoreTableName = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
 		
@@ -384,7 +382,7 @@
 			{
 				$tmpArr = explode("^", $params['evalStr']);
 	
-				// ƒJƒ‰ƒ€–¼‚ÌŽæ“¾
+				// Retrieve calumn names
 				$sqlStr = "SELECT attname FROM pg_attribute WHERE attnum > 3"
 				        . " AND attrelid = (SELECT relfilenode FROM pg_class WHERE relname='".$scoreTableName."')"
 						. " AND attname != 'registered_at' AND attname != 'interrupt_flg' ORDER BY attnum";

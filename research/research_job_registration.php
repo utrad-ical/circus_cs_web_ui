@@ -58,7 +58,7 @@
 			$cadIDArr = explode('^', $params['checkedCadIdStr']);
 			$cadNum   = count($cadIDArr);
 	
-			$userID = $_SESSION['userID'];	
+			$userID = $_SESSION['userID'];
 
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
@@ -91,22 +91,22 @@
 						$sqlStr .= "(jcad.exec_id=?)";
 						$colArr[] = $cadIDArr[$i];
 					}
-					$sqlStr .= ")";				
-				
+					$sqlStr .= ")";
+					
 					$stmtSub = $pdo->prepare($sqlStr);
-					$stmtSub->execute($colArr);		
-				
+					$stmtSub->execute($colArr);
+					
 					if($stmtSub->rowCount() == $cadNum)
 					{
 						$resultSub = $stmtSub->fetch(PDO::FETCH_ASSOC);
-	
+						
 						$dstData['message'] = '<b>Already registerd by ' . $resultSub['exec_user'] . ' !!</b>';
 					    $dstData['registeredAt'] = $resultSub['registered_at'];
 						break;
 					}
 				}
 			}
-		
+			
 			if($dstData['message'] == "")
 			{
 				$sqlStr = "SELECT sub.id FROM"
@@ -116,7 +116,7 @@
 						. " WHERE sub.cad_num=? ORDER BY sub.id";
 			
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($pluginName, $version, $cadNum));		
+				$stmt->execute(array($pluginName, $version, $cadNum));
 			
 				if($stmt->rowCount() > 0)
 				{
@@ -127,27 +127,27 @@
 						$sqlStr = "SELECT * FROM executed_plugin_list el, executed_cad_list ecad"
 								. " WHERE el.exec_id=? AND el.exec_id=ecad.exec_id"
 								. " AND (";
-				
+						
 						$colArr[] = $result;
-			
+						
 						for($i=0; $i<$cadNum; $i++)
 						{
 							if($i > 0)  $sqlStr .= " OR ";
-					
+						
 							$sqlStr .= "(ecad.cad_exec_id=?)";
 							$colArr[] = $cadIDArr[$i];
 						}
 						$sqlStr .= ");";
-			
+						
 						$stmtSub = $pdo->prepare($sqlStr);
 						$stmtSub->execute($colArr);
-					
+						
 						//echo $sqlStr;
-	
+						
 						if($stmtSub->rowCount() == $cadNum)
 						{
 							$resultSub = $stmt->fetch(PDO::FETCH_ASSOC);
-		
+							
 							$dstData['message']    = '<b>Already executed by ' . $resultSub['exec_user'] . $tmp . '!!</b>';
 							$dsaData['executedAt'] = $resultSub['executed_at'];
 							break;
@@ -167,7 +167,7 @@
 				if($stmt->rowCount() == 1)
 				{
 					$sqlStr = "SELECT job_id FROM plugin_job_list WHERE plugin_name=? AND version=? AND registered_at=?";
-
+					
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute(array($pluginName, $version, $dstData['registeredAt']));
 					$jobID = $stmt->fetchColumn();
@@ -182,7 +182,7 @@
 						$colArr[] = $jobID;
 						$colArr[] = $cadIDArr[$i];
 					}
-
+					
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($colArr);
 
@@ -190,7 +190,7 @@
 					{
 						$dstData['message'] = '<b>Fail to register in plug-in job list!!</b>';
 						$dstData['registeredAt'] = "";
-
+						
 						$sqlStr = "DELETE FROM job_cad_list WHERE job_id=?; DELETE FROM plugin_job_list WHERE job_id=?;";
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute(array($jobID, $jobID));

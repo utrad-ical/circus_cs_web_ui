@@ -6,8 +6,8 @@
 
 	include_once("../common.php");
 	include_once("auto_logout_research_exec.php");	
-	require_once('../class/PersonalInfoScramble.class.php');	
-	require_once('../class/validator.class.php');		
+	require_once('../class/PersonalInfoScramble.class.php');
+	require_once('../class/validator.class.php');
 
 	try
 	{
@@ -85,7 +85,7 @@
 			$params['errorMessage'] = implode('<br/>', $validator->errors);
 		}
 		
-		$params['toTopDir'] = "../";		
+		$params['toTopDir'] = "../";
 		//--------------------------------------------------------------------------------------------------------------
 		
 		//--------------------------------------------------------------------------------------------------------------

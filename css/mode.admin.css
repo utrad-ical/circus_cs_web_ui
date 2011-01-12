@@ -1,4 +1,4 @@
-@charset "shift_jis";
+@charset "utf-8";
 /* ===================================================================
 CSS information
 
@@ -320,8 +320,6 @@ p.add-favorite {
 }
 
 
-
-
 /* Large */
 .radio-to-button-l {
 	display:block;
@@ -424,7 +422,8 @@ input.form-btn {
 	
 		h3
 		h4
- ===================================================*/  
+ ===================================================*/
 h4.upSec {
 	color: #8a3b2b;
 	font-weight: bold;
+}

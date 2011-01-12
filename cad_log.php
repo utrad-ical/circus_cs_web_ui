@@ -13,7 +13,7 @@
 	function CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $execID)
 	{
 		$registStatus = array('cand' => 0,
-							  'FN'   => 0);  // 0F–¢“ü—ÍA1F“r’†A2F“ü—ÍÏ
+							  'FN'   => 0);  // 0ï¼šnot evaluated, 1ï¼šincomplete, 2ï¼šcomplete
 
 		$stmtPersonalFB->bindParam(1, $execID);
 		$stmtPersonalFB->execute();
@@ -40,9 +40,7 @@
 			if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
 			else									 $registStatus['FN'] = 1;
 		}
-	
-		//echo '(' . $registStatus['cand'] . ' ' . $registStatus['FN'] . ')';
-	
+		
 		if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
 		{
 			$ret = '-';
@@ -69,7 +67,7 @@
 		//-----------------------------------------------------------------------------------------------------------------
 		// Import $_GET variables and validation
 		//-----------------------------------------------------------------------------------------------------------------
-		$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";	
+		$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";
 		$params = array();
 	
 		PgValidator::$conn = $pdo;
@@ -458,9 +456,9 @@
 					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
 					$addressParams['filterFBUser'] = $params['filterFBUser'];
 				}
-				else	//@entered by —“‚É‰½‚à“ü—Í‚³‚ê‚Ä‚¢‚È‚¢ê‡
+				else	//ã€€if entered in "entered by" fieldã‚‚å…¥åŠ›ã•ã‚Œã¦ã„ãªã„å ´åˆ
 				{
-					if($_SESSION['colorSet'] == 'admin')	// ŠÇ—ŽÒ‚Í‘Sƒ†[ƒU‚Ìpersonal feedback‚ðcheck
+					if($_SESSION['colorSet'] == 'admin')	// ç®¡ç†è€…ã¯å…¨ãƒ¦ãƒ¼ã‚¶ã®personal feedbackã‚’check
 					{
 						$tmpCond .= ')';
 					}
@@ -542,7 +540,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
-		// Retrieve mode of display order (Default: ascending order of series number)
+		// Retrieve mode of display order (default: ascending order of series number)
 		//--------------------------------------------------------------------------------------------------------------
 		$orderColStr = "";
 		
@@ -822,13 +820,12 @@
 		require_once('smarty/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 		
-		$smarty->assign('params', $params);
-		$smarty->assign('data',   $data);
-		
+		$smarty->assign('params',          $params);
+		$smarty->assign('data',            $data);
 		$smarty->assign('modalityList',    $modalityList);
-		$smarty->assign('modalityMenuVal', $modalityMenuVal);	
+		$smarty->assign('modalityMenuVal', $modalityMenuVal);
 		$smarty->assign('cadList',         $cadList);
-		$smarty->assign('versionList',     $versionList);		
+		$smarty->assign('versionList',     $versionList);
 
 		$smarty->display('cad_log.tpl');
 		//--------------------------------------------------------------------------------------------------------------
@@ -838,7 +835,5 @@
 		var_dump($e->getMessage());
 	}
 
-	$pdo = null;	
+	$pdo = null;
 ?>
-
-

@@ -10,7 +10,7 @@
 		<li><a href="{$params.toTopDir}home.php" class="jq-btn jq-btn-home" title="home"></a></li>
 		<li>
 		  <a id="linkTodayDisp" href="{$params.toTopDir}{if $smarty.session.todayDisp=='series'}series_list{else}cad_log{/if}.php?mode=today" class="jq-btn jq-btn-today" title="today">
-				<!-- カレンダー表示 -->
+				<!-- Calendar display -->
 				<div class="calendar" id="flash_admin">
 					<object id="today_admin" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="32" height="32" id="" align="middle">
 						<param name="allowScriptAccess" value="sameDomain" />

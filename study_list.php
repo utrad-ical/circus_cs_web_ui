@@ -235,7 +235,7 @@
 					$sqlParams[] = $params['filterAgeMax'];
 					$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 				}
-			}		
+			}
 		
 			if($params['filterModality'] != "" && $params['filterModality'] != "all")
 			{
@@ -282,7 +282,7 @@
 			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
 			$params['maxPageNum']   = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
-			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);		
+			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);
 			//----------------------------------------------------------------------------------------------------------
 			
 			//----------------------------------------------------------------------------------------------------------
@@ -291,14 +291,14 @@
 			$sqlStr = "SELECT st.sid, st.study_instance_uid, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 					. " st.study_id, st.study_date, st.study_time, st.modality, st.accession_number"
 					. " FROM patient_list pt, study_list st" . $sqlCond . " ORDER BY " . $orderColStr;
-					
+			
 			if($params['showing'] != "all")
 			{
 				$sqlStr .= " LIMIT ? OFFSET ?";
 				$sqlParams[] = $params['showing'];
 				$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 			}
-	
+			
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 			
@@ -355,5 +355,5 @@
 		var_dump($e->getMessage());
 	}
 
-	$pdo = null;	
+	$pdo = null;
 ?>

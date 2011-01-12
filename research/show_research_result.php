@@ -72,8 +72,6 @@
 		
 			$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';
 			include($templateName);
-
-			//echo $dstHtml;
 		}
 	}
 	catch (PDOException $e)

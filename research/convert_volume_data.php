@@ -24,7 +24,7 @@
 			"type" => "uid",
 			"required" => true,
 			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
-		));				
+		));
 
 	if($validator->validate($_POST))
 	{

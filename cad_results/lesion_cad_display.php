@@ -63,12 +63,13 @@
 		$params['dispWidth'] = 384;	
 	}
 
-	$params['dispHeight'] = (int)($params['cropHeight'] * ($params['dispWidth'] / $params['cropWidth']) + 0.5);	
+	$params['dispHeight'] = (int)($params['cropHeight'] * ($params['dispWidth'] / $params['cropWidth']) + 0.5);
 
 	//--------------------------------------------------------------------------------------------------------
 	// Make one-time ticket
 	//--------------------------------------------------------------------------------------------------------
 	$_SESSION['ticket'] = md5(uniqid().mt_rand());
+	$params['ticket'] = $_SESSION['ticket'];
 	//--------------------------------------------------------------------------------------------------------
 
 	//--------------------------------------------------------------------------------------------------------
@@ -114,7 +115,7 @@
 		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
 
 		//$img = new Imagick();
-		//$img->readImage($srcFname);			
+		//$img->readImage($srcFname);
 		//$width  = $img->getImageWidth();
 		//$height = $img->getImageHeight();
 		//$img->destroy();
@@ -141,7 +142,7 @@
 		{
 		 	$candHtml[$k] .= '<img class="transparent" src="images/double_circle.png"'
 		                  .  ' style="position:absolute; left:' . (($posX-$params['orgX'])*$params['scale']-15)
-						  .  'px; top:' . (($posY-$params['orgY'])*$params['scale']-15) . 'px; z-index:2;">';		
+						  .  'px; top:' . (($posY-$params['orgY'])*$params['scale']-15) . 'px; z-index:2;">';
 		}
 		else if($confidence < $params['yellowCircleTh'])
 		{
@@ -218,7 +219,7 @@
 			
 			//$maxNum = 0;
 			
-			for($j=0; $j<count($radioButtonList[$consensualFlg]); $j++)
+			for($j=0; $j < count($radioButtonList[$consensualFlg]); $j++)
 			{
 				$evalStr = "";
 				$titleStr = "";
@@ -251,11 +252,9 @@
 						}
 					}
 					
-					//if($checkFlg == 0 && $totalNum > 0 && $enterNum > $maxNum)
 					if($checkFlg == 0 && $totalNum > 0 && $enterNum == $totalNum)
 					{
 						$evalVal = $radioButtonList[$consensualFlg][$j][1];
-						//$maxNum = $enterNum;
 					}
 				}
 				
@@ -286,9 +285,9 @@
 
 			$candHtml[$k] .= '</div>';
 			
-		//----------------------------------------------------------------------------------------------------
-		// Tag list
-		//----------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------
+			// Tag list
+			//----------------------------------------------------------------------------------------------------
 
 		}
 		
@@ -474,7 +473,7 @@
 
 	$detailData = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
 	
-	for($i=0; $i<count($detailData); $i++)
+	for($i = 0; $i < count($detailData); $i++)
 	{
 		$candClass = "";
 		
@@ -522,14 +521,11 @@
 	$smarty->assign('consensualFBFlg', $consensualFBFlg);
 	$smarty->assign('sliceOffset',     $sliceOffset);
 
-	$smarty->assign('ticket', htmlspecialchars($_SESSION['ticket'], ENT_QUOTES));
-	
 	$smarty->assign('registMsg',     $registMsg);
-
 	$smarty->assign('fnConsCheck',   $fnConsCheck);
 
 	$smarty->assign('candArr',       $candArr);	
-	$smarty->assign('candHtml',      $candHtml);	
+	$smarty->assign('candHtml',      $candHtml);
 	
 	$smarty->assign('candStr',       $candStr);
 

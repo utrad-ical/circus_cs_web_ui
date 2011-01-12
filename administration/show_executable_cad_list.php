@@ -1,9 +1,9 @@
 <?php
-	//session_cache_limiter('none');
+	session_cache_limiter('none');
 	session_start();
 
 	include_once("../common.php");
-	require_once('../class/validator.class.php');	
+	require_once('../class/validator.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
@@ -19,7 +19,7 @@
 			"default" => "CT",
 			"otherwise" => "CT"),
 		));
-		
+	
 	if($validator->validate($_POST))
 	{
 		$dstData = $validator->output;
@@ -62,6 +62,5 @@
 	{
 		var_dump($e->getMessage());
 	}
-	
 
 ?>

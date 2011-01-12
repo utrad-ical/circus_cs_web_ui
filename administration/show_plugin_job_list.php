@@ -6,7 +6,7 @@
 
 	include_once("../common.php");
 	include("auto_logout_administration.php");	
-	require_once('../class/PersonalInfoScramble.class.php');	
+	require_once('../class/PersonalInfoScramble.class.php');
 
 	try
 	{
@@ -31,7 +31,7 @@
 		$smarty->assign('jobList', $jobList);
 
 		$smarty->display('administration/show_plugin_job_list.tpl');
-		//--------------------------------------------------------------------------------------------------------	
+		//--------------------------------------------------------------------------------------------------------
 	}
 	catch (PDOException $e)
 	{

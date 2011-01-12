@@ -3,7 +3,7 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../class/validator.class.php');	
+	require_once('../class/validator.class.php');
 	
 	$errorFlg = 0;
 	

@@ -136,8 +136,8 @@
 				}
 			
 				$sqlStr .= " AND es.series_id=1"
-			    	    .  " AND sr.series_instance_uid = es.series_instance_uid";
-			
+						.  " AND sr.series_instance_uid = es.series_instance_uid";
+						
 				if($params['dateFrom'] != "")
 				{
 					$sqlStr .= " AND sr.series_date>=?";
@@ -149,10 +149,10 @@
 					$sqlStr .= " AND sr.series_date<=?";
 					$sqlParams[] = $params['dateTo'];
 				}
-								 
+				
 				$sqlStr .= " AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
-				        .  "ORDER BY lf.entered_by ASC";
-	
+						.  "ORDER BY lf.entered_by ASC";
+				
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 				$userList = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -185,10 +185,10 @@
 				
 				$sqlStrCntEval = "SELECT DISTINCT(lf.exec_id) FROM executed_plugin_list el,"
 							   . " executed_series_list es, lesion_feedback lf, series_list sr";
-	
+				
 				$sqlStrCntFN  = "SELECT SUM(fn.false_negative_num) FROM executed_plugin_list el,"
-				              . " executed_series_list es, false_negative_count fn, series_list sr";
-	
+							  . " executed_series_list es, false_negative_count fn, series_list sr";
+				
 				if($params['version'] != "all")	$sqlStrCntEval .= ', "' . $resultTableName . '" cad';
 				
 				$sqlStrCntEval .= " WHERE el.plugin_name=?";
@@ -235,33 +235,33 @@
 				{
 				  	$sqlStrCntEval .= " AND cad.exec_id=el.exec_id"
 								   .  " AND (cad.sub_id =lf.lesion_id OR lf.lesion_id=0)"
-						           .  " AND cad.volume_size>=? AND cad.volume_size<=?";
-									 
+								   .  " AND cad.volume_size>=? AND cad.volume_size<=?";
+					
 					$sqlParamCntEval[] = $minVolume;
 					$sqlParamCntEval[] = $maxVolume;
 				}
 				
 				$sqlStrCntEval .= " AND lf.entered_by=?"
 					           .  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'";
-	
+				
 				$sqlStrCntFN .= " AND fn.exec_id=el.exec_id"
 					           .  " AND fn.entered_by=?"
 				               .  " AND fn.consensual_flg ='f'"
 				               .  " AND fn.status>=1";
-	
+				
 				$sqlParamCntEval[] = $userList[$k];
 				$sqlParamCntFN[]   = $userList[$k];
-	
+				
 				$stmt = $pdo->prepare($sqlStrCntFN);
 				$stmt->execute($sqlParamCntFN);
 				
 				$fnNum = $stmt->fetchColumn();
 				if($fnNum == "" || $fnNum < 0)  $fnNum = 0;
 				$totalNum += $fnNum;
-	
+				
 				$stmt = $pdo->prepare($sqlStrCntEval);
 				$stmt->execute($sqlParamCntEval);
-	
+				
 				//var_dump($sqlStrCntEval);
 				//var_dump($sqlParamCntEval);
 				
@@ -349,7 +349,7 @@
 						$sqlStr .= " AND es.exec_id=el.exec_id"
 								.  " AND es.series_id=1"
 								.  " AND sr.series_instance_uid = es.series_instance_uid";
-				
+						
 						if($params['dateFrom'] != "")
 						{
 							$sqlStr .= " AND sr.series_date>=?";
@@ -378,15 +378,15 @@
 						$sqlParams[] = $userList[$k];
 						
 						//var_dump($sqlStrCntEval);
-						//var_dump($sqlParamCntEval);					
+						//var_dump($sqlParamCntEval);
 							
 						$stmtDetail = $pdo->prepare($sqlStr);
 						$stmtDetail->execute($sqlParams);
-		
+						
 						while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
 						{
 							$sqlStr = "SELECT evaluation FROM lesion_feedback"
-							        . " WHERE exec_id=? AND lesion_id=?"
+									. " WHERE exec_id=? AND lesion_id=?"
 									. " AND consensual_flg='t' AND interrupt_flg='f';";
 							
 							$stmtEvalDetail = $pdo->prepare($sqlStr);
@@ -405,24 +405,23 @@
 					}
 					//------------------------------------------------------------------------------------------------
 				} // end while
-						
-		
+				
 				$dstData['tblHtml'] = '<tr';
 				
 				if($k%2==1) $dstData['tblHtml'] .= ' class="column"';
-	
+				
 				$dstData['tblHtml'] .= '>'
-				                    . '<td>' . $userList[$k] . '</td>'
+									. '<td>' . $userList[$k] . '</td>'
 									. '<td>' . $dstData['caseNum'] . '</td>';
 	
 				foreach($evaluation as $key)
 				{
 					$dstData['tblHtml'] .= '<td>' . $key[0] . '</td>';
 				}
-		
+				
 				$dstData['tblHtml'] .= '<td>' . $fnNum . '</td>'
 				                    .  '<td>' . $totalNum . '</td>';
-	
+				
 				if($evaluation["2"][0] > 0)
 				{
 					$dstData['tblHtml'] .= '<td align=center>' . $detailMissedTP["TP"] . '</td>'
@@ -538,4 +537,3 @@
 	
 	echo json_encode($dstData);	
 ?>
-

@@ -8,14 +8,14 @@
 		{
 			$ret = "";
 		
-			for($n=0; $n<strlen($str); $n++)
+			for($n = 0; $n < strlen($str); $n++)
 			{
 				$inChar  = $str[$n];
 				$keyChar = $key[$n];
 
 				$inNum = $keyNum = -1;
 
-				for($i=0; $i<strlen(self::$_baseStr); $i++)
+				for($i = 0; $i < strlen(self::$_baseStr); $i++)
 				{
 					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
 					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
@@ -39,14 +39,14 @@
 		{
 			$ret = "";
 		
-			for($n=0; $n<strlen($str); $n++)
+			for($n = 0; $n < strlen($str); $n++)
 			{
 				$inChar  = $str[$n];
 				$keyChar = $key[$n];
 
 				$inNum = $keyNum = -1;
 
-				for($i=0; $i<strlen(self::$_baseStr); $i++)
+				for($i = 0; $i < strlen(self::$_baseStr); $i++)
 				{
 					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
 					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
