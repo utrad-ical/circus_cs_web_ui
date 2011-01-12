@@ -150,7 +150,7 @@ $(function() {ldelim}
 									<img id="orgImg" src="../{$orgImg}" width="{$dispWidth}" height="{$dispHeight}" />
 								</td>
 							</tr>
-							<tr 
+							<tr>
 								<td class="pt10" valign=top width="{$dispWidth}" height="{$dispHeight}">
 									<img id="resImg" src="../{$resImg}" width="{$dispWidth}" height="{$dispHeight}" />
 								</td>
