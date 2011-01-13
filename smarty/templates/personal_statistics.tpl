@@ -9,6 +9,7 @@
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="jq/ui/jquery-ui-1.7.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="jq/jquery.blockUI.js"></script>
 <script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
@@ -18,72 +19,107 @@
 {literal}
 function ShowPersonalStatResult()
 {
+	var cadName  = $("#cadMenu option:selected").text();
 	var version  = $("#versionMenu").val();
-	var evalUser = $("#userMenu").val()
+	var evalUser = $("#userMenu").val();
 
-	$.post("statistics/show_personal_stat_detail.php",
-		   { dateFrom: $("#dateFrom").val(),
-			 dateTo:   $("#dateTo").val(),
-			 cadName:  $("#cadMenu option:selected").text(),
-			 version:  $("#versionMenu").val(),
-             evalUser: $("#userMenu").val(),
-			 minSize:  $("#minSize").val(),
-             maxSize:  $("#maxSize").val()},
+	if(cadName == "(Select)")
+	{
+		$("#errorMessage").html('"CAD" is not selected."');
+	}
+	else if(evalUser == "")
+	{
+		$("#errorMessage").html('"User" is not selected');
+	}
+	else
+	{
+		$("#errorMessage").html('');
+		$.blockUI();
 
-			function(data){
+		$.ajax({
+				type:   "POST",
+				url:    "statistics/show_personal_stat_detail.php",
+				data:   { dateFrom: $("#dateFrom").val(),
+						  dateTo:   $("#dateTo").val(),
+						  cadName:  $("#cadMenu option:selected").text(),
+						  version:  $("#versionMenu").val(),
+	       				  evalUser: $("#userMenu").val(),
+						  minSize:  $("#minSize").val(),
+			              maxSize:  $("#maxSize").val()},
+				dataType: "json",
 
-				$("#errorMessage").html(data.errorMessage);
+				success: function(data){
+					
+							$.unblockUI();
+							$("#errorMessage").html(data.errorMessage);
 
-				if(data.errorMessage == "&nbsp;")
-				{
-					$("#statRes .col-tbl tbody").html(data.tblHtml);
-					$("#scatterPlotAx").attr("src", data.XY);
-					$("#scatterPlotCoro").attr("src", data.XZ);
-					$("#sactterPlotSagi").attr("src", data.YZ);
+							if(data.errorMessage == "&nbsp;")
+							{
+								$("#statRes .col-tbl tbody").html(data.tblHtml);
+								$("#scatterPlotAx").attr("src", data.XY);
+								$("#scatterPlotCoro").attr("src", data.XZ);
+								$("#sactterPlotSagi").attr("src", data.YZ);
 
-					$("#statRes").show();
-					if(version == 'all' || evalUser == 'all' || data.caseNum == 0)
-					{
-						$("#scatterPlot").hide();
-					}
-					else
-					{
-						$("#scatterPlot").show();
-						$("#scatterPlot [name^=check]").attr("checked", "checked");
-					}
+								$("#statRes").show();
+								if(version == 'all' || evalUser == 'all' || data.caseNum == 0)
+								{
+									$("#scatterPlot").hide();
+								}
+								else
+								{
+									$("#scatterPlot").show();
+									$("#scatterPlot [name^=check]").attr("checked", "checked");
+								}
 
-					$("#container").height( $(document).height() - 10 );
-				}
-				else
-				{
-					$("#statRes").hide();
-				}
+								$("#container").height( $(document).height() - 10 );
+							}
+							else
+							{
+								$("#statRes").hide();
+							}
+						},
 
-			}, "json");
+				error:   function(){
+							$.unblockUI();
+							alert("Fail to analyze perdonal statistics.");
+						}
+			});
+	}
 }
 
 function RedrawScatterPlot()
 {
-	$.post("statistics/show_personal_stat_detail.php",
-		   { dateFrom:    $("#dateFrom").val(),
-			 dateTo:      $("#dateTo").val(),
-			 cadName:     $("#cadMenu option:selected").text(),
-			 version:     $("#versionMenu").val(),
-             evalUser:    $("#userMenu").val(),
-			 minSize:     $("#minSize").val(),
-             maxSize:     $("#maxSize").val(),
-			 dataStr:     $("#dataStr").val(),
-			 knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
-			 missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
-             fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
-			 pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},
+	$.blockUI();
 
-			function(data){
-				//$("#statRes .col-tbl tbody").html(data.tblHtml);
-				$("#scatterPlotAx").attr("src", data.XY);
-				$("#scatterPlotCoro").attr("src", data.XZ);
-				$("#sactterPlotSagi").attr("src", data.YZ);
-			}, "json");
+	$.ajax({
+			type:   "POST",
+			url:    "statistics/show_personal_stat_detail.php",
+			data:   { dateFrom:    $("#dateFrom").val(),
+			 		  dateTo:      $("#dateTo").val(),
+					  cadName:     $("#cadMenu option:selected").text(),
+					  version:     $("#versionMenu").val(),
+            		  evalUser:    $("#userMenu").val(),
+					  minSize:     $("#minSize").val(),
+       			      maxSize:     $("#maxSize").val(),
+					  dataStr:     $("#dataStr").val(),
+					  knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
+					  missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
+       			      fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
+					  pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},
+			dataType: "json",
+
+			success: function(data){
+						$.unblockUI();
+						$("#scatterPlotAx").attr("src", data.XY);
+						$("#scatterPlotCoro").attr("src", data.XZ);
+						$("#sactterPlotSagi").attr("src", data.YZ);
+					},
+
+			error:   function(){
+						$.unblockUI();
+						alert("Fail to redraw scatter plots.");
+					}
+		});
 }
 
 function SetDate(mode)
@@ -154,6 +190,45 @@ function ChangeCadMenu()
 	$("#versionMenu").html(optionStr);
 }
 
+function ChangeUserList(mode, allStatFlg)
+{
+	var cadName = $("#cadMenu option:selected").text();
+	var version = $("#versionMenu option:selected").text();
+
+	// Set options of version
+	if(mode == 'cadMenu')
+	{
+		var versionStr = $("#cadMenu option:selected").val().split("^");
+		var optionStr = '<option value="all" selected="selected">all</option>';
+
+		if(versionStr != "")
+		{
+			for(var i=0; i<versionStr.length; i++)
+			{
+				if(versionStr[i] != 'all')
+				{
+					optionStr += '<option value="' + versionStr[i] + '">' + versionStr[i] + '</option>';
+				}
+			}
+		}
+		version = 'all';
+		$("#versionMenu").html(optionStr);
+	}
+
+	if(allStatFlg == 1)
+	{
+		$.post("statistics/user_list_for_parsonal_stat.php",
+			 	{ cadName: cadName,
+			 	  version: version},
+				  function(data){ 
+							if(data.errorMessage == "" && data.userOptionStr != "")
+							{
+								$("#userMenu").html(data.userOptionStr);
+							}
+					}, "json");
+	}
+}
+
 
 function ResetCondition()
 {
@@ -187,6 +262,14 @@ $(function() {
 						                          selectedDate, instance.settings );
 					$("#dateFrom").datepicker("option", "maxDate", date);
 				}});
+
+
+	// Parameters of UI blocking for ajax requests (using jquery blockUI)
+	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
+							   + ' Under analyzing, just moment...</span>';
+	$.blockUI.defaults.fadeOut = 200;			// set fadeOut effect shorter
+	$.blockUI.defaults.css.width   = '320px';
+	$.blockUI.defaults.css.padding = '5px';
 });
 
 {/literal}
@@ -237,18 +320,20 @@ $(function() {
 							</td>
 							<th><span class="trim01">User</span></th>
 							<td>
-								<select id="userMenu" name="userMenu" style="width: 100px;>
-									<option value="all">all</option>
-									{foreach from=$userList item=item}
-										<option value="{$item|escape}" {if $item==$smarty.session.userID}selected="selected"{/if}>{$item|escape}</option>
-									{/foreach}
+								<select id="userMenu" name="userMenu" style="width: 100px;">
+									{if $smarty.session.allStatFlg}
+										<option value="">(Select)</option>
+									{else}
+										<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
+									{/if}
 								</select>
 							</td>
 						</tr>
 						<tr>
 							<th><span class="trim01">CAD</span></th>
 							<td>
-								<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeCadMenu();">
+								<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
+										<option value="" selected="selected">(Select)</option>
 									{foreach from=$cadList item=item}
 										<option value="{$item[1]|escape}">{$item[0]|escape}</option>
 									{/foreach}
@@ -256,7 +341,8 @@ $(function() {
 							</td>
 							<th style="width: 5.5em;"><span class="trim01">Version</span></th>
 							<td>
-								<select id="versionMenu" name="versionMenu" style="width: 70px;">
+								{*<select id="versionMenu" name="versionMenu" style="width: 70px;">*}
+								<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
 									<option value="all">all</option>
 									{foreach from=$versionDetail item=item}
 										<option value="{$item|escape}">{$item|escape}</option>

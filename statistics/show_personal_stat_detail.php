@@ -2,7 +2,7 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../class/validator.class.php');	
+	require_once('../class/validator.class.php');
 	
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
@@ -519,7 +519,7 @@
 				                          $params['knownTpFlg'], $params['missedTpFlg'],
 										  $params['fpFlg'], $params['pendingFlg']);
 			
-						$dstData[$val] = 'personal_stat/show_scatter_plot.php?fname=' . $tmpFname;
+						$dstData[$val] = 'statistics/show_scatter_plot.php?fname=' . $tmpFname;
 					}
 				}
 				

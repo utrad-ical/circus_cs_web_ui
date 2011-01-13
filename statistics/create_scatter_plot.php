@@ -32,7 +32,7 @@
 		$xId = 1;				$yId = 2;
 		$xlabel = 'x';			$ylabel = 'y';
 		$xDistLabel = 'left';	$yDistLabel = 'post.';
-		$baseFname = '../images/ps_scatter_plot_base_xy.png';
+		$baseFname = '../images/statistics/ps_scatter_plot_base_xy.png';
 	
 		switch($section)
 		{
@@ -40,21 +40,21 @@
 				$xId = 1;				$yId = 2;
 				$xlabel = 'x';			$ylabel = 'y';	
 				$xDistLabel = 'left';	$yDistLabel = 'post.';
-				$baseFname = '../images/personal_stat/ps_scatter_plot_base_xy.png';
+				$baseFname = '../images/statistics/ps_scatter_plot_base_xy.png';
 				break;
 	
 			case 'XZ':
 				$xId = 1;				$yId = 3;
 				$xlabel = 'x';			$ylabel = 'z';	
 				$xDistLabel = 'left';	$yDistLabel = 'inf.';
-				$baseFname = '../images/personal_stat/ps_scatter_plot_base_xz.png';
+				$baseFname = '../images/statistics/ps_scatter_plot_base_xz.png';
 				break;
 	
 			case 'YZ':
 				$xId = 2;				$yId = 3;
 				$xlabel = 'y';			$ylabel = 'z';	
 				$xDistLabel = 'post.';	$yDistLabel = 'inf.';
-				$baseFname = '../images/personal_stat/ps_scatter_plot_base_yz.png';
+				$baseFname = '../images/statistics/ps_scatter_plot_base_yz.png';
 				break;
 		}
 		//---------------------------------------------------------------------------------------------
