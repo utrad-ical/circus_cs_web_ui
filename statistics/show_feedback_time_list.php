@@ -110,11 +110,15 @@
 
 				$startFlg = 0;
 				$fnInputFlg = 0;
+				$transFlg = 0;
 				$totalStartTime = "";
 				$totalEndTime = "";
 				$fnStartTime = "";
 				$fnEndTime = "";
+				$transStartTime = "";
+				$transEndTime = "";
 				$fnTime = 0;
+				$transTime = 0;
 				$tmpStr = "";
 
 				for($i = 0; $i < count($results); $i++)
@@ -153,13 +157,28 @@
 						$fnStartTime = $results[$i][8];
 					}
 					
-					if($fnInputFlg == 1 && $results[$i][6] == 'open' &&  $results[$i][7] == 'CAD result')
+					if($fnInputFlg == 1 && $results[$i][6] == 'save' &&  $results[$i][7] == 'FN input')
 					{
 						$fnInputFlg = 0;
 						$fnEndTime = $results[$i][8];
 						
 						$fnTime += (strtotime($fnEndTime)-strtotime($fnStartTime));
 					}
+
+					if($startFlg == 1 &&  $results[$i][6] == 'save')
+					{
+						$transFlg = 1;
+						$transStartTime = $results[$i][8];
+					}
+
+					if($transFlg == 1 &&  $results[$i][6] == 'open')
+					{
+						$transFlg = 0;
+						$transEndTime = $results[$i][8];
+						
+						$transTime += (strtotime($transEndTime)-strtotime($transStartTime));
+					}
+
 					
 					if($results[$i][6] == 'register')
 					{
@@ -221,7 +240,7 @@
 							}
 							//------------------------------------------------------------------------------------------
 						
-							$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime) . '</td>'
+							$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime-$transTime) . '</td>'
 									.  '<td>' . $fnTime . '</td>'
 									.  '<td>' . $dispCandNum . '</td>'
 									.  '<td>' . $enterFnNum . '</td>'

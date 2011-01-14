@@ -33,7 +33,7 @@ function ShowPersonalStatResult()
 	}
 	else
 	{
-		$("#errorMessage").html('');
+		$("#errorMessage").html('&nbsp;');
 		$.blockUI();
 
 		$.ajax({
@@ -47,6 +47,7 @@ function ShowPersonalStatResult()
 						  minSize:  $("#minSize").val(),
 			              maxSize:  $("#maxSize").val()},
 				dataType: "json",
+				timeout: 180000,	// 3 minutes (avoid timeout error)
 
 				success: function(data){
 					
@@ -81,7 +82,7 @@ function ShowPersonalStatResult()
 
 				error:   function(){
 							$.unblockUI();
-							alert("Fail to analyze perdonal statistics.");
+							alert("Fail to analyze personal statistics.");
 						}
 			});
 	}
@@ -170,32 +171,12 @@ function SetDate(mode)
 	}
 }
 
-function ChangeCadMenu()
-{
-	var versionStr = $("#cadMenu option:selected").val().split("^");
-	
-	var optionStr = '<option value="all" selected="selected">all</option>';
-
-	if(versionStr != "")
-	{
-		for(var i=0; i<versionStr.length; i++)
-		{
-			if(versionStr[i] != 'all')
-			{
-				optionStr += '<option value="' + versionStr[i] + '">' + versionStr[i] + '</option>';
-			}
-		}
-	}
-
-	$("#versionMenu").html(optionStr);
-}
-
 function ChangeUserList(mode, allStatFlg)
 {
 	var cadName = $("#cadMenu option:selected").text();
 	var version = $("#versionMenu option:selected").text();
 
-	// Set options of version
+	// Set <option> of version menu
 	if(mode == 'cadMenu')
 	{
 		var versionStr = $("#cadMenu option:selected").val().split("^");
@@ -228,7 +209,6 @@ function ChangeUserList(mode, allStatFlg)
 					}, "json");
 	}
 }
-
 
 function ResetCondition()
 {
@@ -286,7 +266,7 @@ $(function() {
 <!-- InstanceParam name="class" type="text" value="personal-statistics" -->
 </head>
 
-<body class="personal-statistics spot">
+<body class="personal-statistics">
 <div id="page">
 	<div id="container" class="menu-back">
 		<div id="leftside">
@@ -295,129 +275,145 @@ $(function() {
 		<div id="content">
 <!-- InstanceBeginEditable name="content" -->
 
-		<h2>Personal Statistics</h2>
+			<!-- ***** TAB ***** -->
+			<div id="researchListTab" class="tabArea">
+				<ul>
+					<li><a href="#" class="btn-tab" title="Reading characteristics" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Personal statistics</a></li>
+					<li><a href="statistics/time_for_feedback_entry.php" class="btn-tab" title="Time for feedback entry">Time for feedback</a></li>
+				</ul>
+			</div><!-- / .tabArea END -->
 
-		<form name="form1">
-		<input type="hidden" id="dataStr" name="dataStr" value="">
+			<div class="tab-content">
 
-			
-		<!-- ***** Serach conditions ***** -->
-			<div class="statSearch">
-				<h3>Search</h3>
-				<div class="p20">
-					<table class="search-tbl">
-						<tr>
-							<th style="width: 3.5em;"><span class="trim01">Date</span></th>
-							<td style="width: 220px;">
-								<input id="dateFrom" type="text" style="width:72px;" />
-								-
-								<input id="dateTo" type="text" style="width:72px;" />
+				<h2>Personal statistics</h2>
+				{*<h2>Reading characteristics</h2>*}
 
-							</td>
-							<td colspan="2" style="width:200px;">
-								<input name="" type="button" class="form-btn" value="this month" onclick="SetDate('thisMonth');" />
-								<input name="" type="button" class="form-btn" value="last month" onclick="SetDate('lastMonth');" />
-							</td>
-							<th><span class="trim01">User</span></th>
-							<td>
-								<select id="userMenu" name="userMenu" style="width: 100px;">
-									{if $smarty.session.allStatFlg}
-										<option value="">(Select)</option>
-									{else}
-										<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
-									{/if}
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">CAD</span></th>
-							<td>
-								<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
-										<option value="" selected="selected">(Select)</option>
-									{foreach from=$cadList item=item}
-										<option value="{$item[1]|escape}">{$item[0]|escape}</option>
-									{/foreach}
-								</select>
-							</td>
-							<th style="width: 5.5em;"><span class="trim01">Version</span></th>
-							<td>
-								{*<select id="versionMenu" name="versionMenu" style="width: 70px;">*}
-								<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
-									<option value="all">all</option>
-									{foreach from=$versionDetail item=item}
-										<option value="{$item|escape}">{$item|escape}</option>
-									{/foreach}
-								</select>
-							</td>
-							<th style="width: 10em;"><span class="trim01">Size(diameter)</span></th>
-							<td colspan="2">
-								<input id="minSize" type="text" class="al-r" style="width: 36px">&nbsp;-&nbsp;<input id="maxSize" type="text" class="al-r" style="width: 36px">&nbsp;[mm]
-							</td>
-						</tr>
-					</table>	
-					<div class="al-l mt10 ml20" style="width: 100%;">
-						<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
-						<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
-						<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
+				<form name="form1">
+				<input type="hidden" id="dataStr" name="dataStr" value="">
+
+				<!-- ***** Serach conditions ***** -->
+					<div class="statSearch">
+						<h3>Search</h3>
+						<div class="p20">
+							<table class="search-tbl">
+								<tr>
+									<th style="width: 3.5em;"><span class="trim01">Date</span></th>
+									<td style="width: 220px;">
+										<input id="dateFrom" type="text" style="width:72px;" />
+										-
+										<input id="dateTo" type="text" style="width:72px;" />
+
+									</td>
+									<td colspan="2" style="width:200px;">
+										<input name="" type="button" class="form-btn" value="this month" onclick="SetDate('thisMonth');" />
+										<input name="" type="button" class="form-btn" value="last month" onclick="SetDate('lastMonth');" />
+									</td>
+									<th><span class="trim01">User</span></th>
+									<td>
+										<select id="userMenu" name="userMenu" style="width: 100px;">
+											{if $smarty.session.allStatFlg}
+												<option value="">(Select)</option>
+											{else}
+												<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
+											{/if}
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<th><span class="trim01">CAD</span></th>
+									<td>
+										<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
+											<option value="" selected="selected">(Select)</option>
+											{foreach from=$cadList item=item}
+												<option value="{$item[1]|escape}">{$item[0]|escape}</option>
+											{/foreach}
+										</select>
+									</td>
+									<th style="width: 5.5em;"><span class="trim01">Version</span></th>
+									<td>
+										<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
+											<option value="all">all</option>
+											{foreach from=$versionDetail item=item}
+												<option value="{$item|escape}">{$item|escape}</option>
+											{/foreach}
+										</select>
+									</td>
+									<th style="width: 10em;"><span class="trim01">Size(diameter)</span></th>
+									<td colspan="2">
+										<input id="minSize" type="text" class="al-r" style="width: 36px">&nbsp;-&nbsp;<input id="maxSize" type="text" class="al-r" style="width: 36px">&nbsp;[mm]
+									</td>
+								</tr>
+							</table>	
+							<div class="al-l mt10 ml20" style="width: 100%;">
+								<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
+								<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
+								<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
+							</div>
+						</div><!-- / .m20 END -->
+					</div><!-- / #statSearch END -->
+				<!-- / Search conditions -->
+				
+				<div id="statRes" style="display:none;">
+					<h3>Results of personal statistics</h3>
+					<table class="col-tbl mt20 mb20" style="width: 100%;">
+						<thead>
+							<tr>
+								<th rowspan="2">User</th>
+								<th rowspan="2">Case</th>
+								<th rowspan="2">known TP</th>
+								<th rowspan="2">missed TP</th>
+								<th rowspan="2">FP</th>
+								<th rowspan="2">pending</th>
+								<th rowspan="2">FN</th>
+								<th rowspan="2">Total</th>
+								<th colspan="3">Detail of missed TP</th>
+							</tr>
+							<tr>
+								<th>TP</th>
+								<th>FP</th>
+								<th>Pending</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				
+					<div id="scatterPlot" style="width: 950px;" style="display:none;">
+						<table class="block-al-r mb10">
+							<tr>
+								<td>
+									<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
+								</td>
+								<td>
+									<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/statistics/missedTP.png" />
+								</td>
+								<td>
+									<input name="checkFP" type="checkbox" checked="checked" /><img src="images/statistics/FP.png" />
+								</td>
+								<td>
+									<input name="checkPending" type="checkbox" checked="checked" /><img src="images/statistics/pending.png" />
+								</td>
+								<td><input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" /></td>
+							</tr>
+						</table>
+
+						<table class="ml10">
+							<tr>
+								<td style="width: 330px;"><img id="scatterPlotAx"   src="images/statistics/ps_scatter_plot_base_xy.png" /></td>
+								<td style="width: 330px;"><img id="scatterPlotCoro" src="images/statistics/ps_scatter_plot_base_xz.png" /></td>
+								<td style="width: 330px;"><img id="sactterPlotSagi" src="images/statistics/ps_scatter_plot_base_yz.png" /></td>
+							</tr>
+						</table>
 					</div>
-				</div><!-- / .m20 END -->
-			</div><!-- / #statSearch END -->
-		<!-- / Search conditions -->
-		
-		<div id="statRes" style="display:none;">
-			<h3>Results of personal statistics</h3>
-			<table class="col-tbl mt20 mb20" style="width: 100%;">
-				<thead>
-					<tr>
-						<th rowspan="2">User</th>
-						<th rowspan="2">Case</th>
-						<th rowspan="2">known TP</th>
-						<th rowspan="2">missed TP</th>
-						<th rowspan="2">FP</th>
-						<th rowspan="2">pending</th>
-						<th rowspan="2">FN</th>
-						<th rowspan="2">Total</th>
-						<th colspan="3">Detail of missed TP</th>
-					</tr>
-					<tr>
-						<th>TP</th>
-						<th>FP</th>
-						<th>Pending</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		
-			<div id="scatterPlot" style="width: 950px;" style="display:none;">
-				<table class="block-al-r mb10">
-					<tr>
-						<td>
-							<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
-						</td>
-						<td>
-							<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/statistics/missedTP.png" />
-						</td>
-						<td>
-							<input name="checkFP" type="checkbox" checked="checked" /><img src="images/statistics/FP.png" />
-						</td>
-						<td>
-							<input name="checkPending" type="checkbox" checked="checked" /><img src="images/statistics/pending.png" />
-						</td>
-						<td><input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" /></td>
-					</tr>
-				</table>
+				</div>
+				</form>
 
-				<table class="ml10">
-					<tr>
-						<td style="width: 330px;"><img id="scatterPlotAx"   src="images/statistics/ps_scatter_plot_base_xy.png" /></td>
-						<td style="width: 330px;"><img id="scatterPlotCoro" src="images/statistics/ps_scatter_plot_base_xz.png" /></td>
-						<td style="width: 330px;"><img id="sactterPlotSagi" src="images/statistics/ps_scatter_plot_base_yz.png" /></td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		</form>
+				<div class="al-r fl-clr">
+					<p class="pagetop"><a href="#page">page top</a></p>
+				</div>
+
+			</div><!-- / .tab-content END -->
+
 <!-- InstanceEndEditable -->
 		</div><!-- / #content END -->
 	</div><!-- / #container END -->
