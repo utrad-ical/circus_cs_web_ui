@@ -243,15 +243,14 @@ $(function() {
 					$("#dateFrom").datepicker("option", "maxDate", date);
 				}});
 
-
 	// Parameters of UI blocking for ajax requests (using jquery blockUI)
 	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
-							   + ' Under analyzing, just moment...</span>';
+							   + ' Under processing, just moment...</span>';
 	$.blockUI.defaults.fadeOut = 200;			// set fadeOut effect shorter
 	$.blockUI.defaults.css.width   = '320px';
 	$.blockUI.defaults.css.padding = '5px';
-});
 
+});
 {/literal}
 -->
 </script>
@@ -297,17 +296,28 @@ $(function() {
 						<div class="p20">
 							<table class="search-tbl">
 								<tr>
-									<th style="width: 3.5em;"><span class="trim01">Date</span></th>
+									<th style="width: 8em;"><span class="trim01">Series date</span></th>
 									<td style="width: 220px;">
 										<input id="dateFrom" type="text" style="width:72px;" />
 										-
 										<input id="dateTo" type="text" style="width:72px;" />
 
 									</td>
-									<td colspan="2" style="width:200px;">
+									{*<td colspan="2" style="width:200px;">
 										<input name="" type="button" class="form-btn" value="this month" onclick="SetDate('thisMonth');" />
 										<input name="" type="button" class="form-btn" value="last month" onclick="SetDate('lastMonth');" />
+									</td>*}
+									<th style="width: 8em;"><span class="trim01">CAD name</span></th>
+									<td>
+										<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
+											<option value="" selected="selected">(Select)</option>
+											{foreach from=$cadList item=item}
+												<option value="{$item[1]|escape}">{$item[0]|escape}</option>
+											{/foreach}
+										</select>
 									</td>
+								</tr>
+								<tr>
 									<th><span class="trim01">User</span></th>
 									<td>
 										<select id="userMenu" name="userMenu" style="width: 100px;">
@@ -318,18 +328,7 @@ $(function() {
 											{/if}
 										</select>
 									</td>
-								</tr>
-								<tr>
-									<th><span class="trim01">CAD</span></th>
-									<td>
-										<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
-											<option value="" selected="selected">(Select)</option>
-											{foreach from=$cadList item=item}
-												<option value="{$item[1]|escape}">{$item[0]|escape}</option>
-											{/foreach}
-										</select>
-									</td>
-									<th style="width: 5.5em;"><span class="trim01">Version</span></th>
+									<th style="width: 5.5em;"><span class="trim01">CAD version</span></th>
 									<td>
 										<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
 											<option value="all">all</option>
@@ -338,11 +337,15 @@ $(function() {
 											{/foreach}
 										</select>
 									</td>
-									<th style="width: 10em;"><span class="trim01">Size(diameter)</span></th>
+								</tr>
+								<tr>
+									<th style="width: 9.5em;"><span class="trim01">Size(diameter)</span></th>
 									<td colspan="2">
 										<input id="minSize" type="text" class="al-r" style="width: 36px">&nbsp;-&nbsp;<input id="maxSize" type="text" class="al-r" style="width: 36px">&nbsp;[mm]
 									</td>
+									<td></td><td></td>
 								</tr>
+
 							</table>	
 							<div class="al-l mt10 ml20" style="width: 100%;">
 								<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
