@@ -99,7 +99,7 @@
 
 			$base_name = substr($uploadFile, 0, strlen($uploadFile)-4);
 			$xmlFname = $dstPath . $baseName . $DIR_SEPARATOR . $baseName . ".xml";
-			
+
 			if(!is_file($xmlFname) || ($xml = simplexml_load_file($xmlFname)) == false)
 			{
 				$message .= '<span style="color:red;">Fail to load xml file (' . $xmlFname . ')</span><br/>';
@@ -117,33 +117,33 @@
 				$groupResearchDefinition = $xml->GroupResearchDefinition[0];
 
 				$resultDBDefinition = $xml->ResultDBDefinition[0];
-				$scoreDBDefifition  = $xml->ScoreDBDefifition[0];
-				$seriesDefifition   = $xml->SeriesDefifition[0];
+				$scoreDBDefinition  = $xml->ScoreDBDefinition[0];
+				$seriesDefinition   = $xml->SeriesDefinition[0];
 				
-				$resultTableName = $resultDBDefifition->ResultTableName[0];
-				$scoreTableName  = $scoreDBDefifition->ScoreTableName[0];
+				$resultTableName = (string)$resultDBDefinition->ResultTableName[0];
+				$scoreTableName  = (string)$scoreDBDefinition->ScoreTableName[0];
 				
-				$pluginName       = $pluginDefifition->PluginName[0];
-				$version          = $pluginDefifition->Version[0];
-				$pluginType       = $pluginDefifition->PluginType[0];				
-				$description      = addslashes($pluginDefifition->Description[0]);
+				$pluginName       = (string)$pluginDefinition->PluginName[0];
+				$version          = (string)$pluginDefinition->Version[0];
+				$pluginType       = (string)$pluginDefinition->PluginType[0];
+				$description      = addslashes((string)$pluginDefinition->Description[0]);
 				//------------------------------------------------------------------------------------------------------
-				
+
 				if($pluginType == 1)    // for CAD
 				{
-					$inputType        = $cadDefifition->InputType[0];
-					$resultType       = $cadDefifition->ResultType[0];
-					$presentType      = $cadDefifition->PresentType[0];
-					$exportType       = $cadDefifition->ExportType[0];
-					$timeLimit        = $cadDefifition->TimeLimit[0];
-					$defaultSortKey   = $cadDefifition->DefaultSortKey[0];
-					$defaultSortOrder = ($cadDefifition->DefaultSortOrder[0] == 1) ? 't' : 'f';
-					$maxDispNum       = $cadDefifition->MaxDispNum[0];
-					$confidenceTh     = $cadDefifition->ConfidenceTh[0];
-					$yellowCircleTh   = $cadDefifition->YellowCircleTh[0];
-					$doubleCircleTh   = $cadDefifition->DoubleCircleTh[0];
-					$windowLevel      = $cadDefifition->WindowLevel[0];
-					$windowWidth      = $cadDefifition->WindowWidth[0];
+					$inputType        = (string)$cadDefinition->InputType[0];
+					$resultType       = (string)$cadDefinition->ResultType[0];
+					$presentType      = (string)$cadDefinition->PresentType[0];
+					$exportType       = (string)$cadDefinition->ExportType[0];
+					$timeLimit        = (string)$cadDefinition->TimeLimit[0];
+					$defaultSortKey   = (string)$cadDefinition->DefaultSortKey[0];
+					$defaultSortOrder = ((string)$cadDefinition->DefaultSortOrder[0] == "1") ? 't' : 'f';
+					$maxDispNum       = (string)$cadDefinition->MaxDispNum[0];
+					$confidenceTh     = (string)$cadDefinition->ConfidenceTh[0];
+					$yellowCircleTh   = (string)$cadDefinition->YellowCircleTh[0];
+					$doubleCircleTh   = (string)$cadDefinition->DoubleCircleTh[0];
+					$windowLevel      = (string)$cadDefinition->WindowLevel[0];
+					$windowWidth      = (string)$cadDefinition->WindowWidth[0];
 					
 					$mainModality   = "";
 					
@@ -151,9 +151,9 @@
 					$cadSeriesSqlStr = "";
 					$cadSeriesSqlParams = array();
 					
-					foreach($seriesDefifition->SeriesItem as $item)
+					foreach($seriesDefinition->SeriesItem as $item)
 					{	
-						if($cnt = 0 || $item->SeriesID[0] == 1)  $mainModality = $item->Modality[0];
+						if($cnt = 0 || (string)$item->SeriesID[0] == 1)  $mainModality = (string)$item->Modality[0];
 						
 						$cadSeriesSqlStr .= "INSERT INTO cad_series (cad_name, version, series_id,"
 										 .  " series_description, manufacturer, model_name, station_name,"
@@ -163,21 +163,21 @@
 						
 						$cadSeriesSqlParams[] = $pluginName;
 						$cadSeriesSqlParams[] = $version;
-						$cadSeriesSqlParams[] = $item->SeriesID[0];
+						$cadSeriesSqlParams[] = (string)$item->SeriesID[0];
 						
-						$tmpStr = $item->DefaultSeriesDescription[0];
+						$tmpStr = (string)$item->DefaultSeriesDescription[0];
 						$cadSeriesSqlParams[] = ($tmpStr == "") ? $tmpStr : '(default)';
 						
-						$cadSeriesSqlParams[] = $item->Manufacturer[0];
-						$cadSeriesSqlParams[] = $item->ModelName[0];
-						$cadSeriesSqlParams[] = $item->StationName[0];
-						$cadSeriesSqlParams[] = $item->Modality[0];
-						$cadSeriesSqlParams[] = $item->MinSlice[0];
-						$cadSeriesSqlParams[] = $item->MaxSlice[0];
-						$cadSeriesSqlParams[] = $item->IsotropicType[0];
-						$cadSeriesSqlParams[] = $item->StartImgNum[0]; 
-						$cadSeriesSqlParams[] = $item->EndImgNum[0];
-						$cadSeriesSqlParams[] = $item->ExportSeriesNum[0];
+						$cadSeriesSqlParams[] = (string)$item->Manufacturer[0];
+						$cadSeriesSqlParams[] = (string)$item->ModelName[0];
+						$cadSeriesSqlParams[] = (string)$item->StationName[0];
+						$cadSeriesSqlParams[] = (string)$item->Modality[0];
+						$cadSeriesSqlParams[] = (string)$item->MinSlice[0];
+						$cadSeriesSqlParams[] = (string)$item->MaxSlice[0];
+						$cadSeriesSqlParams[] = (string)$item->IsotropicType[0];
+						$cadSeriesSqlParams[] = (string)$item->StartImgNum[0]; 
+						$cadSeriesSqlParams[] = (string)$item->EndImgNum[0];
+						$cadSeriesSqlParams[] = (string)$item->ExportSeriesNum[0];
 						
 						$cnt++;
 					}
@@ -249,12 +249,16 @@
 						
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute(array_merge($sqlParams, $cadSeriesSqlParams));
-						
+
+						//echo $sqlStr; 
+						var_dump(array_merge($sqlParams, $cadSeriesSqlParams));
+
+
 						if($stmt->errorCode() != '00000')
 						{
 							$message .= '<span style="color:red;">[ERROR] Fail to register plugin table.</span><br/>';
-							//$errorMessage = $stmt->errorInfo();
-							//$message .= $errorMessage[2] . '<br/>';
+							$errorMessage = $stmt->errorInfo();
+							$message .= $errorMessage[2] . '<br/>';
 							
 							$sqlStr = "DELETE FROM plugin_master WHERE plugin_name=? AND version=?";
 							$stmt = $pdo->prepare($sqlStr);
@@ -277,11 +281,11 @@
 								. 'exec_id    INT NOT NULL,'
 								. 'sub_id     SMALLINT NOT NULL,';
 						
-						foreach($resultDBDefifition->DBItem as $item)
+						foreach($resultDBDefinition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
 							
-							switch($item->DBColumnType[0])
+							switch((string)$item->DBColumnType[0])
 							{
 								case 'int':
 									$sqlStr .= $colName . ' INT NOT NULL,';
@@ -292,7 +296,7 @@
 									break;
 								
 								case 'text':
-									$colSize = $item->DBColumnSize[0];
+									$colSize = (int)$item->DBColumnSize[0];
 									if($colSize > 255)
 									{
 										$sqlStr .= $colName . ' TEXT NOT NULL,';
@@ -353,11 +357,11 @@
 								. 'consensual_flg BOOLEAN NOT NULL DEFAULT false,'
 								. 'interrupt_flg BOOLEAN NOT NULL DEFAULT false,';
 						
-						foreach($scoreDBDefifition->DBItem as $item)
+						foreach($scoreDBDefinition->DBItem as $item)
 						{
 							$colName = sprintf("%s", (string)$item->DBColumnName[0]);
 							
-							switch($item->DBColumnType[0])
+							switch((string)$item->DBColumnType[0])
 							{
 								case 'int':
 									$sqlStr .= $colName . ' INT NOT NULL,';
@@ -368,7 +372,7 @@
 									break;
 								
 								case 'text':
-									$colSize = $item->DBColumnSize[0];
+									$colSize = (int)$item->DBColumnSize[0];
 									if($colSize > 255)
 									{
 										$sqlStr .= $colName . ' TEXT NOT NULL,';
