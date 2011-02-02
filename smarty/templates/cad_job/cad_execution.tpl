@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/base.dwt" codeOutsideHTMLIsLocked="false" -->
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=shift_jis" />
 <meta http-equiv="content-style-type" content="text/css" />
 <meta http-equiv="content-script-type" content="text/javascript" />
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-<!-- InstanceBeginEditable name="doctitle" -->
+
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
-<!-- InstanceEndEditable -->
+
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
@@ -201,7 +201,6 @@ function RegistrationCADJob()
 </script>
 
 <link rel="shortcut icon" href="favicon.ico" />
-<!-- InstanceBeginEditable name="head" -->
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 
@@ -220,331 +219,329 @@ function RegistrationCADJob()
 -->
 </style>
 {/literal}
-
-<!-- InstanceEndEditable -->
-<!-- InstanceParam name="class" type="text" value="series-list" -->
 </head>
 
 <body class="cad_execution">
 <div id="page">
 	<div id="container" class="menu-back">
+		<!-- ***** #leftside ***** -->
 		<div id="leftside">
 			{include file='menu.tpl'}
-		</div><!-- / #leftside END -->
+		</div>
+		<!-- / #leftside END -->
+
 		<div id="content">
-<!-- InstanceBeginEditable name="content" -->
-		<!-- ***** TAB ***** -->
-		<div class="tabArea">
-			<ul>
-				{if $params.srcList!="" && $smarty.session.listAddress!=""}
-					<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
-				{else}
-					<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
-				{/if}
-				<li><a href="" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD execution</a></li>
-			</ul>
-		</div><!-- / .tabArea END -->
-		
-		<div class="tab-content">
-			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="cadName"              name="cadName"              value="{$params.cadName}" />
-			<input type="hidden" id="version"              name="version"              value="{$params.version}" />
-			<input type="hidden" id="studyUIDStr"          name="studyUIDStr"          value="{$studyUIDStr}" />
-			<input type="hidden" id="seriesUIDStr"         name="seriesUIDStr"         value="{$seriesUIDStr}" />
-			<input type="hidden" id="modalityStr"          name="modalityStr"          value="{$modalityStr}" />
-			<input type="hidden" id="seriesDescriptionStr" name="seriesDescriptionStr" value="{$seriesDescriptionStr}" />
-			<input type="hidden" id="srcList"              name="srcList"              value="{$params.srcList}">
+			<!-- ***** TAB ***** -->
+			<div class="tabArea">
+				<ul>
+					{if $params.srcList!="" && $smarty.session.listAddress!=""}
+						<li><a href="../{$smarty.session.listAddress}" class="btn-tab" title="{$params.listTabTitle}">{$params.listTabTitle}</a></li>
+					{else}
+						<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
+					{/if}
+					<li><a href="" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD execution</a></li>
+				</ul>
+			</div><!-- / .tabArea END -->
+			
+			<div class="tab-content">
+				<form id="form1" name="form1" onsubmit="return false;">
+				<input type="hidden" id="cadName"              name="cadName"              value="{$params.cadName}" />
+				<input type="hidden" id="version"              name="version"              value="{$params.version}" />
+				<input type="hidden" id="studyUIDStr"          name="studyUIDStr"          value="{$studyUIDStr}" />
+				<input type="hidden" id="seriesUIDStr"         name="seriesUIDStr"         value="{$seriesUIDStr}" />
+				<input type="hidden" id="modalityStr"          name="modalityStr"          value="{$modalityStr}" />
+				<input type="hidden" id="seriesDescriptionStr" name="seriesDescriptionStr" value="{$seriesDescriptionStr}" />
+				<input type="hidden" id="srcList"              name="srcList"              value="{$params.srcList}">
 
-			<div id="seriesSelect" {if $params.mode!='select'}style="display:none;"{/if}>
+				<div id="seriesSelect" {if $params.mode!='select'}style="display:none;"{/if}>
 
 
-				<h2>Series selection</h2>
-				<p class="mb10">Select DICOM series,and press the <span class="clr-blue fw-bold">[OK]</span>button after selection.</p>
-				
-				<p class="mb10">
-					<input name="" type="button" value="OK"     class="w100 form-btn" onclick="CheckSeries();" />
-					<input name="" type="button" value="Cancel" class="w100 form-btn" oncLick="history.back(1);" />
-				</p>
-				
-				<div class="detail-panel mb20">
-					<table class="detail-tbl">
-						<tr>
-							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$params.cadName} v.{$params.version}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Patient ID</span></th>
-							<td>{$params.patientID}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Pateint name</span></th>
-							<td>{$params.patientName}</td>
-						</tr>
-					</table>
-				</div><!-- / .detail-panel END -->
-				
-				{assign var="cnt" value=0}	
+					<h2>Series selection</h2>
+					<p class="mb10">Select DICOM series,and press the <span class="clr-blue fw-bold">[OK]</span>button after selection.</p>
+					
+					<p class="mb10">
+						<input name="" type="button" value="OK"     class="w100 form-btn" onclick="CheckSeries();" />
+						<input name="" type="button" value="Cancel" class="w100 form-btn" oncLick="history.back(1);" />
+					</p>
+					
+					<div class="detail-panel mb20">
+						<table class="detail-tbl">
+							<tr>
+								<th style="width: 9em;"><span class="trim01">CAD name</span></th>
+								<td>{$params.cadName} v.{$params.version}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Patient ID</span></th>
+								<td>{$params.patientID}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Pateint name</span></th>
+								<td>{$params.patientName}</td>
+							</tr>
+						</table>
+					</div><!-- / .detail-panel END -->
+					
+					{assign var="cnt" value=0}	
 
-				{section name=k start=0 loop=$seriesNum}
-		
-					{assign var="k" value=$smarty.section.k.index}	
-		
-						<h3 class="ptn02">Series {$k+1}:
-							<span style="font-weight: normal">({$modalityArr[$k]},
+					{section name=k start=0 loop=$seriesNum}
+			
+						{assign var="k" value=$smarty.section.k.index}	
+			
+							<h3 class="ptn02">Series {$k+1}:
+								<span style="font-weight: normal">({$modalityArr[$k]},
 
-							{section name=j start=0 loop=$descriptionNumArr[$k]}
+								{section name=j start=0 loop=$descriptionNumArr[$k]}
 
-								{assign var="j"  value=$smarty.section.j.index}
-								{assign var="tmp" value=$cnt+$j}
+									{assign var="j"  value=$smarty.section.j.index}
+									{assign var="tmp" value=$cnt+$j}
 
-								{if $seriesDescriptionArr[$tmp] == '(default)'}
-									#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}{if $j==$descriptionNumArr[$k]-1}){else},{/if}
+									{if $seriesDescriptionArr[$tmp] == '(default)'}
+										#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}{if $j==$descriptionNumArr[$k]-1}){else},{/if}
+									{else}
+										series description: {$seriesDescriptionArr[$tmp]}{if $j==$descriptionNumArr[$k]-1}){else},{/if}
+									{/if}
+								{/section}</span>
+							</h3>
+
+						<table id="selectTbl{$k+1}" class="col-tbl mb30" style="width: 100%;">
+							<thead>
+								<tr>
+									{if $k != 0}<th>&nbsp;</th>{/if}
+									<th>Study ID</th>
+									<th>Series ID</th>
+									<th>Series date</th>
+									<th>Series time</th>
+									<th>Img.</th>
+									<th>Series description</th>
+								</tr>
+							</thead>
+							<tbody>
+								{* ----- 1st series ----- *}
+								{if $k==0}
+									<tr>
+										<td>{$seriesList[0][0][1]}</td>
+										<td>{$seriesList[0][0][2]}</td>
+										<td>{$seriesList[0][0][3]}</td>
+										<td>{$seriesList[0][0][4]}</td>
+										<td>{$seriesList[0][0][5]}</td>
+										<td class="al-l">{$seriesList[0][0][6]}</td>
+									</tr>
 								{else}
-									series description: {$seriesDescriptionArr[$tmp]}{if $j==$descriptionNumArr[$k]-1}){else},{/if}
-								{/if}
-							{/section}</span>
-						</h3>
+									{assign var="ktmp" value=$k+1}
 
-					<table id="selectTbl{$k+1}" class="col-tbl mb30" style="width: 100%;">
+									{section name=j start=0 loop=$selectedSeriesArr[$ktmp]}
+			
+										{assign var="j" value=$smarty.section.j.index}	
+
+											<tr id="rowSeries{$k+1}_{$j+1}" class="{if $j%2==1}column {/if}rowDisp">
+												<td align=center>
+													<input type="checkbox" id="checkbox{$k+1}_{$j+1}" name="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onClick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if {$seriesList[$k][$j][6]} == $defaultSeriesDescriptionArr[$k]}checked{/if}>
+												</td>
+												<td>{$seriesList[$k][$j][1]}</td>
+												<td>{$seriesList[$k][$j][2]}</td>
+												<td>{$seriesList[$k][$j][3]}</td>
+												<td>{$seriesList[$k][$j][4]}</td>
+												<td>{$seriesList[$k][$j][5]}</td>
+												<td  class="al-l">{$seriesList[$k][$j][6]}</td>
+											</tr>
+										{/section}
+									<input type="hidden" id="series{$k+1}Selected" value="">
+								{/if}
+							</tbody>
+						</table>
+					{/section}
+
+					<input name="" type="button" value="reset" class="s-btn mb30 form-btn" onclick="ResetSeries();" />
+					<input type="hidden" id="selectedSeriesStr" name="selectedSeriesStr" value="{$selectedSeriesStr}" />
+					</form>
+				</div>
+				<!-- / Detail END -->
+				
+				<!-- Confirmation -->
+				<div id="confirm" {if $params.mode!='confirm'}style="display:none;"{/if}>
+					<h2>Confirmation</h2>
+					<p class="mb10">Do you register following CAD job?</p>
+					
+					<p class="mb10">
+						<input name="" type="button" value="OK"     class="w100 form-btn" onclick="RegistrationCADJob();" />
+						<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
+					</p>
+					
+					<div class="detail-panel mb20">
+						<table class="detail-tbl">
+							<tr>
+								<th style="width: 9em;"><span class="trim01">CAD name</span></th>
+								<td>{$params.cadName} v.{$params.version}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Patient ID</span></th>
+								<td>{$params.patientID}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Pateint name</span></th>
+								<td>{$params.patientName}</td>
+							</tr>
+						</table>
+					</div>
+					
+					<h3 class="ptn02">Series list</h3>
+
+					<table class="col-tbl mb30" style="width: 100%;">
 						<thead>
 							<tr>
-								{if $k != 0}<th>&nbsp;</th>{/if}
+								<th></th>
 								<th>Study ID</th>
 								<th>Series ID</th>
 								<th>Series date</th>
 								<th>Series time</th>
+								<th>Modality</th>
 								<th>Img.</th>
 								<th>Series description</th>
 							</tr>
 						</thead>
 						<tbody>
-							{* ----- 1st series ----- *}
-							{if $k==0}
-								<tr>
-									<td>{$seriesList[0][0][1]}</td>
-									<td>{$seriesList[0][0][2]}</td>
-									<td>{$seriesList[0][0][3]}</td>
-									<td>{$seriesList[0][0][4]}</td>
-									<td>{$seriesList[0][0][5]}</td>
-									<td class="al-l">{$seriesList[0][0][6]}</td>
-								</tr>
-							{else}
-								{assign var="ktmp" value=$k+1}
-
-								{section name=j start=0 loop=$selectedSeriesArr[$ktmp]}
-		
-									{assign var="j" value=$smarty.section.j.index}	
-
-										<tr id="rowSeries{$k+1}_{$j+1}" class="{if $j%2==1}column {/if}rowDisp">
-											<td align=center>
-												<input type="checkbox" id="checkbox{$k+1}_{$j+1}" name="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onClick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if {$seriesList[$k][$j][6]} == $defaultSeriesDescriptionArr[$k]}checked{/if}>
-											</td>
-											<td>{$seriesList[$k][$j][1]}</td>
-											<td>{$seriesList[$k][$j][2]}</td>
-											<td>{$seriesList[$k][$j][3]}</td>
-											<td>{$seriesList[$k][$j][4]}</td>
-											<td>{$seriesList[$k][$j][5]}</td>
-											<td  class="al-l">{$seriesList[$k][$j][6]}</td>
-										</tr>
-									{/section}
-								<input type="hidden" id="series{$k+1}Selected" value="">
+							{if $params.mode=='confirm'}
+								{foreach from=$seriesList item=item name=confirmList}
+									<tr>
+										<td>{$smarty.foreach.confirmList.iteration}</td>
+											<td>{$item[0]}</td>
+										<td>{$item[1]}</td>
+										<td>{$item[2]}</td>
+										<td>{$item[3]}</td>
+										<td>{$item[4]}</td>
+										<td>{$item[5]}</td>
+										<td class="al-l">{$item[6]}</td>
+									</tr>
+								{/foreach}
 							{/if}
 						</tbody>
 					</table>
-				{/section}
-
-				<input name="" type="button" value="reset" class="s-btn mb30 form-btn" onclick="ResetSeries();" />
-				<input type="hidden" id="selectedSeriesStr" name="selectedSeriesStr" value="{$selectedSeriesStr}" />
-				</form>
-			</div>
-			<!-- / Detail END -->
-			
-			<!-- Confirmation -->
-			<div id="confirm" {if $params.mode!='confirm'}style="display:none;"{/if}>
-				<h2>Confirmation</h2>
-				<p class="mb10">Do you register following CAD job?</p>
-				
-				<p class="mb10">
-					<input name="" type="button" value="OK"     class="w100 form-btn" onclick="RegistrationCADJob();" />
-					<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
-				</p>
-				
-				<div class="detail-panel mb20">
-					<table class="detail-tbl">
-						<tr>
-							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$params.cadName} v.{$params.version}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Patient ID</span></th>
-							<td>{$params.patientID}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Pateint name</span></th>
-							<td>{$params.patientName}</td>
-						</tr>
-					</table>
 				</div>
+				<!-- / confirmation END -->
 				
-				<h3 class="ptn02">Series list</h3>
+				<!-- 17.Successfully-registered-in-cad-job-list.html -->
+				<div id="success" style="display:none;"> 
+					<p id="registMessage" class="clr-orange mb10">Successfully registered in CAD job list!</p>
+					<p class="mb10"><input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
 
-				<table class="col-tbl mb30" style="width: 100%;">
-					<thead>
-						<tr>
-							<th></th>
-							<th>Study ID</th>
-							<th>Series ID</th>
-							<th>Series date</th>
-							<th>Series time</th>
-							<th>Modality</th>
-							<th>Img.</th>
-							<th>Series description</th>
-						</tr>
-					</thead>
-					<tbody>
-						{if $params.mode=='confirm'}
-							{foreach from=$seriesList item=item name=confirmList}
-								<tr>
-									<td>{$smarty.foreach.confirmList.iteration}</td>
-										<td>{$item[0]}</td>
-									<td>{$item[1]}</td>
-									<td>{$item[2]}</td>
-									<td>{$item[3]}</td>
-									<td>{$item[4]}</td>
-									<td>{$item[5]}</td>
-									<td class="al-l">{$item[6]}</td>
-								</tr>
-							{/foreach}
-						{/if}
-					</tbody>
-				</table>
-			</div>
-			<!-- / confirmation END -->
-			
-			<!-- 17.Successfully-registered-in-cad-job-list.html -->
-			<div id="success" style="display:none;"> 
-				<p id="registMessage" class="clr-orange mb10">Successfully registered in CAD job list!</p>
-				<p class="mb10"><input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
-
-				<div class="detail-panel mb20">
-					<table class="detail-tbl">
-				<!--		<tr>
-							<th style="width: 110px;"><span class="trim01">Registered at</span></th>
-							<td><span id="registeredAt"></span></td>
-						</tr> -->
-						<tr>
-							<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
-							<td>{$smarty.session.userID}</td>
-						</tr>
-						<tr>
-							<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-							<td>{$params.cadName} v.{$params.version}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Patient ID</span></th>
-							<td>{$params.patientID}</td>
-						</tr>
-						<tr>
-							<th><span class="trim01">Pateint name</span></th>
-							<td>{$params.patientName}</td>
-						</tr>
-					</table>
-				</div>
-				
-				<h3 class="ptn02">Series list</h3>
-				<table class="col-tbl mb30" style="width: 100%;">
-					<thead>
-						<tr>
-							<th></th>
-							<th>Study ID</th>
-							<th>Series ID</th>
-							<th>Series date</th>
-							<th>Series time</th>
-							<th>Modality</th>
-							<th>Img.</th>
-							<th>Series description</th>
-						</tr>
-					</thead>
-					<tbody>
-						{if $params.mode=='confirm'}
-							{foreach from=$seriesList item=item name=confirmList}
-								<tr>
-									<td>{$smarty.foreach.confirmList.iteration}</td>
-										<td>{$item[0]}</td>
-									<td>{$item[1]}</td>
-									<td>{$item[2]}</td>
-									<td>{$item[3]}</td>
-									<td>{$item[4]}</td>
-									<td>{$item[5]}</td>
-									<td class="al-l">{$item[6]}</td>
-								</tr>
-							{/foreach}
-						{/if}
-					</tbody>
-				</table>
-			</div>
-			<!-- / Seccessfully END -->
-
-			<!-- Error display -->
-			<div id="error" {if $params.mode!='error'}style="display:none;"{/if}> 
-				<h2>Error</h2>
-
-				{if $params.errorMessage != ""}
-					<p class="mb10">{$params.errorMessage}</p>
-				{else}
-					<p class="mb10">{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
-	</p>
-					<table class="col-tbl mb30">
+					<div class="detail-panel mb20">
+						<table class="detail-tbl">
+					<!--		<tr>
+								<th style="width: 110px;"><span class="trim01">Registered at</span></th>
+								<td><span id="registeredAt"></span></td>
+							</tr> -->
+							<tr>
+								<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
+								<td>{$smarty.session.userID}</td>
+							</tr>
+							<tr>
+								<th style="width: 9em;"><span class="trim01">CAD name</span></th>
+								<td>{$params.cadName} v.{$params.version}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Patient ID</span></th>
+								<td>{$params.patientID}</td>
+							</tr>
+							<tr>
+								<th><span class="trim01">Pateint name</span></th>
+								<td>{$params.patientName}</td>
+							</tr>
+						</table>
+					</div>
+					
+					<h3 class="ptn02">Series list</h3>
+					<table class="col-tbl mb30" style="width: 100%;">
 						<thead>
 							<tr>
-								<th>Series</th>
+								<th></th>
+								<th>Study ID</th>
+								<th>Series ID</th>
+								<th>Series date</th>
+								<th>Series time</th>
 								<th>Modality</th>
-								<th>Condition</th>
+								<th>Img.</th>
+								<th>Series description</th>
 							</tr>
 						</thead>
 						<tbody>
-							{assign var="cnt" value=0}
-
-							{section name=j start=0 loop=$seriesNum}
-
-								{assign var="j" value=$smarty.section.j.index}
-
-								{section name=i start=0 loop=$descriptionNumArr[$j]}
-
+							{if $params.mode=='confirm'}
+								{foreach from=$seriesList item=item name=confirmList}
 									<tr>
-										{assign var="i" value=$smarty.section.i.index}
-										{assign var="tmp" value=$cnt+$i}
-
-										{if $i==0}
-											<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$j+1}</td>
-											<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$modalityArr[$j]}</td>
-										{/if}
-
-										{if $seriesDescriptionArr[$tmp] == '(default)'}
-											<td>#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}</td>
-										{else}
-											<td>series description: {$seriesDescriptionArr[$tmp]}</td>
-										{/if}
+										<td>{$smarty.foreach.confirmList.iteration}</td>
+											<td>{$item[0]}</td>
+										<td>{$item[1]}</td>
+										<td>{$item[2]}</td>
+										<td>{$item[3]}</td>
+										<td>{$item[4]}</td>
+										<td>{$item[5]}</td>
+										<td class="al-l">{$item[6]}</td>
 									</tr>
-								{/section}
-
-								{assign var="cnt" value=$cnt+$descriptionNumArr[$j]}
-							{/section}
+								{/foreach}
+							{/if}
 						</tbody>
 					</table>
-				{/if}
-			</div>
-			<!-- / Error END -->
+				</div>
+				<!-- / Seccessfully END -->
 
-			<div class="al-r fl-clr">
-				<p class="pagetop"><a href="#page">page top</a></p>
-			</div>
+				<!-- Error display -->
+				<div id="error" {if $params.mode!='error'}style="display:none;"{/if}> 
+					<h2>Error</h2>
 
-		</div><!-- / .tab-content END -->
+					{if $params.errorMessage != ""}
+						<p class="mb10">{$params.errorMessage}</p>
+					{else}
+						<p class="mb10">{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!&nbsp;&nbsp;<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
+		</p>
+						<table class="col-tbl mb30">
+							<thead>
+								<tr>
+									<th>Series</th>
+									<th>Modality</th>
+									<th>Condition</th>
+								</tr>
+							</thead>
+							<tbody>
+								{assign var="cnt" value=0}
+
+								{section name=j start=0 loop=$seriesNum}
+
+									{assign var="j" value=$smarty.section.j.index}
+
+									{section name=i start=0 loop=$descriptionNumArr[$j]}
+
+										<tr>
+											{assign var="i" value=$smarty.section.i.index}
+											{assign var="tmp" value=$cnt+$i}
+
+											{if $i==0}
+												<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$j+1}</td>
+												<td {if $descriptionNumArr[$j]>1}rowspan={$descriptionNumArr[$j]}{/if} align=center>{$modalityArr[$j]}</td>
+											{/if}
+
+											{if $seriesDescriptionArr[$tmp] == '(default)'}
+												<td>#image: {$minSliceArr[$tmp]}-{$maxSliceArr[$tmp]}</td>
+											{else}
+												<td>series description: {$seriesDescriptionArr[$tmp]}</td>
+											{/if}
+										</tr>
+									{/section}
+
+									{assign var="cnt" value=$cnt+$descriptionNumArr[$j]}
+								{/section}
+							</tbody>
+						</table>
+					{/if}
+				</div>
+				<!-- / Error END -->
+
+				<div class="al-r fl-clr">
+					<p class="pagetop"><a href="#page">page top</a></p>
+				</div>
+
+			</div><!-- / .tab-content END -->
 		
-		<!-- InstanceEndEditable -->
 		</div><!-- / #content END -->
 	</div><!-- / #container END -->
 </div><!-- / #page END -->
 </body>
-<!-- InstanceEnd --></html>
+</html>

@@ -6,7 +6,6 @@
 <meta http-equiv="content-style-type" content="text/css" />
 <meta http-equiv="content-script-type" content="text/javascript" />
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
@@ -22,23 +21,12 @@
 <!--
 	function RedrawRocCurve(execID, inputPath)
 	{
-		$.post("plugin_template/redraw_roc_curve.php",
+		$.post("plugin_template/redraw_roc_curve_v1.1.php",
 			 	{ execID: execID,
 			 	  curveType: $(".tab-content input[name='curveType']:checked").val(),
-			      pendigType: $(".tab-content input[name='pendigType']:checked").val(),
 			      inputPath:  inputPath},
 			   	function(data){
 			 		$("#rocGraph").attr("src", data.imgFname);
-			 		$("#dispTpNum").html(data.dispTpNum);
-			 		$("#undispTpNum").html(data.undispTpNum);
-			 		$("#dispFpNum").html(data.dispFpNum);
-			 		$("#undispFpNum").html(data.undispFpNum);
-			 		$("#fnNum").html(data.fnNum);
-			 		$("#underRocArea").html(data.underRocArea);
-					
-			 		$("#dispTpMenu").html(data.dispTpOptionHtml);
-			 		$("#dispSensitivity").html(data.dispSensitivity + '&nbsp;%');
-
 				}, "json");
 	}
 
@@ -52,6 +40,7 @@
 {/literal}
 
 <link rel="shortcut icon" href="../favicon.ico" />
+
 <link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/darkroom.css" rel="stylesheet" type="text/css" media="all" />
@@ -80,16 +69,18 @@ div.imgArea {
 			{include file='menu.tpl'}
 		</div>
 		<!-- / #leftside END -->
-
+		
 		<div id="content">
-			<!-- ***** TAB ***** -->
+
+			<!-- ***** .tabArea ***** -->
 			<div class="tabArea">
 				<ul>
 					<li><a href="{if $params.srcList!="" && $smarty.session.listAddress!=""}{$smarty.session.listAddress}{else}research_list.php{/if}" class="btn-tab" title="Research list">Research list</a></li>
 					<li><a href="#" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Research result</a></li>
 				</ul>
 				<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
-			</div><!-- / .tabArea END -->
+			</div>
+			<!-- / .tabArea END -->
 
 			<div class="tab-content">
 				<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.execID}]</h2>
@@ -122,22 +113,6 @@ div.imgArea {
 												<th><span class="trim01">False positives</span></th>
 												<td class="al-r"><span id="dispFpNum">{$data.totalFpNum}</span></td>
 				 							</tr>
-										 	{*<tr>
-												<th><span class="trim01">Detected lesions (displayed)</span></th>
-												<td class="al-r"><span id="dispTpNum">{$data.dispTpNum}</span></td>
-				 							</tr>
-										 	<tr>
-												<th><span class="trim01">Detected lesions (undisplayed)</span></th>
-												<td class="al-r"><span id="undispTpNum">{$data.undispTpNum}</span></td>
-				 							</tr>
-										 	<tr>
-												<th><span class="trim01">False positives (displayed)</span></th>
-												<td class="al-r"><span id="dispFpNum">{$data.dispFpNum}</span></td>
-				 							</tr>
-										 	<tr>
-												<th><span class="trim01">False positives (undisplayed)</span></th>
-												<td class="al-r"><span id="undispFpNum">{$data.undispFpNum}</span></td>
-				 							</tr>*}
 				 							<tr>
 				 								<th><span class="trim01">Missed lesions</span></th>
 				 								<td class="al-r"><span id="fnNum">{$data.fnNum}</span></td>
@@ -180,13 +155,6 @@ div.imgArea {
 													<label><input name="curveType" type="radio" value="1" />FROC</label>
 												</td>
 				 							</tr>
-				 							<tr>
-				 								<th><span class="trim01">Pending</span></th>
-				 								<td>
-				 									<label><input name="pendigType" type="radio" value="0" checked="checked" />as FP</label>
-												 	<label><input name="pendigType" type="radio" value="1" />as TP</label>
-												</td>
-											</tr>
 										</table>
 										<div class="al-l mt10 ml20" style="width: 100%;">
 					 						<input type="button" value="Redraw" class="w100 form-btn" onclick="RedrawRocCurve({$params.execID},'{$params.resPath}');" />

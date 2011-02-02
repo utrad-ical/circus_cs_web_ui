@@ -6,9 +6,8 @@
 <meta http-equiv="content-style-type" content="text/css" />
 <meta http-equiv="content-script-type" content="text/javascript" />
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-<!-- InstanceBeginEditable name="doctitle" -->
+
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
-<!-- InstanceEndEditable -->
 
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
@@ -224,7 +223,6 @@ function ResetSettings()
 
 </script>
 
-<!-- InstanceBeginEditable name="head" -->
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 
@@ -248,19 +246,18 @@ div.line{
 
 </style>
 {/literal}
-
-<!-- InstanceEndEditable -->
 </head>
 
-<!-- InstanceParam name="class" type="text" value="home" -->
 <body class="spot">
 <div id="page">
 	<div id="container" class="menu-back">
+		<!-- ***** #leftside ***** -->
 		<div id="leftside">
 			{include file='menu.tpl'}
-		</div><!-- / #leftside END -->
+		</div>
+		<!-- / #leftside END -->
+
 		<div id="content">
-<!-- InstanceBeginEditable name="content" -->
 			<h2>Basic configuration for plug-ins</h2>
 
 			<form id="form1" name="form1">
@@ -323,12 +320,8 @@ div.line{
 					</table>
 				</div>
 			</form>
-
-
-<!-- InstanceEndEditable -->
 		</div><!-- / #content END -->
 	</div><!-- / #container END -->
 </div><!-- / #page END -->
 </body>
-<!-- InstanceEnd --></html>
-
+</html>

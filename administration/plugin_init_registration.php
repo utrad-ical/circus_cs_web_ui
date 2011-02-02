@@ -251,7 +251,7 @@
 						$stmt->execute(array_merge($sqlParams, $cadSeriesSqlParams));
 
 						//echo $sqlStr; 
-						var_dump(array_merge($sqlParams, $cadSeriesSqlParams));
+						//var_dump(array_merge($sqlParams, $cadSeriesSqlParams));
 
 
 						if($stmt->errorCode() != '00000')
