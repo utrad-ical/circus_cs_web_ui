@@ -49,6 +49,17 @@ function EditTag(mode, sid)
 	}
 }
 
+$(function() {
+	$("#addTagText").keydown(function(e) {
+			
+			if (e.keyCode == 13)
+			{
+				$("#addTag").click();
+				return false;
+			}
+		});
+});
+
 --> 
 </script>
 

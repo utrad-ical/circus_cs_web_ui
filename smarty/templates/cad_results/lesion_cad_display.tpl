@@ -509,7 +509,7 @@ $(function() {
 					<div class="hide-on-guest">
 						<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
 						<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
-						<div class="fl-l" style="margin-left:5px;font-size:80%;"><a href="#">about classification types</a></div>
+						{* <div class="fl-l" style="margin-left:5px;font-size:80%;"><a href="#">about classification types</a></div> *}
 					</div>
 				
 					<div class="fl-clr"></div>
