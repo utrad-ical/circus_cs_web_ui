@@ -10,6 +10,20 @@
 <link rel="shortcut icon" href="favicon.ico" />
 
 {literal}
+<script language="javascript">
+<!-- 
+$(function()
+{
+	// Detecting IE6 or below
+	if ($.browser.msie && $.browser.version < 7)
+	{
+		$("#messageArea").html("Your browser is not supported.");
+		$("#mode").attr("disabled", "disabled");
+	}
+});
+-->
+</script>
+
 <style type="text/css" media="all,screen">
 <!--
 body {
@@ -82,7 +96,7 @@ input.login-btn {
 			</tr>
 		</table>
 	</div>
-	<div class="error-blk">
+	<div id="messageArea" class="error-blk">
 		{$message}
 	</div>	
 	<input type="submit" id="mode" name="mode" value="Login" class="w100 login-btn" />
