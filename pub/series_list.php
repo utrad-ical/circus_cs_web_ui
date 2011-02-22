@@ -335,7 +335,7 @@
 			//----------------------------------------------------------------------------------------------------------
 
 			$params['pageAddress'] = sprintf('series_list.php?%s',
-			                         implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
+			                         implode('&', array_map('UrlKeyValPair', array_keys($addressParams), array_values($addressParams))));
 			$_SESSION['listAddress'] = $params['pageAddress'];
 
 			//----------------------------------------------------------------------------------------------------------

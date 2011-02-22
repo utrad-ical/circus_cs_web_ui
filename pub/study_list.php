@@ -271,7 +271,7 @@
 			//----------------------------------------------------------------------------------------------------------
 
 			$params['pageAddress'] = sprintf('study_list.php?%s',
-			                                 implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
+			                                 implode('&', array_map('UrlKeyValPair', array_keys($addressParams), array_values($addressParams))));
 
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
