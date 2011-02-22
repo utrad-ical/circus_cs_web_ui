@@ -8,7 +8,7 @@
 	require_once('../app/lib/validator.class.php');
 
 	try
-	{	
+	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
@@ -21,7 +21,7 @@
 		PgValidator::$conn = $pdo;
 		$validator = new FormValidator();
 		$validator->registerValidator('pgregex', 'PgRegexValidator');
-	
+
 		if($mode == 'patient')
 		{
 			$validator->addRules(array(
@@ -46,18 +46,18 @@
 					"otherwise" => "all")
 				));
 		}
-		
+
 		$validator->addRules(array(
 			"filterAgeMin" => array(
-				'type' => 'int', 
+				'type' => 'int',
 				'min' => '0',
 				'errorMes' => "'Age' is invalid."),
 			"filterAgeMax" => array(
-				'type' => 'int', 
+				'type' => 'int',
 				'min' => '0',
 				'errorMes' => "'Age' is invalid."),
 			"filterModality" => array(
-				'type' => 'select', 
+				'type' => 'select',
 				"options" => $modalityList,
 				"default" => "all",
 				"otherwise" => "all"),
@@ -86,22 +86,22 @@
 				"default" => '10',
 				"otherwise" => '10')
 			));
-		
+
 		if($validator->validate($_GET))
 		{
 			$params = $validator->output;
 			$params['errorMessage'] = "&nbsp;";
-			
+
 			$params['pageNum']  = (isset($_GET['pageNum']) && ctype_digit($_GET['pageNum'])) ? $_GET['pageNum'] : 1;
 			$params['startNum'] = 0;
 			$params['endNum'] = 0;
 			$params['totalNum'] = 0;
 			$params['maxPageNum'] = 1;
-			
+
 			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
 			   && $params['filterAgeMin'] > $params['filterAgeMax'])
 			{
-				//$params['errorMessage'] = "Range of 'Age' is invalid."; 
+				//$params['errorMessage'] = "Range of 'Age' is invalid.";
 				$tmp = $params['filterAgeMin'];
 				$params['filterAgeMin'] = $params['filterAgeMax'];
 				$params['filterAgeMax'] = $tmp;
@@ -116,7 +116,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 
 		$data = array();
-		
+
 		if($params['errorMessage'] == "&nbsp;")
 		{
 			//----------------------------------------------------------------------------------------------------------
@@ -126,27 +126,27 @@
 			$sqlParams = array();
 			$sqlCond = "";
 			$addressParams = array();
-		
+
 			$sqlCond = " WHERE ";
 
 			if($params['mode'] == 'patient')
 			{
 				$patientID = PinfoScramble::decrypt($params['encryptedPtID'], $_SESSION['key']);
 				$params['filterPtID'] = ($_SESSION['anonymizeFlg'] == 1) ? $params['encryptedPtID'] : $patientID;
-			
+
 				$sqlCondArray[] = "pt.patient_id=?";
 				$sqlParams[]    = $patientID;
 				$addressParams['mode'] = 'patient';
 				$addressParams['encryptedPtID'] = $params['encryptedPtID'];
-			
+
 				$stmt = $pdo->prepare("SELECT pt.patient_name, pt.sex FROM patient_list pt WHERE patient_id=?");
 				$stmt->bindParam(1, $patientID);
 				$stmt->execute();
-			
+
 				$result = $stmt->fetch(PDO::FETCH_NUM);
 				$params['filterPtName'] = $result[0];
 				$params['filterSex'] = $result[1];
-			
+
 				if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
 			}
 			else
@@ -161,15 +161,15 @@
 					$sqlParams[] = $patientID;
 					$addressParams['filterPtID'] = $params['filterPtID'];
 				}
-	
+
 				if($params['filterPtName'] != "")
 				{
-					// Search by regular expression 
+					// Search by regular expression
 					$sqlCondArray[] = "pt.patient_name~*?";
 					$sqlParams[] = $params['filterPtName'];
 					$addressParams['filterPtName'] = $params['filterPtName'];
 				}
-			
+
 				if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 				{
 					$sqlCondArray[] = "pt.sex=?";
@@ -177,7 +177,7 @@
 					$addressParams['filterSex'] = $params['filterSex'];
 				}
 			}
-			
+
 			if($params['stDateFrom'] != "" && $params['stDateTo'] != "" && $params['stDateFrom'] == $params['stDateTo'])
 			{
 				$sqlCondArray[] = "st.study_date=?";
@@ -193,12 +193,12 @@
 					$sqlParams[] = $params['stDateFrom'];
 					$addressParams['stDateFrom'] = $params['stDateFrom'];
 				}
-		
+
 				if($params['stDateTo'] != "")
 				{
 					$sqlParams[] = $params['stDateTo'];
 					$addressParams['stDateTo'] = $params['stDateTo'];
-	
+
 					if($params['stTimeTo'] != "")
 					{
 						$sqlCondArray[] = "(st.study_date<? OR (st.study_date=? AND st.study_time<=?))";
@@ -212,7 +212,7 @@
 					}
 				}
 			}
-		
+
 			if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 			{
 				$sqlCondArray[] = "st.age=?";
@@ -228,7 +228,7 @@
 					$sqlParams[] = $params['filterAgeMin'];
 					$addressParams['filterAgeMin'] = $params['filterAgeMin'];
 				}
-		
+
 				if($params['filterAgeMax'] != "")
 				{
 					$sqlCondArray[] = "st.age<=?";
@@ -236,23 +236,23 @@
 					$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 				}
 			}
-		
+
 			if($params['filterModality'] != "" && $params['filterModality'] != "all")
 			{
 				$sqlCondArray[] = "st.modality=?";
 				$sqlParams[] = $params['filterModality'];
 				$addressParams['filterModality'] = $params['filterModality'];
 			}
-			
+
 			$sqlCondArray[] = "pt.patient_id=st.patient_id";
-			$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));					  
+			$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
 			//----------------------------------------------------------------------------------------------------------
-			
+
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve sort column and order (Default: ascending order of patient ID)
 			//----------------------------------------------------------------------------------------------------------
 			$orderColStr = "";
-		
+
 			switch($params['orderCol'])
 			{
 				case "Patient ID":		$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
@@ -261,20 +261,20 @@
 				case "Sex":				$orderColStr = 'pt.sex '          . $params['orderMode'];  break;
 				case "Modality":		$orderColStr = 'st.modality '     . $params['orderMode'];  break;
 				case "Study ID":		$orderColStr = 'st.study_id" '    . $params['orderMode'];  break;
-				default:	
+				default:
 					$orderColStr = 'st.study_date ' . $params['orderMode'] . ', st.study_time ' . $params['orderMode'];
 					$params['orderCol']    = 'Study date';
 					break;
 			}
-	
+
 			$addressParams['orderCol']  = $paramss['orderCol'];
 			$addressParams['orderMode'] = $paramss['orderMode'];
 			$addressParams['showing']   = $paramss['showing'];
 			//----------------------------------------------------------------------------------------------------------
-	
+
 			$params['pageAddress'] = sprintf('study_list.php?%s',
 			                                 implode('&', array_map(UrlKeyValPair, array_keys($addressParams), array_values($addressParams))));
-	
+
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
@@ -284,28 +284,28 @@
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
 			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);
 			//----------------------------------------------------------------------------------------------------------
-			
+
 			//----------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT st.sid, st.study_instance_uid, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 					. " st.study_id, st.study_date, st.study_time, st.modality, st.accession_number"
 					. " FROM patient_list pt, study_list st" . $sqlCond . " ORDER BY " . $orderColStr;
-			
+
 			if($params['showing'] != "all")
 			{
 				$sqlStr .= " LIMIT ? OFFSET ?";
 				$sqlParams[] = $params['showing'];
 				$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 			}
-			
+
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
-			
+
 			$rowNum = $stmt->rowCount();
 			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
-			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;	
-			
+			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
+
 			$sqlStr = "SELECT tag FROM tag_list WHERE category=2 AND reference_id=?";
 			$stmtTag = $pdo->prepare($sqlStr);
 
@@ -335,18 +335,17 @@
 			}
 			//---------------------------------------------------------------------------------------------------------
 		}
-		
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
-		require_once('../app/lib/SmartyEx.class.php');
 		$smarty = new SmartyEx();
-			
+
 		$smarty->assign('params', $params);
 		$smarty->assign('data',   $data);
-		
+
 		$smarty->assign('modalityList', $modalityList);
-		
+
 		$smarty->display('study_list.tpl');
 		//--------------------------------------------------------------------------------------------------------------
 	}

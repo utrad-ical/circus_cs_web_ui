@@ -10,7 +10,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"category" => array(
 			"type" => "int",
@@ -23,7 +23,7 @@
 			"min" => 1,
 			"required" => true,
 			"errorMes" => "Reference ID is invalid."),
-		));	
+		));
 
 	if($validator->validate($_GET))
 	{
@@ -52,9 +52,9 @@
 		{
 			$params['errorMessage'] = "[ERROR] URL is invalid.";
 		}
-		
+
 		$params['title'] = 'Tag for ';
-		
+
 		switch($params['category'])
 		{
 			case 1:  $params['title'] .= 'patient';           break;
@@ -64,16 +64,15 @@
 			case 5:  $params['title'] .= 'lesion candidate';  break;
 			case 6:  $params['title'] .= 'research';          break;
 		}
-		
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
-		require_once('../app/lib/SmartyEx.class.php');
 		$smarty = new SmartyEx();
-		
+
 		$smarty->assign('params',   $params);
 		$smarty->assign('tagArray', $tagArray);
-		
+
 		$smarty->display('edit_tags.tpl');
 		//--------------------------------------------------------------------------------------------------------------
 	}

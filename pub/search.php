@@ -4,10 +4,10 @@
 
 	include_once('common.php');
 	include_once("auto_logout.php");
-	
+
 	try
 	{
-		
+
 		$params = array('mode'         => "",
 					    'filterSex'    => "all",
 					    'personalFB'   => "all",
@@ -25,7 +25,6 @@
 		//----------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//----------------------------------------------------------------------------------------------------
-		require_once('../app/lib/SmartyEx.class.php');
 		$smarty = new SmartyEx();
 
 		$smarty->assign('params', $params);

@@ -4,14 +4,14 @@
 
 	include("../common.php");
 	include("auto_logout_administration.php");
-	
+
 	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{
 		$params = array('toTopDir' => "../",
 		                'message'  => "&nbsp;");
-	
+
 		//--------------------------------------------------------------------------------------------------------------
-		// Import $_REQUEST variables 
+		// Import $_REQUEST variables
 		//--------------------------------------------------------------------------------------------------------------
 		$mode                = (isset($_REQUEST['mode']))                ? $_REQUEST['mode']                : "";
 		$oldGroupID          = (isset($_REQUEST['oldGroupID']))          ? $_REQUEST['oldGroupID']          : "";
@@ -32,7 +32,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 
 		try
-		{	
+		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
 
@@ -41,13 +41,13 @@
 			//---------------------------------------------------------------------------------------------------------
 			$sqlStr = "";
 			$sqlParams = array();
-			
+
 			if(($mode == 'delete' && $newGroupID != "admin") || $mode == 'update')
 			{
 				$sqlStr = "DELETE FROM groups WHERE group_id=?;";
 				$sqlParams[] = $newGroupID;
 			}
-		
+
 			if(($mode == 'add' && $newGroupID != "") || $mode == 'update')
 			{
 				if($mode == 'update' && $oldGroupID == "admin")
@@ -60,7 +60,7 @@
 							.  ' modify_consensual, view_all_statistics, research_show, research_exec, volume_download,'
 							.  ' anonymize_flg, data_delete, server_operation, server_settings)'
 							.  ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-						
+
 					$sqlParams[]  = $newGroupID;
 					$sqlParams[]  = $newColorSet;
 					$sqlParams[]  = $newExecCAD;
@@ -83,11 +83,11 @@
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 				$errorMessage = $stmt->errorInfo();
-				
+
 				if($errorMessage[2] == "")
 				{
 					$params['message'] = '<span style="color: #0000ff;" >';
-				
+
 					switch($mode)
 					{
 						case 'add'    :  $params['message'] .= '"' . $newGroupID . '" was successfully added.'; break;
@@ -99,7 +99,7 @@
 				else
 				{
 					$params['message'] = '<span style="color:#ff0000;">Fail to ' . $mode . '"';
-					
+
 					if($mode == 'update')
 					{
 						$params['message'] .= $oldGroupID;
@@ -111,15 +111,15 @@
 					$params['message'] .= '"</span>';
 				}
 			}
-			
+
 			//----------------------------------------------------------------------------------------------------------
-	
+
 			//----------------------------------------------------------------------------------------------------------
 			// Make one-time ticket
 			//----------------------------------------------------------------------------------------------------------
 			$_SESSION['ticket'] = md5(uniqid().mt_rand());
 			//----------------------------------------------------------------------------------------------------------
-	
+
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve group lists
 			//----------------------------------------------------------------------------------------------------------
@@ -135,20 +135,19 @@
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute();
-			
+
 			$groupList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//----------------------------------------------------------------------------------------------------------
-			
+
 			//----------------------------------------------------------------------------------------------------------
 			// Settings for Smarty
 			//----------------------------------------------------------------------------------------------------------
-			require_once('../../app/lib/SmartyEx.class.php');
-			$smarty = new SmartyEx();	
-			
+			$smarty = new SmartyEx();
+
 			$smarty->assign('params',    $params);
 			$smarty->assign('groupList', $groupList);
 			$smarty->assign('ticket',    $_SESSION['ticket']);
-			
+
 			$smarty->display('administration/group_config.tpl');
 			//----------------------------------------------------------------------------------------------------------
 		}

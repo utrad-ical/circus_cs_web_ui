@@ -2,7 +2,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Road parameter file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($params['resPath']."VATstat.txt", "r"); 
+	$fp = fopen($params['resPath']."VATstat.txt", "r");
 
 	$caseNum    = rtrim(fgets($fp));
 	$volumeMean = rtrim(fgets($fp));
@@ -17,7 +17,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	$dataFile = $params['resPath'] . "VAT.txt";
-	
+
 	$tmpFname = 'VATplot_' . microtime(true) . '.png';
 
 	$plotFname = $APACHE_DOCUMENT_ROOT . $DIR_SEPARATOR . 'CIRCUS-CS' . $DIR_SEPARATOR . 'tmp'
@@ -32,13 +32,13 @@
 					2 => array("pipe", "w")); // stderr
 
 	$gnuplot = proc_open(GPLOT, $dspec, $pipes);
-	
+
 	if ( !is_resource($gnuplot) )
 	{
 		print "proc_open error\n";
 		exit(1);
 	}
-	
+
 	// 初期設定
 	fwrite($pipes[0], "set term png size 360, 360\n");
 	fwrite($pipes[0], "set grid\n");
@@ -49,25 +49,25 @@
 	fwrite($pipes[0], "set ytics font \"Verdana,9\"\n");
 	fwrite($pipes[0], "set xlabel \"VAT volume [mm3]\"\n");
 	fwrite($pipes[0], "set ylabel \"VAT area [mm2]\" 1.5,0.0\n");
-	
+
 	// グラフの種類
 	fwrite($pipes[0], "plot ".$a."*x+".$b." lw 2 lc rgb \"black\", '" . $dataFile . "' with points 1 13\n");
-	fwrite($pipes[0], "set output '" . $plotFname . "'\n");	
-	fwrite($pipes[0], "replot\n");	
+	fwrite($pipes[0], "set output '" . $plotFname . "'\n");
+	fwrite($pipes[0], "replot\n");
 	fclose($pipes[0]);
 
 	// グラフ出力
 	//header("Content-type: image/png");
 	//fpassthru($pipes[1]);
 	//fclose($pipes[1]);
- 
+
 	// エラー出力
 	if (!empty($pipes[2]))
 	{
 		error_log($pipes[2], 0);
 	}
 	fclose($pipes[2]);
- 
+
 	// 終わり
 	proc_close($gnuplot);
 
@@ -112,11 +112,10 @@
 					. '</td>'
 				. '</tr>'
 			. '</table>';
-			 
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../smarty/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params',  $params);

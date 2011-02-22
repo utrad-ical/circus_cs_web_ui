@@ -1,15 +1,13 @@
 <?php
 	session_cache_limiter('nocache');
 	session_start();
-	
+
 	include('common.php');
 
 	function DispLoginPage($message, $version)
 	{
-		require_once('../app/lib/SmartyEx.class.php');
-
 		$smarty = new SmartyEx();
-		
+
 		$smarty->assign('version', $version);
 		$smarty->assign('message', $message);
 		$smarty->display('login_disp.tpl');
@@ -17,7 +15,7 @@
 
 	$message = "";
 	$mode = (isset($_REQUEST['mode'])) ? $_REQUEST['mode'] : "";
-	
+
 	if(!isset($_SESSION['userID']))
 	{
 	    //----------------------------------------------------------------------------------------------------
@@ -29,23 +27,23 @@
 			{
 				// Connect to SQL Server
 				$pdo = new PDO($connStrPDO);
-				
+
 				$sqlStr = "SELECT * FROM users WHERE user_id=? AND passcode=?";
 				$result = PdoQueryOne($pdo, $sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
 
     			if($result == null)
 				{
 					$message = 'Authentication credentials not accepted!!';
-							 
+
 					DispLoginPage($message, $CIRCUS_CS_VERSION);
-				
+
 					$fp = fopen($LOG_DIR.$DIR_SEPARATOR.$LOGIN_ERROR_LOG, "a");
 					fprintf($fp, "[%s] Login error: userID=%s, password=%s (Accessed from %s)\r\n",
 					         date("Y-m-d H:i:s"), $_POST['userID'], MD5($_POST['pswd']), getenv("REMOTE_ADDR"));
 					fclose($fp);
-					
+
 					$pdo = null;
-				}			
+				}
 				else
 				{
 					$loginDateTime = date("Y-m-d H:i:s");
@@ -62,7 +60,7 @@
 					$_SESSION['darkroomFlg']   = ($result['darkroom_flg'] == 't') ? 1 : 0;
 					$_SESSION['anonymizeFlg']  = ($result['anonymize_flg'] == 't') ? 1 : 0;
 					$_SESSION['latestResults'] = $result['latest_results'];
-				
+
 					$stmt = $pdo->prepare("UPDATE users SET last_login_dt=?, ip_address=? WHERE user_id=?");
 					$stmt->execute(array($loginDateTime, $_SESSION['nowIPAddr'], $_SESSION['userID']));
 
@@ -83,19 +81,19 @@
 					$_SESSION['dataDeleteFlg']       = ($result['data_delete'] == 't') ? 1 : 0;
 					$_SESSION['serverOperationFlg']  = ($result['server_operation'] == 't') ? 1 : 0;
 					$_SESSION['serverSettingsFlg']   = ($result['server_settings'] == 't') ? 1 : 0;
-					
+
 					if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
-					
+
 					$_SESSION['adminModeFlg'] = 0;
 					$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
-				
+
 					$fp = fopen($LOG_DIR.$DIR_SEPARATOR.$LOGIN_LOG, "a");
 					fprintf($fp, "[%s] Login: userID=%s (Accessed from %s)\r\n",
 							$loginDateTime, $_SESSION['userID'], $_SESSION['lastIPAddr']);
 					fclose($fp);
-					
+
 					$pdo = null;
-				
+
 					header("location:home.php");
 				}
 			}
@@ -113,10 +111,10 @@
 			$logoutDateTime = date("Y-m-d H:i:s");
 			$userID =$_SESSION['userID'];
 			$ipAddr = $_SESSION['lastIPAddr'];
-		
+
 			$_SESSION = array();
 			session_destroy();
-			
+
 			$fp = fopen($LOG_DIR.$DIR_SEPARATOR.$LOGIN_LOG, "a");
 
 			if($mode == 'timeout')

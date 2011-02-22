@@ -1,5 +1,5 @@
 <?php
-	
+
 	$CIRCUS_CS_VERSION = "1.0 RC3";
 
 	//-------------------------------------------------------------------------------------------------------
@@ -7,17 +7,18 @@
 	//-------------------------------------------------------------------------------------------------------
 	$DIR_SEPARATOR = '\\';
 	$DIR_SEPARATOR_WEB = '/';
-	
+
 	$BASE_DIR          = "C:\\CIRCUS-CS";
 	$APP_DIR           = $BASE_DIR . $DIR_SEPARATOR . "apps";
 	$PLUGIN_DIR        = $BASE_DIR . $DIR_SEPARATOR . "plugins";
 	$LOG_DIR           = $BASE_DIR . $DIR_SEPARATOR . "logs";
 	$WEB_UI_ROOT       = $BASE_DIR . $DIR_SEPARATOR . "web_ui";
+	$WEB_UI_LIBDIR     = $WEB_UI_ROOT . $DIR_SEPARATOR . "app" . $DIR_SEPARATOR . "lib";
 	$SUBDIR_JPEG       = "jpg_img";
 	$SUBDIR_CAD_RESULT = "cad_results";
-	
+
 	$CONFIG_DICOM_STORAGE = "DICOMStorageServer.conf";
-	
+
 	$LOGIN_LOG               = "loginUser_log.txt";
 	$LOGIN_ERROR_LOG         = "loginUser_errlog.txt";
 
@@ -30,6 +31,19 @@
 	$APACHE_BASE = "C:\\apache2";
 	$APACHE_DOCUMENT_ROOT = $APACHE_BASE . "\\htdocs";
 	$apacheAliasFname = $APACHE_BASE . "\\conf\extra\httpd-aliases.conf";
+	//-------------------------------------------------------------------------------------------------------
+
+	//-------------------------------------------------------------------------------------------------------
+	// Include path definition and enable class autoloading
+	//-------------------------------------------------------------------------------------------------------
+	set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR);
+	function __autoLoad($class)
+	{
+		if (!class_exists($class))
+		{
+			require_once($class . ".class.php");
+		}
+	}
 	//-------------------------------------------------------------------------------------------------------
 
 	//-------------------------------------------------------------------------------------------------------
@@ -49,7 +63,7 @@
 	$dbAccessUser = "circus";
 	//$dbAccessPass = "cad";    // for RC1 or HIMEDIC
 	$dbAccessPass = "sucRic";   // for RC3
-	
+
 	$connStr = "host=localhost port=5432 dbname=" . $dbName
              . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
 	$connStrPDO = "pgsql:host=localhost port=5432 dbname=" . $dbName
@@ -68,7 +82,7 @@
 	//-------------------------------------------------------------------------------------------------------
 	$JPEG_QUALITY  = 100;
 	$DEFAULT_WIDTH = 256;
-	
+
 	$RESCALE_RATIO_OF_SERIES_DETAIL = 1.25;
 	//-------------------------------------------------------------------------------------------------------
 
@@ -87,7 +101,7 @@
 	//-------------------------------------------------------------------------------------------------------
 	$RESULT_COL_NUM = 3;
 	//-------------------------------------------------------------------------------------------------------
-	
+
 	//-------------------------------------------------------------------------------------------------------
 	// Count DICOM files in the selected directory (for Win)
 	//-------------------------------------------------------------------------------------------------------
@@ -95,12 +109,12 @@
 	{
 		$flist = scandir($path);
 		$imgCnt = 0;
-	
+
 		for($i = 0; $i < count($flist); $i++)
 		{
 			if(preg_match('/\\.dcm$/i', $flist[$i]))  $imgCnt++;
 		}
-		
+
 		return $imgCnt;
 	}
 	//-------------------------------------------------------------------------------------------------------
@@ -111,14 +125,14 @@
 	function GetDicomFileListInPath($path)
 	{
 		$tmpFlist = scandir($path);
-		
+
 		$flist = array();
-		
+
 		for($i=0; $i < count($tmpFlist); $i++)
 		{
 			if(preg_match('/\\.dcm$/i', $tmpFlist[$i]))  $flist[] = $tmpFlist[$i];
 		}
-		
+
 		return $flist;
 	}
 	//-------------------------------------------------------------------------------------------------------
@@ -130,15 +144,15 @@
 	{
 		$birthDate = str_replace('-', '', $birthDate);
 		$baseDate  = str_replace('-', '', $baseDate);
-	
+
 		if(!checkdate(substr($birthDate,4,2), substr($birthDate,6,2), substr($birthDate,0,4)))	return -1;
 		if(!checkdate(substr($baseDate,4,2),  substr($baseDate,6,2),  substr($baseDate,0,4)))	return -1;
-	
+
 		if($baseDate < $birthDate)	return -1;
 		else						return (int)(($baseDate - $birthDate) / 10000);
 	}
 	//-------------------------------------------------------------------------------------------------------
-	
+
 	//-------------------------------------------------------------------------------------------------------
 	// Function for URL key and val pair
 	//-------------------------------------------------------------------------------------------------------
@@ -154,17 +168,17 @@
 	function PdoQueryOne($pdo, $sqlStr, $bindValues, $outputType)
 	{
 		$stmt = $pdo->prepare($sqlStr);
-		
+
 		if(is_array($bindValues))
 		{
 			$stmt->execute($bindValues);
 		}
-		else 
+		else
 		{
 			if(strlen($bindValues) > 0)  $stmt->bindValue(1, $bindValues);
 			$stmt->execute();
 		}
-		
+
 		if($stmt->errorCode()=='00000')
 		{
 			switch($outputType)
@@ -190,18 +204,18 @@
 		if(is_dir($dir))
 		{
 			$objects = scandir($dir);
-			
+
 			foreach ($objects as $object)
-			{ 
+			{
 				if($object != "." && $object != "..")
 				{
 					$fname = $dir . "/" . $object;
 					if(filetype($fname) == "dir")		DeleteDirRecursively($fname);
-					else								unlink($fname); 
+					else								unlink($fname);
 				}
 			}
-			reset($objects); 
-			rmdir($dir); 
+			reset($objects);
+			rmdir($dir);
 		}
 		return TRUE;
  	}

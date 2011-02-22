@@ -1,16 +1,16 @@
 <?php
 	session_cache_limiter('nocache');
 	session_start();
-	
+
 	$params = array('toTopDir' => "../");
 
 	include_once("../common.php");
-	include_once("../auto_logout.php");	
+	include_once("../auto_logout.php");
 	require_once('../../app/lib/PersonalInfoScramble.class.php');
-	require_once('../../app/lib/validator.class.php');	
-		
+	require_once('../../app/lib/validator.class.php');
+
 	$reqSeriesList = array();
-	
+
 	$studyUIDArr = array();
 	$seriesUIDArr = array();
 	$modalityArr = array();
@@ -24,7 +24,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"cadName" => array(
 			"type" => "cadname",
@@ -40,7 +40,7 @@
 			"errorMes" => "[ERROR] 'Study instance UID' is invalid."),
 		"seriesInstanceUID" => array(
 			"type" => "uid",
-			"required" => true,			
+			"required" => true,
 			"errorMes" => "[ERROR] 'Series instance UID' is invalid."),
 		"srcList" => array(
 			"type" => "select",
@@ -53,10 +53,10 @@
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
-		
+
 		$studyUIDArr[] = $params['studyInstanceUID'];
 		$seriesUIDArr[] = $params['seriesInstanceUID'];
-		
+
 	}
 	else
 	{
@@ -75,28 +75,28 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	try
-	{	
+	{
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
-			
+
 			//----------------------------------------------------------------------------------------------------------
 			// Get initial value from database
 			//----------------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT * FROM patient_list pt, study_list st WHERE st.study_instance_uid=?" 
+			$sqlStr = "SELECT * FROM patient_list pt, study_list st WHERE st.study_instance_uid=?"
 					. " AND pt.patient_id=st.patient_id";
-				
+
 			$result = PdoQueryOne($pdo, $sqlStr, $studyUIDArr[0], 'ARRAY_ASSOC');
-					
+
 			$params['patientID']   = $result['patient_id'];
 			$params['patientName'] = $result['patient_name'];
-			
+
 			$encryptedPatientID   = PinfoScramble::encrypt($params['patientID'] , $_SESSION['key']);
-			
+
 			$stmt = $pdo->prepare("SELECT input_type FROM cad_master WHERE cad_name=? AND version=?");
 			$stmt->execute(array($params['cadName'], $params['version']));
-			
+
 			if($stmt->rowCount() == 1)
 			{
 				$params['inputType'] = $stmt->fetchColumn();
@@ -106,7 +106,7 @@
 				$params['errorMessage'] = $params['cadName'] . ' ver.' . $params['version'] . ' is not defined.';
 			}
 		}
-		
+
 		$seriesNum = 0;
 
 		if($params['errorMessage'] == "")
@@ -118,9 +118,9 @@
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['cadName'], $params['version']));
-			
+
 			$seriesNum = $stmt->rowCount();
-			
+
 			$cnt = 0;
 
 			for($j=0; $j<$seriesNum; $j++)
@@ -141,7 +141,7 @@
 				for($i=0; $i<$tmp; $i++)
 				{
 					$descriptionRes = $stmtDesc->fetch(PDO::FETCH_NUM);
-		
+
 					if(!($descriptionRes[0] == '(default)' && $descriptionRes[1] == 0 && $descriptionRes[2] == 0))
 					{
 						$seriesDescriptionArr[$cnt] = $descriptionRes[0];
@@ -159,12 +159,12 @@
 			// Main roop
 			//------------------------------------------------------------------------------------------------------
 			$cnt = $descriptionNumArr[0];
-	
+
 			for($j=1; $j<$seriesNum; $j++)
 			{
 				$colArr = array();
 				$sqlStr = "";
-	
+
 				//----------------------------------------------------------------------------------------------------------
 				// Create SQL state
 				//----------------------------------------------------------------------------------------------------------
@@ -173,14 +173,14 @@
 					$sqlStr = "SELECT study_instance_uid, series_instance_uid FROM series_list"
 					        . " WHERE study_instance_uid=? AND modality=?"
 							. " AND (";
-					
+
 					$colArr[] = $studyUIDArr[0];
 					$colArr[] = $modalityArr[$j];
-			
+
 					for($i=0; $i<$descriptionNumArr[$j]; $i++)
 					{
 						if($i > 0)  $sqlStr .= " OR ";
-			
+
 						if($seriesDescriptionArr[$cnt+$i] == '(default)')
 						{
 							$sqlStr .= "(image_number>=? AND image_number<=?)";
@@ -191,12 +191,12 @@
 						{
 							$sqlStr .= "series_description=?";
 							$colArr[] = $seriesDescriptionArr[$cnt+$i];
-						}	
+						}
 					}
-			
+
 					$sqlStr .= ")";
 					$cnt += $descriptionNumArr[$j];
-			
+
 					for($i=0; $i<$j; $i++)
 					{
 						if($modalityArr[$i] == $modalityArr[$j])
@@ -204,7 +204,7 @@
 							$sqlStr .= " AND series_instance_uid!=?";
 							$colArr[] = $seriesUIDArr[$i];
 						}
-					}				
+					}
 					$sqlStr .= " ORDER BY series_date ASC, series_time ASC";
 				}
 				else if($params['inputType'] == 2) // multi series in mulit studies
@@ -215,14 +215,14 @@
 							. " AND st.study_instance_uid=sr.study_instance_uid"
 							. " AND sr.modality=?"
 							. " AND (";
-						
+
 					$colArr[] = $params['patientID'];
 					$colArr[] = $modalityArr[$j];
-				
+
 					for($i=0; $i<$descriptionNumArr[$j]; $i++)
 					{
 						if($i > 0)  $sqlStr .= " OR ";
-				
+
 						if($seriesDescriptionArr[$cnt+$i] == '(default)')
 						{
 							$sqlStr .= "(image_number>=? AND image_number<=?)";
@@ -233,12 +233,12 @@
 						{
 							$sqlStr .= "series_description=?";
 							$colArr[] = $seriesDescriptionArr[$cnt+$i];
-						}	
-					}					
-				
+						}
+					}
+
 					$sqlStr .= ")";
 					$cnt += $descriptionNumArr[$j];
-	
+
 					for($i=0; $i<$j; $i++)
 					{
 						if($modalityArr[$i] == $modalityArr[$j])
@@ -255,7 +255,7 @@
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($colArr);
 				$rowNum = $stmt->rowCount();
-		
+
 				if ($rowNum <= 0)
 				{
 					$params['mode'] ='error';
@@ -266,7 +266,7 @@
 					if(count($modalityArr)==2)
 					{
 						if($rowNum == 1)
-						{			
+						{
 							$result = $stmt->fetch(PDO::FETCH_NUM);
 							array_push($studyUIDArr,  $result[0]);
 							array_push($seriesUIDArr, $result[1]);
@@ -285,7 +285,7 @@
 				}
 			} // end for
 			//----------------------------------------------------------------------------------------------------------
-		
+
 			if($params['mode'] == "")
 			{
 				if(count($modalityArr)<=2)
@@ -297,15 +297,15 @@
 					$params['mode'] = 'select';
 				}
 			}
-		
+
 			$selectedSeriesArr = array_fill(0, count($modalityArr)+1, 0);
-			
+
 			$defaultSelectedSeriesArr = array();
 			$seriesList = array();
-			
+
 			$studyUIDStr = "";
 			$seriesUIDStr = "";
-				
+
 			if($params['mode'] == 'confirm')
 			{
 				for($j=0; $j<count($seriesUIDArr); $j++)
@@ -313,26 +313,26 @@
 					$sqlStr = "SELECT pt.patient_id, pt.patient_name, st.study_id, sr.series_number, "
 							. " sr.series_date, sr.series_time, sr.modality, sr.image_number, sr.series_description"
 							. " FROM patient_list pt, study_list st, series_list sr"
-							. " WHERE sr.series_instance_uid=? AND st.study_instance_uid=?" 
+							. " WHERE sr.series_instance_uid=? AND st.study_instance_uid=?"
 							. " AND st.study_instance_uid=sr.study_instance_uid"
 							. " AND pt.patient_id=st.patient_id;";
-				
+
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute(array($seriesUIDArr[$j], $studyUIDArr[$j]));
 
 					$result = $stmt->fetch(PDO::FETCH_NUM);
-		
+
 					if($j==0)
 					{
 						$params['patientID']   = $result[0];
 						$params['patientName'] = $result[1];
 					}
-		
+
 					for($i=0; $i<7; $i++)
 					{
 						$seriesList[$j][$i] = $result[$i+2];
 					}
-				
+
 					if($j==0)
 					{
 						$studyUIDStr = $studyUIDArr[$j];
@@ -348,9 +348,9 @@
 			else if($params['mode'] == 'select')
 			{
 				$cnt = 0;
-			
+
 				for($k=0; $k<count($modalityArr); $k++)
-				{	
+				{
 					//--------------------------------------------------------------------------------------------------
 					// 1st series of 1st modality
 					//--------------------------------------------------------------------------------------------------
@@ -359,18 +359,18 @@
 						$sqlStr = "SELECT st.study_id, sr.series_number, sr.series_date, sr.series_time, "
 								. " sr.image_number, sr.series_description"
 								. " FROM study_list st, series_list sr"
-								. " WHERE sr.series_instance_uid=?" 
-								. " AND st.study_instance_uid=?" 
+								. " WHERE sr.series_instance_uid=?"
+								. " AND st.study_instance_uid=?"
 								. " AND st.study_instance_uid=sr.study_instance_uid";
-								
+
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute(array($seriesUIDArr[0], $studyUIDArr[0]));
-	
+
 						$result = $stmt->fetch(PDO::FETCH_NUM);
-								
+
 						$seriesList[0][0][0] = $studyUIDArr[0] . "^" . $seriesUIDArr[0];
 						$seriesNumArr[0] = 1;
-					
+
 						for($i=1; $i < 7; $i++)
 						{
 							$seriesList[0][0][$i] = $result[$i-1];
@@ -384,25 +384,25 @@
 						// Create SQL statement
 						//----------------------------------------------------------------------------------------------
 						$colArr = array();
-					
+
 						if($params['inputType'] == 1)
 						{
 							$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid,"
 							        . " st.study_id, sr.series_number, sr.series_date, sr.series_time, "
 									. " sr.image_number, sr.series_description"
 									. " FROM study_list st, series_list sr"
-									. " WHERE st.study_instance_uid=?" 
+									. " WHERE st.study_instance_uid=?"
 									. " AND st.study_instance_uid=sr.study_instance_uid"
 									. " AND sr.modality=?"
 									. " AND (";
-									
+
 							$colArr[] = $studyUIDArr[0];
 							$colArr[] = $modalityArr[$k];
-									
+
 							for($j=0; $j<$descriptionNumArr[$k]; $j++)
 							{
 								if($j > 0)  $sqlStr .= " OR ";
-								
+
 								if($seriesDescriptionArr[$cnt+$j] == '(default)')
 								{
 									$sqlStr .= "(sr.image_number>=? AND sr.image_number<=?)";
@@ -415,15 +415,15 @@
 									$colArr[] = $seriesDescriptionArr[$cnt+$j];
 								}
 							}
-									
+
 							$sqlStr .= ")";
-									
+
 							if($modalityArr[$k] == $modalityArr[0])
 							{
 								$sqlStr .= " AND sr.series_instance_uid!=?";
 								$colArr[] = $seriesUIDArr[0];
 							}
-							
+
 							//echo $sqlStr . "<br>";
 						}
 						else if($params['inputType'] == 2)
@@ -436,14 +436,14 @@
 									. " AND st.study_instance_uid=sr.study_instance_uid"
 									. " AND sr.modality=?"
 									. " AND (";
-	
+
 							$colArr[] = $params['patientID'];
 							$colArr[] = $modalityArr[$k];
-									
+
 							for($j = 0; $j<$descriptionNumArr[$k]; $j++)
 							{
 								if($j > 0)  $sqlStr .= " OR ";
-						
+
 								if($seriesDescriptionArr[$cnt+$i] == '(default)')
 								{
 									$sqlStr .= "(sr.image_number>=? AND sr.image_number<=?)";
@@ -456,7 +456,7 @@
 									$colArr[] = $seriesDescriptionArr[$cnt+$j];
 								}
 							}
-							
+
 							if($modalityArr[$k] == $modalityArr[0])
 							{
 								$sqlStr .= " AND NOT (st.study_instance_uid=? AND sr.series_instance_uid=?)";
@@ -465,38 +465,38 @@
 							}
 						}
 						$sqlStr .= " ORDER BY sr.series_date DESC, sr.series_time DESC";
-						
+
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute($colArr);
-						
+
 						$rowNum = $stmt->rowCount();
 						$selectedSeriesArr[$k+1] = $rowNum;
-						
+
 						for($j = 0; $j < $rowNum; $j++)
 						{
 							$result = $stmt->fetch(PDO::FETCH_NUM);
-						
+
 							$seriesList[$k][$j][0] = $result[0] . '^' . $result[1];
-						
+
 							if($result[7] == $defaultSeriesDescriptionArr[$k])
 							{
 								$tmpStr = ($k+1) . '_' . $seriesList[$k][$j][0];
 								$defaultSelectedSeriesArr[] = $tmpStr;
 							}
-							
+
 							for($i=1; $i<7; $i++)
 							{
 								$seriesList[$k][$j][$i] = $result[$i+1];
 							}
 						}
 					}
-					
+
 					$cnt += $descriptionNumArr[$k];
-					
-				} // end for : k 
-				
+
+				} // end for : k
+
 				$defaultSelectedSeriesList = array();
-				
+
 				if(count($defaultSelectedSeries) > 0)
 				{
 					for($i = 0; $i < count($defaultSelectedSeries); $i++)
@@ -507,29 +507,28 @@
 					}
 				}
 			}
-			
+
 			$selectedSeriesStr = implode('^', $selectedSeriesArr);
 		}
 		else
 		{
 			$params['mode'] = 'error';
 		}
-		
+
 		if($_SESSION['anonymizeFlg'] == 1)
 		{
 			$params['patientID']   = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 			$params['patientName'] = PinfoScramble::scramblePtName();
-		}		
-		
+		}
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Settings for Smarty
 		//--------------------------------------------------------------------------------------------------------------
-		require_once('../../app/lib/SmartyEx.class.php');
 		$smarty = new SmartyEx();
-		
+
 		$smarty->assign('params',     $params);
 		$smarty->assign('seriesList', $seriesList);
-		
+
 		$smarty->assign('seriesNum',            $seriesNum);
 		$smarty->assign('modalityArr',          $modalityArr);
 		$smarty->assign('descriptionNumArr',    $descriptionNumArr);
@@ -539,14 +538,14 @@
 		$smarty->assign('seriesNum',            count($modalityArr));
 
 		$smarty->assign('selectedSeriesArr',     $selectedSeriesArr);
-		
+
 		$smarty->assign('studyUIDStr',          $studyUIDStr);
 		$smarty->assign('seriesUIDStr',         $seriesUIDStr);
-		
+
 		$smarty->assign('selectedSeriesStr',         $selectedSeriesStr);
 		$smarty->assign('defaultSelectedSeriesNum',  count($defaultSelectedSeries));
 		$smarty->assign('defaultSelectedSeriesList', $defaultSelectedSeriesList);
-	
+
 		$smarty->display('cad_job/cad_execution.tpl');
 		//--------------------------------------------------------------------------------------------------------------
 	}

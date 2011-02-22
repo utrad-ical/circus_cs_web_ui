@@ -6,8 +6,8 @@
 	$img = @imagecreatefrompng($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
 	$dispWidth  = imagesx($img);
 	$dispHeight = imagesy($img);
-	imagedestroy($img);	
-	
+	imagedestroy($img);
+
 	$consensualFBFlg = ($_SESSION['groupID'] == 'admin') ? 1 : 0;
 
 	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "fat_volumetry_v1.3" WHERE exec_id=?');
@@ -22,7 +22,7 @@
 	$stmt->execute(array($params['execID'], $imgNum));
 
 	$data = $stmt->fetch(PDO::FETCH_ASSOC);
-	
+
 	if($imgNum == 1 && $data['umbilicus_slice'] != $imgNum)
 	{
 		$imgNum = $data['umbilicus_slice'];
@@ -40,26 +40,26 @@
 	// Scoring HTML
 	//------------------------------------------------------------------------------------------------------------------
 	//$scoreTitle = array("Heart, diaphragm", "Pelvic floor", "Abdominal cavity", "Other", "Abdominal wall");
-	//$colName    = array("heart_", "pelvic_", "cavity_", "other_", "wall_");	
+	//$colName    = array("heart_", "pelvic_", "cavity_", "other_", "wall_");
 	//
 	//$scoreStr = "";
 	//$evalComment = "";
 	//$registTime = "";
 	//$scoringHTML = "";
-	
+
 	//$evalVal = array();
 	//for($j=0; $j<5; $j++)
 	//for($i=0; $i<3; $i++)
 	//{
 	//	$evalVal[$j][$i] = 0;
-	//}	
+	//}
 	//
 	//$sqlStr = 'SELECT * FROM "fat_volumetry_v' . $params['version'] . '_score"'
 	//		.  " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
 	//
 	//$stmt = $pdo->prepare($sqlStr);
 	//$stmt->execute(array($params['execID'], $userID));
-	//	
+	//
 	//if($stmt->rowCount()==1)
 	//{
 	//	$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -93,36 +93,36 @@
 	//for($j=0; $j<5; $j++)
 	//{
 	//	$scoringHTML .= ($j%2 == 0) ? '<tr>' : '<td width=15></td>';
-	//	
+	//
 	//	$scoringHTML .= '<th class="al-l">' . $scoreTitle[$j] . '&nbsp;</th>';
-	//	
+	//
 	//	$scoringHTML .= '<td class="al-c">';
 	//	$scoringHTML .= '<select id="' . $colName[$j] . 'vat"';
 	//	if($registTime != "") $scoringHTML .= ' disabled="disabled"';
 	//	$scoringHTML .= '>';
-	//	
+	//
 	//	for($i=-2; $i<=2; $i++)
 	//	{
 	//		$scoringHTML .= '<option value=' . $i;
 	//		if($i == $evalVal[$j][0])  $scoringHTML .= ' selected="selected"';
 	//		$scoringHTML .= '>' . $i . '</option>';
 	//	}
-	//	
+	//
 	//	$scoringHTML .= '</select>';
 	//	$scoringHTML .= '&nbsp;</td>';
-	//			
+	//
 	//	$scoringHTML .= '<td class="al-c">';
 	//	$scoringHTML .= '<select id="' . $colName[$j] . 'sat"';
 	//	if($registTime != "") $scoringHTML .= ' disabled="disabled"';
 	//	$scoringHTML .= '>';
-	//	
+	//
 	//	for($i=-2; $i<=2; $i++)
 	//	{
 	//		$scoringHTML .= '<option value=' . $i;
 	//		if($i == $evalVal[$j][1])  $scoringHTML .= ' selected="selected"';
 	//		$scoringHTML .= '>' . $i . '</option>';
 	//	}
-	//	
+	//
 	//	$scoringHTML .= '</select>';
 	//	$scoringHTML .= '&nbsp;</td>';
 	//
@@ -130,18 +130,18 @@
 	//	$scoringHTML .= '<select id="' . $colName[$j] . 'bound"';
 	//	if($registTime != "") $scoringHTML .= ' disabled="disabled"';
 	//	$scoringHTML .= '>';
-	//	
+	//
 	//	for($i=-2; $i<=2; $i++)
 	//	{
 	//		$scoringHTML .= '<option value=' . $i;
 	//		if($i == $evalVal[$j][2])  $scoringHTML .= ' selected="selected"';
 	//		$scoringHTML .= '>' . $i . '</option>';
 	//	}
-	//	
+	//
 	//	$scoringHTML .= '</select>';
 	//	$scoringHTML .= '&nbsp;</td>';
 	//
-	//	
+	//
 	//	if($j%2 == 1)   $scoringHTML .= '</tr>';
 	//	else if($j==4)  $scoringHTML .= '<td></td><td>&nbsp;</td></tr>';
 	//}
@@ -164,7 +164,6 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../../app/lib/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params', $params);
@@ -180,15 +179,15 @@
 
 	$smarty->assign('sliceOffset',     $sliceOffset);
 
-	$smarty->assign('orgImg', $orgImg);	
-	$smarty->assign('resImg', $resImg);	
+	$smarty->assign('orgImg', $orgImg);
+	$smarty->assign('resImg', $resImg);
 
-	//$smarty->assign('scoringHTML', $scoringHTML);	
+	//$smarty->assign('scoringHTML', $scoringHTML);
 	//$smarty->assign('registTime',  $registTime);
 	//$smarty->assign('scoreStr',    $scoreStr);
 	//$smarty->assign('evalComment',  $evalComment);
-	
-		
+
+
 	$smarty->display('cad_results/fat_volumetry_v1.tpl');
 	//$smarty->display('cad_results/fat_volumetry_v1.3_with_score.tpl');
 	//------------------------------------------------------------------------------------------------------------------

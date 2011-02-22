@@ -6,8 +6,8 @@
 	$img = @imagecreatefrompng($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%04d", $imgNum) . '.png');
 	$dispWidth  = imagesx($img);
 	$dispHeight = imagesy($img);
-	imagedestroy($img);	
-	
+	imagedestroy($img);
+
 	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "calc_fa_v1" WHERE exec_id=?');
 	$stmt->bindParam(1, $params['execID']);
 	$stmt->execute();
@@ -33,7 +33,6 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../../app/lib/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params', $params);
@@ -45,8 +44,8 @@
 	$smarty->assign('imgNum',     $imgNum);
 	$smarty->assign('maxImgNum',  (int)($totalImgNum/$chNum));
 
-	$smarty->assign('b0Img',  $b0Img);	
-	$smarty->assign('resImg', $resImg);	
+	$smarty->assign('b0Img',  $b0Img);
+	$smarty->assign('resImg', $resImg);
 
 	$smarty->display('cad_results/Calc-FA_v1.tpl');
 	//------------------------------------------------------------------------------------------------------------------

@@ -3,13 +3,13 @@
 	include('drawRocCurve.php');
 	include("../cad_results/lesion_candidate_display_private.php");
 	require_once('../../app/lib/DcmExport.class.php');
-		
+
 	$data = array();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Load base file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_base.txt", "r"); 
+	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_base.txt", "r");
 
 	$data['caseNum']      = rtrim(fgets($fp));
 	$data['undispTpNum']  = rtrim(fgets($fp));
@@ -18,7 +18,7 @@
 	$data['dispFpNum']    = rtrim(fgets($fp));
 	$data['fnNum']        = rtrim(fgets($fp));
 	$data['underRocArea'] = sprintf("%.3f",rtrim(fgets($fp)));
-	
+
 	$data['totalTpNum'] = $data['dispTpNum'] + $data['undispTpNum'];
 	$data['totalFpNum'] = $data['dispFpNum'] + $data['undispFpNum'];
 
@@ -28,21 +28,21 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Load dispTp file
 	//------------------------------------------------------------------------------------------------------------------
-	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_dispTp.txt", "r"); 
-	
+	$fp = fopen($params['resPath']."CAD-SummarizerResult_0_dispTp.txt", "r");
+
 	$totalTP = (int)($data['dispTpNum']) + (int)($data['undispTpNum']) + (int)($data['fnNum']);
-	
+
 	$maxDispTp = (int)(rtrim(fgets($fp)));
 	$sensitivityArr = array();
-	
+
 	for($i=0; $i<$maxDispTp; $i++)
 	{
 		$tmp = (int)(rtrim(fgets($fp)));
-	
+
 		$sensitivityArr[$i][0] = $i+1;
 		$sensitivityArr[$i][1] = sprintf("%.1f", (double)$tmp/$totalTP*100.0);
 	}
-	
+
 	fclose($fp);
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -52,14 +52,14 @@
 	$listName = array('TP', 'FP', 'pending', 'FN');
 	$listHtml = array();
 	$dispNum = 5;
-	
+
 	$cadName = "";
 	$version = "";
 	$resultTableName = "";
-	
+
 	for($n=0; $n<4; $n++)
 	{
-		$fp = fopen($params['resPath']."CAD-SummarizerResult_" . $listName[$n] . "List.txt", "r"); 
+		$fp = fopen($params['resPath']."CAD-SummarizerResult_" . $listName[$n] . "List.txt", "r");
 
 		$listCnt = (int)(rtrim(fgets($fp)));
 		$candList= array();
@@ -70,38 +70,38 @@
 			array_push($candList, $tmpArray);
 		}
 		fclose($fp);
-		
+
 		if($n==0)
 		{
 			$sqlStr = "SELECT plugin_name, version FROM executed_plugin_list WHERE exec_id=?";
-			
+
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $candList[0][0]);
 			$stmt->execute();
 			$result = $stmt->fetch(PDO::FETCH_NUM);
-		
+
 			$cadName = $result[0];
 			$version = $result[1];
-		
+
 			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE cad_name=? AND version=?");
 			$stmt->execute(array($cadName, $version));
 			$resultTableName = $stmt->fetchColumn();
 		}
-	
+
 		$listHtml[$n] = '<table class="mt10 ml20"><tr>';
-	
+
 		for($k=0; $k<min(5, $listCnt); $k++)
 		{
 			$stmt = $pdo->prepare("SELECT * FROM param_set WHERE exec_id=?");
 			$stmt->bindParam(1, $candList[$k][0]);
 			$stmt->execute();
-		
+
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 			$windowLevel  = $result['window_level'];
 			$windowWidth  = $result['window_width'];
-	
+
 			$sqlStr = "";
-						
+
 			if($n==3)
 			{
 				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias,'
@@ -130,23 +130,23 @@
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindParam(1, $candList[$k][0]);
 			$stmt->bindParam(2, $candList[$k][1]);
-			$stmt->execute();	
-	
+			$stmt->execute();
+
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 
 			$seriesDir = $result[3] . $DIR_SEPARATOR . $result[0] . $DIR_SEPARATOR
 					   . $result[1] . $DIR_SEPARATOR . $result[2];
 			$seriesDirWeb = $result[4] . $result[0]
 						  . $DIR_SEPARATOR_WEB . $result[1] . $DIR_SEPARATOR_WEB . $result[2];
-	
+
 			$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR . $cadName . '_v.' . $version;
 			$webPathOfCADReslut = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $cadName
-			                    . '_v.' . $version;	
-	
+			                    . '_v.' . $version;
+
 			$posX = $result[5];
 			$posY = $result[6];
 			$posZ = $result[7];
-			
+
 			$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $candList[$k][1]);
 			$srcFnameWeb = sprintf("../%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $candList[$k][1]);
 
@@ -162,16 +162,16 @@
 			}
 
 			//$img = new Imagick();
-			//$img->readImage($srcFname);			
+			//$img->readImage($srcFname);
 			//$width  = $img->getImageWidth();
 			//$height = $img->getImageHeight();
 			//$img->destroy();
-			
+
 			$img = @imagecreatefrompng($srcFname);
 			$width  = imagesx($img);
 			$height = imagesy($img);
-			imagedestroy($img);			
-		
+			imagedestroy($img);
+
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
 			              .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
 						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=0&sortOrder=t"'
@@ -203,19 +203,18 @@
 	CreateRocCurve(0, 0, $params['resPath'], $curveFname);
 
 	$params['resPath'] = addslashes($params['resPath']);
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../../app/lib/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params',         $params);
 	$smarty->assign('data',           $data);
 	$smarty->assign('curveFnameWeb',  $curveFnameWeb);
-	
+
 	$smarty->assign('sensitivityArr', $sensitivityArr);
-	
+
 	$smarty->assign('tpListHtml',      $listHtml[0]);
 	$smarty->assign('fpListHtml',      $listHtml[1]);
 	$smarty->assign('pendingListHtml', $listHtml[2]);

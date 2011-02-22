@@ -10,13 +10,13 @@
 	$width  = $result[0];	$dispWidth  = (int)($width/2);
 	$height = $result[1];	$dispHeight = (int)($height/2);
 	$depth  = $result[2];   $dispDepth  = (int)($depth/2);
-	
+
 	$xPos = (int)($width/2);
 	$yPos = (int)($height/2);
 	$zPos = (int)($depth/2);
-	
+
 	$sqlStr = "SELECT sub_id, landmark_name, short_name, location_x as x, location_y as y, location_z as z"
-		    . " FROM \"landmark_detection_v0\" WHERE exec_id=? ORDER BY sub_id ASC";	 
+		    . " FROM \"landmark_detection_v0\" WHERE exec_id=? ORDER BY sub_id ASC";
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->bindParam(1, $params['execID']);
 	$stmt->execute();
@@ -32,9 +32,9 @@
 	         .  '<input type="hidden" id="yPos"       value="' . $yPos . '">'
 	         .  '<input type="hidden" id="zPos"       value="' . $zPos . '">';
 	         .  '<input type="hidden" id="webPathOfCADReslut" value="../' . $params['webPathOfCADReslut'] . '">';
-	
+
 	$dstHtml .= '<div id="resultBody" class="resultBody" style="background-color:#f0f;">';
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Main table
 	//------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@
 	         .  ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . (-$yPos/2-25) . 'px;">'
 	         .  '</div>'
 	         .  '</td>';
-	
+
 	$dstHtml .= '<td width=10 rowspan=5></td>';
 
 	$dstHtml .= '<td rowspan=3 align=left>'
@@ -114,7 +114,7 @@
 	         .  ' style="position:absolute; left:' . (-$xPos+50) . 'px; top:' . (-$zPos+50) . 'px; z-index:1;">'
 	         .  '</div>'
 	         .  '</td>';
-	
+
 	$dstHtml .= '<td>'
 	         .  '<div id="sagittalEnlargeArea" class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
 	         .  '<img id="sagittalEnlargeCross" src="images/magenta_cross_enlarge.png" style="position:absolute; left:0px; top:0px; z-index:2;">'
@@ -127,15 +127,15 @@
 	         .  '</table>'
 	         .  '</td>'
 	         .  '</tr>';
-	
+
 	$dstHtml .= '<tr>'
 	         .  '<td align=center><div id="axialSlider" class="mt5 mb5"></div></td>'
 	         .  '</tr>';
-	
+
 	$dstHtml .= '<tr><td height=5></td></tr>';
-	
+
 	$dstHtml .= '<tr>';
-	
+
 	// Coronal
 	$dstHtml .= '<td>'
 	         .  '<div class="imgArea" style="width:' . $dispWidth . 'px; height:' .  $dispDepth . 'px;">'
@@ -145,7 +145,7 @@
 	         .  ' style="position:relative; left:' . ($xPos/2-25) . 'px; top:' . ($zPos/2-$dispDepth-25) . 'px;">'
 	         .  '</div>'
 	         .  '</td>';
-	
+
 	// Saggittal
 	$dstHtml .= '<td>'
 	         .  '<div class="imgArea" style="width:' . $dispHeight . 'px; height:' .  $dispDepth . 'px;">'
@@ -157,7 +157,7 @@
 	         .  '</td>';
 
 	$dstHtml .= '</tr>';
-	
+
 	$dstHtml .= '<tr>';
 	$dstHtml .= '<td align=center><div id="coronalSlider"  class="mt5 mb5"></div></td>';
 	$dstHtml .= '<td align=center><div id="sagittalSlider" class="mt5 mb5"></div></td>';
@@ -180,27 +180,27 @@
 	$dstHtml .= '</tr>';
 	$dstHtml .= '</thead>';
 	$dstHtml .= '<tbody>';
-	
+
 	$maxID = 0;
-	
+
 	foreach($posData as $item)
 	{
 		if($maxID < $item['sub_id'])  $maxID = $item['sub_id'];
-	
+
 		$dstHtml .= '<tr id="row' . $item['sub_id'] . '" class="landmarkRow">';
 		$dstHtml .= '<td class="landmarkID">' .   $item['sub_id'] . '</td>';
 		//$dstHtml .= '<td class="landmarkName">' . $item['landmark_name'] . '</td>';
 		$dstHtml .= '<td class="landmarkName">' . $item['short_name'] . '</td>';
 		$dstHtml .= '<td class="landmarkRank">&nbsp;</td>';
 		$dstHtml .= '<td class="landmarkXpos">' . $item['x'] . '</td>';
-		$dstHtml .= '<td class="landmarkYpos">' . $item['y'] . '</td>';	
+		$dstHtml .= '<td class="landmarkYpos">' . $item['y'] . '</td>';
 		$dstHtml .= '<td class="landmarkZpos">' . $item['z'] . '</td>';
 		$dstHtml .= '<td class="colButtons">';
 		$dstHtml .= '<input type="button" id="edit' . $item['sub_id'] . '" class="editPos form-btn" value="E" />';
 		$dstHtml .= '<input type="button" id="del' . $item['sub_id'] . '" class="delPos form-btn" value="D" />';
 		$dstHtml .= '</td>';
 		//$dstHtml .= '<td>&nbsp;&nbsp;&nbsp;</td>';
-		$dstHtml .= '</tr>';	
+		$dstHtml .= '</tr>';
 	}
 	$dstHtml .= '</tbody>';
 	$dstHtml .= '</table>';
@@ -218,13 +218,12 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../../app/lib/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params', $params);
 
 	$smarty->assign('width',              $width);
-	$smarty->assign('height',             $height);	
+	$smarty->assign('height',             $height);
 	$smarty->assign('depth',              $depth);
 	$smarty->assign('dispWidth',          $dispWidth);
 	$smarty->assign('dispHeight',         $dispHeight);
@@ -236,7 +235,7 @@
 	$smarty->assign('webPathOfCADReslut', $params['webPathOfCADReslut']);
 	$smarty->assign('maxID',              $maxID);
 
-	$smarty->assign('dstHtml', $dstHtml);	
+	$smarty->assign('dstHtml', $dstHtml);
 
 	$smarty->display('cad_results/landmark_detect_v0.tpl');
 	//------------------------------------------------------------------------------------------------------------------

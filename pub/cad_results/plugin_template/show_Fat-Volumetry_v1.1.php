@@ -6,8 +6,8 @@
 	$img = @imagecreatefrompng($params['pathOfCADReslut'] . $DIR_SEPARATOR . 'result' . sprintf("%03d", $imgNum) . '.png');
 	$dispWidth  = imagesx($img);
 	$dispHeight = imagesy($img);
-	imagedestroy($img);	
-	
+	imagedestroy($img);
+
 	$consensualFBFlg = ($_SESSION['groupID'] == 'admin') ? 1 : 0;
 
 	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "fat_volumetry_v1.1" WHERE exec_id=?');
@@ -17,7 +17,7 @@
 
 	$orgImg = $params['webPathOfCADReslut'] . '/ct' . sprintf("%03d", $imgNum) . '.png';
 	$resImg = $params['webPathOfCADReslut'] . '/result' . sprintf("%03d", $imgNum) . '.png';
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Measuring results
 	//------------------------------------------------------------------------------------------------------------------
@@ -26,11 +26,10 @@
 
 	$data = $stmt->fetch(PDO::FETCH_ASSOC);
 	//------------------------------------------------------------------------------------------------------------------
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//------------------------------------------------------------------------------------------------------------------
-	require_once('../../app/lib/SmartyEx.class.php');
 	$smarty = new SmartyEx();
 
 	$smarty->assign('params', $params);
@@ -46,9 +45,9 @@
 
 	$smarty->assign('sliceOffset',     $sliceOffset);
 
-	$smarty->assign('orgImg', $orgImg);	
-	$smarty->assign('resImg', $resImg);	
-	
+	$smarty->assign('orgImg', $orgImg);
+	$smarty->assign('resImg', $resImg);
+
 	$smarty->display('cad_results/fat_volumetry_v1.tpl');
-	//------------------------------------------------------------------------------------------------------------------		
+	//------------------------------------------------------------------------------------------------------------------
 ?>

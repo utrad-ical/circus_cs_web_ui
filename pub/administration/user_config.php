@@ -1,15 +1,15 @@
 <?php
 
 	session_start();
-	
+
 	include("../common.php");
 	include("auto_logout_administration.php");
-		
+
 	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{
 		$params = array('toTopDir' => "../",
 		                'message'  => "&nbsp;");
-	
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Import $_REQUEST variables
 		//--------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@
 		$longinUser = $_SESSION['userID'];
 
 		try
-		{	
+		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
 
@@ -46,12 +46,12 @@
 			{
 				$sqlStr = "";
 				$sqlParams = array();
-				
+
 				if($mode == 'add')
 				{
 					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
 					         . " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-						 
+
 					$sqlParams[] = $newUserID;
 					$sqlParams[] = $newUserName;
 					$sqlParams[] = md5($newPassword);
@@ -60,13 +60,13 @@
 					$sqlParams[] = $newDarkroomFlg;
 					$sqlParams[] = $newAnonymizeFlg;
 					$sqlParams[] = $newLatestResults;
-			
+
 					if($newUserID == "" || $newPassword == "")  $sqlStr = "";
 				}
 				else if($mode == 'update') // update user config
 				{
 					$updateCnt = 0;
-				
+
 					$sqlStr = 'UPDATE users SET ';
 					if($oldUserID == $longinUser && $newUserID != $oldUserID)
 					{
@@ -97,7 +97,7 @@
 							$sqlParams[] = md5($newPassword);
 							$updateCnt++;
 						}
-						
+
 						if($oldUserID == $longinUser && $oldGroupID != $newGroupID)
 						{
 							$msg = "You can't change your group ID (" . $oldGroupID . " -> " . $newGroupID . ")";
@@ -109,7 +109,7 @@
 							$sqlParams[] = $newGroupID;
 							$updateCnt++;
 						}
-	
+
 						if($oldTodayDisp != $newTodayDisp)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
@@ -117,7 +117,7 @@
 							$sqlParams[] = $newTodayDisp;
 							$updateCnt++;
 						}
-						
+
 						if($oldDarkroomFlg != $newDarkroomFlg)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
@@ -125,7 +125,7 @@
 							$sqlParams[] = $newDarkroomFlg;
 							$updateCnt++;
 						}
-	
+
 						if($oldAnonymizeFlg != $newAnonymizeFlg)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
@@ -133,7 +133,7 @@
 							$sqlParams[] = $newAnonymizeFlg;
 							$updateCnt++;
 						}
-	
+
 						if($oldLatestResults != $newLatestResults)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
@@ -141,10 +141,10 @@
 							$sqlParams[] = $newLatestResults;
 							$updateCnt++;
 						}
-					
+
 						$sqlStr .= " WHERE user_id=?";
 						$sqlParams[] = $oldUserID;
-						
+
 						if($updateCnt == 0)  $sqlStr  = "";
 					}
 				}
@@ -160,19 +160,19 @@
 						$sqlParams[0] = $newUserID;
 					}
 				}
-		
+
 				if($params['message'] == "&nbsp;" && $sqlStr != "")
 				{
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
-				
+
 					$tmp = $stmt->errorInfo();
 					$message = $tmp[2];
 
 					if($stmt->errorCode() == '00000')
 					{
 						$params['message'] = '<span style="color: #0000ff;" >';
-					
+
 						switch($mode)
 						{
 							case 'add'    :  $params['message'] .= '"' . $newUserID . '" was successfully added.'; break;
@@ -207,7 +207,7 @@
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute();
-			
+
 			$userList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//------------------------------------------------------------------------------------------------
 
@@ -218,20 +218,19 @@
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute();
-			
+
 			$groupList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//------------------------------------------------------------------------------------------------
 
 			//------------------------------------------------------------------------------------------------
 			// Settings for Smarty
 			//------------------------------------------------------------------------------------------------
-			require_once('../../app/lib/SmartyEx.class.php');
 			$smarty = new SmartyEx();
 
 			$smarty->assign('params',    $params);
 			$smarty->assign('userList',  $userList);
 			$smarty->assign('groupList', $groupList);
-			
+
 			$smarty->display('administration/user_config.tpl');
 			//------------------------------------------------------------------------------------------------
 		}
