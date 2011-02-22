@@ -1,4 +1,4 @@
-<?
+<?php
 	include('../../common.php');
 	include('drawRocCurve_v1.1.php');
 

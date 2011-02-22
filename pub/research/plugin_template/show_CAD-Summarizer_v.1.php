@@ -1,4 +1,4 @@
-<?
+<?php
 
 	include('drawRocCurve.php');
 	include("../cad_results/lesion_candidate_display_private.php");

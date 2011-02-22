@@ -1,4 +1,4 @@
-<?
+<?php
 	class PinfoScramble
 	{
 		private static $_baseStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';

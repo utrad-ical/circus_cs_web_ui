@@ -1,4 +1,4 @@
-<?
+<?php
 
 	function CreateRocCurve($curveType, $inputPath, $dstFname)
 	{

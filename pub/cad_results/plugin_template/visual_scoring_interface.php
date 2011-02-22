@@ -1,4 +1,4 @@
-<?
+<?php
 
 	$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 : 0;
 		

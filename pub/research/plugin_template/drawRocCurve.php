@@ -1,4 +1,4 @@
-<?
+<?php
 
 	function CreateRocCurve($pendigType, $curveType, $inputPath, $dstFname)
 	{
