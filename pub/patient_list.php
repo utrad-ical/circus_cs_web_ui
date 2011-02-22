@@ -4,8 +4,6 @@
 
 	include_once("common.php");
 	include("auto_logout.php");
-	require_once('../app/lib/PersonalInfoScramble.class.php');
-	require_once('../app/lib/validator.class.php');
 
 	try
 	{
@@ -17,9 +15,9 @@
 		//-------------------------------------------------------------------------------------------------------------
 		$params = array();
 
-		PgValidator::$conn = $pdo;
 		$validator = new FormValidator();
 		$validator->registerValidator('pgregex', 'PgRegexValidator');
+		PgValidator::$conn = $pdo;
 
 		$validator->addRules(array(
 			"filterPtID" => array(

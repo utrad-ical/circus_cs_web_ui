@@ -6,8 +6,6 @@
 
 	include_once("../common.php");
 	include_once("auto_logout_research.php");
-	require_once('../../app/lib/PersonalInfoScramble.class.php');
-	require_once('../../app/lib/validator.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation

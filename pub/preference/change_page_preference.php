@@ -1,9 +1,8 @@
 <?php
 	session_start();
-	
+
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_POST variables
 	//--------------------------------------------------------------------------------------------------------
@@ -11,13 +10,13 @@
 
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"oldTodayDisp" => array(
 			"type" => "select",
 			"options" => array('series', 'cad'),
 			"default" => "series",
-			"otherwise" => "series"),	
+			"otherwise" => "series"),
 		"newTodayDisp" => array(
 			"type" => "select",
 			"options" => array('series', 'cad')),
@@ -25,18 +24,18 @@
 			"type" => "select",
 			"options" => array('t', 'f'),
 			"default" => "f",
-			"otherwise" => "f"),	
+			"otherwise" => "f"),
 		"newDarkroomFlg" => array(
 			"type" => "select",
-			"options" => array('t', 'f')),	
+			"options" => array('t', 'f')),
 		"oldAnonymizeFlg" => array(
 			"type" => "select",
 			"options" => array('t', 'f'),
 			"default" => "f",
-			"otherwise" => "f"),	
+			"otherwise" => "f"),
 		"newAnonymizeFlg" => array(
 			"type" => "select",
-			"options" => array('t', 'f')),	
+			"options" => array('t', 'f')),
 		"oldLatestResults" => array(
 			"type" => "select",
 			"options" => array('own', 'all', 'none'),
@@ -45,8 +44,8 @@
 		"newLatestResults" => array(
 			"type" => "select",
 			"options" => array('own', 'all', 'none'))
-		));	
-	
+		));
+
 
 	if($validator->validate($_POST))
 	{
@@ -63,7 +62,7 @@
 	//--------------------------------------------------------------------------------------------------------
 
 	try
-	{	
+	{
 		$dstData = array('messaage'  => $params['message'],
 						 'todayList' => ($params['newTodayDisp'] == 'cad') ? 'cad_log' : 'series_list');
 
@@ -71,7 +70,7 @@
 		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
-		
+
 			if($params['oldTodayDisp'] != $params['newTodayDisp']
 			   || $params['oldDarkroomFlg'] != $params['newDarkroomFlg']
 			   || $params['oldAnonymizeFlg'] != $params['newAnonymizeFlg']
@@ -79,10 +78,10 @@
 			{
 				$sqlStr = "UPDATE users SET today_disp=?, darkroom_flg=?, anonymize_flg=?, latest_results=?"
 						. " WHERE user_id=?";
-				$sqlParams = array($params['newTodayDisp'], $params['newDarkroomFlg'], 
+				$sqlParams = array($params['newTodayDisp'], $params['newDarkroomFlg'],
 				                   $params['newAnonymizeFlg'], $params['newLatestResults'],
 								   $userID);
-						
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 
@@ -104,7 +103,7 @@
 
 		echo json_encode($dstData);
 
-	}	
+	}
 	catch (PDOException $e)
 	{
 		var_dump($e->getMessage());

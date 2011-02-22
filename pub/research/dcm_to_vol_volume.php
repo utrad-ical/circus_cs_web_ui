@@ -3,21 +3,20 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	$errorFlg = 0;
-	
+
 	if($_SESSION['researchShowFlg'] == 0 && $_SESSION['researchExecFlg'] == 0)
 	{
 		$errorFlg = 1;
 	}
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"studyInstanceUID" => array(
 			"type" => "uid",
@@ -27,7 +26,7 @@
 			"type" => "uid",
 			"required" => true,
 			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
-		));				
+		));
 
 	if($validator->validate($_POST))
 	{
@@ -40,9 +39,9 @@
 		//$params['message'] = implode('<br/>', $validator->errors);
 		$errorFlg = 1;
 	}
-	
+
 	$params['toTopDir'] = "../";
-	//-----------------------------------------------------------------------------------------------------------------	
+	//-----------------------------------------------------------------------------------------------------------------
 
 	try
 	{
@@ -51,10 +50,10 @@
 
 		if(!$errorFlg)
 		{
-			$sqlStr = "SELECT st.patient_id, sm.path" 
-					. " FROM study_list st, series_list sr, storage_master sm " 
-					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?" 
-					. " AND sr.study_instance_uid=st.study_instance_uid" 
+			$sqlStr = "SELECT st.patient_id, sm.path"
+					. " FROM study_list st, series_list sr, storage_master sm "
+					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?"
+					. " AND sr.study_instance_uid=st.study_instance_uid"
 					. " AND sr.storage_id=sm.storage_id;";
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -77,7 +76,7 @@
 
 				$baseName = $seriesDir . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 				$dstFileName = $baseName . ".zip";
-		
+
 				if(!is_file($dstFileName))
 				{
 					//--------------------------------------------------------------------------------------------------
@@ -87,12 +86,12 @@
 							. ' ' . $params['seriesInstanceUID'] . '"';
 					shell_exec($cmdStr);
 					//--------------------------------------------------------------------------------------------------
-	
+
 					//--------------------------------------------------------------------------------------------------
 					// create a zip archive
 					//--------------------------------------------------------------------------------------------------
 					$zip = new ZipArchive();
-			
+
 					if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
 					{
 						$errorFlg = 1;
@@ -106,7 +105,7 @@
 						}
 					}
 					$zip->close();
-	
+
 					if($errorFlg == 1 && is_file($dstFileName))  unlink($dstFileName);
 					if(is_file($baseName . ".vol"))  unlink($baseName . ".vol");
 					if(is_file($baseName . ".txt"))  unlink($baseName . ".txt");

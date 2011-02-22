@@ -5,26 +5,24 @@
 	$params = array('toTopDir' => "../");
 
 	include_once("../common.php");
-	include_once("auto_logout_research_exec.php");	
-	require_once('../../app/lib/PersonalInfoScramble.class.php');
-	require_once('../../app/lib/validator.class.php');
+	include_once("auto_logout_research_exec.php");
 
 	try
 	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
-	
+
 		$userID = $_SESSION['userID'];
-		
+
 		//-----------------------------------------------------------------------------------------------------------------
 		// Import $_POST variables and validation
 		//-----------------------------------------------------------------------------------------------------------------
 		$params = array();
-	
-		PgValidator::$conn = $pdo;
+
 		$validator = new FormValidator();
 		$validator->registerValidator('pgregex', 'PgRegexValidator');
-	
+		PgValidator::$conn = $pdo;
+
 		$validator->addRules(array(
 			"cadName" => array(
 				"type" => "cadname",
@@ -38,11 +36,11 @@
 				"default" => "all",
 				"otherwise" => "all"),
 			"filterAgeMin" => array(
-				"type" => "int", 
+				"type" => "int",
 				"min" => "0",
 				"errorMes" => "'Age' is invalid."),
 			"filterAgeMax" => array(
-				"type" => "int", 
+				"type" => "int",
 				"min" => "0",
 				"errorMes" => "'Age' is invalid."),
 			"srDateFrom" => array(
@@ -67,16 +65,16 @@
 				"type" => "pgregex",
 				"errorMes" => "'Tag' is invalid."),
 			));
-		
+
 		if($validator->validate($_POST))
 		{
 			$params = $validator->output;
 			$params['errorMessage'] = "";
-			
+
 			if(isset($params['filterAgeMin']) && isset($params['filterAgeMax'])
 			   && $params['filterAgeMin'] > $params['filterAgeMax'])
 			{
-				$params['errorMessage'] = "Range of 'Age' is invalid."; 
+				$params['errorMessage'] = "Range of 'Age' is invalid.";
 			}
 		}
 		else
@@ -84,21 +82,21 @@
 			$params = $validator->output;
 			$params['errorMessage'] = implode('<br/>', $validator->errors);
 		}
-		
+
 		$params['toTopDir'] = "../";
 		//--------------------------------------------------------------------------------------------------------------
-		
+
 		//--------------------------------------------------------------------------------------------------------------
-		// Create SQL queries 
+		// Create SQL queries
 		//--------------------------------------------------------------------------------------------------------------
 
 		if($params['errorMessage'] == "")
 		{
 			$sqlStr = "SELECT result_type FROM cad_master WHERE cad_name=? AND version=?";
 			$condArr = array($params['cadName'], $params['version']);
-		
+
 			$resultType = PdoQueryOne($pdo, $sqlStr, $condArr, 'SCALAR');
-		
+
 			if($resultType == 1)
 			{
 				$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
@@ -123,7 +121,7 @@
 						. " AND st.study_instance_uid = sr.study_instance_uid"
 						. " AND pt.patient_id=st.patient_id";
 			}
-		
+
 			if($params['cadDateFrom'] != "" && $params['cadDateTo'] != ""
 			   && $params['cadDateFrom'] == $params['cadDateTo'])
 			{
@@ -138,11 +136,11 @@
 					$sqlStr .= " AND ?<=el.executed_at";
 					$condArr[] = $params['cadDateFrom'] .' 00:00:00';
 				}
-		
+
 				if($params['cadDateTo'] != "")
 				{
 					$sqlStr .= " AND el.executed_at<=?";
-		
+
 					if($params['cadTimeTo'] != "")
 					{
 						$condArr[] = $params['cadDateTo'] . ' ' . $params['cadTimeTo'];
@@ -167,7 +165,7 @@
 					$sqlStr .= " AND ?<=sr.series_date";
 					$condArr[] = $params['srDateFrom'];
 				}
-		
+
 				if($params['srDateTo'] != "")
 				{
 					$condArr[] = $params['srDateTo'];
@@ -184,7 +182,7 @@
 					}
 				}
 			}
-		
+
 			if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 			{
 				$sqlStr .= " AND pt.sex=?";
@@ -203,7 +201,7 @@
 					$sqlStr .= " AND ?<=st.age";
 					$condArr[] = $params['filterAgeMin'];
 				}
-			
+
 				if($params['filterAgeMax'] != "")
 				{
 					$sqlStr .= " AND st.age<=?";
@@ -216,7 +214,7 @@
 				$sqlStr .= " AND el.exec_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
 				$condArr[] = $params['filterTag'];
 			}
-		
+
 			$sqlStr .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.exec_id ASC";
 			//echo $sqlStr;

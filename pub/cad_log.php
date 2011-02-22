@@ -4,8 +4,6 @@
 
 	include_once('common.php');
 	include_once("auto_logout.php");
-	require_once('../app/lib/PersonalInfoScramble.class.php');
-	require_once('../app/lib/validator.class.php');
 
 	//-----------------------------------------------------------------------------------------------------------------
 	//
@@ -70,9 +68,9 @@
 		$mode = (isset($_GET['mode']) && ($_GET['mode']=='today')) ? $_GET['mode'] : "";
 		$params = array();
 
-		PgValidator::$conn = $pdo;
 		$validator = new FormValidator();
 		$validator->registerValidator('pgregex', 'PgRegexValidator');
+		PgValidator::$conn = $pdo;
 
 		if($mode != "today")
 		{

@@ -6,8 +6,6 @@
 
 	include_once("../common.php");
 	include_once("../auto_logout.php");
-	require_once('../../app/lib/PersonalInfoScramble.class.php');
-	require_once('../../app/lib/validator.class.php');
 
 	$reqSeriesList = array();
 

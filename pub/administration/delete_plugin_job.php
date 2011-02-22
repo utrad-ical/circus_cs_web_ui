@@ -5,22 +5,20 @@
 	$params = array('toTopDir' => "../");
 
 	include_once("../common.php");
-	include("auto_logout_administration.php");	
-	require_once('../../app/lib/validator.class.php');
-	require_once('../../app/lib/PersonalInfoScramble.class.php');
-	
+	include("auto_logout_administration.php");
+
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$dstData = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"jobID" => array(
-			"type" => "int", 
+			"type" => "int",
 			"min" => 1),
 		));
-		
+
 	if($validator->validate($_POST))
 	{
 		$dstData = $validator->output;
@@ -31,15 +29,15 @@
 		$dstData = $validator->output;
 		$dstData['message'] = implode('<br/>', $validator->errors);
 	}
-	
+
 	$userID = $_SESSION['userID'];
-	//-----------------------------------------------------------------------------------------------------------------	
-	
+	//-----------------------------------------------------------------------------------------------------------------
+
 	try
 	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
-		
+
 		if($dstData['message'] == "")
 		{
 
@@ -48,10 +46,10 @@
 			//----------------------------------------------------------------------------------------------------
 			$sqlStr  = "SELECT exec_flg, plugin_type FROM plugin_job_list where job_id=?";
 			$result = PdoQueryOne($pdo, $sqlStr, $dstData['jobID'], 'ARRAY_NUM');
-			
+
 			$execFlg = $result[0];
 			$pluginType = $result[1];
-			
+
 			if(!$execFlg)
 			{
 				switch($pluginType)
@@ -60,9 +58,9 @@
 					case 2:  $sqlStr = "DELETE FROM job_cad_list WHERE job_id=:jobID;";       break;
 					case 3:  $sqlStr = "DELETE FROM job_research_list WHERE job_id=:jobID;";  break;
 				}
-					
+
 				$sqlStr .= "DELETE FROM plugin_job_list WHERE job_id=:jobID;";
-				
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(":jobID", $dstData['jobID']);
 				$stmt->execute();
@@ -80,9 +78,9 @@
 			//--------------------------------------------------------------------------------------------------------
 			include('make_job_list.php');
 			//--------------------------------------------------------------------------------------------------------
-	
+
 			$dstData['jobListHtml'] = "";
-		
+
 			foreach($jobList as $item)
 			{
 				$dstData['jobListHtml'] .= '<tr>'
@@ -98,7 +96,7 @@
 										//. '<input type="button" class="form-btn" value="detail"'
 										//.  ' onClick="ShowJobDetail(' . $item[0] . ');" />'
 										//.  '</td>';
-	
+
 				if($item[8] == 't')
 				{
 					$dstData['jobListHtml'] .= '<td>Processing</td>';
@@ -114,13 +112,13 @@
 				{
 					$dstData['jobListHtml'] .= '<td>&nbsp;</td>';
 				}
-				
+
 				$dstData['jobListHtml'] .= '</tr>';
-			
+
 			}
 		}
 		echo json_encode($dstData);
-	
+
 	}
 	catch (PDOException $e)
 	{

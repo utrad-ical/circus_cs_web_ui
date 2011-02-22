@@ -2,8 +2,7 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
@@ -11,7 +10,7 @@
 
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"dateFrom" => array(
 			"type" => "date",
@@ -29,7 +28,7 @@
 			"errorMes" => "'Version' is invalid."),
 		"evalUser" => array(
 			"type" => "string")
-		));	
+		));
 
 	if($validator->validate($_POST))
 	{
@@ -52,27 +51,27 @@
 	if($params['errorMessage'] == "&nbsp;")
 	{
 		try
-		{	
+		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
-		
+
 			//--------------------------------------------------------------------------------------------------------------
 			// Create tblHtml
 			//--------------------------------------------------------------------------------------------------------------
 			$sqlParams = array();
-				
+
 			$sqlStr = "SELECT DISTINCT(fa.exec_id) FROM executed_plugin_list el,"
 					. " executed_series_list es, feedback_action_log fa, series_list sr"
 					. " WHERE el.plugin_name=?";
-				
+
 			$sqlParams[] = $params['cadName'];
-			
+
 			if($params['version'] != "all")
 			{
 				$sqlStr .= " AND el.version=?";
 				$sqlParams[] = $params['version'];
 			}
-			
+
 			$sqlStr .= " AND es.exec_id=el.exec_id AND fa.exec_id=el.exec_id AND es.series_id=1"
 					.  " AND sr.series_instance_uid = es.series_instance_uid";
 
@@ -81,16 +80,16 @@
 				$sqlStr .= " AND sr.series_date>=?";
 				$sqlParams[] = $params['dateFrom'];
 			}
-				
+
 			if($params['dateTo'] != "")
 			{
 				$sqlStr .= " AND sr.series_date<=?";
 				$sqlParams[] = $params['dateTo'];
 			}
-				
+
 			$sqlStr .= " AND fa.user_id=? ORDER BY fa.exec_id ASC";
 			$sqlParams[] = $userID;
-				
+
 			$execIdList = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_COLUMN');
 
 			for($j = 0; $j < count($execIdList); $j++)
@@ -136,7 +135,7 @@
 								.  '<td>' . $results[$i][3] . ' v.' . $results[$i][4] . '</td>'
 								.  '<td>' . $results[$i][5] . '</td>';
 					}
-						
+
 					if($startFlg == 0)
 					{
 						if($results[$i][6] == 'open' && $results[$i][7] == 'CAD result')
@@ -144,24 +143,24 @@
 							$totalStartTime = $results[$i][8];
 						}
 					}
-					
+
 					if($startFlg == 0
 					   && ($results[$i][6] != 'open' || ($results[$i][6] == 'open' &&  $results[$i][7] == 'FN input')))
 					{
 						$startFlg=1;
 					}
-					
+
 					if($fnInputFlg == 0 && $results[$i][6] == 'open' &&  $results[$i][7] == 'FN input')
 					{
 						$fnInputFlg = 1;
 						$fnStartTime = $results[$i][8];
 					}
-					
+
 					if($fnInputFlg == 1 && $results[$i][6] == 'save' &&  $results[$i][7] == 'FN input')
 					{
 						$fnInputFlg = 0;
 						$fnEndTime = $results[$i][8];
-						
+
 						$fnTime += (strtotime($fnEndTime)-strtotime($fnStartTime));
 					}
 
@@ -175,16 +174,16 @@
 					{
 						$transFlg = 0;
 						$transEndTime = $results[$i][8];
-						
+
 						$transTime += (strtotime($transEndTime)-strtotime($transStartTime));
 					}
 
-					
+
 					if($results[$i][6] == 'register')
 					{
 						$totalEndTime = $results[$i][8];
 					}
-				
+
 					if($i == count($results)-1)
 					{
 						if($totalStartTime != "" && $totalEndTime != "")
@@ -199,17 +198,17 @@
 							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
 									. " WHERE exec_id=? AND entered_by=? AND consensual_flg='f' AND status=2";
 							$enterFnNum = PdoQueryOne($pdo, $sqlStr, array($execIdList[$j], $userID), 'SCALAR');
-							
+
 							// SQL statement for count No. of TP
 							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?"
 							         . " AND interrupt_flg='f' AND evaluation>=1";
-										
+
 							$stmtTP = $pdo->prepare($sqlStr);
-					
+
 							// SQL statement for count No. of FN
 							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
 								     . " AND consensual_flg=? AND false_negative_num>0 AND status=2";
-					
+
 							$stmtFN = $pdo->prepare($sqlStr);
 
 							$tpColStr = "-";
@@ -218,7 +217,7 @@
 							$stmtTP->bindValue(1, $execIdList[$j]);
 							$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
 							$stmtTP->execute();
-					
+
 							if($stmtTP->fetchColumn() > 0)	$tpColStr = '<span style="font-weight:bold;">+</span>';
 							else
 							{
@@ -226,20 +225,20 @@
 								$stmtTP->execute();
 								if($stmtTP->fetchColumn() > 0) $tpColStr = '<span style="font-weight:bold;">!</span>';
 							}
-	
+
 							$stmtFN->bindValue(1, $execIdList[$j]);
 							$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);
-							$stmtFN->execute();	
-							
+							$stmtFN->execute();
+
 							if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">+</span>';
 							else
 							{
 								$stmtFN->bindValue(2, 'f', PDO::PARAM_BOOL);
-								$stmtFN->execute();	
+								$stmtFN->execute();
 								if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">!</span>';
 							}
 							//------------------------------------------------------------------------------------------
-						
+
 							$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime-$transTime) . '</td>'
 									.  '<td>' . $fnTime . '</td>'
 									.  '<td>' . $dispCandNum . '</td>'
@@ -252,7 +251,7 @@
 							//        . (strtotime($totalEndTime)-strtotime($totalStartTime)) . '</td></tr>';
 						}
 						else $tmpStr = "";
-							
+
 						$dstData['tblHtml'] .= $tmpStr;
 					}
 				} // end for: $i
@@ -263,9 +262,9 @@
 		{
 			var_dump($e->getMessage());
 		}
-	
+
 		$pdo = null;
 	}
-	
-	echo json_encode($dstData);	
+
+	echo json_encode($dstData);
 ?>

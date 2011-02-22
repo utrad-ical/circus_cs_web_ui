@@ -3,23 +3,22 @@
 	session_start();
 
 	include_once("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$dstData = array();
 	$validator = new FormValidator();
-	
-	
+
+
 	$validator->addRules(array(
 		"modality" => array(
-			"type" => "select", 
+			"type" => "select",
 			"options" => $modalityList,
 			"default" => "CT",
 			"otherwise" => "CT"),
 		));
-	
+
 	if($validator->validate($_POST))
 	{
 		$dstData = $validator->output;
@@ -36,7 +35,7 @@
 	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
-		
+
 		$dstData['executableList'] = array();
 		$dstData['hiddenList']      = array();
 
@@ -47,11 +46,11 @@
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindValue(1, $dstData['modality']);
 		$stmt->execute();
-	
+
 		while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 		{
 			$tmp = $result['cad_name'] . "_v." . $result['version'];
-		
+
 			if($result['exec_flg'] == 't')  $dstData['executableList'][] = $tmp;
 			else                            $dstData['hiddenList'][] =$tmp;
 		}

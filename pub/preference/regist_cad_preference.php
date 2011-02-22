@@ -2,8 +2,7 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
@@ -11,7 +10,7 @@
 	$validator = new FormValidator();
 
 	$mode = (isset($_POST['mode'])) ? $_POST['mode'] : "";
-	
+
 	$validator->addRules(array(
 		"cadName" => array(
 			"type" => "cadname",
@@ -20,7 +19,7 @@
 		"version" => array(
 			"type" => "version",
 			"required" => true,
-			"errorMes" => "[ERROR] 'Version' is invalid."),	
+			"errorMes" => "[ERROR] 'Version' is invalid."),
 		"sortKey" => array(
 			"type" => "select",
 			"options" => array("0", "1", "2"),
@@ -58,8 +57,8 @@
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = implode('<br/>', $validator->errors);
-	}	
-		
+	}
+
 	$userID = $_SESSION['userID'];
 
 	$dstData = array('preferenceFlg' => $params['preferenceFlg'],
@@ -68,7 +67,7 @@
 
 	//--------------------------------------------------------------------------------------------------------
 	try
-	{	
+	{
 		// Connect to SQL Server
 		$pdo = new PDO($connStrPDO);
 
@@ -76,17 +75,17 @@
 		// regist or delete prefence
 		//----------------------------------------------------------------------------------------------------
 		$sqlParams = array();
-		
+
 		$sqlParams[] = $userID;
 		$sqlParams[] = $params['cadName'];
 		$sqlParams[] = $params['version'];
-		
+
 		if($mode == 'delete')
 		{
 			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
-			
+
 			if($stmt->rowCount() == 1)
 			{
 				$dstData['message'] = 'Succeeded!';
@@ -106,10 +105,10 @@
 			$sqlParams[] = $params['sortKey'];
 			$sqlParams[] = $params['sortOrder'];
 			$sqlParams[] = $params['maxDispNum'];
-			$sqlParams[] = $params['confidenceTh'];		
+			$sqlParams[] = $params['confidenceTh'];
 			$sqlParams[] = $params['dispConfidenceFlg'];
 			$sqlParams[] = $params['dispCandidateTagFlg'];
-			
+
 			$sqlStr = "INSERT INTO cad_preference(user_id, cad_name, version,"
 					. " default_sort_key, default_sort_order, max_disp_num,"
 					. " confidence_threshold, disp_confidence_flg, disp_candidate_tag_flg)"
@@ -128,7 +127,7 @@
 				$dstData['message'] = 'Fail to save the preference.';
 			}
 		}
-		
+
 		echo json_encode($dstData);
 	}
 	catch (PDOException $e)

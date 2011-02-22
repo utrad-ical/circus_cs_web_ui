@@ -2,7 +2,6 @@
 
 	include('drawRocCurve_v1.1.php');
 	include("../cad_results/lesion_candidate_display_private.php");
-	require_once('../../app/lib/DcmExport.class.php');
 
 	$data = array();
 

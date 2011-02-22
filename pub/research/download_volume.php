@@ -4,7 +4,6 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation

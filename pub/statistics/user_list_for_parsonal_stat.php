@@ -3,14 +3,13 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//-----------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"cadName" => array(
 			"type" => "cadname",
@@ -19,7 +18,7 @@
 			"type" => "version",
 			"otherwise" => "all",
 			"errorMes" => "'Version' is invalid.")
-		));	
+		));
 
 	if($validator->validate($_POST))
 	{
@@ -52,7 +51,7 @@
 		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
-			
+
 			$sqlStr = "SELECT DISTINCT lf.entered_by FROM executed_plugin_list el, lesion_feedback lf"
 					. " WHERE el.exec_id=lf.exec_id AND el.plugin_name=?";
 			$sqlParams = array($params['cadName']);
@@ -81,9 +80,9 @@
 		{
 			var_dump($e->getMessage());
 		}
-	
+
 		$pdo = null;
 	}
-	
+
 	echo json_encode($dstData);
 ?>

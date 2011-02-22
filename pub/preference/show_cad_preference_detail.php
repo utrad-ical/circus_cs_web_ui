@@ -2,14 +2,13 @@
 	session_start();
 
 	include("../common.php");
-	require_once('../../app/lib/validator.class.php');
-	
+
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
 	//------------------------------------------------------------------------------------------------------------------
 	$params = array();
 	$validator = new FormValidator();
-	
+
 	$validator->addRules(array(
 		"cadName" => array(
 			"type" => "cadname",
@@ -18,9 +17,9 @@
 		"version" => array(
 			"type" => "version",
 			"required" => true,
-			"errorMes" => "[ERROR] 'Version' is invalid."),	
+			"errorMes" => "[ERROR] 'Version' is invalid."),
 		));
-	
+
 	if($validator->validate($_POST))
 	{
 		$params = $validator->output;
@@ -31,7 +30,7 @@
 		$params = $validator->output;
 		$params['message'] = implode('<br/>', $validator->errors);
 	}
-	
+
 	$params['userID'] = $_SESSION['userID'];
 	$params['preferenceFlg'] = 0;
 	$params['sortKey']             = "";
@@ -52,18 +51,18 @@
 		{
 			// Connect to SQL Server
 			$pdo = new PDO($connStrPDO);
-	
+
 			$sqlStr = "SELECT * FROM cad_master WHERE cad_name=? AND version=?";
 			$result = PdoQueryOne($pdo, $sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
-		
+
 			$params['defaultSortKey']      = $result['default_sort_key'];
 			$params['defaultSortOrder']    = ($result['default_sort_order']) ? "t" : "f";
 			$params['defaultMaxDispNum']   = $result['max_disp_num'];
 			$params['defaultConfidenceTh'] = $result['confidence_threshold'];
-		
-			$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE cad_name=? AND version=? AND user_id=?");	
+
+			$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE cad_name=? AND version=? AND user_id=?");
 			$stmt->execute(array($params['cadName'], $params['version'], $params['userID']));
-	
+
 			if($stmt->rowCount() == 1)
 			{
 				$params['preferenceFlg'] = 1;

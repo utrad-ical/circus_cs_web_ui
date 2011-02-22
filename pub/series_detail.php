@@ -4,9 +4,6 @@
 
 	include_once('common.php');
 	include_once("auto_logout.php");
-	require_once('../app/lib/PersonalInfoScramble.class.php');
-	require_once('../app/lib/DcmExport.class.php');
-	require_once('../app/lib/validator.class.php');
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation

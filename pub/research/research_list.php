@@ -6,7 +6,6 @@
 
 	include_once("../common.php");
 	include_once("auto_logout_research.php");
-	require_once('../../app/lib/validator.class.php');
 
 	try
 	{
@@ -18,9 +17,9 @@
 		//-----------------------------------------------------------------------------------------------------------------
 		$params = array();
 
-		PgValidator::$conn = $pdo;
 		$validator = new FormValidator();
 		$validator->registerValidator('pgregex', 'PgRegexValidator');
+		PgValidator::$conn = $pdo;
 
 		$validator->addRules(array(
 			"pluginName" => array(
