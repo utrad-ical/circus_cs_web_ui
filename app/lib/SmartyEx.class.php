@@ -1,6 +1,6 @@
 <?php
-	require_once('C:/CIRCUS-CS/web_ui/app/vendor/Smarty-2.6.26/Smarty.class.php');
-	//require_once('../vendor/Smarty-3.0.6/Smarty.class.php');
+	global $WEB_UI_ROOT;
+	require_once($WEB_UI_ROOT . '/app/vendor/Smarty-2.6.26/Smarty.class.php');
 
 	function modifier_TorF ($boolean)
 	{
@@ -11,42 +11,36 @@
 	{
 		if ($boolean) return 'O'; else return '-';
 	}
-	
+
 	//function modifier_1or0 ($boolean)
 	//{
 	//	if ($boolean) return '1'; else return '0';
 	//}
 
-	//----------------------------------------------------------------------------------------------
-	// Extended class of Smarty
-	//----------------------------------------------------------------------------------------------
+	/**
+	 * SmartyEx subclasses Smarty, and does CIRCUS-specific initialization.
+	 * Requires Smarty 2.6 but Smarty 3.x is not supported.
+	 */
 	class SmartyEx extends Smarty
 	{
-		// Constructor
+		/**
+		 * Constructor.
+		 * Initializes directories and several modifiers.
+		 */
 		public function __construct()
 		{
+			global $BASE_DIR, $DIR_SEPARATOR, $WEB_UI_ROOT;
 			parent::__construct(); // initalization of parent class
-			
-			$rootPath = 'C:/CIRCUS-CS/web_ui/app/smarty/';
-			
+
+			$rootPath = $WEB_UI_ROOT . $DIR_SEPARATOR . 'app' . $DIR_SEPARATOR . 'smarty' . $DIR_SEPARATOR;
+
 			$this->template_dir = $rootPath . 'templates/';
 			$this->compile_dir  = $rootPath . 'templates_c/';
 			$this->config_dir   = $rootPath . 'configs/';
 			$this->cache_dir    = $rootPath . 'cache/';
-			
-			// for Smarty 2.x
+
 			$this->register_modifier('TorF',     'modifier_TorF');
 			$this->register_modifier('OorMinus', 'modifier_OorMinus');
-			//$this->register_modifier('1or0',     'modifier_1or0');
-			
-			// for Smarty 3.x
-			//$this->registerPlugin('modifier', 'TorF',     'modifier_TorF');
-			//$this->registerPlugin('modifier', 'OorMinus', 'modifier_OorMinus');
-			////$this->registerPlugin('modifier', '1or0',     'modifier_1or0');
-			
-			// define default variables (if required)
-			//$this->assign('TEST', 'TEST');
 		}
 	}
-	//----------------------------------------------------------------------------------------------
 ?>
