@@ -1,6 +1,6 @@
 <?php
 	
-	$CIRCUS_CS_VERSION = "1.0 RC2";
+	$CIRCUS_CS_VERSION = "1.0 RC3";
 
 	//-------------------------------------------------------------------------------------------------------
 	// Define directories, commands, etc.
@@ -48,7 +48,7 @@
 	$dbName       = "circus_cs";
 	$dbAccessUser = "circus";
 	//$dbAccessPass = "cad";    // for RC1 or HIMEDIC
-	$dbAccessPass = "sucRic";   // for RC2
+	$dbAccessPass = "sucRic";   // for RC3
 	
 	$connStr = "host=localhost port=5432 dbname=" . $dbName
              . " user=" . $dbAccessUser . " password=" . $dbAccessPass;
