@@ -17,8 +17,6 @@
 		$params = array();
 
 		$validator = new FormValidator();
-		$validator->registerValidator('pgregex', 'PgRegexValidator');
-		PgValidator::$conn = $pdo;
 
 		if($mode == 'study')
 		{

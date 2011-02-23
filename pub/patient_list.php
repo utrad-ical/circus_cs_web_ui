@@ -16,8 +16,6 @@
 		$params = array();
 
 		$validator = new FormValidator();
-		$validator->registerValidator('pgregex', 'PgRegexValidator');
-		PgValidator::$conn = $pdo;
 
 		$validator->addRules(array(
 			"filterPtID" => array(

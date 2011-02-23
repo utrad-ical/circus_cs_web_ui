@@ -21,7 +21,7 @@ class FormValidator
 		'numeric'   => 'NumericValidator',
 		'str'       => 'StringValidator',
 		'string'    => 'StringValidator',
-		//'pgregexp'  => 'PgRegexpValidator',
+		'pgregex'   => 'PgRegexValidator',
 		'date'      => 'DateValidator',
 		'datetime'  => 'DateTimeValidator',
 		'time'      => 'TimeValidator',
@@ -40,7 +40,7 @@ class FormValidator
 	 * Normalized output of the validated data.
 	 */
 	public $output;
-	
+
 	/**
 	 * If validation failes, this is an array which holds the error messages.
 	 */
@@ -50,7 +50,7 @@ class FormValidator
 	 * Associative array which holds the internal rule set.
 	 */
 	private $rules;
-	
+
 	/**
 	 * Adds one validation rule to the internal rule set.
 	 * @param string $keyName Name of the rule.
@@ -156,7 +156,7 @@ class FormValidator
 		}
 		return (count($this->errors) == 0);
 	}
-	
+
 	/**
 	 * Register a custom (user-defined) validator class.
 	 * @param $typeName mixed Name, or array of names, of the registered type.
@@ -176,7 +176,7 @@ class FormValidator
 			);
 		}
 	}
-	
+
 	/**
 	 * Creates new FormValidator instance having the same configuration as this.
 	 */
@@ -206,18 +206,18 @@ abstract class ValidatorBase
 	 * The FormValidator instance associated to this validator.
 	 */
 	protected $owner;
-	
+
 	/**
 	 * Corresponding key of the processing data.
 	 */
 	protected $key;
-	
+
 	/**
 	 * This holds the label of the data. Labels are used as a caption
 	 * which are used instead of $key.
 	 */
 	protected $label;
-	
+
 	protected $params;
 
 	/**
@@ -225,12 +225,12 @@ abstract class ValidatorBase
 	 * original according to the validation rule.
 	 */
 	public $output;
-	
+
 	/**
 	 * Error message when the validation fails.
 	 */
 	public $error;
-	
+
 	/**
 	 * Initializes the validator.
 	 */
@@ -239,13 +239,13 @@ abstract class ValidatorBase
 		$this->params = $params;
 		$this->setKey($key);
 	}
-	
+
 	public function setKey($key) {
 		$this->key = $key;
 		$this->label = $key;
 		if ($params['label']) $this->label = $params['label'];
 	}
-	
+
 	/**
 	 * Checks the input data.
 	 * @return boolean true if $input is validated, false if $input is invalid.
@@ -410,20 +410,20 @@ class StringValidator extends ScalarValidator
 class DateTimeValidator extends ScalarValidator
 {
 	protected $defaultFormat = 'Y-m-d H:i:s';
-	
+
 	protected function touchDate(DateTime $date) {
 		return $date;
 	}
-	
+
 	protected function timeStamp(DateTime $date) {
 		return $date->format('U');
 	}
-	
+
 	public function validate($input) {
 		try {
 			$date = new DateTime($input);
 			$date = $this->touchDate(new DateTime($input));
-			
+
 			if ($this->params['min']) {
 				$min = $this->touchDate(new DateTime($this->params['min']));
 				if ($this->timeStamp($date) < $this->timeStamp($min)) {
@@ -462,7 +462,7 @@ class DateValidator extends DateTimeValidator
 	public function __construct() {
 		$this->defaultFormat = 'Y-m-d';
 	}
-	
+
 	protected function touchDate(DateTime $date) {
 		$date->setTime(0, 0, 0);
 		return $date;
@@ -480,7 +480,7 @@ class TimeValidator extends ScalarValidator
 		if(preg_match('/^\d{1,2}:\d{1,2}:\d{1,2}$/', $input))
 		{
 			$vals = explode(":", $input);
-				
+
 			if(0<=$vals[0] && $vals[0]<=23 && 0<=$vals[1] && $vals[1]<=59
 			    && 0<=$vals[2] && $vals[2]<=59){
 				$this->output = $input;
@@ -533,7 +533,7 @@ class SelectValidator extends ScalarValidator
 class ArrayValidator extends ValidatorBase
 {
 	protected $childValidator;
-	
+
 	public function init($key, $params, $owner) {
 		parent::init($key, $params, $owner);
 		if (is_array($params['childrenRule'])) {
@@ -541,7 +541,7 @@ class ArrayValidator extends ValidatorBase
 			$this->childValidator->addRule('data', $params['childrenRule']);
 		}
 	}
-	
+
 	public function check($input) {
 		$label = $this->label;
 		$result = array();
@@ -593,7 +593,7 @@ class ArrayValidator extends ValidatorBase
 class AssociativeArrayValidator extends ValidatorBase
 {
 	protected $childValidator;
-	
+
 	public function init($key, $params, $owner)
 	{
 		parent::init($key, $params, $owner);
@@ -602,7 +602,7 @@ class AssociativeArrayValidator extends ValidatorBase
 			$this->childValidator->addRules($params['rule']);
 		}
 	}
-	
+
 	public function check($input)
 	{
 		$cv = $this->childValidator;
@@ -648,7 +648,7 @@ class CallbackValidator extends ValidatorBase
 				"(non-callable callback function (" . $key . ")");
 		}
 	}
-	
+
 	public function check($input) {
 		$callback = $this->params['callback'];
 		$result = call_user_func($callback, $input);
@@ -745,28 +745,20 @@ class CadVersionValidator extends ScalarValidator
 			$this->error = "Input data '$this->label' is invalid.";
 			return false;
 		}
-	}	
-}
-
-/**
- * Base class that utilizes PDO and PostgreSQL for validating something.
- * @package formValidators
- */
-abstract class PgValidator extends ScalarValidator
-{
-	public static $conn; // DB handle (static variable)
+	}
 }
 
 /**
  * Validates if the given input is a well-formed regular expression.
  * @package formValidators
  */
-class PgRegexValidator extends PgValidator
+class PgRegexValidator extends ScalarValidator
 {
 	public function validate($input)
 	{
 		try {
-			$st = self::$conn->prepare("select 'dummy' ~ ?");
+			$conn = DB::getConnection();
+			$st = $conn->prepare("select 'dummy' ~ ?");
 			$st->bindParam(1, $input);
 			$st->execute();
 			// throw a new exception regardless of the value of PDO::ATTR_ERRMODE
@@ -794,7 +786,7 @@ class PgRegexValidator extends PgValidator
 class JsonValidator extends ValidatorBase
 {
 	protected $childValidator;
-	
+
 	public function init($key, $params, $owner) {
 		$this->childVaidator = null;
 		parent::init($key, $params, $owner);
