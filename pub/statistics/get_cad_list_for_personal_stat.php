@@ -11,7 +11,7 @@
 				. " WHERE el.plugin_name=cm.cad_name AND el.version=cm.version AND cm.result_type=1"
 				. " ORDER BY el.plugin_name ASC";
 
-		$resultCad = PdoQueryOne($pdo, $sqlStr, null, 'ALL_COLUMN');
+		$resultCad = DB::query($sqlStr, null, 'ALL_COLUMN');
 
 		if(count($resultCad) > 0)
 		{
@@ -20,7 +20,7 @@
 				$cadList[$key][0] = $item;
 
 				$sqlStr  = "SELECT DISTINCT version FROM executed_plugin_list WHERE plugin_name=?";
-				$resultVersion = PdoQueryOne($pdo, $sqlStr, $item, 'ALL_COLUMN');
+				$resultVersion = DB::query($sqlStr, $item, 'ALL_COLUMN');
 
 				$cadList[$key][1] = implode('^', $resultVersion);
 			}

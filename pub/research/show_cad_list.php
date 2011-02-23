@@ -93,7 +93,7 @@
 			$sqlStr = "SELECT result_type FROM cad_master WHERE cad_name=? AND version=?";
 			$condArr = array($params['cadName'], $params['version']);
 
-			$resultType = PdoQueryOne($pdo, $sqlStr, $condArr, 'SCALAR');
+			$resultType = DB::query($sqlStr, $condArr, 'SCALAR');
 
 			if($resultType == 1)
 			{
@@ -217,7 +217,7 @@
 					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.exec_id ASC";
 			//echo $sqlStr;
 
-			$cadList =  PdoQueryOne($pdo, $sqlStr, $condArr, 'ALL_ASSOC');
+			$cadList =  DB::query($sqlStr, $condArr, 'ALL_ASSOC');
 
 			echo json_encode($cadList);
 		}

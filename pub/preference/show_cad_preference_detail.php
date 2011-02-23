@@ -53,7 +53,7 @@
 			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT * FROM cad_master WHERE cad_name=? AND version=?";
-			$result = PdoQueryOne($pdo, $sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
+			$result = DB::query($sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
 
 			$params['defaultSortKey']      = $result['default_sort_key'];
 			$params['defaultSortOrder']    = ($result['default_sort_order']) ? "t" : "f";

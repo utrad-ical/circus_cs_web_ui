@@ -85,7 +85,7 @@
 			$sqlStr = "SELECT * FROM patient_list pt, study_list st WHERE st.study_instance_uid=?"
 					. " AND pt.patient_id=st.patient_id";
 
-			$result = PdoQueryOne($pdo, $sqlStr, $studyUIDArr[0], 'ARRAY_ASSOC');
+			$result = DB::query($sqlStr, $studyUIDArr[0], 'ARRAY_ASSOC');
 
 			$params['patientID']   = $result['patient_id'];
 			$params['patientName'] = $result['patient_name'];

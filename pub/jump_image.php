@@ -53,7 +53,7 @@
 				    . " AND sr.study_instance_uid=st.study_instance_uid"
 				    . " AND sr.storage_id=sm.storage_id;";
 
-			$result = PdoQueryOne($pdo, $sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
+			$result = DB::query($sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
 
 			$patientID = $result[0];
 

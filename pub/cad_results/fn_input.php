@@ -79,7 +79,7 @@
 			        . " AND sr.storage_id=sm.storage_id;";
 
 
-			$result = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ARRAY_NUM');
+			$result = DB::query($sqlStr, $params['execID'], 'ARRAY_NUM');
 
 			$params['patientID']         = $result[0];
 			$params['studyInstanceUID']  = $result[1];
@@ -234,7 +234,7 @@
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
-			$result = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_ASSOC');
+			$result = DB::query($sqlStr, $sqlParams, 'ALL_ASSOC');
 
 			$fnPosArray = array();
 
@@ -250,7 +250,7 @@
 					{
 						$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
 								. ' WHERE exec_id=? AND sub_id=?';
-						$result2 = PdoQueryOne($pdo, $sqlStr,
+						$result2 = DB::query($sqlStr,
 						                       array($params['execID'], $item['nearest_lesion_id']),
 											   'ARRAY_NUM');
 
@@ -277,7 +277,7 @@
 				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
 				//else										$sqlStr .= " AND consensual_flg='t'";
 				//
-				//if(PdoQueryOne($pdo, $sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
+				//if(DB::query($sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
 				//{
 				//	$params['registTime'] ="";
 				//}

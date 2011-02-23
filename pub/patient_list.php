@@ -129,7 +129,7 @@
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT COUNT(*) FROM patient_list" . $sqlCond;
-			$params['totalNum']     = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
+			$params['totalNum']     = DB::query($sqlStr, $sqlParams, 'SCALAR');
 			$params['maxPageNum']   = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
 			$params['endPageNum']   = min($params['pageNum'] + $PAGER_DELTA, $params['maxPageNum']);

@@ -29,7 +29,7 @@
 				$pdo = DB::getConnection();
 
 				$sqlStr = "SELECT * FROM users WHERE user_id=? AND passcode=?";
-				$result = PdoQueryOne($pdo, $sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
+				$result = DB::query($sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
 
     			if($result == null)
 				{

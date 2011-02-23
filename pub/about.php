@@ -14,7 +14,7 @@
 
 		// For plug-in block
 		$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC";
-		$pluginData = PdoQueryOne($pdo, $sqlStr, null, 'ALL_ASSOC');
+		$pluginData = DB::query($sqlStr, null, 'ALL_ASSOC');
 
 		//----------------------------------------------------------------------------------------------------
 		// Settings for Smarty

@@ -148,7 +148,7 @@
 									   $item["z"],
 									   $registTime);
 
-					$dstID = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'SCALAR');
+					$dstID = DB::query($sqlStr, $sqlParams, 'SCALAR');
 					$srcID = 0;
 
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=?"

@@ -329,7 +329,7 @@
 		$sqlStr = "SELECT SUM(false_negative_num) FROM false_negative_count"
 				. " WHERE exec_id=? AND consensual_flg='f' AND status=2";
 
-		$params['fnPersonalCnt'] = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'SCALAR');
+		$params['fnPersonalCnt'] = DB::query($sqlStr, $params['execID'], 'SCALAR');
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -471,7 +471,7 @@
 		$detailParams['sortStr'] .= ' (descending order)';
 	}
 
-	$detailData = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
+	$detailData = DB::query($sqlStr, $params['execID'], 'ALL_NUM');
 
 	for($i = 0; $i < count($detailData); $i++)
 	{
@@ -487,7 +487,7 @@
 		}
 
 		$sqlStr = "SELECT tag FROM tag_list WHERE category=5 AND reference_id=?";
-		$detailData[$i][] = implode(', ', PdoQueryOne($pdo, $sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
+		$detailData[$i][] = implode(', ', DB::query($sqlStr, $detailData[$i][0], 'ALL_COLUMN'));
 		$detailData[$i][] = $candClass;
 	}
 	//------------------------------------------------------------------------------------------------------------------

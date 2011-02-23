@@ -66,7 +66,7 @@
 			// Retrieve tag data
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=6 AND reference_id=? ORDER BY sid ASC";
-			$params['tagArray'] = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
+			$params['tagArray'] = DB::query($sqlStr, $params['execID'], 'ALL_NUM');
 			//----------------------------------------------------------------------------------------------------------
 
 			$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';

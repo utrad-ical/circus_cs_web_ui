@@ -59,7 +59,7 @@
 			        . " AND pt.patient_id=st.patient_id"
 			        . " AND sr.storage_id=sm.storage_id;";
 
-			$result = PdoQueryOne($pdo, $sqlStr, array($data['studyInstanceUID'], $data['seriesInstanceUID']), 'ARRAY_NUM');
+			$result = DB::query($sqlStr, array($data['studyInstanceUID'], $data['seriesInstanceUID']), 'ARRAY_NUM');
 
 			$data['sid']               = $result[0];
 			$data['patientID']         = $result[1];
@@ -121,7 +121,7 @@
 			$data['presetName']   = "";
 
 			$sqlStr = "SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC";
-			$result = PdoQueryOne($pdo, $sqlStr, $data['modality'], 'ALL_ASSOC');
+			$result = DB::query($sqlStr, $data['modality'], 'ALL_ASSOC');
 
 			$data['presetArr'] = array();
 
@@ -221,7 +221,7 @@
 			// Retrieve tag data
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=3 AND reference_id=? ORDER BY sid ASC";
-			$tagArray = PdoQueryOne($pdo, $sqlStr, $data['sid'], 'ALL_NUM');
+			$tagArray = DB::query($sqlStr, $data['sid'], 'ALL_NUM');
 			//----------------------------------------------------------------------------------------------------------
 		}
 

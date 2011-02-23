@@ -164,44 +164,6 @@
 	}
 
 	/**
-	 * Utility function for PDO query.
-	 * @param PDO $pdo The database connection handle.
-	 * @param string $sqlStr SQL statements with binnding placeholders ('?').
-	 * @param array $bindValues The list of binding parameters.
-	 * @param string $outputType Format of the return type.
-	 * @return Result of the query in the specified format.
-	 */
-	function PdoQueryOne($pdo, $sqlStr, $bindValues, $outputType)
-	{
-		$stmt = $pdo->prepare($sqlStr);
-
-		if(is_array($bindValues))
-		{
-			$stmt->execute($bindValues);
-		}
-		else
-		{
-			if(strlen($bindValues) > 0)  $stmt->bindValue(1, $bindValues);
-			$stmt->execute();
-		}
-
-		if($stmt->errorCode()=='00000')
-		{
-			switch($outputType)
-			{
-				case 'SCALAR':       return $stmt->fetchColumn();                break;
-				case 'ARRAY_ASSOC':  return $stmt->fetch(PDO::FETCH_ASSOC);      break;
-				case 'ARRAY_NUM':    return $stmt->fetch(PDO::FETCH_NUM);        break;
-				case 'ALL_ASSOC':    return $stmt->fetchAll(PDO::FETCH_ASSOC);   break;
-				case 'ALL_NUM':      return $stmt->fetchAll(PDO::FETCH_NUM);     break;
-				case 'ALL_COLUMN':   return $stmt->fetchAll(PDO::FETCH_COLUMN);  break;
-				default:             return null;
-			}
-		}
-		else	return null;
-	}
-
-	/**
 	 * Recursively delete a directory that is not empty.
 	 * @param string $dir The path to the directory to delete.
 	 */

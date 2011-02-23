@@ -90,7 +90,7 @@
 			$sqlStr .= " AND fa.user_id=? ORDER BY fa.exec_id ASC";
 			$sqlParams[] = $userID;
 
-			$execIdList = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_COLUMN');
+			$execIdList = DB::query($sqlStr, $sqlParams, 'ALL_COLUMN');
 
 			for($j = 0; $j < count($execIdList); $j++)
 			{
@@ -105,7 +105,7 @@
 						. " AND st.study_instance_uid = es.study_instance_uid"
 						. " ORDER BY fa.sid ASC";
 
-				$results = PdoQueryOne($pdo, $sqlStr, $execIdList[$j], 'ALL_NUM');
+				$results = DB::query($sqlStr, $execIdList[$j], 'ALL_NUM');
 
 				$startFlg = 0;
 				$fnInputFlg = 0;
@@ -193,11 +193,11 @@
 							//------------------------------------------------------------------------------------------
 							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND entered_by=?"
 									. " AND consensual_flg='f' AND interrupt_flg='f' AND lesion_id>0";
-							$dispCandNum = PdoQueryOne($pdo, $sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+							$dispCandNum = DB::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
 
 							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
 									. " WHERE exec_id=? AND entered_by=? AND consensual_flg='f' AND status=2";
-							$enterFnNum = PdoQueryOne($pdo, $sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+							$enterFnNum = DB::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
 
 							// SQL statement for count No. of TP
 							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?"

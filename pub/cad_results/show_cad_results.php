@@ -87,7 +87,7 @@
 						. " FROM executed_plugin_list el, executed_series_list es"
 						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=1";
 
-				$result = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ARRAY_NUM');
+				$result = DB::query($sqlStr, $params['execID'], 'ARRAY_NUM');
 
 				if(!is_null($result))
 				{
@@ -115,7 +115,7 @@
 						. " AND es.series_id=1 AND es.study_instance_uid=? AND es.series_instance_uid=?";
 				$sqlParams = array($params['cadName'], $params['version'], $params['studyInstanceUID'], $params['seriesInstanceUID']);
 
-				$result = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ARRAY_NUM');
+				$result = DB::query($sqlStr, $sqlParams, 'ARRAY_NUM');
 
 				if(!is_null($result))
 				{
@@ -288,7 +288,7 @@
 				// Retrieve tag data
 				//------------------------------------------------------------------------------------------------------
 				$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=4 AND reference_id=? ORDER BY sid ASC";
-				$params['tagArray'] = PdoQueryOne($pdo, $sqlStr, $params['execID'], 'ALL_NUM');
+				$params['tagArray'] = DB::query($sqlStr, $params['execID'], 'ALL_NUM');
 				//------------------------------------------------------------------------------------------------------
 
 				if($params['resultType'] == 1)

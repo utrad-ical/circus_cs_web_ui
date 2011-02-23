@@ -15,7 +15,7 @@
 				. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"
 				. " AND cs.series_id=1 ORDER BY cs.modality ASC";
 
-		$params['modalityList'] = PdoQueryOne($pdo, $sqlStr, null, 'ALL_COLUMN');
+		$params['modalityList'] = DB::query($sqlStr, null, 'ALL_COLUMN');
 
 		//-------------------------------------------------------------------------------------------------------------
 		// Make one-time ticket

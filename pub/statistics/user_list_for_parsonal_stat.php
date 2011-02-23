@@ -67,7 +67,7 @@
 
 			//echo $sqlStr;
 
-			$userList = PdoQueryOne($pdo, $sqlStr, $sqlParams, 'ALL_COLUMN');
+			$userList = DB::query($sqlStr, $sqlParams, 'ALL_COLUMN');
 
 			//var_dump($userList);
 

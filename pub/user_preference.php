@@ -16,7 +16,7 @@
 		// For page preference
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?";
-		$result = PdoQueryOne($pdo, $sqlStr, $userID, 'ARRAY_NUM');
+		$result = DB::query($sqlStr, $userID, 'ARRAY_NUM');
 
 		$oldTodayDisp = $result[0];
 		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
@@ -28,7 +28,7 @@
 		// For CAD preference
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1";
-		$cadNameArray = PdoQueryOne($pdo, $sqlStr, null, 'ALL_NUM');
+		$cadNameArray = DB::query($sqlStr, null, 'ALL_NUM');
 
 		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1 ORDER BY version DESC";
 		$stmt = $pdo->prepare($sqlStr);
