@@ -102,9 +102,9 @@
 	$RESULT_COL_NUM = 3;
 	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Count DICOM files in the selected directory (for Win)
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Count DICOM files in the selected directory.
+	 */
 	function GetFileNumberOfDicomInPath($path)
 	{
 		$flist = scandir($path);
@@ -117,11 +117,10 @@
 
 		return $imgCnt;
 	}
-	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Retrieve DICOM file list in the selected path
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Retrieve DICOM file list in the selected path.
+	 */
 	function GetDicomFileListInPath($path)
 	{
 		$tmpFlist = scandir($path);
@@ -135,11 +134,15 @@
 
 		return $flist;
 	}
-	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Function for calculation age
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Utility function to calculate age.
+	 * @param string $birthDate The date of birth in 'YYYY-MM-DD' or 'YYYYMMDD'
+	 * format (hyphens are optinal).
+	 * @param string $baseDate The date at which we calculate age
+	 * (typically today).
+	 * @return string The calculated age. Return -1 if invalid date is passed.
+	 */
 	function CalcAge($birthDate, $baseDate)
 	{
 		$birthDate = str_replace('-', '', $birthDate);
@@ -151,20 +154,23 @@
 		if($baseDate < $birthDate)	return -1;
 		else						return (int)(($baseDate - $birthDate) / 10000);
 	}
-	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Function for URL key and val pair
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Utility function to encode key/value pair into urlencoded format.
+	 */
 	function UrlKeyValPair($key, $val)
 	{
 		return $key . "=" . urlencode($val);
 	}
-	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Wrap functions for PDO
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Utility function for PDO query.
+	 * @param PDO $pdo The database connection handle.
+	 * @param string $sqlStr SQL statements with binnding placeholders ('?').
+	 * @param array $bindValues The list of binding parameters.
+	 * @param string $outputType Format of the return type.
+	 * @return Result of the query in the specified format.
+	 */
 	function PdoQueryOne($pdo, $sqlStr, $bindValues, $outputType)
 	{
 		$stmt = $pdo->prepare($sqlStr);
@@ -194,11 +200,11 @@
 		}
 		else	return null;
 	}
-	//-------------------------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------------------------
-	// Recursively delete a directory that is not empty
-	//-------------------------------------------------------------------------------------------------------
+	/**
+	 * Recursively delete a directory that is not empty.
+	 * @param string $dir The path to the directory to delete.
+	 */
 	function DeleteDirRecursively($dir)
 	{
 		if(is_dir($dir))
@@ -218,7 +224,6 @@
 			rmdir($dir);
 		}
 		return TRUE;
- 	}
-	//-------------------------------------------------------------------------------------------------------
+	}
 
 ?>
