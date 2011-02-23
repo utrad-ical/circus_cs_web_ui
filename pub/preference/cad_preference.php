@@ -11,7 +11,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		$stmt = $pdo->prepare("SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1");
 		$stmt->execute();

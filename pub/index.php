@@ -26,7 +26,7 @@
 			try
 			{
 				// Connect to SQL Server
-				$pdo = new PDO($connStrPDO);
+				$pdo = DB::getConnection();
 
 				$sqlStr = "SELECT * FROM users WHERE user_id=? AND passcode=?";
 				$result = PdoQueryOne($pdo, $sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');

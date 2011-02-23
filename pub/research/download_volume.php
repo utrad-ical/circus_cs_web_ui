@@ -41,7 +41,7 @@
 		if($params['message'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT st.patient_id, sm.apache_alias"
 					. " FROM study_list st, series_list sr, storage_master sm "

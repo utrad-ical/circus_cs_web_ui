@@ -69,7 +69,7 @@
 		if($params['message'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			if($params['oldTodayDisp'] != $params['newTodayDisp']
 			   || $params['oldDarkroomFlg'] != $params['newDarkroomFlg']

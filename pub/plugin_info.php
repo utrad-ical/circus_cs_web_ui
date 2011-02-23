@@ -20,12 +20,12 @@
 $(function(){
 
 	$("#cadMenu").change(function(){
-		
+
 		var tmp = jQuery("#cadMenu").val().split('^');
 		var address = 'plugin_info.php?cadName=' + tmp[0] + '&version=' + tmp[1];
 
 		location.href = address;
-	
+
 	});
 });
 
@@ -43,27 +43,27 @@ $(function(){
 <?php
 
 	include ('common.php');
-	include("auto_logout.php");	
+	include("auto_logout.php");
 
 	//--------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables 
+	// Import $_REQUEST variables
 	//--------------------------------------------------------------------------------------------------------
 	$pluginName = (isset($_REQUEST['pluginName'])) ? $_REQUEST['pluginName'] : "";
 	$version = (isset($_REQUEST['version'])) ? $_REQUEST['version'] : "";
 	//--------------------------------------------------------------------------------------------------------
 
 	$userID = $_SESSION['userID'];
-	
+
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		//$stmt = $pdo->prepare("SELECT cad_name, version FROM cad_master ORDER BY exec_flg DESC, cad_name ASC, version ASC");
 		//$stmt->execute();
-	
+
 		//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
+
 		// pull-down menu
 		//echo '<select id="cadMenu" name="cadMenu">';
 
@@ -83,24 +83,24 @@ $(function(){
 		//echo '</form>';
 		//echo '<div style="font-size:5px;">&nbsp;</div>';
 		//echo '<hr>';
-		
+
 		$seriesList = array();
 		$descriptionNumArr = array();
-		
+
 		if($cadName != "" && $version != "")
 		{
 			$condArr = array($cadName, $version);
-		
+
 			// Description, input type
 			$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
-			$stmt->execute($condArr);	
-	
+			$stmt->execute($condArr);
+
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 			$inputType   = $result['input_type'];
 			$resultType  = $result['result_type'];
 			$description = $result['description'];
-		
+
 			// Series info
 			$sqlStr = "SELECT DISTINCT series_id, modality FROM cad_series"
 					. " WHERE cad_name=? AND version=?"
@@ -122,13 +122,13 @@ $(function(){
 
 				$stmtDescription = $pdo->prepare($sqlStr);
 				$stmtDescription->execute(array($cadName, $version, $seriesID));
-				
+
 
 				while($resultDescription = $stmtDescription->fetch(PDO::FETCH_NUM))
 				{
 					if(!($resultDescription[0] == '(default)'
 					      && $resultDescription[1] == 0 && $resultDescription[2] == 0))
-					{		
+					{
 						array_push($seriesList, array( 'seriesID'    => $seriesID,
 						                               'modality'    => $modality,
 				                                       'description' => $resultDescription[0],
@@ -140,18 +140,18 @@ $(function(){
 				array_push($descriptionNumArr, $cnt);
 			}
 			$seriesNum = count($descriptionNumArr);
-			
+
 			// Executed cases
 			$stmt = $pdo->prepare("SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list WHERE plugin_name=? AND version=?");
 			$stmt->execute($condArr);
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 			$caseNum = $result[0];
 			$oldestDate = substr($result[1], 0, 10);
-	
+
 			// Evaluation
 			$evalNumConsensual = $tpNumConsensual = $fnNumConsensual = 0;
 			$missedTPNum = $knownTPNum = $fnNumPersonal = 0;
-		
+
 			if($caseNum > 0 && $resultType == 1)
 			{
 				// Consensual based
@@ -161,13 +161,13 @@ $(function(){
 					    . " AND lf.exec_id=el.exec_id"
 					    . " AND lf.consensual_flg ='t'"
 					    . " AND lf.interrupt_flg ='f'";
-				
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
-				
+
 				$evalNumConsensual = $stmt->fetchColumn();
 				if($evalNumConsensual == "")  $evalNumConsensual = 0;
-			
+
 				$sqlStr = "SELECT COUNT(*)"
 				        . " FROM executed_plugin_list el, lesion_feedback lf"
 						. " WHERE el.plugin_name=? AND el.version=?"
@@ -181,22 +181,22 @@ $(function(){
 
 				$tpNumConsensual = $stmt->fetchColumn();
 				if($tpNumConsensual == "")  $tpNumConsensual = 0;
-		
+
 				$sqlStr = "SELECT SUM(fn.false_negative_num)"
 						. " FROM executed_plugin_list el, false_negative_count fn"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND fn.exec_id=el.exec_id"
 						. " AND fn.consensual_flg ='t'"
-						. " AND fn.status>=1";			
-		
+						. " AND fn.status>=1";
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
 
 				$fnNumConsensual = $stmt->fetchColumn();
 				if($fnNumConsensual == "")  $fnNumConsensual = 0;
-		
+
 				array_push($condArr, $userID);
-		
+
 				// Personal based
 				$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el, lesion_feedback lf"
 						. " WHERE el.plugin_name=? AND el.version=?"
@@ -204,16 +204,16 @@ $(function(){
 						. " AND lf.entered_by=?"
 						.  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'"
 						.  " GROUP BY lf.evaluation;";
-					
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
-				
+
 				while($result = $stmt->fetch(PDO::FETCH_NUM))
 				{
 					if($result[0] == 1)       $knownTPNum  += $result[1];
 					else if($result[0] == 2)  $missedTPNum += $result[1];
 				}
-		
+
 				$sqlStr = "SELECT SUM(fn.false_negative_num)"
 						. " FROM executed_plugin_list el, false_negative_count fn"
 						. " WHERE el.plugin_name=? AND el.version=?"
@@ -221,7 +221,7 @@ $(function(){
 						. " AND fn.entered_by=?"
 						. " AND fn.consensual_flg ='f'"
 						. " AND fn.status>=1";
-						
+
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
 
@@ -231,20 +231,20 @@ $(function(){
 
 			//---------------------------------------------------------------------------------------------------
 			// Show plug-in information
-			//---------------------------------------------------------------------------------------------------	
+			//---------------------------------------------------------------------------------------------------
 			echo '<div style="font-size:7px;">&nbsp;</div>';
 			echo '<div style="font-size:16px; margin:5px;">';
-			echo '<b>Plug-in name: </b>' . $cadName . '<br>';	
+			echo '<b>Plug-in name: </b>' . $cadName . '<br>';
 			echo '<b>Version: </b>' . $version . '<br>';
 			echo '<b>Description: </b>' . $description . '<br>';
-		
+
 			echo '<b>No. of executed cases: </b>' . $caseNum;
 			if($caseNum > 0)  echo ' (since ' . $oldestDate . ')';
 			echo '</div>';
 
 			echo '<div style="font-size:7px;">&nbsp;</div>';
 			echo '<div style="font-size:16px; margin-left:5px;"><b>Required DICOM series</b></div>';
-			
+
 			echo '<div style="font-size:14px; margin-left:15px;">';
 			echo '<table border="1">';
 			echo '<tr>';
@@ -252,13 +252,13 @@ $(function(){
 			echo '</tr>';
 
 			$cnt = 0;
-			
+
 			for($j=0; $j<$seriesNum; $j++)
 			{
 				for($i=$cnt; $i<$cnt + $descriptionNumArr[$j]; $i++)
 				{
 					echo '<tr>';
-					
+
 					if($i==$cnt)
 					{
 						echo '<td';
@@ -268,7 +268,7 @@ $(function(){
 						if($descriptionNumArr[$j]>1) echo ' rowspan=' . $descriptionNumArr[$j];
 						echo ' align=center>' . $seriesList[$i]['modality'] . '</td>';
 					}
-			
+
 					if($seriesList[$i]['description'] == '(default)')
 					{
 						echo '<td>#image: ' .  $seriesList[$i]['minSlice'] . '-' . $seriesList[$i]['maxSlice'] . '</td>';
@@ -281,14 +281,14 @@ $(function(){
 				}
 				$cnt += $descriptionNumArr[$j];
 			}
-			
+
 			echo '</table>';
 			echo '</div>';
-		
+
 			if($caseNum > 0 && $resultType == 1)
 			{
 				echo '<div style="font-size:7px;">&nbsp;</div>';
-			
+
 				if($evalNumConsensual > 0)
 				{
 					echo '<div style="font-size:16px; margin-left:5px;"><b>Evaluation</b> (Consensual feedback)</div>';
@@ -297,7 +297,7 @@ $(function(){
 					echo '<b>No. of FN: </b>' . $fnNumConsensual . '<br>';
 					echo '</div>';
 				}
-			
+
 				if($missedTPNum > 0 || $knownTPNum > 0 || $fnNumPersonal > 0)
 				{
 					echo '<div style="font-size:16px; margin:5px;"><b>Evaluation</b> (by ' . $userID . ')</div>';

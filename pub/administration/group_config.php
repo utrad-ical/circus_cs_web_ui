@@ -34,7 +34,7 @@
 		try
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			//---------------------------------------------------------------------------------------------------------
 			// Add / Update / Delete group

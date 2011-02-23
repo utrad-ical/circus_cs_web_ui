@@ -17,14 +17,14 @@
 	$zPos = (isset($_POST['zPos'])) ? $_POST['zPos'] : 0;
 
 	$userID = $_SESSION['userID'];
-	
+
 	$tableName = 'landmark_detection_v0';
 	//--------------------------------------------------------------------------------------------------------
-	
+
 	try
-	{	
+	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		if($mode == 'delete')
 		{
@@ -33,7 +33,7 @@
 			$stmt->bindParam(1, $execID);
 			$stmt->bindParam(2, $subID);
 			$stmt->execute();
-			
+
 			if($stmt->rowCount() == 1)	echo "Success to detele!!";
 			else						echo "Fail to delete!!";
 		}
@@ -43,14 +43,14 @@
 			$stmt->bindParam(1, $execID);
 			$stmt->bindParam(2, $landmarkName);
 			$stmt->execute();
-			
+
 			if($stmt->fetchColumn() == 0)
 			{
 				$sqlStr = 'INSERT INTO "' . $tableName . '" (exec_id, sub_id, landmark_name, short_name, location_x, location_y, location_z)'
 						. ' VALUES (?, ?, ?, ?, ?, ?, ?)';
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($execID, $subID, $landmarkName, $shortName, $xPos, $yPos, $zPos));
-			
+
 				if($stmt->rowCount() == 1)	echo "Success to add row!!";
 				else						echo "Fail to add row!!";
 			}
@@ -70,7 +70,7 @@
 						. ' WHERE exec_id=? AND sub_id=?';
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($landmarkName, $shortName, $xPos, $yPos, $zPos, $execID, $subID));
-			
+
 				if($stmt->rowCount() == 1)	echo "Success to update row!!";
 				else						echo "Fail to update row!!";
 			}

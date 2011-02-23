@@ -1,9 +1,9 @@
 <?php
 
 	session_start();
-	
+
 	include("../common.php");
-	
+
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables
 	//--------------------------------------------------------------------------------------------------------
@@ -14,9 +14,9 @@
 	//--------------------------------------------------------------------------------------------------------
 
 	try
-	{	
+	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		$message = "";
 
@@ -26,7 +26,7 @@
 		}
 		else
 		{
-			$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE user_id=? AND passcode=?"); 
+			$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE user_id=? AND passcode=?");
 			$stmt->execute(array($userID, MD5($oldPassword)));
 
 			if($stmt->fetchColumn() != 1)
@@ -42,7 +42,7 @@
 			//	$message = "New password is the same as current password.";
 			//}
 		}
-		
+
 		if($message == "")
 		{
 			$stmt = $pdo->prepare("UPDATE users SET passcode=? WHERE user_id=?");
@@ -58,9 +58,9 @@
 				$message = $tmp[2];
 			}
 		}
-	
+
 		echo $message;
-	
+
 	}
 	catch (PDOException $e)
 	{

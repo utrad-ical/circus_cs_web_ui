@@ -75,7 +75,7 @@
 		if($dstData['message'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			if($params['mode']=="add")
 			{

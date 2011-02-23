@@ -17,7 +17,7 @@
 					    'showing'      => 10);
 
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		include('set_cad_panel_params.php');
 		$versionList = array("all");

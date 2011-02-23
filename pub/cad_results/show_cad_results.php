@@ -74,7 +74,7 @@
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve data from database

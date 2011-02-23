@@ -10,7 +10,7 @@
 		$userID = $_SESSION['userID'];
 
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		//--------------------------------------------------------------------------------------------------------------
 		// For page preference

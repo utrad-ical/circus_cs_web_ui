@@ -8,7 +8,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		//-----------------------------------------------------------------------------------------------------------------
 		// Import $_GET variables and validation

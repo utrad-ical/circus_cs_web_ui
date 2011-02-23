@@ -60,7 +60,7 @@
 		try
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			//---------------------------------------------------------------------------------------------------------
 			// Begin transaction and lock tables (patient_list, series_list, study_list)

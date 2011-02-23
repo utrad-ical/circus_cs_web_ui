@@ -58,7 +58,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		$userID = $_SESSION['userID'];
 

@@ -5,11 +5,11 @@
 	include("../../common.php");
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables 
+	// Import $_POST variables
 	//------------------------------------------------------------------------------------------------------------------
 	$version = (isset($_POST['version']))  ? $_POST['version']  : 1;
 	$execID = (isset($_POST['execID']))  ? $_POST['execID']  : "";
-	$imgNum = (isset($_POST['imgNum'])) ? $_POST['imgNum'] : 1;	
+	$imgNum = (isset($_POST['imgNum'])) ? $_POST['imgNum'] : 1;
 	$orgImgFname = (isset($_POST['orgImgFname']))  ? $_POST['orgImgFname']  : "";
 	$resImgFname = (isset($_POST['resImgFname']))  ? $_POST['resImgFname']  : "";
 	//------------------------------------------------------------------------------------------------------------------
@@ -18,9 +18,9 @@
 	                 'imgNumStr' => sprintf("Img. No. %04d", $imgNum));
 
 	try
-	{	
+	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		//--------------------------------------------------------------------------------------------------------------
 		// Set Image file name
@@ -28,7 +28,7 @@
 		$dstData['orgImgFname'] = sprintf("%s%03d.png", substr($orgImgFname, 0, strlen($orgImgFname)-7), $imgNum);
 		$dstData['resImgFname'] = sprintf("%s%03d.png", substr($resImgFname, 0, strlen($resImgFname)-7), $imgNum);
 		//--------------------------------------------------------------------------------------------------------------
-		
+
 		//--------------------------------------------------------------------------------------------------------------
 		// Measurment results
 		//--------------------------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@
 		$stmt->execute(array($execID, $imgNum));
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		
+
 		$dstData['dcmSliceNum']    = $result['image_num'];
 		$dstData['sliceLocation']  = sprintf("%.2f", $result['slice_location']);
 		$dstData['bodyTrunkArea']  = sprintf("%.2f", $result['body_trunk_area']);
@@ -53,5 +53,5 @@
 		var_dump($e->getMessage());
 	}
 	$pdo = null;
-	
+
 ?>

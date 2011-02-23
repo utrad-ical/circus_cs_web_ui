@@ -60,7 +60,7 @@
 			$userID = $_SESSION['userID'];
 
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT sub.id FROM"
 					. " (SELECT pj.job_id as id, count(jcad.exec_id) as cad_num"

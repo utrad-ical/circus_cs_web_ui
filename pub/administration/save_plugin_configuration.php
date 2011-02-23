@@ -40,7 +40,7 @@
 		if($params['message'] == "&nbsp;")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr    = "";
 			$sqlParams = array();

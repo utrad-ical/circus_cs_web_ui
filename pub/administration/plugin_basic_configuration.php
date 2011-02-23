@@ -9,7 +9,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = new PDO($connStrPDO);
+		$pdo = DB::getConnection();
 
 		$sqlStr = "SELECT DISTINCT cs.modality FROM cad_master cm, cad_series cs"
 				. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"

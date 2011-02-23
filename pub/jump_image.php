@@ -44,7 +44,7 @@
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT st.patient_id, sm.path, sm.apache_alias"
 					. " FROM study_list st, series_list sr, storage_master sm"

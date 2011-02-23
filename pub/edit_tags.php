@@ -41,7 +41,7 @@
 	{
 		if($params['errorMessage'] == '')
 		{
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 			$sqlStr = "SELECT sid, tag, entered_by FROM tag_list"
 					. " WHERE category=? AND reference_id=? ORDER BY sid ASC";
 			$sqlParams = array($params['category'], $params['referenceID']);

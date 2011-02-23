@@ -50,7 +50,7 @@
 		if($params['message'] == "&nbsp;")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT * FROM cad_master WHERE cad_name=? AND version=?";
 			$result = PdoQueryOne($pdo, $sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');

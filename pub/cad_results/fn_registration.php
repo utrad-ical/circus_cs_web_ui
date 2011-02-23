@@ -98,7 +98,7 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 

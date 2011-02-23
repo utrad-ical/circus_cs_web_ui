@@ -46,7 +46,7 @@
 		if($data['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = new PDO($connStrPDO);
+			$pdo = DB::getConnection();
 
 			$sqlStr = "SELECT sr.sid, pt.patient_id, pt.patient_name, sm.path, sm.apache_alias,"
 			        . " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"

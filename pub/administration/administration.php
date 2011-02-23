@@ -14,7 +14,7 @@
 	if($adminModeFlg == 1) $_SESSION['adminModeFlg'] = 1;
 
 	// Connect to SQL Server
-	$pdo = new PDO($connStrPDO);
+	$pdo = DB::getConnection();
 
 	//-------------------------------------------------------------------------------------------------------------
 	// Check server status
