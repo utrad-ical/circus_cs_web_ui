@@ -144,7 +144,6 @@ $(function() {
 					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
 						                          selectedDate, instance.settings );
 
-					alert(date);
 					$("#cadSearch input[name='srDateTo']").datepicker("option", "minDate", date);
 				}});
 
