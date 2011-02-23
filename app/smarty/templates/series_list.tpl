@@ -183,10 +183,10 @@
 											</select>
 
 											{if $smarty.session.execCADFlg == 1}
-												<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="&nbsp;Exec&nbsp;" onClick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[1]}', '{$item[2]}');" class="s-btn form-btn"{if $item[14][$selectedID][2] || $item[14][0][3] || $item[14][0][4]} style="display:none;"{/if} />
+												<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="&nbsp;Exec&nbsp;" onclick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[1]}', '{$item[2]}');" class="s-btn form-btn"{if $item[14][$selectedID][2] || $item[14][0][3] || $item[14][0][4]} style="display:none;"{/if} />
 											{/if}
 
-											<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onClick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[1]}', '{$item[2]}', {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
+											<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onclick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[1]}', '{$item[2]}', {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
 											<div id="cadInfo{$smarty.foreach.cnt.iteration}">
 												{if $item[14][0][5] != ''}Executed at {$item[14][0][5]|escape}{elseif !$item[14][0][3] && $item[14][0][4]}Registered in CAD job list{elseif $params.mode == 'today'}<span style="color:#f00;">Not executed</span>{else}&nbsp;{/if}
 											</div>

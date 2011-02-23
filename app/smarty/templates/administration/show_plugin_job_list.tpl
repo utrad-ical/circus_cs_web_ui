@@ -117,7 +117,7 @@ div.line{
 									<td>{$item[6]}</td>
 									<td>{$item[7]}</td>
 								{*	<td>
-										<input type="button" class="form-btn" value="detail" onClick="ShowJobDetail({$item[0]});" />
+										<input type="button" class="form-btn" value="detail" onclick="ShowJobDetail({$item[0]});" />
 									</td>*}
 
 									{if $item[8] == 't'}
@@ -125,7 +125,7 @@ div.line{
 									{elseif $smarty.session.serverOperationFlg == 1 || $smarty.session.serverSettingsFlg == 1
 											|| $userID == $item[2]}
 										<td>
-											<input type="button" class="form-btn" value="delete" onClick="DeleteJob({$item[0]});">
+											<input type="button" class="form-btn" value="delete" onclick="DeleteJob({$item[0]});">
 										</td>
 									{else}
 										<td>&nbsp;</td>

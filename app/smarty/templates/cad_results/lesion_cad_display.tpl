@@ -600,11 +600,11 @@ $(function() {
 										<table cellpadding=0 cellspacing=0>
 											<tr>
 												<td align="right" {if $detailParams.dispWidth>=300}width={math equation="(x-256)/2" x=$detailParams.dispWidth}"{/if}>
-	 												<input type="button" value="-" onClick="Minus();" />
+	 												<input type="button" value="-" onclick="Minus();" />
 												</td>
 												<td align="center" width="256"><div id="slider"></div></td>
 												<td align="left" {if $detailParams.dispWidth>=300}width="{math equation="(x-256)/2" x=$detailParams.dispWidth}"{/if}>
-		 											<input type="button" value="+" onClick="Plus();" />
+		 											<input type="button" value="+" onclick="Plus();" />
 												</td>
 											</tr>
 											<tr>

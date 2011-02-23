@@ -103,7 +103,7 @@ function ResetCurrentID()
 						<span style="color:#ff0000; font-weight:bold;">
 							Please restart DICOM storage server and HTTP server to activate settings.
 						</span>
-						<input type="button" class="form-btn" value="restart" onClick="RestartServer('{$ticket}');">
+						<input type="button" class="form-btn" value="restart" onclick="RestartServer('{$ticket}');">
 					</p>
 				{/if}
 
@@ -130,7 +130,7 @@ function ResetCurrentID()
 								<td>
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 										{if $item[0] != $smarty.session.userID}
-										 	class="s-btn form-btn" onClick="deleteStorage({$item[0]}, {$item[3]});" />
+										 	class="s-btn form-btn" onclick="deleteStorage({$item[0]}, {$item[3]});" />
 									 	{else}
 										 	name="loginUser" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
 										{/if}
@@ -163,8 +163,8 @@ function ResetCurrentID()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" class="form-btn" value="add"   onClick="AddStorage('{$ticket}');" />&nbsp;
-							<input type="button" class="form-btn" value="reset" onClick="ResetAddStorage();" />
+							<input type="button" class="form-btn" value="add"   onclick="AddStorage('{$ticket}');" />&nbsp;
+							<input type="button" class="form-btn" value="reset" onclick="ResetAddStorage();" />
 						</p>
 					</div>
 				</div>
@@ -206,8 +206,8 @@ function ResetCurrentID()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" class="form-btn" value="update" onClick="UpdateCurrentID('{$ticket}');" />&nbsp;
-							<input type="button" class="form-btn" value="reset"  onClick="ResetCurrentID();" />
+							<input type="button" class="form-btn" value="update" onclick="UpdateCurrentID('{$ticket}');" />&nbsp;
+							<input type="button" class="form-btn" value="reset"  onclick="ResetCurrentID();" />
 						</p>
 					</div>
 			</form>

@@ -145,11 +145,11 @@ $(function() {ldelim}
 										<table cellpadding=0 cellspacing=0>
 											<tr>
 												<td align="right" width="{if $dispWidth>=300}{math equation="(x-256)/2" x=$dispWidth}{else}22{/if}">
-	 												<input type="button" value="-" onClick="Minus();" />
+	 												<input type="button" value="-" onclick="Minus();" />
 												</td>
 												<td align="center" width="256"><div id="slider"></div></td>
 												<td align="left" width="{if $dispWidth>=300}{math equation="(x-256)/2" x=$dispWidth}{else}22{/if}">
-		 											<input type="button" value="+" onClick="Plus();" />
+		 											<input type="button" value="+" onclick="Plus();" />
 												</td>
 											</tr>
 											<tr>

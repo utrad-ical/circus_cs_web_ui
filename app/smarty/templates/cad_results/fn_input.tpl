@@ -198,13 +198,13 @@ function Minus()
 
 							<tr>
 								<td align="right" style="{if $params.dispWidth >=256}width:{$widthOfPlusButton|escape}{/if}px;">
-									<input type="button" value="-" onClick="Minus();"  />
+									<input type="button" value="-" onclick="Minus();"  />
 								</td>
 					
 								<td align=center style="width:256px;"><div id="slider"></div></td>
 
 								<td align=left  style="{if $params.dispWidth >=256}width:{$params.widthOfPlusButton|escape}{/if}px;">
-							 		<input type="button" value="+" onClick="Plus();" />
+							 		<input type="button" value="+" onclick="Plus();" />
 								</td>
 							</tr>
 

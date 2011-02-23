@@ -108,7 +108,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td>DICOM storage server</td>
 							<td class="pl10">
 								<input type="button" id="dicomStorageConfButton" value="config" class="form-btn"
-							 			onClick="location.href='dicom_storage_server_config.php';" />
+							 			onclick="location.href='dicom_storage_server_config.php';" />
 							</td>
 						</tr>
 
@@ -116,7 +116,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td class="pt5">Data storages</td>
 							<td class="pt5 pl10">
 								<input type="button" id="diskStorageConfButton" value="config" class="form-btn"
-								 		onClick="location.href='data_storage_config.php';"/>
+								 		onclick="location.href='data_storage_config.php';"/>
 							</td>
 						</tr>
 
@@ -124,7 +124,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td class="pt5">Add plug-in from packaged file</td>
 							<td class="pt5 pl10">
 								<input type="button" id="pluginConfButton" value="config" class="form-btn"
-									 onClick="location.href='add_plugin.php';" />
+									 onclick="location.href='add_plugin.php';" />
 							</td>
 						</tr>
 
@@ -132,7 +132,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td class="pt5">Basic configuration for plug-ins</td>
 							<td class="pt5 pl10">
 								<input type="button" id="pluginConfButton" value="config" class="form-btn"
-					 				onClick="location.href='plugin_basic_configuration.php';">
+					 				onclick="location.href='plugin_basic_configuration.php';">
 							</td>
 						</tr>
 					<!--
@@ -140,7 +140,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td class="pt5">Grayscale preset</td>
 							<td class="pt5 pl10">
 								<input type="button" id="grayscaleConfButton" value="config" class="form-btn"
-									 onClick="location.href='grayscale_config.php';" disabled="disabled" />
+									 onclick="location.href='grayscale_config.php';" disabled="disabled" />
 							</td>
 						</tr>
 					-->
@@ -150,7 +150,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 						<td class="pt5">Users</td>
 						<td class="pt5 pl10">
 							<input type="button" id="userConfButton" value="config" class="form-btn"
-								 onClick="location.href='user_config.php';" />
+								 onclick="location.href='user_config.php';" />
 						</td>
 					</tr>
 					
@@ -159,7 +159,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 							<td class="pt5">Groups</td>
 							<td class="pt5 pl10">
 								<input type="button" id="groupConfButton" value="config" class="form-btn"
-					 					onClick="location.href='group_config.php';" />
+					 					onclick="location.href='group_config.php';" />
 							</td>
 						</tr>
 					{/if}
@@ -168,7 +168,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 						<td class="pt5">Server logs</td>
 						<td class="pt5 pl10">
 							<input type="button" id="groupConfButton" value="show" class="form-btn"
-					 				onClick="location.href='server_logs.php';" />
+					 				onclick="location.href='server_logs.php';" />
 						</td>
 					</tr>
 					
@@ -182,7 +182,7 @@ function ChangeServerStatus(baseName, serviceName, mode)
 						<td class="pt5">Show plug-in jobs</td>
 						<td class="pt5 pl10">
 							<input type="button" id="groupConfButton" value="show" class="form-btn"
-					 				onClick="location.href='show_plugin_job_list.php';" />
+					 				onclick="location.href='show_plugin_job_list.php';" />
 						</td>
 					</tr>
 				</table>
@@ -196,13 +196,13 @@ function ChangeServerStatus(baseName, serviceName, mode)
 						<td class="pt5 pl10" style="width: 95px;"><span id="storageStatusStr" style="font-weight:bold;">{$storageSvStatus.str}</span></td>
 						<td class="pt5 pl5">
 							<input type="button" id="startStorage" value="start"
-                             onClick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'start');"
+                             onclick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'start');"
 							 class ="form-btn{if $storageSvStatus.val == 1} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
                             <input type="button" id="stopStorage" value="stop"
-                             onClick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'stop');"
+                             onclick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'stop');"
                              class ="form-btn{if $storageSvStatus.val == 0} form-btn-disabled" disabled="disabled{/if}" />&nbsp;&nbsp;
                             <input type="button" id="storageStatus" value="status" class ="form-btn"
-                             onClick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'status');" />
+                             onclick="ChangeServerStatus('storage', '{$storageSvStatus.serviceName}', 'status');" />
                         </td>
                     </tr>
 	                <tr>
@@ -210,13 +210,13 @@ function ChangeServerStatus(baseName, serviceName, mode)
                         <td class="pt5 pl10" style="width: 90px;"><span id="managerStatusStr" style="font-weight:bold;">{$jobManagerStatus.str}</span></td>
                         <td class="pt5 pl5">
 	                        <input type="button" id="startManager" value="start" 
-                             onClick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'start');"
+                             onclick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'start');"
                              class ="form-btn{if $jobManagerStatus.val == 1} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
                             <input type="button" id="stopManager" value="stop"
-                             onClick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'stop');"
+                             onclick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'stop');"
                              class ="form-btn{if $jobManagerStatus.val == 0} form-btn-disabled" disabled="disabled{/if}" />&nbsp;&nbsp;
                             <input type="button" id="managerStatus" value="status" class ="form-btn"
-                             onClick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'status');" />
+                             onclick="ChangeServerStatus('manager', '{$jobManagerStatus.serviceName}', 'status');" />
                         </td>
                     </tr>
 	            </table>

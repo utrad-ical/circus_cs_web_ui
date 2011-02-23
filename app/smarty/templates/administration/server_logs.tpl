@@ -77,9 +77,9 @@ function RefleshLogList()
 
 								<td>
 									<input type="button" id="downloadButton{$smarty.foreach.cnt.iteration}" value="download"
-									 class="form-btn" onClick="Downloadlogs('{$item[0]}');" />
+									 class="form-btn" onclick="Downloadlogs('{$item[0]}');" />
 									<input type="button" id="clearButton{$smarty.foreach.cnt.iteration}" value="clear"
-									 class="form-btn" onClick="Clearlogs('{$item[0]}');" />
+									 class="form-btn" onclick="Clearlogs('{$item[0]}');" />
 								</td>
 							</tr>
 						{/foreach}

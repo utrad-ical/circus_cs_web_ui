@@ -269,7 +269,7 @@ div.line{
 							<option value="{$item}">{$item}</option>
 						{/foreach}
 					</select>&nbsp;
-					<input type="button" id="applyBtn" class="form-btn" value="apply" onClick="ShowPluginConfDetail();">
+					<input type="button" id="applyBtn" class="form-btn" value="apply" onclick="ShowPluginConfDetail();">
 				</div>
 
 				<div class="line"></div>

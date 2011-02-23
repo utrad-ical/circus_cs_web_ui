@@ -165,12 +165,12 @@ function RestartStorageSv()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" value="Update" onClick="UpdateConfig();"
+							<input type="button" value="Update" onclick="UpdateConfig();"
 								class="form-btn{if $restartFlg} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
-							<input type="button" id="addBtn" class="form-btn" value="Cancel" onClick="CancelConfig();"
+							<input type="button" id="addBtn" class="form-btn" value="Cancel" onclick="CancelConfig();"
 								class="form-btn{if $restartFlg} form-btn-disabled" disabled="disabled{/if}" />&nbsp;
 							{if $restartFlg}
-								<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="Restart" onClick="RestartStorageSv();" />
+								<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="Restart" onclick="RestartStorageSv();" />
 							{/if}
 						</p>
 					</div>

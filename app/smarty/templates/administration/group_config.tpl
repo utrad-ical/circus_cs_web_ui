@@ -227,13 +227,13 @@ function CancelUpdate()
 								{if $item[0] != "admin"}
 									<td>
 										<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
-                                   		  onClick="SetEditBox('{$item[0]}','{$item[1]}','{$item[2]|TorF}', '{$item[3]|TorF}', '{$item[4]|TorF}',
+                                   		  onclick="SetEditBox('{$item[0]}','{$item[1]}','{$item[2]|TorF}', '{$item[3]|TorF}', '{$item[4]|TorF}',
                                                               '{$item[5]|TorF}','{$item[6]|TorF}','{$item[7]|TorF}','{$item[8]|TorF}',
                                                               '{$item[9]|TorF}','{$item[10]|TorF}','{$item[11]|TorF}',
                                                               '{$item[12]|TorF}', '{$item[13]|TorF}');" />
 										<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 											{if $item[0] != $smarty.session.userID}
-									 			class="s-btn form-btn" onClick="deleteGroup('{$item[0]}');" />
+									 			class="s-btn form-btn" onclick="deleteGroup('{$item[0]}');" />
 								 			{else}
 									 			name="noDelete" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
 											{/if}
@@ -365,11 +365,11 @@ function CancelUpdate()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" id="addBtn" class="form-btn" value="add" onClick="GroupSetting('add','{$ticket}');" />&nbsp;
+							<input type="button" id="addBtn" class="form-btn" value="add" onclick="GroupSetting('add','{$ticket}');" />&nbsp;
 							<input type="button" id="updateBtn" class="form-btn form-btn-disabled" value="update"
-                                   onClick="GroupSetting('update','{$ticket}');" disabled="disabled" />
+                                   onclick="GroupSetting('update','{$ticket}');" disabled="disabled" />
 							<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="cancel"
-                                   onClick="CancelUpdate();" disabled="disabled" />
+                                   onclick="CancelUpdate();" disabled="disabled" />
 						</p>
 					</div>
 				</div>

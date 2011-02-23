@@ -25,7 +25,7 @@ function deleteUser(userID)
 	if(confirm('Do you want to delete "'+ userID + '" ?'))
 	{
 		var address = 'user_config.php?mode=delete'
-		            + '&newUserID=' + userID
+					+ '&newUserID=' + userID
 					+ '&ticket=' + $("#ticket").val();
 
 		location.replace(address);	
@@ -37,12 +37,12 @@ function deleteUser(userID)
 function UserSetting(mode)
 {
 	if(mode == 'update' && $("#oldUserID").val() == "" 
-       && $("#oldUserName").val() == "" && $("#oldPassword").val() == "")
+	   && $("#oldUserName").val() == "" && $("#oldPassword").val() == "")
 	{
 		mode = 'add';
 	}
 
-    var flg = 1;
+	var flg = 1;
 	
 	if(mode == 'update')
 	{
@@ -52,22 +52,22 @@ function UserSetting(mode)
 	if(flg == 1)
 	{
 		var address = 'user_config.php?mode=' + mode 
-		            + '&oldUserID=' + $("#oldUserID").val()
-		            + '&oldUserName=' + $("#oldUserName").val()
-		            + '&oldPassword=' + $("#oldPassword").val()
-		            + '&oldGroupID='  + $("#oldGroupID").val()
-           			+ '&oldTodayDisp=' + $("#oldTodayDisp").val()
+					+ '&oldUserID=' + $("#oldUserID").val()
+					+ '&oldUserName=' + $("#oldUserName").val()
+					+ '&oldPassword=' + $("#oldPassword").val()
+					+ '&oldGroupID='  + $("#oldGroupID").val()
+					+ '&oldTodayDisp=' + $("#oldTodayDisp").val()
 					+ '&oldDarkroomFlg=' + $("#oldDarkroomFlg").val()
 					+ '&oldDarkroomFlg=' + $("#oldAnonymizeFlg").val()
-            		+ '&oldLatestResults=' + $("#oldLatestResults").val()
-		            + '&newUserID='   + $("#inputUserID").val()
-		            + '&newUserName=' + $("#inputUserName").val()
-		            + '&newPassword=' + $("#inputPass").val()
-		            + '&newGroupID='  + $("#groupList").val()
-		            + '&newTodayDisp=' + $('input[name="newTodayDisp"]:checked').val()
-		            + '&newDarkroomFlg=' + $('input[name="newDarkroomFlg"]:checked').val()
-		            + '&newAnonymizeFlg=' + $('input[name="newAnonymizeFlg"]:checked').val()
-		            + '&newLatestResults=' + $('input[name="newLatestResults"]:checked').val()
+					+ '&oldLatestResults=' + $("#oldLatestResults").val()
+					+ '&newUserID='   + $("#inputUserID").val()
+					+ '&newUserName=' + $("#inputUserName").val()
+					+ '&newPassword=' + $("#inputPass").val()
+					+ '&newGroupID='  + $("#groupList").val()
+					+ '&newTodayDisp=' + $('input[name="newTodayDisp"]:checked').val()
+					+ '&newDarkroomFlg=' + $('input[name="newDarkroomFlg"]:checked').val()
+					+ '&newAnonymizeFlg=' + $('input[name="newAnonymizeFlg"]:checked').val()
+					+ '&newLatestResults=' + $('input[name="newLatestResults"]:checked').val()
 					+ '&ticket=' + $("#ticket").val();
 
 		location.replace(address);	
@@ -99,8 +99,8 @@ function SetEditBox(userID, userName, password, groupID, todayDisp, darkroomFlg,
 
 	$("#updateBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#addBtn, #userList input[type='button']").attr('disabled', 'disabled')
-                                                .removeClass('form-btn-normal, form-btn-hover')
-                                                .addClass('form-btn-disabled');
+												.removeClass('form-btn-normal, form-btn-hover')
+												.addClass('form-btn-disabled');
 }
 
 function CancelUpdate()
@@ -117,8 +117,8 @@ function CancelUpdate()
 
 	$("#addBtn, #userList input[type='button']").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#updateBtn, #cancelBtn, #userList input[name='loginUser']").attr('disabled', 'disabled')
-                                                                  .removeClass('form-btn-normal, form-btn-hover')
-                                                                  .addClass('form-btn-disabled');
+																  .removeClass('form-btn-normal, form-btn-hover')
+																  .addClass('form-btn-disabled');
 }
 
 
@@ -144,15 +144,15 @@ function CancelUpdate()
 			<h2>User configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket"            value="{$params.ticket|escape}" />
-				<input type="hidden" id="oldUserID"         value="" />
-				<input type="hidden" id="oldUserName"       value="" />
-				<input type="hidden" id="oldPassword"       value="" />
-				<input type="hidden" id="oldGroupID"        value="" />
-				<input type="hidden" id="oldTodayDisp"      value="" />
-				<input type="hidden" id="oldDarkroomFlg"    value="" />
-				<input type="hidden" id="oldAnonymizeFlg"   value="" />
-				<input type="hidden" id="oldLatestResults"  value="" />
+				<input type="hidden" id="ticket"			value="{$params.ticket|escape}" />
+				<input type="hidden" id="oldUserID" 		value="" />
+				<input type="hidden" id="oldUserName"		value="" />
+				<input type="hidden" id="oldPassword"		value="" />
+				<input type="hidden" id="oldGroupID"		value="" />
+				<input type="hidden" id="oldTodayDisp"		value="" />
+				<input type="hidden" id="oldDarkroomFlg"	value="" />
+				<input type="hidden" id="oldAnonymizeFlg"	value="" />
+				<input type="hidden" id="oldLatestResults"	value="" />
 
 				<div id="message" class="mt5 mb5 ml10">{$params.message}</div>
 
@@ -180,11 +180,11 @@ function CancelUpdate()
 								<td>{$item[6]}</td>
 								<td>
 									<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
-                                     onClick="SetEditBox('{$item[0]}', '{$item[1]}', '{$item[7]}','{$item[2]}', '{$item[3]}',
+									 onclick="SetEditBox('{$item[0]}', '{$item[1]}', '{$item[7]}','{$item[2]}', '{$item[3]}',
 														 '{$item[4]|TorF}', '{$item[5]|TorF}','{$item[6]}');" />
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 										{if $item[0] != $smarty.session.userID}
-										 	class="s-btn form-btn" onClick="deleteUser('{$item[0]}');" />
+										 	class="s-btn form-btn" onclick="deleteUser('{$item[0]}');" />
 									 	{else}
 										 	name="loginUser" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
 										{/if}
@@ -258,11 +258,11 @@ function CancelUpdate()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" id="addBtn" class="form-btn" value="add" onClick="UserSetting('add');" />&nbsp;
+							<input type="button" id="addBtn" class="form-btn" value="add" onclick="UserSetting('add');" />&nbsp;
 							<input type="button" id="updateBtn" class="form-btn form-btn-disabled" value="update"
-                                   onClick="UserSetting('update');" disabled="disabled" />
+								   onclick="UserSetting('update');" disabled="disabled" />
 							<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="cancel"
-                                   onClick="CancelUpdate();" disabled="disabled" />
+								   onclick="CancelUpdate();" disabled="disabled" />
 						</p>
 					</div>
 				</div>

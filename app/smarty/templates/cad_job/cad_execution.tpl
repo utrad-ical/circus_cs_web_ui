@@ -335,7 +335,7 @@ function RegistrationCADJob()
 
 											<tr id="rowSeries{$k+1}_{$j+1}" class="{if $j%2==1}column {/if}rowDisp">
 												<td align=center>
-													<input type="checkbox" id="checkbox{$k+1}_{$j+1}" name="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onClick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if {$seriesList[$k][$j][6]} == $defaultSeriesDescriptionArr[$k]}checked{/if}>
+													<input type="checkbox" id="checkbox{$k+1}_{$j+1}" name="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onclick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if {$seriesList[$k][$j][6]} == $defaultSeriesDescriptionArr[$k]}checked{/if}>
 												</td>
 												<td>{$seriesList[$k][$j][1]}</td>
 												<td>{$seriesList[$k][$j][2]}</td>

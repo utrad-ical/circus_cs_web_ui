@@ -234,7 +234,7 @@ function ChangeCadMenu()
 
 				<div class="pl20 mb20 mt10">
 					<p>
-						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onClick="ChangePassword();" />
+						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePassword();" />
 					</p>
 				</div>
 				</form>
@@ -276,7 +276,7 @@ function ChangeCadMenu()
 				</table>
 				<div class="pl20 mb20 mt10">
 					<p>
-						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onClick="ChangePagePreference();" />
+						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePagePreference();" />
 					</p>
 				</div>
 				</form>
@@ -307,7 +307,7 @@ function ChangeCadMenu()
 					</table>
 				
 					<div class="pl20 mb20 mt10">
-						<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onClick="ShowCadPreferenceDetail();" /></p>
+						<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onclick="ShowCadPreferenceDetail();" /></p>
 					</div>
 
 					<div id="detailCadPrefrence" style="display:none;">
