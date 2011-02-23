@@ -23,7 +23,7 @@
 	{
 		$params = $validator->output;
 		$params['message'] = "&nbsp;";
-	}
+	} else {
 		$params = $validator->output;
 		$params['message'] = implode('<br/>', $validator->errors);
 	}

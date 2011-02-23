@@ -30,7 +30,7 @@
 	         .  '<input type="hidden" id="dispDepth"  value="' . $dispDepth . '">'
 	         .  '<input type="hidden" id="xPos"       value="' . $xPos . '">'
 	         .  '<input type="hidden" id="yPos"       value="' . $yPos . '">'
-	         .  '<input type="hidden" id="zPos"       value="' . $zPos . '">';
+	         .  '<input type="hidden" id="zPos"       value="' . $zPos . '">'
 	         .  '<input type="hidden" id="webPathOfCADReslut" value="../' . $params['webPathOfCADReslut'] . '">';
 
 	$dstHtml .= '<div id="resultBody" class="resultBody" style="background-color:#f0f;">';
