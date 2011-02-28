@@ -1,2 +1,3 @@
 app/smarty/templates_c/*
 app/smarty/cache/*
+config/db.ini

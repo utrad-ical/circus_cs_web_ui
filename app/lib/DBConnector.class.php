@@ -24,7 +24,27 @@ class DBConnector
 		{
 			return self::$_conn;
 		} else {
-			$dsn = $GLOBALS['connStrPDO'];
+			// Define default values
+			$param = array(
+				'dbname' => 'circus_cs',
+				'user' => 'circus',
+				'host' => 'localhost',
+				'port' => '5432',
+				'password' => ''
+			);
+
+			// Parse the db.ini file for overriding default values.
+			$ps = $GLOBALS['DIR_SEPARATOR'];
+			$iniFile =
+				$GLOBALS['WEB_UI_ROOT'] . $ps . 'config' . $ps . 'db.ini';
+			$ini = parse_ini_file($iniFile);
+			if (is_array($ini)) {
+				$param = array_merge($param, $ini);
+			}
+
+			$dsn = "pgsql:host=$param[host] port=$param[port] " .
+				"user=$param[user] dbname=$param[dbname] " .
+				"password=$param[password]";
 			$h = new PDO($dsn);
 			if ($h)
 			{
