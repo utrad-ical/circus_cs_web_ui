@@ -64,7 +64,7 @@
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT pt.patient_id, st.study_instance_uid, sr.series_instance_uid,"
 					. " pt.patient_name, sr.image_width, sr.image_height, pt.sex, st.age,"
@@ -79,7 +79,7 @@
 			        . " AND sr.storage_id=sm.storage_id;";
 
 
-			$result = DB::query($sqlStr, $params['execID'], 'ARRAY_NUM');
+			$result = DBConnector::query($sqlStr, $params['execID'], 'ARRAY_NUM');
 
 			$params['patientID']         = $result[0];
 			$params['studyInstanceUID']  = $result[1];
@@ -234,7 +234,7 @@
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
-			$result = DB::query($sqlStr, $sqlParams, 'ALL_ASSOC');
+			$result = DBConnector::query($sqlStr, $sqlParams, 'ALL_ASSOC');
 
 			$fnPosArray = array();
 
@@ -250,7 +250,7 @@
 					{
 						$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
 								. ' WHERE exec_id=? AND sub_id=?';
-						$result2 = DB::query($sqlStr,
+						$result2 = DBConnector::query($sqlStr,
 						                       array($params['execID'], $item['nearest_lesion_id']),
 											   'ARRAY_NUM');
 
@@ -277,7 +277,7 @@
 				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
 				//else										$sqlStr .= " AND consensual_flg='t'";
 				//
-				//if(DB::query($sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
+				//if(DBConnector::query($sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
 				//{
 				//	$params['registTime'] ="";
 				//}

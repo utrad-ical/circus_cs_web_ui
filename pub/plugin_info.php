@@ -57,7 +57,7 @@ $(function(){
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		//$stmt = $pdo->prepare("SELECT cad_name, version FROM cad_master ORDER BY exec_flg DESC, cad_name ASC, version ASC");
 		//$stmt->execute();

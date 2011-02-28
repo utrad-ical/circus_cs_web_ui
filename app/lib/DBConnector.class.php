@@ -5,7 +5,7 @@
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 
-class DB
+class DBConnector
 {
 	private static $_conn;
 
@@ -20,15 +20,15 @@ class DB
 	 */
 	public static function getConnection()
 	{
-		if (DB::$_conn)
+		if (self::$_conn)
 		{
-			return DB::$_conn;
+			return self::$_conn;
 		} else {
 			$dsn = $GLOBALS['connStrPDO'];
 			$h = new PDO($dsn);
 			if ($h)
 			{
-				DB::$_conn = $h;
+				self::$_conn = $h;
 				return $h;
 			}
 		}

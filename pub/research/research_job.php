@@ -12,7 +12,7 @@
 		$pluginList = array();
 
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$sqlStr = "SELECT pm.plugin_name, pm.version, rm.research_type, rm.target_cad_name, rm.target_version_min,"
 				. " rm.target_version_max, rm.time_limit, rm.result_table FROM plugin_master pm, research_master rm"

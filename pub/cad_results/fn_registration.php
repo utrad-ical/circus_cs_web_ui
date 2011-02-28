@@ -98,7 +98,7 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 
@@ -148,7 +148,7 @@
 									   $item["z"],
 									   $registTime);
 
-					$dstID = DB::query($sqlStr, $sqlParams, 'SCALAR');
+					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 					$srcID = 0;
 
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=?"

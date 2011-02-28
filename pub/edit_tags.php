@@ -41,11 +41,11 @@
 	{
 		if($params['errorMessage'] == '')
 		{
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 			$sqlStr = "SELECT sid, tag, entered_by FROM tag_list"
 					. " WHERE category=? AND reference_id=? ORDER BY sid ASC";
 			$sqlParams = array($params['category'], $params['referenceID']);
-			$tagArray = DB::query($sqlStr, $sqlParams, 'ALL_NUM');
+			$tagArray = DBConnector::query($sqlStr, $sqlParams, 'ALL_NUM');
 		}
 		else
 		{

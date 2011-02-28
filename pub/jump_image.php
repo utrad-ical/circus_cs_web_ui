@@ -44,7 +44,7 @@
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT st.patient_id, sm.path, sm.apache_alias"
 					. " FROM study_list st, series_list sr, storage_master sm"
@@ -53,7 +53,7 @@
 				    . " AND sr.study_instance_uid=st.study_instance_uid"
 				    . " AND sr.storage_id=sm.storage_id;";
 
-			$result = DB::query($sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
+			$result = DBConnector::query($sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
 
 			$patientID = $result[0];
 

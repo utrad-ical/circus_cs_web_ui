@@ -5,13 +5,13 @@
 		$cadList = array();
 
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$sqlStr = "SELECT DISTINCT el.plugin_name FROM executed_plugin_list el, cad_master cm"
 				. " WHERE el.plugin_name=cm.cad_name AND el.version=cm.version AND cm.result_type=1"
 				. " ORDER BY el.plugin_name ASC";
 
-		$resultCad = DB::query($sqlStr, null, 'ALL_COLUMN');
+		$resultCad = DBConnector::query($sqlStr, null, 'ALL_COLUMN');
 
 		if(count($resultCad) > 0)
 		{
@@ -20,7 +20,7 @@
 				$cadList[$key][0] = $item;
 
 				$sqlStr  = "SELECT DISTINCT version FROM executed_plugin_list WHERE plugin_name=?";
-				$resultVersion = DB::query($sqlStr, $item, 'ALL_COLUMN');
+				$resultVersion = DBConnector::query($sqlStr, $item, 'ALL_COLUMN');
 
 				$cadList[$key][1] = implode('^', $resultVersion);
 			}

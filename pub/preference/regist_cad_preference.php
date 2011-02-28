@@ -69,7 +69,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		//----------------------------------------------------------------------------------------------------
 		// regist or delete prefence

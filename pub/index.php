@@ -26,10 +26,10 @@
 			try
 			{
 				// Connect to SQL Server
-				$pdo = DB::getConnection();
+				$pdo = DBConnector::getConnection();
 
 				$sqlStr = "SELECT * FROM users WHERE user_id=? AND passcode=?";
-				$result = DB::query($sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
+				$result = DBConnector::query($sqlStr, array($_POST['userID'], MD5($_POST['pswd'])), 'ARRAY_ASSOC');
 
     			if($result == null)
 				{

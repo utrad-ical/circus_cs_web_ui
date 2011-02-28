@@ -23,7 +23,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$sqlStr = 'SELECT * FROM "fat_volumetry_v1.3_score"'
 				. "WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";

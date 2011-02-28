@@ -43,7 +43,7 @@
 		if($params['message'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT pt.patient_id, pt.patient_name, sr.series_date, sr.series_time,"
 					. " sr.modality, sr.series_description"

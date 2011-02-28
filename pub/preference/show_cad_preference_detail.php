@@ -50,10 +50,10 @@
 		if($params['message'] == "&nbsp;")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT * FROM cad_master WHERE cad_name=? AND version=?";
-			$result = DB::query($sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
+			$result = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
 
 			$params['defaultSortKey']      = $result['default_sort_key'];
 			$params['defaultSortOrder']    = ($result['default_sort_order']) ? "t" : "f";

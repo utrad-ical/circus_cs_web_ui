@@ -34,7 +34,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$dstData['executableList'] = array();
 		$dstData['hiddenList']      = array();

@@ -71,7 +71,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$registeredAt = date('Y-m-d H:i:s');
 		$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';

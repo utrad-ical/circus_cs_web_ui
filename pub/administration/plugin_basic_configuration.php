@@ -9,13 +9,13 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$sqlStr = "SELECT DISTINCT cs.modality FROM cad_master cm, cad_series cs"
 				. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"
 				. " AND cs.series_id=1 ORDER BY cs.modality ASC";
 
-		$params['modalityList'] = DB::query($sqlStr, null, 'ALL_COLUMN');
+		$params['modalityList'] = DBConnector::query($sqlStr, null, 'ALL_COLUMN');
 
 		//-------------------------------------------------------------------------------------------------------------
 		// Make one-time ticket

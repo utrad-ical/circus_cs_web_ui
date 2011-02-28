@@ -9,20 +9,20 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		//--------------------------------------------------------------------------------------------------------------
 		// For news block
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC LIMIT 5";
-		$newsData = DB::query($sqlStr, null, 'ALL_ASSOC');
+		$newsData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
 		// For CAD execution block
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list";
-		$result = DB::query($sqlStr, null, 'ARRAY_NUM');
+		$result = DBConnector::query($sqlStr, null, 'ARRAY_NUM');
 
 		$executionNum = $result[0];
 		$oldestExecDate = substr($result[1], 0, 10);
@@ -31,7 +31,7 @@
 		{
 			$sqlStr = "SELECT plugin_name, version, COUNT(exec_id) as cnt FROM executed_plugin_list "
 			        . " GROUP BY plugin_name, version ORDER BY COUNT(exec_id) DESC LIMIT 3";
-			$cadExecutionData = DB::query($sqlStr, null, 'ALL_ASSOC');
+			$cadExecutionData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 		}
 		//--------------------------------------------------------------------------------------------------------------
 

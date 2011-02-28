@@ -46,7 +46,7 @@
 		if($params['errorMessage']=="")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options) VALUES (?,?,?,?,?)";
 			$stmt = $pdo->prepare($sqlStr);

@@ -757,7 +757,7 @@ class PgRegexValidator extends ScalarValidator
 	public function validate($input)
 	{
 		try {
-			$conn = DB::getConnection();
+			$conn = DBConnector::getConnection();
 			$st = $conn->prepare("select 'dummy' ~ ?");
 			$st->bindParam(1, $input);
 			$st->execute();

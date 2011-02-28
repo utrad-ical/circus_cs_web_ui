@@ -30,7 +30,7 @@
 				         'executedAt'   => "");
 
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$colArr =array();
 

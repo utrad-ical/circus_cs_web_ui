@@ -45,7 +45,7 @@
 		$errorFlg = 0;
 
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$dstPath = $PLUGIN_DIR . $DIR_SEPARATOR;
 
@@ -62,7 +62,7 @@
 
 			$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list WHERE plugin_name=? AND version=?";
 
-			if(DB::query($sqlStr, array($pluginName, $version), 'SCALAR') == 0)
+			if(DBConnector::query($sqlStr, array($pluginName, $version), 'SCALAR') == 0)
 			{
 				$zipData = new ZipArchive;
 				if ($zipData->open($dstPath.$uploadFile) === TRUE)
@@ -189,11 +189,11 @@
 					{
 						$sqlStr = "SELECT COUNT(*) FROM plugin_master WHERE plugin_name=? AND version=?";
 
-						if(DB::query($sqlStr, array($pluginName, $version), 'SCALAR') == 1)
+						if(DBConnector::query($sqlStr, array($pluginName, $version), 'SCALAR') == 1)
 						{
 							$sqlStr = "SELECT result_table, score_table FROM cad_master"
 									. " WHERE plugin_name=? AND version=?";
-							$result = DB::query($sqlStr, array($pluginName, $version), 'ARRAY_ASSOC');
+							$result = DBConnector::query($sqlStr, array($pluginName, $version), 'ARRAY_ASSOC');
 
 							if($result[0] != "")	DropTableIfExists($pdo, $esult[0]);
 							if($result[1] != "")	DropTableIfExists($pdo, $esult[1]);
@@ -206,7 +206,7 @@
 						$sqlStr = "SELECT MAX(cm.label_order) FROM cad_master cm, cad_series cs"
 								. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"
 								. " AND cm.exec_flg='t' AND cs.series_id=1 AND cs.modality=?";
-						$maxLabelOrder = DB::query($sqlStr, $mainModality, 'SCALAR');
+						$maxLabelOrder = DBConnector::query($sqlStr, $mainModality, 'SCALAR');
 
 						$sqlParams = array();
 

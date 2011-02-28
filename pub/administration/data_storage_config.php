@@ -26,7 +26,7 @@
 		try
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			//----------------------------------------------------------------------------------------------------------
 			// Registration of storage settings

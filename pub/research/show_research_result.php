@@ -43,7 +43,7 @@
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			//echo json_encode($dstData);
 			$sqlStr .= "SELECT el.plugin_name, el.version, el.executed_at, sm.path, sm.apache_alias"
@@ -66,7 +66,7 @@
 			// Retrieve tag data
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=6 AND reference_id=? ORDER BY sid ASC";
-			$params['tagArray'] = DB::query($sqlStr, $params['execID'], 'ALL_NUM');
+			$params['tagArray'] = DBConnector::query($sqlStr, $params['execID'], 'ALL_NUM');
 			//----------------------------------------------------------------------------------------------------------
 
 			$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';

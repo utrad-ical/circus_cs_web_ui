@@ -10,13 +10,13 @@
 		$userID = $_SESSION['userID'];
 
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		//--------------------------------------------------------------------------------------------------------------
 		// For page preference
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?";
-		$result = DB::query($sqlStr, $userID, 'ARRAY_NUM');
+		$result = DBConnector::query($sqlStr, $userID, 'ARRAY_NUM');
 
 		$oldTodayDisp = $result[0];
 		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
@@ -28,7 +28,7 @@
 		// For CAD preference
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1";
-		$cadNameArray = DB::query($sqlStr, null, 'ALL_NUM');
+		$cadNameArray = DBConnector::query($sqlStr, null, 'ALL_NUM');
 
 		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1 ORDER BY version DESC";
 		$stmt = $pdo->prepare($sqlStr);

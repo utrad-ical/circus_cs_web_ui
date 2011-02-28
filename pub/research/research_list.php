@@ -10,7 +10,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		//-----------------------------------------------------------------------------------------------------------------
 		// Import $_GET variables and validation

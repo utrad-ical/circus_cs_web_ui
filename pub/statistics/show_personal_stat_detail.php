@@ -103,7 +103,7 @@
 		try
 		{
 			// Connect to SQL Server
-			$pdo = DB::getConnection();
+			$pdo = DBConnector::getConnection();
 
 			$userList = array();
 			$resultTableName = "";

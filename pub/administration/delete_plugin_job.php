@@ -36,7 +36,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		if($dstData['message'] == "")
 		{
@@ -45,7 +45,7 @@
 			// Delete the selected CAD job (unprocessed)
 			//----------------------------------------------------------------------------------------------------
 			$sqlStr  = "SELECT exec_flg, plugin_type FROM plugin_job_list where job_id=?";
-			$result = DB::query($sqlStr, $dstData['jobID'], 'ARRAY_NUM');
+			$result = DBConnector::query($sqlStr, $dstData['jobID'], 'ARRAY_NUM');
 
 			$execFlg = $result[0];
 			$pluginType = $result[1];

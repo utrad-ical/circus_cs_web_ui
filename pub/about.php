@@ -7,14 +7,14 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$params = array('toTopDir' => "./");
 		$data = array();
 
 		// For plug-in block
 		$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC";
-		$pluginData = DB::query($sqlStr, null, 'ALL_ASSOC');
+		$pluginData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 
 		//----------------------------------------------------------------------------------------------------
 		// Settings for Smarty

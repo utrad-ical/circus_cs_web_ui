@@ -10,7 +10,7 @@
 	try
 	{
 		// Connect to SQL Server
-		$pdo = DB::getConnection();
+		$pdo = DBConnector::getConnection();
 
 		$userID = $_SESSION['userID'];
 
@@ -93,7 +93,7 @@
 			$sqlStr = "SELECT result_type FROM cad_master WHERE cad_name=? AND version=?";
 			$condArr = array($params['cadName'], $params['version']);
 
-			$resultType = DB::query($sqlStr, $condArr, 'SCALAR');
+			$resultType = DBConnector::query($sqlStr, $condArr, 'SCALAR');
 
 			if($resultType == 1)
 			{
@@ -217,7 +217,7 @@
 					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.exec_id ASC";
 			//echo $sqlStr;
 
-			$cadList =  DB::query($sqlStr, $condArr, 'ALL_ASSOC');
+			$cadList =  DBConnector::query($sqlStr, $condArr, 'ALL_ASSOC');
 
 			echo json_encode($cadList);
 		}

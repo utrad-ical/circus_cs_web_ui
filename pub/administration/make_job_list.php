@@ -5,7 +5,7 @@
 	$jobList = array();
 
 	$sqlStr  = "SELECT * FROM plugin_job_list ORDER BY registered_at ASC;";
-	$result = DB::query($sqlStr, null, 'ALL_ASSOC');
+	$result = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 
 	foreach($result as $item)
 	{
@@ -35,7 +35,7 @@
 					. " AND st.study_instance_uid=sr.study_instance_uid"
 					." AND sr.series_instance_uid=cs.series_instance_uid;";
 
-			$resDetail = DB::query($sqlStr, $item['job_id'], 'ARRAY_ASSOC');
+			$resDetail = DBConnector::query($sqlStr, $item['job_id'], 'ARRAY_ASSOC');
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
