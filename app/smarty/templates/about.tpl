@@ -1,27 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
-
-<link rel="shortcut icon" href="favicon.ico" />
-<link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-
+{capture name="extra"}
 {literal}
 <style type="text/css" media="all,screen">
-<!--
-
 #content h1 {
 	font-size: 18px;
 	margin-bottom: 3px;
@@ -39,103 +18,88 @@
   height: 100px;
   margin-left: 10px;
 }
-
--->
 </style>
 {/literal}
+{/capture}
+{include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 
-</head>
+<h2>About CIRCUS CS</h2>
+<div class="ml10">
+	<img src="images/circus-logo.jpg" width=231 height=170 align="right">
 
-<body class="spot">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
-		</div>
-		<!-- / #leftside END -->
+	<p>CIRCUS CS (Clinical Server) is a web based CAD process platform for clinical environment.
+	CIRCUS CS is developed under CIRCUS (Clinical Infrastructure for Radiologic Computation of United Solutions)
+	project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD ICAL</a>.</p>
 
-		<div id="content">
-			<h2>About CIRCUS CS</h2>
-			<div class="ml10">
-				<img src="images/circus-logo.jpg" width=231 height=170 align="right">
-			
-				<p>CIRCUS CS (Clinical Server) is a web based CAD process platform for clinical environment. 
-				CIRCUS CS is developed under CIRCUS (Clinical Infrastructure for Radiologic Computation of United Solutions)
-				project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD ICAL</a>.</p>
+	<p class="mt5">CIRCUS CS is based as follows:</p>
+	<ul class="mt5 ml10">
+		<li>- Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
+		<li>- DICOM storage server: DCMTK 3.5.4, PostgreSQL
+		<li>- External application for research function: R 2.10.2, gnuplot 4.4
+	</ul>
 
-				<p class="mt5">CIRCUS CS is based as follows:</p>
-				<ul class="mt5 ml10">
-					<li>- Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
-					<li>- DICOM storage server: DCMTK 3.5.4, PostgreSQL
-					<li>- External application for research function: R 2.10.2, gnuplot 4.4
-				</ul>				
-				
-				<p class="mt5">Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
+	<p class="mt5">Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
 
-				<p class="mt5">CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
-				A plug-in development kit will be released in the winter 2011.</p> 
+	<p class="mt5">CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
+	A plug-in development kit will be released in the winter 2011.</p>
 
-				<h4 class="mt20">Developer team:</h4>
-				<table class="ml10 mt5 mb10">
-					<tr>
-						<td style="width:220px;">- Yukihiro NOMURA, PhD</td>
-						<td>overall coding, plugin development, and project management</td>
-					</tr>
-					<tr><td colspan="2" style="height:5px;"></td></tr>
-					<tr>
-						<td>- Yoshitaka MASUTANI, PhD</td>
-						<td>concept design, engineering supervision, and project direction</td>
-					</tr>
-					<tr>
-						<td>- Naoto HAYASHI, MD PhD</td>
-						<td>clinical supervision</td>
-					</tr>
-					<tr>
-						<td>- Takeharu YOSHIKAWA, MD PhD</td>
-						<td>clinical advice</td>
-					</tr>
-					<tr>
-						<td>- Mitsutaka NEMOTO, PhD</td>
-						<td>plugin development, and coding advice</td>
-					</tr>
-					<tr>
-						<td>- Shouhei HANAOKA, MD PhD</td>
-						<td>plugin development, and clinical advice</td>
-					</tr>
-					<tr>
-						<td>- Soichiro MIKI, MD</td>
-						<td>clinical advice, and coding advice</td>
-					</tr>
-				</table>
+	<h4 class="mt20">Developer team:</h4>
+	<table class="ml10 mt5 mb10">
+		<tr>
+			<td style="width:220px;">- Yukihiro NOMURA, PhD</td>
+			<td>overall coding, plugin development, and project management</td>
+		</tr>
+		<tr><td colspan="2" style="height:5px;"></td></tr>
+		<tr>
+			<td>- Yoshitaka MASUTANI, PhD</td>
+			<td>concept design, engineering supervision, and project direction</td>
+		</tr>
+		<tr>
+			<td>- Naoto HAYASHI, MD PhD</td>
+			<td>clinical supervision</td>
+		</tr>
+		<tr>
+			<td>- Takeharu YOSHIKAWA, MD PhD</td>
+			<td>clinical advice</td>
+		</tr>
+		<tr>
+			<td>- Mitsutaka NEMOTO, PhD</td>
+			<td>plugin development, and coding advice</td>
+		</tr>
+		<tr>
+			<td>- Shouhei HANAOKA, MD PhD</td>
+			<td>plugin development, and clinical advice</td>
+		</tr>
+		<tr>
+			<td>- Soichiro MIKI, MD</td>
+			<td>clinical advice, and coding advice</td>
+		</tr>
+	</table>
 
-				<h4 class="mt10">References:</h4>
-				<ol class="mt5 ml10">
-					<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Maeda E, Ohtomo K,
+	<h4 class="mt10">References:</h4>
+	<ol class="mt5 ml10">
+		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Maeda E, Ohtomo K,
                         An integrated platform for development and clinical use of CAD software:
                         building and utilization in the clinical environment,
                         Int J CARS 4:S161-S162, June 2009</li>
-					<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Ohtomo K, Hanaoka S, Maeda E,
-						An integrated platform for clinical use of CAD software and feedback,
-						Proc. of RSNA 2009:919 (LL-IN2158-R01), November 2009</li>
-					<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Miki S, Maeda E, Ohtomo K,
-						CIRCUS: an MDA platform for clinical image analysis in hospitals,
-						Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
-				</ol>
-			</div>
+		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Ohtomo K, Hanaoka S, Maeda E,
+			An integrated platform for clinical use of CAD software and feedback,
+			Proc. of RSNA 2009:919 (LL-IN2158-R01), November 2009</li>
+		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Miki S, Maeda E, Ohtomo K,
+			CIRCUS: an MDA platform for clinical image analysis in hospitals,
+			Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
+	</ol>
+</div>
 
 
-			<h2>Installed plug-ins</h2>
-			<div class="plug-in">
-				<ul>
-					{foreach from=$pluginData item=item}
-						<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})
-						<a href="plugin_info.php?pluginName='{$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
-					{/foreach}
-				</ul>
-			</div>
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+<h2>Installed plug-ins</h2>
+<div class="plug-in">
+	<ul>
+		{foreach from=$pluginData item=item}
+			<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})
+			<a href="plugin_info.php?pluginName='{$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
+		{/foreach}
+	</ul>
+</div>
+
+{include file="footer.tpl"}
