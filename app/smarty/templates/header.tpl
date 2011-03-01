@@ -7,6 +7,10 @@ Parameters:
   approot:
     Relative path to the CIRCUS CS application root.
 	If your php file is in a subdirectory, provide something like '..'.
+  require:
+    Additional CSS (*.css) and JavaScript (*.js) files to
+    include in this HTML file. Specify one file path per line.
+    File path should be relative to the approot.
   head_extra:
     Anything passed by this parameter will be added
     to the head section of the rendered html.
@@ -35,7 +39,10 @@ Parameters:
 <link rel="shortcut icon" href="{$root}/favicon.ico" />
 <link href="{$root}/css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 
+<!-- template specific inclusions -->
+{require require=$require}
 {$head_extra}
+<!-- / tempalte specific inclusions END -->
 </head>
 
 <body class="{$body_class}">

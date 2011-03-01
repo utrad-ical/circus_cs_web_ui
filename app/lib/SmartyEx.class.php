@@ -12,10 +12,33 @@
 		if ($boolean) return 'O'; else return '-';
 	}
 
-	//function modifier_1or0 ($boolean)
-	//{
-	//	if ($boolean) return '1'; else return '0';
-	//}
+	/**
+	 * Custom plugin function for smarty, for printing link and
+	 * script tags easily.
+	 */
+	function func_print_requirements ($param, $smarty)
+	{
+		$requires = explode("\n", $param['require']);
+		$results = array();
+		foreach ($requires as $req)
+		{
+			$req = trim($req);
+			$root = $smarty->get_template_vars('root');
+			if ($root)
+				$req = "$root/$req";
+			if (preg_match("/\\.css$/i", $req))
+			{
+				$results[] = '<link href="' . $req . '" rel="stylesheet" ' .
+					'type="text/css" media="all" />';
+			}
+			else if (preg_match("/\\.js$/i", $req))
+			{
+				$results[] = '<script language="javascript" ' .
+					'type="text/javascript" src="' . $req . '"></script>';
+			}
+		}
+		return implode("\n", $results);
+	}
 
 	/**
 	 * SmartyEx subclasses Smarty, and does CIRCUS-specific initialization.
@@ -41,6 +64,7 @@
 
 			$this->register_modifier('TorF',     'modifier_TorF');
 			$this->register_modifier('OorMinus', 'modifier_OorMinus');
+			$this->register_function('require', 'func_print_requirements');
 		}
 	}
 ?>
