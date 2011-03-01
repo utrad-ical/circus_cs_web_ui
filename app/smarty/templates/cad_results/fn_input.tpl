@@ -55,7 +55,7 @@ $(function() {
 
 {if $moveCadResultFlg == 1}
 {literal}
-	$.event.add(window, "load", 
+	$.event.add(window, "load",
 				function(){
 					 alert("[CAUTION] Lesion classification is not completed!");
 
@@ -150,7 +150,7 @@ function Minus()
 					<input type="hidden" id="posStr"            value="{$params.posStr|escape}" />
 					<input type="hidden" id="userStr"           value="{$params.userStr|escape}" />
 					<input type="hidden" id="feedbackMode"      value="{$params.feedbackMode|escape}" />
-					<input type="hidden" id="userID"            value="{$params.userID}">	
+					<input type="hidden" id="userID"            value="{$params.userID}">
 
 					<input type="hidden" id="grayscaleStr"      value="{$params.grayscaleStr|escape}" />
 					<input type="hidden" id="presetName"        value="{$params.presetName|escape}" />
@@ -160,13 +160,13 @@ function Minus()
 					<input type="hidden" id="sliceOrigin"    value="{$params.sliceOrigin|escape}" />
 					<input type="hidden" id="slicePitch"     value="{$params.slicePitch|escape}" />
 					<input type="hidden" id="sliceOffset"    value="{$params.sliceOffset|escape}" />
-						
+
 					<input type="hidden" id="distTh"         value="{$params.distTh|escape}" />
 					<input type="hidden" id="orgWidth"       value="{$params.orgWidth|escape}" />
 					<input type="hidden" id="orgHeight"      value="{$params.orgHeight|escape}" />
 					<input type="hidden" id="dispWidth"      value="{$params.dispWidth|escape}" />
 					<input type="hidden" id="dispHeight"     value="{$params.dispHeight|escape}" />
-						
+
 					<input type="hidden" id="registTime"   value="{$params.registTime|escape}" />
 				{*	<input type="hidden" id="darkroomFlg"  value="{$smarty.session.darkroomFlg}" /> *}
 					<input type="hidden" id="status"       value="{$params.status|escape}" />
@@ -200,7 +200,7 @@ function Minus()
 								<td align="right" style="{if $params.dispWidth >=256}width:{$widthOfPlusButton|escape}{/if}px;">
 									<input type="button" value="-" onclick="Minus();"  />
 								</td>
-					
+
 								<td align=center style="width:256px;"><div id="slider"></div></td>
 
 								<td align=left  style="{if $params.dispWidth >=256}width:{$params.widthOfPlusButton|escape}{/if}px;">
@@ -217,7 +217,7 @@ function Minus()
 							{*<tr>
 								<td align=center colspan=3>
 									<b>Slice location [mm]: </b>
-									<input type="text" id="sliceLocation" value="{$params.sliceLocation|escape}" style="width:64px; text-align:right" onKeyPress="return submitStop(event);" />
+									<input type="text" id="sliceLocation" value="{$params.sliceLocation|escape}" style="width:64px; text-align:right" onkeypress="return submitStop(event);" />
 									<input type="button" id="applySL" class="form-btn" value="Jump" onclick="JumpImgNumBySliceLocation({$params.sliceOrigin}, {$params.slicePitch}, {$params.sliceOffset}, {$params.fNum});" />
 						</td></tr>*}
 
@@ -239,7 +239,7 @@ function Minus()
 					{* --- Add FN plots --- *}
 
 					<div class="fl-l" style="width: 40%;">
-			
+
 						{if $params.registTime == "" || $params.status != 2}
 						<div style="margin-bottom:5px;">
 							Action for checked item(s)
@@ -287,7 +287,7 @@ function Minus()
 				<div class="al-r fl-clr">
 					<p class="pagetop"><a href="#page">page top</a></p>
 				</div>
-			
+
 			</div><!-- / .tab-content END -->
 
 			<!-- darkroom button -->

@@ -26,8 +26,8 @@ function ChangeCheckbox(sid, val)
 	// Display series rows depending on checked state
 	for(var j=2; j<numSelectedSeries.length; j++)
 	{
-		 document.getElementById('series' + j + 'Selected').value = "";
-	
+		document.getElementById('series' + j + 'Selected').value = "";
+
 		for(var i=1; i<=numSelectedSeries[j]; i++)
 		{
 			var tmpObj = document.getElementById('checkbox' + j + '_' + i);
@@ -43,16 +43,16 @@ function ChangeCheckbox(sid, val)
 			if(tmpObj.checked == true)  document.getElementById('series' + j + 'Selected').value = tmpObj.value;
 		}
 	}
-	
+
 	// Hide series rows depending on checked state
 	for(var k=2; k<numSelectedSeries.length; k++)
 	{
 		selectedValue = document.getElementById('series' + k + 'Selected').value;
-		
+
 		if(selectedValue != "")
 		{
 			for(var j=2; j<numSelectedSeries.length; j++)
-			{	
+			{
 				for(var i=1; i<=numSelectedSeries[j]; i++)
 				{
 					var tmpObj = document.getElementById('checkbox' + j + '_' + i);
@@ -79,19 +79,19 @@ function ChangeCheckbox(sid, val)
 
 function ResetSeries()
 {
-	var numSelectedSeries = document.getElementById('selectedSeriesStr').value.split("^");	
-	
-	for(var k=2; k<numSelectedSeries.length; k++)	
+	var numSelectedSeries = document.getElementById('selectedSeriesStr').value.split("^");
+
+	for(var k=2; k<numSelectedSeries.length; k++)
 	{
 		document.getElementById('series' + k + 'Selected').value="";
-	
+
 		for(var j=1; j<=numSelectedSeries[k]; j++)
 		{
 			if(j%2==0)	document.getElementById('rowSeries' + k + '_' + j).className = "column rowDisp";
 			else		document.getElementById('rowSeries' + k + '_' + j).className = "rowDisp";
 			document.getElementById('checkbox' + k + '_' + j).checked = false;
 		}
-	}	
+	}
 }
 
 function CheckSeries()
@@ -109,11 +109,11 @@ function CheckSeries()
 		for(var k=2; k<numSelectedSeries.length; k++)
 		{
 			selectFlg = 0;
-			
+
 			for(var j=1; j<=numSelectedSeries[k]; j++)
 			{
 				var tmpObj = document.getElementById('checkbox' + k + '_' + j);
-			
+
 				if (tmpObj.checked)
 				{
 					selectFlg = 1;
@@ -122,47 +122,48 @@ function CheckSeries()
 					seriesUID += '^' + tmpArr[1];
 				}
 			}
-			
+
 			if(selectFlg == 0)
 			{
 				alert ('Series ' + k + ' is not selected !!');
 				break;
 			}
 		}
-		
+
 		if(selectFlg == 1)
 		{
 			$("#studyUIDStr").val(studyUID);
 			$("#seriesUIDStr").val(seriesUID);
 
-			$.post("create_series_list.php",
-            		{ studyUIDStr: $("#studyUIDStr").val(),
-			  		  seriesUIDStr: $("#seriesUIDStr").val()},
-  					function(data){
-
-						var tableHtml = "";
-
-						for(i=0; i<data.length; i++)
-						{
-							tableHtml += '<tr';
-							if(i%2==1)  tableHtml += ' class="column"';
-							tableHtml += '><td>' + (i+1) + '</td>'
-                                      +  '<td>' + data[i].study_id + '</td>'
-                                      +  '<td>' + data[i].series_number + '</td>'
-									  +  '<td>' + data[i].series_date + '</td>'
-									  +  '<td>' + data[i].series_time + '</td>'
-									  +  '<td>' + data[i].modality + '</td>'
-									  +  '<td>' + data[i].image_number + '</td>'
-									  +  '<td class="al-l">' + data[i].series_description + '</td>'
-									  +  '</tr>';
-						}
-
-						$("#confirm .col-tbl tbody").append(tableHtml);
-						$("#success .col-tbl tbody").append(tableHtml);
-
-						$("#seriesSelect").attr("style", "display:none;");
-						$("#confirm").removeAttr("style", "display:none;");
-			 		}, "json");
+			$.post(
+				"create_series_list.php",
+				{
+					studyUIDStr: $("#studyUIDStr").val(),
+					seriesUIDStr: $("#seriesUIDStr").val()
+				},
+				function(data){
+					var tableHtml = "";
+					for(i=0; i<data.length; i++)
+					{
+						tableHtml += '<tr';
+						if(i%2==1)  tableHtml += ' class="column"';
+						tableHtml += '><td>' + (i+1) + '</td>'
+							+  '<td>' + data[i].study_id + '</td>'
+							+ '<td>' + data[i].series_number + '</td>'
+							+ '<td>' + data[i].series_date + '</td>'
+							+ '<td>' + data[i].series_time + '</td>'
+							+ '<td>' + data[i].modality + '</td>'
+							+ '<td>' + data[i].image_number + '</td>'
+							+ '<td class="al-l">' + data[i].series_description + '</td>'
+							+ '</tr>';
+					}
+					$("#confirm .col-tbl tbody").append(tableHtml);
+					$("#success .col-tbl tbody").append(tableHtml);
+					$("#seriesSelect").attr("style", "display:none;");
+					$("#confirm").removeAttr("style", "display:none;");
+				},
+				"json"
+			);
 		}
 	}
 }
@@ -170,29 +171,29 @@ function CheckSeries()
 function RegistrationCADJob()
 {
 	$.post("cad_job_registration.php",
-            { cadName: $("#cadName").val(),
- 			  version: $("#version").val(),
-			  studyUIDStr: $("#studyUIDStr").val(),
-			  seriesUIDStr: $("#seriesUIDStr").val()},
-  			function(data){
-
-				var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
-
-				if(data.executedAt != "")
-				{
-					htmlStr += 'Executed at</span></th><td>' + data.executedAt + '</td>';
-				}
-				else
-				{
-					htmlStr += 'Registered at</span></th><td>' + data.registeredAt + '</td>';
-				}
-
-				$("#registMessage").html(data.message);
-				$("#success .detail-tbl").prepend(htmlStr);
-
-				$("#confirm").attr("style", "display:none;");
-				$("#success").removeAttr("style", "display:none;");
-		 }, "json");
+		{
+			cadName: $("#cadName").val(),
+			version: $("#version").val(),
+			studyUIDStr: $("#studyUIDStr").val(),
+			seriesUIDStr: $("#seriesUIDStr").val()
+		},
+		function(data){
+			var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
+			if(data.executedAt != "")
+			{
+				htmlStr += 'Executed at</span></th><td>' + data.executedAt + '</td>';
+			}
+			else
+			{
+				htmlStr += 'Registered at</span></th><td>' + data.registeredAt + '</td>';
+			}
+			$("#registMessage").html(data.message);
+			$("#success .detail-tbl").prepend(htmlStr);
+			$("#confirm").attr("style", "display:none;");
+			$("#success").removeAttr("style", "display:none;");
+		},
+		"json"
+	);
 }
 {/literal}
 
@@ -242,7 +243,7 @@ function RegistrationCADJob()
 					<li><a href="" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD execution</a></li>
 				</ul>
 			</div><!-- / .tabArea END -->
-			
+
 			<div class="tab-content">
 				<form id="form1" name="form1" onsubmit="return false;">
 				<input type="hidden" id="cadName"              name="cadName"              value="{$params.cadName}" />
@@ -258,12 +259,12 @@ function RegistrationCADJob()
 
 					<h2>Series selection</h2>
 					<p class="mb10">Select DICOM series,and press the <span class="clr-blue fw-bold">[OK]</span>button after selection.</p>
-					
+
 					<p class="mb10">
 						<input name="" type="button" value="OK"     class="w100 form-btn" onclick="CheckSeries();" />
-						<input name="" type="button" value="Cancel" class="w100 form-btn" oncLick="history.back(1);" />
+						<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
 					</p>
-					
+
 					<div class="detail-panel mb20">
 						<table class="detail-tbl">
 							<tr>
@@ -280,13 +281,13 @@ function RegistrationCADJob()
 							</tr>
 						</table>
 					</div><!-- / .detail-panel END -->
-					
-					{assign var="cnt" value=0}	
+
+					{assign var="cnt" value=0}
 
 					{section name=k start=0 loop=$seriesNum}
-			
-						{assign var="k" value=$smarty.section.k.index}	
-			
+
+						{assign var="k" value=$smarty.section.k.index}
+
 							<h3 class="ptn02">Series {$k+1}:
 								<span style="font-weight: normal">({$modalityArr[$k]},
 
@@ -330,8 +331,8 @@ function RegistrationCADJob()
 									{assign var="ktmp" value=$k+1}
 
 									{section name=j start=0 loop=$selectedSeriesArr[$ktmp]}
-			
-										{assign var="j" value=$smarty.section.j.index}	
+
+										{assign var="j" value=$smarty.section.j.index}
 
 											<tr id="rowSeries{$k+1}_{$j+1}" class="{if $j%2==1}column {/if}rowDisp">
 												<td align=center>
@@ -356,17 +357,17 @@ function RegistrationCADJob()
 					</form>
 				</div>
 				<!-- / Detail END -->
-				
+
 				<!-- Confirmation -->
 				<div id="confirm" {if $params.mode!='confirm'}style="display:none;"{/if}>
 					<h2>Confirmation</h2>
 					<p class="mb10">Do you register following CAD job?</p>
-					
+
 					<p class="mb10">
 						<input name="" type="button" value="OK"     class="w100 form-btn" onclick="RegistrationCADJob();" />
 						<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
 					</p>
-					
+
 					<div class="detail-panel mb20">
 						<table class="detail-tbl">
 							<tr>
@@ -383,7 +384,7 @@ function RegistrationCADJob()
 							</tr>
 						</table>
 					</div>
-					
+
 					<h3 class="ptn02">Series list</h3>
 
 					<table class="col-tbl mb30" style="width: 100%;">
@@ -418,9 +419,9 @@ function RegistrationCADJob()
 					</table>
 				</div>
 				<!-- / confirmation END -->
-				
+
 				<!-- 17.Successfully-registered-in-cad-job-list.html -->
-				<div id="success" style="display:none;"> 
+				<div id="success" style="display:none;">
 					<p id="registMessage" class="clr-orange mb10">Successfully registered in CAD job list!</p>
 					<p class="mb10"><input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
 
@@ -448,7 +449,7 @@ function RegistrationCADJob()
 							</tr>
 						</table>
 					</div>
-					
+
 					<h3 class="ptn02">Series list</h3>
 					<table class="col-tbl mb30" style="width: 100%;">
 						<thead>
@@ -484,7 +485,7 @@ function RegistrationCADJob()
 				<!-- / Seccessfully END -->
 
 				<!-- Error display -->
-				<div id="error" {if $params.mode!='error'}style="display:none;"{/if}> 
+				<div id="error" {if $params.mode!='error'}style="display:none;"{/if}>
 					<h2>Error</h2>
 
 					{if $params.errorMessage != ""}
@@ -539,7 +540,7 @@ function RegistrationCADJob()
 				</div>
 
 			</div><!-- / .tab-content END -->
-		
+
 		</div><!-- / #content END -->
 	</div><!-- / #container END -->
 </div><!-- / #page END -->
