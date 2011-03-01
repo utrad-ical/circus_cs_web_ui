@@ -1,105 +1,79 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+{capture name="require"}
+jq/ui/jquery-ui-1.7.3.min.js
+js/search_panel.js
+jq/ui/css/jquery-ui-1.7.3.custom.css
+{/capture}
 
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="jq/ui/jquery-ui-1.7.3.min.js"></script>
-<script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
-<script language="javascript" type="text/javascript" src="js/search_panel.js"></script>
+{capture name="extra"}
 <!-- Search div display control script-->
 {literal}
 <script type="text/javascript">
 	$(function(){
 		$("#patientSearch,#studySearch,#cadSearch,#researchSearch#groupResearchSearch").attr("style", "display:none;").find('select').hide().end();
 	});
-
 </script>
-{/literal}	
+{/literal}
+{/capture}
 
+{include file="header.tpl" body_class="search spot"
+	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<link rel="shortcut icon" href="favicon.ico" />
-<link href="./jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
-<link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-</head>
+<h2>Search</h2>
 
-<body class="search spot">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
-		</div>
-		<!-- / #leftside END -->
-
-		<div id="content">
-			<h2>Search</h2>
-
-			<ul class="inline mt5 ml10">
-				<li><a href="javascript:void(0)"  class="btn btn-search" title="Patient" id="apatient">Patient</a></li>
-				<li><a href="javascript:void(0)"  class="btn btn-search" title="Study" id="astudy">Study</a></li>
-				<li><a href="javascript:void(0)"  class="btn selected-btn-search" title="Series" id="aseries">Series</a></li>
-				<li><a href="javascript:void(0)"  class="btn btn-search" title="CAD" id="acad">CAD</a></li>
-{*				{if $smarty.session.researchFlg==1}
+<ul class="inline mt5 ml10">
+	<li><a href="javascript:void(0)"  class="btn btn-search" title="Patient" id="apatient">Patient</a></li>
+	<li><a href="javascript:void(0)"  class="btn btn-search" title="Study" id="astudy">Study</a></li>
+	<li><a href="javascript:void(0)"  class="btn selected-btn-search" title="Series" id="aseries">Series</a></li>
+	<li><a href="javascript:void(0)"  class="btn btn-search" title="CAD" id="acad">CAD</a></li>
+{*	{if $smarty.session.researchFlg==1}
 					<li><a href="javascript:void(0)"  class="btn btn-search" title="Research" id="aresearch">Research</a></li>
 					<li><a href="javascript:void(0)"  class="btn btn-search" title="GroupResearch" id="agresearch">Group research</a></li>
 				{/if}
-*}			</ul>
+*}
+</ul>
 
-			<br class="fl-clr">
-			
-		<!-- ***** Search panel ******************************************** -->
-		
-		<!-- ***** Patient ***** -->
-			<form name="" onsubmit="return false;">
-				{include file='patient_search_panel.tpl'}
-			</form>
-		<!-- / Patient END -->
+<br class="fl-clr">
 
-		<!-- ***** Study ***** -->
-			<form name="" onsubmit="return false;">
-				{include file='study_search_panel.tpl'}
-			</form>
-		<!-- / Study END -->
+<!-- ***** Search panel ******************************************** -->
 
-		<!-- ***** Series ***** -->
-			<form name="" onsubmit="return false;">
-				{include file='series_search_panel.tpl'}
-			</form>
-		<!-- / Series END -->
-	
-		<!-- ***** CAD ***** -->
-			<form name="" onsubmit="return false;">
-				{include file='cad_search_panel.tpl'}
-			</form>
-		<!-- / CAD END -->
+<!-- ***** Patient ***** -->
+	<form name="" onsubmit="return false;">
+		{include file='patient_search_panel.tpl'}
+	</form>
+<!-- / Patient END -->
 
-		<!-- ***** Reserach ***** -->
-		{*	<form name="" onsubmit="return false;">
-				{include file='research_search_panel.tpl'}
-			</form>*}
-		<!-- / Research END -->
+<!-- ***** Study ***** -->
+	<form name="" onsubmit="return false;">
+		{include file='study_search_panel.tpl'}
+	</form>
+<!-- / Study END -->
 
-		<!-- ***** Group reserach ***** -->
-		{*	<form name="" onsubmit="return false;">
-				{include file='group_research_search_panel.tpl'}
-			</form>*}
-		<!-- / Group research END -->
+<!-- ***** Series ***** -->
+	<form name="" onsubmit="return false;">
+		{include file='series_search_panel.tpl'}
+	</form>
+<!-- / Series END -->
 
-		<!-- <div class="al-r">
-			<p class="pagetop"><a href="#page">page top</a></p>
-		</div> -->
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+<!-- ***** CAD ***** -->
+	<form name="" onsubmit="return false;">
+		{include file='cad_search_panel.tpl'}
+	</form>
+<!-- / CAD END -->
+
+<!-- ***** Reserach ***** -->
+{*	<form name="" onsubmit="return false;">
+		{include file='research_search_panel.tpl'}
+	</form>*}
+<!-- / Research END -->
+
+<!-- ***** Group reserach ***** -->
+{*	<form name="" onsubmit="return false;">
+		{include file='group_research_search_panel.tpl'}
+	</form>*}
+<!-- / Group research END -->
+
+<!-- <div class="al-r">
+	<p class="pagetop"><a href="#page">page top</a></p>
+</div> -->
+
+{include file="footer.tpl"}
