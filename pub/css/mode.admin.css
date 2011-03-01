@@ -3,9 +3,9 @@
 CSS information
 
  file name  :layout.admin.css
- 
-  theme color : #8a3b2b(accent),#ebbe8c,#ffd
- 
+
+ theme color : #8a3b2b(accent),#ebbe8c,#ffd
+
 =================================================================== */
 
 /* ===================================================
@@ -19,6 +19,7 @@ CSS information
 			
 			Calender
  =================================================== */
+
 #leftside h1 img {
 	border-color: #8a3b2b;
 }
@@ -26,12 +27,6 @@ CSS information
 #container {
 	background: url(../img_common/item/menu_bk.admin.gif) left repeat-y;
 }
-
-
-
-/*#menu {
-	background-color: #ebbe8c;
-}*/
 
 .jq-btn-home { background-image: url(../img_common/btn/admin/jq-btn-home.gif) ; }
 .jq-btn-today { background-image: url(../img_common/btn/admin/jq-btn-today.gif) ; }
@@ -43,10 +38,6 @@ CSS information
 .jq-btn-administration { background-image: url(../img_common/btn/admin/jq-btn-administration.gif) ; }
 .jq-btn-logout { background-image: url(../img_common/btn/admin/jq-btn-logout.gif) ; }
 
-#menu #flash_user,
-#menu #flash_guest {
-	display:none;
-}
 
 /* ===================================================
 

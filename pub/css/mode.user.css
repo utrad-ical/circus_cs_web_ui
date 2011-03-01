@@ -5,7 +5,9 @@ CSS information
  file name  :layout.general.css
  
  theme color : #66ccff(accent),#b4ebfa,#f5fafa
+
 =================================================================== */
+
 /* ===================================================
 	#leftside 
 		
@@ -17,14 +19,13 @@ CSS information
 			
 			Calendar
  =================================================== */
+
 #leftside h1 img {
 	border-color: #66ccff;
 }
+
 #container {
 	background: url(../img_common/item/menu_bk.user.gif) left repeat-y;
-}
-#menu {
-	/*background-color: #b4ebfa;*/
 }
 
 .jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }
@@ -36,10 +37,8 @@ CSS information
 .jq-btn-favorites { background-image: url(../img_common/btn/user/jq-btn-favorites.gif) ; }
 .jq-btn-logout { background-image: url(../img_common/btn/user/jq-btn-logout.gif) ; }
 
-#menu #flash_admin,
-#menu #flash_guest {
-	display:none;
-}
+
+
 /* ===================================================
 
 	#content 
