@@ -57,7 +57,7 @@
 //************************************************//
 $(function(){
 	// Enable rollover actions for elements with these classes
-	var classes='.jq-btn , jq-btn-ctr, .jq-btn-right';
+	var classes='.jq-btn';
 	$(classes).rolloverBtn();
 
 	// Disable rollover action if the class of jq-btn is

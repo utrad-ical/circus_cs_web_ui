@@ -17,9 +17,3 @@ CSS information
 /* all style
 ----------------------------------------------------------- */
 @import url("common.css");
-
-/* rollover style
------------------------------------------------------------ */
-@import url("jq.css");
-@import url("jq-btn.css");
-

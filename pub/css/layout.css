@@ -136,6 +136,35 @@ div.calendar {
 	margin-top:8px;
 }
 
+/*
+	menu buttons (rollover effect enabled by jQuery pluguin)
+---------------------------------------------------- */
+
+.jq-btn {
+	display:block;
+	cursor:pointer;
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding:0;
+	margin:0;
+	outline:0;
+	overflow:hidden;
+}
+
+.jq-btn-home,
+.jq-btn-today,
+.jq-btn-search,
+.jq-btn-statistics,
+.jq-btn-research,
+.jq-btn-preference,
+.jq-btn-favorites,
+.jq-btn-administration,
+.jq-btn-logout {
+	width: 197px;
+	height:49px;
+}
+
 /* ================================================= 
 	Layout #content
 	
