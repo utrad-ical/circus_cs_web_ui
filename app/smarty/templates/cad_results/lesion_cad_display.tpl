@@ -19,14 +19,6 @@
 
 {literal}
 
-<!--[if lte IE 6]>
-<script language="javascript" type="text/javascript" src="../js/DD_belatedPNG_0.0.8a-min.js"></script>
-<script language="javascript">
-	DD_belatedPNG.fix('.transparent');
-</script>
-<![endif]-->
-
-
 <script language="Javascript">
 <!--
 {/literal}
