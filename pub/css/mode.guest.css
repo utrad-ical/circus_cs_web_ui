@@ -22,10 +22,7 @@ CSS information
 #leftside h1 img {
 	border-color: #339966;
 }
-/*#container {
-	background: url(../img_common/item/menu_bk.guest.gif) left repeat-y;
-}*/
-#container.menu-back {
+#container {
 	background: url(../img_common/item/menu_bk.guest.gif) left repeat-y;
 }
 

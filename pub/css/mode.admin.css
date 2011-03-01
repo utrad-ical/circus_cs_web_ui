@@ -23,12 +23,7 @@ CSS information
 	border-color: #8a3b2b;
 }
 
-/*#container {
-	background: url(../img_common/item/menu_bk.admin.gif) left repeat-y;
-}
-*/
-
-#container.menu-back {
+#container {
 	background: url(../img_common/item/menu_bk.admin.gif) left repeat-y;
 }
 
@@ -281,23 +276,23 @@ p.add-favorite {
 	height: 23px;
 }
 .radio-to-button-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-hover {
-	color: #ff6600;
-	border: 1px solid #ff6600;
+	color: #ff6600 !important;
+	border: 1px solid #ff6600 !important;
 	background-position: 0 -23px;
 }
 .radio-to-button-checked {
-	color: #fff;
-	border: 1px solid #8a3b2b;
+	color: #fff !important;
+	border: 1px solid #8a3b2b !important;
 	background-position: 0 -46px;
 }
 .radio-to-button-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -69px;
 }
 /* consensual extention */
@@ -312,11 +307,11 @@ p.add-favorite {
 }
 
 .consensual .hide-on-consensual {
-	display:none; 
+	display:none;
 }
 
 .personal .hide-on-personal {
-	display:none; 
+	display:none;
 }
 
 
@@ -351,23 +346,23 @@ p.add-favorite {
 }
 
 .radio-to-button-l-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-l-hover {
-	color: #ff6600;
-	border: 1px solid #ff6600;
+	color: #ff6600 !important;
+	border: 1px solid #ff6600 !important;
 	background-position: 0 -25px;
 }
 .radio-to-button-l-checked {
-	color: #fff;
-	border: 1px solid #8a3b2b;
+	color: #fff !important;
+	border: 1px solid #8a3b2b !important;
 	background-position: 0 -50px;
 }
 .radio-to-button-l-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -75px;
 }
 

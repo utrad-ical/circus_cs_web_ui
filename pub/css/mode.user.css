@@ -273,23 +273,23 @@ p.add-favorite {
 }
 
 .radio-to-button-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-hover {
-	color: #69f;
-	border: 1px solid #69f;
+	color: #69f !important;
+	border: 1px solid #69f !important;
 	background-position: 0 -23px;
 }
 .radio-to-button-checked {
-	color: #fff;
-	border: 1px solid #0041ff;
+	color: #fff !important;
+	border: 1px solid #0041ff !important;
 	background-position: 0 -46px;
 }
 .radio-to-button-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -69px;
 }
 /* consensual extention */
@@ -342,23 +342,23 @@ p.add-favorite {
 }
 
 .radio-to-button-l-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-l-hover {
-	color: #69f;
-	border: 1px solid #69f;
+	color: #69f !important;
+	border: 1px solid #69f !important;
 	background-position: 0 -25px;
 }
 .radio-to-button-l-checked {
-	color: #fff;
-	border: 1px solid #0041ff;
+	color: #fff !important;
+	border: 1px solid #0041ff !important;
 	background-position: 0 -50px;
 }
 .radio-to-button-l-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -75px;
 }
 
