@@ -4,9 +4,6 @@ CIRCUS CS Common Header Template.
 Almost all templates, excluding login page, should include this template.
 
 Parameters:
-  approot:
-    Relative path to the CIRCUS CS application root.
-    If your php file is in a subdirectory, provide something like '..'.
   require:
     Additional CSS (*.css) and JavaScript (*.js) files to
     include in this HTML file. Specify one file path per line.
@@ -18,7 +15,7 @@ Parameters:
     The class of the body tag.
 
 *}
-{assign var="root" value="$approot"|default:'.'}
+{assign var="root" value=$param.toTopDir}
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -30,14 +27,14 @@ Parameters:
 
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
-<link href="{$root}/css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="{$root}/jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}/jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}/js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}/js/viewControl.js"></script>
+<link href="{$root}css/import.css" rel="stylesheet" type="text/css" media="all" />
+<script language="javascript" type="text/javascript" src="{$root}jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="{$root}jq/jq-btn.js"></script>
+<script language="javascript" type="text/javascript" src="{$root}js/hover.js"></script>
+<script language="javascript" type="text/javascript" src="{$root}js/viewControl.js"></script>
 
-<link rel="shortcut icon" href="{$root}/favicon.ico" />
-<link href="{$root}/css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
+<link rel="shortcut icon" href="{$root}favicon.ico" />
+<link href="{$root}css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 
 <!-- template specific inclusions -->
 {require require=$require}
