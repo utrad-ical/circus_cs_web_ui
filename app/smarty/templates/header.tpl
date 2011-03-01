@@ -6,7 +6,7 @@ Almost all templates, excluding login page, should include this template.
 Parameters:
   approot:
     Relative path to the CIRCUS CS application root.
-	If your php file is in a subdirectory, provide something like '..'.
+    If your php file is in a subdirectory, provide something like '..'.
   require:
     Additional CSS (*.css) and JavaScript (*.js) files to
     include in this HTML file. Specify one file path per line.
