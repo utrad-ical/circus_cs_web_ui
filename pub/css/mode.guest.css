@@ -40,89 +40,32 @@ CSS information
 
 
 /* ===================================================
-
 	#content 
-		
  =================================================== */
+
 #content h2 {
 	color: #339966;
 }
-#content h3 { /* for Search title */
+#content h3 {
 	background-color: #339966;
 	border-bottom:2px solid #76e4a6;
 }
 
 /* ===================================================
 	TABLE 
-		body.general
  =================================================== */
-
 table.col-tbl th {
 	background-color: #339966;
-	color: #fff;
 	border: 1px solid #76e4a6;
-	padding: 2px;
-	text-align: center;
 }
 table.col-tbl tr td {
 	border: 1px solid #76e4a6;
-	padding: 1px;
-	text-align: center;
 }
 table.col-tbl tr.column td {
 	background-color: #ffd;
 }
-
-
-
-
-
-table.row-tbl th {
-	background-color: #339966;
-	color: #fff;
-	border: 1px solid #76e4a6;
-	padding: 2px;
-	text-align: left;
-}
-table.row-tbl tr td {
-	border: 1px solid #76e4a6;
-	padding: 2px;
-	padding-left: 10px;
-	text-align: left;
-}
-
-table.img-tbl {
-	/*background: url(../img_common/item/imgbk_top.jpg) top no-repeat;*/
-	overflow: hidden;
-	width: 408px;
-	margin: 0;
-	padding: 0;
-}
-table.img-tbl td {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-
-
-div.imgnum {
-	width: 90%;
-	margin: 5px auto;
-	background-color:#000;
-	color:#fff;
-}
-
-/*
-	SEARCH PANEL
----------------------------------------------------- */
-.search-panel {
-	background-color: #f9f9f9;
-	margin-bottom: 20px;
-}
 .trim01 {
 	border-left: 2px solid #339966;
-	padding-left: 3px;
 }
 .selected-btn-search {
 	color: #ffffff;
