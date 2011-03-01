@@ -37,7 +37,7 @@ $(function(){
 <form id="form1" name="form1">
 
 <div class="listTitle">Plug-in information</div>
-<div style="font-size:5px;">&nbsp</div>
+<div style="font-size:5px;">&nbsp;</div>
 <!-- <div style="font-size:16px;">Plug-in name:&nbsp; -->
 
 <?php
