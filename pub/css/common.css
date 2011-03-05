@@ -1,11 +1,4 @@
 @charset "utf-8";
-/* ===================================================================
-CSS information
-
- file name  :common.css
- author     :yourName (admin)
- 
-=================================================================== */
 
 .fl-r { float: right; }
 .fl-l { float: left; }
@@ -16,19 +9,6 @@ CSS information
 .al-l {text-align: left !important;}
 .al-r {text-align: right !important;}
 
-/* Firefox block */
-.block-al-c { 
-	margin-right: auto !important;
-	margin-left: auto !important;
-}
-.block-al-r {
-	margin-right: 0 !important;
-	margin-left: auto !important;
-}
-.block-al-l {
-	margin-right: auto !important;
-	margin-left: 0 !important;
-}
 /* vertical-align: top */
 td.val-t { vertical-align: top !important;}
 
@@ -86,11 +66,6 @@ td.val-t { vertical-align: top !important;}
 .ml30 {margin-left:30px;}
 .ml40 {margin-left:40px;}.m20 {margin: 0 20px;}
 
-
-/* font-family */
-.ff_minchou {
-	font-family:"ＭＳ Ｐ明朝", "細明朝体", "ヒラギノ明朝 Pro W3","PMingLiU",serif;
-}
 /* font-size */
 .fs-xs{font-size: 85%;}
 .fs-s {font-size: 90%;}
@@ -105,8 +80,6 @@ td.val-t { vertical-align: top !important;}
 .clr-blue { color: #0041ff; }
 .clr-brown { color: #8a3b2b; }
 .clr-orange { color: orange; }
-/* cursor */
-.hand {	cursor: pointer;}
 
 /* width */
 .w50 {width: 50px;}
@@ -116,23 +89,6 @@ td.val-t { vertical-align: top !important;}
 .w120 {width: 120px;}
 .w150 {width: 150px;}
 .w180 {width: 180px;}
-/* pagenumber */
-#active-page{
-	color:red;
-	border-bottom:2px solid #ff6600;
-	border-top:2px solid #ff6600;
-}
-#focus-page{
-	color:red;
-}
-.normal-page{
-	cursor:pointer;
-	background-color:transparent;
-	border:0 none;
-	padding:0;
-	font-weight:bold;
-	color:blue;
-}
 
 /* clearfix */
 .clrfix:after {

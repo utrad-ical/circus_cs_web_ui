@@ -5,7 +5,9 @@ CSS information
  file name  :layout.general.css
  
  theme color : #66ccff(accent),#b4ebfa,#f5fafa
+
 =================================================================== */
+
 /* ===================================================
 	#leftside 
 		
@@ -17,14 +19,13 @@ CSS information
 			
 			Calendar
  =================================================== */
+
 #leftside h1 img {
 	border-color: #66ccff;
 }
+
 #container {
 	background: url(../img_common/item/menu_bk.user.gif) left repeat-y;
-}
-#menu {
-	/*background-color: #b4ebfa;*/
 }
 
 .jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }
@@ -36,89 +37,35 @@ CSS information
 .jq-btn-favorites { background-image: url(../img_common/btn/user/jq-btn-favorites.gif) ; }
 .jq-btn-logout { background-image: url(../img_common/btn/user/jq-btn-logout.gif) ; }
 
-#menu #flash_admin,
-#menu #flash_guest {
-	display:none;
-}
-/* ===================================================
 
+
+/* ===================================================
 	#content 
-		
  =================================================== */
+
 #content h2 {
 	color: #09f;
 }
-#content h3 { /* for Search title */
+#content h3 {
 	background-color: #66ccff;
 	border-bottom:2px solid #b4ebfa;
 }
 
 /* ===================================================
 	TABLE 
-		body.general
  =================================================== */
 table.col-tbl th {
 	background-color: #66ccff;
-	color: #fff;
 	border: 1px solid #b4ebfa;
-	padding: 2px;
-	text-align: center;
 }
 table.col-tbl tr td {
 	border: 1px solid #b4ebfa;
-	padding: 1px;
-	text-align: center;
 }
 table.col-tbl tr.column td {
 	background-color: #f5fafa;
 }
-
-table.row-tbl th {
-	background-color: #66ccff;
-	color: #fff;
-	border: 1px solid #b4ebfa;
-	padding: 2px;
-	text-align: left;
-}
-table.row-tbl tr td {
-	border: 1px solid #b4ebfa;
-	padding: 2px;
-	padding-left: 10px;
-	text-align: left;
-}
-
-table.img-tbl {
-/*	background: url(../img_common/item/imgbk_top.jpg) top no-repeat;*/
-	overflow: hidden;
-	width: 408px;
-	margin: 0;
-	padding: 0;
-}
-table.img-tbl td {
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-
-
-div.imgnum {
-	width: 90%;
-	margin: 5px auto;
-	background-color:#000;
-	color:#fff;
-}
-
-/*
-	SEARCH PANEL
----------------------------------------------------- */
-.search-panel {
-	background-color: #f9f9f9;
-	margin-bottom: 20px;
-}
 .trim01 {
 	border-left: 2px solid #66ccff;
-	padding-left: 3px;
 }
 .selected-btn-search {
 	color: #ffffff;
@@ -273,23 +220,23 @@ p.add-favorite {
 }
 
 .radio-to-button-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-hover {
-	color: #69f;
-	border: 1px solid #69f;
+	color: #69f !important;
+	border: 1px solid #69f !important;
 	background-position: 0 -23px;
 }
 .radio-to-button-checked {
-	color: #fff;
-	border: 1px solid #0041ff;
+	color: #fff !important;
+	border: 1px solid #0041ff !important;
 	background-position: 0 -46px;
 }
 .radio-to-button-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -69px;
 }
 /* consensual extention */
@@ -342,23 +289,23 @@ p.add-favorite {
 }
 
 .radio-to-button-l-normal {
-	color: #333;
-	border: 1px solid #333;
+	color: #333 !important;
+	border: 1px solid #333 !important;
 	background-position: 0 0;
 }
 .radio-to-button-l-hover {
-	color: #69f;
-	border: 1px solid #69f;
+	color: #69f !important;
+	border: 1px solid #69f !important;
 	background-position: 0 -25px;
 }
 .radio-to-button-l-checked {
-	color: #fff;
-	border: 1px solid #0041ff;
+	color: #fff !important;
+	border: 1px solid #0041ff !important;
 	background-position: 0 -50px;
 }
 .radio-to-button-l-disabled {
-	color: #aaa;
-	border: 1px solid #808080;
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
 	background-position: 0 -75px;
 }
 

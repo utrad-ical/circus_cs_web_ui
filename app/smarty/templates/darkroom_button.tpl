@@ -8,9 +8,6 @@
 function ToggleDarkroomBtn()
 {
 	$('body').toggleClass('darkroom');
-	$('h1').toggleClass('darkroom');
-	$('#menu p').toggleClass('user-darkroom');
-	$('#container').toggleClass('menu-back').toggleClass('menu-darkroom').height( $(document).height() - 10 );
 }
 {/literal}
 

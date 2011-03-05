@@ -1,11 +1,6 @@
 {capture name="extra"}
 {literal}
 <style type="text/css" media="all,screen">
-#content h1 {
-	font-size: 18px;
-	margin-bottom: 3px;
-}
-
 #content h2 {
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -18,79 +13,96 @@
   height: 100px;
   margin-left: 10px;
 }
+
+h3 {
+	margin: 2em 0 0.5em 0;
+}
+
+p {
+	margin: 5px 0;
+}
+
+table.developers td {
+	padding: 0 1em;
+}
+
+ol li {
+	margin-left: 2em;
+	list-style-type: decimal;
+}
+ul li {
+	margin-left: 2em;
+	list-style-type: disc;
+}
 </style>
 {/literal}
 {/capture}
 {include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 
 <h2>About CIRCUS CS</h2>
-<div class="ml10">
-	<img src="images/circus-logo.jpg" width=231 height=170 align="right">
+<img src="images/circus-logo.jpg" width="231" height="170" align="right">
 
-	<p>CIRCUS CS (Clinical Server) is a web based CAD process platform for clinical environment.
-	CIRCUS CS is developed under CIRCUS (Clinical Infrastructure for Radiologic Computation of United Solutions)
-	project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD ICAL</a>.</p>
+<p><b>CIRCUS CS</b> (Clinical Server) is a web based CAD process platform for clinical environment.
+CIRCUS CS is developed under CIRCUS (Clinical Infrastructure for Radiologic Computation of United Solutions)
+project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD ICAL</a>.</p>
 
-	<p class="mt5">CIRCUS CS is based as follows:</p>
-	<ul class="mt5 ml10">
-		<li>- Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
-		<li>- DICOM storage server: DCMTK 3.5.4, PostgreSQL
-		<li>- External application for research function: R 2.10.2, gnuplot 4.4
-	</ul>
+<p>CIRCUS CS is based on the following technologies:</p>
+<ul>
+	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
+	<li>DICOM storage server: DCMTK 3.5.4, PostgreSQL
+	<li>External application for research function: R 2.10.2, gnuplot 4.4
+</ul>
 
-	<p class="mt5">Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
+<p>Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
 
-	<p class="mt5">CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
-	A plug-in development kit will be released in the winter 2011.</p>
+<p>CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
+A plug-in development kit will be released in the winter 2011.</p>
 
-	<h4 class="mt20">Developer team:</h4>
-	<table class="ml10 mt5 mb10">
-		<tr>
-			<td style="width:220px;">- Yukihiro NOMURA, PhD</td>
-			<td>overall coding, plugin development, and project management</td>
-		</tr>
-		<tr><td colspan="2" style="height:5px;"></td></tr>
-		<tr>
-			<td>- Yoshitaka MASUTANI, PhD</td>
-			<td>concept design, engineering supervision, and project direction</td>
-		</tr>
-		<tr>
-			<td>- Naoto HAYASHI, MD PhD</td>
-			<td>clinical supervision</td>
-		</tr>
-		<tr>
-			<td>- Takeharu YOSHIKAWA, MD PhD</td>
-			<td>clinical advice</td>
-		</tr>
-		<tr>
-			<td>- Mitsutaka NEMOTO, PhD</td>
-			<td>plugin development, and coding advice</td>
-		</tr>
-		<tr>
-			<td>- Shouhei HANAOKA, MD PhD</td>
-			<td>plugin development, and clinical advice</td>
-		</tr>
-		<tr>
-			<td>- Soichiro MIKI, MD</td>
-			<td>clinical advice, and coding advice</td>
-		</tr>
-	</table>
+<h3>Developer team:</h3>
+<table class="developers">
+	<tr style="padding-bottom: 15px">
+		<td>- Yukihiro NOMURA, PhD</td>
+		<td>overall coding, plugin development, and project management</td>
+	</tr>
+	<tr>
+		<td>- Yoshitaka MASUTANI, PhD</td>
+		<td>concept design, engineering supervision, and project direction</td>
+	</tr>
+	<tr>
+		<td>- Naoto HAYASHI, MD PhD</td>
+		<td>clinical supervision</td>
+	</tr>
+	<tr>
+		<td>- Takeharu YOSHIKAWA, MD PhD</td>
+		<td>clinical advice</td>
+	</tr>
+	<tr>
+		<td>- Mitsutaka NEMOTO, PhD</td>
+		<td>plugin development, and coding advice</td>
+	</tr>
+	<tr>
+		<td>- Shouhei HANAOKA, MD PhD</td>
+		<td>plugin development, and clinical advice</td>
+	</tr>
+	<tr>
+		<td>- Soichiro MIKI, MD</td>
+		<td>clinical advice, and coding</td>
+	</tr>
+</table>
 
-	<h4 class="mt10">References:</h4>
-	<ol class="mt5 ml10">
-		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Maeda E, Ohtomo K,
-                        An integrated platform for development and clinical use of CAD software:
-                        building and utilization in the clinical environment,
-                        Int J CARS 4:S161-S162, June 2009</li>
-		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Ohtomo K, Hanaoka S, Maeda E,
-			An integrated platform for clinical use of CAD software and feedback,
-			Proc. of RSNA 2009:919 (LL-IN2158-R01), November 2009</li>
-		<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Miki S, Maeda E, Ohtomo K,
-			CIRCUS: an MDA platform for clinical image analysis in hospitals,
-			Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
-	</ol>
-</div>
-
+<h3>References:</h3>
+<ol>
+	<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Maeda E, Ohtomo K,
+		An integrated platform for development and clinical use of CAD software:
+		building and utilization in the clinical environment,
+		Int J CARS 4:S161-S162, June 2009</li>
+	<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Ohtomo K, Hanaoka S, Maeda E,
+		An integrated platform for clinical use of CAD software and feedback,
+		Proc. of RSNA 2009:919 (LL-IN2158-R01), November 2009</li>
+	<li>Nomura Y, Hayashi N, Masutani Y, Yoshikawa T, Nemoto M, Hanaoka S, Miki S, Maeda E, Ohtomo K,
+		CIRCUS: an MDA platform for clinical image analysis in hospitals,
+		Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
+</ol>
 
 <h2>Installed plug-ins</h2>
 <div class="plug-in">

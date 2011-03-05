@@ -1,10 +1,5 @@
 @charset "utf-8";
-/* ===================================================================
-CSS information
 
- file name  :  default.css
-=================================================================== */
-/*--- reset */
 html {
 	overflow-y: scroll;
 }
@@ -52,7 +47,4 @@ body {
 	font-size: small;
 	font-family: verdana,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",Osaka,"ＭＳ Ｐゴシック","MS PGothic",Sans-Serif;
 	line-height: 1.5;
-}
-*:first-child + html body {	/* for IF7 */
-	font-family: "メイリオ","Meiryo";
 }
