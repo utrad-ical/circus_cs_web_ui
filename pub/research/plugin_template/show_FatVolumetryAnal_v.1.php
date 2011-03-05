@@ -20,8 +20,9 @@
 
 	$tmpFname = 'VATplot_' . microtime(true) . '.png';
 
-	$plotFname = $APACHE_DOCUMENT_ROOT . $DIR_SEPARATOR . 'CIRCUS-CS' . $DIR_SEPARATOR . 'tmp'
-               . $DIR_SEPARATOR . $tmpFname;
+	$plotFname = $WEB_UI_ROOT . $DIR_SEPARATOR . 'pub' . $DIR_SEPARATOR . 'tmp'
+	           . $DIR_SEPARATOR . $tmpFname;
+
 	$plotFnameWeb = '../tmp/' . $tmpFname;
 
 	define('GPLOT', 'C:\\gnuplot\\binary\\gnuplot.exe');
@@ -39,7 +40,7 @@
 		exit(1);
 	}
 
-	// 初期設定
+	// initial set of gnuplot
 	fwrite($pipes[0], "set term png size 360, 360\n");
 	fwrite($pipes[0], "set grid\n");
 	fwrite($pipes[0], "set border\n");
@@ -47,28 +48,23 @@
 	fwrite($pipes[0], "set size square\n");
 	fwrite($pipes[0], "set xtics 2000 font \"Verdana,9\"\n");
 	fwrite($pipes[0], "set ytics font \"Verdana,9\"\n");
-	fwrite($pipes[0], "set xlabel \"VAT volume [mm3]\"\n");
-	fwrite($pipes[0], "set ylabel \"VAT area [mm2]\" 1.5,0.0\n");
+	fwrite($pipes[0], "set xlabel \"VAT volume [cm3]\"\n");
+	fwrite($pipes[0], "set ylabel \"VAT area [cm2]\" 1.5,0.0\n");
 
-	// グラフの種類
+	// set kind of graph
 	fwrite($pipes[0], "plot ".$a."*x+".$b." lw 2 lc rgb \"black\", '" . $dataFile . "' with points 1 13\n");
 	fwrite($pipes[0], "set output '" . $plotFname . "'\n");
 	fwrite($pipes[0], "replot\n");
 	fclose($pipes[0]);
 
-	// グラフ出力
-	//header("Content-type: image/png");
-	//fpassthru($pipes[1]);
-	//fclose($pipes[1]);
-
-	// エラー出力
+	// error output
 	if (!empty($pipes[2]))
 	{
 		error_log($pipes[2], 0);
 	}
 	fclose($pipes[2]);
 
-	// 終わり
+	// end of proc
 	proc_close($gnuplot);
 
 	$dstHtml .= '<table>'
@@ -86,14 +82,14 @@
 								 .  '</tr>'
 								 .  '<tr>'
 									 .  '<th><span class="trim01">Mean of VAT volume</span></th>'
-									 .  '<td>' . sprintf("%.2f",$volumeMean) . ' [mm3]</td>'
+									 .  '<td>' . sprintf("%.2f",$volumeMean) . ' [cm3]</td>'
 								 .  '</tr>'
 								 .  '<tr>'
 									 .  '<th><span class="trim01">S.D. of VAT volume</span></th>'
 									 .  '<td>' . sprintf("%.2f",$volumeSD) . '</td>'
 								 .  '</tr>'
 									 .  '<th><span class="trim01">Mean of VAT area</span></th>'
-									 .  '<td>' . sprintf("%.2f",$areaMean) . ' [mm2]</td>'
+									 .  '<td>' . sprintf("%.2f",$areaMean) . ' [cm2]</td>'
 								 .  '</tr>'
 								 .  '<tr>'
 									 .  '<th><span class="trim01">S.D. of VAT area</span></th>'
