@@ -1,25 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="js/viewControl.js"></script>
-<link rel="shortcut icon" href="favicon.ico" />
+{capture name="require"}
+css/popup.css
+js/hover.js
+{/capture}
+{capture name="extra"}
 
 <script language="Javascript">;
 <!--
 {literal}
-
 
 function ChangePassword()
 {
@@ -160,7 +147,7 @@ function RegisterCadPreference(mode)
 function ChangeCadMenu()
 {
 	var versionStr = $("#cadMenu option:selected").val().split("^");
-	
+
 	var optionStr = "";
 
 	if(versionStr != "")
@@ -176,199 +163,183 @@ function ChangeCadMenu()
 	$("#versionMenu").html(optionStr);
 }
 
-
 {/literal}
--->
 </script>
+{/capture}
 
-<link href="./css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="./css/popup.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="./js/hover.js"></script>
-</head>
+{include file="header.tpl" body_class="spot"
+	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<body class="spot">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
+<form id="form1" name="form1" onsubmit="return false;">
+<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp|escape}">
+<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg|escape}">
+<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg|escape}">
+<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults|escape}">
+<input type="hidden" id="cadName"             value="">
+<input type="hidden" id="version"             value="">
+<input type="hidden" id="preferenceFlg"       value="">
+<input type="hidden" id="defaultSortKey"      value="">
+<input type="hidden" id="defaultSortOrder"    value="">
+<input type="hidden" id="defaultMaxDispNum"   value="">
+<input type="hidden" id="defaultConfidenceTh" value="">
+<input type="hidden" name="ticket" value="{$ticket|escape}">
+
+<h2>User preference</h2>
+
+<h3>Change password</h3>
+<div class="p20" style="width: 50%;">
+	<form onsubmit="return false;">
+	<table class="detail-tbl" style="width: 100%;">
+		<tr>
+			<th style="width:15em;"><span class="trim01">Current password</span></th>
+			<td>
+				<input id="oldPassword" type="password" style="width: 150px;" />
+			</td>
+		</tr>
+		<tr>
+			<th><span class="trim01">New password</span></th>
+			<td><input id="newPassword" type="password" value="" style="width: 150px;" /></td>
+		</tr>
+		<tr>
+			<th><span class="trim01">Re-enter new password</span></th>
+			<td><input id="reenterPassword" type="password" value="" style="width: 150px;" /></td>
+		</tr>
+	</table>
+
+	<div class="pl20 mb20 mt10">
+		<p>
+			<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePassword();" />
+		</p>
+	</div>
+	</form>
+</div>
+
+<h3>Page preference</h3>
+<div class="p20" style="width: 50%;">
+	<form onsubmit="return false;">
+	<table class="detail-tbl" style="width: 100%;">
+		<tr>
+			<th style="width: 17em;"><span class="trim01">Display today's list</span></th>
+			<td>
+				<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series&nbsp;
+				<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"} checked="checked"{/if} />CAD
+			</td>
+		</tr>
+		<tr>
+			<th><span class="trim01">Darkroom mode</span></th>
+			<td>
+				<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white&nbsp;
+				<input name="newDarkroomFlg" type="radio" value="t"{if $oldDarkroomFlg=="t"} checked="checked"{/if} />black
+			</td>
+		</tr>
+		<tr>
+			<th><span class="trim01">Anonymization</span></th>
+			<td>
+				<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
+				<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
+			</td>
+		</tr>
+		<tr>
+			<th><span class="trim01">Latest results</span></th>
+			<td>
+				<input name="newLatestResults" type="radio" value="own"{if $oldLatestResults=="own"} checked="checked"{/if} />own&nbsp;
+				<input name="newLatestResults" type="radio" value="all"{if $oldLatestResults=="all"} checked="checked"{/if} />all&nbsp;
+				<input name="newLatestResults" type="radio" value="none"{if $oldLatestResults=="none"} checked="checked"{/if} />none
+			</td>
+		</tr>
+	</table>
+	<div class="pl20 mb20 mt10">
+		<p>
+			<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePagePreference();" />
+		</p>
+	</div>
+	</form>
+</div>
+
+<h3>CAD preference</h3>
+<div class="p20" style="width: 50%;">
+	<div class="detail-panel02">
+		<table class="detail-tbl" style="width: 100%;">
+			<tr>
+				<th style="width:4em;"><span class="trim01">CAD</span></th>
+				<td style="width:120px;">
+					<select id="cadMenu" name="cadMenu" onchange="ChangeCadMenu();">';
+						{foreach from=$cadList item=item}
+							<option value="{$item[1]}">{$item[0]}</option>
+						{/foreach}
+					</select>
+				</td>
+				<th style="width:5em;"><span class="trim01">Version</span></th>
+				<td>
+					<select id="versionMenu">
+						{foreach from=$verDetail item=item}
+							<option value="{$item}">{$item}</option>
+						{/foreach}
+					</select>
+				</td>
+			</tr>
+		</table>
+
+		<div class="pl20 mb20 mt10">
+			<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onclick="ShowCadPreferenceDetail();" /></p>
 		</div>
-		<!-- / #leftside END -->
 
-		<div id="content">
-			<form id="form1" name="form1" onsubmit="return false;">
-			<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp|escape}">
-			<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg|escape}">
-			<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg|escape}">
-			<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults|escape}">
-			<input type="hidden" id="cadName"             value="">
-			<input type="hidden" id="version"             value="">
-			<input type="hidden" id="preferenceFlg"       value="">
-			<input type="hidden" id="defaultSortKey"      value="">
-			<input type="hidden" id="defaultSortOrder"    value="">
-			<input type="hidden" id="defaultMaxDispNum"   value="">
-			<input type="hidden" id="defaultConfidenceTh" value="">
-			<input type="hidden" name="ticket" value="{$ticket|escape}">
+		<div id="detailCadPrefrence" style="display:none;">
+			<h4 id="message" class="themeColor">&nbsp;</h4>
 
-			<h2>User preference</h2>
-			
-			<h3>Change password</h3>
-			<div class="p20" style="width: 50%;">
-				<form onsubmit="return false;">
-				<table class="detail-tbl" style="width: 100%;">
-					<tr>
-						<th style="width:15em;"><span class="trim01">Current password</span></th>
-						<td>
-							<input id="oldPassword" type="password" style="width: 150px;" />
-						</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">New password</span></th>
-						<td><input id="newPassword" type="password" value="" style="width: 150px;" /></td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Re-enter new password</span></th>
-						<td><input id="reenterPassword" type="password" value="" style="width: 150px;" /></td>
-					</tr>
-				</table>
+			<table class="detail-tbl" style="width: 100%;">
+				<tr>
+					<th style="width: 17em;"><span class="trim01">Sort key</span></th>
+					<td>
+						<select id="sortKey" name="sortKey">
+							{foreach from=$sortStr item=item name=cnt}
+								<option value="{$smarty.foreach.cnt.index}">{$item}</option>
+							{/foreach}
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th><span class="trim01">Sort order</span></th>
+					<td>
+						<input type="radio" name="sortOrder" value="f" />Asc.
+		    			<input type="radio" name="sortOrder" value="t" />Desc.
+					</td>
+				</tr>
+				<tr>
+					<th><span class="trim01">Maximum display candidates</span></th>
+					<td>
+						<input id="maxDispNum" type="text" class="al-r" style="width: 100px;" />
+					</td>
+				</tr>
+				<tr>
+					<th><span class="trim01">Threshold of confidence</span></th>
+					<td>
+						<input id="confidenceTh" type="text" class="al-r" style="width: 100px;" />
+					</td>
+				</tr>
+				<tr>
+					<th><span class="trim01">Disp confidence</span></th>
+					<td>
+						<input type="radio" name="dispConfidence" value="t" />True
+		    			<input type="radio" name="dispConfidence" value="f" />False
+					</td>
+				</tr>
+				<tr>
+					<th><span class="trim01">Disp tags for lesion candidate</span></th>
+					<td>
+						<input type="radio" name="dispCandidateTag" value="t" />True
+		    			<input type="radio" name="dispCandidateTag" value="f" />False
+					</td>
+				</tr>
+			</table>
 
-				<div class="pl20 mb20 mt10">
-					<p>
-						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePassword();" />
-					</p>
-				</div>
-				</form>
+			<div class="pl20 mb20 mt10">
+					<input id="updateCADPrefBtn" type="button" value="Update" class="w100 form-btn" onclick="RegisterCadPreference('update');">
+   					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
 			</div>
+		</div>
+	</div>
+</div>
+</form>
 
-			<h3>Page preference</h3>
-			<div class="p20" style="width: 50%;">
-				<form onsubmit="return false;">
-				<table class="detail-tbl" style="width: 100%;">
-					<tr>
-						<th style="width: 17em;"><span class="trim01">Display today's list</span></th>
-						<td>
-							<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series&nbsp;
-							<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"} checked="checked"{/if} />CAD
-						</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Darkroom mode</span></th>
-						<td>
-							<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white&nbsp;
-							<input name="newDarkroomFlg" type="radio" value="t"{if $oldDarkroomFlg=="t"} checked="checked"{/if} />black
-						</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Anonymization</span></th>
-						<td>
-							<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
-							<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
-						</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Latest results</span></th>
-						<td>
-							<input name="newLatestResults" type="radio" value="own"{if $oldLatestResults=="own"} checked="checked"{/if} />own&nbsp;
-							<input name="newLatestResults" type="radio" value="all"{if $oldLatestResults=="all"} checked="checked"{/if} />all&nbsp;
-							<input name="newLatestResults" type="radio" value="none"{if $oldLatestResults=="none"} checked="checked"{/if} />none
-						</td>
-					</tr>
-				</table>
-				<div class="pl20 mb20 mt10">
-					<p>
-						<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePagePreference();" />
-					</p>
-				</div>
-				</form>
-			</div>
-			
-			<h3>CAD preference</h3>
-			<div class="p20" style="width: 50%;">
-				<div class="detail-panel02">
-					<table class="detail-tbl" style="width: 100%;">
-						<tr>
-							<th style="width:4em;"><span class="trim01">CAD</span></th>
-							<td style="width:120px;">
-								<select id="cadMenu" name="cadMenu" onchange="ChangeCadMenu();">';
-									{foreach from=$cadList item=item}
-										<option value="{$item[1]}">{$item[0]}</option>
-									{/foreach}
-								</select>
-							</td>
-							<th style="width:5em;"><span class="trim01">Version</span></th>
-							<td>
-								<select id="versionMenu">
-									{foreach from=$verDetail item=item}
-										<option value="{$item}">{$item}</option>
-									{/foreach}
-								</select>
-							</td>
-						</tr>
-					</table>
-
-					<div class="pl20 mb20 mt10">
-						<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onclick="ShowCadPreferenceDetail();" /></p>
-					</div>
-
-					<div id="detailCadPrefrence" style="display:none;">
-						<h4 id="message" class="themeColor">&nbsp;</h4>
-
-						<table class="detail-tbl" style="width: 100%;">
-							<tr>
-								<th style="width: 17em;"><span class="trim01">Sort key</span></th>
-								<td>
-									<select id="sortKey" name="sortKey">
-										{foreach from=$sortStr item=item name=cnt}
-											<option value="{$smarty.foreach.cnt.index}">{$item}</option>
-										{/foreach}	
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Sort order</span></th>
-								<td>
-									<input type="radio" name="sortOrder" value="f" />Asc.
-					    			<input type="radio" name="sortOrder" value="t" />Desc.
-								</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Maximum display candidates</span></th>
-								<td>
-									<input id="maxDispNum" type="text" class="al-r" style="width: 100px;" />
-								</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Threshold of confidence</span></th>
-								<td>
-									<input id="confidenceTh" type="text" class="al-r" style="width: 100px;" />
-								</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Disp confidence</span></th>
-								<td>
-									<input type="radio" name="dispConfidence" value="t" />True
-					    			<input type="radio" name="dispConfidence" value="f" />False
-								</td>
-							</tr>
-							<tr>
-								<th><span class="trim01">Disp tags for lesion candidate</span></th>
-								<td>
-									<input type="radio" name="dispCandidateTag" value="t" />True
-					    			<input type="radio" name="dispCandidateTag" value="f" />False
-								</td>
-							</tr>
-						</table>
-					
-						<div class="pl20 mb20 mt10">
-								<input id="updateCADPrefBtn" type="button" value="Update" class="w100 form-btn" onclick="RegisterCadPreference('update');">
-			   					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
-						</div>
-					</div>
-				</div>
-			</div>
-			</form>
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+{include file="footer.tpl"}

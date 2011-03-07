@@ -1,19 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/jquery.blockUI.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="../js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
-
+{capture name="require"}
+jq/ui/jquery-ui-1.7.3.min.js
+jq/jquery.blockUI.js
+js/hover.js
+jq/ui/css/jquery-ui-1.7.3.custom.css
+{/capture}
+{capture name="extra"}
 <script language="Javascript">;
 <!--
 {literal}
@@ -101,7 +92,7 @@ function ChangeUserList(mode, allStatFlg)
 		$.post("user_list_for_parsonal_stat.php",
 			 	{ cadName: cadName,
 			 	  version: version},
-				  function(data){ 
+				  function(data){
 							if(data.errorMessage == "" && data.userOptionStr != "")
 							{
 								$("#userMenu").html(data.userOptionStr);
@@ -155,129 +146,109 @@ $(function() {
 {/literal}
 -->
 </script>
+{/capture}
+{include file="header.tpl" body_class="personal-statistics"
+	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
+<div id="researchListTab" class="tabArea">
+	<ul>
+		<li><a href="../personal_statistics.php" class="btn-tab" title="Personal statistics">Personal statistics</a></li>
+		<li><a href="#" class="btn-tab" title="Time for feedback entry" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Time for feedback</a></li>
+	</ul>
+</div><!-- / .tabArea END -->
 
-<link rel="shortcut icon" href="favicon.ico" />
-<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-</head>
+<div class="tab-content">
 
-<body class="personal-statistics">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
-		</div>
-		<!-- / #leftside END -->
+	<h2>Time for feedback entry</h2>
 
-		<div id="content">
+	<form name="form1">
+	<input type="hidden" id="dataStr" name="dataStr" value="">
 
-			<!-- ***** TAB ***** -->
-			<div id="researchListTab" class="tabArea">
-				<ul>
-					<li><a href="../personal_statistics.php" class="btn-tab" title="Personal statistics">Personal statistics</a></li>
-					<li><a href="#" class="btn-tab" title="Time for feedback entry" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Time for feedback</a></li>
-				</ul>
-			</div><!-- / .tabArea END -->
+	<!-- ***** Search conditions ***** -->
+		<div class="statSearch">
+			<h3>Search</h3>
+			<div class="p20">
+				<table class="search-tbl">
+					<tr>
+						<th style="width: 7.5em;"><span class="trim01">Series date</span></th>
+						<td style="width: 220px;">
+							<input id="dateFrom" type="text" style="width:72px;" />
+							-
+							<input id="dateTo" type="text" style="width:72px;" />
 
-			<div class="tab-content">
-
-				<h2>Time for feedback entry</h2>
-
-				<form name="form1">
-				<input type="hidden" id="dataStr" name="dataStr" value="">
-
-				<!-- ***** Search conditions ***** -->
-					<div class="statSearch">
-						<h3>Search</h3>
-						<div class="p20">
-							<table class="search-tbl">
-								<tr>
-									<th style="width: 7.5em;"><span class="trim01">Series date</span></th>
-									<td style="width: 220px;">
-										<input id="dateFrom" type="text" style="width:72px;" />
-										-
-										<input id="dateTo" type="text" style="width:72px;" />
-
-									</td>
-									<th style="width: 8em;"><span class="trim01">CAD name</span></th>
-									<td>
-										<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
-											<option value="" selected="selected">(Select)</option>
-											{foreach from=$cadList item=item}
-												<option value="{$item[1]|escape}">{$item[0]|escape}</option>
-											{/foreach}
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<th><span class="trim01">User</span></th>
-									<td>
-										<select id="userMenu" name="userMenu" style="width: 100px;">
-											{if $smarty.session.allStatFlg}
-												<option value="">(Select)</option>
-											{else}
-												<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
-											{/if}
-										</select>
-									</td>
-									<th><span class="trim01">CAD version</span></th>
-									<td>
-										<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
-											<option value="all">all</option>
-											{foreach from=$versionDetail item=item}
-												<option value="{$item|escape}">{$item|escape}</option>
-											{/foreach}
-										</select>
-									</td>
-								</tr>
-							</table>	
-							<div class="al-l mt10 ml20" style="width: 100%;">
-								<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
-								<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
-								<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
-							</div>
-						</div><!-- / .m20 END -->
-					</div><!-- / #statSearch END -->
-				<!-- / Search conditions END -->
-				
-				<div id="statRes" style="display:none;">
-					<h3>Time for feedback entry</h3>
-					<table class="col-tbl mt20 mb20" style="width: 100%;">
-						<thead>
-							<tr>
-								<th rowspan="2">CAD ID</th>
-								<th rowspan="2">Patient ID</th>
-								<th colspan="2">Series</th>
-								<th rowspan="2">CAD</th>
-								<th rowspan="2">CAD date</th>
-								<th colspan="2">Elapsed time [sec]</th>
-								<th colspan="2">Number of</th>
-							</tr>
-							<tr>
-								<th>Date</th>
-								<th>Time</th>
-								<th>Cand. classify</th>
-								<th>FN input</th>
-								<th>Disp. cand.</th>
-								<th>Entered FN</th>
-							</tr>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-				
+						</td>
+						<th style="width: 8em;"><span class="trim01">CAD name</span></th>
+						<td>
+							<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
+								<option value="" selected="selected">(Select)</option>
+								{foreach from=$cadList item=item}
+									<option value="{$item[1]|escape}">{$item[0]|escape}</option>
+								{/foreach}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th><span class="trim01">User</span></th>
+						<td>
+							<select id="userMenu" name="userMenu" style="width: 100px;">
+								{if $smarty.session.allStatFlg}
+									<option value="">(Select)</option>
+								{else}
+									<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
+								{/if}
+							</select>
+						</td>
+						<th><span class="trim01">CAD version</span></th>
+						<td>
+							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
+								<option value="all">all</option>
+								{foreach from=$versionDetail item=item}
+									<option value="{$item|escape}">{$item|escape}</option>
+								{/foreach}
+							</select>
+						</td>
+					</tr>
+				</table>
+				<div class="al-l mt10 ml20" style="width: 100%;">
+					<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
+					<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
+					<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
 				</div>
-				</form>
+			</div><!-- / .m20 END -->
+		</div><!-- / #statSearch END -->
+	<!-- / Search conditions END -->
 
-				<div class="al-r fl-clr">
-					<p class="pagetop"><a href="#page">page top</a></p>
-				</div>
+	<div id="statRes" style="display:none;">
+		<h3>Time for feedback entry</h3>
+		<table class="col-tbl mt20 mb20" style="width: 100%;">
+			<thead>
+				<tr>
+					<th rowspan="2">CAD ID</th>
+					<th rowspan="2">Patient ID</th>
+					<th colspan="2">Series</th>
+					<th rowspan="2">CAD</th>
+					<th rowspan="2">CAD date</th>
+					<th colspan="2">Elapsed time [sec]</th>
+					<th colspan="2">Number of</th>
+				</tr>
+				<tr>
+					<th>Date</th>
+					<th>Time</th>
+					<th>Cand. classify</th>
+					<th>FN input</th>
+					<th>Disp. cand.</th>
+					<th>Entered FN</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
 
-			</div><!-- / .tab-content END -->
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+	</div>
+	</form>
+
+	<div class="al-r fl-clr">
+		<p class="pagetop"><a href="#page">page top</a></p>
+	</div>
+
+{include file="footer.tpl"}
