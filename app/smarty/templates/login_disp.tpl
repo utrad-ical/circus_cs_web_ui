@@ -6,7 +6,6 @@
 <title>CIRCUS CS {$version}</title>
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="jq/jq-btn.js"></script>
 <link rel="shortcut icon" href="favicon.ico" />
 
 {literal}
@@ -71,8 +70,15 @@ input.login-btn {
 	background:url(images/login_btn_bk_new2.jpg) repeat-x;
 	border: 1px solid #444;
 	padding-bottom: 3px;
+	width: 100px;
 	height: 23px;
 	cursor: pointer;
+}
+p.version {
+	text-align: right;
+	margin-right: 30px;
+	padding-top: 20px;
+	color: gray;
 }
 -->
 </style>
@@ -83,7 +89,7 @@ input.login-btn {
 <body>
 <div id="login-pnl">
 <form action="index.php" method="post">
-	<p class="al-r pt20 mr30 clr-gray" >clinical server {$version}</p>
+	<p class="version">clinical server {$version}</p>
 	<div class="longin-pnl-innner">
 		<table class="login-tbl">
 			<tr>
@@ -99,7 +105,7 @@ input.login-btn {
 	<div id="messageArea" class="error-blk">
 		{$message}
 	</div>	
-	<input type="submit" id="mode" name="mode" value="Login" class="w100 login-btn" />
+	<input type="submit" id="mode" name="mode" value="Login" class="login-btn" />
 </form>
 </div>
 </body>
