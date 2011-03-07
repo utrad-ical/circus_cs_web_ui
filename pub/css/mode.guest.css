@@ -9,14 +9,11 @@ CSS information
 =================================================================== */
 
 /* ===================================================
-	#leftside 
-		
+	#leftside
 		LOGO Border color
-		
 		#menu
 			Background color
 			Button Background image
-			
 			Calendar
  =================================================== */
 
@@ -40,7 +37,7 @@ CSS information
 
 
 /* ===================================================
-	#content 
+	#content
  =================================================== */
 
 #content h2 {
@@ -51,8 +48,9 @@ CSS information
 	border-bottom:2px solid #76e4a6;
 }
 
+
 /* ===================================================
-	TABLE 
+	TABLE
  =================================================== */
 table.col-tbl th {
 	background-color: #339966;
@@ -67,77 +65,33 @@ table.col-tbl tr.column td {
 .trim01 {
 	border-left: 2px solid #339966;
 }
-.selected-btn-search {
-	color: #ffffff;
-  background: url(../img_common/btn/guest/btn-bk0.jpg) repeat-x;
-  text-decoration: none;
-}
-
 
 
 /* ===================================================
-	 for User settings
- =================================================== */
-table.u-set {
-	margin-left: 15px;
-	font-size: 16px;
-}
-table.u-set th {
-	width: 353px;
-	background: url(../img_common/item/arrow02.gif) left bottom no-repeat;
-	width: 223px;
-	height: 25px;
-	font-weight: normal;
-	padding-top: 30px;
-}
-table.u-set td {
-	vertical-align: bottom;
-}
-
-div.setting input {
-	float: right;
-}
-
-
-#content h3.ptn02 { /* for result */
-	background-color: #fff;
-	padding-left: 0;
-	color: #000;
-	letter-spacing: 0;
-	border-bottom:2px solid #c9c9d7;
-}
-h3.ptn02 span {
-	font-weight: normal;
-}
-ul.ul-ptn02 {
-	margin: 20px 10px 10px 0;
-	text-align: right;
-	font-weight: bold;
-}
-ul.ul-ptn02 li {
-	display: inline;
-	margin-right: 15px;
-}
-
-/* ===================================================
-	 BUTTON for search.html
+	 Toggle buttons for search.html
  =================================================== */
 
-a:link.btn-search,a:active.btn-search,a:visited.btn-search { 
+a:link.btn-search,a:active.btn-search,a:visited.btn-search {
 	color: #000;
 	background: url(../img_common/btn/guest/btn-bk1.jpg) repeat-x;
 	text-decoration: none;
 }
-a:hover.btn-search { 
+a:hover.btn-search {
 	color: #339966;
 	background: url(../img_common/btn/guest/btn-bk2.jpg) repeat-x;
 }
+.selected-btn-search {
+	color: #ffffff;
+	background: url(../img_common/btn/guest/btn-bk0.jpg) repeat-x;
+	text-decoration: none;
+}
+
+
 /* ===================================================
 	 TAB
 	 	Border color
 	 	Background image
 		Link style
-		
 			Detail PANEL color
  =================================================== */
 .tab-content {
@@ -147,7 +101,6 @@ a:link.btn-tab,a:active.btn-tab,a:visited.btn-tab{
 	color: #339966;
 	background: url(../img_common/btn/guest/tab.gif) no-repeat;
 }
- 
 a:hover.btn-tab {
 	color: #fff;
 	background: url(../img_common/btn/guest/tab0.gif) no-repeat;
@@ -163,9 +116,9 @@ p.add-favorite {
 	background-color: #ffd;
 }
 
+
 /* ===================================================
    Only Guest
-	 		
 			Radio Button hidden
 			DIV.sort-by
  =================================================== */
@@ -177,9 +130,6 @@ p.add-favorite {
 	display: none;
 }
 
-/*.sort-by {
-	float:left;
-}*/
 
 /* ----------------------------------
 	FORM BUTTON
@@ -203,13 +153,10 @@ input.form-btn {
 	background-color: #999;
 }
 
+
 /* ===================================================
-	User preference (added by Y.Nomura 2010.04.03)
-	
-		h3
-		h4
+	General theme color
  ===================================================*/
-h4.upSec {
+.themeColor {
 	color: #339966;
-	font-weight: bold;
 }

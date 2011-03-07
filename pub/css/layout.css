@@ -13,7 +13,7 @@ a {
 
 input[type=button] {
 	font-family: verdana,"ＭＳ Ｐゴシック",sans-serif;
-	padding: 0; 
+	padding: 0;
 }
 input.s-btn {
 	font-size: 80%;
@@ -22,14 +22,14 @@ input.s-btn {
 
 /* ===================================================
 	Layout
-	
+
 	#page
 		#container
 			#leftside
 			#content
-			
+
  =================================================== */
- 
+
 /*
  	#page
 ---------------------------------------------------- */
@@ -65,12 +65,9 @@ input.s-btn {
 }
 
 /* =================================================
- 
 	#leftside
-
 		#menu
 			calendar
-
 ==================================================== */
 h1 {
 	background-color:#fff;
@@ -141,16 +138,13 @@ div.calendar {
 	height:49px;
 }
 
-/* ================================================= 
+/* =================================================
 	Layout #content
-	
 		tabArea
 		tab-content
-		
 		search-panel
 			search-tbl
 			serp
-		
 ==================================================== */
 #content h2 {
 	clear: both;
@@ -168,7 +162,7 @@ body.spot #content h2 {
 	color: #fff;
 	letter-spacing: 2px;
 }
-#content h3.ptn02 { /* for result */
+#content h3.ptn02 { /* H3 pattern 2 */
 	clear: both;
 	background-color: #fff;
 	padding-left: 0;
@@ -180,15 +174,7 @@ body.spot #content h2 {
 h3.ptn02 span {
 	font-weight: normal;
 }
-ul.ul-ptn02 {
-	margin: 20px 10px 10px 0;
-	text-align: right;
-	font-weight: bold;
-}
-ul.ul-ptn02 li {
-	display: inline;
-	margin-right: 15px;
-}
+
 
 /*
 	tabArea
@@ -277,6 +263,101 @@ table.search-tbl th, table.search-tbl td {
 	text-decoration: underline;
 }
 
+/* =================================================
+	 Buttons for CAD Result Page
+==================================================== */
+/* Radio button (normal size) */
+.radio-to-button {
+	display:inline-block;
+	cursor:pointer;
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding:0 3px;
+	margin:0 2px 0 0;
+	outline:0;
+	overflow:hidden;
+	text-decoration: none;
+	text-align: center;
+	line-height: 1.8;
+	font-size: 12px;
+	font-family:Arial, Helvetica, sans-serif;
+	height: 23px;
+}
+.radio-to-button-normal {
+	background-position: 0 0;
+}
+.radio-to-button-hover {
+	background-position: 0 -23px;
+}
+.radio-to-button-checked {
+	background-position: 0 -46px;
+}
+.radio-to-button-disabled {
+	background-position: 0 -69px;
+}
+
+/* Radio button (large size) */
+.radio-to-button-l {
+	display:block;
+	cursor:pointer;
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding:0;
+	margin:0;
+	outline:0;
+	overflow:hidden;
+	float: left;
+	margin-right: 3px;
+	text-decoration: none;
+	text-align: center;
+	line-height: 2;
+	font-size: 12px;
+	font-family:Arial, Helvetica, sans-serif;
+	height: 25px;
+	width: 130px;
+	background-image:url(../img_common/btn/admin/radio-to-button-l_white2.jpg);
+}
+.radio-to-button-l-normal {
+	background-position: 0 0;
+}
+.radio-to-button-l-hover {
+	background-position: 0 -25px;
+}
+.radio-to-button-l-checked {
+	background-position: 0 -50px;
+}
+.radio-to-button-l-disabled {
+	background-position: 0 -75px;
+}
+
+/* consensual extention */
+.consensual .radio-to-button-normal{
+	font-weight: bold;
+}
+.consensual .radio-to-button-hover{
+	font-weight: bold;
+}
+.consensual .radio-to-button-checked{
+	font-weight: bold;
+}
+.consensual .hide-on-consensual {
+	display:none;
+}
+.personal .hide-on-personal {
+	display:none;
+}
+
+/* "Registration of feedback" button */
+input.registration {
+	display:inline-block;
+	cursor:pointer;
+	padding: 5px 0;
+	width: 200px;
+}
+
+
 
 /* =================================================
 	PAGE TOP
@@ -351,24 +432,6 @@ table.arrange-tbl td {
 	padding: 0 10px 5px 0;
 }
 
-/* ===================================================
-	 for User settings
- =================================================== */
-table.u-set {
-	margin-left: 15px;
-	font-size: 16px;
-}
-table.u-set th {
-	width: 353px;
-	background: url(../img_common/item/arrow02.gif) left bottom no-repeat;
-	width: 223px;
-	height: 25px;
-	font-weight: normal;
-	padding-top: 30px;
-}
-table.u-set td {
-	vertical-align: bottom;
-}
 
 div.setting input {
 	float: right;
@@ -403,19 +466,19 @@ ul.inline li {
 
 
 .result-record {
- width:260px; 
- float:left; 
- margin:20px; 
+ width:260px;
+ float:left;
+ margin:20px;
  margin-left:0;
 } =================================================== */
 
 /* ===================================================
-	 for CAD result (2010.3.30 modified by Y.Nomura) 
+	 for CAD result (2010.3.30 modified by Y.Nomura)
  =================================================== */
 
 .result-record-2cols {
- width:388px; 
- float:left; 
+ width:388px;
+ float:left;
   margin:5px 20px 15px 0px;
   margin-left:0;
   padding: 1px 1px 3px 1px;
@@ -425,8 +488,8 @@ ul.inline li {
 }
 
 .result-record-3cols {
-  width:260px; 
-  float:left; 
+  width:260px;
+  float:left;
   margin:5px 20px 15px 0px;
   margin-left:0;
   padding: 1px 1px 3px 1px;
@@ -436,7 +499,7 @@ ul.inline li {
 }
 
 /* ===================================================
-	TABLE 
+	TABLE
  =================================================== */
 
 table.col-tbl th {

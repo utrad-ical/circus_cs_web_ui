@@ -305,14 +305,14 @@ function ChangeCadMenu()
 							</td>
 						</tr>
 					</table>
-				
+
 					<div class="pl20 mb20 mt10">
 						<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onclick="ShowCadPreferenceDetail();" /></p>
 					</div>
 
 					<div id="detailCadPrefrence" style="display:none;">
-						<h4 id="message" class="upSec">&nbsp;</h4>
-					
+						<h4 id="message" class="themeColor">&nbsp;</h4>
+
 						<table class="detail-tbl" style="width: 100%;">
 							<tr>
 								<th style="width: 17em;"><span class="trim01">Sort key</span></th>

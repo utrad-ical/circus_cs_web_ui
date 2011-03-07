@@ -9,15 +9,12 @@ CSS information
 =================================================================== */
 
 /* ===================================================
-	#leftside 
-		
+	#leftside
 		LOGO Border color
-		
 		#menu
 			Background color
 			Button Background image
-			
-			Calender
+			Calendar
  =================================================== */
 
 #leftside h1 img {
@@ -40,7 +37,7 @@ CSS information
 
 
 /* ===================================================
-	#content 
+	#content
  =================================================== */
 
 #content h2 {
@@ -51,8 +48,9 @@ CSS information
 	border-bottom:2px solid #ebbe8c;
 }
 
+
 /* ===================================================
-	TABLE 
+	TABLE
  =================================================== */
 table.col-tbl th {
 	background-color: #8a3b2b;
@@ -70,88 +68,30 @@ table.col-tbl tr.column td {
 
 
 /* ===================================================
-	 for User settings
- =================================================== */
-table.u-set {
-	margin-left: 15px;
-	font-size: 16px;
-}
-table.u-set th {
-	width: 353px;
-	background: url(../img_common/item/arrow02.gif) left bottom no-repeat;
-	width: 223px;
-	height: 25px;
-	font-weight: normal;
-	padding-top: 30px;
-}
-table.u-set td {
-	vertical-align: bottom;
-}
-
-div.setting input {
-	float: right;
-}
-
-
-#content h3.ptn02 { /* for result */
-	background-color: #fff;
-	padding-left: 0;
-	color: #000;
-	letter-spacing: 0;
-	border-bottom:2px solid #c9c9d7;
-}
-h3.ptn02 span {
-	font-weight: normal;
-}
-ul.ul-ptn02 {
-	margin: 20px 10px 10px 0;
-	text-align: left;
-	font-weight: bold;
-}
-ul.ul-ptn02 li {
-	display: inline;
-	margin-right: 15px;
-}
-
-/* ===================================================
-	 BUTTON for search.html
+	 Toggle buttons for search.html
  =================================================== */
 
-a:link.btn-search,a:active.btn-search,a:visited.btn-search { 
+a:link.btn-search,a:active.btn-search,a:visited.btn-search {
 	color: #000;
 	background: url(../img_common/btn/admin/btn-bk1.jpg) repeat-x;
 	text-decoration: none;
 }
-a:hover.btn-search { 
+a:hover.btn-search {
 	color: #8a3b2b;
 	background: url(../img_common/btn/admin/btn-bk2.jpg) repeat-x;
 }
-
 .selected-btn-search {
 	color: #ffffff;
-  background: url(../img_common/btn/admin/btn-bk0.jpg) repeat-x;
-  text-decoration: none;
+	background: url(../img_common/btn/admin/btn-bk0.jpg) repeat-x;
+	text-decoration: none;
 }
 
 
-/* ===================================================
-	 BUTTON mode change
- =================================================== */
-.jq-btn-personal{
-	background-image:url(../img_common/btn/admin/jq-btn-personal.jpg);
-}
-.jq-btn-consensual {
-	background-image:url(../img_common/btn/admin/jq-btn-consensual.jpg);
-}
- 
- 
- 
 /* ===================================================
 	 TAB
 	 	Border color
 	 	Background image
 		Link style
-		
 			Detail PANEL color
  =================================================== */
 .tab-content {
@@ -176,144 +116,37 @@ p.add-favorite {
 	background-color: #ffd;
 }
 
+
 /* ===================================================
-	 Radio Button
+	 Buttons for CAD Result Page
  =================================================== */
-/* Normal */
-.radio-to-button {
-	display:inline-block;
-	cursor:pointer;
-	
-	border:0px none;
-	background-color:transparent;
-	background-repeat:repeat;
-	padding:0 3px;
-	margin:0;
-	
-	outline:0;
-	overflow:hidden;
-	
-	/*float: left;*/
-
-	/* Modified by Y.Nomura (2009.04.05) */
-	margin-right: 2px;
-	padding-left: 3px;
-	padding-right: 3px;
-	/* --------------------------------- */
-	
-	text-decoration: none;
-	text-align: center;
-	line-height: 1.8;
-}
-
+/* Radio button (normal size) */
 .radio-to-button {
 	background-image:url(../img_common/btn/admin/radio-to-button_white2.jpg);
-	font-size: 12px;
-	font-family:Arial, Helvetica, sans-serif;
-	height: 23px;
 }
-.radio-to-button-normal {
-	color: #333 !important;
-	border: 1px solid #333 !important;
-	background-position: 0 0;
-}
-.radio-to-button-hover {
-	color: #ff6600 !important;
-	border: 1px solid #ff6600 !important;
-	background-position: 0 -23px;
-}
-.radio-to-button-checked {
-	color: #fff !important;
-	border: 1px solid #8a3b2b !important;
-	background-position: 0 -46px;
-}
-.radio-to-button-disabled {
-	color: #aaa !important;
-	border: 1px solid #808080 !important;
-	background-position: 0 -69px;
-}
-/* consensual extention */
-.consensual .radio-to-button-normal{
-	font-weight: bold;
-}
-.consensual .radio-to-button-hover{
-	font-weight: bold;
-}
-.consensual .radio-to-button-checked{
-	font-weight: bold;
-}
-
-.consensual .hide-on-consensual {
-	display:none;
-}
-
-.personal .hide-on-personal {
-	display:none;
-}
-
-
-/* Large */
-.radio-to-button-l {
-	display:block;
-	cursor:pointer;
-	
-	border:0px none;
-	background-color:transparent;
-	background-repeat:repeat;
-	padding:0;
-	margin:0;
-	
-	outline:0;
-	overflow:hidden;
-	
-	float: left;
-	margin-right: 3px;
-
-	text-decoration: none;
-	text-align: center;
-	line-height: 2;
-}
-
+/* Radio button (large size) */
 .radio-to-button-l {
 	background-image:url(../img_common/btn/admin/radio-to-button-l_white2.jpg);
-	font-size: 12px;
-	font-family:Arial, Helvetica, sans-serif;
-	height: 25px;
-	width: 130px;
 }
 
-.radio-to-button-l-normal {
+.radio-to-button-normal, .radio-to-button-l-normal {
 	color: #333 !important;
 	border: 1px solid #333 !important;
-	background-position: 0 0;
 }
-.radio-to-button-l-hover {
+.radio-to-button-hover, .radio-to-button-l-hover {
 	color: #ff6600 !important;
 	border: 1px solid #ff6600 !important;
-	background-position: 0 -25px;
 }
-.radio-to-button-l-checked {
+.radio-to-button-checked, .radio-to-button-l-checked {
 	color: #fff !important;
 	border: 1px solid #8a3b2b !important;
-	background-position: 0 -50px;
 }
-.radio-to-button-l-disabled {
+.radio-to-button-disabled, .radio-to-button-l-disabled {
 	color: #aaa !important;
 	border: 1px solid #808080 !important;
-	background-position: 0 -75px;
 }
 
-/* ----------------------------------
-	Registration of feedback
------------------------------------- */
-input.registration {
-	display:inline-block;
-	cursor:pointer;
-
-	padding: 5px 0;
-	width: 200px;
-}
-
+/* "Registration of feedback" button */
 .registration-normal {
 	color: #000;
 	background-color: #ebbe8c;
@@ -349,13 +182,10 @@ input.form-btn {
 	background-color: #999;
 }
 
+
 /* ===================================================
-	User preference (added by Y.Nomura 2010.04.03)
-	
-		h3
-		h4
+	General theme color
  ===================================================*/
-h4.upSec {
+.themeColor {
 	color: #8a3b2b;
-	font-weight: bold;
 }
