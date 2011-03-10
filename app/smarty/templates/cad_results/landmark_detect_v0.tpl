@@ -549,7 +549,7 @@ div.imgArea {
 							$("#oldLandmarkYpos").val(yPos);
 							$("#oldLandmarkZpos").val(zPos);
 
-							$("#row"+id+">.landmarkName").html('<input type="textbox" id="currentEditName" style="width:100px;" value="'+name+'" />');
+							//$("#row"+id+">.landmarkName").html('<input type="textbox" id="currentEditName" style="width:100px;" value="'+name+'" />');
 							$("#row"+id+">.landmarkXpos").html('<input type="textbox" id="currentEditXpos" size=3 value='+xPos+' />');
 							$("#row"+id+">.landmarkYpos").html('<input type="textbox" id="currentEditYpos" size=3 value='+yPos+' />');
 							$("#row"+id+">.landmarkZpos").html('<input type="textbox" id="currentEditZpos" size=3 value='+zPos+' />');
@@ -561,7 +561,7 @@ div.imgArea {
 
 							if(confirm("Do you delete the selected landmark?"))
 							{
-								$.get("plugin_template/landmark_registration_v0.php",
+								$.post("plugin_template/landmark_registration_v0.php",
 								{ mode: 'delete',
 								  execID: $("#execID").val(),
 								  subID: id
@@ -648,11 +648,11 @@ div.imgArea {
 									mode = "insert";
 								}
 								
-								$.get("plugin_template/landmark_registration_v0.php",
+								$.post("plugin_template/landmark_registration_v0.php",
 								{ mode: mode,
 								  execID: $("#execID").val(),
 								  subID: id,
-								  landmarkName: $("#currentEditName").val(),
+								  landmarkName: $("#row"+id+">.landmarkName").html(),
 								  xPos: parseInt($("#currentEditXpos").val()),
 								  yPos: parseInt($("#currentEditYpos").val()),
 								  zPos: parseInt($("#currentEditZpos").val())
@@ -660,7 +660,7 @@ div.imgArea {
 								function(ret){
 								  if(ret.substr(0,10) == 'Success to')
 								  {
-									$("#row"+id+">.landmarkName").html($("#currentEditName").val());
+									//$("#row"+id+">.landmarkName").html($("#currentEditName").val());
 									$("#row"+id+">.landmarkXpos").html($("#currentEditXpos").val());
 									$("#row"+id+">.landmarkYpos").html($("#currentEditYpos").val());
 									$("#row"+id+">.landmarkZpos").html($("#currentEditZpos").val());

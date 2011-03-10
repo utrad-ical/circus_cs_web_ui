@@ -64,17 +64,19 @@
 			$stmt->bindParam(3, $subID);
 			$stmt->execute();
 
-			if($stmt->fetchColumn() == 0)
-			{
-				$sqlStr = 'UPDATE "' . $tableName . '" SET landmark_name=?, short_name=?, location_x=?, location_y=?, location_z=?'
-						. ' WHERE exec_id=? AND sub_id=?';
+			//if($stmt->fetchColumn() == 0)
+			//{
+				$sqlStr = 'UPDATE "' . $tableName . '" SET location_x=?, location_y=?, location_z=?'
+						. ' WHERE exec_id=? AND sub_id=?'
+						. ' AND cand_id=1';
+
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($landmarkName, $shortName, $xPos, $yPos, $zPos, $execID, $subID));
+				$stmt->execute(array($xPos, $yPos, $zPos, $execID, $subID));
 
 				if($stmt->rowCount() == 1)	echo "Success to update row!!";
 				else						echo "Fail to update row!!";
-			}
-			else  echo 'Error: Landmark "' . $landmarkName . '" was already defined!!';
+			//}
+			//else  echo 'Error: Landmark "' . $landmarkName . '" was already defined!!';
 		}
 	}
 	catch (PDOException $e)
