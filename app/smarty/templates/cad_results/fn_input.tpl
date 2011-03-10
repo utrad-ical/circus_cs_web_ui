@@ -151,6 +151,7 @@ function Minus()
 					<input type="hidden" id="userStr"           value="{$params.userStr|escape}" />
 					<input type="hidden" id="feedbackMode"      value="{$params.feedbackMode|escape}" />
 					<input type="hidden" id="userID"            value="{$params.userID}">
+					<input type="hidden" id="groupID"           value="{$smarty.session.groupID}" />
 
 					<input type="hidden" id="grayscaleStr"      value="{$params.grayscaleStr|escape}" />
 					<input type="hidden" id="presetName"        value="{$params.presetName|escape}" />
@@ -191,7 +192,8 @@ function Minus()
 							<tr>
 								<td colspan="3" valign="top">
 									<div id="imgBlock" style="margin:0px;padding:0px;width:{$dispWidth}px;height:{$dispHeight}px;position:relative;">
-										<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2) && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
+										{*<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2) && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />*}
+										<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2)}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
 									</div>
 								</td>
 							</tr>

@@ -302,20 +302,23 @@ function TableOperation()
 	if($("#status").val()==0)			$("#resetBtn").show();
 	else if($("#status").val()==1)		$("#undoBtn").show();
 
-	// 候補分類入力中にメニューバーを押された場合の対策
-	$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
-		function(event){ 
+	// Measures to click button of menu bar during FN input
+	if($("#groupID").val() != 'demo')
+	{
+		$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
+			function(event){
 
-		if(!event.isDefaultPrevented())
-		{
-			event.preventDefault();  // prevent link action
-
-			if(confirm("Do you want to save the changes?"))
+			if(!event.isDefaultPrevented())
 			{
-				ConfirmFNLocation(event.currentTarget.href);
+				event.preventDefault();  // prevent link action
+
+				if(confirm("Do you want to save the changes?"))
+				{
+					ConfirmFNLocation(event.currentTarget.href);
+				}
 			}
-		}
-	});
+		});
+	}
 }
 
 function RefreshTable()
@@ -529,21 +532,23 @@ $(document).ready(function(){
 		if($("#status").val()==0)			$("#resetBtn").show();
 		else if($("#status").val()==1)		$("#undoBtn").show();
 
-		// 候補分類入力中にメニューバーを押された場合の対策
-		$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
-			function(event){ 
+		// Measures to click button of menu bar during FN input
+		if($("#groupID").val() != 'demo')
+		{
+			$("#linkAbout, #menu a, .tabArea a[title!='FN input']").click(
+				function(event){ 
 
-			if(!event.isDefaultPrevented())
-			{
-				event.preventDefault();  // prevent link action
-					
-				if(confirm("Do you want to save the changes?"))
+				if(!event.isDefaultPrevented())
 				{
-					ConfirmFNLocation(event.currentTarget.href);
-				}
-			}
-		});
+					event.preventDefault();  // prevent link action
 
+					if(confirm("Do you want to save the changes?"))
+					{
+						ConfirmFNLocation(event.currentTarget.href);
+					}
+				}
+			});
+		}
 	});
 });
 
