@@ -99,8 +99,8 @@
 			}
 			else
 			{
-				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type, registered_at)'
-				        . ' VALUES (?,?,?,1,?)';
+				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type,'
+						. ' status, registered_at) VALUES (?,?,?,1,2,?)';
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($userID, $cadName, $version, $dstData['registeredAt']));
 

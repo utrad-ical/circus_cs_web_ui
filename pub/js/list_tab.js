@@ -219,23 +219,24 @@ function ShowCADResultFromSeriesList(seriesID, studyInstanceUID, seriesInstanceU
 	location.href = address;
 }
 
-function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
+function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 {
 	// プルダウンメニューで選択されたOptionの値を取得
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
 
-	var flg      = parseInt(tmpStr[2]);
-	var dateTime = tmpStr[3];
+	var cadExecFlg = parseInt(tmpStr[2]);
+	var jobStatus  = parseInt(tmpStr[3]);
+	var dateTime   = tmpStr[4];
 
-	//alert($("#cadMenu"+seriesID).val() + ' ' + flg );
+	alert(cadExecFlg + ' ' + jobStatus );
 
-	if(execCADFlg==1)
+	if(cadExecPermit==1)
 	{
-		if(flg == 0)	$("#execButton"+seriesID).show();
-		else			$("#execButton"+seriesID).hide()
+		if(cadExecFlg == 0)	$("#execButton"+seriesID).show();
+		else	        	$("#execButton"+seriesID).hide()
 	}
 
-	if(flg == 2)
+	if(cadExecFlg == 1)
 	{
 		$("#resultButton" + seriesID).show();
 		$("#cadInfo"+seriesID).html('Executed at ' + dateTime);
@@ -244,13 +245,17 @@ function ChangeCADMenu(source, seriesID, menuID, execCADFlg)
 	{
 		$("#resultButton" + seriesID).hide();
 	
-		if(flg == 1)
+		if(jobStatus > 0)
 		{
 			$("#cadInfo"+seriesID).html('Registered in CAD job list');
 		}
 		else
 		{
-			if(source == 'todaysSeriesList')
+			if(jobStatus == -1)
+			{
+				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Fail to execute</span>');
+			}
+			else if(source == 'todaysSeriesList')
 			{
 				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Not executed</span>');
 			}

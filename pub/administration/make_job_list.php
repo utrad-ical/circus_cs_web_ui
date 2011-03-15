@@ -4,7 +4,7 @@
 	//----------------------------------------------------------------------------------------------
 	$jobList = array();
 
-	$sqlStr  = "SELECT * FROM plugin_job_list ORDER BY registered_at ASC;";
+	$sqlStr  = "SELECT * FROM plugin_job_list WHERE status > 0 ORDER BY registered_at ASC;";
 	$result = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 
 	foreach($result as $item)
@@ -58,7 +58,7 @@
 						   $patientID,
 						   $studyID,
 						   $seriesNumber,
-						   $item['exec_flg']);
+						   $item['status']);
 	}
 	//--------------------------------------------------------------------------------------------------------
 

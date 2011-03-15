@@ -397,7 +397,7 @@
 
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
-			$sqlStr = "SELECT COUNT(*) FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
+			$sqlStr = "SELECT status FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
 					. " WHERE cm.cad_name=? AND cm.version=?"
 					. " AND cm.cad_name=pjob.plugin_name"
 					. " AND cm.version=pjob.version"
@@ -430,7 +430,7 @@
 					$cadColSettings[$cadNum][1] = $resultCADMaster[1];
 					$cadColSettings[$cadNum][2] = ($resultCADMaster[2]=='t') ? 1 : 0;
 					$cadColSettings[$cadNum][3] = 0;					// flg for plug-in execution
-					$cadColSettings[$cadNum][4] = 0;					// queue flg
+					$cadColSettings[$cadNum][4] = 0;					// status of CAD job
 					$cadColSettings[$cadNum][5] = '';
 					$cadColSettings[$cadNum][6] = $resultCADMaster[3];
 
@@ -455,7 +455,7 @@
 					{
 						$cadColSettings[$cadNum][3] = 0;
 						$stmtCADJob->execute($cadCondArr);
-						if($stmtCADJob->fetchColumn() > 0)  $cadColSettings[$cadNum][4] = 1;
+						$cadColSettings[$cadNum][4]  = ($stmtCADJob->rowCount() > 0) ? $stmtCADJob->fetchColumn() : 0;
 					}
 
 					$cadNum++;
