@@ -59,7 +59,7 @@ $(function(){
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		//$stmt = $pdo->prepare("SELECT cad_name, version FROM cad_master ORDER BY exec_flg DESC, cad_name ASC, version ASC");
+		//$stmt = $pdo->prepare("SELECT plugin_name, version FROM cad_master ORDER BY exec_flg DESC, plugin_name ASC, version ASC");
 		//$stmt->execute();
 
 		//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -71,10 +71,10 @@ $(function(){
 
 		//foreach($result as $item)
 		//{
-		//	echo '<option value="' . $item['cad_name'] . '^' . $item['version'] . '"';
-		//	if($item['cad_name'] == $cadName && $item['version'] == $version)  echo ' selected';
+		//	echo '<option value="' . $item['plugin_name'] . '^' . $item['version'] . '"';
+		//	if($item['plugin_name'] == $cadName && $item['version'] == $version)  echo ' selected';
 		//	echo '>';
-		//	echo $item['cad_name'] . ' v.' . $item['version'];
+		//	echo $item['plugin_name'] . ' v.' . $item['version'];
 		//	echo '</option>';
 		//}
 		//echo '</select>';
@@ -92,7 +92,7 @@ $(function(){
 			$condArr = array($cadName, $version);
 
 			// Description, input type
-			$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
+			$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE plugin_name=? AND version=?");
 			$stmt->execute($condArr);
 
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -103,7 +103,7 @@ $(function(){
 
 			// Series info
 			$sqlStr = "SELECT DISTINCT series_id, modality FROM cad_series"
-					. " WHERE cad_name=? AND version=?"
+					. " WHERE plugin_name=? AND version=?"
 					. " ORDER BY series_id ASC;";
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -117,7 +117,7 @@ $(function(){
 				$modality = $result[1];
 
 				$sqlStr = "SELECT series_description, min_slice, max_slice FROM cad_series"
-						. " WHERE cad_name=? AND version=?"
+						. " WHERE plugin_name=? AND version=?"
 						. " AND series_id=? ORDER BY series_description DESC;";
 
 				$stmtDescription = $pdo->prepare($sqlStr);

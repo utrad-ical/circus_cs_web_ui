@@ -155,7 +155,7 @@
 					{
 						if($cnt = 0 || (string)$item->SeriesID[0] == 1)  $mainModality = (string)$item->Modality[0];
 
-						$cadSeriesSqlStr .= "INSERT INTO cad_series (cad_name, version, series_id,"
+						$cadSeriesSqlStr .= "INSERT INTO cad_series (plugin_name, version, series_id,"
 										 .  " series_description, manufacturer, model_name, station_name,"
 										 .  " modality, min_slice, max_slice, isotropic_type, start_img_num,"
 										 .  " end_img_num, export_series_number)"
@@ -204,7 +204,7 @@
 						}
 
 						$sqlStr = "SELECT MAX(cm.label_order) FROM cad_master cm, cad_series cs"
-								. " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version"
+								. " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version"
 								. " AND cm.exec_flg='t' AND cs.series_id=1 AND cs.modality=?";
 						$maxLabelOrder = DBConnector::query($sqlStr, $mainModality, 'SCALAR');
 
@@ -217,7 +217,7 @@
 						$sqlParams[] = $description;
 						$sqlParams[] = $installDate;
 
-						$sqlStr .= "INSERT INTO cad_master (cad_name, version, exec_flg, label_order,"
+						$sqlStr .= "INSERT INTO cad_master (plugin_name, version, exec_flg, label_order,"
 								.  " input_type, result_type, present_type, export_type, time_limit,"
 								.  " default_sort_key, default_sort_order, max_disp_num,"
 								.  " confidence_threshold, yellow_circle_th, double_circle_th,"

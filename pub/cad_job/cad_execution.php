@@ -92,7 +92,7 @@
 
 			$encryptedPatientID   = PinfoScramble::encrypt($params['patientID'] , $_SESSION['key']);
 
-			$stmt = $pdo->prepare("SELECT input_type FROM cad_master WHERE cad_name=? AND version=?");
+			$stmt = $pdo->prepare("SELECT input_type FROM cad_master WHERE plugin_name=? AND version=?");
 			$stmt->execute(array($params['cadName'], $params['version']));
 
 			if($stmt->rowCount() == 1)
@@ -111,7 +111,7 @@
 		{
 			// Set series array
 			$sqlStr = "SELECT DISTINCT series_id, modality FROM cad_series"
-	    			. " WHERE cad_name=? AND version=?"
+	    			. " WHERE plugin_name=? AND version=?"
 					. " ORDER BY series_id ASC;";
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -128,7 +128,7 @@
 				$modalityArr[$j] = $seriesIdRes[1];		// modality
 
 				$sqlStr = "SELECT series_description, min_slice, max_slice FROM cad_series"
-						. " WHERE cad_name=? AND version=? AND series_id=? ORDER BY series_description DESC";
+						. " WHERE plugin_name=? AND version=? AND series_id=? ORDER BY series_description DESC";
 
 				$stmtDesc = $pdo->prepare($sqlStr);
 				$stmtDesc->execute(array($params['cadName'], $params['version'], $seriesIdRes[0]));

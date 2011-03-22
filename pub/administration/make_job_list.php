@@ -28,7 +28,7 @@
 					. " FROM plugin_job_list cl, job_series_list cs, study_list st, series_list sr,"
 					. " cad_master cm WHERE cl.job_id=?"
 					. " AND cl.job_id = cs.job_id"
-					. " AND cm.cad_name = cl.plugin_name"
+					. " AND cm.plugin_name = cl.plugin_name"
 					. " AND cm.version = cl.version"
 					. " AND cs.series_id=1"
 					. " AND sr.study_instance_uid=cs.study_instance_uid"

@@ -80,7 +80,7 @@
 			$registeredAt = date('Y-m-d H:i:s');
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
-			$stmt = $pdo->prepare("SELECT result_type, score_table FROM cad_master WHERE cad_name=? AND version=?");
+			$stmt = $pdo->prepare("SELECT result_type, score_table FROM cad_master WHERE plugin_name=? AND version=?");
 			$stmt->execute(array($params['cadName'], $params['version']));
 
 			$result = $stmt->fetch(PDO::FETCH_NUM);

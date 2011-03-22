@@ -14,7 +14,7 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		$sqlStr = "SELECT pm.plugin_name, pm.version, rm.research_type, rm.target_cad_name, rm.target_version_min,"
+		$sqlStr = "SELECT pm.plugin_name, pm.version, rm.research_type, rm.target_plugin_name, rm.target_version_min,"
 				. " rm.target_version_max, rm.time_limit, rm.result_table FROM plugin_master pm, research_master rm"
 		        . " WHERE pm.plugin_name=rm.plugin_name AND pm.version=rm.version"
 				. " AND pm.type=2 AND pm.exec_flg='t'"
@@ -44,7 +44,7 @@
 			{
 				$sqlStr = "SELECT DISTINCT ep.plugin_name, ep.version"
 						. " FROM executed_plugin_list ep, lesion_feedback lf, cad_master cm"
-	    		        . " WHERE ep.plugin_name=cm.cad_name AND ep.version=cm.version"
+	    		        . " WHERE ep.plugin_name=cm.plugin_name AND ep.version=cm.version"
 						. " AND cm.result_type=1 AND ep.exec_id=lf.exec_id AND lf.consensual_flg='t'"
 						. " ORDER BY ep.plugin_name ASC, ep.version ASC";
 				$stmt = $pdo->prepare($sqlStr);

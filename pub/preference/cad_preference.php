@@ -13,17 +13,17 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		$stmt = $pdo->prepare("SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1");
+		$stmt = $pdo->prepare("SELECT DISTINCT plugin_name FROM cad_master WHERE result_type=1");
 		$stmt->execute();
 
 		$sqlStr = "SELECT DISTINCT version FROM cad_master"
-				. " WHERE cad_name=? AND result_type=1";
+				. " WHERE plugin_name=? AND result_type=1";
 
 		$stmtVersion = $pdo->prepare($sqlStr);
 
 		while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 		{
-			$stmtVersion->bindParam(1, $result['cad_name']);
+			$stmtVersion->bindParam(1, $result['plugin_name']);
 			$stmtVersion->execute();
 
 			$tmpStr = "";
@@ -35,7 +35,7 @@
 				$tmpStr .= $resultVersion['version'];
 			}
 
-			array_push($cadList, array($result['cad_name'], $tmpStr));
+			array_push($cadList, array($result['plugin_name'], $tmpStr));
 		}
 
 		//--------------------------------------------------------------------------------------------------------

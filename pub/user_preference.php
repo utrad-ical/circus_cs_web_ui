@@ -27,10 +27,10 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For CAD preference
 		//--------------------------------------------------------------------------------------------------------------
-		$sqlStr = "SELECT DISTINCT cad_name FROM cad_master WHERE result_type=1";
+		$sqlStr = "SELECT DISTINCT plugin_name FROM cad_master WHERE result_type=1";
 		$cadNameArray = DBConnector::query($sqlStr, null, 'ALL_NUM');
 
-		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE cad_name=? AND result_type=1 ORDER BY version DESC";
+		$sqlStr = "SELECT DISTINCT version FROM cad_master WHERE plugin_name=? AND result_type=1 ORDER BY version DESC";
 		$stmt = $pdo->prepare($sqlStr);
 
 		foreach($cadNameArray as $item)

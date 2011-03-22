@@ -137,7 +137,7 @@
 				$params['dispConfidenceFlg'] = 0;
 				$params['dispCandidateTagFlg']  = 0;
 
-				$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?");
+				$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?");
 				$stmt->execute(array($userID, $params['cadName'], $params['version']));
 
 				$cadPreferenceFlg = ($stmt->rowCount() == 1) ? 1 : 0;
@@ -188,7 +188,7 @@
 				$params['storagePath']       = $result[14];
 				$params['webPath']           = $result[15];
 
-				$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE cad_name=? AND version=?");
+				$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE plugin_name=? AND version=?");
 				$stmt->execute(array($params['cadName'], $params['version']));
 
 				$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -314,7 +314,7 @@
 					$params['dispWidth'] = 256;
 					$params['dispHeight'] = (int)($params['cropHeight'] * (256 / $params['cropWidth']) + 0.5);
 
-					$stmt = $pdo->prepare("SELECT modality FROM cad_series WHERE cad_name=? AND version=? AND series_id=1");
+					$stmt = $pdo->prepare("SELECT modality FROM cad_series WHERE plugin_name=? AND version=? AND series_id=1");
 					$stmt->execute(array($params['cadName'], $params['version']));
 
 					$params['mainModality'] = $stmt->fetchColumn();

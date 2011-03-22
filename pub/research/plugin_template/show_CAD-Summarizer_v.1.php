@@ -82,7 +82,7 @@
 			$cadName = $result[0];
 			$version = $result[1];
 
-			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE cad_name=? AND version=?");
+			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE plugin_name=? AND version=?");
 			$stmt->execute(array($cadName, $version));
 			$resultTableName = $stmt->fetchColumn();
 		}

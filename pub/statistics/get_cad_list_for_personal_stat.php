@@ -8,7 +8,7 @@
 		$pdo = DBConnector::getConnection();
 
 		$sqlStr = "SELECT DISTINCT el.plugin_name FROM executed_plugin_list el, cad_master cm"
-				. " WHERE el.plugin_name=cm.cad_name AND el.version=cm.version AND cm.result_type=1"
+				. " WHERE el.plugin_name=cm.plugin_name AND el.version=cm.version AND cm.result_type=1"
 				. " ORDER BY el.plugin_name ASC";
 
 		$resultCad = DBConnector::query($sqlStr, null, 'ALL_COLUMN');

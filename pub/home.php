@@ -52,7 +52,7 @@
 					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.exec_id=el.exec_id)"
 					. " ON lf.exec_id=es.exec_id AND es.series_id=1) ON sr.series_instance_uid=es.series_instance_uid)"
 					. " ON sr.storage_id=storage.storage_id) ON st.study_instance_uid=es.study_instance_uid)"
-					. " ON pt.patient_id=st.patient_id) ON cm.cad_name=el.plugin_name AND cm.version=el.version"
+					. " ON pt.patient_id=st.patient_id) ON cm.plugin_name=el.plugin_name AND cm.version=el.version"
 					. " WHERE lf.entered_by=? AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
 					. " AND lf.evaluation=2 ORDER BY lf.registered_at DESC LIMIT 3";
 

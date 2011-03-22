@@ -53,7 +53,7 @@
 				$version = substr($executableList[$i], $pos+3, strlen($executableList[$i])-$pos-3);
 
 				$sqlStr .= "UPDATE cad_master SET exec_flg='t', label_order=?"
-				        .  " WHERE cad_name=? AND version=?;";
+				        .  " WHERE plugin_name=? AND version=?;";
 				$sqlParams[] = $order;
 				$sqlParams[] = $cadName;
 				$sqlParams[] = $version;
@@ -68,7 +68,7 @@
 				$version = substr($hiddenList[$i], $pos+3, strlen($hiddenList[$i])-$pos-3);
 
 				$sqlStr .= "UPDATE cad_master SET exec_flg='f', label_order=?"
-				        .  " WHERE cad_name=? AND version=?;";
+				        .  " WHERE plugin_name=? AND version=?;";
 				$sqlParams[] = $order;
 				$sqlParams[] = $cadName;
 				$sqlParams[] = $version;

@@ -82,7 +82,7 @@
 
 		if($mode == 'delete')
 		{
-			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?";
+			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
@@ -98,7 +98,7 @@
 		}
 		if($mode == 'update')	// restore default settings
 		{
-			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND cad_name=? AND version=?";
+			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
@@ -109,7 +109,7 @@
 			$sqlParams[] = $params['dispConfidenceFlg'];
 			$sqlParams[] = $params['dispCandidateTagFlg'];
 
-			$sqlStr = "INSERT INTO cad_preference(user_id, cad_name, version,"
+			$sqlStr = "INSERT INTO cad_preference(user_id, plugin_name, version,"
 					. " default_sort_key, default_sort_order, max_disp_num,"
 					. " confidence_threshold, disp_confidence_flg, disp_candidate_tag_flg)"
 					. " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";

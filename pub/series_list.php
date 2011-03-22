@@ -373,22 +373,22 @@
 			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
 
 			// Search executable or executed CAD software
-			$sqlStr = "SELECT cm.cad_name, cm.version, cm.exec_flg, max(cs.series_description)"
+			$sqlStr = "SELECT cm.plugin_name, cm.version, cm.exec_flg, max(cs.series_description)"
 					. " FROM cad_master cm, cad_series cs"
-					. " WHERE cm.cad_name=cs.cad_name"
+					. " WHERE cm.plugin_name=cs.plugin_name"
 					. " AND cm.version=cs.version"
 					. " AND cs.series_id=1"
 					. " AND cs.modality=?"
 					. " AND ((cs.series_description=?)"
 					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
-					. " GROUP BY cm.cad_name, cm.version, cm.exec_flg, cm.label_order"
+					. " GROUP BY cm.plugin_name, cm.version, cm.exec_flg, cm.label_order"
 					. " ORDER BY cm.label_order ASC";
 
 			$stmtCADMaster = $pdo->prepare($sqlStr);
 
 			$sqlStr = "SELECT executed_at FROM executed_plugin_list el, executed_series_list esr, cad_master cm"
-					. " WHERE cm.cad_name=? AND cm.version=?"
-					. " AND cm.cad_name=el.plugin_name"
+					. " WHERE cm.plugin_name=? AND cm.version=?"
+					. " AND cm.plugin_name=el.plugin_name"
 					. " AND cm.version=el.version"
 					. " AND el.exec_id=esr.exec_id"
 					. " AND esr.series_id=1"
@@ -398,8 +398,8 @@
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
 			$sqlStr = "SELECT status FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
-					. " WHERE cm.cad_name=? AND cm.version=?"
-					. " AND cm.cad_name=pjob.plugin_name"
+					. " WHERE cm.plugin_name=? AND cm.version=?"
+					. " AND cm.plugin_name=pjob.plugin_name"
 					. " AND cm.version=pjob.version"
 					. " AND pjob.job_id = jsr.job_id"
 					. " AND jsr.series_id=1"

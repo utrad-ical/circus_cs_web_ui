@@ -40,7 +40,7 @@
 		$dstData['hiddenList']      = array();
 
 		$sqlStr  = "SELECT * FROM cad_master cm, cad_series cs"
-				 . " WHERE cm.cad_name=cs.cad_name AND cm.version=cs.version AND cs.series_id=1"
+				 . " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version AND cs.series_id=1"
 				 . " AND cs.modality=? ORDER BY cm.label_order ASC";
 
 		$stmt = $pdo->prepare($sqlStr);
@@ -49,7 +49,7 @@
 
 		while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 		{
-			$tmp = $result['cad_name'] . "_v." . $result['version'];
+			$tmp = $result['plugin_name'] . "_v." . $result['version'];
 
 			if($result['exec_flg'] == 't')  $dstData['executableList'][] = $tmp;
 			else                            $dstData['hiddenList'][] =$tmp;

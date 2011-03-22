@@ -52,7 +52,7 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT * FROM cad_master WHERE cad_name=? AND version=?";
+			$sqlStr = "SELECT * FROM cad_master WHERE plugin_name=? AND version=?";
 			$result = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
 
 			$params['defaultSortKey']      = $result['default_sort_key'];
@@ -60,7 +60,7 @@
 			$params['defaultMaxDispNum']   = $result['max_disp_num'];
 			$params['defaultConfidenceTh'] = $result['confidence_threshold'];
 
-			$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE cad_name=? AND version=? AND user_id=?");
+			$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE plugin_name=? AND version=? AND user_id=?");
 			$stmt->execute(array($params['cadName'], $params['version'], $params['userID']));
 
 			if($stmt->rowCount() == 1)
