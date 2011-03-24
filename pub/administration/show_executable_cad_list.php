@@ -40,7 +40,7 @@
 		$dstData['hiddenList']      = array();
 
 		$sqlStr  = "SELECT * FROM cad_master cm, cad_series cs"
-				 . " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version AND cs.series_id=1"
+				 . " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version AND cs.series_id=0"
 				 . " AND cs.modality=? ORDER BY cm.label_order ASC";
 
 		$stmt = $pdo->prepare($sqlStr);

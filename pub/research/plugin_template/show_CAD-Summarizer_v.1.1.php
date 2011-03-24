@@ -103,7 +103,7 @@
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, false_negative_location fn'
 						. ' WHERE el.exec_id=?  AND fn.exec_id=el.exec_id AND fn.location_id=?'
-						. ' AND es.exec_id=el.exec_id AND es.series_id=1'
+						. ' AND es.exec_id=el.exec_id AND es.series_id=0'
 						. ' AND st.study_instance_uid=es.study_instance_uid '
 						. ' AND sr.series_instance_uid=es.series_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
@@ -115,7 +115,7 @@
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, "' . $resultTableName . '" cad'
 						. ' WHERE el.exec_id=?  AND cad.exec_id=el.exec_id AND cad.sub_id=?'
-						. ' AND es.exec_id=el.exec_id AND es.series_id=1'
+						. ' AND es.exec_id=el.exec_id AND es.series_id=0'
 						. ' AND st.study_instance_uid=es.study_instance_uid '
 						. ' AND sr.series_instance_uid=es.series_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';

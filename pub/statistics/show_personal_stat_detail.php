@@ -134,7 +134,7 @@
 					$sqlParams[] = $params['version'];
 				}
 
-				$sqlStr .= " AND es.series_id=1"
+				$sqlStr .= " AND es.series_id=0"
 						.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 				if($params['dateFrom'] != "")
@@ -205,9 +205,9 @@
 					$sqlParamCntFN[]   = $params['version'];
 				}
 
-				$sqlStrCntEval .= " AND es.exec_id=el.exec_id AND es.series_id=1"
+				$sqlStrCntEval .= " AND es.exec_id=el.exec_id AND es.series_id=0"
 				               .  " AND sr.series_instance_uid = es.series_instance_uid";
-				$sqlStrCntFN   .= " AND es.exec_id=el.exec_id AND es.series_id=1"
+				$sqlStrCntFN   .= " AND es.exec_id=el.exec_id AND es.series_id=0"
 				               .  " AND sr.series_instance_uid = es.series_instance_uid";
 
 				if($params['dateFrom'] != "")
@@ -287,7 +287,7 @@
 					}
 
 					$sqlStr .= " AND es.exec_id=el.exec_id"
-							.  " AND es.series_id=1"
+							.  " AND es.series_id=0"
 							.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 					if($params['dateFrom'] != "")
@@ -346,7 +346,7 @@
 						}
 
 						$sqlStr .= " AND es.exec_id=el.exec_id"
-								.  " AND es.series_id=1"
+								.  " AND es.series_id=0"
 								.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 						if($params['dateFrom'] != "")
@@ -462,7 +462,7 @@
 						        . " AND cad.sub_id=lf.lesion_id"
 								. " AND cad.volume_size>=?"
 							    . " AND cad.volume_size<=?"
-						        . " AND es.series_id=1"
+						        . " AND es.series_id=0"
 						        . " AND es.series_instance_uid=sr.series_instance_uid"
 								. " AND el.plugin_name=? AND el.version=?"
 						        . " AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"

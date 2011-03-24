@@ -85,7 +85,7 @@
 				$sqlStr = "SELECT el.plugin_name, el.version, es.study_instance_uid, es.series_instance_uid,"
 						. " el.plugin_type, el.executed_at"
 						. " FROM executed_plugin_list el, executed_series_list es"
-						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=1";
+						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=0";
 
 				$result = DBConnector::query($sqlStr, $params['execID'], 'ARRAY_NUM');
 
@@ -112,7 +112,7 @@
 			{
 				$sqlStr = "SELECT el.exec_id, el.executed_at FROM executed_plugin_list el, executed_series_list es"
 						. " WHERE es.exec_id=el.exec_id AND el.plugin_name=? AND el.version=?"
-						. " AND es.series_id=1 AND es.study_instance_uid=? AND es.series_instance_uid=?";
+						. " AND es.series_id=0 AND es.study_instance_uid=? AND es.series_instance_uid=?";
 				$sqlParams = array($params['cadName'], $params['version'], $params['studyInstanceUID'], $params['seriesInstanceUID']);
 
 				$result = DBConnector::query($sqlStr, $sqlParams, 'ARRAY_NUM');
@@ -314,7 +314,7 @@
 					$params['dispWidth'] = 256;
 					$params['dispHeight'] = (int)($params['cropHeight'] * (256 / $params['cropWidth']) + 0.5);
 
-					$stmt = $pdo->prepare("SELECT modality FROM cad_series WHERE plugin_name=? AND version=? AND series_id=1");
+					$stmt = $pdo->prepare("SELECT modality FROM cad_series WHERE plugin_name=? AND version=? AND series_id=0");
 					$stmt->execute(array($params['cadName'], $params['version']));
 
 					$params['mainModality'] = $stmt->fetchColumn();

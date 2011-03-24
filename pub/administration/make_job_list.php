@@ -30,7 +30,7 @@
 					. " AND cl.job_id = cs.job_id"
 					. " AND cm.plugin_name = cl.plugin_name"
 					. " AND cm.version = cl.version"
-					. " AND cs.series_id=1"
+					. " AND cs.series_id=0"
 					. " AND sr.study_instance_uid=cs.study_instance_uid"
 					. " AND st.study_instance_uid=sr.study_instance_uid"
 					." AND sr.series_instance_uid=cs.series_instance_uid;";

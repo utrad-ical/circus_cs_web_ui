@@ -72,7 +72,7 @@
 				$sqlParams[] = $params['version'];
 			}
 
-			$sqlStr .= " AND es.exec_id=el.exec_id AND fa.exec_id=el.exec_id AND es.series_id=1"
+			$sqlStr .= " AND es.exec_id=el.exec_id AND fa.exec_id=el.exec_id AND es.series_id=0"
 					.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 			if($params['dateFrom'] != "")
@@ -100,7 +100,7 @@
 						. " FROM executed_plugin_list el, executed_series_list es,"
 						. " feedback_action_log fa, study_list st, series_list sr"
 						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id"
-						. " AND fa.exec_id=el.exec_id AND es.series_id=1"
+						. " AND fa.exec_id=el.exec_id AND es.series_id=0"
 						. " AND sr.series_instance_uid = es.series_instance_uid"
 						. " AND st.study_instance_uid = es.study_instance_uid"
 						. " ORDER BY fa.sid ASC";

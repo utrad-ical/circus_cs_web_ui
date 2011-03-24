@@ -216,7 +216,7 @@
 		$sqlCond = " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 			       . " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
 			       . " JOIN (executed_series_list es JOIN executed_plugin_list el"
-			       . " ON (es.exec_id=el.exec_id AND es.series_id=1 AND el.plugin_type=1))"
+			       . " ON (es.exec_id=el.exec_id AND es.series_id=0 AND el.plugin_type=1))"
 			       . " ON (sr.series_instance_uid = es.series_instance_uid)"
 			       . " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupt_flg='f')"
 			       . " LEFT JOIN false_negative_count fn ON (es.exec_id = fn.exec_id AND fn.status>=1)";

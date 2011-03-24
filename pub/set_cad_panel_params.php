@@ -10,7 +10,7 @@
 		$prevCadName = "";
 
 		$sqlStr = "SELECT DISTINCT el.plugin_name, el.version FROM executed_plugin_list el, cad_series cs"
-	            . " WHERE cs.plugin_name=el.plugin_name AND cs.version=el.version AND cs.series_id=1";
+	            . " WHERE cs.plugin_name=el.plugin_name AND cs.version=el.version AND cs.series_id=0";
 
 		if($modalityList[$i] != 'all')  $sqlStr .= " AND cs.modality=?";
 		$sqlStr .= " ORDER BY el.plugin_name ASC, el.version DESC";

@@ -377,7 +377,7 @@
 					. " FROM cad_master cm, cad_series cs"
 					. " WHERE cm.plugin_name=cs.plugin_name"
 					. " AND cm.version=cs.version"
-					. " AND cs.series_id=1"
+					. " AND cs.series_id=0"
 					. " AND cs.modality=?"
 					. " AND ((cs.series_description=?)"
 					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
@@ -391,7 +391,7 @@
 					. " AND cm.plugin_name=el.plugin_name"
 					. " AND cm.version=el.version"
 					. " AND el.exec_id=esr.exec_id"
-					. " AND esr.series_id=1"
+					. " AND esr.series_id=0"
 					. " AND esr.study_instance_uid=?"
 					. " AND esr.series_instance_uid=?";
 
@@ -402,7 +402,7 @@
 					. " AND cm.plugin_name=pjob.plugin_name"
 					. " AND cm.version=pjob.version"
 					. " AND pjob.job_id = jsr.job_id"
-					. " AND jsr.series_id=1"
+					. " AND jsr.series_id=0"
 					. " AND jsr.study_instance_uid=?"
 					. " AND jsr.series_instance_uid=?";
 

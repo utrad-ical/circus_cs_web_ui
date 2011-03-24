@@ -48,7 +48,7 @@
 
 			$sqlStr .= "(js.series_id=? AND js.study_instance_UID=? AND js.series_instance_UID=?)";
 
-			array_push($colArr, $i+1);
+			array_push($colArr, $i);
 			array_push($colArr, $studyUIDArr[$i]);
 			array_push($colArr, $seriesUIDArr[$i]);
 		}
@@ -81,7 +81,7 @@
 
 				$sqlStr .= "(es.series_id=? AND es.study_instance_UID=? AND es.series_instance_UID=?)";
 
-				array_push($colArr, $i+1);
+				array_push($colArr, $i);
 				array_push($colArr, $studyUIDArr[$i]);
 				array_push($colArr, $seriesUIDArr[$i]);
 			}
@@ -120,7 +120,7 @@
 						if($i > 0) $sqlStr .= ",";
 						$sqlStr .= "(?,?,?,?)";
 						array_push($colArr, $jobID);
-						array_push($colArr, $i+1);
+						array_push($colArr, $i);
 						array_push($colArr, $studyUIDArr[$i]);
 						array_push($colArr, $seriesUIDArr[$i]);
 					}

@@ -72,7 +72,7 @@
 					. " sr.series_description, el.plugin_name, el.version, sm.path, sm.apache_alias"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm,"
 					. " executed_plugin_list el, executed_series_list es"
-			        . " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=1"
+			        . " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=0"
 			        . " AND sr.series_instance_uid=es.series_instance_uid"
 			        . " AND st.study_instance_uid=es.study_instance_uid"
 			        . " AND pt.patient_id=st.patient_id"

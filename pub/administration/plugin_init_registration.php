@@ -205,7 +205,7 @@
 
 						$sqlStr = "SELECT MAX(cm.label_order) FROM cad_master cm, cad_series cs"
 								. " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version"
-								. " AND cm.exec_flg='t' AND cs.series_id=1 AND cs.modality=?";
+								. " AND cm.exec_flg='t' AND cs.series_id=0 AND cs.modality=?";
 						$maxLabelOrder = DBConnector::query($sqlStr, $mainModality, 'SCALAR');
 
 						$sqlParams = array();
