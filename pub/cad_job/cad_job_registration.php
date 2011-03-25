@@ -36,6 +36,7 @@
 
 		$sqlStr = "SELECT * FROM plugin_job_list pjob, job_series_list js"
 					. " WHERE pjob.plugin_name=? AND pjob.version=?"
+					. " AND pjob.status > 0"
 					. " AND pjob.job_id=js.job_id"
 					. " AND (";
 

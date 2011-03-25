@@ -397,14 +397,15 @@
 
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
-			$sqlStr = "SELECT status FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
+			$sqlStr = "SELECT pjob.status FROM plugin_job_list pjob, job_series_list jsr, cad_master cm"
 					. " WHERE cm.plugin_name=? AND cm.version=?"
 					. " AND cm.plugin_name=pjob.plugin_name"
 					. " AND cm.version=pjob.version"
 					. " AND pjob.job_id = jsr.job_id"
 					. " AND jsr.series_id=0"
 					. " AND jsr.study_instance_uid=?"
-					. " AND jsr.series_instance_uid=?";
+					. " AND jsr.series_instance_uid=?"
+					. " OREDER BY pjob.job_id DESC";
 
 			$stmtCADJob = $pdo->prepare($sqlStr);
 
