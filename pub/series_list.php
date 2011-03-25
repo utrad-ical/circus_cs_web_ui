@@ -405,7 +405,7 @@
 					. " AND jsr.series_id=0"
 					. " AND jsr.study_instance_uid=?"
 					. " AND jsr.series_instance_uid=?"
-					. " OREDER BY pjob.job_id DESC";
+					. " ORDER BY pjob.job_id DESC";
 
 			$stmtCADJob = $pdo->prepare($sqlStr);
 
