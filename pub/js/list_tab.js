@@ -231,7 +231,7 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 	if(cadExecPermit==1)
 	{
 		if(cadExecFlg == 0)	$("#execButton"+seriesID).show();
-		else	        	$("#execButton"+seriesID).hide()
+		else	        	$("#execButton"+seriesID).hide();
 	}
 
 	if(cadExecFlg == 1)
@@ -246,6 +246,7 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 		if(jobStatus > 0)
 		{
 			$("#cadInfo"+seriesID).html('Registered in CAD job list');
+			$("#execButton"+seriesID).hide();
 		}
 		else
 		{
