@@ -228,8 +228,6 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 	var jobStatus  = parseInt(tmpStr[3]);
 	var dateTime   = tmpStr[4];
 
-	alert(cadExecFlg + ' ' + jobStatus );
-
 	if(cadExecPermit==1)
 	{
 		if(cadExecFlg == 0)	$("#execButton"+seriesID).show();

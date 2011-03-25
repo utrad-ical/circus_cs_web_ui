@@ -5,7 +5,7 @@
 	include("../common.php");
 	include("auto_logout_administration.php");
 
-	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
+	if($_SESSION['serverSettingsFlg']==1)
 	{
 		$params = array('toTopDir' => "../",
 		                'message'  => "&nbsp;");
