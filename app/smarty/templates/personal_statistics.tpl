@@ -246,7 +246,7 @@ $(function() {
 </script>
 {/capture}
 {include file="header.tpl" body_class="personal-statistics"
-	require=$smarty.capture.require extra=$smarty.capture.extra}
+	require=$smarty.capture.require head_extra=$smarty.capture.extra}
 
 <!-- ***** TAB ***** -->
 <div id="researchListTab" class="tabArea">
