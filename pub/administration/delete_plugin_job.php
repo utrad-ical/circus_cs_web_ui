@@ -44,25 +44,25 @@
 			//----------------------------------------------------------------------------------------------------
 			// Delete the selected CAD job (unprocessed)
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr  = "SELECT exec_flg, plugin_type FROM plugin_job_list where job_id=?";
+			$sqlStr  = "SELECT status, plugin_type FROM plugin_job_list where job_id=?";
 			$result = DBConnector::query($sqlStr, $dstData['jobID'], 'ARRAY_NUM');
 
-			$execFlg = $result[0];
+			$status = $result[0];
 			$pluginType = $result[1];
 
-			if(!$execFlg)
+			if(0 <= $status && $status <= 2)
 			{
-				switch($pluginType)
-				{
-					case 1:  $sqlStr = "DELETE FROM job_series_list WHERE job_id=:jobID;";    break;
-					case 2:  $sqlStr = "DELETE FROM job_cad_list WHERE job_id=:jobID;";       break;
-					case 3:  $sqlStr = "DELETE FROM job_research_list WHERE job_id=:jobID;";  break;
-				}
+				//switch($pluginType)
+				//{
+				//	case 1:  $sqlStr = "DELETE FROM job_series_list WHERE job_id=:jobID;";    break;
+				//	case 2:  $sqlStr = "DELETE FROM job_cad_list WHERE job_id=:jobID;";       break;
+				//	case 3:  $sqlStr = "DELETE FROM job_research_list WHERE job_id=:jobID;";  break;
+				//}
 
-				$sqlStr .= "DELETE FROM plugin_job_list WHERE job_id=:jobID;";
+				$sqlStr = "DELETE FROM plugin_job_list WHERE job_id=?;";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(":jobID", $dstData['jobID']);
+				$stmt->bindValue(1, $dstData['jobID']);
 				$stmt->execute();
 
 				if($stmt->errorCode() != '00000')
@@ -97,9 +97,13 @@
 										//.  ' onClick="ShowJobDetail(' . $item[0] . ');" />'
 										//.  '</td>';
 
-				if($item[8] == 't')
+				if($item[8] == 3)
 				{
 					$dstData['jobListHtml'] .= '<td>Processing</td>';
+				}
+				else if($item[8] == 4)
+				{
+					$dstData['jobListHtml'] .= '<td>Under posr-processing</td>';
 				}
 				else if($_SESSION['serverOperationFlg'] == 1 || $_SESSION['serverSettingsFlg'] == 1 || $userID == $item[2])
 				{
