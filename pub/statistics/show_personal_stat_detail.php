@@ -452,7 +452,7 @@
 						$sqlStr = "SELECT el.exec_id, lf.lesion_id, lf.evaluation, sr.series_date, sr.series_time,"
 						        . " ((cast(cad.location_x-ps.crop_org_x as real))/cast(ps.crop_width as real)) AS pos_x,"
 						        . " ((cast(cad.location_y-ps.crop_org_y as real))/cast(ps.crop_height as real)) AS pos_y,"
-						        . " ((cast(cad.location_z-ps.crop_org_z as real))/cast(ps.crop_depth as real)) AS pos_z"
+						        . " ((cast((cad.location_z-ps.slice_offset)-ps.crop_org_z as real))/cast(ps.crop_depth as real)) AS pos_z"
 								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, param_set ps,"
 						        . " " . $resultTableName . " cad, lesion_feedback lf"
 						        . " WHERE el.exec_id=es.exec_id"
