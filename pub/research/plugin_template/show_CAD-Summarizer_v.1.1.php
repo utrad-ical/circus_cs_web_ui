@@ -161,19 +161,19 @@
 			imagedestroy($img);
 
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
-			              .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
-						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=0&sortOrder=t"'
+						  .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
+						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
 						  .  ' title="ID:'. $candList[$k][0];
 			if($n!=3)	$listHtml[$n] .= ', rank:'.$candList[$k][1].' (confidence:'.sprintf("%.3f", $candList[$k][2]).')';
 			$listHtml[$n] .= '">'
-			              .  '<div class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
-			              .  '<img src="../cad_results/images/magenta_cross_enlarge.png"'
+						  .  '<div class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
+						  .  '<img src="../cad_results/images/magenta_cross_enlarge.png"'
 						  .  ' style="position:absolute; left:0px; top:0px; z-index:2;">'
-			              .  '<img src="' . $srcFnameWeb . '" width=' . $width . ' height=' . $height
-			              .  ' style="position:absolute; left:'.(-$posX+50).'px; top:'.(-$posY+50).'px; z-index:1;">'
-			              .  '</div>'
-			              .  '</a>'
-			              .  '</td>';
+						  .  '<img src="' . $srcFnameWeb . '" width=' . $width . ' height=' . $height
+						  .  ' style="position:absolute; left:'.(-$posX+50).'px; top:'.(-$posY+50).'px; z-index:1;">'
+						  .  '</div>'
+						  .  '</a>'
+						  .  '</td>';
 		}
 		$listHtml[$n] .= "</tr></table>";
 	}

@@ -15,13 +15,13 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// For page preference
 		//--------------------------------------------------------------------------------------------------------------
-		$sqlStr = "SELECT today_disp, darkroom_flg, anonymize_flg, latest_results FROM users WHERE user_id=?";
+		$sqlStr = "SELECT today_disp, darkroom, anonymized, show_missed FROM users WHERE user_id=?";
 		$result = DBConnector::query($sqlStr, $userID, 'ARRAY_NUM');
 
-		$oldTodayDisp = $result[0];
-		$oldDarkroomFlg = ($result[1]==true) ? "t" : "f";
-		$oldAnonymizeFlg = ($result[2]==true || $_SESSION['anonymizeGroupFlg'] == 1) ? "t" : "f";
-		$oldLatestResults = $result[3];
+		$oldTodayDisp  = $result[0];
+		$oldDarkroom   = ($result[1]==true) ? "t" : "f";
+		$oldAnonymized = ($result[2]==true || $_SESSION['anonymizeGroupFlg'] == 1) ? "t" : "f";
+		$oldShowMissed = $result[3];
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -61,14 +61,16 @@
 
 		$smarty->assign('userID',    $userID);
 
-		$smarty->assign('oldTodayDisp',     $oldTodayDisp);
-		$smarty->assign('oldDarkroomFlg',   $oldDarkroomFlg);
-		$smarty->assign('oldAnonymizeFlg',  $oldAnonymizeFlg);
-		$smarty->assign('oldLatestResults', $oldLatestResults);
+		$smarty->assign('oldTodayDisp',  $oldTodayDisp);
+		$smarty->assign('oldDarkroom',   $oldDarkroom);
+		$smarty->assign('oldAnonymized', $oldAnonymized);
+		$smarty->assign('oldShowMissed', $oldShowMissed);
 
 		$smarty->assign('cadList',   $cadList);
 		$smarty->assign('verDetail', explode('^', $cadList[0][1]));
-		$smarty->assign('sortStr',   array("Confidence", "Img. No.", "Volume"));
+		$smarty->assign('sortArr',   array(array("confidence", "Confidence"),
+		                                   array("location_z", "Img. No."),
+		                                   array("volume_size", "Volume")));
 		$smarty->assign('ticket',    $_SESSION['ticket']);
 
 		$smarty->display('user_preference.tpl');

@@ -514,12 +514,12 @@ $(function() {
 							<input id="sortBtn" type="button" value="Sort" class="s-btn w50 form-btn" onclick="ChangeCondition('changeSort','{$params.feedbackMode}');" />
 							by
 							<select id="sortKey" name="sortKey">
-								<option value="0" {if $params.sortKey==0}selected="selected"{/if}>Confidence</option>
-								<option value="1" {if $params.sortKey==1}selected="selected"{/if}>Img. No.</option>
-								<option value="2" {if $params.sortKey==2}selected="selected"{/if}>Volume</option>
+								<option value="confidence"  {if $params.sortKey=='confidence'}selected="selected"{/if}>Confidence</option>
+								<option value="location_z"  {if $params.sortKey=='location_z'}selected="selected"{/if}>Img. No.</option>
+								<option value="volume_size" {if $params.sortKey=='volume_size'}selected="selected"{/if}>Volume</option>
 							</select>
-							<input name="sortOrder" type="radio" value="f" {if $params.sortOrder=='f'}checked="checked"{/if} />Asc.
-							<input name="sortOrder" type="radio" value="t" {if $params.sortOrder=='t'}checked="checked"{/if} />Desc.
+							<input name="sortOrder" type="radio" value="ASC"  {if $params.sortOrder=='ASC'}checked="checked"{/if} />Asc.
+							<input name="sortOrder" type="radio" value="DESC" {if $params.sortOrder=='DESC'}checked="checked"{/if} />Desc.
 							</div>
 					</div>
 

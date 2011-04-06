@@ -67,9 +67,9 @@
 
 				if($stmt->errorCode() != '00000')
 				{
-					$dsaData['message'] .= '[ERROR] Fail to delete plug-in job (jobID:' . $dstData['jobID'];
+					$dstData['message'] .= '[ERROR] Fail to delete plug-in job (jobID:' . $dstData['jobID'];
 					//$errorMessage = $stmt->errorInfo();
-					//$dsaData['message'] .= $errorMessage[2] . '<br/>';
+					//$dstData['message'] .= $errorMessage[2] . '<br/>';
 				}
 			}
 

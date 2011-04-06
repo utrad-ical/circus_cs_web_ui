@@ -149,7 +149,7 @@
 					$sqlParams[] = $params['dateTo'];
 				}
 
-				$sqlStr .= " AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
+				$sqlStr .= " AND lf.is_consensual='f' AND lf.interrupted='f'"
 						.  "ORDER BY lf.entered_by ASC";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -241,11 +241,11 @@
 				}
 
 				$sqlStrCntEval .= " AND lf.entered_by=?"
-					           .  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'";
+					           .  " AND lf.is_consensual ='f' AND lf.interrupted='f'";
 
 				$sqlStrCntFN .= " AND fn.exec_id=el.exec_id"
 					           .  " AND fn.entered_by=?"
-				               .  " AND fn.consensual_flg ='f'"
+				               .  " AND fn.is_consensual ='f'"
 				               .  " AND fn.status>=1";
 
 				$sqlParamCntEval[] = $userList[$k];
@@ -314,7 +314,7 @@
 					}
 
 					$sqlStr .= " AND lf.entered_by=?"
-					        .  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'"
+					        .  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
 					        .  " GROUP BY lf.evaluation;";
 					$sqlParams[] = $userList[$k];
 
@@ -372,7 +372,7 @@
 						}
 
 						$sqlStr .= " AND lf.entered_by=?"
-						        .  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'"
+						        .  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
 						        .  " AND lf.evaluation=2";
 						$sqlParams[] = $userList[$k];
 
@@ -386,7 +386,7 @@
 						{
 							$sqlStr = "SELECT evaluation FROM lesion_feedback"
 									. " WHERE exec_id=? AND lesion_id=?"
-									. " AND consensual_flg='t' AND interrupt_flg='f';";
+									. " AND is_consensual='t' AND interrupted='f';";
 
 							$stmtEvalDetail = $pdo->prepare($sqlStr);
 							$stmtEvalDetail->execute(array($execID, $result[0]));
@@ -465,7 +465,7 @@
 						        . " AND es.series_id=0"
 						        . " AND es.series_instance_uid=sr.series_instance_uid"
 								. " AND el.plugin_name=? AND el.version=?"
-						        . " AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
+						        . " AND lf.is_consensual='f' AND lf.interrupted='f'"
 						        . " AND lf.entered_by=?";
 
 						if($params['dateFrom'] != "")

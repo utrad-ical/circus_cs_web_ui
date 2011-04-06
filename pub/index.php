@@ -57,9 +57,9 @@
 					$_SESSION['nowIPAddr']     = getenv("REMOTE_ADDR");
 					$_SESSION['groupID']       = $result['group_id'];
 					$_SESSION['todayDisp']     = $result['today_disp'];
-					$_SESSION['darkroomFlg']   = ($result['darkroom_flg'] == 't') ? 1 : 0;
-					$_SESSION['anonymizeFlg']  = ($result['anonymize_flg'] == 't') ? 1 : 0;
-					$_SESSION['latestResults'] = $result['latest_results'];
+					$_SESSION['darkroomFlg']   = ($result['darkroom'] == 't') ? 1 : 0;
+					$_SESSION['anonymizeFlg']  = ($result['anonymized'] == 't') ? 1 : 0;
+					$_SESSION['showMissed']    = $result['show_missed'];
 
 					$stmt = $pdo->prepare("UPDATE users SET last_login_dt=?, ip_address=? WHERE user_id=?");
 					$stmt->execute(array($loginDateTime, $_SESSION['nowIPAddr'], $_SESSION['userID']));
@@ -81,6 +81,7 @@
 					$_SESSION['dataDeleteFlg']       = ($result['data_delete'] == 't') ? 1 : 0;
 					$_SESSION['serverOperationFlg']  = ($result['server_operation'] == 't') ? 1 : 0;
 					$_SESSION['serverSettingsFlg']   = ($result['server_settings'] == 't') ? 1 : 0;
+					$_SESSION['anonymizeGroupFlg']   = ($result['anonymized'] == 't') ? 1 : 0;
 
 					if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
 

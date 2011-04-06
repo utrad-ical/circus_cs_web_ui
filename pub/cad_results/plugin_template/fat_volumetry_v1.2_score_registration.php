@@ -26,7 +26,7 @@
 		$pdo = DBConnector::getConnection();
 
 		$sqlStr = 'SELECT * FROM "fat_volumetry_v1.2_score"'
-				. "WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
+				. "WHERE exec_id=? AND is_consensual='f' AND entered_by=?";
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute(array($execID, $userID));
@@ -40,7 +40,7 @@
 					. ' pelvic_vat=?, pelvic_sat=?, pelvic_bound=?,'
 					. ' other_vat=?, other_sat=?, other_bound=?,'
 					. ' eval_comment=?, registered_at=?'
-					. " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
+					. " WHERE exec_id=? AND is_consensual='f' AND entered_by=?";
 
 			$stmt = $pdo->prepare($sqlStr);
 

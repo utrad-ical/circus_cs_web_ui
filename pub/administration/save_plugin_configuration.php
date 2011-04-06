@@ -35,76 +35,90 @@
 					 'message'  => $params['message']);
 	//-----------------------------------------------------------------------------------------------------------------
 
-	try
+	if($params['message'] == "&nbsp;")
 	{
-		if($params['message'] == "&nbsp;")
+		// Connect to SQL Server
+		try
 		{
-			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
-
-			$sqlStr    = "";
-			$sqlParams = array();
-			$order = 1;
-
-			for($i=0; $i < count($executableList); $i++)
-			{
-				$pos = strpos($executableList[$i], "_v.");
-				$cadName = substr($executableList[$i], 0, $pos);
-				$version = substr($executableList[$i], $pos+3, strlen($executableList[$i])-$pos-3);
-
-				$sqlStr .= "UPDATE cad_master SET exec_flg='t', label_order=?"
-				        .  " WHERE plugin_name=? AND version=?;";
-				$sqlParams[] = $order;
-				$sqlParams[] = $cadName;
-				$sqlParams[] = $version;
-
-				$order++;
-			}
-
-			for($i=0; $i < count($hiddenList); $i++)
-			{
-				$pos = strpos($hiddenList[$i], "_v.");
-				$cadName = substr($hiddenList[$i], 0, $pos);
-				$version = substr($hiddenList[$i], $pos+3, strlen($hiddenList[$i])-$pos-3);
-
-				$sqlStr .= "UPDATE cad_master SET exec_flg='f', label_order=?"
-				        .  " WHERE plugin_name=? AND version=?;";
-				$sqlParams[] = $order;
-				$sqlParams[] = $cadName;
-				$sqlParams[] = $version;
-
-				$order++;
-			}
-
-			if($order>1)
-			{
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParams);
-
-				if($stmt->errorCode() == '00000')
-				{
-					$dstData['message'] = '<span style="color:blue;">Setting was successfully saved.</span>';
-				}
-				else
-				{
-					$dstData['message'] = '<span style="red;">Fail to save settings.</span>';
-					//$errorMessage = $stmt->errorInfo();
-					//$dstData['message'] .= $errorMessage[2] . '<br/>';
-					$dstData['errorFlg'] = 1;
-				}
-			}
 		}
-		else
+		catch (PDOException $e)
 		{
+			$dstData['message']  = '<span style="red;">' . $e->getMessage() . '</span>';
 			$dstData['errorFlg'] = 1;
 		}
 
-		echo json_encode($dstData);
+		if($dstData['errorFlg'] == 0)
+		{
 
+			// 
+			try
+			{
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				// begin transaction
+				$pdo->beginTransaction();
+
+				$sqlParams = array();
+				$order = 1;
+
+				for($i=0; $i < count($executableList); $i++)
+				{
+					$pos = strpos($executableList[$i], "_v.");
+					$cadName = substr($executableList[$i], 0, $pos);
+					$version = substr($executableList[$i], $pos+3, strlen($executableList[$i])-$pos-3);
+
+					$sqlStr = "UPDATE plugin_master SET exec_enabled='t'"
+							. " WHERE plugin_name=:cadName AND version=:version;"
+							. "UPDATE cad_master SET label_order=:order"
+							. " WHERE plugin_name=:cadName AND version=:version;";
+
+					$sqlParams['cadName'] = $cadName;
+					$sqlParams['version'] = $version;
+					$sqlParams['order']   = $order;
+
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+
+					$order++;
+				}
+
+				for($i=0; $i < count($hiddenList); $i++)
+				{
+					$pos = strpos($hiddenList[$i], "_v.");
+					$cadName = substr($hiddenList[$i], 0, $pos);
+					$version = substr($hiddenList[$i], $pos+3, strlen($hiddenList[$i])-$pos-3);
+
+					$sqlStr = "UPDATE plugin_master SET exec_enabled='f'"
+							. " WHERE plugin_name=:cadName AND version=:version;"
+							. "UPDATE cad_master SET label_order=:order"
+							. " WHERE plugin_name=:cadName AND version=:version;";
+
+					$sqlParams['cadName'] = $cadName;
+					$sqlParams['version'] = $version;
+					$sqlParams['order']   = $order;
+
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+
+					$order++;
+				}
+
+				$pdo->commit();
+				$dstData['message'] = '<span style="color:blue;">Setting was successfully saved.</span>';
+			}
+			catch (PDOException $e)
+			{
+				$pdo->rollBack();
+				//$dstData['message']  = '<span style="red;">' . $e->getMessage() . '</span>';
+				$dstData['message'] = '<span style="red;">Fail to save settings.</span>';
+				$dstData['errorFlg'] = 1;
+			}
+		}
 	}
-	catch (PDOException $e)
+	else
 	{
-		var_dump($e->getMessage());
+		$dstData['errorFlg'] = 1;
 	}
 
+	echo json_encode($dstData);
 ?>

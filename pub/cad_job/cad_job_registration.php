@@ -114,16 +114,48 @@
 					$jobID = $stmt->fetchColumn();
 
 					$colArr = array();
-					$sqlStr = "INSERT INTO job_series_list (job_id, series_id, study_instance_uid, series_instance_uid) VALUES ";
+					$sqlStr = "INSERT INTO job_series_list (job_id, series_id, study_instance_uid, series_instance_uid,"
+							. "start_img_num, end_img_num, dump_type, required_private_tags) VALUES ";
 
 					for($i=0; $i<$seriesNum; $i++)
 					{
+						//----------------------------------------------------------------------------------------------
+						// Get start_img_num, end_img_num, required_private_tags
+						//----------------------------------------------------------------------------------------------
+						$seriesSqlStr = "SELECT cs.start_img_num, cs.end_img_num, cs.dump_type, cs.required_private_tags"
+									  . " FROM cad_series cs, series_list sr"
+									  . " WHERE cs.plugin_name=? AND cs.version=? AND cs.series_id=?"
+									  . " AND sr.series_instance_uid=?"
+									  . " AND cs.series_description=sr.series_description";
+
+						$stmtSeries = $pdo->prepare($seriesSqlStr);
+						$stmtSeries->execute(array($cadName, $version, $i, $seriesUIDArr[$i]));
+
+						if($stmtSeries->rowCount() != 1)
+						{
+							$seriesSqlStr = "SELECT cs.start_img_num, cs.end_img_num, cs.dump_type,"
+										  . " cs.required_private_tags FROM cad_series cs, series_list sr"
+										  . " WHERE cs.plugin_name=? AND cs.version=? AND cs.series_id=?"
+										  . " AND sr.series_instance_uid='(default)'"
+										  . " AND cs.series_description=sr.series_description";
+
+							$stmtSeries = $pdo->preapre($seriesSqlStr);
+							$stmtSeries->execute(array($cadName, $version, $i, $seriesUIDArr[$i]));
+						}
+
+						$seriesRes = $stmtSeries->fetch(PDO::FETCH_NUM);
+						//----------------------------------------------------------------------------------------------
+
 						if($i > 0) $sqlStr .= ",";
-						$sqlStr .= "(?,?,?,?)";
+						$sqlStr .= "(?,?,?,?,?,?,?,?)";
 						array_push($colArr, $jobID);
 						array_push($colArr, $i);
 						array_push($colArr, $studyUIDArr[$i]);
 						array_push($colArr, $seriesUIDArr[$i]);
+						array_push($colArr, $seriesRes[0]);
+						array_push($colArr, $seriesRes[1]);
+						array_push($colArr, $seriesRes[2]);
+						array_push($colArr, $seriesRes[3]);
 					}
 
 					$stmt = $pdo->prepare($sqlStr);
@@ -131,7 +163,9 @@
 
 					if($stmt->rowCount() != $seriesNum)
 					{
-						$dstData['message'] = '<b>Fail to register in CAD job list!!</b>';
+						$tmp = $stmt->errorInfo();
+						$dstData['message'] = $tmp[2];
+						//$dstData['message'] = '<b>Fail to register in CAD job list!!</b>';
 						$dstData['registeredAt'] = "";
 
 						$sqlStr = "DELETE FROM job_series_list WHERE job_id=?; DELETE FROM plugin_job_list WHERE job_id=?;";

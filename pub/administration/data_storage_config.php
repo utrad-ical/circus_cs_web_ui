@@ -49,11 +49,11 @@
 				}
 				else
 				{
-					// Set current flg
+					// Set current_use
 					$stmt = $pdo->prepare("SELECT COUNT(*) FROM storage_master WHERE type=?");
 					$stmt->bindParam(1, $newType);
 					$stmt->execute();
-					$currentFlg = ($stmt->fetchColumn() == 0) ? 't' : 'f';
+					$currentUse = ($stmt->fetchColumn() == 0) ? 't' : 'f';
 
 					// Get new storage ID
 					$stmt = $pdo->prepare("SELECT nextval('storage_master_storage_id_seq')");
@@ -63,12 +63,12 @@
 
 					//echo $newStorageID;
 
-					$sqlStr = "INSERT INTO storage_master(storage_id, path, apache_alias, current_flg, type)"
+					$sqlStr = "INSERT INTO storage_master(storage_id, path, apache_alias, current_use, type)"
 							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?, ?)";
 
 					$sqlParams[] = $newPath;
 					$sqlParams[] = $newAlias;
-					$sqlParams[] = $currentFlg;
+					$sqlParams[] = $currentUse;
 					$sqlParams[] = $newType;
 				}
 			}
@@ -76,16 +76,16 @@
 			{
 				if($oldDicomID != 0 && $newDicomID != 0 && $oldDicomID != $newDicomID)
 				{
-					$sqlStr = "UPDATE storage_master SET current_flg='f' WHERE storage_id=?;"
-					        . "UPDATE storage_master SET current_flg='t' WHERE storage_id=?;";
+					$sqlStr = "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
+					        . "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
 					$sqlParams[] = $oldDicomID;
 					$sqlParams[] = $newDicomID;
 				}
 
 				if($oldResearchID != 0 && $newResearchID != 0 && $oldResearchID != $newResearchID)
 				{
-					$sqlStr .= "UPDATE storage_master SET current_flg='f' WHERE storage_id=?;"
-					        .  "UPDATE storage_master SET current_flg='t' WHERE storage_id=?;";
+					$sqlStr .= "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
+					        .  "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
 					$sqlParams[] = $oldResearchID;
 					$sqlParams[] = $newResearchID;
 				}
@@ -206,7 +206,7 @@
 
 						$alias = "/CIRCUS-CS/store" . $newStorageID . "/";
 
-						for($i=0; $i<count($srcData); $i++)
+						for($i = 0; $i < count($srcData); $i++)
 						{
 							if(substr_count($srcData[$i], $alias)>=1)
 							{
@@ -240,7 +240,7 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve storage list
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT storage_id, path, apache_alias, type, current_flg"
+			$sqlStr = "SELECT storage_id, path, apache_alias, type, current_use"
 					. " FROM storage_master ORDER BY storage_id ASC;";
 
 			$stmt = $pdo->prepare($sqlStr);

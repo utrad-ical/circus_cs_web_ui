@@ -33,16 +33,14 @@
 
 	$params['userID'] = $_SESSION['userID'];
 	$params['preferenceFlg'] = 0;
-	$params['sortKey']             = "";
-	$params['sortOrder']           = "";
-	$params['maxDispNum']          = "";
-	$params['confidenceTh']        = "";
-	$params['defaultSortKey']      = "";
-	$params['defaultSortOrder']    = "";
-	$params['defaultMaxDispNum']   = "";
-	$params['defaultConfidenceTh'] = "";
-	$params['dispConfidence']      = "f";
-	$params['dispCandidateTag']    = "f";
+	$params['sortKey']          = array("", "");
+	$params['sortOrder']        = array("", "");
+	$params['maxDispNum']       = array("", "");
+	$params['confidenceTh']     = array("", "");
+	$params['yellowCircleTh']   = array("", "");
+	$params['doubleCircleTh']   = array("", "");
+	$params['dispConfidence']   = array("", "");
+	$params['dispCandidateTag'] = array("", "");
 	//--------------------------------------------------------------------------------------------------------
 
 	try
@@ -52,37 +50,26 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT * FROM cad_master WHERE plugin_name=? AND version=?";
-			$result = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'ARRAY_ASSOC');
 
-			$params['defaultSortKey']      = $result['default_sort_key'];
-			$params['defaultSortOrder']    = ($result['default_sort_order']) ? "t" : "f";
-			$params['defaultMaxDispNum']   = $result['max_disp_num'];
-			$params['defaultConfidenceTh'] = $result['confidence_threshold'];
+			$sqlStr = "SELECT key, value FROM plugin_user_preference WHERE plugin_name=? AND version=? AND user_id=?";
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute(array($params['cadName'], $params['version'], $DEFAOULT_CAD_PREF_USER));
 
-			$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE plugin_name=? AND version=? AND user_id=?");
+			while($result = $stmt->fetch(PDO::FETCH_NUM))
+			{
+				$params[$result[0]][0] = $params[$result[0]][1] = $result[1];
+			}
+
 			$stmt->execute(array($params['cadName'], $params['version'], $params['userID']));
 
-			if($stmt->rowCount() == 1)
+			if($stmt->rowCount() > 0)
 			{
 				$params['preferenceFlg'] = 1;
 
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-				$params['sortKey']          = $result['default_sort_key'];
-				$params['sortOrder']        = ($result['default_sort_order']) ? "t" : "f";
-				$params['maxDispNum']       = ($result['max_disp_num']==0) ? "all" : $result['max_disp_num'];
-				$params['confidenceTh']     = $result['confidence_threshold'];
-				$params['dispConfidence']   = ($result['disp_confidence_flg']) ? "t" : "f";
-				$params['dispCandidateTag'] = ($result['disp_candidate_tag_flg']) ? "t" : "f";
-			}
-			else
-			{
-				$params['preferenceFlg'] = 0;
-				$params['message']      = 'Default settings.';
-				$params['sortKey']      = $params['defaultSortKey'];
-				$params['sortOrder']    = $params['defaultSortOrder'];
-				$params['maxDispNum']   = $params['defaultMaxDispNum'];
-				$params['confidenceTh'] = $params['defaultConfidenceTh'];
+				while($result = $stmt->fetch(PDO::FETCH_NUM))
+				{
+					$params[$result[0]][1] = $result[1];
+				}
 			}
 		}
 		echo json_encode($params);

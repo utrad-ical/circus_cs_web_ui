@@ -67,7 +67,7 @@ function GroupSetting(mode, ticket)
 		        + '&newResearchShow='     + $("input[name='newResearchShow']:checked").val()
 		        + '&newResearchExec='     + $("input[name='newResearchExec']:checked").val()
 		        + '&newVolumeDL='         + $("input[name='newVolumeDL']:checked").val()
-		        + '&newAnonymizeFlg='     + $("input[name='newAnonymizeFlg']:checked").val()
+		        + '&newAnonymized='       + $("input[name='newAnonymized']:checked").val()
 		        + '&newDataDelete='       + $("input[name='newDataDelete']:checked").val()
 		        + '&newServerOperation='  + $("input[name='newServerOperation']:checked").val()
 		        + '&newServerSettings='   + $("input[name='newServerSettings']:checked").val()
@@ -78,7 +78,7 @@ function GroupSetting(mode, ticket)
 }
 
 function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modifyConsensual, 
-                    allStatistics, researchShow, researchExec, volumeDL, anonymizeFlg, dataDelete,
+                    allStatistics, researchShow, researchExec, volumeDL, anonymized, dataDelete,
                     serverOperation, serverSettings)
 {
 	$("#oldGroupID").val(groupID);
@@ -91,7 +91,7 @@ function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modify
 	$("#oldResearchShow").val(researchShow);
 	$("#oldResearchExec").val(researchExec);
 	$("#oldVolumeDL").val(volumeDL);
-	$("#oldAnonymizeFlg").val(anonymizeFlg);
+	$("#oldAnonymized").val(anonymized);
 	$("#oldDataDelete").val(dataDelete);
 	$("#oldServerOperation").val(serverOperation);
 	$("#oldServerSettings").val(serverSettings);
@@ -109,7 +109,7 @@ function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modify
 	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == researchShow) }).attr("checked", true);
 	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == researchExec) }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == volumeDL) }).attr("checked", true);
-	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == anonymizeFlg) }).attr("checked", true);
+	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == anonymized) }).attr("checked", true);
 	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == dataDelete) }).attr("checked", true);
 	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == serverOperation) }).attr("checked", true);
 	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == serverSettings) }).attr("checked", true);
@@ -134,7 +134,7 @@ function CancelUpdate()
 	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
 	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
@@ -179,7 +179,7 @@ function CancelUpdate()
 				<input type="hidden" id="oldResearchShow"     value="" />
 				<input type="hidden" id="oldResearchExec"     value="" />
 				<input type="hidden" id="oldVolumeDL"         value="" />
-				<input type="hidden" id="oldAnonymizeFlg"     value="" />
+				<input type="hidden" id="oldAnonymized"       value="" />
 				<input type="hidden" id="oldDataDelete"       value="" />
 				<input type="hidden" id="oldServerOperation"  value="" />
 				<input type="hidden" id="oldServerSettings"   value="" />
@@ -331,8 +331,8 @@ function CancelUpdate()
 						<tr>
 							<th><span class="trim01">Anonymization</span></th>
 							<td>
-								<input name="newAnonymizeFlg" type="radio" value="t" />TRUE
-								<input name="newAnonymizeFlg" type="radio" value="f" checked="checked" />FALSE
+								<input name="newAnonymized" type="radio" value="t" />TRUE
+								<input name="newAnonymized" type="radio" value="f" checked="checked" />FALSE
 							</td>
 						</tr>
 

@@ -137,26 +137,6 @@
 				$params['dispConfidenceFlg'] = 0;
 				$params['dispCandidateTagFlg']  = 0;
 
-				$stmt = $pdo->prepare("SELECT * FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?");
-				$stmt->execute(array($userID, $params['cadName'], $params['version']));
-
-				$cadPreferenceFlg = ($stmt->rowCount() == 1) ? 1 : 0;
-
-				if($cadPreferenceFlg == 1)
-				{
-					$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-					$params['maxDispNum']   = $result['max_disp_num'];
-					$params['confidenceTh'] = $result['confidence_threshold'];
-					$params['sortKey']      = (isset($_REQUEST['sortKey'])) ? $_REQUEST['sortKey'] : $result['default_sort_key'];
-
-					if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
-					else                               $params['sortOrder'] = ($result['default_sort_order']) ? 't' : 'f';
-
-					$params['dispConfidenceFlg'] = ($result['disp_confidence_flg']) ? 1 : 0;
-					$params['dispCandidateTagFlg']  = ($result['disp_candidate_tag_flg']) ? 1 : 0;
-				}
-
 				$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.age, st.study_id, st.study_date,"
 						. " sr.series_number, sr.series_date, sr.series_time, sr.modality, sr.series_description,"
 						. " sr.body_part, sr.image_width, sr.image_height, sm.path, sm.apache_alias"
@@ -188,29 +168,43 @@
 				$params['storagePath']       = $result[14];
 				$params['webPath']           = $result[15];
 
+				// Retrieve parameters for the plug-in
 				$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE plugin_name=? AND version=?");
 				$stmt->execute(array($params['cadName'], $params['version']));
 
 				$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				$params['resultType']  = $result['result_type'];
-				$params['presentType'] = $result['present_type'];
-
 				$params['resultTableName'] = $result['result_table'];
 				$params['scoreTableName']  = $result['score_table'];
 
-				$params['yellowCircleTh'] = $result['yellow_circle_th'];
-				$params['doubleCircleTh'] = $result['double_circle_th'];
+				//------------------------------------------------------------------------------------------------------
+				// Retrieve paramters from plugin_user_preference table
+				//------------------------------------------------------------------------------------------------------
+				$sqlStr = "SELECT key, value FROM plugin_user_preference"
+						. " WHERE plugin_name=? AND version=? AND user_id=?";
+				$sqlParams = array($params['cadName'], $params['version'], $userID);
 
-				if($cadPreferenceFlg == 0)
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute($sqlParams);
+
+				if($stmt->rowCount() == 0)
 				{
-					$params['maxDispNum']   = $result['max_disp_num'];
-					$params['confidenceTh'] = $result['confidence_threshold'];
-					$params['sortKey']      = (isset($_REQUEST['sortKey'])) ? $_REQUEST['sortKey'] : $result['default_sort_key'];
-
-					if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
-					else                               $params['sortOrder'] = ($result['default_sort_order']) ? 't' : 'f'; // 't' : DESC
+					$sqlParams[2] = $DEFAOULT_CAD_PREF_USER;
+					$stmt->execute($sqlParams);
 				}
+
+				while($result = $stmt->fetch(PDO::FETCH_NUM))
+				{
+					$params[$result[0]] = $result[1];
+				}
+
+				if($params['resultType'] == 1)
+				{
+					if(isset($_REQUEST['sortKey']))    $params['sortKey'] = $_REQUEST['sortKey'];
+					if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
+				}
+				//------------------------------------------------------------------------------------------------------
 
 				$params['seriesDir'] = $params['storagePath'] . $DIR_SEPARATOR . $params['patientID']
 									 . $DIR_SEPARATOR . $params['studyInstanceUID']
@@ -234,9 +228,9 @@
 				}
 				//------------------------------------------------------------------------------------------------------
 
-				//--------------------------------------------------------------------------------------------------------------
+				//------------------------------------------------------------------------------------------------------
 				// Retrieve feedback data
-				//--------------------------------------------------------------------------------------------------------------
+				//------------------------------------------------------------------------------------------------------
 				$registMsg = "";
 				$params['registTime'] = "";
 				$enteredBy = "";
@@ -254,10 +248,10 @@
 					}
 
 					$sqlStr = 'SELECT * FROM "' . $params['tableName'] . '" WHERE exec_id=?';
-					if($params['feedbackMode'] == "personal")  $sqlStr .= " AND consensual_flg='f' AND entered_by=?";
-					else                                       $sqlStr .= " AND consensual_flg='t'";
+					if($params['feedbackMode'] == "personal")  $sqlStr .= " AND is_consensual='f' AND entered_by=?";
+					else                                       $sqlStr .= " AND is_consensual='t'";
 
-					$sqlStr .= " AND interrupt_flg='f'";
+					$sqlStr .= " AND interrupted='f'";
 
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindparam(1, $params['execID']);

@@ -23,26 +23,26 @@ function ChangePassword()
 function ChangePagePreference()
 {
 	$.post("./preference/change_page_preference.php",
-           {oldTodayDisp:     $("#oldTodayDisp").val(),
-            newTodayDisp:     $('input[name="newTodayDisp"]:checked').val(),
-            oldDarkroomFlg:   $("#oldDarkroomFlg").val(),
-            newDarkroomFlg:   $('input[name="newDarkroomFlg"]:checked').val(),
-            oldAnonymizeFlg:  $("#oldAnonymizeFlg").val(),
-            newAnonymizeFlg:  $('input[name="newAnonymizeFlg"]:checked').val(),
-            oldLatestResults: $("#oldLatestResults").val(),
-            newLatestResults: $('input[name="newLatestResults"]:checked').val()},
+           {oldTodayDisp:  $("#oldTodayDisp").val(),
+            newTodayDisp:  $('input[name="newTodayDisp"]:checked').val(),
+            oldDarkroom:   $("#oldDarkroom").val(),
+            newDarkroom:   $('input[name="newDarkroom"]:checked').val(),
+            oldAnonymized: $("#oldAnonymized").val(),
+            newAnonymized: $('input[name="newAnonymized"]:checked').val(),
+            oldShowMissed: $("#oldShowMissed").val(),
+            newShowMissed: $('input[name="newShowMissed"]:checked').val()},
 
             function(data){
 				if(data.message == "Success")
 				{
 					alert('Page preference was successfully changed.');
 					$("#oldTodayDisp").val($('input[name="newTodayDisp"]:checked').val());
-					$("#oldDarkroomFlg").val($('input[name="newDarkroomFlg"]:checked').val());
-					$("#oldAnonymizeFlg").val($('input[name="newAnonymizeFlg"]:checked').val());
-					$("#oldLatestResults").val($('input[name="newLatestResults"]:checked').val());
+					$("#oldDarkroom").val($('input[name="newDarkroom"]:checked').val());
+					$("#oldAnonymized").val($('input[name="newAnonymized"]:checked').val());
+					$("#oldShowMissed").val($('input[name="newShowMissed"]:checked').val());
 					$("#linkTodayDisp").attr("href", data.todayList + ".php?mode=today");
 				}
-				else  alert(data.messaget);
+				else  alert(data.message);
 			}, "json");
 }
 
@@ -54,25 +54,29 @@ function ShowCadPreferenceDetail()
 	$.post("./preference/show_cad_preference_detail.php",
             {cadName: cadName, version: version},
              function(data){
+				alert(data.sortKey[1]);
+
 				$("#cadName").val(data.cadName);
 				$("#version").val(data.version);
 				$("#preferenceFlg").val(data.preferenceFlg);
-				$("#defaultSortKey").val(data.defaultSortKey);
-				$("#defaultSortOrder").val(data.defaultSortOrder);
-				$("#defaultMaxDispNum").val(data.defaultMaxDispNum);
-				$("#defaultConfidenceTh").val(data.defaultConfidenceTh);
+				$("#defaultSortKey").val(data.sortKey[0]);
+				$("#defaultSortOrder").val(data.sortOrder[0]);
+				$("#defaultMaxDispNum").val(data.maxDispNum[0]);
+				$("#defaultConfidenceTh").val(data.confidenceTh[0]);
+				$("#defaultDispConfidence").val(data.dispConfidence[0]);
+				$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
 				$("#message").html(data.message);
-				$("#maxDispNum").val(data.maxDispNum);
-				$("#confidenceTh").val(data.confidenceTh);
-				$("#sortKey").val(data.sortKey);
+				$("#maxDispNum").val(data.maxDispNum[1]);
+				$("#confidenceTh").val(data.confidenceTh[1]);
+				$("#sortKey").val(data.sortKey[1]);
 				$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
-					return ($(this).val() == data.sortOrder)
+					return ($(this).val() == data.sortOrder[1])
 				}).attr("checked", true);
 				$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-					return ($(this).val() == data.dispConfidence)
+					return ($(this).val() == data.dispConfidence[1])
 				}).attr("checked", true);
 				$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-					return ($(this).val() == data.dispCandidateTag)
+					return ($(this).val() == data.dispCandidateTag[1])
 				}).attr("checked", true);
 				$("#preferenceFlg").val(data.preferenceFlg);
 
@@ -122,10 +126,10 @@ function RegisterCadPreference(mode)
 										return ($(this).val() == $("#defaultSortOrder").val())
 									}).attr("checked", true);
 									$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-										return ($(this).val() == "f")
+										return ($(this).val() == $("#defaultDispConfidence").val())
 									}).attr("checked", true);
 									$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-										return ($(this).val() == "f")
+										return ($(this).val() == $("#defaultDispCandidateTag").val())
 									}).attr("checked", true);
 									$("#deleteCADPrefBtn").hide();
 								}
@@ -171,17 +175,19 @@ function ChangeCadMenu()
 	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
 <form id="form1" name="form1" onsubmit="return false;">
-<input type="hidden" id="oldTodayDisp"        value="{$oldTodayDisp|escape}">
-<input type="hidden" id="oldDarkroomFlg"      value="{$oldDarkroomFlg|escape}">
-<input type="hidden" id="oldAnonymizeFlg"     value="{$oldAnonymizeFlg|escape}">
-<input type="hidden" id="oldLatestResults"    value="{$oldLatestResults|escape}">
-<input type="hidden" id="cadName"             value="">
-<input type="hidden" id="version"             value="">
-<input type="hidden" id="preferenceFlg"       value="">
-<input type="hidden" id="defaultSortKey"      value="">
-<input type="hidden" id="defaultSortOrder"    value="">
-<input type="hidden" id="defaultMaxDispNum"   value="">
-<input type="hidden" id="defaultConfidenceTh" value="">
+<input type="hidden" id="oldTodayDisp"            value="{$oldTodayDisp|escape}">
+<input type="hidden" id="oldDarkroom"             value="{$oldDarkroom|escape}">
+<input type="hidden" id="oldAnonymized"           value="{$oldAnonymized|escape}">
+<input type="hidden" id="oldShowMissed"           value="{$oldShowMissed|escape}">
+<input type="hidden" id="cadName"                 value="">
+<input type="hidden" id="version"                 value="">
+<input type="hidden" id="preferenceFlg"           value="">
+<input type="hidden" id="defaultSortKey"          value="">
+<input type="hidden" id="defaultSortOrder"        value="">
+<input type="hidden" id="defaultMaxDispNum"       value="">
+<input type="hidden" id="defaultConfidenceTh"     value="">
+<input type="hidden" id="defaultDispConfidence"   value="">
+<input type="hidden" id="defaultDispCandidateTag" value="">
 <input type="hidden" name="ticket" value="{$ticket|escape}">
 
 <h2>User preference</h2>
@@ -219,7 +225,7 @@ function ChangeCadMenu()
 	<form onsubmit="return false;">
 	<table class="detail-tbl" style="width: 100%;">
 		<tr>
-			<th style="width: 17em;"><span class="trim01">Display today's list</span></th>
+			<th style="width: 25em;"><span class="trim01">Display today's list</span></th>
 			<td>
 				<input name="newTodayDisp" type="radio" value="series"{if $oldTodayDisp=="series"} checked="checked"{/if} />series&nbsp;
 				<input name="newTodayDisp" type="radio" value="cad"{if $oldTodayDisp=="cad"} checked="checked"{/if} />CAD
@@ -228,23 +234,23 @@ function ChangeCadMenu()
 		<tr>
 			<th><span class="trim01">Darkroom mode</span></th>
 			<td>
-				<input name="newDarkroomFlg" type="radio" value="f"{if $oldDarkroomFlg=="f"} checked="checked"{/if} />white&nbsp;
-				<input name="newDarkroomFlg" type="radio" value="t"{if $oldDarkroomFlg=="t"} checked="checked"{/if} />black
+				<input name="newDarkroom" type="radio" value="f"{if $oldDarkroom=="f"} checked="checked"{/if} />white&nbsp;
+				<input name="newDarkroom" type="radio" value="t"{if $oldDarkroom=="t"} checked="checked"{/if} />black
 			</td>
 		</tr>
 		<tr>
 			<th><span class="trim01">Anonymization</span></th>
 			<td>
-				<input name="newAnonymizeFlg" type="radio" value="t"{if $oldAnonymizeFlg=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
-				<input name="newAnonymizeFlg" type="radio" value="f"{if $oldAnonymizeFlg=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
+				<input name="newAnonymized" type="radio" value="t"{if $oldAnonymized=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
+				<input name="newAnonymized" type="radio" value="f"{if $oldAnonymized=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
 			</td>
 		</tr>
 		<tr>
-			<th><span class="trim01">Latest results</span></th>
+			<th><span class="trim01">Display latest missed lesions in home page</span></th>
 			<td>
-				<input name="newLatestResults" type="radio" value="own"{if $oldLatestResults=="own"} checked="checked"{/if} />own&nbsp;
-				<input name="newLatestResults" type="radio" value="all"{if $oldLatestResults=="all"} checked="checked"{/if} />all&nbsp;
-				<input name="newLatestResults" type="radio" value="none"{if $oldLatestResults=="none"} checked="checked"{/if} />none
+				<input name="newShowMissed" type="radio" value="own"{if $oldShowMissed=="own"} checked="checked"{/if} />own&nbsp;
+				<input name="newShowMissed" type="radio" value="all"{if $oldShowMissed=="all"} checked="checked"{/if} />all&nbsp;
+				<input name="newShowMissed" type="radio" value="none"{if $oldShowMissed=="none"} checked="checked"{/if} />none
 			</td>
 		</tr>
 	</table>
@@ -292,8 +298,8 @@ function ChangeCadMenu()
 					<th style="width: 17em;"><span class="trim01">Sort key</span></th>
 					<td>
 						<select id="sortKey" name="sortKey">
-							{foreach from=$sortStr item=item name=cnt}
-								<option value="{$smarty.foreach.cnt.index}">{$item}</option>
+							{foreach from=$sortArr item=item name=cnt}
+								<option value="{$item[0]}">{$item[1]}</option>
 							{/foreach}
 						</select>
 					</td>
@@ -301,8 +307,8 @@ function ChangeCadMenu()
 				<tr>
 					<th><span class="trim01">Sort order</span></th>
 					<td>
-						<input type="radio" name="sortOrder" value="f" />Asc.
-		    			<input type="radio" name="sortOrder" value="t" />Desc.
+						<input type="radio" name="sortOrder" value="ASC" />Asc.
+		    			<input type="radio" name="sortOrder" value="DESC" />Desc.
 					</td>
 				</tr>
 				<tr>
@@ -320,15 +326,15 @@ function ChangeCadMenu()
 				<tr>
 					<th><span class="trim01">Disp confidence</span></th>
 					<td>
-						<input type="radio" name="dispConfidence" value="t" />True
-		    			<input type="radio" name="dispConfidence" value="f" />False
+						<input type="radio" name="dispConfidence" value="1" />True
+		    			<input type="radio" name="dispConfidence" value="0" />False
 					</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Disp tags for lesion candidate</span></th>
 					<td>
-						<input type="radio" name="dispCandidateTag" value="t" />True
-		    			<input type="radio" name="dispCandidateTag" value="f" />False
+						<input type="radio" name="dispCandidateTag" value="1" />True
+		    			<input type="radio" name="dispCandidateTag" value="0" />False
 					</td>
 				</tr>
 			</table>

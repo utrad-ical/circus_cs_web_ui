@@ -18,16 +18,8 @@
 		$sqlStr = 'SELECT * FROM "' . $params['resultTableName'] . '"'
 				. " WHERE exec_id= :execID"
 				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_feedback"
-				. " WHERE exec_id=:execID AND consensual_flg='f' AND interrupt_flg='f')"
-				. ' ORDER BY ';
-
-		switch($params['sortKey'])
-		{
-			case 0: $sqlStr .= 'confidence';   break;  // confidence
-			case 1: $sqlStr .= 'location_z';   break;  // slice number
-			case 2: $sqlStr .= 'volume_size';  break;  // volume of candidate
-		}
-		$sqlStr .= ($params['sortOrder'] == 'f') ? ' ASC' : ' DESC';
+				. " WHERE exec_id=:execID AND is_consensual='f' AND interrupted='f')"
+				. ' ORDER BY ' . $params['sortKey'] . ' ' . $params['sortOrder'];
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindValue(':execID', $params['execID']);
@@ -36,20 +28,12 @@
 	else // for personal
 	{
 		$sqlStr = 'SELECT * FROM (SELECT * FROM "' . $params['resultTableName'] . '"'
-				. " WHERE exec_id=? AND confidence >= ? ORDER BY confidence DESC"
-				. " LIMIT ?) set1 ORDER BY set1.";
-
-		switch($params['sortKey'])
-		{
-			case 0: $sqlStr .= 'confidence';   break;  // confidence
-			case 1: $sqlStr .= 'location_z';   break;  // slice number
-			case 2: $sqlStr .= 'volume_size';  break;  // volume of candidate
-		}
-		$sqlStr .= ($params['sortOrder'] == 'f') ? ' ASC' : ' DESC';
+				. " WHERE exec_id=? AND confidence >= ? ORDER BY confidence DESC  LIMIT ?) set1"
+				. " ORDER BY set1." . $params['sortKey'] . ' ' . $params['sortOrder'];
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute(array($params['execID'], $params['confidenceTh'], $params['maxDispNum']));
-		//var_dump($stmt);
+		//var_dump($stmt->errorInfo());
 	}
 
 	$params['candNum'] = $stmt->rowCount();
@@ -57,7 +41,7 @@
 	$params['resultColNum'] = 3;  // 3 candidates per row
 
 	if($params['candNum'] < 5 && $params['mainModality'] == 'CT')   // for HIMEDIC
-	//if($params['candNum'] < 5)					      // for other case...
+	//if($params['candNum'] < 5)					      			// for other case...
 	{
 		$params['resultColNum'] = 2;
 		$params['dispWidth'] = 384;
@@ -113,12 +97,6 @@
 		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB, $candID);
 
 		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
-
-		//$img = new Imagick();
-		//$img->readImage($srcFname);
-		//$width  = $img->getImageWidth();
-		//$height = $img->getImageHeight();
-		//$img->destroy();
 
 		$img = @imagecreatefrompng($srcFname);
 		$width  = imagesx($img);
@@ -186,8 +164,8 @@
 			if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 			{
 				$sqlStr = "SELECT evaluation FROM lesion_feedback WHERE exec_id=? AND lesion_id=?";
-				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
-				else										$sqlStr .= " AND consensual_flg='t'";
+				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f' AND entered_by=?";
+				else										$sqlStr .= " AND is_consensual='t'";
 
 				$stmtFeedback = $pdo->prepare($sqlStr);
 				$stmtFeedback->bindParam(1, $params['execID']);
@@ -208,7 +186,7 @@
 			if($params['feedbackMode'] == "consensual")
 			{
 				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
-		                 . " WHERE exec_id=? AND consensual_flg='f'";
+		                 . " WHERE exec_id=? AND is_consensual='f'";
 				$stmtFeedback = $pdo->prepare($sqlStr);
 				$stmtFeedback->bindParam(1, $params['execID']);
 				$stmtFeedback->execute();
@@ -216,8 +194,6 @@
 			}
 
 			$candHtml[$k] .= '<div class="hide-on-guest js-personal-or-consensual ' . $params['feedbackMode'] . '">';
-
-			//$maxNum = 0;
 
 			for($j=0; $j < count($radioButtonList[$consensualFlg]); $j++)
 			{
@@ -228,7 +204,7 @@
 				if($params['feedbackMode'] == "consensual")
 				{
 					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE exec_id=?"
-				            . " AND lesion_id=? AND consensual_flg='f' AND interrupt_flg='f'";
+				            . " AND lesion_id=? AND is_consensual='f' AND interrupted='f'";
 
 					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (evaluation=1 OR evaluation=2)";
 					else                                                 $sqlStr .= " AND evaluation=?";
@@ -300,7 +276,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
-	// Retrieve the number of FNs
+	// Retrieve the number of false negatives
 	//------------------------------------------------------------------------------------------------------------------
 	$params['fnInputStatus'] = 0;
 	$params['fnNum'] = 0;
@@ -308,8 +284,8 @@
 
 	$sqlStr = "SELECT false_negative_num, status FROM false_negative_count WHERE exec_id=? AND status>=1";
 
-	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND consensual_flg='f'";
-	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND consensual_flg='t'";
+	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND is_consensual='f'";
+	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND is_consensual='t'";
 
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->bindParam(1, $params['execID']);
@@ -327,7 +303,7 @@
 	if($params['feedbackMode']=="consensual")
 	{
 		$sqlStr = "SELECT SUM(false_negative_num) FROM false_negative_count"
-				. " WHERE exec_id=? AND consensual_flg='f' AND status=2";
+				. " WHERE exec_id=? AND is_consensual='f' AND status=2";
 
 		$params['fnPersonalCnt'] = DBConnector::query($sqlStr, $params['execID'], 'SCALAR');
 	}
@@ -370,10 +346,11 @@
 	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
 	$stmt->bindParam(1, $params['modality']);
 	$stmt->execute();
+	//------------------------------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	// Retrieve preset grayscales
-	//----------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
 	$stmt->bindParam(1, $params['modality']);
 	$stmt->execute();
@@ -401,7 +378,7 @@
 
 	$detailParams['grayscaleStr'] = implode('^', $grayscaleArray);
 	$detailParams['presetNum'] = count($detailParams['presetArr']);
-	//----------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 
 	$flist = array();
 	$flist = GetDicomFileListInPath($params['seriesDir']);
@@ -413,7 +390,7 @@
 
 	$srcFname = $params['seriesDir'] . $DIR_SEPARATOR . $tmpFname;
 
-	// For compresed DICOM file
+	// For compressed DICOM file
 	$tmpFname = str_ireplace("c_", "_", $tmpFname);
 	$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
 
@@ -444,32 +421,27 @@
 
 	switch($params['sortKey'])
 	{
-		case 0:  // confidence
+		case 'confidence':  // confidence
 			$sqlStr .= 'confidence';
 			$detailParams['sortStr'] .= 'confidence';
 			break;
 
-		case 1: // slice number
+		case 'location_z': // slice number
 			$sqlStr .= 'location_z';
 			$detailParams['sortStr'] .= 'Image number';
 			break;
 
-		case 2: // volume of candidate
+		case 'volume_size': // volume of candidate
 			$sqlStr .= 'volume_size';
 			$detailParams['sortStr'] .= 'volume';
 			break;
 	}
 
-	if($params['sortOrder'] == 'f')
-	{
-		$sqlStr .= ' ASC';
-		$detailParams['sortStr'] .= ' (ascending order)';
-	}
-	else
-	{
-		$sqlStr .= ' DESC';
-		$detailParams['sortStr'] .= ' (descending order)';
-	}
+	$sqlStr .= ' '. $params['sortOrder'];
+
+	if($params['sortOrder'] == 'ASC')	$detailParams['sortStr'] .= ' (ascending order)';
+	else								$detailParams['sortStr'] .= ' (descending order)';
+
 
 	$detailData = DBConnector::query($sqlStr, $params['execID'], 'ALL_NUM');
 

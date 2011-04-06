@@ -306,7 +306,7 @@
 
 			if($params['mode'] == 'confirm')
 			{
-				for($j=0; $j<count($seriesUIDArr); $j++)
+				for($j = 0; $j < count($seriesUIDArr); $j++)
 				{
 					$sqlStr = "SELECT pt.patient_id, pt.patient_name, st.study_id, sr.series_number, "
 							. " sr.series_date, sr.series_time, sr.modality, sr.image_number, sr.series_description"
@@ -347,7 +347,7 @@
 			{
 				$cnt = 0;
 
-				for($k=0; $k<count($modalityArr); $k++)
+				for($k = 0; $k < count($modalityArr); $k++)
 				{
 					//--------------------------------------------------------------------------------------------------
 					// 1st series of 1st modality
@@ -397,7 +397,7 @@
 							$colArr[] = $studyUIDArr[0];
 							$colArr[] = $modalityArr[$k];
 
-							for($j=0; $j<$descriptionNumArr[$k]; $j++)
+							for($j = 0; $j < $descriptionNumArr[$k]; $j++)
 							{
 								if($j > 0)  $sqlStr .= " OR ";
 
@@ -438,7 +438,7 @@
 							$colArr[] = $params['patientID'];
 							$colArr[] = $modalityArr[$k];
 
-							for($j = 0; $j<$descriptionNumArr[$k]; $j++)
+							for($j = 0; $j < $descriptionNumArr[$k]; $j++)
 							{
 								if($j > 0)  $sqlStr .= " OR ";
 

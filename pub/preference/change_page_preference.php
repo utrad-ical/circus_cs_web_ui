@@ -20,28 +20,28 @@
 		"newTodayDisp" => array(
 			"type" => "select",
 			"options" => array('series', 'cad')),
-		"oldDarkroomFlg" => array(
+		"oldDarkroom" => array(
 			"type" => "select",
 			"options" => array('t', 'f'),
 			"default" => "f",
 			"otherwise" => "f"),
-		"newDarkroomFlg" => array(
+		"newDarkroom" => array(
 			"type" => "select",
 			"options" => array('t', 'f')),
-		"oldAnonymizeFlg" => array(
+		"oldAnonymized" => array(
 			"type" => "select",
 			"options" => array('t', 'f'),
 			"default" => "f",
 			"otherwise" => "f"),
-		"newAnonymizeFlg" => array(
+		"newAnonymized" => array(
 			"type" => "select",
 			"options" => array('t', 'f')),
-		"oldLatestResults" => array(
+		"oldShowMissed" => array(
 			"type" => "select",
 			"options" => array('own', 'all', 'none'),
 			"default" => 'none',
 			"otherwise" => 'none'),
-		"newLatestResults" => array(
+		"newShowMissed" => array(
 			"type" => "select",
 			"options" => array('own', 'all', 'none'))
 		));
@@ -68,34 +68,37 @@
 
 		if($params['message'] == "")
 		{
+			$params['message'] = "No change";
+
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
 			if($params['oldTodayDisp'] != $params['newTodayDisp']
 			   || $params['oldDarkroomFlg'] != $params['newDarkroomFlg']
 			   || $params['oldAnonymizeFlg'] != $params['newAnonymizeFlg']
-			   || $params['oldLatestResults'] != $params['newLatestResults'])
+			   || $params['oldShowMissed'] != $params['newShowMissed'])
 			{
-				$sqlStr = "UPDATE users SET today_disp=?, darkroom_flg=?, anonymize_flg=?, latest_results=?"
+				$sqlStr = "UPDATE users SET today_disp=?, darkroom=?, anonymized=?, show_missed=?"
 						. " WHERE user_id=?";
-				$sqlParams = array($params['newTodayDisp'], $params['newDarkroomFlg'],
-				                   $params['newAnonymizeFlg'], $params['newLatestResults'],
+				$sqlParams = array($params['newTodayDisp'], $params['newDarkroom'],
+				                   $params['newAnonymized'], $params['newShowMissed'],
 								   $userID);
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 
-				if($stmt->rowCount() == 1)
+				if($stmt->errorCode() == '00000')
 				{
 					$dstData['message'] = 'Success';
 					$_SESSION['todayDisp'] = $params['newTodayDisp'];
-					$_SESSION['darmroomFlg'] =($params['newDarkroomFlg'] == 't') ? 1 : 0;
-					$_SESSION['anonymizeFlg'] =($params['newAnonymizeFlg'] == 't') ? 1 : 0;
-					$_SESSION['latestResults'] = $params['newLatestResults'];
+					$_SESSION['darmroom'] =($params['newDarkroom'] == 't') ? 1 : 0;
+					$_SESSION['anonymized'] =($params['newAnonymized'] == 't') ? 1 : 0;
+					$_SESSION['showMissed'] = $params['newShowMissed'];
 				}
 				else
 				{
 					//$tmp = $stmt->errorInfo();
+					//echo $tmp[2];
 					$dstData['message'] = "Fail to change page preference.";
 				}
 			}

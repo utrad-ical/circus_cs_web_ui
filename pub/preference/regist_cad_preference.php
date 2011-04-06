@@ -22,12 +22,12 @@
 			"errorMes" => "[ERROR] 'Version' is invalid."),
 		"sortKey" => array(
 			"type" => "select",
-			"options" => array("0", "1", "2"),
-			'oterwise' => "0"),
+			"options" => array("confidence", "location_z", "volume_size"),
+			'oterwise' => "confidence"),
 		"sortOrder" => array(
 			"type" => "select",
-			"options" => array("t", "f"),
-			'oterwise' => "t"),
+			"options" => array("ASC", "DESC"),
+			'oterwise' => "DESC"),
 		"maxDispNum" => array(
 			"type" => "string",
 			"regex" => "/^(all|[\d]+)$/i"),
@@ -36,11 +36,12 @@
 			"min" => 0),
 		"dispConfidenceFlg" => array(
 			"type" => "select",
-			"options" => array("t", "f")),
+			"options" => array("1", "0"),
+			'otherwise' => "1"),
 		"dispCandidateTagFlg" => array(
 			"type" => "select",
-			"options" => array("t", "f"),
-			'oterwise' => "f"),
+			"options" => array("1", "0"),
+			'oterwise' => "0"),
 		"preferenceFlg" => array(
 			"type" => "select",
 			"options" => array("1", "0"),
@@ -82,14 +83,14 @@
 
 		if($mode == 'delete')
 		{
-			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?";
+			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
-			if($stmt->rowCount() == 1)
+			if($stmt->errorCode() == '00000')
 			{
 				$dstData['message'] = 'Succeeded!';
-				$dstData['preferenceFlg'] = ($mode == 'delete') ? 0 : 1;
+				$dstData['preferenceFlg'] = 0;
 			}
 			else
 			{
@@ -98,33 +99,44 @@
 		}
 		if($mode == 'update')	// restore default settings
 		{
-			$sqlStr = "DELETE FROM cad_preference WHERE user_id=? AND plugin_name=? AND version=?";
+			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_name=? AND version=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
-			$sqlParams[] = $params['sortKey'];
-			$sqlParams[] = $params['sortOrder'];
-			$sqlParams[] = $params['maxDispNum'];
-			$sqlParams[] = $params['confidenceTh'];
-			$sqlParams[] = $params['dispConfidenceFlg'];
-			$sqlParams[] = $params['dispCandidateTagFlg'];
+			$keyStr = array('sortKey', 'sortOrder', 'maxDispNum', 'confidenceTh',
+							'dispConfidenceFlg', 'dispCandidateTagFlg');
 
-			$sqlStr = "INSERT INTO cad_preference(user_id, plugin_name, version,"
-					. " default_sort_key, default_sort_order, max_disp_num,"
-					. " confidence_threshold, disp_confidence_flg, disp_candidate_tag_flg)"
-					. " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			$sqlStr = "INSERT INTO plugin_user_preference(user_id, plugin_name, version, key, value)"
+					. " VALUES (?,?,?,?,?)";
+
+			for($i = 0; $i < count($keyStr); $i++)
+			{
+				if($i > 0)
+				{
+					$sqlStr .= ",(?,?,?,?,?)";
+					$sqlParams[] = $userID;
+					$sqlParams[] = $params['cadName'];
+					$sqlParams[] = $params['version'];
+				}
+
+				$sqlParams[] = $keyStr[$i];
+				$sqlParams[] = $params[$keyStr[$i]];
+			}
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
-			if($stmt->rowCount() == 1)
+			if($stmt->errorCode() == '00000')
 			{
 				$dstData['message'] = 'Succeeded!';
-				$dstData['preferenceFlg'] = ($mode == 'delete') ? 0 : 1;
+				$dstData['preferenceFlg'] = 1;
 			}
 			else
 			{
-				$dstData['message'] = 'Fail to save the preference.';
+				//$dstData['message'] = 'Fail to save the preference.';
+				$errorMessage = $stmt->errorInfo();
+				$dstData['message'] .= $errorMessage[2];
+
 			}
 		}
 

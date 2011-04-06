@@ -40,7 +40,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 		$latestHtml = "";
 
-		if($_SESSION['personalFBFlg']==1 && $_SESSION['latestResults']=='own')
+		if($_SESSION['personalFBFlg']==1 && $_SESSION['showMissed']!='none')
 		{
 			include('cad_results/lesion_candidate_display_private.php');
 
@@ -52,9 +52,13 @@
 					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.exec_id=el.exec_id)"
 					. " ON lf.exec_id=es.exec_id AND es.series_id=0) ON sr.series_instance_uid=es.series_instance_uid)"
 					. " ON sr.storage_id=storage.storage_id) ON st.study_instance_uid=es.study_instance_uid)"
-					. " ON pt.patient_id=st.patient_id) ON cm.plugin_name=el.plugin_name AND cm.version=el.version"
-					. " WHERE lf.entered_by=? AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
-					. " AND lf.evaluation=2 ORDER BY lf.registered_at DESC LIMIT 3";
+					. " ON pt.patient_id=st.patient_id) ON cm.plugin_name=el.plugin_name AND cm.version=el.version";
+
+			if($_SESSION['showMissed']=='own')  $sqlStr .= " WHERE lf.entered_by=? AND";
+			else								$sqlStr .= " WHERE";
+
+			$sqlStr .= " lf.is_consensual='f' AND lf.interrupted='f'"
+					.  " AND lf.evaluation=2 ORDER BY lf.registered_at DESC LIMIT 3";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $_SESSION['userID']);
@@ -120,20 +124,20 @@
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
 					$latestHtml .= '<b>&nbsp;Pt.: </b>' . PinfoScramble::scramblePtName()
-								.  ' (' . PinfoScramble::encrypt($item['patient_id'], $_SESSION['key']) . ')<br>';
+								.  ' (' . PinfoScramble::encrypt($item['patient_id'], $_SESSION['key']) . ')<br/>';
 				}
 				else
 				{
-					$latestHtml .= '<b>&nbsp;Pt.: </b>' . $item['patient_name'] . ' (' . $item['patient_id'] . ')<br>';
+					$latestHtml .= '<b>&nbsp;Pt.: </b>' . $item['patient_name'] . ' (' . $item['patient_id'] . ')<br/>';
 				}
 
-				$latestHtml .= '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br>'
+				$latestHtml .= '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br/>'
 							.  '<b>&nbsp;CAD: </b>' . $item['plugin_name'] . ' v.' . $item['version']
 							.  '<input name="" type="button" value="detail" class="form-btn"'
 							.  ' onclick="location.href=\'cad_results/show_cad_results.php?execID=' . $item['exec_id']
-							.  '&feedbackMode=personal&remarkCand=' . $item['lesion_id'] . '&sortKey=0&sortOrder=t\';"'
-							.  ' style="margin-left:70px;"><br>'
-							.  '<b>&nbsp;Candidate ID: </b>' . $item['lesion_id'] . '<br>'
+							.  '&feedbackMode=personal&remarkCand=' . $item['lesion_id'] . '&sortKey=confidence'
+							.  '&sortOrder=DESC\';" style="margin-left:70px;"><br/>'
+							.  '<b>&nbsp;Candidate ID: </b>' . $item['lesion_id'] . '<br/>'
 							.  '</div>'
 							.  '<div style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;'
 							.  ' overflow:hidden; position:relative; margin-bottom:7px;" class="block-al-c">'

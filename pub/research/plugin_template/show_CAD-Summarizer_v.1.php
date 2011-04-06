@@ -56,14 +56,14 @@
 	$version = "";
 	$resultTableName = "";
 
-	for($n=0; $n<4; $n++)
+	for($n = 0; $n < 4; $n++)
 	{
 		$fp = fopen($params['resPath']."CAD-SummarizerResult_" . $listName[$n] . "List.txt", "r");
 
 		$listCnt = (int)(rtrim(fgets($fp)));
 		$candList= array();
 
-		for($i=0; $i<$listCnt; $i++)
+		for($i = 0; $i < $listCnt; $i++)
 		{
 			$tmpArray =explode(",", rtrim(fgets($fp)));
 			array_push($candList, $tmpArray);
@@ -89,7 +89,7 @@
 
 		$listHtml[$n] = '<table class="mt10 ml20"><tr>';
 
-		for($k=0; $k<min(5, $listCnt); $k++)
+		for($k = 0; $k < min(5, $listCnt); $k++)
 		{
 			$stmt = $pdo->prepare("SELECT * FROM param_set WHERE exec_id=?");
 			$stmt->bindParam(1, $candList[$k][0]);
@@ -160,31 +160,25 @@
 				DcmExport::dcm2png($srcFname, $posZ, $windowLevel, $windowWidth);
 			}
 
-			//$img = new Imagick();
-			//$img->readImage($srcFname);
-			//$width  = $img->getImageWidth();
-			//$height = $img->getImageHeight();
-			//$img->destroy();
-
 			$img = @imagecreatefrompng($srcFname);
 			$width  = imagesx($img);
 			$height = imagesy($img);
 			imagedestroy($img);
 
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
-			              .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
-						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=0&sortOrder=t"'
+						  .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
+						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
 						  .  ' title="ID:'. $candList[$k][0];
 			if($n!=3)	$listHtml[$n] .= ', rank:'.$candList[$k][1].' (confidence:'.sprintf("%.3f", $candList[$k][2]).')';
 			$listHtml[$n] .= '">'
-			              .  '<div class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
-			              .  '<img src="../cad_results/images/magenta_cross_enlarge.png"'
+						  .  '<div class="imgArea" style="width:101px; height:101px; position:relative; top:0px; left:0px;">'
+						  .  '<img src="../cad_results/images/magenta_cross_enlarge.png"'
 						  .  ' style="position:absolute; left:0px; top:0px; z-index:2;">'
-			              .  '<img src="' . $srcFnameWeb . '" width=' . $width . ' height=' . $height
-			              .  ' style="position:absolute; left:'.(-$posX+50).'px; top:'.(-$posY+50).'px; z-index:1;">'
-			              .  '</div>'
-			              .  '</a>'
-			              .  '</td>';
+						  .  '<img src="' . $srcFnameWeb . '" width=' . $width . ' height=' . $height
+						  .  ' style="position:absolute; left:'.(-$posX+50).'px; top:'.(-$posY+50).'px; z-index:1;">'
+						  .  '</div>'
+						  .  '</a>'
+					      .  '</td>';
 		}
 		$listHtml[$n] .= "</tr></table>";
 	}

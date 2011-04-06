@@ -97,7 +97,7 @@
 				//------------------------------------------------------------------------------------------------
 				// Registration to lesion_feedback table
 				//------------------------------------------------------------------------------------------------
-				$sqlStr = "DELETE FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?";
+				$sqlStr = "DELETE FROM lesion_feedback WHERE exec_id=? AND is_consensual=?";
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -110,8 +110,8 @@
 
 				if($candNum<=1 && strlen($params['candStr'])==0)
 				{
-					$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, consensual_flg, "
-					        . "evaluation, interrupt_flg, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
+					$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, is_consensual, "
+					        . "evaluation, interrupted, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
 
 					$sqlParams[] = $params['execID'];
 					$sqlParams[] = $userID;
@@ -131,8 +131,8 @@
 				{
 					for($i=0; $i<$candNum; $i++)
 					{
-						$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, consensual_flg, "
-							        . "evaluation, interrupt_flg, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
+						$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, is_consensual, "
+							        . "evaluation, interrupted, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
 						$sqlParams[0] = $params['execID'];
 						$sqlParams[1] = $candArr[$i];
@@ -161,7 +161,7 @@
 				{
 					$status = ($params['interruptFlg']) ? 1 : 2;
 
-					$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND consensual_flg=?";
+					$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND is_consensual=?";
 					if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 					$stmt = $pdo->prepare($sqlStr);
@@ -178,7 +178,7 @@
 					if($rowNum == 0 && !$params['fnFoundFlg'])
 					{
 						$sqlStr = "INSERT INTO false_negative_count "
-						        . "(exec_id, entered_by, consensual_flg, false_negative_num, status, registered_at)"
+						        . "(exec_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 						        . " VALUES (?, ?, ?, 0, ?, ?);";
 						$sqlParams[] = $params['execID'];
 						$sqlParams[] = $userID;
@@ -210,7 +210,7 @@
 									$sqlParams[] = $userID;
 								}
 
-								$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+								$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
 								$sqlParams[] = $params['execID'];
 								$sqlParams[] = $consensualFlg;
 
@@ -240,7 +240,7 @@
 									$sqlParams[] = $userID;
 								}
 
-								$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+								$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
 								$sqlParams[] = $params['execID'];
 								$sqlParams[] = $consensualFlg;
 
@@ -259,7 +259,7 @@
 								{
 									$sqlParams = array();
 
-									$sqlStr = "UPDATE false_negative_location SET interrupt_flg=?,"
+									$sqlStr = "UPDATE false_negative_location SET interrupted=?,"
 									        . " registered_at=?";
 									$sqlParams[] = ($params['interruptFlg']) ? 't' : 'f';
 									$sqlParams[] = $registeredAt;
@@ -270,7 +270,7 @@
 										$sqlParams[] = $userID;
 									}
 
-									$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+									$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
 									$sqlParams[] = $params['execID'];
 									$sqlParams[] = $consensualFlg;
 
@@ -323,8 +323,8 @@
 			{
 				$scoreTableName = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
 
-				$sqlStr = "SELECT interrupt_flg FROM \"" . $scoreTableName . "\" WHERE exec_id=?"
-						. " AND consensual_flg=?";
+				$sqlStr = "SELECT interrupted FROM \"" . $scoreTableName . "\" WHERE exec_id=?"
+						. " AND is_consensual=?";
 
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
@@ -344,7 +344,7 @@
 					if($rowNum == 0)
 					{
 						$sqlStr = "INSERT INTO visual_assessment"
-						        . " (exec_id, entered_by, consensual_flg, interrupt_flg, score, registered_at)"
+						        . " (exec_id, entered_by, is_consensual, interrupted, score, registered_at)"
 								. " VALUES (?, ?, ?, ?, ?, ?);";
 						$sqlParams[] = $params['execID'];
 						$sqlParams[] = $userID;
@@ -361,7 +361,7 @@
 
 						if($params['interruptFlg'] == 0)
 						{
-							$sqlStr .= ", interrupt_flg='f'";
+							$sqlStr .= ", interrupted='f'";
 						}
 
 						if($params['feedbackMode'] == "consensual")
@@ -370,7 +370,7 @@
 							$sqlParams[] = $userID;
 						}
 
-						$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+						$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
 						$sqlParams[] = $params['execID'];
 						$sqlParams[] = $consensualFlg;
 
@@ -388,7 +388,7 @@
 					// Retrieve calumn names
 					$sqlStr = "SELECT attname FROM pg_attribute WHERE attnum > 3"
 					        . " AND attrelid = (SELECT relfilenode FROM pg_class WHERE relname='".$scoreTableName."')"
-							. " AND attname != 'registered_at' AND attname != 'interrupt_flg' ORDER BY attnum";
+							. " AND attname != 'registered_at' AND attname != 'interrupted' ORDER BY attnum";
 
 					$stmtCol = $pdo->prepare();
 					$stmtCol->execute();
@@ -397,7 +397,7 @@
 					if($rowNum == 0)
 					{
 						$sqlStr = "INSERT INTO \"" . $scoreTableName . "\""
-						        . " (exec_id, entered_by, consensual_flg, interrupt_flg,";
+						        . " (exec_id, entered_by, is_consensual, interrupted,";
 
 						while($resultCol = $stmtCol->fetch(PDO::FETCH_NUM))
 						{
@@ -436,7 +436,7 @@
 						$sqlStr .= " registered_at=?";
 						$sqlParams[] = $registeredAt;
 
-						if($params['interruptFlg'] == 0)  $sqlStr .= ", interrupt_flg='f'";
+						if($params['interruptFlg'] == 0)  $sqlStr .= ", interrupted='f'";
 
 						if($params['feedbackMode'] == "consensual")
 						{
@@ -444,7 +444,7 @@
 							$sqlParams[] = $userID;
 						}
 
-						$sqlStr .= " WHERE exec_id=? AND consensual_flg=?";
+						$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
 						$sqlParam[] = $execID;
 						$sqlParam[] = $consensualFlg;
 

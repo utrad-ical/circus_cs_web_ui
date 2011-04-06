@@ -14,22 +14,22 @@
 		// Import $_REQUEST variables
 		//--------------------------------------------------------------------------------------------------------------
 		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_GET['ticket'])) ? $_GET['mode'] : "";
-		$oldUserID         = (isset($_GET['oldUserID']))        ? $_GET['oldUserID']        : "";
-		$oldUserName       = (isset($_GET['oldUserName']))      ? $_GET['oldUserName']      : "";
-		$oldPassword       = (isset($_GET['oldPassword']))      ? $_GET['oldPassword']      : "";
-		$oldGroupID        = (isset($_GET['oldGroupID']))       ? $_GET['oldGroupID']       : "";
-		$oldTodayDisp      = (isset($_GET['oldTodayDisp']))     ? $_GET['oldTodayDisp']     : "";
-		$oldDarkroomFlg    = (isset($_GET['oldDarkroomFlg']))   ? $_GET['oldDarkroomFlg']   : "";
-		$oldAnonymizeFlg   = (isset($_GET['oldAnonymizeFlg']))  ? $_GET['oldAnonymizeFlg']  : "";
-		$oldLatestResults  = (isset($_GET['oldLatestResults'])) ? $_GET['oldLatestResults'] : "";
-		$newUserID         = (isset($_GET['newUserID']))        ? $_GET['newUserID']        : "";
-		$newUserName       = (isset($_GET['newUserName']))      ? $_GET['newUserName']      : "";
-		$newPassword       = (isset($_GET['newPassword']))      ? $_GET['newPassword']      : "";
-		$newGroupID        = (isset($_GET['newGroupID']))       ? $_GET['newGroupID']       : "";
-		$newTodayDisp      = (isset($_GET['newTodayDisp']))     ? $_GET['newTodayDisp']     : "";
-		$newDarkroomFlg    = (isset($_GET['newDarkroomFlg']))   ? $_GET['newDarkroomFlg']   : "";
-		$newAnonymizeFlg   = (isset($_GET['newAnonymizeFlg']))  ? $_GET['newAnonymizeFlg']  : "";
-		$newLatestResults  = (isset($_GET['newLatestResults'])) ? $_GET['newLatestResults'] : "";
+		$oldUserID     = (isset($_GET['oldUserID']))     ? $_GET['oldUserID']     : "";
+		$oldUserName   = (isset($_GET['oldUserName']))   ? $_GET['oldUserName']   : "";
+		$oldPassword   = (isset($_GET['oldPassword']))   ? $_GET['oldPassword']   : "";
+		$oldGroupID    = (isset($_GET['oldGroupID']))    ? $_GET['oldGroupID']    : "";
+		$oldTodayDisp  = (isset($_GET['oldTodayDisp']))  ? $_GET['oldTodayDisp']  : "";
+		$oldDarkroom   = (isset($_GET['oldDarkroom']))   ? $_GET['oldDarkroom']   : "";
+		$oldAnonymized = (isset($_GET['oldAnonymized'])) ? $_GET['oldAnonymized'] : "";
+		$oldShowMissed = (isset($_GET['oldShowMissed'])) ? $_GET['oldShowMissed'] : "";
+		$newUserID     = (isset($_GET['newUserID']))     ? $_GET['newUserID']     : "";
+		$newUserName   = (isset($_GET['newUserName']))   ? $_GET['newUserName']   : "";
+		$newPassword   = (isset($_GET['newPassword']))   ? $_GET['newPassword']   : "";
+		$newGroupID    = (isset($_GET['newGroupID']))    ? $_GET['newGroupID']    : "";
+		$newTodayDisp  = (isset($_GET['newTodayDisp']))  ? $_GET['newTodayDisp']  : "";
+		$newDarkroom   = (isset($_GET['newDarkroom']))   ? $_GET['newDarkroom']   : "";
+		$newAnonymized = (isset($_GET['newAnonymized'])) ? $_GET['newAnonymized'] : "";
+		$newShowMissed = (isset($_GET['newShowMissed'])) ? $_GET['newShowMissed'] : "";
 		//--------------------------------------------------------------------------------------------------------------
 
 		$longinUser = $_SESSION['userID'];
@@ -42,24 +42,24 @@
 			//----------------------------------------------------------------------------------------------------
 			// Add / Update / Delete user
 			//----------------------------------------------------------------------------------------------------
-			if($mode != "")
+			if($mode!="" && $oldUserID!=$DEFAOULT_CAD_PREF_USER && $newUsewrID!=$DEFAOULT_CAD_PREF_USER)
 			{
 				$sqlStr = "";
 				$sqlParams = array();
 
 				if($mode == 'add')
 				{
-					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom_flg, "
-					         . " anonymize_flg, latest_results) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom, "
+					         . " anonymized, show_missed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 					$sqlParams[] = $newUserID;
 					$sqlParams[] = $newUserName;
 					$sqlParams[] = md5($newPassword);
 					$sqlParams[] = $newGroupID;
 					$sqlParams[] = $newTodayDisp;
-					$sqlParams[] = $newDarkroomFlg;
-					$sqlParams[] = $newAnonymizeFlg;
-					$sqlParams[] = $newLatestResults;
+					$sqlParams[] = $newDarkroom;
+					$sqlParams[] = $newAnonymized;
+					$sqlParams[] = $newShowMissed;
 
 					if($newUserID == "" || $newPassword == "")  $sqlStr = "";
 				}
@@ -118,27 +118,27 @@
 							$updateCnt++;
 						}
 
-						if($oldDarkroomFlg != $newDarkroomFlg)
+						if($oldDarkroomFlg != $newDarkroom)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "darkroom_flg=?";
-							$sqlParams[] = $newDarkroomFlg;
+							$sqlStr .= "darkroom=?";
+							$sqlParams[] = $newDarkroom;
 							$updateCnt++;
 						}
 
 						if($oldAnonymizeFlg != $newAnonymizeFlg)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "anonymize_flg=?";
-							$sqlParams[] = $newAnonymizeFlg;
+							$sqlStr .= "anonymized=?";
+							$sqlParams[] = $newAnonymized;
 							$updateCnt++;
 						}
 
 						if($oldLatestResults != $newLatestResults)
 						{
 							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "latest_results=?";
-							$sqlParams[] = $newLatestResults;
+							$sqlStr .= "show_missed=?";
+							$sqlParams[] = $newShowMissed;
 							$updateCnt++;
 						}
 
@@ -202,11 +202,11 @@
 			//------------------------------------------------------------------------------------------------
 			// Retrieve user lists
 			//------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT user_id, user_name, group_id, today_disp, darkroom_flg, anonymize_flg,"
-					. " latest_results, passcode FROM users ORDER BY user_id ASC";
+			$sqlStr = "SELECT user_id, user_name, group_id, today_disp, darkroom, anonymized,"
+					. " show_missed, passcode FROM users WHERE user_id<>? ORDER BY user_id ASC";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute();
+			$stmt->execute(array($DEFAOULT_CAD_PREF_USER));
 
 			$userList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//------------------------------------------------------------------------------------------------

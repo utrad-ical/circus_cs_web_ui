@@ -57,33 +57,33 @@ function UserSetting(mode)
 					+ '&oldPassword=' + $("#oldPassword").val()
 					+ '&oldGroupID='  + $("#oldGroupID").val()
 					+ '&oldTodayDisp=' + $("#oldTodayDisp").val()
-					+ '&oldDarkroomFlg=' + $("#oldDarkroomFlg").val()
-					+ '&oldDarkroomFlg=' + $("#oldAnonymizeFlg").val()
-					+ '&oldLatestResults=' + $("#oldLatestResults").val()
+					+ '&oldDarkroom=' + $("#oldDarkroomFlg").val()
+					+ '&oldAnonymized=' + $("#oldAnonymizeFlg").val()
+					+ '&oldShowMissed=' + $("#oldShowMissed").val()
 					+ '&newUserID='   + $("#inputUserID").val()
 					+ '&newUserName=' + $("#inputUserName").val()
 					+ '&newPassword=' + $("#inputPass").val()
 					+ '&newGroupID='  + $("#groupList").val()
 					+ '&newTodayDisp=' + $('input[name="newTodayDisp"]:checked').val()
-					+ '&newDarkroomFlg=' + $('input[name="newDarkroomFlg"]:checked').val()
-					+ '&newAnonymizeFlg=' + $('input[name="newAnonymizeFlg"]:checked').val()
-					+ '&newLatestResults=' + $('input[name="newLatestResults"]:checked').val()
+					+ '&newDarkroom=' + $('input[name="newDarkroom"]:checked').val()
+					+ '&newAnonymized=' + $('input[name="newAnonymized"]:checked').val()
+					+ '&newShowMissed=' + $('input[name="newShowMissed"]:checked').val()
 					+ '&ticket=' + $("#ticket").val();
 
 		location.replace(address);	
 	}
 }
 
-function SetEditBox(userID, userName, password, groupID, todayDisp, darkroomFlg, anonymizeFlg, latestResults)
+function SetEditBox(userID, userName, password, groupID, todayDisp, darkroom, anonymized, showMissed)
 {
 	$("#oldUserID").val(userID);
 	$("#oldUserName").val(userName);
 	$("#oldPassword").val(password);
 	$("#oldGroupID").val(groupID);
 	$("#oldTodayDisp").val(todayDisp);
-	$("#oldDarkroomFlg").val(userName);
-	$("#oldAnonymizeFlg").val(userName);
-	$("#oldLatestResults").val(latestResults);
+	$("#oldDarkroom").val(darkroom);
+	$("#oldAnonymized").val(anonymized);
+	$("#oldshowMissed").val(showMissed);
 	
 	$("#inputUserID").val(userID);
 	$("#inputUserName").val(userName);
@@ -93,9 +93,9 @@ function SetEditBox(userID, userName, password, groupID, todayDisp, darkroomFlg,
 	$("#groupList").val(groupID);
 
 	$("input[name='newTodayDisp']").filter(function(){ return ($(this).val() == todayDisp) }).attr("checked", true);
-	$("input[name='newDarkroomFlg']").filter(function(){ return ($(this).val() == darkroomFlg) }).attr("checked", true);
-	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == anonymizeFlg) }).attr("checked", true);
-	$("input[name='newLatestResults']").filter(function(){ return ($(this).val() == latestResults) }).attr("checked", true);
+	$("input[name='newDarkroom']").filter(function(){ return ($(this).val() == darkroom) }).attr("checked", true);
+	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == anonymized) }).attr("checked", true);
+	$("input[name='newShowMissed']").filter(function(){ return ($(this).val() == showMissed) }).attr("checked", true);
 
 	$("#updateBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#addBtn, #userList input[type='button']").attr('disabled', 'disabled')
@@ -111,9 +111,9 @@ function CancelUpdate()
 	$("#groupList").children().removeAttr("selected");
 
 	$("input[name='newTodayDisp']").filter(function(){ return ($(this).val() == 'cad') }).attr("checked", true);
-	$("input[name='newDarkroomFlg']").filter(function(){ return ($(this).val() == 'white') }).attr("checked", true);
-	$("input[name='newAnonymizeFlg']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newLatestResults']").filter(function(){ return ($(this).val() == 'none') }).attr("checked", true);
+	$("input[name='newDarkroom']").filter(function(){ return ($(this).val() == 'white') }).attr("checked", true);
+	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
+	$("input[name='newShowMissed']").filter(function(){ return ($(this).val() == 'none') }).attr("checked", true);
 
 	$("#addBtn, #userList input[type='button']").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#updateBtn, #cancelBtn, #userList input[name='loginUser']").attr('disabled', 'disabled')
@@ -144,15 +144,15 @@ function CancelUpdate()
 			<h2>User configuration</h2>
 
 			<form id="form1" name="form1">
-				<input type="hidden" id="ticket"			value="{$params.ticket|escape}" />
-				<input type="hidden" id="oldUserID" 		value="" />
-				<input type="hidden" id="oldUserName"		value="" />
-				<input type="hidden" id="oldPassword"		value="" />
-				<input type="hidden" id="oldGroupID"		value="" />
-				<input type="hidden" id="oldTodayDisp"		value="" />
-				<input type="hidden" id="oldDarkroomFlg"	value="" />
-				<input type="hidden" id="oldAnonymizeFlg"	value="" />
-				<input type="hidden" id="oldLatestResults"	value="" />
+				<input type="hidden" id="ticket"		value="{$params.ticket|escape}" />
+				<input type="hidden" id="oldUserID" 	value="" />
+				<input type="hidden" id="oldUserName"	value="" />
+				<input type="hidden" id="oldPassword"	value="" />
+				<input type="hidden" id="oldGroupID"	value="" />
+				<input type="hidden" id="oldTodayDisp"	value="" />
+				<input type="hidden" id="oldDarkroom"	value="" />
+				<input type="hidden" id="oldAnonymized"	value="" />
+				<input type="hidden" id="oldShowMissed"	value="" />
 
 				<div id="message" class="mt5 mb5 ml10">{$params.message}</div>
 
@@ -165,7 +165,7 @@ function CancelUpdate()
 							<th>Today</th>
 							<th>Darkroom</th>
 							<th>Anonymize</th>
-							<th>Latest results</th>
+							<th>Show missed</th>
 							<th>&nbsp;</th>
 						</tr>
 	
@@ -197,7 +197,7 @@ function CancelUpdate()
 				<div class="mt20 ml40">
 					<table class="detail-tbl">
 						<tr>
-							<th style="width: 12em;"><span class="trim01">User ID</th>
+							<th style="width: 15em;"><span class="trim01">User ID</th>
 							<td><input class="loginForm" size="40" type="text" id="inputUserID" name="inputUserID" /></td>
 						</tr>
 						
@@ -233,25 +233,25 @@ function CancelUpdate()
 						<tr>
 							<th><span class="trim01">Darkroom mode</span></th>
 							<td>
-								<input name="newDarkroomFlg" type="radio" value="f" checked="checked" />white
-								<input name="newDarkroomFlg" type="radio" value="t" />black
+								<input name="newDarkroom" type="radio" value="f" checked="checked" />white
+								<input name="newDarkroom" type="radio" value="t" />black
 							</td>
 						</tr>
 
 						<tr>
 							<th><span class="trim01">Anonymization</span></th>
 							<td>
-								<input name="newAnonymizeFlg" type="radio" value="t" />TRUE
-								<input name="newAnonymizeFlg" type="radio" value="f" checked="checked" />FALSE
+								<input name="newAnonymized" type="radio" value="t" />TRUE
+								<input name="newAnonymized" type="radio" value="f" checked="checked" />FALSE
 							</td>
 						</tr>
 					
 						<tr>
-							<th><span class="trim01">Latest results</span></th>
+							<th><span class="trim01">Display missed lesions</span></th>
 							<td>
-								<input name="newLatestResults" type="radio" value="own" />own
-								<input name="newLatestResults" type="radio" value="all" />all
-								<input name="newLatestResults" type="radio" value="none" checked="checked" />none
+								<input name="newShowMissed" type="radio" value="own" />own
+								<input name="newShowMissed" type="radio" value="all" />all
+								<input name="newShowMissed" type="radio" value="none" checked="checked" />none
 							</td>
 						</tr>
 					</table>

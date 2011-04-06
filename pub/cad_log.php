@@ -22,7 +22,7 @@
 
 			while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
 			{
-				if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupt_flg'])
+				if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupted'])
 				{
 					$registStatus['cand'] = 1;
 					break;
@@ -218,7 +218,7 @@
 			       . " JOIN (executed_series_list es JOIN executed_plugin_list el"
 			       . " ON (es.exec_id=el.exec_id AND es.series_id=0 AND el.plugin_type=1))"
 			       . " ON (sr.series_instance_uid = es.series_instance_uid)"
-			       . " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupt_flg='f')"
+			       . " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupted='f')"
 			       . " LEFT JOIN false_negative_count fn ON (es.exec_id = fn.exec_id AND fn.status>=1)";
 
 		if($params['mode'] == 'today')
@@ -400,8 +400,8 @@
 			$operator = ($params['personalFB'] == "entered") ? '=' : '<>';
 
 			$tmpCond .= " el.exec_id " . $operator . " ANY"
-					 .  " (SELECT DISTINCT exec_id FROM lesion_feedback WHERE consensual_flg='f'"
-					 .  " AND interrupt_flg='f'";
+					 .  " (SELECT DISTINCT exec_id FROM lesion_feedback WHERE is_consensual='f'"
+					 .  " AND interrupted='f'";
 
 			if($params['personalFB'] == "entered")
 			{
@@ -429,7 +429,7 @@
 						{
 							$tmpCond .= " AND entered_by~*? AND exec_id IN"
 									 .  " (SELECT DISTINCT exec_id FROM lesion_feedback"
-									 .  "  WHERE consensual_flg='f' AND interrupt_flg='f'"
+									 .  "  WHERE is_consensual='f' AND interrupted='f'"
 									 .  "  AND entered_by~*?))";
 
 							$sqlParams[] = $fbUserArr[0];
@@ -477,7 +477,7 @@
 			$operator = ($params['consensualFB'] == "entered") ? '=' : '<>';
 
 			$tmpCond = "el.exec_id " . $operator . " ANY"
-					 . " (SELECT exec_id FROM lesion_feedback WHERE consensual_flg='t' AND interrupt_flg='f')";
+					 . " (SELECT exec_id FROM lesion_feedback WHERE is_consensual='t' AND interrupted='f')";
 
 			//if($params['filterTP'] == "all" && $params['filterFN'] == "all")
 			//{
@@ -490,15 +490,15 @@
 		{
 			$condition = ($params['filterTP'] == "with") ? '>0' : '<=0';
 
-			$tmpCond = " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupt_flg='f'";
+			$tmpCond = " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupted='f'";
 
 			if($params['consensualFB'] == "entered")
 			{
-				$tmpCond .= " AND consensual_flg='t'";
+				$tmpCond .= " AND is_consensual='t'";
 			}
 			else if($params['consensualFB'] == "notEntered")
 			{
-				$tmpCond .= " AND consensual_flg='f'";
+				$tmpCond .= " AND is_consensual='f'";
 			}
 			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $condition . ")";
 
@@ -514,11 +514,11 @@
 
 			if($params['consensualFB'] == "entered")
 			{
-				$tmpCond .= " AND consensual_flg='t'";
+				$tmpCond .= " AND is_consensual='t'";
 			}
 			else if($params['consensualFB'] == "notEntered")
 			{
-				$tmpCond .= " AND consensual_flg='f'";
+				$tmpCond .= " AND is_consensual='f'";
 			}
 			$tmpCond .= " GROUP BY exec_id HAVING MAX(false_negative_num)" .  $condition . ")";
 
@@ -616,22 +616,22 @@
 		//------------------------------------------------------------------------------------------
 		// SQL statement to count entered heads of personal feedback
 		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
-	             . " WHERE exec_id=? AND consensual_flg=? AND interrupt_flg='f'";
+	             . " WHERE exec_id=? AND is_consensual=? AND interrupted='f'";
 		$stmtHeads = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of TP
 		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=?"
-		        . " AND consensual_flg=? AND evaluation>=1 AND interrupt_flg='f'";
+		        . " AND is_consensual=? AND evaluation>=1 AND interrupted='f'";
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr = "SELECT evaluation, interrupt_flg FROM lesion_feedback WHERE exec_id=?"
-				. " AND consensual_flg='f' AND entered_by=? ORDER BY lesion_id ASC";
+		$sqlStr = "SELECT evaluation, interrupted FROM lesion_feedback WHERE exec_id=?"
+				. " AND is_consensual='f' AND entered_by=? ORDER BY lesion_id ASC";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr  = "SELECT status FROM false_negative_count WHERE exec_id=? AND consensual_flg='f'"
+		$sqlStr  = "SELECT status FROM false_negative_count WHERE exec_id=? AND is_consensual='f'"
 		         . " AND entered_by=?";
 		$stmtPersonalFN = $pdo->prepare($sqlStr);
 		$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
@@ -641,14 +641,14 @@
 		// For cad log
 		//------------------------------------------------------------------------------------------
 		// SQL statement for count No. of TP
-		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?"
-		         . " AND interrupt_flg='f' AND evaluation>=1";
+		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND is_consensual=?"
+		         . " AND interrupted='f' AND evaluation>=1";
 
 		$stmtTP = $pdo->prepare($sqlStr);
 
 		// SQL statement for count No. of FN
 		$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
-			     . " AND consensual_flg=? AND false_negative_num>0 AND status=2";
+			     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 		$stmtFN = $pdo->prepare($sqlStr);
 		//------------------------------------------------------------------------------------------

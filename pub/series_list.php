@@ -373,15 +373,15 @@
 			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
 
 			// Search executable or executed CAD software
-			$sqlStr = "SELECT cm.plugin_name, cm.version, cm.exec_flg, max(cs.series_description)"
-					. " FROM cad_master cm, cad_series cs"
-					. " WHERE cm.plugin_name=cs.plugin_name"
-					. " AND cm.version=cs.version"
+			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled, max(cs.series_description)"
+					. " FROM plugin_master pm, cad_master cm, cad_series cs"
+					. " WHERE cm.plugin_name=pm.plugin_name AND cs.plugin_name=cm.plugin_name"
+					. " AND cm.version=pm.version AND cs.version=cm.version"
 					. " AND cs.series_id=0"
 					. " AND cs.modality=?"
 					. " AND ((cs.series_description=?)"
 					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
-					. " GROUP BY cm.plugin_name, cm.version, cm.exec_flg, cm.label_order"
+					. " GROUP BY pm.plugin_name, pm.version, pm.exec_enabled, cm.label_order"
 					. " ORDER BY cm.label_order ASC";
 
 			$stmtCADMaster = $pdo->prepare($sqlStr);
@@ -418,6 +418,7 @@
 				// Setting of "CAD" column (pull-downmenu, [Exec] button, and [Result] button)
 				//------------------------------------------------------------------------------------------------------
 				$stmtCADMaster->execute(array($result['modality'], $result['series_description'], $imgNum, $imgNum));
+				//var_dump($stmt->errorInfo());
 
 				$cadNum = 0;
 				$cadColSettings = array();

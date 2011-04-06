@@ -209,7 +209,7 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 			$sqlParams = array();
 
-			$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND consensual_flg=?";
+			$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND is_consensual=?";
 
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 
@@ -230,7 +230,7 @@
 			}
 
 			$sqlStr = "SELECT * FROM false_negative_location"
-					. " WHERE exec_id=? AND consensual_flg=?";
+					. " WHERE exec_id=? AND is_consensual=?";
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
@@ -272,10 +272,10 @@
 				$params['userStr'] = $params['enteredBy'] . "^0";
 
 				//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
-				//		. " AND entered_by=? AND interrupt_flg='t'";
+				//		. " AND entered_by=? AND interrupted='t'";
 				//
-				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND consensual_flg='f'";
-				//else										$sqlStr .= " AND consensual_flg='t'";
+				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f'";
+				//else										$sqlStr .= " AND is_consensual='t'";
 				//
 				//if(DBConnector::query($sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
 				//{
@@ -285,7 +285,7 @@
 			else if($params['feedbackMode'] == "consensual")
 			{
 				$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=?"
-						. " AND consensual_flg='t' AND status=2";
+						. " AND is_consensual='t' AND status=2";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(1, $params['execID']);
@@ -306,7 +306,7 @@
 					$params['registTime'] = "";
 
 					$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?"
-					        . " AND consensual_flg='f' AND interrupt_flg='f'"
+					        . " AND is_consensual='f' AND interrupted='f'"
 							. " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
 					$stmt = $pdo->prepare($sqlStr);
@@ -405,7 +405,7 @@
 						}
 
 						$sqlStr = "SELECT DISTINCT entered_by FROM false_negative_location"
-						        . " WHERE exec_id=? AND consensual_flg='f' ORDER BY entered_by ASC";
+						        . " WHERE exec_id=? AND is_consensual='f' ORDER BY entered_by ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->bindValue(1, $params['execID']);
@@ -423,7 +423,7 @@
 						}
 
 						//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
-						//		. " AND consensual_flg='t'" . " AND interrupt_flg='t'";
+						//		. " AND is_consensual='t'" . " AND interrupted='t'";
 						//
 						//$stmt = $pdo->prepare($sqlStr);
 						//$stmt->bindValue(1, $params['execID']);

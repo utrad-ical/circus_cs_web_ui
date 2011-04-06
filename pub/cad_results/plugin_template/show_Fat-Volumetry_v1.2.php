@@ -46,7 +46,7 @@
 	}
 
 	$sqlStr = 'SELECT * FROM "fat_volumetry_v' . $params['version'] . '_score"'
-			.  " WHERE exec_id=? AND consensual_flg='f' AND entered_by=?";
+			.  " WHERE exec_id=? AND is_consensual='f' AND entered_by=?";
 
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->execute(array($params['execID'], $userID));

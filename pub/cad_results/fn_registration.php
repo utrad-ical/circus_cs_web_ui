@@ -14,13 +14,13 @@
 		if($consensualFlg == 'f') $sqlParams[] = $userID;
 
 		$sqlStr = "DELETE FROM false_negative_location WHERE exec_id=?"
-				. " AND consensual_flg=?";
+				. " AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
 
 		$sqlStr = "DELETE FROM false_negative_count"
-				. " WHERE exec_id=? AND consensual_flg=?";
+				. " WHERE exec_id=? AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
@@ -102,8 +102,8 @@
 
 			DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
 
-			$sqlStr = "INSERT INTO false_negative_location (exec_id, entered_by, consensual_flg,"
-			        . " location_x, location_y, location_z, nearest_lesion_id, interrupt_flg, registered_at)"
+			$sqlStr = "INSERT INTO false_negative_location (exec_id, entered_by, is_consensual,"
+			        . " location_x, location_y, location_z, nearest_lesion_id, interrupted, registered_at)"
 			        . " VALUES (?, ?, ?, ?, ?, ?, ?, 't', ?)";
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -140,7 +140,7 @@
 				//-------------------------------------------------------------------------------------------------------
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND consensual_flg='t'"
+					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND is_consensual='t'"
 						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
 					$sqlParams = array($params['execID'],
 									   $item["x"],
@@ -152,7 +152,7 @@
 					$srcID = 0;
 
 					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=?"
-							. " AND consensual_flg='f' AND interrupt_flg='f'"
+							. " AND is_consensual='f' AND interrupted='f'"
 						    . " AND location_x=? AND location_y=? AND location_z=?";
 
 					array_pop($sqlParams);
@@ -207,12 +207,12 @@
 			if($dstData['errorMessage'] == "")
 			{
 				$sqlStr = "SELECT COUNT(*) FROM false_negative_count WHERE exec_id=?"
-		                . " AND consensual_flg=? AND entered_by=?";
+		                . " AND is_consensual=? AND entered_by=?";
 
 				$sqlParams = array();
 
 				$sqlStr = "INSERT INTO false_negative_count "
-				        . "(exec_id, entered_by, consensual_flg, false_negative_num, status, registered_at)"
+				        . "(exec_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 				        . " VALUES (?, ?, ?, ?, 1, ?);";
 				$sqlParams[] = $params['execID'];
 				$sqlParams[] = $userID;

@@ -59,7 +59,7 @@
 	{/if}
 </div>
 
-{if $smarty.session.personalFBFlg==1 && $smarty.session.latestResults!='none'}
+{if $smarty.session.personalFBFlg==1 && $smarty.session.latestResults!='none' && $latestHtml !=""}
 	<h2>Latest results</h2>
 	<div class="ml15">
 		{$latestHtml}

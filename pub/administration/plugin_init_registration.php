@@ -203,27 +203,28 @@
 							$stmt->execute(array($pluginName, $version));
 						}
 
-						$sqlStr = "SELECT MAX(cm.label_order) FROM cad_master cm, cad_series cs"
-								. " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version"
-								. " AND cm.exec_flg='t' AND cs.series_id=0 AND cs.modality=?";
+						$sqlStr = "SELECT MAX(cm.label_order) FROM plugin_master pm, cad_master cm, cad_series cs"
+								. " WHERE cm.plugin_name=pm.plugin_name AND cs.plugin_name=cm.plugin_name"
+								. " WHERE cm.version=pm.version AND cs.version=cm.version"
+								. " AND pm.exec_enabled='t' AND cs.series_id=0 AND cs.modality=?";
 						$maxLabelOrder = DBConnector::query($sqlStr, $mainModality, 'SCALAR');
 
 						$sqlParams = array();
 
-						$sqlStr = "INSERT INTO plugin_master (plugin_name, version, type, exec_flg,"
+						$sqlStr = "INSERT INTO plugin_master (plugin_name, version, type, exec_enabled,"
 								. " description, install_dt) VALUES (?, ?, 1, 't', ?, ?);";
 						$sqlParams[] = $pluginName;
 						$sqlParams[] = $version;
 						$sqlParams[] = $description;
 						$sqlParams[] = $installDate;
 
-						$sqlStr .= "INSERT INTO cad_master (plugin_name, version, exec_flg, label_order,"
+						$sqlStr .= "INSERT INTO cad_master (plugin_name, version, label_order,"
 								.  " input_type, result_type, present_type, export_type, time_limit,"
 								.  " default_sort_key, default_sort_order, max_disp_num,"
 								.  " confidence_threshold, yellow_circle_th, double_circle_th,"
 								.  " window_level, window_width, result_table, score_table,"
 								.  " description) VALUES "
-								.  "(?,?,'t',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+								.  "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 						$sqlParams[] = $pluginName;
 						$sqlParams[] = $version;
@@ -354,8 +355,8 @@
 						$sqlStr = 'CREATE TABLE "' . $scoreTableName . '"('
 								. 'exec_id        INT NOT NULL,'
 								. 'entered_by     CHARACTER VARYING(32) NOT NULL,'
-								. 'consensual_flg BOOLEAN NOT NULL DEFAULT false,'
-								. 'interrupt_flg BOOLEAN NOT NULL DEFAULT false,';
+								. 'is_consensual BOOLEAN NOT NULL DEFAULT false,'
+								. 'interrupted BOOLEAN NOT NULL DEFAULT false,';
 
 						foreach($scoreDBDefinition->DBItem as $item)
 						{
@@ -395,7 +396,7 @@
 
 						$sqlStr .= ' registered_at timestamp without time zone NOT NULL,'
 								.  ' CONSTRAINT "' . $scoreTableName . '_pkey"'
-								.  ' PRIMARY KEY (exec_id, entered_by, consensual_flg),'
+								.  ' PRIMARY KEY (exec_id, entered_by, is_consensual),'
 								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
 								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
 								.  ' ON UPDATE RESTRICT ON DELETE CASCADE);';

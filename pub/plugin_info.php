@@ -159,8 +159,8 @@ $(function(){
 					    . " FROM executed_plugin_list el, lesion_feedback lf"
 					    . " WHERE el.plugin_name=? AND el.version=?"
 					    . " AND lf.exec_id=el.exec_id"
-					    . " AND lf.consensual_flg ='t'"
-					    . " AND lf.interrupt_flg ='f'";
+					    . " AND lf.is_consensual ='t'"
+					    . " AND lf.interrupted ='f'";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
@@ -172,9 +172,9 @@ $(function(){
 				        . " FROM executed_plugin_list el, lesion_feedback lf"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND lf.exec_id=el.exec_id"
-						. " AND lf.consensual_flg ='t'"
+						. " AND lf.is_consensual ='t'"
 						. " AND lf.evaluation>=1"
-						. " AND lf.interrupt_flg ='f'";
+						. " AND lf.interrupted ='f'";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($condArr);
@@ -186,7 +186,7 @@ $(function(){
 						. " FROM executed_plugin_list el, false_negative_count fn"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND fn.exec_id=el.exec_id"
-						. " AND fn.consensual_flg ='t'"
+						. " AND fn.is_consensual ='t'"
 						. " AND fn.status>=1";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -202,7 +202,7 @@ $(function(){
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND lf.exec_id=el.exec_id"
 						. " AND lf.entered_by=?"
-						.  " AND lf.consensual_flg ='f' AND lf.interrupt_flg='f'"
+						.  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
 						.  " GROUP BY lf.evaluation;";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -219,7 +219,7 @@ $(function(){
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND fn.exec_id=el.exec_id"
 						. " AND fn.entered_by=?"
-						. " AND fn.consensual_flg ='f'"
+						. " AND fn.is_consensual ='f'"
 						. " AND fn.status>=1";
 
 				$stmt = $pdo->prepare($sqlStr);

@@ -12,12 +12,12 @@
 		
 		if($params['feedbackMode'] == "personal")
 		{
-			$sqlStr .= " AND consensual_flg='f' AND entered_by=?";
+			$sqlStr .= " AND is_consensual='f' AND entered_by=?";
 			$sqlParams[] = $userID;
 		}
 		else
 		{
-			$sqlStr .= " AND consensual_flg='t'";
+			$sqlStr .= " AND is_consensual='t'";
 		}
 			
 		$stmt = $pdo->prepare($sqlStr);
@@ -35,7 +35,7 @@
 	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM visual_assessment"
-                 . " WHERE exec_id=? AND consensual_flg='f'";
+                 . " WHERE exec_id=? AND is_consensual='f'";
 				 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindParam(1, $params['execID']);
@@ -51,7 +51,7 @@
 	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr = "SELECT score, count(*) FROM visual_assessment WHERE exec_id=?"
-	            . " AND consensual_flg='f' AND interrupt_flg='f' GROUP BY score ORDER BY score ASC;";
+	            . " AND is_consensual='f' AND interrupted='f' GROUP BY score ORDER BY score ASC;";
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindParam(1, $params['execID']);
@@ -86,7 +86,7 @@
 			$evalStr = " " . $enterNumArr[$j-1];
 			
 			$sqlStr = "SELECT entered_by FROM visual_assessment WHERE exec_id=?"
-					. " AND consensual_flg='f' AND interrupt_flg='f' AND score=?";
+					. " AND is_consensual='f' AND interrupted='f' AND score=?";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['execID'], $j));

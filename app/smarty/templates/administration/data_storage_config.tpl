@@ -115,7 +115,7 @@ function ResetCurrentID()
 								<th>Path</th>
 								<th>Alias</th>
 								<th>Type</th>
-								<th>Current Flg</th>
+								<th>Current Use</th>
 								<th>&nbsp;</th>
 							</tr>
 						</thead>

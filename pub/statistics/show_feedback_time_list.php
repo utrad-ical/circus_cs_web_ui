@@ -192,22 +192,22 @@
 							// For TP and FN column
 							//------------------------------------------------------------------------------------------
 							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND entered_by=?"
-									. " AND consensual_flg='f' AND interrupt_flg='f' AND lesion_id>0";
+									. " AND is_consensual='f' AND interrupted='f' AND lesion_id>0";
 							$dispCandNum = DBConnector::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
 
 							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
-									. " WHERE exec_id=? AND entered_by=? AND consensual_flg='f' AND status=2";
+									. " WHERE exec_id=? AND entered_by=? AND is_consensual='f' AND status=2";
 							$enterFnNum = DBConnector::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
 
 							// SQL statement for count No. of TP
-							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND consensual_flg=?"
-							         . " AND interrupt_flg='f' AND evaluation>=1";
+							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND is_consensual=?"
+							         . " AND interrupted='f' AND evaluation>=1";
 
 							$stmtTP = $pdo->prepare($sqlStr);
 
 							// SQL statement for count No. of FN
 							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
-								     . " AND consensual_flg=? AND false_negative_num>0 AND status=2";
+								     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 							$stmtFN = $pdo->prepare($sqlStr);
 

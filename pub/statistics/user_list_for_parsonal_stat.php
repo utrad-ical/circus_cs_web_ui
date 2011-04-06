@@ -62,7 +62,7 @@
 				$sqlParams[] = $params['version'];
 			}
 
-			$sqlStr .= " AND lf.consensual_flg='f' AND lf.interrupt_flg='f'"
+			$sqlStr .= " AND lf.is_consensual='f' AND lf.interrupted='f'"
 					.  " ORDER BY entered_by ASC";
 
 			//echo $sqlStr;
