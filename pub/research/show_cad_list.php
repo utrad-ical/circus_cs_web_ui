@@ -90,7 +90,8 @@
 
 		if($params['errorMessage'] == "")
 		{
-			$sqlStr = "SELECT result_type FROM cad_master WHERE plugin_name=? AND version=?";
+			$sqlStr = "SELECT cm.result_type FROM plugin_master pm, plugin_cad_master cm"
+					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
 			$condArr = array($params['cadName'], $params['version']);
 
 			$resultType = DBConnector::query($sqlStr, $condArr, 'SCALAR');

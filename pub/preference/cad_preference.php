@@ -13,29 +13,30 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		$stmt = $pdo->prepare("SELECT DISTINCT plugin_name FROM cad_master WHERE result_type=1");
+		$sqlStr = "SELECT DISTINCT pm.plugin_name FROM plugin_master pm, plugin_cad_master cm"
+				. " WHERE cm.plugin_id=pm.plugin_id AND cm.result_type=1";
+		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute();
 
-		$sqlStr = "SELECT DISTINCT version FROM cad_master"
-				. " WHERE plugin_name=? AND result_type=1";
+		$sqlStr = "SELECT version FROM plugin_master WHERE plugin_name=?";
 
 		$stmtVersion = $pdo->prepare($sqlStr);
 
-		while($result = $stmt->fetch(PDO::FETCH_ASSOC))
+		while($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
-			$stmtVersion->bindParam(1, $result['plugin_name']);
+			$stmtVersion->bindParam(1, $result[0]);
 			$stmtVersion->execute();
 
 			$tmpStr = "";
 			$cnt = 0;
 
-			while($resultVersion = $stmtVersion->fetch(PDO::FETCH_ASSOC))
+			while($resultVersion = $stmtVersion->fetch(PDO::FETCH_NUM))
 			{
 				if($cnt > 0) $tmpStr .= '^';
-				$tmpStr .= $resultVersion['version'];
+				$tmpStr .= $resultVersion[0];
 			}
 
-			array_push($cadList, array($result['plugin_name'], $tmpStr));
+			array_push($cadList, array($result[0], $tmpStr));
 		}
 
 		//--------------------------------------------------------------------------------------------------------

@@ -11,9 +11,8 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		$sqlStr = "SELECT DISTINCT cs.modality FROM cad_master cm, cad_series cs"
-				. " WHERE cm.plugin_name=cs.plugin_name AND cm.version=cs.version"
-				. " AND cs.series_id=0 ORDER BY cs.modality ASC";
+		$sqlStr = "SELECT DISTINCT cs.modality FROM plugin_cad_master cm, plugin_cad_series cs"
+				. " WHERE cm.plugin_id=cs.plugin_id AND cs.series_id=0 ORDER BY cs.modality ASC";
 
 		$params['modalityList'] = DBConnector::query($sqlStr, null, 'ALL_COLUMN');
 

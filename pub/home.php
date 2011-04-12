@@ -47,12 +47,14 @@
 			$sqlStr = "SELECT lf.job_id, lf.lesion_id, el.plugin_name, el.version, pt.patient_id, pt.patient_name,"
 					. " st.study_date, st.study_time, es.study_instance_uid, es.series_instance_uid,"
 					. " storage.path, storage.apache_alias, cm.result_table"
-					. " FROM cad_master cm JOIN (patient_list pt JOIN (study_list st JOIN (storage_master storage JOIN"
+					. " FROM plugin_cad_master cm JOIN (plugin_master pm JOIN (patient_list pt JOIN"
+					. " (study_list st JOIN (storage_master storage JOIN"
 					. " (series_list sr JOIN (executed_series_list es JOIN"
 					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.job_id=el.job_id)"
 					. " ON lf.job_id=es.job_id AND es.series_id=0) ON sr.series_instance_uid=es.series_instance_uid)"
 					. " ON sr.storage_id=storage.storage_id) ON st.study_instance_uid=es.study_instance_uid)"
-					. " ON pt.patient_id=st.patient_id) ON cm.plugin_name=el.plugin_name AND cm.version=el.version";
+					. " ON pt.patient_id=st.patient_id) ON pm.plugin_name=el.plugin_name AND pm.version=el.version)"
+					. " ON cm.plugin_id=pm.plugin_id";
 
 			if($_SESSION['showMissed']=='own')  $sqlStr .= " WHERE lf.entered_by=? AND";
 			else								$sqlStr .= " WHERE";

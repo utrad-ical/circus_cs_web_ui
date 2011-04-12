@@ -72,18 +72,21 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
+		// Get plugin ID
+		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+		$params['pluginID'] = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'SCALAR');
+
 		//----------------------------------------------------------------------------------------------------
 		// regist or delete prefence
 		//----------------------------------------------------------------------------------------------------
 		$sqlParams = array();
 
 		$sqlParams[] = $userID;
-		$sqlParams[] = $params['cadName'];
-		$sqlParams[] = $params['version'];
+		$sqlParams[] = $params['pluginID'];
 
 		if($mode == 'delete')
 		{
-			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_name=? AND version=?";
+			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_id=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
@@ -99,24 +102,23 @@
 		}
 		if($mode == 'update')	// restore default settings
 		{
-			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_name=? AND version=?";
+			$sqlStr = "DELETE FROM plugin_user_preference WHERE user_id=? AND plugin_id=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 
 			$keyStr = array('sortKey', 'sortOrder', 'maxDispNum', 'confidenceTh',
 							'dispConfidenceFlg', 'dispCandidateTagFlg');
 
-			$sqlStr = "INSERT INTO plugin_user_preference(user_id, plugin_name, version, key, value)"
-					. " VALUES (?,?,?,?,?)";
+			$sqlStr = "INSERT INTO plugin_user_preference(user_id, plugin_id, key, value)"
+					. " VALUES (?,?,?,?)";
 
 			for($i = 0; $i < count($keyStr); $i++)
 			{
 				if($i > 0)
 				{
-					$sqlStr .= ",(?,?,?,?,?)";
+					$sqlStr .= ",(?,?,?,?)";
 					$sqlParams[] = $userID;
-					$sqlParams[] = $params['cadName'];
-					$sqlParams[] = $params['version'];
+					$sqlParams[] = $params['pluginID'];
 				}
 
 				$sqlParams[] = $keyStr[$i];

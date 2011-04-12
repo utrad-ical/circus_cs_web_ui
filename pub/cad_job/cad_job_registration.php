@@ -32,6 +32,10 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
+		// Get plugin ID
+		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+		$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
+
 		$colArr =array();
 
 		$sqlStr = "SELECT * FROM plugin_job_list pjob, job_series_list js"
@@ -123,24 +127,21 @@
 						// Get start_img_num, end_img_num, required_private_tags
 						//----------------------------------------------------------------------------------------------
 						$seriesSqlStr = "SELECT cs.start_img_num, cs.end_img_num, cs.dump_type, cs.required_private_tags"
-									  . " FROM cad_series cs, series_list sr"
-									  . " WHERE cs.plugin_name=? AND cs.version=? AND cs.series_id=?"
+									  . " FROM plugin_cad_series cs, series_list sr"
+									  . " WHERE cs.plugin_id=? AND cs.series_id=?"
 									  . " AND sr.series_instance_uid=?"
 									  . " AND cs.series_description=sr.series_description";
 
 						$stmtSeries = $pdo->prepare($seriesSqlStr);
-						$stmtSeries->execute(array($cadName, $version, $i, $seriesUIDArr[$i]));
+						$stmtSeries->execute(array($pluginID, $i, $seriesUIDArr[$i]));
 
 						if($stmtSeries->rowCount() != 1)
 						{
-							$seriesSqlStr = "SELECT cs.start_img_num, cs.end_img_num, cs.dump_type,"
-										  . " cs.required_private_tags FROM cad_series cs, series_list sr"
-										  . " WHERE cs.plugin_name=? AND cs.version=? AND cs.series_id=?"
-										  . " AND sr.series_instance_uid='(default)'"
-										  . " AND cs.series_description=sr.series_description";
-
+							$seriesSqlStr = "SELECT start_img_num, end_img_num, dump_type, required_private_tags"
+										  . " FROM plugin_cad_series WHERE plugin_id=? AND series_id=?"
+										  . " AND series_instance_uid='(default)'";
 							$stmtSeries = $pdo->preapre($seriesSqlStr);
-							$stmtSeries->execute(array($cadName, $version, $i, $seriesUIDArr[$i]));
+							$stmtSeries->execute(array($pluginID, $i));
 						}
 
 						$seriesRes = $stmtSeries->fetch(PDO::FETCH_NUM);

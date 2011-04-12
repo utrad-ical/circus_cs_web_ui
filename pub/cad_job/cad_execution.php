@@ -92,7 +92,9 @@
 
 			$encryptedPatientID   = PinfoScramble::encrypt($params['patientID'] , $_SESSION['key']);
 
-			$stmt = $pdo->prepare("SELECT input_type FROM cad_master WHERE plugin_name=? AND version=?");
+			$sqlStr = "SELECT cm.input_type FROM plugin_master pm, plugin_cad_master cm"
+					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
+			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['cadName'], $params['version']));
 
 			if($stmt->rowCount() == 1)
@@ -109,13 +111,16 @@
 
 		if($params['errorMessage'] == "")
 		{
-			// Set series array
-			$sqlStr = "SELECT DISTINCT series_id, modality FROM cad_series"
-	    			. " WHERE plugin_name=? AND version=?"
-					. " ORDER BY series_id ASC;";
+			// Get plugin ID
+			$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+			$params['pluginID'] = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'SCALAR');
 
+			// Set series array
+			$sqlStr = "SELECT DISTINCT series_id, modality FROM plugin_cad_series"
+	    			. " WHERE plugin_id=? ORDER BY series_id ASC;";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['cadName'], $params['version']));
+			$stmt->bindValue(1, $params['pluginID']);
+			$stmt->execute();
 
 			$seriesNum = $stmt->rowCount();
 
@@ -127,11 +132,11 @@
 
 				$modalityArr[$j] = $seriesIdRes[1];		// modality
 
-				$sqlStr = "SELECT series_description, min_slice, max_slice FROM cad_series"
-						. " WHERE plugin_name=? AND version=? AND series_id=? ORDER BY series_description DESC";
+				$sqlStr = "SELECT series_description, min_slice, max_slice FROM plugin_cad_series"
+						. " WHERE plugin_id=? AND series_id=? ORDER BY series_description DESC";
 
 				$stmtDesc = $pdo->prepare($sqlStr);
-				$stmtDesc->execute(array($params['cadName'], $params['version'], $seriesIdRes[0]));
+				$stmtDesc->execute(array($params['pluginID'], $seriesIdRes[0]));
 
 				$tmp = $stmtDesc->rowCount();  // No. of description
 				$descriptionNumArr[$j] = $tmp;

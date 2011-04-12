@@ -169,28 +169,32 @@
 				$params['webPath']           = $result[15];
 
 				// Retrieve parameters for the plug-in
-				$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE plugin_name=? AND version=?");
+				$sqlStr = "SELECT pm.plugin_id, cm.result_type, cm.result_table, cm.score_table"
+						. " FROM plugin_master pm, plugin_cad_master cm"
+						. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
+
+				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($params['cadName'], $params['version']));
 
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+				$result = $stmt->fetch(PDO::FETCH_NUM);
 
-				$params['resultType']  = $result['result_type'];
-				$params['resultTableName'] = $result['result_table'];
-				$params['scoreTableName']  = $result['score_table'];
+				$params['pluginID']        = $result[0];
+				$params['resultType']      = $result[1];
+				$params['resultTableName'] = $result[2];
+				$params['scoreTableName']  = $result[3];
 
 				//------------------------------------------------------------------------------------------------------
 				// Retrieve paramters from plugin_user_preference table
 				//------------------------------------------------------------------------------------------------------
-				$sqlStr = "SELECT key, value FROM plugin_user_preference"
-						. " WHERE plugin_name=? AND version=? AND user_id=?";
-				$sqlParams = array($params['cadName'], $params['version'], $userID);
+				$sqlStr = "SELECT key, value FROM plugin_user_preference WHERE plugin_id=? AND user_id=?";
+				$sqlParams = array($params['pluginID'], $userID);
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 
 				if($stmt->rowCount() == 0)
 				{
-					$sqlParams[2] = $DEFAOULT_CAD_PREF_USER;
+					$sqlParams[1] = $DEFAOULT_CAD_PREF_USER;
 					$stmt->execute($sqlParams);
 				}
 
@@ -308,8 +312,9 @@
 					$params['dispWidth'] = 256;
 					$params['dispHeight'] = (int)($params['cropHeight'] * (256 / $params['cropWidth']) + 0.5);
 
-					$stmt = $pdo->prepare("SELECT modality FROM cad_series WHERE plugin_name=? AND version=? AND series_id=0");
-					$stmt->execute(array($params['cadName'], $params['version']));
+					$stmt = $pdo->prepare("SELECT modality FROM plugin_cad_series WHERE plugin_id=? AND series_id=0");
+					$stmt->bindValue(1, $params['pluginID']);
+					$stmt->execute();
 
 					$params['mainModality'] = $stmt->fetchColumn();
 

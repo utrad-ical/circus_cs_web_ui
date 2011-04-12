@@ -40,10 +40,9 @@
 		$dstData['hiddenList']      = array();
 
 		$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled"
-				. " FROM plugin_master pm, cad_master cm, cad_series cs"
-				. " WHERE cm.plugin_name=pm.plugin_name AND cs.plugin_name = cm.plugin_name"
-				. " AND cm.version=pm.version AND cs.version=cm.version AND cs.series_id=0"
-				. " AND cs.modality=? ORDER BY cm.label_order ASC";
+				. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
+				. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id = cm.plugin_id"
+				. " AND cs.series_id=0 AND cs.modality=? ORDER BY cm.label_order ASC";
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindValue(1, $dstData['modality']);

@@ -92,7 +92,7 @@ $(function(){
 			$condArr = array($cadName, $version);
 
 			// Description, input type
-			$stmt = $pdo->prepare("SELECT * FROM cad_master WHERE plugin_name=? AND version=?");
+			$stmt = $pdo->prepare("SELECT * FROM plugin_cad_master WHERE plugin_name=? AND version=?");
 			$stmt->execute($condArr);
 
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -102,7 +102,7 @@ $(function(){
 			$description = $result['description'];
 
 			// Series info
-			$sqlStr = "SELECT DISTINCT series_id, modality FROM cad_series"
+			$sqlStr = "SELECT DISTINCT series_id, modality FROM plugin_cad_series"
 					. " WHERE plugin_name=? AND version=?"
 					. " ORDER BY series_id ASC;";
 
@@ -116,7 +116,7 @@ $(function(){
 				$seriesID = $result[0];
 				$modality = $result[1];
 
-				$sqlStr = "SELECT series_description, min_slice, max_slice FROM cad_series"
+				$sqlStr = "SELECT series_description, min_slice, max_slice FROM plugin_cad_series"
 						. " WHERE plugin_name=? AND version=?"
 						. " AND series_id=? ORDER BY series_description DESC;";
 

@@ -110,7 +110,9 @@
 
 			if($params['version'] != "all")
 			{
-				$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE plugin_name=? AND version=?");
+				$sqlStr = "SELECT cm.result_table FROM plugin_master pm, plugin_cad_master cm"
+						. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
+				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($params['cadName'], $params['version']));
 				$resultTableName = $stmt->fetchColumn();
 			}

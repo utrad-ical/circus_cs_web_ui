@@ -82,7 +82,9 @@
 			$cadName = $result[0];
 			$version = $result[1];
 
-			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE plugin_name=? AND version=?");
+			$sqlStr = "SELECT cm.result_table FROM plugin_master pm, plugin_cad_master cm"
+					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
+			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($cadName, $version));
 			$resultTableName = $stmt->fetchColumn();
 		}
@@ -167,7 +169,7 @@
 
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
 						  .  '<a href="../cad_results/show_cad_results.php?jobID=' . $candList[$k][0]
-						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
+						  .  '&feedbackMode=personal&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
 						  .  ' title="ID:'. $candList[$k][0];
 			if($n!=3)	$listHtml[$n] .= ', rank:'.$candList[$k][1].' (confidence:'.sprintf("%.3f", $candList[$k][2]).')';
 			$listHtml[$n] .= '">'

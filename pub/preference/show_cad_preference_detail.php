@@ -47,11 +47,14 @@
 	{
 		if($params['message'] == "&nbsp;")
 		{
+			$params['message'] = "Default settings";
+
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-
-			$sqlStr = "SELECT key, value FROM plugin_user_preference WHERE plugin_name=? AND version=? AND user_id=?";
+			$sqlStr = "SELECT key, value FROM plugin_master pm, plugin_user_preference pp"
+					. " WHERE pp.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?"
+					. " AND pp.user_id=?";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['cadName'], $params['version'], $DEFAOULT_CAD_PREF_USER));
 
@@ -65,6 +68,7 @@
 			if($stmt->rowCount() > 0)
 			{
 				$params['preferenceFlg'] = 1;
+				$params['message'] = "&nbsp;";
 
 				while($result = $stmt->fetch(PDO::FETCH_NUM))
 				{

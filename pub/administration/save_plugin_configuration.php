@@ -67,13 +67,14 @@
 					$cadName = substr($executableList[$i], 0, $pos);
 					$version = substr($executableList[$i], $pos+3, strlen($executableList[$i])-$pos-3);
 
-					$sqlStr = "UPDATE plugin_master SET exec_enabled='t'"
-							. " WHERE plugin_name=:cadName AND version=:version;"
-							. "UPDATE cad_master SET label_order=:order"
-							. " WHERE plugin_name=:cadName AND version=:version;";
+					// Get plugin ID
+					$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+					$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
 
-					$sqlParams['cadName'] = $cadName;
-					$sqlParams['version'] = $version;
+					$sqlStr = "UPDATE plugin_master SET exec_enabled='t' WHERE plugin_id=:pluginID;"
+							. "UPDATE plugin_cad_master SET label_order=:order WHERE plugin_id=:pluginID;";
+
+					$sqlParams['pluginID'] = $pluginID;
 					$sqlParams['order']   = $order;
 
 					$stmt = $pdo->prepare($sqlStr);
@@ -88,13 +89,14 @@
 					$cadName = substr($hiddenList[$i], 0, $pos);
 					$version = substr($hiddenList[$i], $pos+3, strlen($hiddenList[$i])-$pos-3);
 
-					$sqlStr = "UPDATE plugin_master SET exec_enabled='f'"
-							. " WHERE plugin_name=:cadName AND version=:version;"
-							. "UPDATE cad_master SET label_order=:order"
-							. " WHERE plugin_name=:cadName AND version=:version;";
+					// Get plugin ID
+					$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+					$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
 
-					$sqlParams['cadName'] = $cadName;
-					$sqlParams['version'] = $version;
+					$sqlStr = "UPDATE plugin_master SET exec_enabled='t' WHERE plugin_id=:pluginID;"
+							. "UPDATE plugin_cad_master SET label_order=:order WHERE plugin_id=:pluginID;";
+
+					$sqlParams['pluginID'] = $pluginID;
 					$sqlParams['order']   = $order;
 
 					$stmt = $pdo->prepare($sqlStr);

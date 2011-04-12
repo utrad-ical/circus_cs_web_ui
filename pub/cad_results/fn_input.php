@@ -178,7 +178,9 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve locations of lesion candidate
 			//----------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT result_table FROM cad_master WHERE plugin_name=? AND version=?");
+			$sqlStr = "SELECT cm.result_type FROM plugin_master pm, plugin_cad_master cm"
+					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
+			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $params['cadName']);
 			$stmt->bindValue(2, $params['version']);
 			$stmt->execute();

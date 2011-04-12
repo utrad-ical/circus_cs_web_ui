@@ -54,8 +54,6 @@ function ShowCadPreferenceDetail()
 	$.post("./preference/show_cad_preference_detail.php",
             {cadName: cadName, version: version},
              function(data){
-				alert(data.sortKey[1]);
-
 				$("#cadName").val(data.cadName);
 				$("#version").val(data.version);
 				$("#preferenceFlg").val(data.preferenceFlg);
@@ -82,7 +80,10 @@ function ShowCadPreferenceDetail()
 
 				$("#detailCadPrefrence").show();
 				$("#updateCADPrefBtn").show();
+
 				if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
+				else						 $("#deleteCADPrefBtn").hide();
+
 				$("#container").height( $(document).height() - 10 );
 
 			   }, "json");
