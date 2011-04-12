@@ -29,8 +29,8 @@
 
 		if($executionNum > 0)
 		{
-			$sqlStr = "SELECT plugin_name, version, COUNT(exec_id) as cnt FROM executed_plugin_list "
-			        . " GROUP BY plugin_name, version ORDER BY COUNT(exec_id) DESC LIMIT 3";
+			$sqlStr = "SELECT plugin_name, version, COUNT(job_id) as cnt FROM executed_plugin_list "
+			        . " GROUP BY plugin_name, version ORDER BY COUNT(job_id) DESC LIMIT 3";
 			$cadExecutionData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 		}
 		//--------------------------------------------------------------------------------------------------------------
@@ -44,13 +44,13 @@
 		{
 			include('cad_results/lesion_candidate_display_private.php');
 
-			$sqlStr = "SELECT lf.exec_id, lf.lesion_id, el.plugin_name, el.version, pt.patient_id, pt.patient_name,"
+			$sqlStr = "SELECT lf.job_id, lf.lesion_id, el.plugin_name, el.version, pt.patient_id, pt.patient_name,"
 					. " st.study_date, st.study_time, es.study_instance_uid, es.series_instance_uid,"
 					. " storage.path, storage.apache_alias, cm.result_table"
 					. " FROM cad_master cm JOIN (patient_list pt JOIN (study_list st JOIN (storage_master storage JOIN"
 					. " (series_list sr JOIN (executed_series_list es JOIN"
-					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.exec_id=el.exec_id)"
-					. " ON lf.exec_id=es.exec_id AND es.series_id=0) ON sr.series_instance_uid=es.series_instance_uid)"
+					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.job_id=el.job_id)"
+					. " ON lf.job_id=es.job_id AND es.series_id=0) ON sr.series_instance_uid=es.series_instance_uid)"
 					. " ON sr.storage_id=storage.storage_id) ON st.study_instance_uid=es.study_instance_uid)"
 					. " ON pt.patient_id=st.patient_id) ON cm.plugin_name=el.plugin_name AND cm.version=el.version";
 
@@ -75,11 +75,11 @@
 						. " param.crop_org_x as org_x, param.crop_org_y as org_y,"
 						. " param.crop_width, param.crop_height, param.window_level, param.window_width"
 						. " FROM param_set param JOIN " . $missedTPData[$i]['result_table'] . " cad"
-						. " ON param.exec_id=cad.exec_id"
-						. " WHERE cad.exec_id=? AND cad.sub_id=?";
+						. " ON param.job_id=cad.job_id"
+						. " WHERE cad.job_id=? AND cad.sub_id=?";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $missedTPData[$i]['exec_id']);
+				$stmt->bindValue(1, $missedTPData[$i]['job_id']);
 				$stmt->bindValue(2, $missedTPData[$i]['lesion_id']);
 				$stmt->execute();
 
@@ -134,7 +134,7 @@
 				$latestHtml .= '<b>&nbsp;St.: </b>' . $item['study_date'] . '&nbsp;' . $item['study_time'] . '<br/>'
 							.  '<b>&nbsp;CAD: </b>' . $item['plugin_name'] . ' v.' . $item['version']
 							.  '<input name="" type="button" value="detail" class="form-btn"'
-							.  ' onclick="location.href=\'cad_results/show_cad_results.php?execID=' . $item['exec_id']
+							.  ' onclick="location.href=\'cad_results/show_cad_results.php?jobID=' . $item['job_id']
 							.  '&feedbackMode=personal&remarkCand=' . $item['lesion_id'] . '&sortKey=confidence'
 							.  '&sortOrder=DESC\';" style="margin-left:70px;"><br/>'
 							.  '<b>&nbsp;Candidate ID: </b>' . $item['lesion_id'] . '<br/>'

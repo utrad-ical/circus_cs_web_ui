@@ -8,12 +8,12 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	//
 	//-----------------------------------------------------------------------------------------------------------------
-	function CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $execID)
+	function CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $jobID)
 	{
 		$registStatus = array('cand' => 0,
 							  'FN'   => 0);  // 0：not evaluated, 1：incomplete, 2：complete
 
-		$stmtPersonalFB->bindParam(1, $execID);
+		$stmtPersonalFB->bindParam(1, $jobID);
 		$stmtPersonalFB->execute();
 
 		if($stmtPersonalFB->rowCount() > 0)
@@ -30,7 +30,7 @@
 			}
 		}
 
-		$stmtPersonalFN->bindParam(1, $execID);
+		$stmtPersonalFN->bindParam(1, $jobID);
 		$stmtPersonalFN->execute();
 
 		if($stmtPersonalFN->rowCount() == 1)
@@ -216,10 +216,10 @@
 		$sqlCond = " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 			       . " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
 			       . " JOIN (executed_series_list es JOIN executed_plugin_list el"
-			       . " ON (es.exec_id=el.exec_id AND es.series_id=0 AND el.plugin_type=1))"
+			       . " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
 			       . " ON (sr.series_instance_uid = es.series_instance_uid)"
-			       . " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupted='f')"
-			       . " LEFT JOIN false_negative_count fn ON (es.exec_id = fn.exec_id AND fn.status>=1)";
+			       . " LEFT JOIN lesion_feedback lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
+			       . " LEFT JOIN false_negative_count fn ON (es.job_id = fn.job_id AND fn.status>=1)";
 
 		if($params['mode'] == 'today')
 		{
@@ -309,7 +309,7 @@
 		if($params['filterCadID'] != "")
 		{
 			// Search by regular expression
-			$sqlCondArray[] = "el.exec_id=?";
+			$sqlCondArray[] = "el.job_id=?";
 			$sqlParams[] = $params['filterCadID'];
 			$addressParams['filterCadID'] = $params['filterCadID'];
 		}
@@ -388,7 +388,7 @@
 
 		if($params['filterTag'] != "")
 		{
-			$sqlCondArray[] = "el.exec_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
+			$sqlCondArray[] = "el.job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
 			$sqlParams[] = $params['filterTag'];
 			$addressParams['filterTag'] = $params['filterTag'];
 		}
@@ -399,8 +399,8 @@
 
 			$operator = ($params['personalFB'] == "entered") ? '=' : '<>';
 
-			$tmpCond .= " el.exec_id " . $operator . " ANY"
-					 .  " (SELECT DISTINCT exec_id FROM lesion_feedback WHERE is_consensual='f'"
+			$tmpCond .= " el.job_id " . $operator . " ANY"
+					 .  " (SELECT DISTINCT job_id FROM lesion_feedback WHERE is_consensual='f'"
 					 .  " AND interrupted='f'";
 
 			if($params['personalFB'] == "entered")
@@ -427,8 +427,8 @@
 						}
 						else if(count($fbUserArr) >= 2)
 						{
-							$tmpCond .= " AND entered_by~*? AND exec_id IN"
-									 .  " (SELECT DISTINCT exec_id FROM lesion_feedback"
+							$tmpCond .= " AND entered_by~*? AND job_id IN"
+									 .  " (SELECT DISTINCT job_id FROM lesion_feedback"
 									 .  "  WHERE is_consensual='f' AND interrupted='f'"
 									 .  "  AND entered_by~*?))";
 
@@ -476,8 +476,8 @@
 		{
 			$operator = ($params['consensualFB'] == "entered") ? '=' : '<>';
 
-			$tmpCond = "el.exec_id " . $operator . " ANY"
-					 . " (SELECT exec_id FROM lesion_feedback WHERE is_consensual='t' AND interrupted='f')";
+			$tmpCond = "el.job_id " . $operator . " ANY"
+					 . " (SELECT job_id FROM lesion_feedback WHERE is_consensual='t' AND interrupted='f')";
 
 			//if($params['filterTP'] == "all" && $params['filterFN'] == "all")
 			//{
@@ -490,7 +490,7 @@
 		{
 			$condition = ($params['filterTP'] == "with") ? '>0' : '<=0';
 
-			$tmpCond = " el.exec_id IN (SELECT DISTINCT exec_id FROM lesion_feedback WHERE interrupted='f'";
+			$tmpCond = " el.job_id IN (SELECT DISTINCT job_id FROM lesion_feedback WHERE interrupted='f'";
 
 			if($params['consensualFB'] == "entered")
 			{
@@ -500,7 +500,7 @@
 			{
 				$tmpCond .= " AND is_consensual='f'";
 			}
-			$tmpCond .= " GROUP BY exec_id HAVING MAX(evaluation)" . $condition . ")";
+			$tmpCond .= " GROUP BY job_id HAVING MAX(evaluation)" . $condition . ")";
 
 			$sqlCondArray[] = $tmpCond;
 			$addressParams['filterTP'] = $params['filterTP'];
@@ -510,7 +510,7 @@
 		{
 			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
 
-			$tmpCond = "el.exec_id IN (SELECT DISTINCT exec_id FROM false_negative_count WHERE status=2";
+			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM false_negative_count WHERE status=2";
 
 			if($params['consensualFB'] == "entered")
 			{
@@ -520,7 +520,7 @@
 			{
 				$tmpCond .= " AND is_consensual='f'";
 			}
-			$tmpCond .= " GROUP BY exec_id HAVING MAX(false_negative_num)" .  $condition . ")";
+			$tmpCond .= " GROUP BY job_id HAVING MAX(false_negative_num)" .  $condition . ")";
 
 			$sqlCondArray[] = $tmpCond;
 			$addressParams['filterFN'] = $params['filterFN'];
@@ -530,7 +530,7 @@
 
 		if(count($sqlCondArray) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
 
-		$sqlCond .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+		$sqlCond .= " GROUP BY el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version,"
 				 .  " el.exec_user, el.executed_at, es.study_instance_uid, es.series_instance_uid";
 		//--------------------------------------------------------------------------------------------------------------
@@ -572,7 +572,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Set $data array
 		//--------------------------------------------------------------------------------------------------------------
-		$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+		$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 		        . " sr.series_date, sr.series_time, el.plugin_name, el.version,"
 				. " el.exec_user, el.executed_at,"
 		        . " es.study_instance_uid, es.series_instance_uid,"
@@ -616,22 +616,22 @@
 		//------------------------------------------------------------------------------------------
 		// SQL statement to count entered heads of personal feedback
 		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
-	             . " WHERE exec_id=? AND is_consensual=? AND interrupted='f'";
+	             . " WHERE job_id=? AND is_consensual=? AND interrupted='f'";
 		$stmtHeads = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of TP
-		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=?"
+		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=?"
 		        . " AND is_consensual=? AND evaluation>=1 AND interrupted='f'";
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr = "SELECT evaluation, interrupted FROM lesion_feedback WHERE exec_id=?"
+		$sqlStr = "SELECT evaluation, interrupted FROM lesion_feedback WHERE job_id=?"
 				. " AND is_consensual='f' AND entered_by=? ORDER BY lesion_id ASC";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr  = "SELECT status FROM false_negative_count WHERE exec_id=? AND is_consensual='f'"
+		$sqlStr  = "SELECT status FROM false_negative_count WHERE job_id=? AND is_consensual='f'"
 		         . " AND entered_by=?";
 		$stmtPersonalFN = $pdo->prepare($sqlStr);
 		$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
@@ -641,13 +641,13 @@
 		// For cad log
 		//------------------------------------------------------------------------------------------
 		// SQL statement for count No. of TP
-		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND is_consensual=?"
+		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND is_consensual=?"
 		         . " AND interrupted='f' AND evaluation>=1";
 
 		$stmtTP = $pdo->prepare($sqlStr);
 
 		// SQL statement for count No. of FN
-		$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
+		$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE job_id=?"
 			     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 		$stmtFN = $pdo->prepare($sqlStr);
@@ -686,8 +686,8 @@
 			{
 				if($_SESSION['colorSet'] == "admin")
 				{
-					$stmtHeads->bindParam(1, $result['exec_id']);
-					$stmtTPCnt->bindParam(1, $result['exec_id']);
+					$stmtHeads->bindParam(1, $result['job_id']);
+					$stmtTPCnt->bindParam(1, $result['job_id']);
 
 					for($i=0; $i<2; $i++)
 					{
@@ -711,15 +711,15 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['exec_id']);
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['job_id']);
 				}
 			}
 			else
 			{
 				if($_SESSION['colorSet'] == "admin")
 				{
-					$stmtHeads->bindParam(1, $result['exec_id']);
-					$stmtTPCnt->bindParam(1, $result['exec_id']);
+					$stmtHeads->bindParam(1, $result['job_id']);
+					$stmtTPCnt->bindParam(1, $result['job_id']);
 
 					$stmtHeads->bindParam(2, $flgArray[0]);
 					$stmtHeads->execute();
@@ -741,7 +741,7 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['exec_id']);
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['job_id']);
 				}
 
 				$tpColStr = "-";
@@ -749,7 +749,7 @@
 
 				if($result['tp_max']>=1)
 				{
-					$stmtTP->bindValue(1, $result['exec_id']);
+					$stmtTP->bindValue(1, $result['job_id']);
 					$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
 					$stmtTP->execute();
 
@@ -764,7 +764,7 @@
 
 				if($result['fn_max']>=1)
 				{
-					$stmtFN->bindValue(1, $result['exec_id']);
+					$stmtFN->bindValue(1, $result['job_id']);
 					$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);
 					$stmtFN->execute();
 

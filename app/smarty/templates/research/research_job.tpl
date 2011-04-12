@@ -120,8 +120,8 @@ function ShowCadList()
 					tableHtml += '<tr';
 					if(i%2==1)  tableHtml += ' class="column"';
 					tableHtml += '><td><input type="checkbox" name="cadCheckList[]"'
-                              +  ' value="' + data[i].exec_id + '" checked="checked" /></td>'
-                              +  '<td class="al-l">' + data[i].exec_id + '</td>'
+                              +  ' value="' + data[i].job_id + '" checked="checked" /></td>'
+                              +  '<td class="al-l">' + data[i].job_id + '</td>'
                               +  '<td class="al-l">' + data[i].patient_id + '</td>'
 							  +  '<td class="al-l">' + data[i].patient_name + '</td>'
 							  +  '<td>' + data[i].age + '</td>'
@@ -349,7 +349,7 @@ $(function() {
 								<thead>
 									<tr>
 										<th rowspan="2">&nbsp;</th>
-										<th rowspan="2">CAD ID</th>
+										<th rowspan="2">Job ID</th>
 										<th rowspan="2">Patient ID</th>
 										<th rowspan="2">Name</th>
 										<th rowspan="2">Age</th>

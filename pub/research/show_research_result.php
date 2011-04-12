@@ -14,7 +14,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
@@ -48,10 +48,10 @@
 			//echo json_encode($dstData);
 			$sqlStr .= "SELECT el.plugin_name, el.version, el.executed_at, sm.path, sm.apache_alias"
 					.  " FROM executed_plugin_list el, storage_master sm"
-					.  " WHERE el.exec_id=? AND el.storage_id = sm.storage_id";
+					.  " WHERE el.job_id=? AND el.storage_id = sm.storage_id";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $params['execID']);
+			$stmt->bindParam(1, $params['jobID']);
 			$stmt->execute();
 
 			$result = $stmt->fetch(PDO::FETCH_NUM);
@@ -59,14 +59,14 @@
 			$params['pluginName'] = $result[0];
 			$params['version']    = $result[1];
 			$params['executedAt'] = $result[2];
-			$params['resPath']    = $result[3] . $DIR_SEPARATOR . $params['execID'] . $DIR_SEPARATOR;
-			$params['resPathWeb'] = "../" . $result[4] . $params['execID'] . $DIR_SEPARATOR_WEB;
+			$params['resPath']    = $result[3] . $DIR_SEPARATOR . $params['jobID'] . $DIR_SEPARATOR;
+			$params['resPathWeb'] = "../" . $result[4] . $params['jobID'] . $DIR_SEPARATOR_WEB;
 
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve tag data
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=6 AND reference_id=? ORDER BY sid ASC";
-			$params['tagArray'] = DBConnector::query($sqlStr, $params['execID'], 'ALL_NUM');
+			$params['tagArray'] = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
 			//----------------------------------------------------------------------------------------------------------
 
 			$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';

@@ -5,9 +5,9 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables 
 	//------------------------------------------------------------------------------------------------------------------
-	$execID     = $_POST['execID'];
-	$curveType  = $_POST['curveType'];
-	$inputPath  = $_POST['inputPath'];
+	$jobID     = $_POST['jobID'];
+	$curveType = $_POST['curveType'];
+	$inputPath = $_POST['inputPath'];
 	//------------------------------------------------------------------------------------------------------------------
 
 	$dstData = array();
@@ -26,7 +26,7 @@
 	//fclose($fp);
 	//------------------------------------------------------------------------------------------------------------------
 
-	$tmpFname = 'ROC' . $execID . '_' . microtime(true) . '.png';
+	$tmpFname = 'ROC' . $jobID . '_' . microtime(true) . '.png';
 
 	$curveFname = $WEB_UI_ROOT . $DIR_SEPARATOR . 'pub' . $DIR_SEPARATOR . 'tmp'
 	            . $DIR_SEPARATOR . $tmpFname;

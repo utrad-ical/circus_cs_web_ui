@@ -45,7 +45,7 @@ function CreateEvalStr(lesionArr)
 function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress)
 {
 	$.post("feedback_registration.php",
-			{ execID:  $("#execID").val(),
+			{ jobID:  $("#jobID").val(),
 	  		  cadName: $("#cadName").val(),
 	          version: $("#version").val(),
 	          interruptFlg: interruptFlg,
@@ -86,7 +86,7 @@ function MovePageWithTempRegistration(address)
 function ShowFNinput()
 {
 	var address = 'fn_input.php'
-				+ '?execID=' + $("#execID").val()
+				+ '?jobID=' + $("#jobID").val()
                 + '&feedbackMode=' + $("#feedbackMode").val();
 	
 	MovePageWithTempRegistration(address);
@@ -94,7 +94,7 @@ function ShowFNinput()
 
 function ChangeCondition(mode, feedbackMode)
 {
-	var address = 'show_cad_results.php?execID=' + $("#execID").val()
+	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
 			    + '&feedbackMode=' + feedbackMode
 				+ '&sortKey=' + $("#sortKey").val()
 				+ '&sortOrder=' + $(".sort-by input[name='sortOrder']:checked").val();
@@ -123,7 +123,7 @@ function ChangeCondition(mode, feedbackMode)
 
 function ChangeFeedbackMode(feedbackMode)
 {
-	var address = 'show_cad_results.php?execID=' + $("#execID").val()
+	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
                 + '&feedbackMode=' + feedbackMode;
 
 	if($("#remarkCand").val() > 0)  address += '&remarkCand=' + $("#remarkCand").val();
@@ -182,7 +182,7 @@ function ChangeLesionClassification(candID, label)
 		var options = "Candidate " + candID + ":" + label;
 
 		$.post("write_feedback_action_log.php",
-				{ execID: $("#execID").val(),
+				{ jobID: $("#jobID").val(),
 				  action: 'classify',
 				  options: options
 				});
@@ -323,9 +323,9 @@ function plotDots(id, x, y, colorSet)
 	$("#imgBlock").append(htmlStr);
 }
 
-function EditCandidateTag(execID, candID, feedbackMode, userID)
+function EditCandidateTag(jobID, candID, feedbackMode, userID)
 {
-	var dstAddress = "../cad_results/edit_candidate_tag.php?execID=" + execID + "&candID=" + candID
+	var dstAddress = "../cad_results/edit_candidate_tag.php?jobID=" + jobID + "&candID=" + candID
                    + "&feedbackMode=" + feedbackMode + "&userID=" + userID;
 	window.open(dstAddress,"Edit lesion candidate tag", "width=400,height=250,location=no,resizable=no,scrollbars=1");
 }
@@ -395,7 +395,7 @@ $(function() {
 		if($("#feedbackMode").val()=="personal")
 		{
 			$.post("write_feedback_action_log.php",
-					{ execID: $("#execID").val(),
+					{ jobID: $("#jobID").val(),
 					  action: 'select',
 					  options: options
 					});
@@ -473,7 +473,7 @@ $(function() {
 			{else}
 				<form id="form1" name="form1">
 				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}" />
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}" />
+				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}" />
 				<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}" />
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}" />
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
@@ -490,7 +490,7 @@ $(function() {
 
 				<div id="cadResult">
 
-					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.jobID}]</h2>
 
 				<div class="headerArea">
 						<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
@@ -567,7 +567,7 @@ $(function() {
 					<input type="hidden" id="windowLevel"  name="windowLevel"  value="{$detailParams.windowLevel}" />
 					<input type="hidden" id="windowWidth"  name="windowWidth"  value="{$detailParams.windowWidth}" />
 
-					<h2>CAD Detail&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+					<h2>CAD Detail&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.jobID}]</h2>
 					<div class="headerArea">
 							<div class="fl-l"><a onclick="MovePageWithTempRegistration('../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}');">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>
 							<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$params.studyDate}&nbsp;({$params.studyID})</a></div>

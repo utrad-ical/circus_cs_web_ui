@@ -67,7 +67,7 @@
 
 		if($n==0)
 		{
-			$sqlStr = "SELECT plugin_name, version FROM executed_plugin_list WHERE exec_id=?";
+			$sqlStr = "SELECT plugin_name, version FROM executed_plugin_list WHERE job_id=?";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $candList[0][0]);
@@ -86,7 +86,7 @@
 
 		for($k = 0; $k < min(5, $listCnt); $k++)
 		{
-			$stmt = $pdo->prepare("SELECT * FROM param_set WHERE exec_id=?");
+			$stmt = $pdo->prepare("SELECT * FROM param_set WHERE job_id=?");
 			$stmt->bindParam(1, $candList[$k][0]);
 			$stmt->execute();
 
@@ -102,8 +102,8 @@
 						. ' fn.location_x, fn.location_y, fn.location_z'
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, false_negative_location fn'
-						. ' WHERE el.exec_id=?  AND fn.exec_id=el.exec_id AND fn.location_id=?'
-						. ' AND es.exec_id=el.exec_id AND es.series_id=0'
+						. ' WHERE el.job_id=?  AND fn.job_id=el.job_id AND fn.location_id=?'
+						. ' AND es.job_id=el.job_id AND es.series_id=0'
 						. ' AND st.study_instance_uid=es.study_instance_uid '
 						. ' AND sr.series_instance_uid=es.series_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
@@ -114,8 +114,8 @@
 						. ' cad.location_x, cad.location_y, cad.location_z'
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, "' . $resultTableName . '" cad'
-						. ' WHERE el.exec_id=?  AND cad.exec_id=el.exec_id AND cad.sub_id=?'
-						. ' AND es.exec_id=el.exec_id AND es.series_id=0'
+						. ' WHERE el.job_id=?  AND cad.job_id=el.job_id AND cad.sub_id=?'
+						. ' AND es.job_id=el.job_id AND es.series_id=0'
 						. ' AND st.study_instance_uid=es.study_instance_uid '
 						. ' AND sr.series_instance_uid=es.series_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
@@ -161,7 +161,7 @@
 			imagedestroy($img);
 
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
-						  .  '<a href="../cad_results/show_cad_results.php?execID=' . $candList[$k][0]
+						  .  '<a href="../cad_results/show_cad_results.php?jobID=' . $candList[$k][0]
 						  .  '&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
 						  .  ' title="ID:'. $candList[$k][0];
 			if($n!=3)	$listHtml[$n] .= ', rank:'.$candList[$k][1].' (confidence:'.sprintf("%.3f", $candList[$k][2]).')';
@@ -184,7 +184,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Create ROC(FROC) curve as PNG file
 	//------------------------------------------------------------------------------------------------------------------
-	$tmpFname = 'ROC' . $params['execID'] . '_' . microtime(true) . '.png';
+	$tmpFname = 'ROC' . $params['jobID'] . '_' . microtime(true) . '.png';
 
 	$curveFname    = $WEB_UI_ROOT . $DIR_SEPARATOR . 'pub' . $DIR_SEPARATOR . 'tmp'
 	               . $DIR_SEPARATOR . $tmpFname;

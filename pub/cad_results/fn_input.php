@@ -25,7 +25,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
@@ -72,14 +72,14 @@
 					. " sr.series_description, el.plugin_name, el.version, sm.path, sm.apache_alias"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm,"
 					. " executed_plugin_list el, executed_series_list es"
-			        . " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=0"
+			        . " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
 			        . " AND sr.series_instance_uid=es.series_instance_uid"
 			        . " AND st.study_instance_uid=es.study_instance_uid"
 			        . " AND pt.patient_id=st.patient_id"
 			        . " AND sr.storage_id=sm.storage_id;";
 
 
-			$result = DBConnector::query($sqlStr, $params['execID'], 'ARRAY_NUM');
+			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
 			$params['patientID']         = $result[0];
 			$params['studyInstanceUID']  = $result[1];
@@ -164,8 +164,8 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve slice origin, slice pitch, slice offset
 			//----------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT * FROM param_set where exec_id=?");
-			$stmt->bindValue(1, $params['execID']);
+			$stmt = $pdo->prepare("SELECT * FROM param_set where job_id=?");
+			$stmt->bindValue(1, $params['jobID']);
 			$stmt->execute();
 
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -185,10 +185,10 @@
 			$tableName = $stmt->fetchColumn();
 
 			$sqlStr  = 'SELECT sub_id, location_x, location_y, location_z'
-			         . ' FROM "' . $tableName . '" WHERE exec_id=? ORDER BY sub_id ASC';
+			         . ' FROM "' . $tableName . '" WHERE job_id=? ORDER BY sub_id ASC';
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $params['execID']);
+			$stmt->bindParam(1, $params['jobID']);
 			$stmt->execute();
 			$lesionNum = $stmt->rowCount();
 
@@ -209,11 +209,11 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 			$sqlParams = array();
 
-			$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND is_consensual=?";
+			$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=? AND is_consensual=?";
 
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 
-			$sqlParams[] = $params['execID'];
+			$sqlParams[] = $params['jobID'];
 			$sqlParams[] = $consensualFlg;
 			if($params['feedbackMode'] == "personal")  $sqlParams[] = $params['userID'];
 
@@ -230,7 +230,7 @@
 			}
 
 			$sqlStr = "SELECT * FROM false_negative_location"
-					. " WHERE exec_id=? AND is_consensual=?";
+					. " WHERE job_id=? AND is_consensual=?";
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
@@ -249,9 +249,9 @@
 					if($item['nearest_lesion_id'] > 0)
 					{
 						$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
-								. ' WHERE exec_id=? AND sub_id=?';
+								. ' WHERE job_id=? AND sub_id=?';
 						$result2 = DBConnector::query($sqlStr,
-						                       array($params['execID'], $item['nearest_lesion_id']),
+						                       array($params['jobID'], $item['nearest_lesion_id']),
 											   'ARRAY_NUM');
 
 						$dist = (($item['location_x']-$result2[0])*($item['location_x']-$result2[0])
@@ -271,24 +271,24 @@
 
 				$params['userStr'] = $params['enteredBy'] . "^0";
 
-				//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
+				//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE job_id=?"
 				//		. " AND entered_by=? AND interrupted='t'";
 				//
 				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f'";
 				//else										$sqlStr .= " AND is_consensual='t'";
 				//
-				//if(DBConnector::query($sqlStr, array($params['execID'], $params['userID']), 'SCALAR') > 0)
+				//if(DBConnector::query($sqlStr, array($params['jobID'], $params['userID']), 'SCALAR') > 0)
 				//{
 				//	$params['registTime'] ="";
 				//}
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=?"
+				$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=?"
 						. " AND is_consensual='t' AND status=2";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $params['execID']);
+				$stmt->bindValue(1, $params['jobID']);
 				$stmt->execute();
 
 				if($stmt->rowCount() == 1)
@@ -305,12 +305,12 @@
 					$params['userStr'] = $params['userID'] . "^0";
 					$params['registTime'] = "";
 
-					$sqlStr = "SELECT * FROM false_negative_location WHERE exec_id=?"
+					$sqlStr = "SELECT * FROM false_negative_location WHERE job_id=?"
 					        . " AND is_consensual='f' AND interrupted='f'"
 							. " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindValue(1, $params['execID']);
+					$stmt->bindValue(1, $params['jobID']);
 					$stmt->execute();
 
 					$params['enteredFnNum'] = $stmt->rowCount();
@@ -339,10 +339,10 @@
 								if($dupePos == -1) // 近傍病変候補が既にposArrに含まれていない場合
 								{
 									$sqlStr = 'SELECT location_x, location_y, location_z FROM "' . $tableName . '"'
-											. ' WHERE exec_id=? AND sub_id=?';
+											. ' WHERE job_id=? AND sub_id=?';
 
 									$stmt2 = $pdo->prepare($sqlStr);
-									$stmt2->execute(array($params['execID'], $result['nearest_lesion_id']));
+									$stmt2->execute(array($params['jobID'], $result['nearest_lesion_id']));
 									$result2 = $stmt2->fetch(PDO::FETCH_NUM);
 
 									$fnPosArray[] = $result2[0];
@@ -405,10 +405,10 @@
 						}
 
 						$sqlStr = "SELECT DISTINCT entered_by FROM false_negative_location"
-						        . " WHERE exec_id=? AND is_consensual='f' ORDER BY entered_by ASC";
+						        . " WHERE job_id=? AND is_consensual='f' ORDER BY entered_by ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindValue(1, $params['execID']);
+						$stmt->bindValue(1, $params['jobID']);
 						$stmt->execute();
 
 						$userCnt = 0;
@@ -422,11 +422,11 @@
 							}
 						}
 
-						//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE exec_id=?"
+						//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE job_id=?"
 						//		. " AND is_consensual='t'" . " AND interrupted='t'";
 						//
 						//$stmt = $pdo->prepare($sqlStr);
-						//$stmt->bindValue(1, $params['execID']);
+						//$stmt->bindValue(1, $params['jobID']);
 						//$stmt->execute();
 						//
 						//if($stmt->fetchColumn()>0)	$params['registTime'] ="";
@@ -542,10 +542,10 @@
 		//--------------------------------------------------------------------------------------------------------------
 		if($params['feedbackMode'] == "personal" && ($params['registTime'] == "" || $params['status'] != 2))
 		{
-			$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
+			$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options)"
 					. " VALUES (?,?,?,'open','FN input')";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $params['execID']);
+			$stmt->bindValue(1, $params['jobID']);
 			$stmt->bindValue(2, $params['userID']);
 			$stmt->bindValue(3, date('Y-m-d H:i:s'));
 			$stmt->execute();

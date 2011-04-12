@@ -2,8 +2,8 @@
 
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
-	$stmt = $pdo->prepare("SELECT crop_width, crop_height, crop_depth FROM param_set WHERE exec_id=?");
-	$stmt->bindParam(1, $params['execID']);
+	$stmt = $pdo->prepare("SELECT crop_width, crop_height, crop_depth FROM param_set WHERE job_id=?");
+	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_NUM);
 
@@ -16,9 +16,9 @@
 	$zPos = (int)($depth/2);
 
 	$sqlStr = "SELECT sub_id, landmark_name, short_name, location_x as x, location_y as y, location_z as z"
-		    . " FROM \"landmark_detection_v0\" WHERE exec_id=? ORDER BY sub_id ASC";
+		    . " FROM \"landmark_detection_v0\" WHERE job_id=? ORDER BY sub_id ASC";
 	$stmt = $pdo->prepare($sqlStr);
-	$stmt->bindParam(1, $params['execID']);
+	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$posData = $stmt->fetchAll();
 

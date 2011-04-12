@@ -52,7 +52,7 @@ function ChangeSlice(imgNum)
 			{ldelim}
               version: {$params.version},
 			  imgNum: imgNum,
-			  execID: $("#execID").val(),
+			  jobID: $("#jobID").val(),
 			  orgImgFname: $("#orgImg").attr("src"),
 			  resImgFname: $("#resImg").attr("src"),
 			{rdelim},
@@ -120,7 +120,7 @@ $(function() {ldelim}
 			
 			<div class="tab-content">
 				<form id="form1" name="form1">
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
+				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}">
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
 				<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
@@ -130,7 +130,7 @@ $(function() {ldelim}
 
 				<div id="cadResult">
 
-					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.jobID}]</h2>
 
 					<div class="headerArea">
 						<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>

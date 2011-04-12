@@ -12,7 +12,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
@@ -48,9 +48,9 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options) VALUES (?,?,?,?,?)";
+			$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options) VALUES (?,?,?,?,?)";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $params['execID']);
+			$stmt->bindValue(1, $params['jobID']);
 			$stmt->bindValue(2, $userID);
 			$stmt->bindValue(3, date('Y-m-d H:i:s'));
 			$stmt->bindValue(4, $params['action']);

@@ -63,7 +63,7 @@
 			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT sub.id FROM"
-					. " (SELECT pj.job_id as id, count(jcad.exec_id) as cad_num"
+					. " (SELECT pj.job_id as id, count(jcad.cad_job_id) as cad_num"
 					. " FROM plugin_job_list pj, job_cad_list jcad"
 					. " WHERE pj.job_id=jcad.job_id AND pj.plugin_name=? AND pj.version=? GROUP BY id) as sub"
 					. " WHERE sub.cad_num=? ORDER BY sub.id";
@@ -87,7 +87,7 @@
 					{
 						if($i > 0)  $sqlStr .= " OR ";
 
-						$sqlStr .= "(jcad.exec_id=?)";
+						$sqlStr .= "(jcad.cad_job_id=?)";
 						$colArr[] = $cadIDArr[$i];
 					}
 					$sqlStr .= ")";
@@ -109,9 +109,9 @@
 			if($dstData['message'] == "")
 			{
 				$sqlStr = "SELECT sub.id FROM"
-						. " (SELECT el.exec_id as id, count(ec.exec_id) as cad_num"
+						. " (SELECT el.job_id as id, count(ec.cad_job_id) as cad_num"
 						. " FROM executed_plugin_list el, executed_cad_list ec"
-						. " WHERE el.exec_id=ec.exec_id AND el.plugin_name=? AND el.version=? GROUP BY id) as sub"
+						. " WHERE el.job_id=ec.job_id AND el.plugin_name=? AND el.version=? GROUP BY id) as sub"
 						. " WHERE sub.cad_num=? ORDER BY sub.id";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -124,7 +124,7 @@
 						$colArr =array();
 
 						$sqlStr = "SELECT * FROM executed_plugin_list el, executed_cad_list ecad"
-								. " WHERE el.exec_id=? AND el.exec_id=ecad.exec_id"
+								. " WHERE el.job_id=? AND el.job_id=ecad.job_id"
 								. " AND (";
 
 						$colArr[] = $result;
@@ -133,7 +133,7 @@
 						{
 							if($i > 0)  $sqlStr .= " OR ";
 
-							$sqlStr .= "(ecad.cad_exec_id=?)";
+							$sqlStr .= "(ecad.cad_job_id=?)";
 							$colArr[] = $cadIDArr[$i];
 						}
 						$sqlStr .= ");";
@@ -158,8 +158,8 @@
 
 			if($dstData['message'] == "")
 			{
-				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type, registered_at)'
-				        . ' VALUES (?,?,?,2,?)';
+				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type, status, registered_at)'
+				        . ' VALUES (?,?,?,2,2,?)';
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($userID, $pluginName, $version, $dstData['registeredAt']));
 
@@ -172,7 +172,7 @@
 					$jobID = $stmt->fetchColumn();
 
 					$colArr = array();
-					$sqlStr = "INSERT INTO job_cad_list (job_id, exec_id) VALUES ";
+					$sqlStr = "INSERT INTO job_cad_list (job_id, cad_job_id) VALUES ";
 
 					for($i=0; $i<$cadNum; $i++)
 					{

@@ -52,7 +52,7 @@ function ChangeSlice(imgNum)
 			{ldelim}
               version: {$params.version},
 			  imgNum: imgNum,
-			  execID: $("#execID").val(),
+			  jobID: $("#jobID").val(),
 			  orgImgFname: $("#orgImg").attr("src"),
 			  resImgFname: $("#resImg").attr("src"),
 			{rdelim},
@@ -118,7 +118,7 @@ $(function() {ldelim}
 			
 			<div class="tab-content">
 				<form id="form1" name="form1">
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
+				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}">
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
 				<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
@@ -128,7 +128,7 @@ $(function() {ldelim}
 
 				<div id="cadResult">
 
-					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.jobID}]</h2>
 
 				
 					<div class="headerArea">
@@ -253,7 +253,7 @@ $(function() {ldelim}
 		            					 + $("#other_vat").val() + "^" + $("#other_sat").val() + "^" + $("#other_bound").val();
 
 							$.post('plugin_template/fat_volumetry_v1.2_score_registration.php',
-									{ execID:  $("#execID").val(),
+									{ jobID:  $("#jobID").val(),
 									  modifyFlg: $("#modifyFlg").val(),
 									  scoreStr: scoreStr,
 									  comment: $("#evalComment").val()},

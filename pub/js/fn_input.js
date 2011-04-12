@@ -159,7 +159,7 @@ function ConfirmFNLocation(address)
 	if(confirm('Do you save entered FN locations?'))
 	{
 		$.post("fn_registration.php",
-			{ execID: $("#execID").val(),
+			{ jobID: $("#jobID").val(),
 			  fnData: JSON.stringify(fnData),
 			  feedbackMode: $("#feedbackMode").val(),
 			  dstAddress:address},
@@ -179,7 +179,7 @@ function ConfirmFNLocation(address)
 							data.dstAddress = 'show_cad_results.php';
 						}
 
-						data.dstAddress += '?execID=' + $("#execID").val()
+						data.dstAddress += '?jobID=' + $("#jobID").val()
 	                                    + '&feedbackMode=' + $("#feedbackMode").val();
 
 					}

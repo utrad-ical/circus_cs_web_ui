@@ -9,6 +9,6 @@
 	{/foreach}
 
 	{if $smarty.session.personalFBFlg}
-		<a href="#" onclick="EditTag({if $params.pluginType == 1}4{else if $params.pluginType == 2}6{/if}, '{$params.execID|escape}', '../');">(Edit)</a>
+		<a href="#" onclick="EditTag({if $params.pluginType == 1}4{else if $params.pluginType == 2}6{/if}, '{$params.jobID|escape}', '../');">(Edit)</a>
 	{/if}
 </div>

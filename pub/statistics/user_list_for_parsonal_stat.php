@@ -53,7 +53,7 @@
 			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT DISTINCT lf.entered_by FROM executed_plugin_list el, lesion_feedback lf"
-					. " WHERE el.exec_id=lf.exec_id AND el.plugin_name=?";
+					. " WHERE el.job_id=lf.job_id AND el.plugin_name=?";
 			$sqlParams = array($params['cadName']);
 
 			if($params['version'] != 'all')

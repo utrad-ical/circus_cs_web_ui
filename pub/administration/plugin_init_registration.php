@@ -279,7 +279,7 @@
 						DropTableIfExists($pdo, $resultTableName);
 
 						$sqlStr = 'CREATE TABLE "' . $resultTableName . '"('
-								. 'exec_id    INT NOT NULL,'
+								. 'job_id    INT NOT NULL,'
 								. 'sub_id     SMALLINT NOT NULL,';
 
 						foreach($resultDBDefinition->DBItem as $item)
@@ -320,9 +320,9 @@
 
 						$sqlStr .= 'sid SERIAL NOT NULL,'
 								.  ' CONSTRAINT "' . $resultTableName . '_pkey" PRIMARY KEY (sid),'
-								.  ' CONSTRAINT "' . $resultTableName . '_ukey" UNIQUE (exec_id, sub_id),'
-								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
-								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
+								.  ' CONSTRAINT "' . $resultTableName . '_ukey" UNIQUE (job_id, sub_id),'
+								.  ' CONSTRAINT key_job_id FOREIGN KEY (job_id)'
+								.  ' REFERENCES executed_plugin_list (job_id) MATCH SIMPLE'
 								.  ' ON UPDATE RESTRICT ON DELETE CASCADE)';
 
 						$stmt =$pdo->prepare($sqlStr);
@@ -353,7 +353,7 @@
 						DropTableIfExists($pdo, $scoreTableName);
 
 						$sqlStr = 'CREATE TABLE "' . $scoreTableName . '"('
-								. 'exec_id        INT NOT NULL,'
+								. 'job_id        INT NOT NULL,'
 								. 'entered_by     CHARACTER VARYING(32) NOT NULL,'
 								. 'is_consensual BOOLEAN NOT NULL DEFAULT false,'
 								. 'interrupted BOOLEAN NOT NULL DEFAULT false,';
@@ -396,9 +396,9 @@
 
 						$sqlStr .= ' registered_at timestamp without time zone NOT NULL,'
 								.  ' CONSTRAINT "' . $scoreTableName . '_pkey"'
-								.  ' PRIMARY KEY (exec_id, entered_by, is_consensual),'
-								.  ' CONSTRAINT key_exec_id FOREIGN KEY (exec_id)'
-								.  ' REFERENCES executed_plugin_list (exec_id) MATCH SIMPLE'
+								.  ' PRIMARY KEY (job_id, entered_by, is_consensual),'
+								.  ' CONSTRAINT key_job_id FOREIGN KEY (job_id)'
+								.  ' REFERENCES executed_plugin_list (job_id) MATCH SIMPLE'
 								.  ' ON UPDATE RESTRICT ON DELETE CASCADE);';
 
 						$stmt =$pdo->prepare($sqlStr);

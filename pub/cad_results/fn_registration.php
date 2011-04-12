@@ -8,19 +8,19 @@
 	include_once("../common.php");
 	include_once("../auto_logout.php");
 
-	function DeleteFnTables($pdo, $execID, $consensualFlg, $userID)
+	function DeleteFnTables($pdo, $jobID, $consensualFlg, $userID)
 	{
-		$sqlParams = array($execID, $consensualFlg);
+		$sqlParams = array($jobID, $consensualFlg);
 		if($consensualFlg == 'f') $sqlParams[] = $userID;
 
-		$sqlStr = "DELETE FROM false_negative_location WHERE exec_id=?"
+		$sqlStr = "DELETE FROM false_negative_location WHERE job_id=?"
 				. " AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
 
 		$sqlStr = "DELETE FROM false_negative_count"
-				. " WHERE exec_id=? AND is_consensual=?";
+				. " WHERE job_id=? AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
@@ -33,7 +33,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
@@ -100,16 +100,16 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
+			DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
 
-			$sqlStr = "INSERT INTO false_negative_location (exec_id, entered_by, is_consensual,"
+			$sqlStr = "INSERT INTO false_negative_location (job_id, entered_by, is_consensual,"
 			        . " location_x, location_y, location_z, nearest_lesion_id, interrupted, registered_at)"
 			        . " VALUES (?, ?, ?, ?, ?, ?, ?, 't', ?)";
 
 			$stmt = $pdo->prepare($sqlStr);
 
 			$sqlParams = array();
-			$stmt->bindValue(1, $params['execID']);
+			$stmt->bindValue(1, $params['jobID']);
 			$stmt->bindValue(2, $userID);
 			$stmt->bindValue(3, ($params['feedbackMode'] == "consensual") ? 't' : 'f');
 
@@ -131,7 +131,7 @@
 					//$dstData['errorMessage'] = $err[2];
 					$dstData['errorMessage'] = 'Fail to savr FN location';
 
-					DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
+					DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
 					break;
 				}
 
@@ -140,9 +140,9 @@
 				//-------------------------------------------------------------------------------------------------------
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=? AND is_consensual='t'"
+					$sqlStr = "SELECT location_id FROM false_negative_location WHERE job_id=? AND is_consensual='t'"
 						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
-					$sqlParams = array($params['execID'],
+					$sqlParams = array($params['jobID'],
 									   $item["x"],
 									   $item["y"],
 									   $item["z"],
@@ -151,7 +151,7 @@
 					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 					$srcID = 0;
 
-					$sqlStr = "SELECT location_id FROM false_negative_location WHERE exec_id=?"
+					$sqlStr = "SELECT location_id FROM false_negative_location WHERE job_id=?"
 							. " AND is_consensual='f' AND interrupted='f'"
 						    . " AND location_x=? AND location_y=? AND location_z=?";
 
@@ -206,15 +206,15 @@
 
 			if($dstData['errorMessage'] == "")
 			{
-				$sqlStr = "SELECT COUNT(*) FROM false_negative_count WHERE exec_id=?"
+				$sqlStr = "SELECT COUNT(*) FROM false_negative_count WHERE job_id=?"
 		                . " AND is_consensual=? AND entered_by=?";
 
 				$sqlParams = array();
 
 				$sqlStr = "INSERT INTO false_negative_count "
-				        . "(exec_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
+				        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 				        . " VALUES (?, ?, ?, ?, 1, ?);";
-				$sqlParams[] = $params['execID'];
+				$sqlParams[] = $params['jobID'];
 				$sqlParams[] = $userID;
 				$sqlParams[] = $consensualFlg;
 				$sqlParams[] = count($params['fnData']);
@@ -228,14 +228,14 @@
 					$err = $stmt->errorInfo();
 					$dstData['errorMessage'] = $err[2];
 
-					DeleteFnTables($pdo, $params['execID'], $consensualFlg, $userID);
+					DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
 				}
 				else if($params['feedbackMode'] == "personal") // Write action log table (personal feedback only)
 				{
-					$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
+					$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options)"
 							. " VALUES (?,?,?,'save','FN input')";
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindValue(1, $params['execID']);
+					$stmt->bindValue(1, $params['jobID']);
 					$stmt->bindValue(2, $userID);
 					$stmt->bindValue(3, date('Y-m-d H:i:s'));
 					$stmt->execute();

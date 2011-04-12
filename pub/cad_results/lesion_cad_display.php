@@ -5,8 +5,8 @@
 	$params['candNum'] = 0;
 	$candArr = array();
 
-	$stmt = $pdo->prepare('SELECT COUNT(*) FROM "' . $params['resultTableName'] . '" WHERE exec_id=?');
-	$stmt->bindValue(1, $params['execID']);
+	$stmt = $pdo->prepare('SELECT COUNT(*) FROM "' . $params['resultTableName'] . '" WHERE job_id=?');
+	$stmt->bindValue(1, $params['jobID']);
 	$stmt->execute();
 
 	$params['totalCandNum'] = $stmt->fetchColumn();
@@ -16,23 +16,23 @@
 	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr = 'SELECT * FROM "' . $params['resultTableName'] . '"'
-				. " WHERE exec_id= :execID"
+				. " WHERE job_id= :jobID"
 				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_feedback"
-				. " WHERE exec_id=:execID AND is_consensual='f' AND interrupted='f')"
+				. " WHERE job_id=:jobID AND is_consensual='f' AND interrupted='f')"
 				. ' ORDER BY ' . $params['sortKey'] . ' ' . $params['sortOrder'];
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(':execID', $params['execID']);
+		$stmt->bindValue(':jobID', $params['jobID']);
 		$stmt->execute();
 	}
 	else // for personal
 	{
 		$sqlStr = 'SELECT * FROM (SELECT * FROM "' . $params['resultTableName'] . '"'
-				. " WHERE exec_id=? AND confidence >= ? ORDER BY confidence DESC  LIMIT ?) set1"
+				. " WHERE job_id=? AND confidence >= ? ORDER BY confidence DESC  LIMIT ?) set1"
 				. " ORDER BY set1." . $params['sortKey'] . ' ' . $params['sortOrder'];
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($params['execID'], $params['confidenceTh'], $params['maxDispNum']));
+		$stmt->execute(array($params['jobID'], $params['confidenceTh'], $params['maxDispNum']));
 		//var_dump($stmt->errorInfo());
 	}
 
@@ -163,12 +163,12 @@
 
 			if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT evaluation FROM lesion_feedback WHERE exec_id=? AND lesion_id=?";
+				$sqlStr = "SELECT evaluation FROM lesion_feedback WHERE job_id=? AND lesion_id=?";
 				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f' AND entered_by=?";
 				else										$sqlStr .= " AND is_consensual='t'";
 
 				$stmtFeedback = $pdo->prepare($sqlStr);
-				$stmtFeedback->bindParam(1, $params['execID']);
+				$stmtFeedback->bindParam(1, $params['jobID']);
 				$stmtFeedback->bindParam(2, $candID);
 				if($params['feedbackMode'] == "personal")  $stmtFeedback->bindParam(3, $userID);
 
@@ -186,9 +186,9 @@
 			if($params['feedbackMode'] == "consensual")
 			{
 				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
-		                 . " WHERE exec_id=? AND is_consensual='f'";
+		                 . " WHERE job_id=? AND is_consensual='f'";
 				$stmtFeedback = $pdo->prepare($sqlStr);
-				$stmtFeedback->bindParam(1, $params['execID']);
+				$stmtFeedback->bindParam(1, $params['jobID']);
 				$stmtFeedback->execute();
 				$totalNum =  $stmtFeedback->fetchColumn();
 			}
@@ -203,14 +203,14 @@
 
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE exec_id=?"
+					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE job_id=?"
 				            . " AND lesion_id=? AND is_consensual='f' AND interrupted='f'";
 
 					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (evaluation=1 OR evaluation=2)";
 					else                                                 $sqlStr .= " AND evaluation=?";
 
 					$stmtFeedback = $pdo->prepare($sqlStr);
-					$stmtFeedback->bindParam(1, $params['execID']);
+					$stmtFeedback->bindParam(1, $params['jobID']);
 					$stmtFeedback->bindParam(2, $candID);
 					if($radioButtonList[$consensualFlg][$j][0] != 'TP')  $stmtFeedback->bindParam(3, $radioButtonList[$consensualFlg][$j][1]);
 
@@ -282,13 +282,13 @@
 	$params['fnNum'] = 0;
 	$params['fnPersonalCnt'] = 0;
 
-	$sqlStr = "SELECT false_negative_num, status FROM false_negative_count WHERE exec_id=? AND status>=1";
+	$sqlStr = "SELECT false_negative_num, status FROM false_negative_count WHERE job_id=? AND status>=1";
 
 	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND is_consensual='f'";
 	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND is_consensual='t'";
 
 	$stmt = $pdo->prepare($sqlStr);
-	$stmt->bindParam(1, $params['execID']);
+	$stmt->bindParam(1, $params['jobID']);
 	if($params['feedbackMode']=="personal")  $stmt->bindParam(2, $userID);
 
 	$stmt->execute();
@@ -303,9 +303,9 @@
 	if($params['feedbackMode']=="consensual")
 	{
 		$sqlStr = "SELECT SUM(false_negative_num) FROM false_negative_count"
-				. " WHERE exec_id=? AND is_consensual='f' AND status=2";
+				. " WHERE job_id=? AND is_consensual='f' AND status=2";
 
-		$params['fnPersonalCnt'] = DBConnector::query($sqlStr, $params['execID'], 'SCALAR');
+		$params['fnPersonalCnt'] = DBConnector::query($sqlStr, $params['jobID'], 'SCALAR');
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -415,7 +415,7 @@
 	}
 
 	$sqlStr = 'SELECT sid, sub_id, location_x, location_y, location_z, slice_location, volume_size, confidence'
-			. ' FROM "' . $params['resultTableName'] . '" WHERE exec_id=? ORDER BY ';
+			. ' FROM "' . $params['resultTableName'] . '" WHERE job_id=? ORDER BY ';
 
 	$detailParams['sortStr'] ='Sort by ';
 
@@ -443,7 +443,7 @@
 	else								$detailParams['sortStr'] .= ' (descending order)';
 
 
-	$detailData = DBConnector::query($sqlStr, $params['execID'], 'ALL_NUM');
+	$detailData = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
 
 	for($i = 0; $i < count($detailData); $i++)
 	{
@@ -469,10 +469,10 @@
 	//------------------------------------------------------------------------------------------------------------------
 	if($params['feedbackMode'] == "personal" && $params['registTime'] == "")
 	{
-		$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options)"
+		$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options)"
 				. " VALUES (?,?,?,'open','CAD result')";
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['execID']);
+		$stmt->bindParam(1, $params['jobID']);
 		$stmt->bindParam(2, $userID);
 		$stmt->bindParam(3, date('Y-m-d H:i:s'));
 		$stmt->execute();

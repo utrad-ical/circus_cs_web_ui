@@ -8,8 +8,8 @@
 	$dispHeight = imagesy($img);
 	imagedestroy($img);
 
-	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "calc_fa_v1" WHERE exec_id=?');
-	$stmt->bindParam(1, $params['execID']);
+	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "calc_fa_v1" WHERE job_id=?');
+	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$chNum = $stmt->fetchColumn();
 
@@ -21,8 +21,8 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Measuring results
 	//------------------------------------------------------------------------------------------------------------------
-	$stmt = $pdo->prepare('SELECT * FROM "calc_fa_v1" WHERE exec_id=? ORDER BY sub_id ASC');
-	$stmt->bindParam(1, $params['execID']);
+	$stmt = $pdo->prepare('SELECT * FROM "calc_fa_v1" WHERE job_id=? ORDER BY sub_id ASC');
+	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$data = $stmt->fetchAll(PDO::FETCH_NUM);
 	//------------------------------------------------------------------------------------------------------------------

@@ -53,7 +53,7 @@
 			</div><!-- / .tabArea END -->
 
 			<div class="tab-content">
-				<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.execID}]</h2>
+				<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.jobID}]</h2>
 				<div class="headerArea">Executed at: {$params.executedAt}</div>
 
 				{$dstHtml}

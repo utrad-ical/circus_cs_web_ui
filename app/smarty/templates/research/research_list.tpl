@@ -56,9 +56,9 @@ function SearchResearchList()
 	location.href=address;
 }
 
-function ShowResearchResult(execID)
+function ShowResearchResult(jobID)
 {
-	location.href = "show_research_result.php?execID=" + execID + "&srcList=resList";
+	location.href = "show_research_result.php?jobID=" + jobID + "&srcList=resList";
 }
 
 function ResetSearchBlock()

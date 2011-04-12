@@ -123,7 +123,7 @@
 			{
 				$sqlStr = "SELECT DISTINCT lf.entered_by"
 						. " FROM lesion_feedback lf, executed_plugin_list el, executed_series_list es, series_list sr"
-						. " WHERE lf.exec_id=el.exec_id AND es.exec_id=el.exec_id"
+						. " WHERE lf.job_id=el.job_id AND es.job_id=el.job_id"
 						. " AND el.plugin_name=?";
 
 				$sqlParams[] = $params['cadName'];
@@ -182,7 +182,7 @@
 				$sqlParamCntEval = array();
 				$sqlParamCntFN   = array();
 
-				$sqlStrCntEval = "SELECT DISTINCT(lf.exec_id) FROM executed_plugin_list el,"
+				$sqlStrCntEval = "SELECT DISTINCT(lf.job_id) FROM executed_plugin_list el,"
 							   . " executed_series_list es, lesion_feedback lf, series_list sr";
 
 				$sqlStrCntFN  = "SELECT SUM(fn.false_negative_num) FROM executed_plugin_list el,"
@@ -205,9 +205,9 @@
 					$sqlParamCntFN[]   = $params['version'];
 				}
 
-				$sqlStrCntEval .= " AND es.exec_id=el.exec_id AND es.series_id=0"
+				$sqlStrCntEval .= " AND es.job_id=el.job_id AND es.series_id=0"
 				               .  " AND sr.series_instance_uid = es.series_instance_uid";
-				$sqlStrCntFN   .= " AND es.exec_id=el.exec_id AND es.series_id=0"
+				$sqlStrCntFN   .= " AND es.job_id=el.job_id AND es.series_id=0"
 				               .  " AND sr.series_instance_uid = es.series_instance_uid";
 
 				if($params['dateFrom'] != "")
@@ -228,11 +228,11 @@
 					$sqlParamCntFN[]   = $params['dateTo'];
 				}
 
-				$sqlStrCntEval .= " AND lf.exec_id=el.exec_id";
+				$sqlStrCntEval .= " AND lf.job_id=el.job_id";
 
 				if($params['version'] != "all")
 				{
-				  	$sqlStrCntEval .= " AND cad.exec_id=el.exec_id"
+				  	$sqlStrCntEval .= " AND cad.job_id=el.job_id"
 								   .  " AND (cad.sub_id =lf.lesion_id OR lf.lesion_id=0)"
 								   .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 
@@ -243,7 +243,7 @@
 				$sqlStrCntEval .= " AND lf.entered_by=?"
 					           .  " AND lf.is_consensual ='f' AND lf.interrupted='f'";
 
-				$sqlStrCntFN .= " AND fn.exec_id=el.exec_id"
+				$sqlStrCntFN .= " AND fn.job_id=el.job_id"
 					           .  " AND fn.entered_by=?"
 				               .  " AND fn.is_consensual ='f'"
 				               .  " AND fn.status>=1";
@@ -268,7 +268,7 @@
 
 				while($execRow = $stmt->fetch(PDO::FETCH_NUM))
 				{
-					$execID = $execRow[0];
+					$jobID = $execRow[0];
 
 					//------------------------------------------------------------------------------------------------
 					$sqlParams = array();
@@ -286,7 +286,7 @@
 						$sqlParams[] = $params['version'];
 					}
 
-					$sqlStr .= " AND es.exec_id=el.exec_id"
+					$sqlStr .= " AND es.job_id=el.job_id"
 							.  " AND es.series_id=0"
 							.  " AND sr.series_instance_uid = es.series_instance_uid";
 
@@ -302,12 +302,12 @@
 						$sqlParams[] = $params['dateTo'];
 					}
 
-					$sqlStr .= " AND el.exec_id =? AND lf.exec_id=el.exec_id";
-					$sqlParams[] = $execID;
+					$sqlStr .= " AND el.job_id =? AND lf.job_id=el.job_id";
+					$sqlParams[] = $jobID;
 
 					if($params['version'] != "all")
 					{
-						$sqlStr .= " AND cad.exec_id=el.exec_id AND cad.sub_id =lf.lesion_id"
+						$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =lf.lesion_id"
 							    .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 						$sqlParams[] = $minVolume;
 						$sqlParams[] = $maxVolume;
@@ -345,7 +345,7 @@
 							$sqlParams[] = $params['version'];
 						}
 
-						$sqlStr .= " AND es.exec_id=el.exec_id"
+						$sqlStr .= " AND es.job_id=el.job_id"
 								.  " AND es.series_id=0"
 								.  " AND sr.series_instance_uid = es.series_instance_uid";
 
@@ -360,12 +360,12 @@
 							$sqlParams[] = $params['dateTo'];
 						}
 
-						$sqlStr .= " AND el.exec_id =? AND lf.exec_id=el.exec_id";
-						$sqlParams[] = $execID;
+						$sqlStr .= " AND el.job_id =? AND lf.job_id=el.job_id";
+						$sqlParams[] = $jobID;
 
 						if($params['version'] != "all")
 						{
-							$sqlStr .= " AND cad.exec_id=el.exec_id AND cad.sub_id =lf.lesion_id"
+							$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =lf.lesion_id"
 								    .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 							$sqlParams[] = $minVolume;
 							$sqlParams[] = $maxVolume;
@@ -385,11 +385,11 @@
 						while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
 						{
 							$sqlStr = "SELECT evaluation FROM lesion_feedback"
-									. " WHERE exec_id=? AND lesion_id=?"
+									. " WHERE job_id=? AND lesion_id=?"
 									. " AND is_consensual='t' AND interrupted='f';";
 
 							$stmtEvalDetail = $pdo->prepare($sqlStr);
-							$stmtEvalDetail->execute(array($execID, $result[0]));
+							$stmtEvalDetail->execute(array($jobID, $result[0]));
 
 							if($stmtEvalDetail->rowCount() > 0)
 							{
@@ -449,16 +449,16 @@
 					{
 						$sqlParams = array($minVolume, $maxVolume, $params['cadName'], $params['version'], $userList[0]);
 
-						$sqlStr = "SELECT el.exec_id, lf.lesion_id, lf.evaluation, sr.series_date, sr.series_time,"
+						$sqlStr = "SELECT el.job_id, lf.lesion_id, lf.evaluation, sr.series_date, sr.series_time,"
 						        . " ((cast(cad.location_x-ps.crop_org_x as real))/cast(ps.crop_width as real)) AS pos_x,"
 						        . " ((cast(cad.location_y-ps.crop_org_y as real))/cast(ps.crop_height as real)) AS pos_y,"
 						        . " ((cast((cad.location_z-ps.slice_offset)-ps.crop_org_z as real))/cast(ps.crop_depth as real)) AS pos_z"
 								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, param_set ps,"
 						        . " " . $resultTableName . " cad, lesion_feedback lf"
-						        . " WHERE el.exec_id=es.exec_id"
-						        . " AND el.exec_id=ps.exec_id"
-						        . " AND el.exec_id=cad.exec_id"
-						        . " AND el.exec_id=lf.exec_id"
+						        . " WHERE el.job_id=es.job_id"
+						        . " AND el.job_id=ps.job_id"
+						        . " AND el.job_id=cad.job_id"
+						        . " AND el.job_id=lf.job_id"
 						        . " AND cad.sub_id=lf.lesion_id"
 								. " AND cad.volume_size>=?"
 							    . " AND cad.volume_size<=?"
@@ -480,7 +480,7 @@
 							$sqlParams[] = $params['dateTo'];
 						}
 
-						$sqlStr .= "ORDER BY lf.evaluation ASC, el.exec_id ASC, lf.lesion_id ASC";
+						$sqlStr .= "ORDER BY lf.evaluation ASC, el.job_id ASC, lf.lesion_id ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute($sqlParams);

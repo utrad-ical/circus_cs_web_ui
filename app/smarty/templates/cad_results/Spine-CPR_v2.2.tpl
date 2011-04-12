@@ -44,7 +44,7 @@ function MovePageWithTempRegistration(address, interruptFlg)
 			var evalStr = $("#cadResult input[name='visualScore']:checked").val();
 
 			$.post("./feedback_registration.php",
-       				{ execID: $("#execID").val(),
+       				{ jobID: $("#jobID").val(),
 			  		  cadName: $("#cadName").val(),
 			          version: $("#version").val(),
 			          interruptFlg: interruptFlg,
@@ -131,7 +131,7 @@ function ShowCADResult()
 			<div class="tab-content">
 				<form id="form1" name="form1">
 				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">
-				<input type="hidden" id="execID"            name="execID"            value="{$params.execID}">
+				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}">
 				<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}">
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
@@ -147,7 +147,7 @@ function ShowCADResult()
 
 				<div id="cadResult">
 
-					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.execID}]</h2>
+					<h2>CAD Result&nbsp;&nbsp;[{$params.cadName} v.{$params.version} ID:{$params.jobID}]</h2>
 
 					<div class="headerArea">
 						<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID}">{$params.patientName}&nbsp;({$params.patientID})&nbsp;{$params.age}{$params.sex}</a></div>

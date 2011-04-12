@@ -92,7 +92,7 @@
 			$optionNum = 0;
 			$condArr = array();
 
-			$sqlStr = "SELECT exec_id, plugin_name, version, executed_at, exec_user FROM executed_plugin_list ";
+			$sqlStr = "SELECT job_id, plugin_name, version, executed_at, exec_user FROM executed_plugin_list ";
 
 			$sqlCond =" WHERE plugin_type=2";
 
@@ -150,7 +150,7 @@
 
 			if($params['filterTag'] != "")
 			{
-			 	$sqlCond .= " AND exec_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=6 AND tag~*?)";
+			 	$sqlCond .= " AND job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=6 AND tag~*?)";
 				$condArr[] = $params['filterTag'];
 
 				if(0<$optionNum)  $params['pageAddress'] .= "&";
@@ -177,7 +177,7 @@
 			{
 				case 'Plugin':	$sqlStr .= " plugin_name ".$params['orderMode'].", version ".$params['orderMode'];  break;
 				case 'Time':	$sqlStr .= " executed_at ".$params['orderMode'];									break;
-				default:		$sqlStr .= " exec_id ".$params['orderMode'];										break;
+				default:		$sqlStr .= " job_id ".$params['orderMode'];										break;
 			}
 
 			if(0<$optionNum)  $params['pageAddress'] .= "&";

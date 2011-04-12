@@ -70,7 +70,7 @@
 			$colArr =array();
 
 			$sqlStr = "SELECT * FROM executed_plugin_list el, executed_series_list es"
-					. " WHERE el.plugin_name=? AND el.version=? AND el.exec_id=es.exec_id"
+					. " WHERE el.plugin_name=? AND el.version=? AND el.job_id=es.job_id"
 					. " AND (";
 
 			array_push($colArr, $cadName);

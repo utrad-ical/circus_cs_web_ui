@@ -60,7 +60,7 @@
 			//--------------------------------------------------------------------------------------------------------------
 			$sqlParams = array();
 
-			$sqlStr = "SELECT DISTINCT(fa.exec_id) FROM executed_plugin_list el,"
+			$sqlStr = "SELECT DISTINCT(fa.job_id) FROM executed_plugin_list el,"
 					. " executed_series_list es, feedback_action_log fa, series_list sr"
 					. " WHERE el.plugin_name=?";
 
@@ -72,7 +72,7 @@
 				$sqlParams[] = $params['version'];
 			}
 
-			$sqlStr .= " AND es.exec_id=el.exec_id AND fa.exec_id=el.exec_id AND es.series_id=0"
+			$sqlStr .= " AND es.job_id=el.job_id AND fa.job_id=el.job_id AND es.series_id=0"
 					.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 			if($params['dateFrom'] != "")
@@ -87,25 +87,25 @@
 				$sqlParams[] = $params['dateTo'];
 			}
 
-			$sqlStr .= " AND fa.user_id=? ORDER BY fa.exec_id ASC";
+			$sqlStr .= " AND fa.user_id=? ORDER BY fa.job_id ASC";
 			$sqlParams[] = $userID;
 
-			$execIdList = DBConnector::query($sqlStr, $sqlParams, 'ALL_COLUMN');
+			$jobIDList = DBConnector::query($sqlStr, $sqlParams, 'ALL_COLUMN');
 
-			for($j = 0; $j < count($execIdList); $j++)
+			for($j = 0; $j < count($jobIDList); $j++)
 			{
 				$sqlStr = "SELECT st.patient_id, sr.series_date, sr.series_time,"
 						. " el.plugin_name, el.version, el.executed_at,"
 						. " fa.action, fa.options, fa.act_time"
 						. " FROM executed_plugin_list el, executed_series_list es,"
 						. " feedback_action_log fa, study_list st, series_list sr"
-						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id"
-						. " AND fa.exec_id=el.exec_id AND es.series_id=0"
+						. " WHERE el.job_id=? AND es.job_id=el.job_id"
+						. " AND fa.job_id=el.job_id AND es.series_id=0"
 						. " AND sr.series_instance_uid = es.series_instance_uid"
 						. " AND st.study_instance_uid = es.study_instance_uid"
 						. " ORDER BY fa.sid ASC";
 
-				$results = DBConnector::query($sqlStr, $execIdList[$j], 'ALL_NUM');
+				$results = DBConnector::query($sqlStr, $jobIDList[$j], 'ALL_NUM');
 
 				$startFlg = 0;
 				$fnInputFlg = 0;
@@ -128,7 +128,7 @@
 						if($j%2==1) $tmpStr .= ' class="column"';
 
 						$tmpStr .= '>'
-						        .  '<td>' . $execIdList[$j] . '</td>'
+						        .  '<td>' . $jobIDList[$j] . '</td>'
 								.  '<td>' . $results[$i][0] . '</td>'
 								.  '<td>' . $results[$i][1] . '</td>'
 								.  '<td>' . $results[$i][2] . '</td>'
@@ -191,22 +191,22 @@
 							//------------------------------------------------------------------------------------------
 							// For TP and FN column
 							//------------------------------------------------------------------------------------------
-							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND entered_by=?"
+							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND entered_by=?"
 									. " AND is_consensual='f' AND interrupted='f' AND lesion_id>0";
-							$dispCandNum = DBConnector::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+							$dispCandNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
 							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
-									. " WHERE exec_id=? AND entered_by=? AND is_consensual='f' AND status=2";
-							$enterFnNum = DBConnector::query($sqlStr, array($execIdList[$j], $userID), 'SCALAR');
+									. " WHERE job_id=? AND entered_by=? AND is_consensual='f' AND status=2";
+							$enterFnNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
 							// SQL statement for count No. of TP
-							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE exec_id=? AND is_consensual=?"
+							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND is_consensual=?"
 							         . " AND interrupted='f' AND evaluation>=1";
 
 							$stmtTP = $pdo->prepare($sqlStr);
 
 							// SQL statement for count No. of FN
-							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE exec_id=?"
+							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE job_id=?"
 								     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 							$stmtFN = $pdo->prepare($sqlStr);
@@ -214,7 +214,7 @@
 							$tpColStr = "-";
 							$fnColStr = "-";
 
-							$stmtTP->bindValue(1, $execIdList[$j]);
+							$stmtTP->bindValue(1, $jobIDList[$j]);
 							$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
 							$stmtTP->execute();
 
@@ -226,7 +226,7 @@
 								if($stmtTP->fetchColumn() > 0) $tpColStr = '<span style="font-weight:bold;">!</span>';
 							}
 
-							$stmtFN->bindValue(1, $execIdList[$j]);
+							$stmtFN->bindValue(1, $jobIDList[$j]);
 							$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);
 							$stmtFN->execute();
 

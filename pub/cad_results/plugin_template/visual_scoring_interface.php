@@ -1,13 +1,13 @@
 <?php
 
 	$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 : 0;
-		
+	
 	if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 	{
 		$sqlParams = array();
 		
-		$sqlStr = "SELECT score FROM visual_assessment WHERE exec_id=?";
-		$sqlParams[] = $params['execID'];
+		$sqlStr = "SELECT score FROM visual_assessment WHERE job_id=?";
+		$sqlParams[] = $params['jobID'];
 		
 		
 		if($params['feedbackMode'] == "personal")
@@ -35,10 +35,10 @@
 	if($params['feedbackMode'] == "consensual")
 	{
 		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM visual_assessment"
-                 . " WHERE exec_id=? AND is_consensual='f'";
+                 . " WHERE job_id=? AND is_consensual='f'";
 				 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['execID']);
+		$stmt->bindParam(1, $params['jobID']);
 		$stmt->execute();		 
 		$totalNum = $stmt->fetchColumn();
 	}
@@ -50,11 +50,11 @@
 
 	if($params['feedbackMode'] == "consensual")
 	{
-		$sqlStr = "SELECT score, count(*) FROM visual_assessment WHERE exec_id=?"
+		$sqlStr = "SELECT score, count(*) FROM visual_assessment WHERE job_id=?"
 	            . " AND is_consensual='f' AND interrupted='f' GROUP BY score ORDER BY score ASC;";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['execID']);
+		$stmt->bindParam(1, $params['jobID']);
 		$stmt->execute();		 
 		
 		$numRows = $stmt->rowCount();
@@ -85,11 +85,11 @@
 		{
 			$evalStr = " " . $enterNumArr[$j-1];
 			
-			$sqlStr = "SELECT entered_by FROM visual_assessment WHERE exec_id=?"
+			$sqlStr = "SELECT entered_by FROM visual_assessment WHERE job_id=?"
 					. " AND is_consensual='f' AND interrupted='f' AND score=?";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['execID'], $j));
+			$stmt->execute(array($params['jobID'], $j));
 			
 			$enterNum = $stmt->rowCount();
 			

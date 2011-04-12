@@ -20,10 +20,10 @@
 {literal}
 <script language="Javascript">
 <!--
-	function RedrawRocCurve(execID, inputPath)
+	function RedrawRocCurve(jobID, inputPath)
 	{
 		$.post("plugin_template/redraw_roc_curve.php",
-			 	{ execID: execID,
+			 	{ jobID: jobID,
 			 	  curveType: $(".tab-content input[name='curveType']:checked").val(),
 			      pendigType: $(".tab-content input[name='pendigType']:checked").val(),
 			      inputPath:  inputPath},
@@ -92,7 +92,7 @@ div.imgArea {
 			</div><!-- / .tabArea END -->
 
 			<div class="tab-content">
-				<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.execID}]</h2>
+				<h2>Research result&nbsp;&nbsp;[{$params.pluginName} v.{$params.version} ID:{$params.jobID}]</h2>
 				<div class="headerArea">Executed at: {$params.executedAt}</div>
 
 				<table>
@@ -189,7 +189,7 @@ div.imgArea {
 											</tr>
 										</table>
 										<div class="al-l mt10 ml20" style="width: 100%;">
-					 						<input type="button" value="Redraw" class="w100 form-btn" onclick="RedrawRocCurve({$params.execID},'{$params.resPath}');" />
+					 						<input type="button" value="Redraw" class="w100 form-btn" onclick="RedrawRocCurve({$params.jobID},'{$params.resPath}');" />
 				 						</div>
 				 					</td>
 								</tr>

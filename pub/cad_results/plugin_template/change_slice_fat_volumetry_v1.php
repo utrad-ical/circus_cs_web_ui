@@ -8,7 +8,7 @@
 	// Import $_POST variables
 	//------------------------------------------------------------------------------------------------------------------
 	$version = (isset($_POST['version']))  ? $_POST['version']  : 1;
-	$execID = (isset($_POST['execID']))  ? $_POST['execID']  : "";
+	$jobID = (isset($_POST['jobID']))  ? $_POST['jobID']  : "";
 	$imgNum = (isset($_POST['imgNum'])) ? $_POST['imgNum'] : 1;
 	$orgImgFname = (isset($_POST['orgImgFname']))  ? $_POST['orgImgFname']  : "";
 	$resImgFname = (isset($_POST['resImgFname']))  ? $_POST['resImgFname']  : "";
@@ -32,8 +32,8 @@
 		//--------------------------------------------------------------------------------------------------------------
 		// Measurment results
 		//--------------------------------------------------------------------------------------------------------------
-		$stmt = $pdo->prepare('SELECT * FROM "fat_volumetry_v' . $version . '" WHERE exec_id=? AND sub_id =?');
-		$stmt->execute(array($execID, $imgNum));
+		$stmt = $pdo->prepare('SELECT * FROM "fat_volumetry_v' . $version . '" WHERE job_id=? AND sub_id =?');
+		$stmt->execute(array($jobID, $imgNum));
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 

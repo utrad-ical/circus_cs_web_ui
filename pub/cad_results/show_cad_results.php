@@ -14,7 +14,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"min" => 1,
 			"errorMes" => "[ERROR] CAD ID is invalid."),
@@ -80,14 +80,14 @@
 			// Retrieve data from database
 			//----------------------------------------------------------------------------------------------------------
 
-			if(isset($params['execID']))
+			if(isset($params['jobID']))
 			{
 				$sqlStr = "SELECT el.plugin_name, el.version, es.study_instance_uid, es.series_instance_uid,"
 						. " el.plugin_type, el.executed_at"
 						. " FROM executed_plugin_list el, executed_series_list es"
-						. " WHERE el.exec_id=? AND es.exec_id=el.exec_id AND es.series_id=0";
+						. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0";
 
-				$result = DBConnector::query($sqlStr, $params['execID'], 'ARRAY_NUM');
+				$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
 				if(!is_null($result))
 				{
@@ -99,19 +99,19 @@
 
 					if($result[4] != 1)
 					{
-						$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['execID'] . ") is not CAD result.";
+						$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['jobID'] . ") is not CAD result.";
 					}
 				}
 				else
 				{
-					$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['execID'] . ") is not existed.";
+					$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['jobID'] . ") is not existed.";
 				}
 			}
 			else if(isset($params['studyInstanceUID']) && isset($params['seriesInstanceUID'])
 			        && isset($params['cadName']) && isset($params['version']))
 			{
-				$sqlStr = "SELECT el.exec_id, el.executed_at FROM executed_plugin_list el, executed_series_list es"
-						. " WHERE es.exec_id=el.exec_id AND el.plugin_name=? AND el.version=?"
+				$sqlStr = "SELECT el.job_id, el.executed_at FROM executed_plugin_list el, executed_series_list es"
+						. " WHERE es.job_id=el.job_id AND el.plugin_name=? AND el.version=?"
 						. " AND es.series_id=0 AND es.study_instance_uid=? AND es.series_instance_uid=?";
 				$sqlParams = array($params['cadName'], $params['version'], $params['studyInstanceUID'], $params['seriesInstanceUID']);
 
@@ -119,7 +119,7 @@
 
 				if(!is_null($result))
 				{
-					$params['execID']        = $result[0];
+					$params['jobID']        = $result[0];
 					$params['cadExecutedAt'] = $result[1];
 				}
 				else
@@ -247,14 +247,14 @@
 						$params['tableName'] = "lesion_feedback";
 					}
 
-					$sqlStr = 'SELECT * FROM "' . $params['tableName'] . '" WHERE exec_id=?';
+					$sqlStr = 'SELECT * FROM "' . $params['tableName'] . '" WHERE job_id=?';
 					if($params['feedbackMode'] == "personal")  $sqlStr .= " AND is_consensual='f' AND entered_by=?";
 					else                                       $sqlStr .= " AND is_consensual='t'";
 
 					$sqlStr .= " AND interrupted='f'";
 
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindparam(1, $params['execID']);
+					$stmt->bindparam(1, $params['jobID']);
 					if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
 					$stmt->execute();
 
@@ -269,7 +269,7 @@
 					{
 						$sqlStr = substr_replace($sqlStr, "'t'", (strlen($sqlStr)-3));
 						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindparam(1, $params['execID']);
+						$stmt->bindparam(1, $params['jobID']);
 						if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
 						$stmt->execute();
 						if($stmt->rowCount() >= 1)  $params['interruptFlg'] = 1;
@@ -282,13 +282,13 @@
 				// Retrieve tag data
 				//------------------------------------------------------------------------------------------------------
 				$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=4 AND reference_id=? ORDER BY sid ASC";
-				$params['tagArray'] = DBConnector::query($sqlStr, $params['execID'], 'ALL_NUM');
+				$params['tagArray'] = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
 				//------------------------------------------------------------------------------------------------------
 
 				if($params['resultType'] == 1)
 				{
-					$stmt = $pdo->prepare("SELECT * FROM param_set WHERE exec_id=?");
-					$stmt->bindParam(1, $params['execID']);
+					$stmt = $pdo->prepare("SELECT * FROM param_set WHERE job_id=?");
+					$stmt->bindParam(1, $params['jobID']);
 					$stmt->execute();
 
 					$result = $stmt->fetch(PDO::FETCH_ASSOC);

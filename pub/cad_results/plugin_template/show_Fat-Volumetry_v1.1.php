@@ -10,8 +10,8 @@
 
 	$consensualFBFlg = ($_SESSION['groupID'] == 'admin') ? 1 : 0;
 
-	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "fat_volumetry_v1.1" WHERE exec_id=?');
-	$stmt->bindParam(1, $params['execID']);
+	$stmt = $pdo->prepare('SELECT MAX(sub_id) FROM "fat_volumetry_v1.1" WHERE job_id=?');
+	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$maxImgNum = $stmt->fetchColumn();
 
@@ -21,8 +21,8 @@
 	//------------------------------------------------------------------------------------------------------------------
 	// Measuring results
 	//------------------------------------------------------------------------------------------------------------------
-	$stmt = $pdo->prepare('SELECT * FROM "fat_volumetry_v1.1" WHERE exec_id=? AND sub_id =?');
-	$stmt->execute(array($params['execID'], $imgNum));
+	$stmt = $pdo->prepare('SELECT * FROM "fat_volumetry_v1.1" WHERE job_id=? AND sub_id =?');
+	$stmt->execute(array($params['jobID'], $imgNum));
 
 	$data = $stmt->fetch(PDO::FETCH_ASSOC);
 	//------------------------------------------------------------------------------------------------------------------

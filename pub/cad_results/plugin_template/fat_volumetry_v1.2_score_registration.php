@@ -7,7 +7,7 @@
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variable
 	//--------------------------------------------------------------------------------------------------------
-	$execID = (isset($_REQUEST['execID'])) ? $_REQUEST['execID'] : 0;
+	$jobID = (isset($_REQUEST['jobID'])) ? $_REQUEST['jobID'] : 0;
 	$modifyFlg = (isset($_REQUEST['modifyFlg'])) ? $_REQUEST['modifyFlg'] : 0;
 	$scoreStr = (isset($_REQUEST['scoreStr'])) ? $_REQUEST['scoreStr'] : "";
 	$comment = (isset($_REQUEST['comment'])) ? $_REQUEST['comment'] : "";
@@ -26,10 +26,10 @@
 		$pdo = DBConnector::getConnection();
 
 		$sqlStr = 'SELECT * FROM "fat_volumetry_v1.2_score"'
-				. "WHERE exec_id=? AND is_consensual='f' AND entered_by=?";
+				. "WHERE job_id=? AND is_consensual='f' AND entered_by=?";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($execID, $userID));
+		$stmt->execute(array($jobID, $userID));
 
 		if($stmt->rowCount()==1)
 		{
@@ -40,7 +40,7 @@
 					. ' pelvic_vat=?, pelvic_sat=?, pelvic_bound=?,'
 					. ' other_vat=?, other_sat=?, other_bound=?,'
 					. ' eval_comment=?, registered_at=?'
-					. " WHERE exec_id=? AND is_consensual='f' AND entered_by=?";
+					. " WHERE job_id=? AND is_consensual='f' AND entered_by=?";
 
 			$stmt = $pdo->prepare($sqlStr);
 
@@ -50,7 +50,7 @@
 			}
 			$stmt->bindValue(16, $comment);
 			$stmt->bindValue(17, $registeredAt);
-			$stmt->bindValue(18, $execID);
+			$stmt->bindValue(18, $jobID);
 			$stmt->bindValue(19, $userID);
 
 			$stmt->execute();
@@ -70,7 +70,7 @@
 			$sqlStr = 'INSERT INTO "fat_volumetry_v1.2_score"'
 					. " VALUES (?, ?, 'f', 'f', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $execID);
+			$stmt->bindValue(1, $jobID);
 			$stmt->bindValue(2, $userID);
 
 			for($i=0; $i<15; $i++)

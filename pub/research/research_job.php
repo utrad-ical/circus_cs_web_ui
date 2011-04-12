@@ -45,7 +45,7 @@
 				$sqlStr = "SELECT DISTINCT ep.plugin_name, ep.version"
 						. " FROM executed_plugin_list ep, lesion_feedback lf, cad_master cm"
 	    		        . " WHERE ep.plugin_name=cm.plugin_name AND ep.version=cm.version"
-						. " AND cm.result_type=1 AND ep.exec_id=lf.exec_id AND lf.is_consensual='t'"
+						. " AND cm.result_type=1 AND ep.job_id=lf.job_id AND lf.is_consensual='t'"
 						. " ORDER BY ep.plugin_name ASC, ep.version ASC";
 				$stmt = $pdo->prepare($sqlStr);
 			}

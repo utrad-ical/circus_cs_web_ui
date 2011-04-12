@@ -390,7 +390,7 @@
 					. " WHERE cm.plugin_name=? AND cm.version=?"
 					. " AND cm.plugin_name=el.plugin_name"
 					. " AND cm.version=el.version"
-					. " AND el.exec_id=esr.exec_id"
+					. " AND el.job_id=esr.job_id"
 					. " AND esr.series_id=0"
 					. " AND esr.study_instance_uid=?"
 					. " AND esr.series_instance_uid=?";

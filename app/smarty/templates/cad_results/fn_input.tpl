@@ -60,7 +60,7 @@ $(function() {
 					 alert("[CAUTION] Lesion classification is not completed!");
 
 					var address = 'show_cad_results.php'
-								+ '?execID=' + $("#execID").val()
+								+ '?jobID=' + $("#jobID").val()
                 				+ '&feedbackMode=' + $("#feedbackMode").val();
 
 					location.href = address;
@@ -144,7 +144,7 @@ function Minus()
 			<div class="tab-content">
 				<div id="fnInput">
 					<form id="form1" name="form1">
-					<input type="hidden" id="execID"            value="{$params.execID|escape}" />
+					<input type="hidden" id="jobID"             value="{$params.jobID|escape}" />
 					<input type="hidden" id="studyInstanceUID"  value="{$params.studyInstanceUID|escape}" />
 					<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID|escape}" />
 					<input type="hidden" id="posStr"            value="{$params.posStr|escape}" />
@@ -173,7 +173,7 @@ function Minus()
 					<input type="hidden" id="status"       value="{$params.status|escape}" />
 					<input type="hidden" id="ticket"       value="{$ticket|escape}" />
 
-					<h2>FN input&nbsp;[{$params.cadName|escape} v.{$params.version|escape} ID:{$params.execID|escape}]&nbsp;&nbsp;({$params.feedbackMode|escape} mode)</h2>
+					<h2>FN input&nbsp;[{$params.cadName|escape} v.{$params.version|escape} ID:{$params.jobID|escape}]&nbsp;&nbsp;({$params.feedbackMode|escape} mode)</h2>
 
 					<div class="headerArea">
 						<div class="fl-l"><a href="../study_list.php?mode=patient&encryptedPtID={$params.encryptedPtID|escape}">{$params.patientName|escape}&nbsp;({$params.patientID|escape})&nbsp;{$params.age|escape}{$params.sex|escape}</a></div>

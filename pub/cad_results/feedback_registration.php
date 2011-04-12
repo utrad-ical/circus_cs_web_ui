@@ -12,7 +12,7 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"execID" => array(
+		"jobID" => array(
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
@@ -97,11 +97,11 @@
 				//------------------------------------------------------------------------------------------------
 				// Registration to lesion_feedback table
 				//------------------------------------------------------------------------------------------------
-				$sqlStr = "DELETE FROM lesion_feedback WHERE exec_id=? AND is_consensual=?";
+				$sqlStr = "DELETE FROM lesion_feedback WHERE job_id=? AND is_consensual=?";
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $params['execID']);
+				$stmt->bindParam(1, $params['jobID']);
 				$stmt->bindParam(2, $consensualFlg);
 				if($params['feedbackMode'] == "personal")   $stmt->bindParam(3, $userID);
 				$stmt->execute();
@@ -110,10 +110,10 @@
 
 				if($candNum<=1 && strlen($params['candStr'])==0)
 				{
-					$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, is_consensual, "
+					$sqlStr = "INSERT INTO lesion_feedback (job_id, lesion_id, entered_by, is_consensual, "
 					        . "evaluation, interrupted, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
 
-					$sqlParams[] = $params['execID'];
+					$sqlParams[] = $params['jobID'];
 					$sqlParams[] = $userID;
 					$sqlParams[] = $consensualFlg;
 					$sqlParams[] = ($params['interruptFlg']) ? "t" : "f";
@@ -131,10 +131,10 @@
 				{
 					for($i=0; $i<$candNum; $i++)
 					{
-						$sqlStr = "INSERT INTO lesion_feedback (exec_id, lesion_id, entered_by, is_consensual, "
+						$sqlStr = "INSERT INTO lesion_feedback (job_id, lesion_id, entered_by, is_consensual, "
 							        . "evaluation, interrupted, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-						$sqlParams[0] = $params['execID'];
+						$sqlParams[0] = $params['jobID'];
 						$sqlParams[1] = $candArr[$i];
 						$sqlParams[2] = $userID;
 						$sqlParams[3] = $consensualFlg;
@@ -161,11 +161,11 @@
 				{
 					$status = ($params['interruptFlg']) ? 1 : 2;
 
-					$sqlStr = "SELECT * FROM false_negative_count WHERE exec_id=? AND is_consensual=?";
+					$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=? AND is_consensual=?";
 					if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindValue(1, $params['execID']);
+					$stmt->bindValue(1, $params['jobID']);
 					$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
 					if($params['feedbackMode'] == "personal")   $stmt->bindValue(3, $userID);
 
@@ -178,9 +178,9 @@
 					if($rowNum == 0 && !$params['fnFoundFlg'])
 					{
 						$sqlStr = "INSERT INTO false_negative_count "
-						        . "(exec_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
+						        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 						        . " VALUES (?, ?, ?, 0, ?, ?);";
-						$sqlParams[] = $params['execID'];
+						$sqlParams[] = $params['jobID'];
 						$sqlParams[] = $userID;
 						$sqlParams[] = $consensualFlg;
 						$sqlParams[] = $status;
@@ -210,8 +210,8 @@
 									$sqlParams[] = $userID;
 								}
 
-								$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
-								$sqlParams[] = $params['execID'];
+								$sqlStr .= " WHERE job_id=? AND is_consensual=?";
+								$sqlParams[] = $params['jobID'];
 								$sqlParams[] = $consensualFlg;
 
 								if($params['feedbackMode'] == "personal")
@@ -240,8 +240,8 @@
 									$sqlParams[] = $userID;
 								}
 
-								$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
-								$sqlParams[] = $params['execID'];
+								$sqlStr .= " WHERE job_id=? AND is_consensual=?";
+								$sqlParams[] = $params['jobID'];
 								$sqlParams[] = $consensualFlg;
 
 								if($params['feedbackMode'] == "personal")
@@ -270,8 +270,8 @@
 										$sqlParams[] = $userID;
 									}
 
-									$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
-									$sqlParams[] = $params['execID'];
+									$sqlStr .= " WHERE job_id=? AND is_consensual=?";
+									$sqlParams[] = $params['jobID'];
 									$sqlParams[] = $consensualFlg;
 
 									if($params['feedbackMode'] == "personal")
@@ -298,13 +298,13 @@
 				//----------------------------------------------------------------------------------------------------------
 				if($params['feedbackMode'] == "personal")
 				{
-					$sqlStr = "INSERT INTO feedback_action_log (exec_id, user_id, act_time, action, options) VALUES ";
+					$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options) VALUES ";
 
 					if($params['interruptFlg']==1)	$sqlStr .= "(?,?,?,'save', 'candidate classification')";
 					else							$sqlStr .= "(?,?,?,'register','')";
 
 					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindParam(1, $params['execID']);
+					$stmt->bindParam(1, $params['jobID']);
 					$stmt->bindParam(2, $userID);
 					$stmt->bindParam(3, $registeredAt);
 					$stmt->execute();
@@ -323,13 +323,13 @@
 			{
 				$scoreTableName = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
 
-				$sqlStr = "SELECT interrupted FROM \"" . $scoreTableName . "\" WHERE exec_id=?"
+				$sqlStr = "SELECT interrupted FROM \"" . $scoreTableName . "\" WHERE job_id=?"
 						. " AND is_consensual=?";
 
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $params['execID']);
+				$stmt->bindValue(1, $params['jobID']);
 				$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
 				if($feedbackMode == "personal")  $stmt->bindValue(3, $userID);
 
@@ -344,9 +344,9 @@
 					if($rowNum == 0)
 					{
 						$sqlStr = "INSERT INTO visual_assessment"
-						        . " (exec_id, entered_by, is_consensual, interrupted, score, registered_at)"
+						        . " (job_id, entered_by, is_consensual, interrupted, score, registered_at)"
 								. " VALUES (?, ?, ?, ?, ?, ?);";
-						$sqlParams[] = $params['execID'];
+						$sqlParams[] = $params['jobID'];
 						$sqlParams[] = $userID;
 						$sqlParams[] = $consensualFlg;
 						$sqlParams[] = ($params['interruptFlg']) ? "t" : "f";
@@ -370,8 +370,8 @@
 							$sqlParams[] = $userID;
 						}
 
-						$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
-						$sqlParams[] = $params['execID'];
+						$sqlStr .= " WHERE job_id=? AND is_consensual=?";
+						$sqlParams[] = $params['jobID'];
 						$sqlParams[] = $consensualFlg;
 
 						if($params['feedbackMode'] == "personal")
@@ -397,7 +397,7 @@
 					if($rowNum == 0)
 					{
 						$sqlStr = "INSERT INTO \"" . $scoreTableName . "\""
-						        . " (exec_id, entered_by, is_consensual, interrupted,";
+						        . " (job_id, entered_by, is_consensual, interrupted,";
 
 						while($resultCol = $stmtCol->fetch(PDO::FETCH_NUM))
 						{
@@ -407,7 +407,7 @@
 						$sqlParams = array();
 
 						$sqlStr .= " registered_at) VALUES (?, ?, ?, ?,";
-						$sqlParams[0] = $params['execID'];
+						$sqlParams[0] = $params['jobID'];
 						$sqlParams[1] = $userID;
 						$sqlParams[2] = $consensualFlg;
 						$sqlParams[3] = ($params['interruptFlg']) ? "t" : "f";
@@ -444,8 +444,8 @@
 							$sqlParams[] = $userID;
 						}
 
-						$sqlStr .= " WHERE exec_id=? AND is_consensual=?";
-						$sqlParam[] = $execID;
+						$sqlStr .= " WHERE job_id=? AND is_consensual=?";
+						$sqlParam[] = $params['jobID'];
 						$sqlParam[] = $consensualFlg;
 
 						if($params['feedbackMode'] == "personal")

@@ -97,24 +97,24 @@
 
 			if($resultType == 1)
 			{
-				$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+				$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 						. " sr.series_date, sr.series_time, el.executed_at"
 						. " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 						. " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
 						. " JOIN (executed_series_list es JOIN executed_plugin_list el"
-						. " ON (es.exec_id=el.exec_id AND es.series_id=0 AND el.plugin_type=1))"
+						. " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
 						. " ON (sr.series_instance_uid = es.series_instance_uid)"
-						. " LEFT JOIN lesion_feedback lf ON (es.exec_id=lf.exec_id AND lf.interrupted='f')"
+						. " LEFT JOIN lesion_feedback lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
 						. " WHERE el.plugin_name=? AND el.version=? AND lf.is_consensual='t'";
 			}
 			else
 			{
-				$sqlStr = "SELECT el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+				$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
 						. " sr.series_date, sr.series_time, el.executed_at"
 						. " FROM patient_list pt, study_list st, series_list sr, "
 						. " executed_plugin_list el, executed_series_list es"
 						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND el.exec_id=es.exec_id AND es.series_id=0"
+						. " AND el.job_id=es.job_id AND es.series_id=0"
 						. " AND sr.series_instance_uid = es.series_instance_uid"
 						. " AND st.study_instance_uid = sr.study_instance_uid"
 						. " AND pt.patient_id=st.patient_id";
@@ -209,12 +209,12 @@
 
 			if($params['filterTag'] != "")
 			{
-				$sqlStr .= " AND el.exec_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
+				$sqlStr .= " AND el.job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=4 AND tag~*?)";
 				$condArr[] = $params['filterTag'];
 			}
 
-			$sqlStr .= " GROUP BY el.exec_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
-					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.exec_id ASC";
+			$sqlStr .= " GROUP BY el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.job_id ASC";
 			//echo $sqlStr;
 
 			$cadList =  DBConnector::query($sqlStr, $condArr, 'ALL_ASSOC');

@@ -135,7 +135,7 @@
 				}
 
 				$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list el, executed_series_list es "
-				        . " WHERE es.series_instance_uid=? AND el.exec_id=es.exec_id";
+				        . " WHERE es.series_instance_uid=? AND el.job_id=es.job_id";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindParam(1, $vals['srUID']);

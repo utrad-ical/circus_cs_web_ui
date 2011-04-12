@@ -25,7 +25,7 @@
 
 		$smarty->assign('params', $params);
 
-		$smarty->assign('userID',   $_SESSION['userID']);
+		$smarty->assign('userID',  $_SESSION['userID']);
 		$smarty->assign('jobList', $jobList);
 
 		$smarty->display('administration/show_plugin_job_list.tpl');

@@ -8,7 +8,7 @@
 	// Import $_REQUEST variable
 	//--------------------------------------------------------------------------------------------------------
 	$mode = (isset($_POST['mode'])) ? $_POST['mode'] : "";
-	$execID = (isset($_POST['execID'])) ? $_POST['execID'] : 0;
+	$jobID = (isset($_POST['jobID'])) ? $_POST['jobID'] : 0;
 	$subID = (isset($_POST['subID'])) ? $_POST['subID'] : 0;
 	$landmarkName = (isset($_POST['landmarkName'])) ? $_POST['landmarkName'] : "";
 	$shortName = (isset($_POST['shortName'])) ? $_POST['shortName'] : "";
@@ -28,9 +28,9 @@
 
 		if($mode == 'delete')
 		{
-			$sqlStr = 'DELETE FROM "' . $tableName . '" WHERE exec_id=? AND sub_id=?';
+			$sqlStr = 'DELETE FROM "' . $tableName . '" WHERE job_id=? AND sub_id=?';
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $execID);
+			$stmt->bindParam(1, $jobID);
 			$stmt->bindParam(2, $subID);
 			$stmt->execute();
 
@@ -39,17 +39,17 @@
 		}
 		else if($mode === 'insert')
 		{
-			$stmt = $pdo->prepare('SELECT count(*) FROM "' . $tableName . '" WHERE exec_id=? AND landmark_name=?');
-			$stmt->bindParam(1, $execID);
+			$stmt = $pdo->prepare('SELECT count(*) FROM "' . $tableName . '" WHERE job_id=? AND landmark_name=?');
+			$stmt->bindParam(1, $jobID);
 			$stmt->bindParam(2, $landmarkName);
 			$stmt->execute();
 
 			if($stmt->fetchColumn() == 0)
 			{
-				$sqlStr = 'INSERT INTO "' . $tableName . '" (exec_id, sub_id, landmark_name, short_name, location_x, location_y, location_z)'
+				$sqlStr = 'INSERT INTO "' . $tableName . '" (job_id, sub_id, landmark_name, short_name, location_x, location_y, location_z)'
 						. ' VALUES (?, ?, ?, ?, ?, ?, ?)';
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($execID, $subID, $landmarkName, $shortName, $xPos, $yPos, $zPos));
+				$stmt->execute(array($jobID, $subID, $landmarkName, $shortName, $xPos, $yPos, $zPos));
 
 				if($stmt->rowCount() == 1)	echo "Success to add row!!";
 				else						echo "Fail to add row!!";
@@ -58,8 +58,8 @@
 		}
 		else if($mode === 'update')
 		{
-			$stmt = $pdo->prepare('SELECT count(*) FROM "' . $tableName . '" WHERE exec_id=? AND landmark_name=? AND sub_id!=?');
-			$stmt->bindParam(1, $execID);
+			$stmt = $pdo->prepare('SELECT count(*) FROM "' . $tableName . '" WHERE job_id=? AND landmark_name=? AND sub_id!=?');
+			$stmt->bindParam(1, $jobID);
 			$stmt->bindParam(2, $landmarkName);
 			$stmt->bindParam(3, $subID);
 			$stmt->execute();
@@ -67,11 +67,11 @@
 			//if($stmt->fetchColumn() == 0)
 			//{
 				$sqlStr = 'UPDATE "' . $tableName . '" SET location_x=?, location_y=?, location_z=?'
-						. ' WHERE exec_id=? AND sub_id=?'
+						. ' WHERE job_id=? AND sub_id=?'
 						. ' AND cand_id=1';
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($xPos, $yPos, $zPos, $execID, $subID));
+				$stmt->execute(array($xPos, $yPos, $zPos, $jobID, $subID));
 
 				if($stmt->rowCount() == 1)	echo "Success to update row!!";
 				else						echo "Fail to update row!!";
