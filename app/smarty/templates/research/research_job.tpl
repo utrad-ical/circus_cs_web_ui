@@ -133,7 +133,7 @@ function ShowCadList()
 			  	}
 
 			  	$("#cadList .col-tbl tbody").empty().append(tableHtml);
-     		 	$("#cadList").show();
+     		 	$("#cadList, #execution").show();
 				$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 			  }, "json");
 }
@@ -370,6 +370,10 @@ $(function() {
 								</tbody>
 							</table>
 						</div>
+					</div>
+
+					<div id="execution" class="mt10" style="display:none;">
+						<h3 class="mb5">Step 3: Execution</h3>
 						<div class="al-l ml20 mt10" style="width: 100%;">
 							<input name="" type="button" value="Execute" class="w100 form-btn" onclick="RegistResearchJob();" />
 						</div>

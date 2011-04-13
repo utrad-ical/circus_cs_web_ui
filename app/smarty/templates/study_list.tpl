@@ -77,7 +77,7 @@ jq/ui/css/jquery-ui-1.7.3.custom.css
 	<tbody>
 		{foreach from=$data item=item name=cnt}
 			<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
-				{if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"></td>{/if}
+				{* {if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"></td>{/if} *}
 				<td class="al-l"><a href="study_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</td>
 				<td class="al-l">{$item[3]|escape}</td>
 				<td class="al-r">{$item[4]|escape}</td>

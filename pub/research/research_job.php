@@ -15,9 +15,9 @@
 		$pdo = DBConnector::getConnection();
 
 		$sqlStr = "SELECT pm.plugin_name, pm.version, rm.research_type, rm.target_plugin_name, rm.target_version_min,"
-				. " rm.target_version_max, rm.time_limit, rm.result_table FROM plugin_master pm, research_master rm"
-		        . " WHERE pm.plugin_name=rm.plugin_name AND pm.version=rm.version"
-				. " AND pm.type=2 AND pm.exec_enabled='t'"
+				. " rm.target_version_max, rm.time_limit, rm.result_table"
+				. " FROM plugin_master pm, plugin_research_master rm"
+		        . " WHERE pm.plugin_id=rm.plugin_id AND pm.type=2 AND pm.exec_enabled='t'"
 				. " ORDER BY rm.label_order ASC";
 
 		$stmtCad = $pdo->prepare($sqlStr);

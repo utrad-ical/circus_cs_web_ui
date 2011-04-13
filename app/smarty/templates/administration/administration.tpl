@@ -14,6 +14,10 @@
 <script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/jquery.blockUI.js"></script>
+<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
+
 <link rel="shortcut icon" href="../favicon.ico" />
 
 <script language="Javascript">;
@@ -66,15 +70,29 @@ function ChangeServerStatus(baseName, serviceName, mode)
 {if $smarty.session.adminModeFlg==0}
 	$.event.add(window, "load", 
 				function(){ldelim}
-					if(confirm("Do you change to administration mode?"))
-					{ldelim}
+					$.blockUI(); 
+
+					$('#yes').click(function() {ldelim}
+						$.unblockUI(); 
 						location.replace('administration.php?adminModeFlg=1');
-					{rdelim}
-					else
-					{ldelim}
+					{rdelim});
+
+					$('#no').click(function() {ldelim}
+						$.unblockUI(); 
 						location.replace('../home.php');
-					{rdelim}
+					{rdelim});
 				{rdelim});
+
+$(function() {ldelim}
+	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;">'
+							   + 'Do you change to administration mode?</span><br />'
+                               + '<input type="button" id="yes" value="Yes" />'
+                               + '&nbsp;&nbsp;<input type="button" id="no" value="No" />';
+	$.blockUI.defaults.fadeOut     = 100;		// set fadeOut effect shorter
+	$.blockUI.defaults.css.width   = '350px';
+	$.blockUI.defaults.css.padding = '5px';
+{rdelim});
+
 {/if}
 
 -->
