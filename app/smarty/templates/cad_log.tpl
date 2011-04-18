@@ -149,20 +149,20 @@ css/popup.css
 						<td>{$item[6]|escape}</td>
 						<td>{$item[7]|escape}</td>
 						{if $smarty.session.colorSet != "guest"}<td>{$item[8]|escape}</td>{/if}
-						<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog('{$item[9]|escape}', '{$item[10]|escape}', '{$item[11]|escape}', '{$item[12]|escape}', {$smarty.session.personalFBFlg});" /></td>
+						<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowCADResultFromCADLog({$item[9]|escape}, {$smarty.session.personalFBFlg});" /></td>
 
 						{if $params.mode=='today'}
 							{if $smarty.session.colorSet == "admin"}
-								<td>{$item[13]}</td>
-								<td>{$item[14]}</td>
+								<td>{$item[10]}</td>
+								<td>{$item[11]}</td>
 							{elseif $smarty.session.colorSet == "user" && $smarty.session.personalFBFlg == 1}
-								<td>{$item[13]}</td>
+								<td>{$item[10]}</td>
 							{/if}
 						{else}
-							<td>{$item[13]}</td>
-							<td>{$item[14]}</td>
+							<td>{$item[10]}</td>
+							<td>{$item[11]}</td>
 							{if $smarty.session.colorSet == "admin" || ($smarty.session.colorSet == "user" && $smarty.session.personalFBFlg == 1)}
-								<td>{$item[15]}</td>
+								<td>{$item[12]}</td>
 							{/if}
 						{/if}
 					</tr>

@@ -385,7 +385,7 @@
 
 			$stmtCADMaster = $pdo->prepare($sqlStr);
 
-			$sqlStr = "SELECT executed_at FROM executed_plugin_list el, executed_series_list esr, plugin_master pm"
+			$sqlStr = "SELECT el.job_id, el.executed_at FROM executed_plugin_list el, executed_series_list esr, plugin_master pm"
 					. " WHERE pm.plugin_name=? AND pm.version=?"
 					. " AND pm.plugin_name=el.plugin_name"
 					. " AND pm.version=el.version"
@@ -433,14 +433,19 @@
 					$cadColSettings[$cadNum][3] = 0;					// flg for plug-in execution
 					$cadColSettings[$cadNum][4] = 0;					// status of CAD job
 					$cadColSettings[$cadNum][5] = '';
-					$cadColSettings[$cadNum][6] = $resultCADMaster[3];
+					$cadColSettings[$cadNum][6] = 0;
+					$cadColSettings[$cadNum][7] = $resultCADMaster[3];
 
 					$stmtCADExec->execute($cadCondArr);
 
 					if($stmtCADExec->rowCount() == 1)
 					{
 						$cadColSettings[$cadNum][3] = 1;
-						$tmpDate = $stmtCADExec->fetchColumn();
+
+						$execResult = $stmtCADExec->fetch(PDO::FETCH_NUM);
+
+						$cadColSettings[$cadNum][6] = $execResult[0];
+						$tmpDate = $execResult[1];
 
 						// 2つ目の条件は自明だが念のために
 						if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))

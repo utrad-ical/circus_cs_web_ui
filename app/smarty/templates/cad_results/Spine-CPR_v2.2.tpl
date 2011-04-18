@@ -23,10 +23,7 @@
 
 function RegistFeedback(feedbackMode)
 {
-	var address = 'show_cad_results.php?cadName=' + $("#cadName").val()
-	            + '&version=' + $("#version").val()
-    	        + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-      			+ '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
+	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
 			    + '&feedbackMode=' + feedbackMode;
 
 	MovePageWithTempRegistration(address, 0);

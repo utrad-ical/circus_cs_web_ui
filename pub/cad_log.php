@@ -675,10 +675,7 @@
 							($result['plugin_name'].' v.'.$result['version']),
 							(($params['mode'] == 'today') ? substr($result['executed_at'], 11) : $result['executed_at']),
 							$result['exec_user'],
-							$result['plugin_name'],
-							$result['version'],
-							$result['study_instance_uid'],
-							$result['series_instance_uid']);
+							$result['job_id']);
 
 			$flgArray = array('f', 't');
 

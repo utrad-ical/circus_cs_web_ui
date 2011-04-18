@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------------------------------
 function DeleteData(mode)
 {
-	//選択されたチェックボックスの値を配列に保存
+	// Get selected sids (checkbox)
 	var sids=[];
     $("[name='sidList[]']:checked").each(function(){ sids.push(this.value); });
 
@@ -198,18 +198,14 @@ function ShowSeriesDetail(colorSet, studyInstanceUID, seriesInstanceUID)
                   + "&listTabName=" + ((mode == 'today') ? "Today's series" : "Series list");
 }
 
-function ShowCADResultFromSeriesList(seriesID, studyInstanceUID, seriesInstanceUID, personalFeedbackFlg)
+
+function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 {
-	// プルダウンメニューで選択されたOptionの値を取得
+	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
+	var jobID = tmpStr[5];
 
-	var cadName = tmpStr[0];
-	var version = tmpStr[1];
-
-	var address = 'cad_results/show_cad_results.php'
-                + '?cadName=' + encodeURIComponent(cadName) + '&version=' + encodeURIComponent(version)
-                + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
-                + '&seriesInstanceUID=' + encodeURIComponent(seriesInstanceUID);
+	var address = 'cad_results/show_cad_results.php?jobID=' + jobID;
 	
 	if(personalFeedbackFlg == 1)  address += '&feedbackMode=personal';
 
@@ -221,7 +217,7 @@ function ShowCADResultFromSeriesList(seriesID, studyInstanceUID, seriesInstanceU
 
 function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 {
-	// プルダウンメニューで選択されたOptionの値を取得
+	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
 
 	var cadExecFlg = parseInt(tmpStr[2]);
@@ -268,7 +264,7 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 
 function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 {
-	// プルダウンメニューで選択されたOptionの値を取得
+	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
 
 	var cadName = tmpStr[0];
@@ -292,13 +288,10 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 //--------------------------------------------------------------------------------------------------
 // For CAD log
 //--------------------------------------------------------------------------------------------------
-function ShowCADResultFromCADLog(cadName, version, studyInstanceUID, seriesInstanceUID, personalFBFlg)
+function ShowCADResultFromCADLog(jobID, personalFBFlg)
 {
 	var address = 'cad_results/show_cad_results.php'
-                + '?cadName=' + encodeURIComponent(cadName)
-                + '&version=' + encodeURIComponent(version)
-                + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
-                + '&seriesInstanceUID=' + encodeURIComponent(seriesInstanceUID);
+                + '?jobID=' + encodeURIComponent(jobID);
 	
 	if(personalFBFlg == 1)  address += '&feedbackMode=personal';
 
@@ -307,7 +300,6 @@ function ShowCADResultFromCADLog(cadName, version, studyInstanceUID, seriesInsta
 
 	location.href = address;
 }
-
 
 
 function ChangeOrderOfCADList(orderCol, orderMode)

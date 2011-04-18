@@ -142,9 +142,9 @@ css/popup.css
 
 										{if $item[14][$i][2] || $item[14][$i][3]}
 
-											<option value="{$item[14][$i][0]}^{$item[14][$i][1]}^{$item[14][$i][3]}^{$item[14][$i][4]}^{$item[14][$i][5]}"
+											<option value="{$item[14][$i][0]}^{$item[14][$i][1]}^{$item[14][$i][3]}^{$item[14][$i][4]}^{$item[14][$i][5]}^{$item[14][$i][6]}"
 
-											{if $item[14][$i][2] && $optionFlg == 0 && $item[14][$i][6] == $item[11]}
+											{if $item[14][$i][2] && $optionFlg == 0 && $item[14][$i][7] == $item[11]}
 										 		selected="selected"
 								 				{assign var="optionFlg" value=1}
 											{/if}
@@ -158,7 +158,7 @@ css/popup.css
 									<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="&nbsp;Exec&nbsp;" onclick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[1]}', '{$item[2]}');" class="s-btn form-btn"{if $item[14][$selectedID][2] || $item[14][0][3] || $item[14][0][4] > 0} style="display:none;"{/if} />
 								{/if}
 
-								<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onclick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, '{$item[1]}', '{$item[2]}', {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
+								<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onclick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if !$item[14][0][3]} style="display:none;"{/if} />
 								<div id="cadInfo{$smarty.foreach.cnt.iteration}">
 									{if $item[14][0][5] != ''}Executed at {$item[14][0][5]|escape}{elseif !$item[14][0][3] && $item[14][0][4]>0}Registered in CAD job list{elseif $item[14][0][4]==-1}<span style="color:#f00;">Fail to execute</span>{elseif $params.mode == 'today'}<span style="color:#f00;">Not executed</span>{else}&nbsp;{/if}
 								</div>

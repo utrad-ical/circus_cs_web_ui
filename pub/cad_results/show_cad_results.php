@@ -17,23 +17,11 @@
 		"jobID" => array(
 			"type" => "int",
 			"min" => 1,
-			"errorMes" => "[ERROR] CAD ID is invalid."),
+			"errorMes" => "[ERROR] job ID is invalid."),
 		"feedbackMode" => array(
 			"type" => "select",
 			"options" => array("personal", "consensual"),
 			'oterwise' => "personal"),
-		"cadName" => array(
-			"type" => "cadname",
-			"errorMes" => "[ERROR] 'CAD name' is invalid."),
-		"version" => array(
-			"type" => "version",
-			"errorMes" => "[ERROR] 'Version' is invalid."),
-		"studyInstanceUID" => array(
-			"type" => "uid",
-			"errorMes" => "[ERROR] 'Study instance UID' is invalid."),
-		"seriesInstanceUID" => array(
-			"type" => "uid",
-			"errorMes" => "[ERROR] 'Series instance UID' is invalid."),
 		"srcList" => array(
 			"type" => "select",
 			"options" => array("todaysCAD", "cadLog", "todaysSeries", "series"),
@@ -80,56 +68,29 @@
 			// Retrieve data from database
 			//----------------------------------------------------------------------------------------------------------
 
-			if(isset($params['jobID']))
+			$sqlStr = "SELECT el.plugin_name, el.version, es.study_instance_uid, es.series_instance_uid,"
+					. " el.plugin_type, el.executed_at"
+					. " FROM executed_plugin_list el, executed_series_list es"
+					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0";
+
+			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
+
+			if(!is_null($result))
 			{
-				$sqlStr = "SELECT el.plugin_name, el.version, es.study_instance_uid, es.series_instance_uid,"
-						. " el.plugin_type, el.executed_at"
-						. " FROM executed_plugin_list el, executed_series_list es"
-						. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0";
+				$params['cadName'] = $result[0];
+				$params['version'] = $result[1];
+				$params['studyInstanceUID']  = $result[2];
+				$params['seriesInstanceUID'] = $result[3];
+				$params['cadExecutedAt']     = $result[5];
 
-				$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
-
-				if(!is_null($result))
+				if($result[4] != 1)
 				{
-					$params['cadName'] = $result[0];
-					$params['version'] = $result[1];
-					$params['studyInstanceUID']  = $result[2];
-					$params['seriesInstanceUID'] = $result[3];
-					$params['cadExecutedAt']     = $result[5];
-
-					if($result[4] != 1)
-					{
-						$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['jobID'] . ") is not CAD result.";
-					}
-				}
-				else
-				{
-					$params['errorMessage'] = "[ERROR] Specified exec ID (" . $params['jobID'] . ") is not existed.";
-				}
-			}
-			else if(isset($params['studyInstanceUID']) && isset($params['seriesInstanceUID'])
-			        && isset($params['cadName']) && isset($params['version']))
-			{
-				$sqlStr = "SELECT el.job_id, el.executed_at FROM executed_plugin_list el, executed_series_list es"
-						. " WHERE es.job_id=el.job_id AND el.plugin_name=? AND el.version=?"
-						. " AND es.series_id=0 AND es.study_instance_uid=? AND es.series_instance_uid=?";
-				$sqlParams = array($params['cadName'], $params['version'], $params['studyInstanceUID'], $params['seriesInstanceUID']);
-
-				$result = DBConnector::query($sqlStr, $sqlParams, 'ARRAY_NUM');
-
-				if(!is_null($result))
-				{
-					$params['jobID']        = $result[0];
-					$params['cadExecutedAt'] = $result[1];
-				}
-				else
-				{
-					$params['errorMessage'] = "[ERROR] CAD result is not specified.";
+					$params['errorMessage'] = "[ERROR] Specified job ID (" . $params['jobID'] . ") is not CAD result.";
 				}
 			}
 			else
 			{
-				$params['errorMessage'] = "[ERROR] CAD result is not specified!!";
+				$params['errorMessage'] = "[ERROR] Specified job ID (" . $params['jobID'] . ") is not existed.";
 			}
 
 			if($params['errorMessage'] == "")
