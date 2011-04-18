@@ -51,7 +51,7 @@
 			$sqlStr = "SELECT sr.sid, pt.patient_id, pt.patient_name, sm.path, sm.apache_alias,"
 			        . " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality,"
-					. " sr.series_description, sr.body_part, sr.compress_flg"
+					. " sr.series_description, sr.body_part"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm "
 			        . " WHERE sr.study_instance_uid=?"
 			        . " AND sr.series_instance_uid=?"
