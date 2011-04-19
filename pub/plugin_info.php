@@ -156,7 +156,7 @@ $(function(){
 			{
 				// Consensual based
 				$sqlStr = "SELECT COUNT(*)"
-					    . " FROM executed_plugin_list el, lesion_feedback lf"
+					    . " FROM executed_plugin_list el, lesion_classification lf"
 					    . " WHERE el.plugin_name=? AND el.version=?"
 					    . " AND lf.job_id=el.job_id"
 					    . " AND lf.is_consensual ='t'"
@@ -169,7 +169,7 @@ $(function(){
 				if($evalNumConsensual == "")  $evalNumConsensual = 0;
 
 				$sqlStr = "SELECT COUNT(*)"
-				        . " FROM executed_plugin_list el, lesion_feedback lf"
+				        . " FROM executed_plugin_list el, lesion_classification lf"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND lf.job_id=el.job_id"
 						. " AND lf.is_consensual ='t'"
@@ -183,7 +183,7 @@ $(function(){
 				if($tpNumConsensual == "")  $tpNumConsensual = 0;
 
 				$sqlStr = "SELECT SUM(fn.false_negative_num)"
-						. " FROM executed_plugin_list el, false_negative_count fn"
+						. " FROM executed_plugin_list el, fn_count fn"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND fn.job_id=el.job_id"
 						. " AND fn.is_consensual ='t'"
@@ -198,7 +198,7 @@ $(function(){
 				array_push($condArr, $userID);
 
 				// Personal based
-				$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el, lesion_feedback lf"
+				$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el, lesion_classification lf"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND lf.job_id=el.job_id"
 						. " AND lf.entered_by=?"
@@ -215,7 +215,7 @@ $(function(){
 				}
 
 				$sqlStr = "SELECT SUM(fn.false_negative_num)"
-						. " FROM executed_plugin_list el, false_negative_count fn"
+						. " FROM executed_plugin_list el, fn_count fn"
 						. " WHERE el.plugin_name=? AND el.version=?"
 						. " AND fn.job_id=el.job_id"
 						. " AND fn.entered_by=?"

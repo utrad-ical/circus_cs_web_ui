@@ -107,7 +107,7 @@
 				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias,'
 						. ' fn.location_x, fn.location_y, fn.location_z'
 						. ' FROM study_list st, series_list sr, storage_master sm,'
-						. ' executed_plugin_list el, executed_series_list es, false_negative_location fn'
+						. ' executed_plugin_list el, executed_series_list es, fn_location fn'
 						. ' WHERE el.job_id=?  AND fn.job_id=el.job_id AND fn.location_id=?'
 						. ' AND es.job_id=el.job_id AND es.series_id=0'
 						. ' AND st.study_instance_uid=es.study_instance_uid '

@@ -209,7 +209,7 @@
 					}
 					else
 					{
-						$params['tableName'] = "lesion_feedback";
+						$params['tableName'] = "lesion_classification";
 					}
 
 					$sqlStr = 'SELECT * FROM "' . $params['tableName'] . '" WHERE job_id=?';

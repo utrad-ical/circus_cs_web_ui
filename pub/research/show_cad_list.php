@@ -105,7 +105,7 @@
 						. " JOIN (executed_series_list es JOIN executed_plugin_list el"
 						. " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
 						. " ON (sr.series_instance_uid = es.series_instance_uid)"
-						. " LEFT JOIN lesion_feedback lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
+						. " LEFT JOIN lesion_classification lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
 						. " WHERE el.plugin_name=? AND el.version=? AND lf.is_consensual='t'";
 			}
 			else

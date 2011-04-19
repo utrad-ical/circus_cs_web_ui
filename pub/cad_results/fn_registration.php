@@ -13,13 +13,13 @@
 		$sqlParams = array($jobID, $consensualFlg);
 		if($consensualFlg == 'f') $sqlParams[] = $userID;
 
-		$sqlStr = "DELETE FROM false_negative_location WHERE job_id=?"
+		$sqlStr = "DELETE FROM fn_location WHERE job_id=?"
 				. " AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
 
-		$sqlStr = "DELETE FROM false_negative_count"
+		$sqlStr = "DELETE FROM fn_count"
 				. " WHERE job_id=? AND is_consensual=?";
 		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
 		$stmt = $pdo->prepare($sqlStr);
@@ -102,7 +102,7 @@
 
 			DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
 
-			$sqlStr = "INSERT INTO false_negative_location (job_id, entered_by, is_consensual,"
+			$sqlStr = "INSERT INTO fn_location (job_id, entered_by, is_consensual,"
 			        . " location_x, location_y, location_z, nearest_lesion_id, interrupted, registered_at)"
 			        . " VALUES (?, ?, ?, ?, ?, ?, ?, 't', ?)";
 
@@ -140,7 +140,7 @@
 				//-------------------------------------------------------------------------------------------------------
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT location_id FROM false_negative_location WHERE job_id=? AND is_consensual='t'"
+					$sqlStr = "SELECT location_id FROM fn_location WHERE job_id=? AND is_consensual='t'"
 						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
 					$sqlParams = array($params['jobID'],
 									   $item["x"],
@@ -151,7 +151,7 @@
 					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 					$srcID = 0;
 
-					$sqlStr = "SELECT location_id FROM false_negative_location WHERE job_id=?"
+					$sqlStr = "SELECT location_id FROM fn_location WHERE job_id=?"
 							. " AND is_consensual='f' AND interrupted='f'"
 						    . " AND location_x=? AND location_y=? AND location_z=?";
 
@@ -163,7 +163,7 @@
 					{
 						$srcID = $stmtUpdate->fetchColumn();
 
-						$sqlStr = "UPDATE false_negative_location SET integrate_location_id=? WHERE location_id=?";
+						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE location_id=?";
 						$stmtUpdate = $pdo->prepare($sqlStr);
 						$stmtUpdate->execute(array($dstID, $srcID));
 
@@ -181,7 +181,7 @@
 						$idArr = explode(',', $item["idStr"]);
 						$idNum = count($idArr);
 
-						$sqlStr = "UPDATE false_negative_location SET integrate_location_id=? WHERE location_id=?";
+						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE location_id=?";
 						$stmtUpdate = $pdo->prepare($sqlStr);
 						$stmtUpdate->bindParam(1, $dstID);
 
@@ -206,12 +206,12 @@
 
 			if($dstData['errorMessage'] == "")
 			{
-				$sqlStr = "SELECT COUNT(*) FROM false_negative_count WHERE job_id=?"
+				$sqlStr = "SELECT COUNT(*) FROM fn_count WHERE job_id=?"
 		                . " AND is_consensual=? AND entered_by=?";
 
 				$sqlParams = array();
 
-				$sqlStr = "INSERT INTO false_negative_count "
+				$sqlStr = "INSERT INTO fn_count "
 				        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 				        . " VALUES (?, ?, ?, ?, 1, ?);";
 				$sqlParams[] = $params['jobID'];

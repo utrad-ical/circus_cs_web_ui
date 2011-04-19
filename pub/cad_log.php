@@ -218,8 +218,8 @@
 			       . " JOIN (executed_series_list es JOIN executed_plugin_list el"
 			       . " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
 			       . " ON (sr.series_instance_uid = es.series_instance_uid)"
-			       . " LEFT JOIN lesion_feedback lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
-			       . " LEFT JOIN false_negative_count fn ON (es.job_id = fn.job_id AND fn.status>=1)";
+			       . " LEFT JOIN lesion_classification lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
+			       . " LEFT JOIN fn_count fn ON (es.job_id = fn.job_id AND fn.status>=1)";
 
 		if($params['mode'] == 'today')
 		{
@@ -400,7 +400,7 @@
 			$operator = ($params['personalFB'] == "entered") ? '=' : '<>';
 
 			$tmpCond .= " el.job_id " . $operator . " ANY"
-					 .  " (SELECT DISTINCT job_id FROM lesion_feedback WHERE is_consensual='f'"
+					 .  " (SELECT DISTINCT job_id FROM lesion_classification WHERE is_consensual='f'"
 					 .  " AND interrupted='f'";
 
 			if($params['personalFB'] == "entered")
@@ -428,7 +428,7 @@
 						else if(count($fbUserArr) >= 2)
 						{
 							$tmpCond .= " AND entered_by~*? AND job_id IN"
-									 .  " (SELECT DISTINCT job_id FROM lesion_feedback"
+									 .  " (SELECT DISTINCT job_id FROM lesion_classification"
 									 .  "  WHERE is_consensual='f' AND interrupted='f'"
 									 .  "  AND entered_by~*?))";
 
@@ -477,7 +477,7 @@
 			$operator = ($params['consensualFB'] == "entered") ? '=' : '<>';
 
 			$tmpCond = "el.job_id " . $operator . " ANY"
-					 . " (SELECT job_id FROM lesion_feedback WHERE is_consensual='t' AND interrupted='f')";
+					 . " (SELECT job_id FROM lesion_classification WHERE is_consensual='t' AND interrupted='f')";
 
 			//if($params['filterTP'] == "all" && $params['filterFN'] == "all")
 			//{
@@ -490,7 +490,7 @@
 		{
 			$condition = ($params['filterTP'] == "with") ? '>0' : '<=0';
 
-			$tmpCond = " el.job_id IN (SELECT DISTINCT job_id FROM lesion_feedback WHERE interrupted='f'";
+			$tmpCond = " el.job_id IN (SELECT DISTINCT job_id FROM lesion_classification WHERE interrupted='f'";
 
 			if($params['consensualFB'] == "entered")
 			{
@@ -510,7 +510,7 @@
 		{
 			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
 
-			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM false_negative_count WHERE status=2";
+			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM fn_count WHERE status=2";
 
 			if($params['consensualFB'] == "entered")
 			{
@@ -615,23 +615,23 @@
 		// For today's CAD
 		//------------------------------------------------------------------------------------------
 		// SQL statement to count entered heads of personal feedback
-		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
+		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_classification"
 	             . " WHERE job_id=? AND is_consensual=? AND interrupted='f'";
 		$stmtHeads = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of TP
-		$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=?"
+		$sqlStr = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=?"
 		        . " AND is_consensual=? AND evaluation>=1 AND interrupted='f'";
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr = "SELECT evaluation, interrupted FROM lesion_feedback WHERE job_id=?"
+		$sqlStr = "SELECT evaluation, interrupted FROM lesion_classification WHERE job_id=?"
 				. " AND is_consensual='f' AND entered_by=? ORDER BY lesion_id ASC";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
 
 		// SQL statement to count the number of personal feedback
-		$sqlStr  = "SELECT status FROM false_negative_count WHERE job_id=? AND is_consensual='f'"
+		$sqlStr  = "SELECT status FROM fn_count WHERE job_id=? AND is_consensual='f'"
 		         . " AND entered_by=?";
 		$stmtPersonalFN = $pdo->prepare($sqlStr);
 		$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
@@ -641,13 +641,13 @@
 		// For cad log
 		//------------------------------------------------------------------------------------------
 		// SQL statement for count No. of TP
-		$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND is_consensual=?"
+		$sqlStr  = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND is_consensual=?"
 		         . " AND interrupted='f' AND evaluation>=1";
 
 		$stmtTP = $pdo->prepare($sqlStr);
 
 		// SQL statement for count No. of FN
-		$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE job_id=?"
+		$sqlStr  = "SELECT false_negative_num FROM fn_count WHERE job_id=?"
 			     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 		$stmtFN = $pdo->prepare($sqlStr);

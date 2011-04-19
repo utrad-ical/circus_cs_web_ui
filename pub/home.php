@@ -50,7 +50,7 @@
 					. " FROM plugin_cad_master cm JOIN (plugin_master pm JOIN (patient_list pt JOIN"
 					. " (study_list st JOIN (storage_master storage JOIN"
 					. " (series_list sr JOIN (executed_series_list es JOIN"
-					. " (lesion_feedback lf JOIN executed_plugin_list el ON lf.job_id=el.job_id)"
+					. " (lesion_classification lf JOIN executed_plugin_list el ON lf.job_id=el.job_id)"
 					. " ON lf.job_id=es.job_id AND es.series_id=0) ON sr.series_instance_uid=es.series_instance_uid)"
 					. " ON sr.storage_id=storage.storage_id) ON st.study_instance_uid=es.study_instance_uid)"
 					. " ON pt.patient_id=st.patient_id) ON pm.plugin_name=el.plugin_name AND pm.version=el.version)"

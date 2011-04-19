@@ -124,7 +124,7 @@
 			if($userID == "all")
 			{
 				$sqlStr = "SELECT DISTINCT lf.entered_by"
-						. " FROM lesion_feedback lf, executed_plugin_list el, executed_series_list es, series_list sr"
+						. " FROM lesion_classification lf, executed_plugin_list el, executed_series_list es, series_list sr"
 						. " WHERE lf.job_id=el.job_id AND es.job_id=el.job_id"
 						. " AND el.plugin_name=?";
 
@@ -185,10 +185,10 @@
 				$sqlParamCntFN   = array();
 
 				$sqlStrCntEval = "SELECT DISTINCT(lf.job_id) FROM executed_plugin_list el,"
-							   . " executed_series_list es, lesion_feedback lf, series_list sr";
+							   . " executed_series_list es, lesion_classification lf, series_list sr";
 
 				$sqlStrCntFN  = "SELECT SUM(fn.false_negative_num) FROM executed_plugin_list el,"
-							  . " executed_series_list es, false_negative_count fn, series_list sr";
+							  . " executed_series_list es, fn_count fn, series_list sr";
 
 				if($params['version'] != "all")	$sqlStrCntEval .= ', "' . $resultTableName . '" cad';
 
@@ -275,7 +275,7 @@
 					//------------------------------------------------------------------------------------------------
 					$sqlParams = array();
 					$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el,"
-					        . " executed_series_list es, lesion_feedback lf, series_list sr";
+					        . " executed_series_list es, lesion_classification lf, series_list sr";
 
 					if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
 
@@ -334,7 +334,7 @@
 						$sqlParams = array();
 
 						$sqlStr = "SELECT lf.lesion_id FROM executed_plugin_list el,"
-						        . " executed_series_list es, lesion_feedback lf, series_list sr";
+						        . " executed_series_list es, lesion_classification lf, series_list sr";
 
 						if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
 
@@ -386,7 +386,7 @@
 
 						while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
 						{
-							$sqlStr = "SELECT evaluation FROM lesion_feedback"
+							$sqlStr = "SELECT evaluation FROM lesion_classification"
 									. " WHERE job_id=? AND lesion_id=?"
 									. " AND is_consensual='t' AND interrupted='f';";
 
@@ -453,7 +453,7 @@
 
 						$sqlStr = "SELECT el.job_id, lf.evaluation, cad.location_x, cad.location_y, cad.location_z"
 								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, "
-								. $resultTableName . " cad, lesion_feedback lf"
+								. $resultTableName . " cad, lesion_classification lf"
 								. " WHERE el.job_id=es.job_id"
 								. " AND el.job_id=cad.job_id"
 								. " AND el.job_id=lf.job_id"

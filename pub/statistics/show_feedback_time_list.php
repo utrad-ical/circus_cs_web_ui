@@ -191,22 +191,22 @@
 							//------------------------------------------------------------------------------------------
 							// For TP and FN column
 							//------------------------------------------------------------------------------------------
-							$sqlStr = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND entered_by=?"
+							$sqlStr = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND entered_by=?"
 									. " AND is_consensual='f' AND interrupted='f' AND lesion_id>0";
 							$dispCandNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
-							$sqlStr = "SELECT false_negative_num FROM false_negative_count"
+							$sqlStr = "SELECT false_negative_num FROM fn_count"
 									. " WHERE job_id=? AND entered_by=? AND is_consensual='f' AND status=2";
 							$enterFnNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
 							// SQL statement for count No. of TP
-							$sqlStr  = "SELECT COUNT(*) FROM lesion_feedback WHERE job_id=? AND is_consensual=?"
+							$sqlStr  = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND is_consensual=?"
 							         . " AND interrupted='f' AND evaluation>=1";
 
 							$stmtTP = $pdo->prepare($sqlStr);
 
 							// SQL statement for count No. of FN
-							$sqlStr  = "SELECT false_negative_num FROM false_negative_count WHERE job_id=?"
+							$sqlStr  = "SELECT false_negative_num FROM fn_count WHERE job_id=?"
 								     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
 
 							$stmtFN = $pdo->prepare($sqlStr);

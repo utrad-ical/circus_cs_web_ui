@@ -17,7 +17,7 @@
 	{
 		$sqlStr = 'SELECT * FROM "' . $params['resultTableName'] . '"'
 				. " WHERE job_id= :jobID"
-				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_feedback"
+				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_classification"
 				. " WHERE job_id=:jobID AND is_consensual='f' AND interrupted='f')"
 				. ' ORDER BY ' . $params['sortKey'] . ' ' . $params['sortOrder'];
 
@@ -163,7 +163,7 @@
 
 			if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT evaluation FROM lesion_feedback WHERE job_id=? AND lesion_id=?";
+				$sqlStr = "SELECT evaluation FROM lesion_classification WHERE job_id=? AND lesion_id=?";
 				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f' AND entered_by=?";
 				else										$sqlStr .= " AND is_consensual='t'";
 
@@ -185,7 +185,7 @@
 
 			if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_feedback"
+				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_classification"
 		                 . " WHERE job_id=? AND is_consensual='f'";
 				$stmtFeedback = $pdo->prepare($sqlStr);
 				$stmtFeedback->bindParam(1, $params['jobID']);
@@ -203,7 +203,7 @@
 
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT entered_by FROM lesion_feedback WHERE job_id=?"
+					$sqlStr = "SELECT entered_by FROM lesion_classification WHERE job_id=?"
 				            . " AND lesion_id=? AND is_consensual='f' AND interrupted='f'";
 
 					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (evaluation=1 OR evaluation=2)";
@@ -282,7 +282,7 @@
 	$params['fnNum'] = 0;
 	$params['fnPersonalCnt'] = 0;
 
-	$sqlStr = "SELECT false_negative_num, status FROM false_negative_count WHERE job_id=? AND status>=1";
+	$sqlStr = "SELECT false_negative_num, status FROM fn_count WHERE job_id=? AND status>=1";
 
 	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND is_consensual='f'";
 	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND is_consensual='t'";
@@ -302,7 +302,7 @@
 
 	if($params['feedbackMode']=="consensual")
 	{
-		$sqlStr = "SELECT SUM(false_negative_num) FROM false_negative_count"
+		$sqlStr = "SELECT SUM(false_negative_num) FROM fn_count"
 				. " WHERE job_id=? AND is_consensual='f' AND status=2";
 
 		$params['fnPersonalCnt'] = DBConnector::query($sqlStr, $params['jobID'], 'SCALAR');

@@ -97,9 +97,9 @@
 				$candNum = count($candArr);
 
 				//------------------------------------------------------------------------------------------------
-				// Registration to lesion_feedback table
+				// Registration to lesion_classification table
 				//------------------------------------------------------------------------------------------------
-				$sqlStr = "DELETE FROM lesion_feedback WHERE job_id=? AND is_consensual=?";
+				$sqlStr = "DELETE FROM lesion_classification WHERE job_id=? AND is_consensual=?";
 				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -112,7 +112,7 @@
 
 				if($candNum<=1 && strlen($params['candStr'])==0)
 				{
-					$sqlStr = "INSERT INTO lesion_feedback (job_id, lesion_id, entered_by, is_consensual, "
+					$sqlStr = "INSERT INTO lesion_classification (job_id, lesion_id, entered_by, is_consensual, "
 					        . "evaluation, interrupted, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
 
 					$sqlParams[] = $params['jobID'];
@@ -133,7 +133,7 @@
 				{
 					for($i=0; $i<$candNum; $i++)
 					{
-						$sqlStr = "INSERT INTO lesion_feedback (job_id, lesion_id, entered_by, is_consensual, "
+						$sqlStr = "INSERT INTO lesion_classification (job_id, lesion_id, entered_by, is_consensual, "
 							        . "evaluation, interrupted, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
 
 						$sqlParams[0] = $params['jobID'];
@@ -157,13 +157,13 @@
 				//----------------------------------------------------------------------------------------------------
 
 				//----------------------------------------------------------------------------------------------------
-				// Registration to false_negative_count table
+				// Registration to fn_count table
 				//----------------------------------------------------------------------------------------------------
 				if($dstData['message'] == "")
 				{
 					$status = ($params['interruptFlg']) ? 1 : 2;
 
-					$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=? AND is_consensual=?";
+					$sqlStr = "SELECT * FROM fn_count WHERE job_id=? AND is_consensual=?";
 					if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
 
 					$stmt = $pdo->prepare($sqlStr);
@@ -179,7 +179,7 @@
 
 					if($rowNum == 0 && !$params['fnFoundFlg'])
 					{
-						$sqlStr = "INSERT INTO false_negative_count "
+						$sqlStr = "INSERT INTO fn_count "
 						        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
 						        . " VALUES (?, ?, ?, 0, ?, ?);";
 						$sqlParams[] = $params['jobID'];
@@ -202,7 +202,7 @@
 						{
 							if($savedStatus != $status)
 							{
-								$sqlStr = "UPDATE false_negative_count SET status=?, registered_at=?";
+								$sqlStr = "UPDATE fn_count SET status=?, registered_at=?";
 								$sqlParams[] = $status;
 								$sqlParams[] = $registeredAt;
 
@@ -232,7 +232,7 @@
 						{
 						 	if($savedStatus != $status)
 						 	{
-								$sqlStr = "UPDATE false_negative_count SET status=?, registered_at=?";
+								$sqlStr = "UPDATE fn_count SET status=?, registered_at=?";
 								$sqlParams[] = $status;
 								$sqlParams[] = $registeredAt;
 
@@ -261,7 +261,7 @@
 								{
 									$sqlParams = array();
 
-									$sqlStr = "UPDATE false_negative_location SET interrupted=?,"
+									$sqlStr = "UPDATE fn_location SET interrupted=?,"
 									        . " registered_at=?";
 									$sqlParams[] = ($params['interruptFlg']) ? 't' : 'f';
 									$sqlParams[] = $registeredAt;

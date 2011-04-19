@@ -43,7 +43,7 @@
 			else if($resultPlugin[$i][2] == 2)
 			{
 				$sqlStr = "SELECT DISTINCT ep.plugin_name, ep.version"
-						. " FROM executed_plugin_list ep, lesion_feedback lf,"
+						. " FROM executed_plugin_list ep, lesion_classification lf,"
 						. " plugin_master pm, plugin_cad_master cm"
 	    		        . " WHERE ep.plugin_name=pm.plugin_name AND ep.version=pm.version"
 						. " AND cm.plugin_id=pm.plugin_id AND cm.result_type=1"

@@ -215,7 +215,7 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 			$sqlParams = array();
 
-			$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=? AND is_consensual=?";
+			$sqlStr = "SELECT * FROM fn_count WHERE job_id=? AND is_consensual=?";
 
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 
@@ -235,7 +235,7 @@
 				$params['enteredBy']  = $result['entered_by'];
 			}
 
-			$sqlStr = "SELECT * FROM false_negative_location"
+			$sqlStr = "SELECT * FROM fn_location"
 					. " WHERE job_id=? AND is_consensual=?";
 			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
 			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
@@ -277,7 +277,7 @@
 
 				$params['userStr'] = $params['enteredBy'] . "^0";
 
-				//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE job_id=?"
+				//$sqlStr = "SELECT COUNT(*) FROM fn_location WHERE job_id=?"
 				//		. " AND entered_by=? AND interrupted='t'";
 				//
 				//if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f'";
@@ -290,7 +290,7 @@
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT * FROM false_negative_count WHERE job_id=?"
+				$sqlStr = "SELECT * FROM fn_count WHERE job_id=?"
 						. " AND is_consensual='t' AND status=2";
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -311,7 +311,7 @@
 					$params['userStr'] = $params['userID'] . "^0";
 					$params['registTime'] = "";
 
-					$sqlStr = "SELECT * FROM false_negative_location WHERE job_id=?"
+					$sqlStr = "SELECT * FROM fn_location WHERE job_id=?"
 					        . " AND is_consensual='f' AND interrupted='f'"
 							. " ORDER BY location_z ASC, location_y ASC, location_x ASC";
 
@@ -410,7 +410,7 @@
 							}
 						}
 
-						$sqlStr = "SELECT DISTINCT entered_by FROM false_negative_location"
+						$sqlStr = "SELECT DISTINCT entered_by FROM fn_location"
 						        . " WHERE job_id=? AND is_consensual='f' ORDER BY entered_by ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
@@ -428,7 +428,7 @@
 							}
 						}
 
-						//$sqlStr = "SELECT COUNT(*) FROM false_negative_location WHERE job_id=?"
+						//$sqlStr = "SELECT COUNT(*) FROM fn_location WHERE job_id=?"
 						//		. " AND is_consensual='t'" . " AND interrupted='t'";
 						//
 						//$stmt = $pdo->prepare($sqlStr);

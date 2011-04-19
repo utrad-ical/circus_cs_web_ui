@@ -52,7 +52,7 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT DISTINCT lf.entered_by FROM executed_plugin_list el, lesion_feedback lf"
+			$sqlStr = "SELECT DISTINCT lf.entered_by FROM executed_plugin_list el, lesion_classification lf"
 					. " WHERE el.job_id=lf.job_id AND el.plugin_name=?";
 			$sqlParams = array($params['cadName']);
 
