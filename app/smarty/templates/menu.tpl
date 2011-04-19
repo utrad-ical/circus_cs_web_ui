@@ -14,15 +14,15 @@
 				<div class="calendar">
 					<object id="today" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="32" height="32" id="" align="middle">
 						<param name="allowScriptAccess" value="sameDomain" />
-						<param name="movie" value="{$params.toTopDir}{$smarty.session.colorSet}.swf" />
+						<param name="movie" value="{$params.toTopDir}img_common/btn/{$smarty.session.colorSet}/today.swf" />
 						<param name="quality" value="high" />
 						<param name="wmode" value="transparent" />
 						<param name="bgcolor" value="#81392f" />
 						<!--[if !IE]>-->
-						<object type="application/x-shockwave-flash" data="{$params.toTopDir}{$smarty.session.colorSet}.swf" quality="high" wmode="transparent" bgcolor="#81392f" width="32" height="32" name="" align="middle" allowScriptAccess="sameDomain">
+						<object type="application/x-shockwave-flash" data="{$params.toTopDir}img_common/btn/{$smarty.session.colorSet}/today.swf" quality="high" wmode="transparent" bgcolor="#81392f" width="32" height="32" name="" align="middle" allowScriptAccess="sameDomain">
 						<!--<![endif]-->
 						<div>
-							<img src="{$params.toTopDir}img_common/item/today_{$smarty.session.colorSet}.jpg" width="32" height="32" />
+							<img src="{$params.toTopDir}img_common/btn/{$smarty.session.colorSet}/today.jpg" width="32" height="32" />
 						</div>
 						<!--[if !IE]>-->
 						</object>
