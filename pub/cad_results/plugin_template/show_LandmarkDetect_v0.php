@@ -2,14 +2,19 @@
 
 	$imgNum = (isset($_REQUEST['imgNum'])) ? $_REQUEST['imgNum'] : 1;
 
-	$stmt = $pdo->prepare("SELECT crop_width, crop_height, crop_depth FROM param_set WHERE job_id=?");
+	$sqlStr = "SELECT MAX(case when key='crop_width' then value else null end) as crop_width,"
+			. "MAX(case when key='crop_height' then value else null end) as crop_height,"
+			. "MAX(case when key='crop_depth' then value else null end) as crop_depth"
+			. " FROM executed_plugin_attributes WHERE job_id=? GROUP BY job_id";
+
+	$stmt = $pdo->prepare($sqlStr);
 	$stmt->bindParam(1, $params['jobID']);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_NUM);
 
 	$width  = $result[0];	$dispWidth  = (int)($width/2);
 	$height = $result[1];	$dispHeight = (int)($height/2);
-	$depth  = $result[2];   $dispDepth  = (int)($depth/2);
+	$depth  = $result[2];	$dispDepth  = (int)($depth/2);
 
 	$xPos = (int)($width/2);
 	$yPos = (int)($height/2);
@@ -23,7 +28,7 @@
 	$posData = $stmt->fetchAll();
 
 	$dstHtml .= '<input type="hidden" id="orgWidth"   value="' . $width . '">'
-	         .   '<input type="hidden" id="orgHeight"  value="' . $height . '">'
+	         .  '<input type="hidden" id="orgHeight"  value="' . $height . '">'
 	         .  '<input type="hidden" id="orgDepth"   value="' . $depth . '">'
 	         .  '<input type="hidden" id="dispWidth"  value="' . $dispWidth . '">'
 	         .  '<input type="hidden" id="dispHeight" value="' . $dispHeight . '">'

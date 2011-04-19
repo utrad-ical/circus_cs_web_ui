@@ -451,24 +451,20 @@
 					{
 						$sqlParams = array($minVolume, $maxVolume, $params['cadName'], $params['version'], $userList[0]);
 
-						$sqlStr = "SELECT el.job_id, lf.lesion_id, lf.evaluation, sr.series_date, sr.series_time,"
-						        . " ((cast(cad.location_x-ps.crop_org_x as real))/cast(ps.crop_width as real)) AS pos_x,"
-						        . " ((cast(cad.location_y-ps.crop_org_y as real))/cast(ps.crop_height as real)) AS pos_y,"
-						        . " ((cast((cad.location_z-ps.slice_offset)-ps.crop_org_z as real))/cast(ps.crop_depth as real)) AS pos_z"
-								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, param_set ps,"
-						        . " " . $resultTableName . " cad, lesion_feedback lf"
-						        . " WHERE el.job_id=es.job_id"
-						        . " AND el.job_id=ps.job_id"
-						        . " AND el.job_id=cad.job_id"
-						        . " AND el.job_id=lf.job_id"
-						        . " AND cad.sub_id=lf.lesion_id"
+						$sqlStr = "SELECT el.job_id, lf.evaluation, cad.location_x, cad.location_y, cad.location_z"
+								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, "
+								. $resultTableName . " cad, lesion_feedback lf"
+								. " WHERE el.job_id=es.job_id"
+								. " AND el.job_id=cad.job_id"
+								. " AND el.job_id=lf.job_id"
+								. " AND cad.sub_id=lf.lesion_id"
 								. " AND cad.volume_size>=?"
-							    . " AND cad.volume_size<=?"
-						        . " AND es.series_id=0"
-						        . " AND es.series_instance_uid=sr.series_instance_uid"
+								. " AND cad.volume_size<=?"
+								. " AND es.series_id=0"
+								. " AND es.series_instance_uid=sr.series_instance_uid"
 								. " AND el.plugin_name=? AND el.version=?"
-						        . " AND lf.is_consensual='f' AND lf.interrupted='f'"
-						        . " AND lf.entered_by=?";
+								. " AND lf.is_consensual='f' AND lf.interrupted='f'"
+								. " AND lf.entered_by=?";
 
 						if($params['dateFrom'] != "")
 						{
@@ -489,8 +485,23 @@
 
 						$tmpDataArr = array();
 
+						$sqlStr = "SELECT MAX(case when key='crop_org_x' then value else null end),"
+								. "MAX(case when key='crop_org_y' then value else null end),"
+								. "MAX(case when key='crop_org_z' then value else null end),"
+								. "MAX(case when key='crop_width' then value else null end),"
+								. "MAX(case when key='crop_height' then value else null end),"
+								. "MAX(case when key='crop_depth' then value else null end),"
+								. "MAX(case when key='slice_offset' then value else null end)"
+								. " FROM executed_plugin_attributes WHERE job_id=? GROUP BY job_id";
+						
+						$stmtAttr = $pdo->prepare($sqlStr);
+
 						while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 						{
+							$stmtAttr->bindValue(1, $result['job_id']);
+							$stmtAttr->execute();
+							$attrArr = $stmtAttr->fetch(PDO::FETCH_NUM);
+
 							$tmpDataArr[] = $result['evaluation'];
 							$tmpDataArr[] = $result['pos_x'];
 							$tmpDataArr[] = $result['pos_y'];

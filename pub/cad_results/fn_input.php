@@ -164,11 +164,15 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve slice origin, slice pitch, slice offset
 			//----------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT * FROM param_set where job_id=?");
-			$stmt->bindValue(1, $params['jobID']);
+			$stmt = $pdo->prepare("SELECT key, value FROM executed_plugin_attributes WHERE job_id=?");
+			$stmt->bindParam(1, $params['jobID']);
 			$stmt->execute();
+			$result = array();
 
-			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+			{
+				$result[$item['key']] = $item['value'];
+			}
 
 			$params['sliceOrigin'] = $result['slice_location_origin'];
 			$params['slicePitch']  = $result['slice_location_pitch'];

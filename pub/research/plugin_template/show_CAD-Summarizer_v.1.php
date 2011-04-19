@@ -93,11 +93,16 @@
 
 		for($k = 0; $k < min(5, $listCnt); $k++)
 		{
-			$stmt = $pdo->prepare("SELECT * FROM param_set WHERE job_id=?");
+			$stmt = $pdo->prepare("SELECT key, value FROM executed_plugin_attributes WHERE job_id=?");
 			$stmt->bindParam(1, $candList[$k][0]);
 			$stmt->execute();
+			$result = array();
 
-			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+			{
+				$result[$item['key']] = $item['value'];
+			}
+
 			$windowLevel  = $result['window_level'];
 			$windowWidth  = $result['window_width'];
 

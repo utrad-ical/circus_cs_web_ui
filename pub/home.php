@@ -69,25 +69,29 @@
 			$missedTPNum = $stmt->rowCount();
 
 			$missedTPData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-			//var_dump($missedTPData);
 
 			for($i=0; $i<$missedTPNum; $i++)
 			{
-				$sqlStr = "SELECT cad.location_x, cad.location_y, cad.location_z,"
-						. " param.crop_org_x as org_x, param.crop_org_y as org_y,"
-						. " param.crop_width, param.crop_height, param.window_level, param.window_width"
-						. " FROM param_set param JOIN " . $missedTPData[$i]['result_table'] . " cad"
-						. " ON param.job_id=cad.job_id"
-						. " WHERE cad.job_id=? AND cad.sub_id=?";
+				$sqlStr = "SELECT location_x, location_y, location_z FROM " . $missedTPData[$i]['result_table']
+						. " WHERE job_id=? AND sub_id=?";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute(array($missedTPData[$i]['job_id'], $missedTPData[$i]['lesion_id']));
+				$lesionLocation = $stmt->fetch(PDO::FETCH_ASSOC);
 
+				$missedTPData[$i] = array_merge($missedTPData[$i], $lesionLocation);
+
+				$sqlStr = "SELECT key, value FROM executed_plugin_attributes WHERE job_id=?";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(1, $missedTPData[$i]['job_id']);
-				$stmt->bindValue(2, $missedTPData[$i]['lesion_id']);
 				$stmt->execute();
 
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-				$missedTPData[$i] = array_merge($missedTPData[$i], $result);
+				foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+				{
+					$missedTPData[$i][$item['key']] = $item['value'];
+				}
 			}
+
+			//var_dump($missedTPData);
 
 			foreach($missedTPData as $key => $item)
 			{
@@ -111,8 +115,8 @@
 				}
 
 				$dispWidth = 256;
-				$dispHeight = (int)($item['crop_height'] * ($dispWidth / $item['crop_width']) + 0.5);
-				$scale = $dispWidth/$item['crop_width'];
+				$dispHeight = (int)((real)$item['crop_height'] * ($dispWidth / (real)$item['crop_width']) + 0.5);
+				$scale = $dispWidth/(real)$item['crop_width'];
 
 				$img = new Imagick();
 				$img->readImage($dstFname);
@@ -144,10 +148,12 @@
 							.  '<div style="width:' . $dispWidth . 'px; height:' .  $dispHeight . 'px;'
 							.  ' overflow:hidden; position:relative; margin-bottom:7px;" class="block-al-c">'
 							.  '<img class="transparent" src="cad_results/images/magenta_circle.png"'
-							.  ' style="position:absolute; left:' .  (($item['location_x']-$item['org_x'])*$scale-12) . 'px;'
-							.  ' top:' .(($item['location_y']-$item['org_y'])*$scale-12) . 'px; z-index:2;">'
+							.  ' style="position:absolute;'
+							.  ' left:' .  (($item['location_x']-(int)$item['crop_org_x'])*$scale-12) . 'px;'
+							.  ' top:' .(($item['location_y']-(int)$item['crop_org_y'])*$scale-12) . 'px; z-index:2;">'
 							.  '<img src="' . $dstFnameWeb . '" width=' . $width*$scale . ' height=' . $height*$scale
-							.  ' style="position:absolute; left:' . (-$item['org_x']*$scale) . 'px; top:' . (-$item['org_y']*$scale) . 'px;'
+							.  ' style="position:absolute; left:' . (-(int)$item['crop_org_x']*$scale) . 'px;'
+							.  ' top:' . (-(int)$item['crop_org_y']*$scale) . 'px;'
 							.  ' z-index:1;">'
 							.  '</div>'
 							.  '</div>';
