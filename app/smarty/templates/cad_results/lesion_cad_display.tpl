@@ -16,397 +16,18 @@
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
-
-{literal}
-
-<script language="Javascript">
+<script language="javascript" type="text/javascript" src="../js/cad_results.js"></script>
+<script language="javascript" type="text/javascript">
 <!--
-{/literal}
 var candData = {$detailData|@json_encode};
-{literal}
-function CreateEvalStr(lesionArr)
-{
-	var evalArr = new Array();
 
-	for(var j=0; j<lesionArr.length; j++)
-	{
-		if($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val() == undefined)
-		{
-			evalArr.push(-99);
-		}
-		else 
-		{
-			evalArr.push($("#lesionBlock" + lesionArr[j] + " input[name:'radioCand" + lesionArr[j] + "']:checked").val());
-		}
-	}
-	return evalArr.join("^");
-}
-
-function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress)
-{
-	$.post("feedback_registration.php",
-			{ jobID:  $("#jobID").val(),
-	  		  cadName: $("#cadName").val(),
-	          version: $("#version").val(),
-	          interruptFlg: interruptFlg,
-			  fnFoundFlg: $('input[name="fnFoundFlg"]:checked').val(),
-	          feedbackMode: feedbackMode,
-	  		  candStr: candStr,
-	          evalStr: evalStr},
-			  function(data){
-
-				if(interruptFlg == 0)	alert(data.message);
-
-				if(dstAddress != "")
-				{
-					if(dstAddress == "historyBack")  history.back();
-					else						   	 location.replace(dstAddress);
-				}
-		  }, "json");
-}
-
-function MovePageWithTempRegistration(address)
-{
-	if($("#registTime").val() == "" && $("#interruptFlg").val() == 1)
-	{
-		var candStr = $("#candStr").val();
-		var lesionArr = candStr.split("^");
-		var evalStr = CreateEvalStr(lesionArr);
-
-		RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, address);
-	}
-	else
-	{
-		if(address == "historyBack")	history.back();
-		else							location.href=address;
-	}
-}
-
-
-function ShowFNinput()
-{
-	var address = 'fn_input.php'
-				+ '?jobID=' + $("#jobID").val()
-                + '&feedbackMode=' + $("#feedbackMode").val();
-	
-	MovePageWithTempRegistration(address);
-}
-
-function ChangeCondition(mode, feedbackMode)
-{
-	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
-			    + '&feedbackMode=' + feedbackMode
-				+ '&sortKey=' + $("#sortKey").val()
-				+ '&sortOrder=' + $(".sort-by input[name='sortOrder']:checked").val();
-
-	if($("#remarkCand").val() > 0)  address += '&remarkCand=' + $("#remarkCand").val();
-
-	if((feedbackMode == "personal" || feedbackMode == "consensual") && $("#registTime").val() == "")
-	{
-		var candStr = $("#candStr").val();
-		var lesionArr = candStr.split("^");
-		var evalStr = CreateEvalStr(lesionArr);
-
-		if(mode == 'registration')
-		{
-			evalArr = evalStr.split("^");
-			RegistFeedback(feedbackMode, 0, candStr, evalStr, address);
-		}
-		else if(mode == 'changeSort' && $("#interruptFlg").val()==1)
-		{
-			RegistFeedback(feedbackMode, 1, candStr, evalStr, address);
-		}
-		else  location.replace(address);
-	}
-	else	location.replace(address);
-}
-
-function ChangeFeedbackMode(feedbackMode)
-{
-	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
-                + '&feedbackMode=' + feedbackMode;
-
-	if($("#remarkCand").val() > 0)  address += '&remarkCand=' + $("#remarkCand").val();
-
-	MovePageWithTempRegistration(address);
-}
-
-function ChangeRegistCondition()
-{
-	var checkCnt = $("input[name^='radioCand']:checked").length;
-
-	var tmpStr = 'Candidate classification: <span style="color:' 
-               + (($("#candNum").val()==checkCnt) ? 'blue;">complete' : 'red;">incomplete') + '</span><br/>'
-	           + 'FN input: <span style="color:'
-		       + (($("#fnInputStatus").val()==1) ? 'blue;">complete' : 'red;">incomplete') + '</span>';
-
-	if($("#registTime").val() =="" && $("#candNum").val()==checkCnt && $("#fnInputStatus").val()==1)
-	{
-		$("#registBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		$("#interruptFlg").val(0);
-	}
-	else
-	{
-		$("#registBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
-		$("#interruptFlg").val(1);
-	}
-
-	if($("#groupID").val() != 'demo')
-	{
-		$("#registCaution").html(tmpStr);
-
-		$("#interruptFlg").val(1);
-
-		// Measures to click button of menu bar during lesion candidate classification
-		$("#linkAbout, #menu a, #listTab").click(
-			function(event){ 
-
-				if(!event.isDefaultPrevented())
-				{
-					event.preventDefault();  // prevent link action
-					
-					if(confirm("Do you want to save the changes?"))
-					{
-						MovePageWithTempRegistration(event.currentTarget.href);
-					}
-				}
-			});
-	}
-}
-
-
-function ChangeLesionClassification(candID, label)
-{
-	if($("#feedbackMode").val()=="personal" && $("#registTime").val()=="")
-	{
-		var options = "Candidate " + candID + ":" + label;
-
-		$.post("write_feedback_action_log.php",
-				{ jobID: $("#jobID").val(),
-				  action: 'classify',
-				  options: options
-				});
-	}
-
-	ChangeRegistCondition();
-}
-
-
-function ShowCADDetail(imgNum)
-{
-	$("#slider").slider("value", imgNum);
-
-	if($("#registTime").val() == "" && $("#interruptFlg").val() == 1)
-	{
-		var candStr = $("#candStr").val();
-		var lesionArr = candStr.split("^");
-		var evalStr = CreateEvalStr(lesionArr);
-
-		RegistFeedback($("#feedbackMode").val(), 1, candStr, evalStr, "");
-	}
-
-	$("#cadResult, #cadResultTab").hide();
-	$("#cadDetailTab, #cadDetail").show();
-	$('#container').height( $(document).height() - 10 );
-
-}
-
-function ShowCADResult()
-{
-	$("#cadDetailTab, #cadDetail").hide();
-	$("#cadResult, #cadResultTab").show();
-	$('#container').height( $(document).height() - 10 );
-}
-
-function Plus()
-{
-	var value = $("#slider").slider("value");
-
-	if(value < $("#slider").slider("option", "max"))
-	{
-		value++;
-		$("#sliderValue").html(value);
-		$("#slider").slider("value", value);
-	}
-}
-
-function Minus()
-{
-	var value = $("#slider").slider("value");
-
-	if($("#slider").slider("option", "min") <= value)
-	{
-		value--;
-		$("#sliderValue").html(value);
-		$("#slider").slider("value", value);
-	}
-}
-
-function ChangePresetMenu()
-{
-	var tmpStr = $("#presetMenu").val().split("^");
-	$("#windowLevel").val(tmpStr[0]);
-	$("#windowWidth").val(tmpStr[1]);
-	$("#presetName").val($("#presetMenu option:selected").text());
-
-	JumpImgNumber($("#slider").slider("value"));
-}
-
-function JumpImgNumber(imgNum)
-{
-	$.post("../jump_image.php",
-		{ studyInstanceUID: $("#studyInstanceUID").val(),
-		  seriesInstanceUID: $("#seriesInstanceUID").val(),
-		  imgNum: imgNum,
-		  windowLevel: $("#windowLevel").val(),
-		  windowWidth: $("#windowWidth").val(),
-		  presetName:  $("#presetName").val()},
-		  function(data){
-
-			if(data.errorMessage != "")
-			{
-				alert(data.errorMessage);
-			}
-			else if(data.imgFname != "")
-			{
-				$("#imgArea").attr("src", '../' + data.imgFname);
-				$("#imgBlock span").remove();
-				$("#sliceLocation").val(data.sliceLocation);
-
-				if($("#checkVisibleCand").is(':checked'))
-				{
-					for(var i=0; i<candData.length; i++)
-					{
-						if(candData[i][4] == data.imgNum)
-						{
-							var xPos = parseInt(candData[i][2] * parseFloat($("#detailDispWidth").val())
-				                                 / parseFloat($("#detailOrgWidth").val())  + 0.5);
-							var yPos = parseInt(candData[i][3] * parseFloat($("#detailDispHeight").val())
-       		                                     / parseFloat($("#detailOrgHeight").val()) + 0.5);
-
-							plotDots(i+1, xPos, yPos, 0);
-						}
-					}
-				}
-			}
-		}, "json");
-}
-
-function plotDots(id, x, y, colorSet)
-{
-	var dotOffsetX = -1;
-	var dotOffsetY = -1;
-	var labelOffsetX = 0;
-	var labelOffsetY = 0;
-
-	var labelBaseX = 3;
-	var labelBaseY = 0;
-	var color = "#ff00ff";
-
-	// for IE
-	if (document.all)
-	{
-		dotOffsetX = 2;
-		labelOffsetX = 3;
-		labelOffsetY = 1;
-	}
-
-	var htmlStr = '<span id="dot' + id + '" class="dot" style="top:' + (y+dotOffsetY) + 'px; '
-                + 'left:' + (x+dotOffsetX) + 'px; height:3px; width:3px; padding:0px; '
-                + 'background-color:' + color + ';position:absolute;"></span>'
-				+ '<span id="label' + id + '" class="dot" style="top:' + (y+labelBaseY+labelOffsetY) + 'px;'
-				+ ' left:' + (x+labelBaseX+labelOffsetX) + 'px; color:' + color + ';'
-				+ ' filter:dropshadow(color=#000000 offX=1 offY=0) dropshadow(color=#000000 offX=-1 offY=0)'
-				+ ' dropshadow(color=#000000 offX=0 offY=1) dropshadow(color=#000000 offX=0 offY=-1);'
-				+ ' font-weight:bold;position:absolute;">' + id + '</span>';
-
-	$("#imgBlock").append(htmlStr);
-}
-
-function EditCandidateTag(jobID, candID, feedbackMode, userID)
-{
-	var dstAddress = "../cad_results/edit_candidate_tag.php?jobID=" + jobID + "&candID=" + candID
-                   + "&feedbackMode=" + feedbackMode + "&userID=" + userID;
-	window.open(dstAddress,"Edit lesion candidate tag", "width=400,height=250,location=no,resizable=no,scrollbars=1");
-}
-
-function ChangeVisibleCand()
-{
-	if($("#checkVisibleCand").is(':checked'))	JumpImgNumber($("#slider").slider("value"));
-	else										$("#imgBlock span").remove();
-}
-
-var rowClickHandler = function(event) {
-
-	if ($(event.target).parents('td.tagColumn').length == 0)
-	{
-		$('#checkVisibleFN').attr('checked', 'checked');
-		// for jQuery 1.3.2
-		var imgNum = $(event.target).parents('tr').children('td.z').html();
-		$("#slider").slider("value", imgNum);
-
-		// for jQuery 1.4.3
-		//var idx = $(event.target).parents('tr').index();
-		//var item = fnData[idx];
-		//$("#slider").slider("value", item.z);
-	}
-}
-
-$(function() {
-{/literal}
-
-	$('#posTable tbody tr').live('click', rowClickHandler);
-
-	$("#slider").slider({ldelim}
-		value:{$params.sliceOffset+1},
-		min: {$params.sliceOffset+1},
-		max: {$detailParams.fNum},
-		step: 1,
-		slide: function(event, ui) {ldelim}
-			$("#sliderValue").html(ui.value);
-		{rdelim},
-		change: function(event, ui) {ldelim}
-			$("#sliderValue").html(ui.value);
-			JumpImgNumber(ui.value);
-		{rdelim}
-	{rdelim});
-	$("#slider").css("width", "220px");
-	$("#sliderValue").html(jQuery("#slider").slider("value"));	
-
-{literal}
-
-	$("input[name='fnFoundFlg']").change(function() {
-	
-		var options = "";
-
-		if($(this).val() == 0)
-		{
-			$("#fnInputStatus").val(1);
-			$("#fnInputBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
-			options = "FN  not found";
-		}
-		else
-		{
-			$("#fnInputBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-		    $("#fnInputStatus").val(($("#fnNum").val() > 0) ? 1 : 0);
-			options = "FN  found";
-		}
-
-		if($("#feedbackMode").val()=="personal")
-		{
-			$.post("write_feedback_action_log.php",
-					{ jobID: $("#jobID").val(),
-					  action: 'select',
-					  options: options
-					});
-		}
-
-		ChangeRegistCondition();
-	});
-});
-{/literal}
-
-
+$(function() {ldelim}
+	setupSlider(
+		{$params.sliceOffset+1},
+		{$params.sliceOffset+1},
+		{$detailParams.fNum}
+	);
+{rdelim});
 -->
 </script>
 
@@ -466,7 +87,7 @@ $(function() {
 				<p class="add-favorite"><a href="#" title="favorite"><img src="../img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>
 			</div><!-- / .tabArea END -->
 
-			
+
 			<div class="tab-content">
 			{if $data.errorMessage != ""}
 				<div style="color:#f00;font-weight:bold;">{$data.errorMessage}</div>
@@ -477,7 +98,7 @@ $(function() {
 				<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}" />
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}" />
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
-				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}" />	
+				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}" />
 				<input type="hidden" id="version"           name="version"           value="{$params.version}" />
 				<input type="hidden" id="ticket"            name="ticket"            value="{$params.ticket|escape}" />
 				<input type="hidden" id="registTime"        name="registTime"        value="{$params.registTime}" />
@@ -497,13 +118,13 @@ $(function() {
 						<div class="fl-l"><img src="../img_common/share/path.gif" /><a onclick="MovePageWithTempRegistration('../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}');">{$params.studyDate}&nbsp;({$params.studyID})</a></div>
 						<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality},&nbsp;{$params.seriesDescription}&nbsp;({$params.seriesID})</div>
 					</div>
-			
+
 					<div class="hide-on-guest">
 						<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
 						<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
 						{* <div class="fl-l" style="margin-left:5px;font-size:80%;"><a href="#">about classification types</a></div> *}
 					</div>
-				
+
 					<div class="fl-clr"></div>
 
 					<div class="sort-by">
@@ -621,7 +242,7 @@ $(function() {
 								</tr>
 							</table>
 						</div>
-						
+
 						<div div class="fl-l">
 							<p style="margin:0px 0px 3px 10px;">{$detailParams.sortStr}</p>
 							<div style="overflow-y:scroll; overflow-x:hidden; width: 330px; height: 400px;">
