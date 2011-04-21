@@ -2,6 +2,75 @@
 
 	include_once("lesion_candidate_display_private.php");
 
+	//--------------------------------------------------------------------------------------------------------
+	// Get attributes from "executed_plugin_attributes" table
+	//--------------------------------------------------------------------------------------------------------
+	$stmt = $pdo->prepare("SELECT key, value FROM executed_plugin_attributes WHERE job_id=?");
+	$stmt->bindParam(1, $params['jobID']);
+	$stmt->execute();
+	$result = array();
+
+	foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+	{
+		$result[$item['key']] = $item['value'];
+	}
+
+	$params['orgX']         = $result['crop_org_x'];
+	$params['orgY']         = $result['crop_org_y'];
+	$params['cropWidth']    = $result['crop_width'];
+	$params['cropHeight']   = $result['crop_height'];
+	$params['pixelSize']    = $result['pixel_size'];
+	$params['distSlice']    = $result['dist_slice'];
+	$params['sliceOffset']  = $result['slice_offset'];
+	$params['windowLevel']  = $result['window_level'];
+	$params['windowWidth']  = $result['window_width'];
+	//--------------------------------------------------------------------------------------------------------
+
+	// Get main modality (1st series)
+	$sqlStr = "SELECT modality FROM plugin_cad_series WHERE plugin_id=? AND series_id=0";
+	$params['mainModality'] = DBConnector::query($sqlStr, $params['pluginID'], 'SCALAR');
+
+	//--------------------------------------------------------------------------------------------------------
+	$params['registMsg'] = "";
+	$params['registTime'] = "";
+
+	$sqlStr = "SELECT registered_at, entered_by FROM feedback_list WHERE job_id=? AND status=1";
+	
+	if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=? AND is_consensual='f'";
+	else                                       $sqlStr .= " AND is_consensual='t'";
+
+	$stmt = $pdo->prepare($sqlStr);
+	$stmt->bindparam(1, $params['jobID']);
+	if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
+	$stmt->execute();
+
+	if($stmt->rowCount() >= 1)
+	{
+		$result = $stmt->fetch();
+		$params['registTime'] = $result['registered_at'];
+		$enteredBy  = $result['entered_by'];
+		$consensualFBFlg = 1;
+
+		$params['registMsg'] = 'registered at ' . $params['registTime'];
+		if($params['feedbackMode'] == "consensual")
+		{
+			$params['registMsg'] .= ' (by ' . $result['entered_by']. ')';
+		}
+	}
+	//else
+	//{
+	//	$sqlStr = substr_replace($sqlStr, "'t'", (strlen($sqlStr)-3));
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->bindparam(1, $params['jobID']);
+	//	if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
+	//	$stmt->execute();
+	//	if($stmt->rowCount() >= 1)  $params['interruptFlg'] = 1;
+	//}
+	//--------------------------------------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------------------------------------
+	//
+	//--------------------------------------------------------------------------------------------------------
 	$params['candNum'] = 0;
 	$candArr = array();
 
@@ -17,8 +86,10 @@
 	{
 		$sqlStr = 'SELECT * FROM "' . $params['resultTableName'] . '"'
 				. " WHERE job_id= :jobID"
-				. " AND sub_id IN (SELECT DISTINCT(lesion_id) FROM lesion_classification"
-				. " WHERE job_id=:jobID AND is_consensual='f' AND interrupted='f')"
+				. " AND sub_id IN"
+				. " (SELECT DISTINCT(cc.candidate_id) FROM feedback_list fl, candidate_classification cc"
+				. " WHERE fl.job_id=:jobID AND cc.fb_id=fl.fb_id"
+				. " AND fl.is_consensual='f' AND fl.status=1)"
 				. ' ORDER BY ' . $params['sortKey'] . ' ' . $params['sortOrder'];
 
 		$stmt = $pdo->prepare($sqlStr);
@@ -37,8 +108,13 @@
 	}
 
 	$params['candNum'] = $stmt->rowCount();
+	//--------------------------------------------------------------------------------------------------------
 
+	//--------------------------------------------------------------------------------------------------------
+	// Set parameters for candidate display
+	//--------------------------------------------------------------------------------------------------------
 	$params['resultColNum'] = 3;  // 3 candidates per row
+	$params['dispWidth'] = 256;
 
 	if($params['candNum'] < 5 && $params['mainModality'] == 'CT')   // for HIMEDIC
 	//if($params['candNum'] < 5)					      			// for other case...
@@ -47,37 +123,17 @@
 		$params['dispWidth'] = 384;
 	}
 
-	$params['dispHeight'] = (int)($params['cropHeight'] * ($params['dispWidth'] / $params['cropWidth']) + 0.5);
-
-	//--------------------------------------------------------------------------------------------------------
-	// Make one-time ticket
-	//--------------------------------------------------------------------------------------------------------
-	$_SESSION['ticket'] = md5(uniqid().mt_rand());
-	$params['ticket'] = $_SESSION['ticket'];
+	$params['scale'] = $params['dispWidth']/$params['cropWidth'];
+	$params['dispHeight'] = (int)($params['cropHeight'] * $params['scale'] + 0.5);
 	//--------------------------------------------------------------------------------------------------------
 
 	//--------------------------------------------------------------------------------------------------------
-	// image and feedback buttons
+	// Set HTML statement for each lesion candidate
 	//--------------------------------------------------------------------------------------------------------
 	$fnConsCheck = 0;
-
-	if($_SESSION['personalFBFlg'] || $_SESSION['consensualFBFlg'] || $_SESSION['groupID'] == 'demo')
-	{
-		if($params['registTime'] != "")
-		{
-			$registMsg = 'registered at ' . $params['registTime'];
-			if($params['feedbackMode'] == "consensual")
-			{
-				$registMsg .= ' (by ' . $enteredBy . ')';
-			}
-		}
-	}
-
 	$candHtml = array();
-
 	$k = 0;
 
-	$params['scale'] = $params['dispWidth']/$params['cropWidth'];
 	$params['lesionCheckCnt'] = 0;
 
 	$dispSid = array();
@@ -99,9 +155,14 @@
 		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
 
 		$img = @imagecreatefrompng($srcFname);
-		$width  = imagesx($img);
-		$height = imagesy($img);
-		imagedestroy($img);
+	
+	    if($img)
+		{
+			$width  = imagesx($img);
+			$height = imagesy($img);
+			imagedestroy($img);
+		}
+
 
 		$candHtml[$k]  = '<div id="lesionBlock' . $candID . '" class="result-record-' . $params['resultColNum'] . 'cols al-c"';
 		if($candID == $params['remarkCand'])  $candHtml[$k] .= ' style="border: 1px solid #F00;"';
@@ -157,15 +218,15 @@
 		{
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 1 :0;
 
-			//$evalVal = ($registTime == "") ? -1 : -2;
 			$evalVal = -2;
 			$checkFlg = 0;
 
 			if($params['feedbackMode'] == "personal" || $params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT evaluation FROM lesion_classification WHERE job_id=? AND lesion_id=?";
-				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND is_consensual='f' AND entered_by=?";
-				else										$sqlStr .= " AND is_consensual='t'";
+				$sqlStr = "SELECT cc.evaluation FROM feedback_list fl, candidate_classification cc"
+						. " WHERE fl.job_id=? AND cc.fb_id=fl.fb_id AND cc.candidate_id=?";
+				if($params['feedbackMode'] == "personal")	$sqlStr .= " AND fl.is_consensual='f' AND fl.entered_by=?";
+				else										$sqlStr .= " AND fl.is_consensual='t'";
 
 				$stmtFeedback = $pdo->prepare($sqlStr);
 				$stmtFeedback->bindParam(1, $params['jobID']);
@@ -185,7 +246,7 @@
 
 			if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_classification"
+				$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM feedback_list"
 		                 . " WHERE job_id=? AND is_consensual='f'";
 				$stmtFeedback = $pdo->prepare($sqlStr);
 				$stmtFeedback->bindParam(1, $params['jobID']);
@@ -203,11 +264,12 @@
 
 				if($params['feedbackMode'] == "consensual")
 				{
-					$sqlStr = "SELECT entered_by FROM lesion_classification WHERE job_id=?"
-				            . " AND lesion_id=? AND is_consensual='f' AND interrupted='f'";
+					$sqlStr = "SELECT fl.entered_by FROM feedback_list fl, candidate_classification cc"
+							. " WHERE fl.job_id=? AND cc.fb_id=fl.fb_id AND cc.candidate_id=?"
+							. " AND fl.is_consensual='f' AND fl.status=1";
 
-					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (evaluation=1 OR evaluation=2)";
-					else                                                 $sqlStr .= " AND evaluation=?";
+					if($radioButtonList[$consensualFlg][$j][0] == 'TP')  $sqlStr .= " AND (cc.evaluation=1 OR cc.evaluation=2)";
+					else                                                 $sqlStr .= " AND cc.evaluation=?";
 
 					$stmtFeedback = $pdo->prepare($sqlStr);
 					$stmtFeedback->bindParam(1, $params['jobID']);
@@ -253,18 +315,19 @@
 				}
 
 				if(($params['feedbackMode'] != "personal" && $params['feedbackMode'] != "consensual")
-				   || ($params['registTime'] != "" && $evalVal != $radioButtonList[$consensualFlg][$j][1]))	 $candHtml[$k] .= ' disabled="disabled"';
+				   || ($params['registTime'] != "" && $evalVal != $radioButtonList[$consensualFlg][$j][1]))
+				{
+					$candHtml[$k] .= ' disabled="disabled"';
+				}
 
-				if($params['feedbackMode'] == "consensual" && $titleStr != "")	$candHtml[$k] .= ' title="' . $titleStr . '" /></span><!-- -->';
-				else													        $candHtml[$k] .= ' /></span><!-- -->';
+				if($params['feedbackMode'] == "consensual" && $titleStr != "")
+				{
+					$candHtml[$k] .= ' title="' . $titleStr . '"';
+				}
+				$candHtml[$k] .= ' /></span><!-- -->';
 			}
 
 			$candHtml[$k] .= '</div>';
-
-			//----------------------------------------------------------------------------------------------------
-			// Tag list
-			//----------------------------------------------------------------------------------------------------
-
 		}
 
 		$candHtml[$k] .= '</div>';
@@ -282,10 +345,11 @@
 	$params['fnNum'] = 0;
 	$params['fnPersonalCnt'] = 0;
 
-	$sqlStr = "SELECT false_negative_num, status FROM fn_count WHERE job_id=? AND status>=1";
+	$sqlStr = "SELECT fn.fn_num FROM feedback_list fl, fn_count fn"
+			. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id";
 
-	if($params['feedbackMode']=="personal")         $sqlStr .= " AND entered_by=? AND is_consensual='f'";
-	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND is_consensual='t'";
+	if($params['feedbackMode']=="personal")         $sqlStr .= " AND fl.entered_by=? AND fl.is_consensual='f'";
+	else if($params['feedbackMode']=="consensual")  $sqlStr .= " AND fl.is_consensual='t'";
 
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->bindParam(1, $params['jobID']);
@@ -297,22 +361,24 @@
 	{
 		$result = $stmt->fetch(PDO::FETCH_NUM);
 		$params['fnNum'] = $result[0];
-		$params['fnInputStatus'] = $result[1];
+		$params['fnInputStatus'] = 1;
 	}
 
 	if($params['feedbackMode']=="consensual")
 	{
-		$sqlStr = "SELECT SUM(false_negative_num) FROM fn_count"
-				. " WHERE job_id=? AND is_consensual='f' AND status=2";
+		$sqlStr = "SELECT SUM(fn.fn_num) FROM feedback_list fl, fn_count fn"
+				. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id "
+				. " AND fl.is_consensual='f' AND fl.status=1";
 
 		$params['fnPersonalCnt'] = DBConnector::query($sqlStr, $params['jobID'], 'SCALAR');
 	}
-	//------------------------------------------------------------------------------------------------------------------
 
 	$params['registStr'] = 'Candidate classification: <span style="color:'
 	                     . (($params['candNum']==$params['lesionCheckCnt']) ? 'blue;">complete' : 'red;">incomplete')
 						 . '</span><br/>FN input: <span style="color:'
 						 . (($params['fnInputStatus']==1) ? 'blue;">complete' : 'red;">incomplete') . '</span>';
+	//------------------------------------------------------------------------------------------------------------------
+
 
 	//------------------------------------------------------------------------------------------------------------------
 	// For CAD detail
@@ -330,12 +396,14 @@
 	if($detailParams['dispWidth'] >= $detailParams['dispHeight'] && $detailParams['dispWidth'] > 256)
 	{
 		$detailParams['dispWidth']  = 256;
-		$detailParams['dispHeight'] = (int)((float)$detailParams['orgHeight'] * (float)$detailParams['dispWidth']/(float)$detailParams['orgWidth']);
+		$detailParams['dispHeight'] = (int)((float)$detailParams['orgHeight'] * (float)$detailParams['dispWidth']
+											 / (float)$detailParams['orgWidth']);
 	}
 	else if($detailParams['dispHeight'] > 256)
 	{
 		$detailParams['dispHeight'] = 256;
-		$detailParams['dispWidth']  = (int)((float)$detailParams['orgWidth'] * (float)$detailParams['dispHeight']/(float)$detailParams['orgHeight']);
+		$detailParams['dispWidth']  = (int)((float)$detailParams['orgWidth'] * (float)$detailParams['dispHeight']
+                                             / (float)$detailParams['orgHeight']);
 	}
 	$detailParams['dispWidth']  = (int)($detailParams['dispWidth']  * $RESCALE_RATIO_OF_SERIES_DETAIL);
 	$detailParams['dispHeight'] = (int)($detailParams['dispHeight'] * $RESCALE_RATIO_OF_SERIES_DETAIL);
@@ -465,6 +533,8 @@
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------------------------
 	// Write action log table (personal feedback only)
 	//------------------------------------------------------------------------------------------------------------------
 	if($params['feedbackMode'] == "personal" && $params['registTime'] == "")
@@ -480,6 +550,13 @@
 		$tmp = $stmt->errorInfo();
 		echo $tmp[2];
 	}
+	//------------------------------------------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------------------------------------------
+	// Make one-time ticket
+	//------------------------------------------------------------------------------------------------------------------
+	$_SESSION['ticket'] = md5(uniqid().mt_rand());
+	$params['ticket'] = $_SESSION['ticket'];
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------

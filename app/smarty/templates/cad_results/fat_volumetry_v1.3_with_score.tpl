@@ -121,8 +121,8 @@ $(function() {ldelim}
 			<div class="tab-content">
 				<form id="form1" name="form1">
 				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}">
-				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
+				<input type="hidden" id="pluginID"          name="pluginID"          value="{$params.pluginID}" />
+				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">
 				<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
 				<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}">
 				<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}">
@@ -228,15 +228,14 @@ $(function() {ldelim}
 				<!-- Scoring interface -->
 				{if $smarty.session.personalFBFlg == 1 || $smarty.session.groupID == 'demo'}
 					<input type="hidden" id="modifyFlg"  value=0 />
-					<input type="hidden" id="oldScore"   value="{$scoreStr}" />
-					<input type="hidden" id="oldComment" value="{$evalComment}" />
+					<input type="hidden" id="oldEval"   value="{$evalStr}" />
 
 					<div id="scoringIF" class="hide-on-guest fl-clr mb20" style="width: 800px;">
 						{$scoringHTML}
 						
 						<p class="ml30">
-							<input id="registBtn" type="button" value="Registration" class="fs-l form-btn {if $registTime == ""}form-btn-normal{else}form-btn-disabled{/if}" style="padding: 3px 8px;" onclick="RegistrationScore();" {if $registTime != ""}disabled="disabled"{/if} />
-							<input id="modifyBtn" type="button" value="Modify" class="fs-l form-btn {if $registTime == ""}form-btn-disabled{else}form-btn-normal{/if}" style="padding: 3px 8px;" onclick="ModifyScore();" {if $registTime == ""}disabled="disabled"{/if} />
+							<input id="registBtn" type="button" value="Registration" class="fs-l form-btn {if $params.registTime == ""}form-btn-normal{else}form-btn-disabled{/if}" style="padding: 3px 8px;" onclick="RegistrationScore();" {if $params.registTime != ""}disabled="disabled"{/if} />
+							<input id="modifyBtn" type="button" value="Modify" class="fs-l form-btn {if $params.registTime == ""}form-btn-disabled{else}form-btn-normal{/if}" style="padding: 3px 8px;" onclick="ModifyScore();" {if $params.registTime == ""}disabled="disabled"{/if} />
 							<input id="cancelBtn" type="button" value="Cancel" class="fs-l form-btn form-btn-disabled" style="padding: 3px 8px;" onclick="CancelModify();" disabled="disabled" />
 							<span id="modifyComment" style="font-size:14px; color:#f00; font-weight:bold;" class="ml10" disabled="disabled"></span>
 							</p>
@@ -247,19 +246,30 @@ $(function() {ldelim}
 					<!--
 						function RegistrationScore()
 						{
-							var scoreStr = $("#heart_vat").val() + "^" + $("#heart_sat").val() + "^" + $("#heart_bound").val() + "^"
-		            					 + $("#cavity_vat").val() + "^" + $("#cavity_sat").val() + "^" + $("#cavity_bound").val() + "^"
-		            					 + $("#wall_vat").val() + "^" + $("#wall_sat").val() + "^" + $("#wall_bound").val() + "^"
-		            					 + $("#pelvic_vat").val() + "^" + $("#pelvic_sat").val() + "^" + $("#pelvic_bound").val() + "^"
-		            					 + $("#other_vat").val() + "^" + $("#other_sat").val() + "^" + $("#other_bound").val();
+							var evalStr = 'heart_vat^' + $("#heart_vat").val() + "^"
+										+ 'heart_sat^' + $("#heart_sat").val() + "^"
+									    + 'heart_bound^' + $("#heart_bound").val() + "^"
+		            					+ 'cavity_vat^'  + $("#cavity_vat").val() + "^"
+                                        + 'cavity_sat^' + $("#cavity_sat").val() + "^"
+                                        + 'cavity_bound^' + $("#cavity_bound").val() + "^"
+		            					+ 'wall_vat^' + $("#wall_vat").val() + "^"
+                                        + 'wall_sat^' + $("#wall_sat").val() + "^"
+                                        + 'wall_bound^' + $("#wall_bound").val() + "^"
+		            					+ 'pelvic_vat^' + $("#pelvic_vat").val() + "^"
+                                        + 'pelvic_sat^' + $("#pelvic_sat").val() + "^"
+                                        + 'pelvic_bound^' + $("#pelvic_bound").val() + "^"
+		            					+ 'other_vat^' + $("#other_vat").val() + "^"
+                                        + 'other_sat^' + $("#other_sat").val() + "^"
+                                        + 'other_bound^' + $("#other_bound").val() + "^"
+                                        + 'comment^' + $("#evalComment").val();
 
-							$.post('plugin_template/fat_volumetry_v1.3_score_registration.php',
-									{ jobID:  $("#jobID").val(),
-									  modifyFlg: $("#modifyFlg").val(),
-									  scoreStr: scoreStr,
-									  comment: $("#evalComment").val()},
-									function(data){
-
+							$.post("./feedback_registration.php",
+       							   { jobID: $("#jobID").val(),
+			  		  				 pluginID: $("#pluginID").val(),
+			          				 interruptFlg: 0,
+			          				 feedbackMode: $("#feedbackMode").val(),
+			          				 evalStr: evalStr},
+    	  	  		  				 function(data){
 										alert(data.message);
 
 										if(data.message.substr(0, 12) == "Successfully")
@@ -267,15 +277,34 @@ $(function() {ldelim}
 											$("#modifyBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 											$("#registBtn, #cancelBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
 											$("#scoringIF select, #evalComment").attr("disabled", "disabled");
-											$("#oldScore").val(scoreStr);
 											$("#oldComment").val($("#evalComment").val());
 											$("#modifyComment").html('').hide();
 										}
-									}, "json");
+				  			}, "json");
+
 						}
 
 						function ModifyScore()
 						{
+							var evalStr = $("#heart_vat").val() + "^"
+								   	    + $("#heart_sat").val() + "^"
+									    + $("#heart_bound").val() + "^"
+		            				    + $("#cavity_vat").val() + "^"
+                                        + $("#cavity_sat").val() + "^"
+                                        + $("#cavity_bound").val() + "^"
+		            				    + $("#wall_vat").val() + "^"
+                                        + $("#wall_sat").val() + "^"
+                                        + $("#wall_bound").val() + "^"
+		            				    + $("#pelvic_vat").val() + "^"
+                                        + $("#pelvic_sat").val() + "^"
+                                        + $("#pelvic_bound").val() + "^"
+		            				    + $("#other_vat").val() + "^"
+                                        + $("#other_sat").val() + "^"
+                                        + $("#other_bound").val() + "^"
+                                        + $("#evalComment").val();
+
+							$("#oldEval").val(evalStr);
+
 							$("#modifyFlg").val(1);
 							$("#registBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 							$("#modifyBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
@@ -285,25 +314,25 @@ $(function() {ldelim}
 
 						function CancelModify()
 						{
-							var scoreArray = $("#oldScore").val().split("^");
+							var evalArray = $("#oldEval").val().split("^");
 							
-							$("#heart_vat").val(scoreArray[0]);
-							$("#heart_sat").val(scoreArray[1]);
-							$("#heart_bound").val(scoreArray[2]);
-							$("#cavity_vat").val(scoreArray[3]);
-							$("#cavity_sat").val(scoreArray[4]);
-							$("#cavity_bound").val(scoreArray[5]);
-							$("#wall_vat").val(scoreArray[6]);
-							$("#wall_sat").val(scoreArray[7]);
-							$("#wall_bound").val(scoreArray[8]);
-							$("#pelvic_vat").val(scoreArray[9]);
-							$("#pelvic_sat").val(scoreArray[10]);
-							$("#pelvic_bound").val(scoreArray[11]);
-							$("#other_vat").val(scoreArray[12]);
-							$("#other_sat").val(scoreArray[13]);
-							$("#other_bound").val(scoreArray[14]);
+							$("#heart_vat").val(evalArray[0]);
+							$("#heart_sat").val(evalArray[1]);
+							$("#heart_bound").val(evalArray[2]);
+							$("#cavity_vat").val(evalArray[3]);
+							$("#cavity_sat").val(evalArray[4]);
+							$("#cavity_bound").val(evalArray[5]);
+							$("#wall_vat").val(evalArray[6]);
+							$("#wall_sat").val(evalArray[7]);
+							$("#wall_bound").val(evalArray[8]);
+							$("#pelvic_vat").val(evalArray[9]);
+							$("#pelvic_sat").val(evalArray[10]);
+							$("#pelvic_bound").val(evalArray[11]);
+							$("#other_vat").val(evalArray[12]);
+							$("#other_sat").val(evalArray[13]);
+							$("#other_bound").val(evalArray[14]);
+							$("#evalComment").val(evalArray[15]);
 
-							$("#evalComment").val($("#oldComment").val());
 							$("#modifyFlg").val(0);
 							$("#registBtn, #cancelBtn").attr("disabled", "disabled").removeClass('form-btn-normal').addClass('form-btn-disabled');
 							$("#modifyBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');

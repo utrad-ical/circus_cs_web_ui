@@ -38,12 +38,11 @@ function MovePageWithTempRegistration(address, interruptFlg)
 		if(interruptFlg == 0
            || (interruptFlg == 1 && $("#interruptFlg").val() == 1 && confirm('Do you regist feedbacks temporarily?')))
 		{
-			var evalStr = $("#cadResult input[name='visualScore']:checked").val();
+			var evalStr = 'total^' + $("#cadResult input[name='visualScore']:checked").val();
 
 			$.post("./feedback_registration.php",
        				{ jobID: $("#jobID").val(),
-			  		  cadName: $("#cadName").val(),
-			          version: $("#version").val(),
+			  		  pluginID: $("#pluginID").val(),
 			          interruptFlg: interruptFlg,
 			          feedbackMode: $("#feedbackMode").val(),
 			          evalStr: evalStr},
@@ -60,10 +59,7 @@ function MovePageWithTempRegistration(address, interruptFlg)
 
 function ChangeFeedbackMode(feedbackMode)
 {
-	var address = 'show_cad_results.php?cadName=' + $("#cadName").val()
-                + '&version=' + $("#version").val()
-                + '&studyInstanceUID=' + $("#studyInstanceUID").val()
-                + '&seriesInstanceUID=' + $("#seriesInstanceUID").val()
+	var address = 'show_cad_results.php?jobID=' + $("#jobID").val()
                 + '&feedbackMode=' + feedbackMode;
 
 	MovePageWithTempRegistration(address, 1);
@@ -129,14 +125,11 @@ function ShowCADResult()
 				<form id="form1" name="form1">
 				<input type="hidden" id="feedbackMode"      name="feedbackMode"      value="{$params.feedbackMode}">
 				<input type="hidden" id="jobID"             name="jobID"             value="{$params.jobID}">
+				<input type="hidden" id="pluginID"          name="pluginID"          value="{$params.pluginID}" />
 				<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}">
-				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}">
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}">
-				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}">	
-				<input type="hidden" id="version"           name="version"           value="{$params.version}">
 				<input type="hidden" id="colorSet"          name="colorSet"          value="{$smarty.session.colorSet}">
 				<input type="hidden" id="ticket"            name="ticket"            value="{$params.ticket|escape}">
-				<input type="hidden" id="registTime"        name="registTime"        value="{$registTime}">
+				<input type="hidden" id="registTime"        name="registTime"        value="{$params.registTime}">
 				<input type="hidden" id="interruptFlg"      name="interruptFlg"      value="{$params.interruptFlg}">
 				<input type="hidden" id="srcList"           name="srcList"           value="{$params.srcList}">
 				<input type="hidden" id="tagStr"            name="tagStr"            value="{$params.tagStr}">
@@ -151,11 +144,10 @@ function ShowCADResult()
 						<div class="fl-l"><img src="../img_common/share/path.gif" /><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}">{$params.studyDate}&nbsp;({$params.studyID})</a></div>
 						<div class="fl-l"><img src="../img_common/share/path.gif" />{$params.modality},&nbsp;{$params.seriesDescription}&nbsp;({$params.seriesID})</div>
 					</div>
-			
+
 					<div class="hide-on-guest">
 						<input type="radio" name="change-mode1" value="Personal mode" class="radio-to-button-l" label="Personal mode"  onclick="ChangeFeedbackMode('personal');" {if $params.feedbackMode=='personal'}checked="checked"{/if} />
 						<input type="radio" name="change-mode1" value="Consensual mode" class="radio-to-button-l" label="Consensual mode" onclick="ChangeFeedbackMode('consensual');" {if $params.feedbackMode=='consensual'}checked="checked"{/if}{if $smarty.session.consensualFBFlg==0 || ($params.feedbackMode == "personal" && $consensualFBFlg == 0)} disabled="disabled"{/if} />
-						<div class="fl-l" style="margin-left:5px;">{$registMsg}</div>
 					</div>
 
 					<!-- Display results -->
@@ -231,9 +223,9 @@ function ShowCADResult()
 								{$scoringHtml}
 							</div>
 							<p class="fl-r" style="width:255px;">
-								<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="RegistFeedback('{$params.feedbackMode}');" {if $registTime != ""}disabled="disabled"{/if}/>
+								<input name="" type="button" value="Registration of feedback" class="fs-l form-btn registration" onclick="RegistFeedback('{$params.feedbackMode}');" {if $params.registTime != ""}disabled="disabled"{/if}/>
 								<br />
-								<span id="registCaution" class="regist-caution">{if $interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{/if}</span>
+								<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || $interruptFlg == 1}Please press the [Registration] button,<br/> or your changes will be discarded.{else}{$params.registMsg}{/if}</span>
 							</p>
 						</div>
 					{/if}

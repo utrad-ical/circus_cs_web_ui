@@ -54,6 +54,7 @@
 
 	$cadName = "";
 	$version = "";
+	$pluginID = 0;
 	$resultTableName = "";
 
 	for($n = 0; $n < 4; $n++)
@@ -72,21 +73,17 @@
 
 		if($n==0)
 		{
-			$sqlStr = "SELECT plugin_name, version FROM executed_plugin_list WHERE job_id=?";
+			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.plugin_id"
+					. " FROM executed_plugin_list el, plugin_master pm"
+					. " WHERE el.job_id=? AND pm.plugin_id=el.plugin_id";
+			$result = DBConnector::query($sqlStr, $candList[0][0], 'ARRAY_NUM');
 
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $candList[0][0]);
-			$stmt->execute();
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+			$cadName  = $result[0];
+			$version  = $result[1];
+			$pluginID = $result[2];
 
-			$cadName = $result[0];
-			$version = $result[1];
-
-			$sqlStr = "SELECT cm.result_table FROM plugin_master pm, plugin_cad_master cm"
-					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($cadName, $version));
-			$resultTableName = $stmt->fetchColumn();
+			$sqlStr = "SELECT result_table FROM plugin_cad_master WHERE plugin_id=?";
+			$resultTableName = DBConnector::query($sqlStr, $pluginID, 'SCALAR');
 		}
 
 		$listHtml[$n] = '<table class="mt10 ml20"><tr>';
@@ -106,18 +103,16 @@
 			$windowLevel  = $result['window_level'];
 			$windowWidth  = $result['window_width'];
 
-			$sqlStr = "";
-
 			if($n==3)
 			{
 				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias,'
 						. ' fn.location_x, fn.location_y, fn.location_z'
-						. ' FROM study_list st, series_list sr, storage_master sm,'
-						. ' executed_plugin_list el, executed_series_list es, fn_location fn'
-						. ' WHERE el.job_id=?  AND fn.job_id=el.job_id AND fn.location_id=?'
+						. ' FROM study_list st, series_list sr, storage_master sm, executed_plugin_list el,'
+						. ' executed_series_list es, feedback_list fl, fn_location fn'
+						. ' WHERE el.job_id=?  AND fl.job_id=el.job_id AND fn.fb_id=fl.fb_id AND fn.fn_id=?'
 						. ' AND es.job_id=el.job_id AND es.series_id=0'
-						. ' AND st.study_instance_uid=es.study_instance_uid '
-						. ' AND sr.series_instance_uid=es.series_instance_uid '
+						. ' AND sr.sid=es.series_sid'
+						. ' AND st.study_instance_uid=sr.study_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
 			}
 			else
@@ -128,8 +123,8 @@
 						. ' executed_plugin_list el, executed_series_list es, "' . $resultTableName . '" cad'
 						. ' WHERE el.job_id=?  AND cad.job_id=el.job_id AND cad.sub_id=?'
 						. ' AND es.job_id=el.job_id AND es.series_id=0'
-						. ' AND st.study_instance_uid=es.study_instance_uid '
-						. ' AND sr.series_instance_uid=es.series_instance_uid '
+						. ' AND sr.sid=es.series_sid '
+						. ' AND st.study_instance_uid=sr.study_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
 			}
 

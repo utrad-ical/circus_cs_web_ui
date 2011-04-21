@@ -98,6 +98,7 @@ $(function() {ldelim}
 				<input type="hidden" id="groupID"           name="groupID"           value="{$smarty.session.groupID}" />
 				<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"  value="{$params.studyInstanceUID}" />
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
+				<input type="hidden" id="pluginID"          name="pluginID"          value="{$params.pluginID}" />
 				<input type="hidden" id="cadName"           name="cadName"           value="{$params.cadName}" />
 				<input type="hidden" id="version"           name="version"           value="{$params.version}" />
 				<input type="hidden" id="ticket"            name="ticket"            value="{$params.ticket|escape}" />
@@ -169,7 +170,7 @@ $(function() {ldelim}
 							<p class="fl-r" style="width:250px;">
 								<input id="registBtn" type="button" value="Registration of feedback" class="fs-l form-btn registration form-btn-disabled" onclick="ChangeCondition('registration', '{$params.feedbackMode}');" {if $params.registTime!="" || !($params.candNum==$params.lesionCheckCnt && $params.fnInputStatus==1)} disabled="disabled"{/if} />
 								<br />
-								<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || $params.fnInputStatus!=2}{$params.registStr}{else}{$registMsg}{/if}</span>
+								<span id="registCaution" style="font-weight:bold;">{if $params.registTime=="" || $params.fnInputStatus!=2}{$params.registStr}{else}{$params.registMsg}{/if}</span>
 							</p>
 						</div>
 					{/if}

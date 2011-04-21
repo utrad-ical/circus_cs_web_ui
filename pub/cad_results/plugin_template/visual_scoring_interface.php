@@ -6,18 +6,20 @@
 	{
 		$sqlParams = array();
 		
-		$sqlStr = "SELECT score FROM visual_assessment WHERE job_id=?";
+		$sqlStr = "SELECT value FROM feedback_list fl, visual_assessment va"
+				. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+				. " AND va.key='total'";
 		$sqlParams[] = $params['jobID'];
 		
 		
 		if($params['feedbackMode'] == "personal")
 		{
-			$sqlStr .= " AND is_consensual='f' AND entered_by=?";
+			$sqlStr .= " AND fl.is_consensual='f' AND fl.entered_by=?";
 			$sqlParams[] = $userID;
 		}
 		else
 		{
-			$sqlStr .= " AND is_consensual='t'";
+			$sqlStr .= " AND fl.is_consensual='t'";
 		}
 			
 		$stmt = $pdo->prepare($sqlStr);
@@ -34,7 +36,7 @@
 			
 	if($params['feedbackMode'] == "consensual")
 	{
-		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM visual_assessment"
+		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM feedback_list"
                  . " WHERE job_id=? AND is_consensual='f'";
 				 
 		$stmt = $pdo->prepare($sqlStr);
@@ -50,25 +52,19 @@
 
 	if($params['feedbackMode'] == "consensual")
 	{
-		$sqlStr = "SELECT score, count(*) FROM visual_assessment WHERE job_id=?"
-	            . " AND is_consensual='f' AND interrupted='f' GROUP BY score ORDER BY score ASC;";
+		$sqlStr = "SELECT va.value FROM feedback_list fl, visual_assessment va"
+				. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+	            . " AND fl.is_consensual='f' AND fl.status=1 AND va.key='total'";
+		$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
-		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['jobID']);
-		$stmt->execute();		 
-		
-		$numRows = $stmt->rowCount();
+		foreach($result as $item)  $enterNumArr[$item[0]-1]++;
 
-		for($i=0; $i<$numRows; $i++)
+		for($i=0; $i<5; $i++)
 		{
-			$result = $stmt->fetch(PDO::FETCH_NUM);
-			$tmp = $result[0];
-			$enterNumArr[$tmp-1] = $result[1];
-
-			if($enterNumArr[$tmp-1] >= $maxScoreCnt)
+			if($enterNumArr[$i] >= $maxScoreCnt)
 			{
-				$maxScoreCnt = $enterNumArr[$tmp-1];
-				$maxScoreVal = $tmp;
+				$maxScoreCnt = $enterNumArr[$i];
+				$maxScoreVal = $i+1;
 			}
 		}
 	}
@@ -85,11 +81,13 @@
 		{
 			$evalStr = " " . $enterNumArr[$j-1];
 			
-			$sqlStr = "SELECT entered_by FROM visual_assessment WHERE job_id=?"
-					. " AND is_consensual='f' AND interrupted='f' AND score=?";
+			$sqlStr = "SELECT fl.entered_by FROM feedback_list fl, visual_assessment va"
+					. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+					. " AND fl.is_consensual='f' AND fl.status=1"
+					. " AND va.key='total' AND va.value=?";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['jobID'], $j));
+			$stmt->execute(array($params['jobID'], strval($j)));
 			
 			$enterNum = $stmt->rowCount();
 			
@@ -104,7 +102,7 @@
 		             .  ' label="' . $scoreStr[$j-1] . $evalStr . '"'
 		             .  ' class="radio-to-button"  onclick="DispRegistCaution();"';
 
-		if($registTime != "")
+		if($params['registTime'] != "")
 		{
 			if($evalVal == $j)	$scoringHtml .= ' checked="checked"';
 			else				$scoringHtml .= ' disabled="disabled"';
@@ -115,7 +113,10 @@
 			$scoringHtml .= ' checked="checked"';
 		}
 		
-		if($params['feedbackMode'] == "consensual" && $titleStr != "")	$scoringHtml .= ' title="' . $titleStr . '" />';
-		else															$scoringHtml .= ' />';
+		if($params['feedbackMode'] == "consensual" && $titleStr != "")
+		{
+			$scoringHtml .= ' title="' . $titleStr . '"';
+		}
+		$scoringHtml .= ' />';
 	}
 ?>

@@ -13,11 +13,11 @@
 	border-bottom: 2px solid #000;
 }
 
-.news, .cad_execution, .help {
+.news, .plugin_execution, .help {
 	margin-left: 15px;
 }
 
-.cad_execution ul{
+.plugin_execution ul{
 	margin-top: -3px;
 }
 
@@ -45,9 +45,9 @@
 	</ul>
 </div>
 
-<h2>CAD execution</h2>
-<div class="cad_execution">
-	<h4>Total of CAD execution: {$executionNum|escape} (since {$oldestExecDate|escape})</h4>
+<h2>Plug-in execution</h2>
+<div class="plugin_execution">
+	<h4>Total of plug-in execution: {$executionNum|escape} (since {$oldestExecDate|escape})</h4>
 
 	{if $executionNum > 0}
 		[Top {$cadExecutionData|@count}]</p>

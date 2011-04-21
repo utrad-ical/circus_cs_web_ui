@@ -17,14 +17,11 @@
 			"required" => true,
 			"min" => 1,
 			"errorMes" => "[ERROR] CAD ID is invalid."),
-		"cadName" => array(
-			"type" => "cadname",
+		"pluginID" => array(
+			"type" => "int",
 			"required" => true,
-			"errorMes" => "'CAD name' is invalid."),
-		"version" => array(
-			"type" => "version",
-			"required" => true,
-			"errorMes" => "'Version' is invalid."),
+			"min" => 1,
+			"errorMes" => "[ERROR] Plug-in ID is invalid."),
 		"feedbackMode" => array(
 			"type" => "select",
 			"required" => true,
@@ -35,18 +32,18 @@
 			"required" => true,
 			"options" => array("0", "1"),
 			"errorMes" => "[ERROR] 'interruptFlg' is invalid."),
-		"fnFoundFlg" => array(
-			"type" => "select",
-			"required" => true,
-			"options" => array("0", "1"),
-			"otherwise" => "1"),
+		//"fnFoundFlg" => array(
+		//	"type" => "select",
+		//	"required" => true,
+		//	"options" => array("0", "1"),
+		//	"otherwise" => "1"),
 		"candStr" => array(
 			"type" => "string",
 			"regex" => "/^[\d\^]+$/",
 			"errorMes" => "[ERROR] 'Candidate string' is invalid."),
 		"evalStr" => array(
 			"type" => "string",
-			"regex" => "/^[\d-\^]+$/",
+		//	"regex" => "/^[\d-\^]+$/",
 			"errorMes" => "[ERROR] 'Evaluation string' is invalid.")
 		));
 
@@ -70,8 +67,6 @@
 
 	if($_SESSION['groupID'] != 'demo')
 	{
-
-
 		try
 		{
 			// Connect to SQL Server
@@ -80,403 +75,200 @@
 			$registeredAt = date('Y-m-d H:i:s');
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
-			$sqlStr = "SELECT cm.result_type, cm.score_table FROM plugin_master pm, plugin_cad_master cm"
-					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['cadName'], $params['version']));
-
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+			$sqlStr = "SELECT result_type, score_table FROM plugin_cad_master WHERE plugin_id=?";
+			$result = DBConnector::query($sqlStr, $params['pluginID'], 'ARRAY_NUM');
+			
 			$resultType     = $result[0];
 			$scoreTableName = $result[1];
 
-			if($resultType == 1)
+			$initialFlg = 0;
+
+			//------------------------------------------------------------------------------------------------
+			// Insert (or update) feedback_list
+			//------------------------------------------------------------------------------------------------
+			$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
+			
+			$sqlParams = array();
+			
+			if($feedbackID == 0)
 			{
-				$candArr = explode("^", $params['candStr']);
-				$evalArr = explode('^', $params['evalStr']);
+				$sqlStr = "INSERT INTO feedback_list(job_id, entered_by, is_consensual, status, registered_at)"
+						. "VALUES (?, ?, ?, ?, ?)";
 
-				$candNum = count($candArr);
+				$sqlParams[] = $params['jobID'];
+				$sqlParams[] = $userID;
+				$sqlParams[] = $consensualFlg;
+				$sqlParams[] = ($params['interruptFlg']) ? 0 : 1;
+				$sqlParams[] = $registeredAt;
 
-				//------------------------------------------------------------------------------------------------
-				// Registration to lesion_classification table
-				//------------------------------------------------------------------------------------------------
-				$sqlStr = "DELETE FROM lesion_classification WHERE job_id=? AND is_consensual=?";
-				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $params['jobID']);
-				$stmt->bindParam(2, $consensualFlg);
-				if($params['feedbackMode'] == "personal")   $stmt->bindParam(3, $userID);
-				$stmt->execute();
-
-				$sqlParams = array();
-
-				if($candNum<=1 && strlen($params['candStr'])==0)
-				{
-					$sqlStr = "INSERT INTO lesion_classification (job_id, lesion_id, entered_by, is_consensual, "
-					        . "evaluation, interrupted, registered_at) VALUES (?, 0, ?, ?, 0, ?, ?);";
-
-					$sqlParams[] = $params['jobID'];
-					$sqlParams[] = $userID;
-					$sqlParams[] = $consensualFlg;
-					$sqlParams[] = ($params['interruptFlg']) ? "t" : "f";
-					$sqlParams[] = $registeredAt;
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($sqlParams);
-
-					if($stmt->rowCount() != 1)
-					{
-						$dstData['message'] .= "Fail to register lesion classification.";
-					}
-				}
-				else
-				{
-					for($i=0; $i<$candNum; $i++)
-					{
-						$sqlStr = "INSERT INTO lesion_classification (job_id, lesion_id, entered_by, is_consensual, "
-							        . "evaluation, interrupted, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?);";
-
-						$sqlParams[0] = $params['jobID'];
-						$sqlParams[1] = $candArr[$i];
-						$sqlParams[2] = $userID;
-						$sqlParams[3] = $consensualFlg;
-						$sqlParams[4] = $evalArr[$i];
-						$sqlParams[5] = ($params['interruptFlg']) ? "t" : "f";
-						$sqlParams[6] = $registeredAt;
-
-						$stmt = $pdo->prepare($sqlStr);
-						$stmt->execute($sqlParams);
-
-						if($stmt->rowCount() != 1)
-						{
-							$dstData['message'] .= "Fail to register lesion classification;";
-							break;
-						}
-					}
-				}
-				//----------------------------------------------------------------------------------------------------
-
-				//----------------------------------------------------------------------------------------------------
-				// Registration to fn_count table
-				//----------------------------------------------------------------------------------------------------
-				if($dstData['message'] == "")
-				{
-					$status = ($params['interruptFlg']) ? 1 : 2;
-
-					$sqlStr = "SELECT * FROM fn_count WHERE job_id=? AND is_consensual=?";
-					if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindValue(1, $params['jobID']);
-					$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
-					if($params['feedbackMode'] == "personal")   $stmt->bindValue(3, $userID);
-
-					$stmt->execute();
-					$rowNum = $stmt->rowCount();
-					$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-					$sqlParams = array();
-
-					if($rowNum == 0 && !$params['fnFoundFlg'])
-					{
-						$sqlStr = "INSERT INTO fn_count "
-						        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
-						        . " VALUES (?, ?, ?, 0, ?, ?);";
-						$sqlParams[] = $params['jobID'];
-						$sqlParams[] = $userID;
-						$sqlParams[] = $consensualFlg;
-						$sqlParams[] = $status;
-						$sqlParams[] = $registeredAt;
-
-						$stmtFN = $pdo->prepare($sqlStr);
-						$stmtFN->execute($sqlParams);
-
-						if($stmtFN->rowCount() != 1) $dstData['message'] .= "Fail to save the number of FN.";
-					}
-					else if($rowNum == 1)
-					{
-						$savedFnNum = $result['false_negative_num'];
-						$savedStatus= $result['status'];
-
-						if($savedFnNum == 0)
-						{
-							if($savedStatus != $status)
-							{
-								$sqlStr = "UPDATE fn_count SET status=?, registered_at=?";
-								$sqlParams[] = $status;
-								$sqlParams[] = $registeredAt;
-
-								if($params['feedbackMode'] == "consensual")
-								{
-									$sqlStr .= ", entered_by=?";
-									$sqlParams[] = $userID;
-								}
-
-								$sqlStr .= " WHERE job_id=? AND is_consensual=?";
-								$sqlParams[] = $params['jobID'];
-								$sqlParams[] = $consensualFlg;
-
-								if($params['feedbackMode'] == "personal")
-								{
-									$sqlStr .= " AND entered_by=?";
-									$sqlParams[] = $userID;
-								}
-
-								$stmt = $pdo->prepare($sqlStr);
-								$stmt->execute($sqlParams);
-
-								if($stmt->rowCount() != 1) $dstData['message'] .= "Fail to update FN table.";
-							}
-						}
-						else
-						{
-						 	if($savedStatus != $status)
-						 	{
-								$sqlStr = "UPDATE fn_count SET status=?, registered_at=?";
-								$sqlParams[] = $status;
-								$sqlParams[] = $registeredAt;
-
-								if($params['feedbackMode'] == "consensual")
-								{
-									$sqlStr .= ", entered_by=?";
-									$sqlParams[] = $userID;
-								}
-
-								$sqlStr .= " WHERE job_id=? AND is_consensual=?";
-								$sqlParams[] = $params['jobID'];
-								$sqlParams[] = $consensualFlg;
-
-								if($params['feedbackMode'] == "personal")
-								{
-									$sqlStr .= " AND entered_by=?";
-									$sqlParams[] = $userID;
-								}
-
-								$stmt = $pdo->prepare($sqlStr);
-								$stmt->execute($sqlParams);
-
-								if($stmt->rowCount() != 1) 	$dstData['message'] .= "Fail to update FN table.";
-
-								if($dstData['message'] == "")
-								{
-									$sqlParams = array();
-
-									$sqlStr = "UPDATE fn_location SET interrupted=?,"
-									        . " registered_at=?";
-									$sqlParams[] = ($params['interruptFlg']) ? 't' : 'f';
-									$sqlParams[] = $registeredAt;
-
-									if($params['feedbackMode'] == "consensual")
-									{
-										$sqlStr .= ", entered_by=?";
-										$sqlParams[] = $userID;
-									}
-
-									$sqlStr .= " WHERE job_id=? AND is_consensual=?";
-									$sqlParams[] = $params['jobID'];
-									$sqlParams[] = $consensualFlg;
-
-									if($params['feedbackMode'] == "personal")
-									{
-										$sqlStr .= " AND entered_by=?";
-										$sqlParams[] = $userID;
-									}
-
-									$stmt = $pdo->prepare($sqlStr);
-									$stmt->execute($sqlParams);
-
-									if($stmt->rowCount() != $result['false_negative_num'])
-									{
-										$dstData['message'] .= "Fail to update FN table.";
-									}
-								}
-							}
-						}
-					}
-				}
-
-				//----------------------------------------------------------------------------------------------------------
-				// Write action log table (personal feedback only)
-				//----------------------------------------------------------------------------------------------------------
-				if($params['feedbackMode'] == "personal")
-				{
-					$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options) VALUES ";
-
-					if($params['interruptFlg']==1)	$sqlStr .= "(?,?,?,'save', 'candidate classification')";
-					else							$sqlStr .= "(?,?,?,'register','')";
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindParam(1, $params['jobID']);
-					$stmt->bindParam(2, $userID);
-					$stmt->bindParam(3, $registeredAt);
-					$stmt->execute();
-
-					//$tmp = $stmt->errorInfo();
-					//echo $tmp[2];
-				}
-				//----------------------------------------------------------------------------------------------------------
-
-				if($dstData['message'] == "" && $params['interruptFlg'] == 0)
-				{
-					$dstData['message'] .= 'Successfully registered in feedback database.';
-				}
+				$initialFlg = 1;
 			}
-			else if($resultType == 2)  // under modified (2010.11.5)
+			else
 			{
-				$scoreTableName = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
-
-				$sqlStr = "SELECT interrupted FROM \"" . $scoreTableName . "\" WHERE job_id=?"
-						. " AND is_consensual=?";
-
-				if($params['feedbackMode'] == "personal") $sqlStr .= " AND entered_by=?";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $params['jobID']);
-				$stmt->bindValue(2, $consensualFlg, PDO::PARAM_BOOL);
-				if($feedbackMode == "personal")  $stmt->bindValue(3, $userID);
-
-				$stmt->execute();
-				$rowNum = $stmt->rowCount();
-
-				$sqlStr = "";
-				$sqlParams = array();
-
-				if($scoreTableName == "visual_assessment")
-				{
-					if($rowNum == 0)
-					{
-						$sqlStr = "INSERT INTO visual_assessment"
-						        . " (job_id, entered_by, is_consensual, interrupted, score, registered_at)"
-								. " VALUES (?, ?, ?, ?, ?, ?);";
-						$sqlParams[] = $params['jobID'];
-						$sqlParams[] = $userID;
-						$sqlParams[] = $consensualFlg;
-						$sqlParams[] = ($params['interruptFlg']) ? "t" : "f";
-						$sqlParams[] = $evalStr;
-						$sqlParams[] = $registeredAt;
-					}
-					else if($rowNum == 1 && $stmt->fetchColumn() == 't')
-					{
-						$sqlStr = "UPDATE visual_assessment SET score=?, registered_at=?";
-						$sqlParams[] = $evalStr;
-						$sqlParams[] = $registeredAt;
-
-						if($params['interruptFlg'] == 0)
-						{
-							$sqlStr .= ", interrupted='f'";
-						}
-
-						if($params['feedbackMode'] == "consensual")
-						{
-							$sqlStr .= ", entered_by=?";
-							$sqlParams[] = $userID;
-						}
-
-						$sqlStr .= " WHERE job_id=? AND is_consensual=?";
-						$sqlParams[] = $params['jobID'];
-						$sqlParams[] = $consensualFlg;
-
-						if($params['feedbackMode'] == "personal")
-						{
-							$sqlStr .= " AND entered_by=?";
-							$sqlParams[] = $userID;
-						}
-					}
-				}
-				else
-				{
-					$tmpArr = explode("^", $params['evalStr']);
-
-					// Retrieve calumn names
-					$sqlStr = "SELECT attname FROM pg_attribute WHERE attnum > 3"
-					        . " AND attrelid = (SELECT relfilenode FROM pg_class WHERE relname='".$scoreTableName."')"
-							. " AND attname != 'registered_at' AND attname != 'interrupted' ORDER BY attnum";
-
-					$stmtCol = $pdo->prepare();
-					$stmtCol->execute();
-					$colNum = $stmtCol->rowCount();
-
-					if($rowNum == 0)
-					{
-						$sqlStr = "INSERT INTO \"" . $scoreTableName . "\""
-						        . " (job_id, entered_by, is_consensual, interrupted,";
-
-						while($resultCol = $stmtCol->fetch(PDO::FETCH_NUM))
-						{
-							$sqlStr .= $colRow[0] . ', ';
-						}
-
-						$sqlParams = array();
-
-						$sqlStr .= " registered_at) VALUES (?, ?, ?, ?,";
-						$sqlParams[0] = $params['jobID'];
-						$sqlParams[1] = $userID;
-						$sqlParams[2] = $consensualFlg;
-						$sqlParams[3] = ($params['interruptFlg']) ? "t" : "f";
-
-						for($i=0; $i<$colNum; $i++)
-						{
-							$sqlStr .= "?,";
-							$sqlParams[] = $tmpArr[$i];
-						}
-
-						$sqlStr .= "'?)";
-						$sqlParams[] = $registeredAt;
-					}
-					//else if($rowNum == 1 && $stmt->fetchColumn() == 't')
-					else if($rowNum == 1 && ($stmt->fetchColumn() == 't' || $params['interruptFlg']))
-					{
-						$sqlStr = "UPDATE \"" . $scoreTableName . "\" SET ";
-
-						for($i=0; $i<$colNum; $i++)
-						{
-							$resultCol = $stmtCol->fetch(PDO::FETCH_NUM);
-							$sqlStr .= $colRow[0] . '=?, ';
-							$sqlParams[$i] = $tmpArr[$i];
-						}
-
-						$sqlStr .= " registered_at=?";
-						$sqlParams[] = $registeredAt;
-
-						if($params['interruptFlg'] == 0)  $sqlStr .= ", interrupted='f'";
-
-						if($params['feedbackMode'] == "consensual")
-						{
-							$sqlStr .= ", entered_by=?";
-							$sqlParams[] = $userID;
-						}
-
-						$sqlStr .= " WHERE job_id=? AND is_consensual=?";
-						$sqlParam[] = $params['jobID'];
-						$sqlParam[] = $consensualFlg;
-
-						if($params['feedbackMode'] == "personal")
-						{
-							$sqlStr .= " AND entered_by=?";
-							$sqlParam[] = $userID;
-						}
-					}
-					//echo $sqlStr;
-				}
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParam);
-
-				if($stmt->rowCount() == 1)
-				{
-					$dstData['message'] = 'Successfully registered in feedback database.';
-				}
-				else
-				{
-					$tmp = $stmt->errorInfo();
-					$dstData['message'] = $tmp[2];
-				}
+				$sqlStr = "UPDATE feedback_list SET status=?, registered_at=? WHERE fb_id=?";
+				$sqlParams[] = ($params['interruptFlg']) ? 0 : 1;
+				$sqlParams[] = $registeredAt;
+				$sqlParams[] = $feedbackID;
 			}
-			//echo json_encode($dstData);
+
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute($sqlParams);
+
+			if($stmt->rowCount() != 1)
+			{
+				$dstData['message'] .= "Fail to register feedbacks.";
+			}
+			else
+			{
+				$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
+			}
+			//------------------------------------------------------------------------------------------------
 		}
 		catch (PDOException $e)
 		{
 			var_dump($e->getMessage());
+		}
+
+		if($dstData['message'] == "")
+		{
+
+			try
+			{
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+				if($resultType == 1)	// for lesion detection
+				{
+					//----------------------------------------------------------------------------------------
+					// Registration to lesion_classification table
+					//----------------------------------------------------------------------------------------
+					$candArr = explode("^", $params['candStr']);
+					$evalArr = explode('^', $params['evalStr']);
+					$candNum = count($candArr);
+					$sqlParams = array();
+
+					$sqlStr = "SELECT COUNT(*) FROM candidate_classification WHERE fb_id=?";
+					$registeredCandNum = DBConnector::query($sqlStr, $feedbackID, 'SCALAR');
+
+					// begin transaction
+					$pdo->beginTransaction();
+
+					for($i=0; $i<$candNum; $i++)
+					{
+						if($initialFlg == 1 || $registeredCandNum == 0)
+						{
+							$sqlStr = "INSERT INTO candidate_classification"
+									. " (fb_id, candidate_id, evaluation) VALUES (?, ?, ?);";
+							$sqlParams[0] = $feedbackID;
+							$sqlParams[1] = $candArr[$i];
+							$sqlParams[2] = $evalArr[$i];
+						}
+						else
+						{
+							$sqlStr = "UPDATE candidate_classification SET evaluation=?"
+									. " WHERE fb_id=? AND candidate_id=?";
+							$sqlParams[0] = $evalArr[$i];
+							$sqlParams[1] = $feedbackID;
+							$sqlParams[2] = $candArr[$i];
+						}
+
+						$stmt = $pdo->prepare($sqlStr);
+						$stmt->execute($sqlParams);
+					}
+					//----------------------------------------------------------------------------------------
+
+					//----------------------------------------------------------------------------------------
+					// Registration to fn_count table
+					//----------------------------------------------------------------------------------------
+					if($initialFlg == 1)
+					{
+						$sqlStr = "INSERT INTO fn_count(fb_id, fn_num) VALUES (?, 0)";
+						$stmt = $pdo->prepare($sqlStr);
+						$stmt->execute(array($feedbackID, $status));
+					}
+					//----------------------------------------------------------------------------------------
+
+					//----------------------------------------------------------------------------------------
+					// Write action log table (personal feedback only)
+					//----------------------------------------------------------------------------------------
+					if($params['feedbackMode'] == "personal")
+					{
+						$sqlStr = "INSERT INTO feedback_action_log"
+								. " (job_id, user_id, act_time, action, options) VALUES ";
+
+						if($params['interruptFlg']) $sqlStr .= "(?,?,?,'save', 'candidate classification')";
+						else						$sqlStr .= "(?,?,?,'register','')";
+
+						$stmt = $pdo->prepare($sqlStr);
+						$stmt->bindParam(1, $params['jobID']);
+						$stmt->bindParam(2, $userID);
+						$stmt->bindParam(3, $registeredAt);
+						$stmt->execute();
+
+						//$tmp = $stmt->errorInfo();
+						//echo $tmp[2];
+					}
+					//----------------------------------------------------------------------------------------
+
+					$pdo->commit();
+
+					if($dstData['message'] == "" && $params['interruptFlg'] == 0)
+					{
+						$dstData['message'] .= 'Successfully registered in feedback database.';
+					}
+				}
+				else if($resultType == 2)  // under modified (2010.11.5)
+				{
+					// begin transaction
+					$pdo->beginTransaction();
+
+					$sqlStr = "DELETE FROM visual_assessment WHERE fb_id=?";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->bindvalue(1, $feedbackID);
+					$stmt->execute();
+
+					$evalArr = explode("^", $params['evalStr']);
+
+					$sqlStr = "INSERT INTO visual_assessment"
+							    . " (fb_id, key, value) VALUES (?, ?, ?);";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->bindvalue(1, $feedbackID);
+
+					for($i = 0; $i < count($evalArr)/2; $i++)
+					{
+						$stmt->bindvalue(2, $evalArr[$i*2]);
+						$stmt->bindvalue(3, $evalArr[$i*2+1]);
+						$stmt->execute();
+					}
+					$pdo->commit();
+
+					if($dstData['message'] == "")
+					{
+						$dstData['message'] = 'Successfully registered in feedback database.';
+					}
+				}
+				//$pdo->commit();
+			}
+			catch (PDOException $e)
+			{
+				$pdo->rollBack();
+				$dstData['message']  = $e->getMessage();
+				//$dstData['message'] .= "Fail to register feedbacks.";
+
+				if($initialFlg == 1)
+				{
+					$sqlStr = "DELETE FROM feedback_list WHERE fb_id=?";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->bindValue(1, $feedbackID);
+					$stmt->execute();
+				}
+				else if(!$params['interruptFlg'])
+				{
+					$sqlStr = "UPDATE feedback_list SET status=0 WHERE fb_id=?";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->bindValue(1, $feedbackID);
+					$stmt->execute();
+				}
+			}
 		}
 		$pdo = null;
 	}

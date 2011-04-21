@@ -33,9 +33,7 @@
 	$scoreTitle = array("Heart, diaphragm", "Pelvic floor", "Abdominal cavity", "Other", "Abdominal wall");
 	$colName    = array("heart_", "pelvic_", "cavity_", "other_", "wall_");
 
-	$scoreStr = "";
-	$evalComment = "";
-	$registTime = "";
+	$evalStr = "";
 	$scoringHTML = "";
 
 	$evalVal = array();
@@ -45,34 +43,36 @@
 		$evalVal[$j][$i] = 0;
 	}
 
-	$sqlStr = 'SELECT * FROM "fat_volumetry_v' . $params['version'] . '_score"'
-			.  " WHERE job_id=? AND is_consensual='f' AND entered_by=?";
-
+	$sqlStr = "SELECT va.key, va.value FROM feedback_list fl, visual_assessment va"
+			. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+			. " AND fl.is_consensual='f' AND fl.entered_by=?";
+	
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->execute(array($params['jobID'], $userID));
 
-	if($stmt->rowCount()==1)
+	if($stmt->rowCount()>0)
 	{
-		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		$result = array();
+
+		foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+		{
+			$result[$item['key']] = $item['value'];
+		}
 
 		for($j=0; $j<5; $j++)
 		{
 			$evalVal[$j][0] = $result[$colName[$j] . 'vat'];
 			$evalVal[$j][1] = $result[$colName[$j] . 'sat'];
-			$evalVal[$j][2] = $result[$colName[$j] . 'sat'];
+			$evalVal[$j][2] = $result[$colName[$j] . 'bound'];
 		}
-			$evalComment = $result['eval_comment'];
-			$registTime = $result['registered_at'];
 
-			$scoreStr = $result['heart_vat']."^".$result['heart_sat']."^".$result['heart_bound']."^"
-			          . $result['cavity_vat']."^".$result['cavity_sat']."^".$result['cavity_bound']."^"
-					  . $result['wall_vat']."^".$result['wall_sat']."^".$result['wall_bound']."^"
-					  . $result['pelvic_vat']."^".$result['pelvic_sat']."^".$result['pelvic_bound']."^"
-					  . $result['other_vat']."^".$result['other_sat']."^".$result['other_bound'];
+		$evalStr = $result['heart_vat']."^".$result['heart_sat']."^".$result['heart_bound']."^"
+		         . $result['cavity_vat']."^".$result['cavity_sat']."^".$result['cavity_bound']."^"
+			     . $result['wall_vat']."^".$result['wall_sat']."^".$result['wall_bound']."^"
+			     . $result['pelvic_vat']."^".$result['pelvic_sat']."^".$result['pelvic_bound']."^"
+				 . $result['other_vat']."^".$result['other_sat']."^".$result['other_bound']."^"
+				 . $result['comment'];
 	}
-
-	$consensualFlg = ($feedbackMode == "consensualFeedback") ? 1 : 0;
-	$modifyFlg = (isset($_REQUEST['modifyFlg'])) ? $_REQUEST['modifyFlg'] : 0;
 
 	$scoringHTML .= '<table class="mt10 ml10">'
 	             .  '<tr>'
@@ -89,7 +89,7 @@
 
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'vat"';
-		if($registTime != "") $scoringHTML .= ' disabled="disabled"';
+		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
 
 		for($i=-2; $i<=2; $i++)
@@ -103,7 +103,7 @@
 
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'sat"';
-		if($registTime != "") $scoringHTML .= ' disabled="disabled"';
+		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
 
 		for($i=-2; $i<=2; $i++)
@@ -117,7 +117,7 @@
 
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'bound"';
-		if($registTime != "") $scoringHTML .= ' disabled="disabled"';
+		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
 
 		for($i=-2; $i<=2; $i++)
@@ -141,7 +141,7 @@
 				 .  '<th>Comment:</th>'
 				 .  '<td><textarea id="evalComment" cols="60" rows="3"';
 
-	if($registTime != "")  $scoringHTML .= ' disabled="disabled"';
+	if($params['registTime'] != "")  $scoringHTML .= ' disabled="disabled"';
 
 	$scoringHTML .= '>' . $evalComment . '</textarea></td>'
 	             .  '</tr>'
@@ -158,8 +158,6 @@
 	$smarty->assign('params', $params);
 	$smarty->assign('data',   $data);
 
-	$smarty->assign('consensualFBFlg', $consensualFBFlg);
-
 	$smarty->assign('dispWidth',  $dispWidth);
 	$smarty->assign('dispHeight', $dispHeight);
 
@@ -172,9 +170,7 @@
 	$smarty->assign('resImg', $resImg);
 
 	$smarty->assign('scoringHTML', $scoringHTML);
-	$smarty->assign('registTime',  $registTime);
-	$smarty->assign('scoreStr',    $scoreStr);
-	$smarty->assign('evalComment',  $evalComment);
+	$smarty->assign('evalStr',     $evalStr);
 
 	//$smarty->display('cad_results/fat_volumetry_v1.tpl');
 	$smarty->display('cad_results/fat_volumetry_v1_with_score.tpl');

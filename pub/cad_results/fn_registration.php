@@ -8,21 +8,16 @@
 	include_once("../common.php");
 	include_once("../auto_logout.php");
 
-	function DeleteFnTables($pdo, $jobID, $consensualFlg, $userID)
+	function DeleteFnTables($pdo, $feedbackID)
 	{
-		$sqlParams = array($jobID, $consensualFlg);
-		if($consensualFlg == 'f') $sqlParams[] = $userID;
-
-		$sqlStr = "DELETE FROM fn_location WHERE job_id=?"
-				. " AND is_consensual=?";
-		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
+		$sqlStr = "DELETE FROM fn_location WHERE fb_id=?";
 		$stmt = $pdo->prepare($sqlStr);
+		$stmt->bindvalue(1, $feedbackID);
 		$stmt->execute($sqlParams);
 
-		$sqlStr = "DELETE FROM fn_count"
-				. " WHERE job_id=? AND is_consensual=?";
-		if($consensualFlg == 'f') $sqlStr .= " AND entered_by=?";
+		$sqlStr = "DELETE FROM fn_count WHERE fb_id=?";
 		$stmt = $pdo->prepare($sqlStr);
+		$stmt->bindvalue(1, $feedbackID);
 		$stmt->execute($sqlParams);
 	}
 
@@ -37,7 +32,7 @@
 			"type" => "int",
 			"required" => true,
 			"min" => 1,
-			"errorMes" => "[ERROR] Input data (CAD ID) is invalid."),
+			"errorMes" => "[ERROR] Input data (job ID) is invalid."),
 		"feedbackMode" => array(
 			"type" => "select",
 			"required" => true,
@@ -87,168 +82,200 @@
 	$dstData = array('errorMessage' => $params['errorMessage'],
 	                 'dstAddress'   => $params['dstAddress']);
 
-	try
+	if($params['errorMessage'] == "" && $_SESSION['groupID'] != 'demo')
 	{
-		if($params['errorMessage'] == "")
+		try
 		{
-			$userID = $_SESSION['userID'];
-
-			$registTime = date('Y-m-d H:i:s');
-			$posArr = explode('^', $params['posStr']);
-			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
-
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
+			$userID = $_SESSION['userID'];
+			$registeredAt = date('Y-m-d H:i:s');
+			$posArr = explode('^', $params['posStr']);
+			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 
-			$sqlStr = "INSERT INTO fn_location (job_id, entered_by, is_consensual,"
-			        . " location_x, location_y, location_z, nearest_lesion_id, interrupted, registered_at)"
-			        . " VALUES (?, ?, ?, ?, ?, ?, ?, 't', ?)";
+			$initialFlg = 0;
 
-			$stmt = $pdo->prepare($sqlStr);
+			//------------------------------------------------------------------------------------------------
+			// Insert (or update) feedback_list
+			//------------------------------------------------------------------------------------------------
+			$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
 
 			$sqlParams = array();
-			$stmt->bindValue(1, $params['jobID']);
-			$stmt->bindValue(2, $userID);
-			$stmt->bindValue(3, ($params['feedbackMode'] == "consensual") ? 't' : 'f');
-
-			foreach($params['fnData'] as $item)
+			
+			if($feedbackID == 0)
 			{
-				$tmpStr = explode(' ', $item["rank"]);
-				if(strcmp($tmpStr[0],'-')==0) $tmpStr[0] = 0;
+				$sqlStr = "INSERT INTO feedback_list (job_id, entered_by, is_consensual, status, registered_at)"
+						. "VALUES (?, ?, ?, 0, ?)";
 
-				$stmt->bindValue(4, $item["x"]);
-				$stmt->bindValue(5, $item["y"]);
-				$stmt->bindValue(6, $item["z"]);
-				$stmt->bindValue(7, $tmpStr[0]);
-				$stmt->bindValue(8, $registTime);
-				$stmt->execute();
-
-				if($stmt->rowCount() != 1)
-				{
-					//$err = $stmt->errorInfo();
-					//$dstData['errorMessage'] = $err[2];
-					$dstData['errorMessage'] = 'Fail to savr FN location';
-
-					DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
-					break;
-				}
-
-				//-------------------------------------------------------------------------------------------------------
-				// Update integrate_location_id
-				//-------------------------------------------------------------------------------------------------------
-				if($params['feedbackMode'] == "consensual")
-				{
-					$sqlStr = "SELECT location_id FROM fn_location WHERE job_id=? AND is_consensual='t'"
-						    . " AND location_x=? AND location_y=? AND location_z=? AND registered_at=?";
-					$sqlParams = array($params['jobID'],
-									   $item["x"],
-									   $item["y"],
-									   $item["z"],
-									   $registTime);
-
-					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
-					$srcID = 0;
-
-					$sqlStr = "SELECT location_id FROM fn_location WHERE job_id=?"
-							. " AND is_consensual='f' AND interrupted='f'"
-						    . " AND location_x=? AND location_y=? AND location_z=?";
-
-					array_pop($sqlParams);
-					$stmtUpdate = $pdo->prepare($sqlStr);
-					$stmtUpdate->execute($sqlParams);
-
-					if($stmtUpdate->rowCount() == 1)
-					{
-						$srcID = $stmtUpdate->fetchColumn();
-
-						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE location_id=?";
-						$stmtUpdate = $pdo->prepare($sqlStr);
-						$stmtUpdate->execute(array($dstID, $srcID));
-
-						if($stmtUpdate->rowCount() != 1)
-						{
-							//$err = $stmtUpdate->errorInfo();
-							//$dstData['errorMessage'] = $err[2];
-							$dstData['errorMessage'] = 'Fail to savr FN location';
-							break;
-						}
-					}
-
-					if($item["idStr"] != "")
-					{
-						$idArr = explode(',', $item["idStr"]);
-						$idNum = count($idArr);
-
-						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE location_id=?";
-						$stmtUpdate = $pdo->prepare($sqlStr);
-						$stmtUpdate->bindParam(1, $dstID);
-
-						foreach($idArr as $value)
-						{
-							$stmtUpdate->bindParam(2, $value);
-							$stmtUpdate->execute();
-
-							if($stmtUpdate->rowCount() != 1)
-							{
-								//$err = $stmtUpdate->errorInfo();
-								//$dstData['errorMessage'] = $err[2];
-								$dstData['errorMessage'] = 'Fail to save FN location';
-								break;
-							}
-						}
-						if($dstData['errorMessage'] != "")	break;
-					}
-				}
-				//-------------------------------------------------------------------------------------------------------
-			} // end foreach
-
-			if($dstData['errorMessage'] == "")
-			{
-				$sqlStr = "SELECT COUNT(*) FROM fn_count WHERE job_id=?"
-		                . " AND is_consensual=? AND entered_by=?";
-
-				$sqlParams = array();
-
-				$sqlStr = "INSERT INTO fn_count "
-				        . "(job_id, entered_by, is_consensual, false_negative_num, status, registered_at)"
-				        . " VALUES (?, ?, ?, ?, 1, ?);";
 				$sqlParams[] = $params['jobID'];
 				$sqlParams[] = $userID;
 				$sqlParams[] = $consensualFlg;
-				$sqlParams[] = count($params['fnData']);
-				$sqlParams[] = $registTime;
+				$sqlParams[] = $registeredAt;
+
+				$initialFlg = 1;
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 
 				if($stmt->rowCount() != 1)
 				{
-					$err = $stmt->errorInfo();
-					$dstData['errorMessage'] = $err[2];
-
-					DeleteFnTables($pdo, $params['jobID'], $consensualFlg, $userID);
+					$dstData['errorMessage'] .= "Fail to register feedbacks.";
 				}
-				else if($params['feedbackMode'] == "personal") // Write action log table (personal feedback only)
+				else
 				{
-					$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options)"
-							. " VALUES (?,?,?,'save','FN input')";
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindValue(1, $params['jobID']);
-					$stmt->bindValue(2, $userID);
-					$stmt->bindValue(3, date('Y-m-d H:i:s'));
-					$stmt->execute();
+					$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
 				}
 			}
+			//------------------------------------------------------------------------------------------------
+		}
+		catch (PDOException $e)
+		{
+			var_dump($e->getMessage());
+		}
+
+		try
+		{
+			//------------------------------------------------------------------------------------------------
+			// Set ID array for updating integrate_location_id
+			//------------------------------------------------------------------------------------------------
+			$idArr = array();
+
+			if($params['feedbackMode'] == "consensual")
+			{
+				foreach($params['fnData'] as $item)
+				{
+					$sqlStr = "SELECT fn.fn_id FROM feedback_list fl, fn_location fn"
+							. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
+							. " AND fl.is_consensual='f' AND fl.status=1"
+						    . " AND fn.location_x=? AND fn.location_y=? AND fn.location_z=?";
+					$sqlParams = array($params['jobID'],
+									   $item["x"],
+									   $item["y"],
+									   $item["z"]);
+					
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+					
+					$idArr[] = array('srcID' => ($stmt->rowCount() == 1) ? 0 :$stmt->fetchColumn(),
+									 'idStr' => $item["idStr"]);
+				}
+			}
+
+			//var_dump($idArr);
+			//------------------------------------------------------------------------------------------------
+
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			// begin transaction
+			$pdo->beginTransaction();
+
+			if(!$initialFlg)  DeleteFnTables($pdo, $feedbackID);
+
+			//------------------------------------------------------------------------------------------------
+			// Save FN locations
+			//------------------------------------------------------------------------------------------------
+			$sqlStr = "INSERT INTO fn_location"
+					. " (fb_id, location_x, location_y, location_z, nearest_lesion_id)"
+			        . " VALUES (?, ?, ?, ?, ?)";
+			$sqlParams = array();
+
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->bindValue(1, $feedbackID);
+
+			$cnt = 0;
+
+			foreach($params['fnData'] as $item)
+			{
+				$tmpStr = explode(' ', $item["rank"]);
+				if(strcmp($tmpStr[0],'-')==0) $tmpStr[0] = 0;
+
+				$stmt->bindValue(2, $item["x"]);
+				$stmt->bindValue(3, $item["y"]);
+				$stmt->bindValue(4, $item["z"]);
+				$stmt->bindValue(5, $tmpStr[0]);
+				$stmt->execute();
+
+				//--------------------------------------------------------------------------------------------
+				// Update integrate_location_id
+				//--------------------------------------------------------------------------------------------
+				if($params['feedbackMode'] == "consensual")
+				{
+					$sqlStr = "SELECT fn.fn_id FROM feedback_list fl, fn_location fn"
+							. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
+							. " AND fl.is_consensual='t'"
+						    . " AND fn.location_x=? AND fn.location_y=? AND fn.location_z=?";
+					$sqlParams = array($params['jobID'],
+									   $item["x"],
+									   $item["y"],
+									   $item["z"]);
+					
+					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
+
+					//echo $dstID;
+
+					if($idArr[$cnt]['srcID'] != 0)
+					{
+						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE fn_id=?";
+						$stmtUpdate = $pdo->prepare($sqlStr);
+						$stmtUpdate->execute(array($dstID, $idArr[$cnt]['srcID']));
+					}
+
+					if($idArr[$cnt]["idStr"] != "")
+					{
+						$tmpArr = explode(',', $idArr[$cnt]["idStr"]);
+
+						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE fn_id=?";
+						$stmtUpdate = $pdo->prepare($sqlStr);
+						$stmtUpdate->bindValue(1, $dstID);
+
+						foreach($tmpArr as $value)
+						{
+							$stmtUpdate->bindValue(2, $value);
+							$stmtUpdate->execute();
+						}
+					}
+				}
+				//--------------------------------------------------------------------------------------------
+
+				$cnt++;
+			}
+			//------------------------------------------------------------------------------------------------
+
+			//------------------------------------------------------------------------------------------------
+			// Save the number of FN
+			//------------------------------------------------------------------------------------------------
+			$sqlParams = array();
+
+			$sqlStr = "INSERT INTO fn_count (fb_id, fn_num) VALUES (?, ?);";
+			$sqlParams[] = $feedbackID;
+			$sqlParams[] = count($params['fnData']);
+
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute($sqlParams);
+
+			if($params['feedbackMode'] == "personal") // Write action log table (personal feedback only)
+			{
+				$sqlStr = "INSERT INTO feedback_action_log (job_id, user_id, act_time, action, options)"
+						. " VALUES (?,?,?,'save','FN input')";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->bindValue(1, $params['jobID']);
+				$stmt->bindValue(2, $userID);
+				$stmt->bindValue(3, date('Y-m-d H:i:s'));
+				$stmt->execute();
+			}
+			//------------------------------------------------------------------------------------------------
+
+			$pdo->commit();	 // commit
+		}
+		catch (PDOException $e)
+		{
+			//$pdo->rollBack();
+			//$dstData['errorMessage']  = $e->getMessage();
+			$dstData['errorMessage'] .= "Fail to save FN location.";
 		}
 		echo json_encode($dstData);
 
+		$pdo = null;
 	}
-	catch (PDOException $e)
-	{
-		var_dump($e->getMessage());
-	}
-	$pdo = null;
-
 ?>

@@ -21,11 +21,11 @@
 		"feedbackMode" => array(
 			"type" => "select",
 			"options" => array("personal", "consensual"),
-			'oterwise' => "personal"),
+			"otherwise" => "personal"),
 		"srcList" => array(
 			"type" => "select",
 			"options" => array("todaysCAD", "cadLog", "todaysSeries", "series"),
-			'oterwise' => "series")
+			'otherwise' => "series")
 		));
 
 	if($validator->validate($_GET))
@@ -67,23 +67,25 @@
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve data from database
 			//----------------------------------------------------------------------------------------------------------
-
-			$sqlStr = "SELECT el.plugin_name, el.version, es.study_instance_uid, es.series_instance_uid,"
+			$sqlStr = "SELECT el.plugin_id, pm.plugin_name, pm.version,"
+					. " sr.study_instance_uid, sr.series_instance_uid,"
 					. " el.plugin_type, el.executed_at"
-					. " FROM executed_plugin_list el, executed_series_list es"
-					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0";
-
+					. " FROM executed_plugin_list el, executed_series_list es,"
+					. " plugin_master pm, series_list sr"
+					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
+					. " AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid";
 			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
 			if(!is_null($result))
 			{
-				$params['cadName'] = $result[0];
-				$params['version'] = $result[1];
-				$params['studyInstanceUID']  = $result[2];
-				$params['seriesInstanceUID'] = $result[3];
-				$params['cadExecutedAt']     = $result[5];
+				$params['pluginID']          = $result[0];
+				$params['cadName']           = $result[1];
+				$params['version']           = $result[2];
+				$params['studyInstanceUID']  = $result[3];
+				$params['seriesInstanceUID'] = $result[4];
+				$params['cadExecutedAt']     = $result[6];
 
-				if($result[4] != 1)
+				if($result[5] != 1)
 				{
 					$params['errorMessage'] = "[ERROR] Specified job ID (" . $params['jobID'] . ") is not CAD result.";
 				}
@@ -92,207 +94,156 @@
 			{
 				$params['errorMessage'] = "[ERROR] Specified job ID (" . $params['jobID'] . ") is not existed.";
 			}
+		}
+		
+		if($params['errorMessage'] == "")
+		{
+			// Connect to SQL Server
+			$pdo = DBConnector::getConnection();
 
-			if($params['errorMessage'] == "")
+			$params['dispConfidenceFlg'] = 0;
+			$params['dispCandidateTagFlg']  = 0;
+
+			$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.age, st.study_id, st.study_date,"
+					. " sr.series_number, sr.series_date, sr.series_time, sr.modality, sr.series_description,"
+					. " sr.body_part, sr.image_width, sr.image_height, sm.path, sm.apache_alias"
+					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm"
+					. " WHERE sr.series_instance_uid=?"
+					. " AND sr.study_instance_uid=st.study_instance_uid"
+					. " AND pt.patient_id=st.patient_id"
+					. " AND sr.storage_id=sm.storage_id";
+			$result = DBConnector::query($sqlStr, $params['seriesInstanceUID'], 'ARRAY_NUM');
+
+			$params['patientID']         = $result[0];
+			$params['patientName']       = $result[1];
+			$params['sex']               = $result[2];
+			$params['age']               = $result[3];
+			$params['studyID']           = $result[4];
+			$params['studyDate']         = $result[5];
+			$params['seriesID']          = $result[6];
+			$params['seriesDate']        = $result[7];
+			$params['seriesTime']        = $result[8];
+			$params['modality']          = $result[9];
+			$params['seriesDescription'] = $result[10];
+			$params['bodyPart']          = $result[11];
+			$params['orgWidth']          = $result[12];
+			$params['orgHeight']         = $result[13];
+			$params['storagePath']       = $result[14];
+			$params['webPath']           = $result[15];
+
+			// Retrieve parameters for the plug-in
+			$sqlStr = "SELECT result_type, result_table, score_table"
+					. " FROM plugin_cad_master WHERE plugin_id=?";
+			$result = DBConnector::query($sqlStr, $params['pluginID'], 'ARRAY_NUM');
+
+			$params['resultType']      = $result[0];
+			$params['resultTableName'] = $result[1];
+			$params['scoreTableName']  = $result[2];
+
+			//------------------------------------------------------------------------------------------------------
+			// Retrieve paramters from plugin_user_preference table
+			//------------------------------------------------------------------------------------------------------
+			$sqlStr = "SELECT key, value FROM plugin_user_preference WHERE plugin_id=? AND user_id=?";
+			$sqlParams = array($params['pluginID'], $userID);
+
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute($sqlParams);
+
+			if($stmt->rowCount() == 0)
 			{
-				$params['dispConfidenceFlg'] = 0;
-				$params['dispCandidateTagFlg']  = 0;
-
-				$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.age, st.study_id, st.study_date,"
-						. " sr.series_number, sr.series_date, sr.series_time, sr.modality, sr.series_description,"
-						. " sr.body_part, sr.image_width, sr.image_height, sm.path, sm.apache_alias"
-						. " FROM patient_list pt, study_list st, series_list sr, storage_master sm"
-						. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?"
-						. " AND sr.study_instance_uid=st.study_instance_uid"
-						. " AND pt.patient_id=st.patient_id"
-						. " AND sr.storage_id=sm.storage_id";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
-
-				$result = $stmt->fetch(PDO::FETCH_NUM);
-
-				$params['patientID']         = $result[0];
-				$params['patientName']       = $result[1];
-				$params['sex']               = $result[2];
-				$params['age']               = $result[3];
-				$params['studyID']           = $result[4];
-				$params['studyDate']         = $result[5];
-				$params['seriesID']          = $result[6];
-				$params['seriesDate']        = $result[7];
-				$params['seriesTime']        = $result[8];
-				$params['modality']          = $result[9];
-				$params['seriesDescription'] = $result[10];
-				$params['bodyPart']          = $result[11];
-				$params['orgWidth']          = $result[12];
-				$params['orgHeight']         = $result[13];
-				$params['storagePath']       = $result[14];
-				$params['webPath']           = $result[15];
-
-				// Retrieve parameters for the plug-in
-				$sqlStr = "SELECT pm.plugin_id, cm.result_type, cm.result_table, cm.score_table"
-						. " FROM plugin_master pm, plugin_cad_master cm"
-						. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($params['cadName'], $params['version']));
-
-				$result = $stmt->fetch(PDO::FETCH_NUM);
-
-				$params['pluginID']        = $result[0];
-				$params['resultType']      = $result[1];
-				$params['resultTableName'] = $result[2];
-				$params['scoreTableName']  = $result[3];
-
-				//------------------------------------------------------------------------------------------------------
-				// Retrieve paramters from plugin_user_preference table
-				//------------------------------------------------------------------------------------------------------
-				$sqlStr = "SELECT key, value FROM plugin_user_preference WHERE plugin_id=? AND user_id=?";
-				$sqlParams = array($params['pluginID'], $userID);
-
-				$stmt = $pdo->prepare($sqlStr);
+				$sqlParams[1] = $DEFAOULT_CAD_PREF_USER;
 				$stmt->execute($sqlParams);
+			}
 
-				if($stmt->rowCount() == 0)
-				{
-					$sqlParams[1] = $DEFAOULT_CAD_PREF_USER;
-					$stmt->execute($sqlParams);
-				}
+			while($result = $stmt->fetch(PDO::FETCH_NUM))
+			{
+				$params[$result[0]] = $result[1];
+			}
 
-				while($result = $stmt->fetch(PDO::FETCH_NUM))
-				{
-					$params[$result[0]] = $result[1];
-				}
+			if($params['resultType'] == 1)
+			{
+				if(isset($_REQUEST['sortKey']))    $params['sortKey'] = $_REQUEST['sortKey'];
+				if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
+			}
+			//------------------------------------------------------------------------------------------------------
 
-				if($params['resultType'] == 1)
-				{
-					if(isset($_REQUEST['sortKey']))    $params['sortKey'] = $_REQUEST['sortKey'];
-					if(isset($_REQUEST['sortOrder']))  $params['sortOrder'] = $_REQUEST['sortOrder'];
-				}
-				//------------------------------------------------------------------------------------------------------
+			$params['seriesDir'] = $params['storagePath'] . $DIR_SEPARATOR . $params['patientID']
+								 . $DIR_SEPARATOR . $params['studyInstanceUID']
+								 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
+			$params['seriesDirWeb'] = $params['webPath'] . $params['patientID']
+								    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
+								    . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$params['pathOfCADReslut'] = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
+									   . $DIR_SEPARATOR . $params['cadName'] . '_v.' . $params['version'];
+			$params['webPathOfCADReslut'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB
+										  . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $params['cadName']
+										  . '_v.' . $params['version'];
 
-				$params['seriesDir'] = $params['storagePath'] . $DIR_SEPARATOR . $params['patientID']
-									 . $DIR_SEPARATOR . $params['studyInstanceUID']
-									 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-				$params['seriesDirWeb'] = $params['webPath'] . $params['patientID']
-									    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-									    . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$params['encryptedPtID'] = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 
-				$params['pathOfCADReslut'] = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
-										   . $DIR_SEPARATOR . $params['cadName'] . '_v.' . $params['version'];
-				$params['webPathOfCADReslut'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB
-											  . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $params['cadName']
-											  . '_v.' . $params['version'];
+			if($_SESSION['anonymizeFlg'] == 1)
+			{
+				$params['patientID'] = $params['encryptedPtID'];
+				$params['patientName'] = PinfoScramble::scramblePtName();
+			}
+			//------------------------------------------------------------------------------------------------------
 
-				$params['encryptedPtID'] = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
+			//------------------------------------------------------------------------------------------------------
+			// Retrieve tag data
+			//------------------------------------------------------------------------------------------------------
+			$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=4 AND reference_id=? ORDER BY sid ASC";
+			$params['tagArray'] = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
+			//------------------------------------------------------------------------------------------------------
 
-				if($_SESSION['anonymizeFlg'] == 1)
-				{
-					$params['patientID'] = $params['encryptedPtID'];
-					$params['patientName'] = PinfoScramble::scramblePtName();
-				}
-				//------------------------------------------------------------------------------------------------------
+			if($params['resultType'] == 1)
+			{
+				$params['remarkCand'] = (isset($_REQUEST['remarkCand'])) ? $_REQUEST['remarkCand'] : 0;
 
-				//------------------------------------------------------------------------------------------------------
+				include('lesion_cad_display.php');
+			}
+			else if($params['resultType'] == 0 || $params['resultType'] == 2)
+			{
+				//--------------------------------------------------------------------------------------------------
 				// Retrieve feedback data
-				//------------------------------------------------------------------------------------------------------
-				$registMsg = "";
+				//--------------------------------------------------------------------------------------------------
+				$params['registMsg'] = "";
 				$params['registTime'] = "";
 				$enteredBy = "";
 				$consensualFBFlg = ($_SESSION['groupID'] == 'admin' || $_SESSION['groupID'] == 'demo') ? 1 : 0;
 
-				if($params['resultType'] == 1 || $params['resultType'] == 2)
+				if($params['resultType'] == 2)
 				{
-					if($params['resultType'] == 2)
-					{
-						$params['tableName'] = ($scoreTableName !== "") ? $scoreTableName : "visual_assessment";
-					}
-					else
-					{
-						$params['tableName'] = "lesion_classification";
-					}
-
-					$sqlStr = 'SELECT * FROM "' . $params['tableName'] . '" WHERE job_id=?';
-					if($params['feedbackMode'] == "personal")  $sqlStr .= " AND is_consensual='f' AND entered_by=?";
-					else                                       $sqlStr .= " AND is_consensual='t'";
-
-					$sqlStr .= " AND interrupted='f'";
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->bindparam(1, $params['jobID']);
-					if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
-					$stmt->execute();
-
-					if($stmt->rowCount() >= 1)
-					{
-						$result = $stmt->fetch();
-						$params['registTime'] = $result['registered_at'];
-						$enteredBy  = $result['entered_by'];
-						$consensualFBFlg = 1;
-					}
-					else
-					{
-						$sqlStr = substr_replace($sqlStr, "'t'", (strlen($sqlStr)-3));
-						$stmt = $pdo->prepare($sqlStr);
-						$stmt->bindparam(1, $params['jobID']);
-						if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
-						$stmt->execute();
-						if($stmt->rowCount() >= 1)  $params['interruptFlg'] = 1;
-					}
-
+					$params['tableName'] = ($params['scoreTableName'] !== "") ? $params['scoreTableName'] : "visual_assessment";
 				}
-				//------------------------------------------------------------------------------------------------------
 
-				//------------------------------------------------------------------------------------------------------
-				// Retrieve tag data
-				//------------------------------------------------------------------------------------------------------
-				$sqlStr = "SELECT tag, entered_by FROM tag_list WHERE category=4 AND reference_id=? ORDER BY sid ASC";
-				$params['tagArray'] = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
-				//------------------------------------------------------------------------------------------------------
+				$sqlStr = "SELECT registered_at, entered_by FROM feedback_list WHERE job_id=? AND status=1";
+				
+				if($params['feedbackMode'] == "personal")  $sqlStr .= " AND is_consensual='f' AND entered_by=?";
+				else                                       $sqlStr .= " AND is_consensual='t'";
 
-				if($params['resultType'] == 1)
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->bindparam(1, $params['jobID']);
+				if($params['feedbackMode'] == "personal")  $stmt->bindParam(2, $userID);
+				$stmt->execute();
+
+				if($stmt->rowCount() >= 1)
 				{
-					$stmt = $pdo->prepare("SELECT key, value FROM executed_plugin_attributes WHERE job_id=?");
-					$stmt->bindParam(1, $params['jobID']);
-					$stmt->execute();
-					$result = array();
+					$result = $stmt->fetch(PDO::FETCH_NUM);
+					$params['registTime'] = $result[0];
+					$enteredBy  = $result[1];
+					$consensualFBFlg = 1;
 
-					foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $item)
+					$params['registMsg'] = 'registered at ' . $params['registTime'];
+					if($params['feedbackMode'] == "consensual")
 					{
-						$result[$item['key']] = $item['value'];
+						$params['registMsg'] .= ' (by ' . $enteredBy. ')';
 					}
-
-					$params['orgX']         = $result['crop_org_x'];
-					$params['orgY']         = $result['crop_org_y'];
-					$params['cropWidth']    = $result['crop_width'];
-					$params['cropHeight']   = $result['crop_height'];
-					$params['pixelSize']    = $result['pixel_size'];
-					$params['distSlice']    = $result['dist_slice'];
-					$params['isotropicFlg'] = $result['isotropic_flg'];
-					$params['sliceOffset']  = $result['slice_offset'];
-
-					$params['windowLevel']  = $result['window_level'];
-					$params['windowWidth']  = $result['window_width'];
-
-					$params['dispWidth'] = 256;
-					$params['dispHeight'] = (int)($params['cropHeight'] * (256 / $params['cropWidth']) + 0.5);
-
-					$stmt = $pdo->prepare("SELECT modality FROM plugin_cad_series WHERE plugin_id=? AND series_id=0");
-					$stmt->bindValue(1, $params['pluginID']);
-					$stmt->execute();
-
-					$params['mainModality'] = $stmt->fetchColumn();
-
-					$params['remarkCand'] = (isset($_REQUEST['remarkCand'])) ? $_REQUEST['remarkCand'] : 0;
-
-					include('lesion_cad_display.php');
 				}
-				else if($params['resultType'] == 0 || $params['resultType'] == 2)
-				{
-					// Use preferable template
-					$templateName = 'plugin_template/show_' . $params['cadName'] . '_v' . $params['version'] . '.php';
-					include($templateName);
-				}
+				//--------------------------------------------------------------------------------------------------
+
+				// Use preferable template
+				$templateName = 'plugin_template/show_' . $params['cadName'] . '_v' . $params['version'] . '.php';
+				include($templateName);
 			}
 		}
 	}

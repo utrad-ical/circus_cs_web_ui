@@ -9,14 +9,18 @@
 		$tmpStr = "";
 		$prevCadName = "";
 
-		$sqlStr = "SELECT DISTINCT el.plugin_name, el.version FROM executed_plugin_list el, plugin_cad_series cs"
-	            . " WHERE cs.plugin_name=el.plugin_name AND cs.version=el.version AND cs.series_id=0";
+		$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version"
+				. " FROM executed_plugin_list el, plugin_master pm, plugin_cad_series cs"
+				. " WHERE el.status=?"
+				. " AND pm.plugin_id=el.plugin_id AND cs.plugin_id=el.plugin_id"
+				. " AND cs.series_id=0";
 
 		if($modalityList[$i] != 'all')  $sqlStr .= " AND cs.modality=?";
-		$sqlStr .= " ORDER BY el.plugin_name ASC, el.version DESC";
+		$sqlStr .= " ORDER BY pm.plugin_name ASC, pm.version DESC";
 		
 		$stmt = $pdo->prepare($sqlStr);
-		if($modalityList[$i] != 'all')  $stmt->bindParam(1, $modalityList[$i]);
+		$stmt->bindParam(1, $PLUGIN_SUCESSED);
+		if($modalityList[$i] != 'all')  $stmt->bindParam(2, $modalityList[$i]);
 		$stmt->execute();
 	
 		while($result = $stmt->fetch(PDO::FETCH_NUM))

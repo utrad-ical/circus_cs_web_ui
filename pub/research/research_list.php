@@ -92,14 +92,15 @@
 			$optionNum = 0;
 			$condArr = array();
 
-			$sqlStr = "SELECT job_id, plugin_name, version, executed_at, exec_user FROM executed_plugin_list ";
+			$sqlStr = "SELECT el.job_id, pm.plugin_name, pm.version, el.executed_at, el.exec_user"
+					. " FROM executed_plugin_list el, plugin_master pm";
 
-			$sqlCond =" WHERE plugin_type=2";
+			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND el.plugin_type=2";
 
 			if($params['resDateFrom'] != "" && $params['resDateTo'] != ""
 			   && $params['resDateFrom'] == $params['resDateTo'])
 			{
-				$sqlCond .= " AND executed_at>=? AND executed_at<=?";
+				$sqlCond .= " AND el.executed_at>=? AND el.executed_at<=?";
 				array_push($condArr, $params['resDateFrom'] . ' 00:00:00');
 				array_push($condArr, $params['resDateFrom'] . ' 23:59:59');
 
@@ -110,7 +111,7 @@
 			{
 				if($params['resDateFrom'] != "")
 				{
-					$sqlCond .= " AND ?<=executed_at";
+					$sqlCond .= " AND ?<=el.executed_at";
 					$condArr[] = $params['resDateFrom'] . ' 00:00:00';
 
 					$params['pageAddress'] .= 'resDateFrom=' . $params['resDateFrom'];
@@ -119,7 +120,7 @@
 
 				if($params['resDateTo'] != "")
 				{
-					$sqlCond .= " AND executed_at<=?";
+					$sqlCond .= " AND el.executed_at<=?";
 
 					if(0<$optionNum)  $params['pageAddress'] .= "&";
 					$params['pageAddress'] .= 'resDateTo=' . $params['resDateTo'];
@@ -139,7 +140,7 @@
 
 			if($params['pluginName'] != "" && $params['version'] != "")
 			{
-				$sqlCond .= " AND plugin_name=? AND version=?";
+				$sqlCond .= " AND pm.plugin_name=? AND pm.version=?";
 				$condArr[] = $params['pluginName'];
 				$condArr[] = $params['version'];
 
@@ -150,7 +151,7 @@
 
 			if($params['filterTag'] != "")
 			{
-			 	$sqlCond .= " AND job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=6 AND tag~*?)";
+			 	$sqlCond .= " AND el.job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=6 AND tag~*?)";
 				$condArr[] = $params['filterTag'];
 
 				if(0<$optionNum)  $params['pageAddress'] .= "&";
@@ -162,7 +163,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT COUNT(*) FROM executed_plugin_list" . $sqlCond);
+			$stmt = $pdo->prepare("SELECT COUNT(*) FROM executed_plugin_list el, plugin_master pm" . $sqlCond);
 			$stmt->execute($condArr);
 
 			$params['totalNum'] = $stmt->fetchColumn();
@@ -175,9 +176,16 @@
 
 			switch($params['orderCol'])
 			{
-				case 'Plugin':	$sqlStr .= " plugin_name ".$params['orderMode'].", version ".$params['orderMode'];  break;
-				case 'Time':	$sqlStr .= " executed_at ".$params['orderMode'];									break;
-				default:		$sqlStr .= " job_id ".$params['orderMode'];										break;
+				case 'Plugin':
+						$sqlStr .= " pm.plugin_name " .$params['orderMode']
+								.  ", pm.version ".$params['orderMode'];
+						break;
+				case 'Time':
+						$sqlStr .= " el.executed_at ".$params['orderMode'];
+						break;
+				default:
+						$sqlStr .= " el.job_id ".$params['orderMode'];
+						break;
 			}
 
 			if(0<$optionNum)  $params['pageAddress'] .= "&";
@@ -208,7 +216,9 @@
 			}
 			//----------------------------------------------------------------------------------------------------------
 
-			$stmtCad = $pdo->prepare("SELECT DISTINCT plugin_name, version FROM executed_plugin_list WHERE plugin_type=2");
+			$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version FROM executed_plugin_list el, plugin_master pm"
+					. " WHERE pm.plugin_id=el.plugin_id AND el.plugin_type=2";
+			$stmtCad = $pdo->prepare($sqlStr);
 			$stmtCad->execute();
 			$pluginList = $stmtCad->fetchAll(PDO::FETCH_NUM);
 		}

@@ -74,8 +74,8 @@
 			$pdo = DBConnector::getConnection();
 
 			if($params['oldTodayDisp'] != $params['newTodayDisp']
-			   || $params['oldDarkroomFlg'] != $params['newDarkroomFlg']
-			   || $params['oldAnonymizeFlg'] != $params['newAnonymizeFlg']
+			   || $params['oldDarkroom'] != $params['newDarkroom']
+			   || $params['oldAnonymized'] != $params['newAnonymized']
 			   || $params['oldShowMissed'] != $params['newShowMissed'])
 			{
 				$sqlStr = "UPDATE users SET today_disp=?, darkroom=?, anonymized=?, show_missed=?"
@@ -89,11 +89,11 @@
 
 				if($stmt->errorCode() == '00000')
 				{
-					$dstData['message'] = 'Success';
-					$_SESSION['todayDisp'] = $params['newTodayDisp'];
-					$_SESSION['darmroom'] =($params['newDarkroom'] == 't') ? 1 : 0;
-					$_SESSION['anonymized'] =($params['newAnonymized'] == 't') ? 1 : 0;
-					$_SESSION['showMissed'] = $params['newShowMissed'];
+					$dstData['message']       = 'Success';
+					$_SESSION['todayDisp']    = $params['newTodayDisp'];
+					$_SESSION['darkroomFlg']  = ($params['newDarkroom'] == 't') ? 1 : 0;
+					$_SESSION['anonymizeFlg'] = ($params['newAnonymized'] == 't') ? 1 : 0;
+					$_SESSION['showMissed']   = $params['newShowMissed'];
 				}
 				else
 				{

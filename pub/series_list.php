@@ -385,28 +385,15 @@
 
 			$stmtCADMaster = $pdo->prepare($sqlStr);
 
-			$sqlStr = "SELECT el.job_id, el.executed_at FROM executed_plugin_list el, executed_series_list esr, plugin_master pm"
+			$sqlStr = "SELECT el.job_id, el.status, el.executed_at"
+					. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm"
 					. " WHERE pm.plugin_name=? AND pm.version=?"
-					. " AND pm.plugin_name=el.plugin_name"
-					. " AND pm.version=el.version"
-					. " AND el.job_id=esr.job_id"
-					. " AND esr.series_id=0"
-					. " AND esr.study_instance_uid=?"
-					. " AND esr.series_instance_uid=?";
+					. " AND pm.plugin_id=el.plugin_id"
+					. " AND el.job_id=es.job_id"
+					. " AND es.series_id=0"
+					. " AND es.series_sid=?";
 
 			$stmtCADExec = $pdo->prepare($sqlStr);
-
-			$sqlStr = "SELECT pjob.status FROM plugin_job_list pjob, job_series_list jsr, plugin_master pm"
-					. " WHERE pm.plugin_name=? AND pm.version=?"
-					. " AND pm.plugin_name=pjob.plugin_name"
-					. " AND pm.version=pjob.version"
-					. " AND pjob.job_id = jsr.job_id"
-					. " AND jsr.series_id=0"
-					. " AND jsr.study_instance_uid=?"
-					. " AND jsr.series_instance_uid=?"
-					. " ORDER BY pjob.job_id DESC";
-
-			$stmtCADJob = $pdo->prepare($sqlStr);
 
 			while ($result = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
@@ -424,17 +411,15 @@
 
 				while($resultCADMaster = $stmtCADMaster->fetch(PDO::FETCH_NUM))
 				{
-					$cadCondArr = array($resultCADMaster[0], $resultCADMaster[1],
-					                    $result['study_instance_uid'], $result['series_instance_uid']);
+					$cadCondArr = array($resultCADMaster[0], $resultCADMaster[1], $result['sid']);
 
 					$cadColSettings[$cadNum][0] = $resultCADMaster[0];
 					$cadColSettings[$cadNum][1] = $resultCADMaster[1];
 					$cadColSettings[$cadNum][2] = ($resultCADMaster[2]=='t') ? 1 : 0;
-					$cadColSettings[$cadNum][3] = 0;					// flg for plug-in execution
-					$cadColSettings[$cadNum][4] = 0;					// status of CAD job
-					$cadColSettings[$cadNum][5] = '';
-					$cadColSettings[$cadNum][6] = 0;
-					$cadColSettings[$cadNum][7] = $resultCADMaster[3];
+					$cadColSettings[$cadNum][3] = 0;					// status of plugin-job job
+					$cadColSettings[$cadNum][4] = '';
+					$cadColSettings[$cadNum][5] = 0;
+					$cadColSettings[$cadNum][6] = $resultCADMaster[3];
 
 					$stmtCADExec->execute($cadCondArr);
 
@@ -444,24 +429,19 @@
 
 						$execResult = $stmtCADExec->fetch(PDO::FETCH_NUM);
 
-						$cadColSettings[$cadNum][6] = $execResult[0];
-						$tmpDate = $execResult[1];
+						$cadColSettings[$cadNum][5] = $execResult[0];  // jobID
+						$cadColSettings[$cadNum][3] = $execResult[1];  // status
+						$tmpDate = $execResult[2];
 
 						// 2つ目の条件は自明だが念のために
 						if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
 						{
-							$cadColSettings[$cadNum][5] = substr($tmpDate, 11);
+							$cadColSettings[$cadNum][4] = substr($tmpDate, 11);
 						}
 						else
 						{
-							$cadColSettings[$cadNum][5] = substr($tmpDate, 0, 10);
+							$cadColSettings[$cadNum][4] = substr($tmpDate, 0, 10);
 						}
-					}
-					else
-					{
-						$cadColSettings[$cadNum][3] = 0;
-						$stmtCADJob->execute($cadCondArr);
-						$cadColSettings[$cadNum][4]  = ($stmtCADJob->rowCount() > 0) ? $stmtCADJob->fetchColumn() : 0;
 					}
 
 					$cadNum++;

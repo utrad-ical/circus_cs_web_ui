@@ -69,15 +69,15 @@
 			$sqlStr = "SELECT pt.patient_id, st.study_instance_uid, sr.series_instance_uid,"
 					. " pt.patient_name, sr.image_width, sr.image_height, pt.sex, st.age,"
 					. " st.study_id, st.study_date, sr.series_number, sr.series_date, sr.modality,"
-					. " sr.series_description, el.plugin_name, el.version, sm.path, sm.apache_alias"
+					. " sr.series_description, el.plugin_id, pm.plugin_name, pm.version, sm.path, sm.apache_alias"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm,"
-					. " executed_plugin_list el, executed_series_list es"
+					. " executed_plugin_list el, executed_series_list es, plugin_master pm"
 			        . " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
-			        . " AND sr.series_instance_uid=es.series_instance_uid"
-			        . " AND st.study_instance_uid=es.study_instance_uid"
+			        . " AND sr.sid=es.series_sid"
+			        . " AND st.study_instance_uid=sr.study_instance_uid"
 			        . " AND pt.patient_id=st.patient_id"
+					. " AND pm.plugin_id=el.plugin_id"
 			        . " AND sr.storage_id=sm.storage_id;";
-
 
 			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
@@ -95,14 +95,15 @@
 			$params['seriesDate']        = $result[11];
 			$params['modality']          = $result[12];
 			$params['seriesDescription'] = $result[13];
-			$params['cadName']           = $result[14];
-			$params['version']           = $result[15];
+			$params['pluginID']          = $result[14];
+			$params['cadName']           = $result[15];
+			$params['version']           = $result[16];
 
-			$params['seriesDir'] = $result[16] . $DIR_SEPARATOR . $params['patientID']
+			$params['seriesDir'] = $result[17] . $DIR_SEPARATOR . $params['patientID']
 								 . $DIR_SEPARATOR . $params['studyInstanceUID']
 								 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 
-			$params['seriesDirWeb'] = $result[17] . $params['patientID']
+			$params['seriesDirWeb'] = $result[18] . $params['patientID']
 								    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
 								    . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
 
@@ -182,13 +183,8 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve locations of lesion candidate
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT cm.result_type FROM plugin_master pm, plugin_cad_master cm"
-					. " WHERE cm.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $params['cadName']);
-			$stmt->bindValue(2, $params['version']);
-			$stmt->execute();
-			$tableName = $stmt->fetchColumn();
+			$sqlStr = "SELECT result_table FROM plugin_cad_master WHERE plugin_id=?";
+			$tableName = DBConnector::query($sqlStr, $params['pluginID'], 'SCALAR');
 
 			$sqlStr  = 'SELECT sub_id, location_x, location_y, location_z'
 			         . ' FROM "' . $tableName . '" WHERE job_id=? ORDER BY sub_id ASC';
@@ -215,9 +211,11 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 			$sqlParams = array();
 
-			$sqlStr = "SELECT * FROM fn_count WHERE job_id=? AND is_consensual=?";
+			$sqlStr = "SELECT fn.fn_num, fn.status, fl.registered_at, fl.entered_by"
+					. " FROM feedback_list fl, fn_count fn"
+					. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id AND fl.is_consensual=?";
 
-			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
+			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND fl.entered_by=?";
 
 			$sqlParams[] = $params['jobID'];
 			$sqlParams[] = $consensualFlg;
@@ -228,17 +226,17 @@
 
 			if($stmt->rowCount() == 1)
 			{
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-				$params['enteredFnNum'] = $result['false_negative_num'];
-				$params['status'] = $result['status'];
-				$params['registTime'] = $result['registered_at'];
-				$params['enteredBy']  = $result['entered_by'];
+				$result = $stmt->fetch(PDO::FETCH_NUM);
+				$params['enteredFnNum'] = $result[0];
+				$params['status']       = $result[1];
+				$params['registTime']   = $result[2];
+				$params['enteredBy']    = $result[3];
 			}
 
-			$sqlStr = "SELECT * FROM fn_location"
-					. " WHERE job_id=? AND is_consensual=?";
-			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND entered_by=?";
-			$sqlStr .= " ORDER BY location_z ASC, location_y ASC, location_x ASC";
+			$sqlStr = "SELECT * FROM feedback_list fl, fn_location fn"
+					. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id AND fl.is_consensual=?";
+			if($params['feedbackMode'] == "personal")  $sqlStr .= " AND fl.entered_by=?";
+			$sqlStr .= " ORDER BY fn.location_z ASC, fn.location_y ASC, fn.location_x ASC";
 
 			$result = DBConnector::query($sqlStr, $sqlParams, 'ALL_ASSOC');
 
@@ -290,8 +288,10 @@
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT * FROM fn_count WHERE job_id=?"
-						. " AND is_consensual='t' AND status=2";
+				$sqlStr = "SELECT fn.fn_num, fn.status, fl.registered_at, fl.entered_by"
+						. " FROM feedback_location fl, fn_count fn"
+						. " WHERE fl.job_id=? AND fl.fb_id=fn.fb_id"
+						. " AND fl.is_consensual='t' AND fn.status=2";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(1, $params['jobID']);
@@ -299,21 +299,22 @@
 
 				if($stmt->rowCount() == 1)
 				{
-					$result = $stmt->fetch(PDO::FETCH_ASSOC);
-					$params['enteredFnNum'] = $result['false_negative_num'];
-					$params['status'] = $result['status'];
-					$params['registTime'] = $result['registered_at'];
-					$params['userStr'] = $result['entered_by'] . "^0";
-					$params['enteredBy'] = $result['entered_by'];
+					$result = $stmt->fetch(PDO::FETCH_NUM);
+					$params['enteredFnNum'] = $result[0];
+					$params['status']       = $result[1];
+					$params['registTime']   = $result[2];
+					$params['userStr']      = $result[3] . "^0";
+					$params['enteredBy']    = $result[3];
 				}
 				else
 				{
 					$params['userStr'] = $params['userID'] . "^0";
 					$params['registTime'] = "";
 
-					$sqlStr = "SELECT * FROM fn_location WHERE job_id=?"
-					        . " AND is_consensual='f' AND interrupted='f'"
-							. " ORDER BY location_z ASC, location_y ASC, location_x ASC";
+					$sqlStr = "SELECT * FROM feedback_list fl, fn_location fn"
+							. " WHERE fl.job_id=? AND fl.fb_id=fn.fb_id"
+					        . " AND fl.is_consensual='f' AND fl.status=1"
+							. " ORDER BY fn.location_z ASC, fn.location_y ASC, fn.location_x ASC";
 
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindValue(1, $params['jobID']);
@@ -410,8 +411,10 @@
 							}
 						}
 
-						$sqlStr = "SELECT DISTINCT entered_by FROM fn_location"
-						        . " WHERE job_id=? AND is_consensual='f' ORDER BY entered_by ASC";
+						$sqlStr = "SELECT DISTINCT fl.entered_by"
+								. " FROM feedback_list fl, fn_location fn"
+						        . " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
+								. " AND fl.is_consensual='f' ORDER BY fl.entered_by ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->bindValue(1, $params['jobID']);
@@ -427,15 +430,6 @@
 								$params['userStr'] .= "^" . $result[0] . "^" . $userCnt;
 							}
 						}
-
-						//$sqlStr = "SELECT COUNT(*) FROM fn_location WHERE job_id=?"
-						//		. " AND is_consensual='t'" . " AND interrupted='t'";
-						//
-						//$stmt = $pdo->prepare($sqlStr);
-						//$stmt->bindValue(1, $params['jobID']);
-						//$stmt->execute();
-						//
-						//if($stmt->fetchColumn()>0)	$params['registTime'] ="";
 					}
 				}
 			}

@@ -1,26 +1,5 @@
 <?php
 
-	//function CreateThumbnailMPR($ifname, $ofname, $dstWidth)
-	//{
-	//	$img = new Imagick($ifname);
-	//	$srcWidth  = $img->getImageWidth();
-	//	$srcHeight = $img->getImageHeight();
-	//
-	//	$dstHeight = (int)($dstWidth / $srcWidth * $srcHeight);
-	//
-	//	$img->resizeImage($dstWidth, $dstHeight, Imagick::FILTER_SINC,1);
-	//
-	//		$img->setImageDepth(8); // 16bit -> 8bit
-	//		$img->setImageColorspace(1);
-	//
-	//	$img->writeImage($ofname);
-	//	$img->destroy();
-	//
-	//	$im = @imagecreatefrompng($ofname);
-	//	imagealphablending( $im, false );
-	//	imagepng($im, $ofname, 9);
-	//}
-
 	function CreateThumbnailMPR($ifname, $ofname, $dstWidth)
 	{
 		$srcImg = @imagecreatefrompng($ifname);

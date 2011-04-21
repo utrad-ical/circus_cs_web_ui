@@ -203,7 +203,7 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 {
 	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
-	var jobID = tmpStr[5];
+	var jobID = tmpStr[4];
 
 	var address = 'cad_results/show_cad_results.php?jobID=' + jobID;
 	
@@ -220,18 +220,12 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
 
-	var cadExecFlg = parseInt(tmpStr[2]);
-	var jobStatus  = parseInt(tmpStr[3]);
-	var dateTime   = tmpStr[4];
+	var jobStatus  = parseInt(tmpStr[2]);
+	var dateTime   = tmpStr[3];
 
-	if(cadExecPermit==1)
+	if(jobStatus == 4) // Executed
 	{
-		if(cadExecFlg == 0)	$("#execButton"+seriesID).show();
-		else	        	$("#execButton"+seriesID).hide();
-	}
-
-	if(cadExecFlg == 1)
-	{
+		$("#execButton"+seriesID).hide();
 		$("#resultButton" + seriesID).show();
 		$("#cadInfo"+seriesID).html('Executed at ' + dateTime);
 	}
@@ -246,6 +240,8 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 		}
 		else
 		{
+			$("#execButton" + seriesID).show();
+
 			if(jobStatus == -1)
 			{
 				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Fail to execute</span>');

@@ -46,9 +46,10 @@
 			$pdo = DBConnector::getConnection();
 
 			//echo json_encode($dstData);
-			$sqlStr .= "SELECT el.plugin_name, el.version, el.executed_at, sm.path, sm.apache_alias"
-					.  " FROM executed_plugin_list el, storage_master sm"
-					.  " WHERE el.job_id=? AND el.storage_id = sm.storage_id";
+			$sqlStr .= "SELECT pm.plugin_name, pm.version, el.executed_at, sm.path, sm.apache_alias"
+					.  " FROM executed_plugin_list el, plugin_master pm, storage_master sm"
+					.  " WHERE el.job_id=? AND pm.plugin_id=el.plugin_id"
+					.  " AND el.storage_id = sm.storage_id";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindParam(1, $params['jobID']);

@@ -8,49 +8,25 @@
 	//-----------------------------------------------------------------------------------------------------------------
 	//
 	//-----------------------------------------------------------------------------------------------------------------
-	function CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $jobID)
+	function CheckRegistStatusPersonalFB($stmtPersonalFB, $jobID)
 	{
-		$registStatus = array('cand' => 0,
-							  'FN'   => 0);  // 0：not evaluated, 1：incomplete, 2：complete
-
 		$stmtPersonalFB->bindParam(1, $jobID);
 		$stmtPersonalFB->execute();
 
-		if($stmtPersonalFB->rowCount() > 0)
-		{
-			$registStatus['cand'] = 2;
+		$ret = '-';
 
-			while($resultPersonalFB = $stmtPersonalFB->fetch(PDO::FETCH_ASSOC))
+		if($stmtPersonalFB->rowCount() == 1)
+		{
+			if($stmtPersonalFB->fetchColumn() == 1)
 			{
-				if($resultPersonalFB['evaluation'] == -99 || $resultPersonalFB['interrupted'])
-				{
-					$registStatus['cand'] = 1;
-					break;
-				}
+				$ret = 'Registered';
+			}
+			else
+			{
+				$ret = '<span style="font-weight:bold;color:red;">Incomplete</span>';
 			}
 		}
 
-		$stmtPersonalFN->bindParam(1, $jobID);
-		$stmtPersonalFN->execute();
-
-		if($stmtPersonalFN->rowCount() == 1)
-		{
-			if($stmtPersonalFN->fetchColumn() == 2)  $registStatus['FN'] = 2;
-			else									 $registStatus['FN'] = 1;
-		}
-
-		if($registStatus['cand'] == 0 && $registStatus['FN'] == 0)
-		{
-			$ret = '-';
-		}
-		else if($registStatus['cand'] == 2 && $registStatus['FN'] == 2)
-		{
-			$ret = 'Registered';
-		}
-		else
-		{
-			$ret = '<span style="font-weight:bold;color:red;">Incomplete</span>';
-		}
 		return $ret;
 	}
 	//-----------------------------------------------------------------------------------------------------------------
@@ -136,9 +112,9 @@
 			"filterTag"=> array(
 				"type" => "pgregex",
 				"errorMes" => "'Tag' is invalid."),
-			"filterFBUser"=> array(
-				"type" => "pgregex",
-				"errorMes" => "'Series description' is invalid."),
+			//"filterFBUser"=> array(
+			//	"type" => "pgregex",
+			//	"errorMes" => "'Series description' is invalid."),
 			"personalFB" => array(
 				"type" => "select",
 				"options" => array("entered", "notEntered", "all"),
@@ -212,14 +188,6 @@
 		$sqlCondArray = array();
 		$sqlParams = array();
 		$addressParams = array();
-
-		$sqlCond = " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
-			       . " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
-			       . " JOIN (executed_series_list es JOIN executed_plugin_list el"
-			       . " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
-			       . " ON (sr.series_instance_uid = es.series_instance_uid)"
-			       . " LEFT JOIN lesion_classification lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
-			       . " LEFT JOIN fn_count fn ON (es.job_id = fn.job_id AND fn.status>=1)";
 
 		if($params['mode'] == 'today')
 		{
@@ -374,14 +342,14 @@
 
 		if($params['filterCAD'] != "all")
 		{
-			$sqlCondArray[] = "el.plugin_name=?";
+			$sqlCondArray[] = "pm.plugin_name=?";
 			$sqlParams[] = $params['filterCAD'];
 			$addressParams['filterCAD'] = $params['filterCAD'];
 		}
 
 		if($params['filterVersion'] != "all")
 		{
-			$sqlCondArray[] = "el.version=?";
+			$sqlCondArray[] = "pm.version=?";
 			$sqlParams[] = $params['filterVersion'];
 			$addressParams['filterVersion'] = $params['filterVersion'];
 		}
@@ -397,87 +365,86 @@
 		{
 			$params['pageAddress'] .= 'personalFB=' . $params['personalFB'];
 
-			$operator = ($params['personalFB'] == "entered") ? '=' : '<>';
+			$operator = ($params['personalFB'] == "entered") ? 'IN' : '<> ALL';
 
-			$tmpCond .= " el.job_id " . $operator . " ANY"
-					 .  " (SELECT DISTINCT job_id FROM lesion_classification WHERE is_consensual='f'"
-					 .  " AND interrupted='f'";
-
-			if($params['personalFB'] == "entered")
-			{
-				if($params['filterFBUser'] != "")
-				{
-					if(strncmp($params['filterFBUser'],'PAIR"', 5) == 0)
-					{
-						$tmpStr = substr($params['filterFBUser'], 5);
-						$fbUserArr = array();
-
-						array_push($fbUserArr, strtok($tmpStr,'"'));
-
-						while($tmpStr2 = strtok('"'))
-						{
-							//echo $tmpStr2;
-							if($tmpStr2 != ")")  array_push($fbUserArr, $tmpStr2);
-						}
-
-						if(count($fbUserArr) == 1)
-						{
-							$tmpCond .= ' AND entered_by=?)';
-							$sqlParams[] = $fbUserArr[0];
-						}
-						else if(count($fbUserArr) >= 2)
-						{
-							$tmpCond .= " AND entered_by~*? AND job_id IN"
-									 .  " (SELECT DISTINCT job_id FROM lesion_classification"
-									 .  "  WHERE is_consensual='f' AND interrupted='f'"
-									 .  "  AND entered_by~*?))";
-
-							$sqlParams[] = $fbUserArr[0];
-							$sqlParams[] = $fbUserArr[1];
-						}
-					}
-					else
-					{
-						if($_SESSION[''] == "admin")
-						{
-							$tmpCond .= ')';
-						}
-						else
-						{
-							$tmpCond .= ' AND entered_by~*?)';
-							$sqlParams[] = $params['filterFBUser'];
-						}
-					}
-
-					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
-					$addressParams['filterFBUser'] = $params['filterFBUser'];
-				}
-				else	//　if entered in "entered by" fieldも入力されていない場合
-				{
-					if($_SESSION['colorSet'] == 'admin')	// 管理者は全ユーザのpersonal feedbackをcheck
-					{
-						$tmpCond .= ')';
-					}
-					else
-					{
-						$tmpCond .= ' AND entered_by=?)';
-						$sqlParams[] = $userID;
-					}
-				}
-			}
-			else
-			{
-				$tmpCond .= ")";
-			}
+			$tmpCond .= " el.job_id " . $operator
+					 .  " (SELECT DISTINCT job_id FROM feedback_list WHERE is_consensual='f' AND status=1)";
+//
+//			if($params['personalFB'] == "entered")
+//			{
+//				if($params['filterFBUser'] != "")
+//				{
+//					if(strncmp($params['filterFBUser'],'PAIR"', 5) == 0)
+//					{
+//						$tmpStr = substr($params['filterFBUser'], 5);
+//						$fbUserArr = array();
+//
+//						array_push($fbUserArr, strtok($tmpStr,'"'));
+//
+//						while($tmpStr2 = strtok('"'))
+//						{
+//							//echo $tmpStr2;
+//							if($tmpStr2 != ")")  array_push($fbUserArr, $tmpStr2);
+//						}
+//
+//						if(count($fbUserArr) == 1)
+//						{
+//							$tmpCond .= ' AND entered_by=?)';
+//							$sqlParams[] = $fbUserArr[0];
+//						}
+//						else if(count($fbUserArr) >= 2)
+//						{
+//							$tmpCond .= " AND entered_by~*? AND job_id IN"
+//									 .  " (SELECT DISTINCT job_id FROM lesion_classification"
+//									 .  "  WHERE is_consensual='f' AND interrupted='f'"
+//									 .  "  AND entered_by~*?))";
+//
+//							$sqlParams[] = $fbUserArr[0];
+//							$sqlParams[] = $fbUserArr[1];
+//						}
+//					}
+//					else
+//					{
+//						if($_SESSION[''] == "admin")
+//						{
+//							$tmpCond .= ')';
+//						}
+//						else
+//						{
+//							$tmpCond .= ' AND entered_by~*?)';
+//							$sqlParams[] = $params['filterFBUser'];
+//						}
+//					}
+//
+//					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
+//					$addressParams['filterFBUser'] = $params['filterFBUser'];
+//				}
+//				else	//　if entered in "entered by" fieldも入力されていない場合
+//				{
+//					if($_SESSION['colorSet'] == 'admin')	// 管理者は全ユーザのpersonal feedbackをcheck
+//					{
+//						$tmpCond .= ')';
+//					}
+//					else
+//					{
+//						$tmpCond .= ' AND entered_by=?)';
+//						$sqlParams[] = $userID;
+//					}
+//				}
+//			}
+//			else
+//			{
+//				$tmpCond .= ")";
+//			}
 			$sqlCondArray[] = $tmpCond;
 		}
 
 		if($params['consensualFB'] == "entered" || $params['consensualFB'] == "notEntered")
 		{
-			$operator = ($params['consensualFB'] == "entered") ? '=' : '<>';
+			$operator = ($params['consensualFB'] == "entered") ? 'IN' : '<> ALL';
 
-			$tmpCond = "el.job_id " . $operator . " ANY"
-					 . " (SELECT job_id FROM lesion_classification WHERE is_consensual='t' AND interrupted='f')";
+			$tmpCond = "el.job_id " . $operator
+					 . " (SELECT job_id FROM feedback_list WHERE is_consensual='t' AND status=1)";
 
 			//if($params['filterTP'] == "all" && $params['filterFN'] == "all")
 			//{
@@ -490,17 +457,18 @@
 		{
 			$condition = ($params['filterTP'] == "with") ? '>0' : '<=0';
 
-			$tmpCond = " el.job_id IN (SELECT DISTINCT job_id FROM lesion_classification WHERE interrupted='f'";
+			$tmpCond = " el.job_id IN (SELECT DISTINCT fl.job_id FROM feedback_list fl, candidate_classification cc"
+					 . " WHERE cc.fb_id=fl.fb_id AND fl.status=1";
 
 			if($params['consensualFB'] == "entered")
 			{
-				$tmpCond .= " AND is_consensual='t'";
+				$tmpCond .= " AND fl.is_consensual='t'";
 			}
 			else if($params['consensualFB'] == "notEntered")
 			{
-				$tmpCond .= " AND is_consensual='f'";
+				$tmpCond .= " AND fl.is_consensual='f'";
 			}
-			$tmpCond .= " GROUP BY job_id HAVING MAX(evaluation)" . $condition . ")";
+			$tmpCond .= " GROUP BY fl.job_id HAVING MAX(cc.evaluation)" . $condition . ")";
 
 			$sqlCondArray[] = $tmpCond;
 			$addressParams['filterTP'] = $params['filterTP'];
@@ -510,15 +478,16 @@
 		{
 			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
 
-			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM fn_count WHERE status=2";
+			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM feedback_list fl, fn_location fn"
+					 . " WHERE fn.fb_id=fl.fb_id AND fl.status=1";
 
 			if($params['consensualFB'] == "entered")
 			{
-				$tmpCond .= " AND is_consensual='t'";
+				$tmpCond .= " AND fl.is_consensual='t'";
 			}
 			else if($params['consensualFB'] == "notEntered")
 			{
-				$tmpCond .= " AND is_consensual='f'";
+				$tmpCond .= " AND fl.is_consensual='f'";
 			}
 			$tmpCond .= " GROUP BY job_id HAVING MAX(false_negative_num)" .  $condition . ")";
 
@@ -528,11 +497,7 @@
 
 		//var_dump($sqlCondArray);
 
-		if(count($sqlCondArray) > 0)  $sqlCond .= sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
-
-		$sqlCond .= " GROUP BY el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
-				 .  " sr.series_date, sr.series_time, el.plugin_name, el.version,"
-				 .  " el.exec_user, el.executed_at, es.study_instance_uid, es.series_instance_uid";
+		if(count($sqlCondArray) > 0)  $sqlCond .= sprintf(" AND %s", implode(' AND ', $sqlCondArray));
 		//--------------------------------------------------------------------------------------------------------------
 
 		//--------------------------------------------------------------------------------------------------------------
@@ -573,11 +538,16 @@
 		// Set $data array
 		//--------------------------------------------------------------------------------------------------------------
 		$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
-		        . " sr.series_date, sr.series_time, el.plugin_name, el.version,"
-				. " el.exec_user, el.executed_at,"
-		        . " es.study_instance_uid, es.series_instance_uid,"
-		        . " MAX(lf.evaluation) as tp_max,"
-		        . " MAX(fn.false_negative_num) as fn_max"
+		        . " sr.series_date, sr.series_time, pm.plugin_name, pm.version,"
+				. " el.exec_user, el.executed_at"
+				. " FROM patient_list pt, study_list st, series_list sr,"
+				. " executed_plugin_list el, executed_series_list es, plugin_master pm"
+				. " WHERE el.plugin_type=1 AND el.status=" . $PLUGIN_SUCESSED
+				. " AND pm.plugin_id=el.plugin_id"
+				. " AND es.job_id=el.job_id"
+				. " AND es.series_id=0 AND sr.sid=es.series_sid"
+				. " AND st.study_instance_uid=sr.study_instance_uid"
+				. " AND pt.patient_id=st.patient_id"
 				. $sqlCond;
 
 		$stmt = $pdo->prepare($sqlStr);
@@ -610,46 +580,40 @@
 		$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
 		$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
 
-
 		//------------------------------------------------------------------------------------------
 		// For today's CAD
 		//------------------------------------------------------------------------------------------
 		// SQL statement to count entered heads of personal feedback
-		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM lesion_classification"
-	             . " WHERE job_id=? AND is_consensual=? AND interrupted='f'";
+		$sqlStr  = "SELECT COUNT(DISTINCT entered_by) FROM feedback_list"
+	             . " WHERE job_id=? AND is_consensual=? AND status=1";
 		$stmtHeads = $pdo->prepare($sqlStr);
 
 		// SQL statement to count the number of TP
-		$sqlStr = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=?"
-		        . " AND is_consensual=? AND evaluation>=1 AND interrupted='f'";
+		$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+				. " WHERE fl.job_id=? AND fl.fb_id=cc.fb_id"
+				. " AND fl.is_consensual=? AND fl.status=1 AND cc.evaluation>=1";
 		$stmtTPCnt = $pdo->prepare($sqlStr);
 
-		// SQL statement to count the number of personal feedback
-		$sqlStr = "SELECT evaluation, interrupted FROM lesion_classification WHERE job_id=?"
-				. " AND is_consensual='f' AND entered_by=? ORDER BY lesion_id ASC";
+		// SQL statement to check the status of personal feedback
+		$sqlStr = "SELECT status FROM feedback_list"
+				. " WHERE job_id=? AND is_consensual='f' AND entered_by=?";
 		$stmtPersonalFB = $pdo->prepare($sqlStr);
 		$stmtPersonalFB->bindParam(2, $_SESSION['userID']);
-
-		// SQL statement to count the number of personal feedback
-		$sqlStr  = "SELECT status FROM fn_count WHERE job_id=? AND is_consensual='f'"
-		         . " AND entered_by=?";
-		$stmtPersonalFN = $pdo->prepare($sqlStr);
-		$stmtPersonalFN->bindParam(2, $_SESSION['userID']);
 		//------------------------------------------------------------------------------------------
 
 		//------------------------------------------------------------------------------------------
 		// For cad log
 		//------------------------------------------------------------------------------------------
 		// SQL statement for count No. of TP
-		$sqlStr  = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND is_consensual=?"
-		         . " AND interrupted='f' AND evaluation>=1";
-
+		$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+				. " WHERE fl.job_id=? AND fl.fb_id=cc.fb_id"
+				. " AND fl.is_consensual=? AND fl.status=1 AND cc.evaluation>=1";
 		$stmtTP = $pdo->prepare($sqlStr);
 
 		// SQL statement for count No. of FN
-		$sqlStr  = "SELECT false_negative_num FROM fn_count WHERE job_id=?"
-			     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
-
+		$sqlStr = "SELECT fn.fn_num FROM feedback_list fl, fn_count fn"
+				. " WHERE fl.job_id=? AND fl.fb_id=fn.fb_id"
+				. " AND fl.is_consensual=? AND fn.fn_num>0 AND fn.status=2";
 		$stmtFN = $pdo->prepare($sqlStr);
 		//------------------------------------------------------------------------------------------
 
@@ -708,7 +672,7 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['job_id']);
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $result['job_id']);
 				}
 			}
 			else
@@ -738,13 +702,13 @@
 				}
 				else if($_SESSION['colorSet']=="user" && $_SESSION['personalFBFlg'])
 				{
-					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $stmtPersonalFN, $result['job_id']);
+					$colArr[] = CheckRegistStatusPersonalFB($stmtPersonalFB, $result['job_id']);
 				}
 
 				$tpColStr = "-";
 				$fnColStr = "-";
 
-				if($result['tp_max']>=1)
+				//if($result['tp_max']>=1)
 				{
 					$stmtTP->bindValue(1, $result['job_id']);
 					$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
@@ -759,7 +723,7 @@
 					}
 				}
 
-				if($result['fn_max']>=1)
+				//if($result['fn_max']>=1)
 				{
 					$stmtFN->bindValue(1, $result['job_id']);
 					$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);

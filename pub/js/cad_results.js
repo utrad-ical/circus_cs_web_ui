@@ -25,10 +25,9 @@ function RegistFeedback(feedbackMode, interruptFlg, candStr, evalStr, dstAddress
 	$.post("feedback_registration.php",
 			{
 				jobID:  $("#jobID").val(),
-				cadName: $("#cadName").val(),
-				version: $("#version").val(),
+				pluginID: $("#pluginID").val(),
 				interruptFlg: interruptFlg,
-				fnFoundFlg: $('input[name="fnFoundFlg"]:checked').val(),
+				//fnFoundFlg: $('input[name="fnFoundFlg"]:checked').val(),
 				feedbackMode: feedbackMode,
 				candStr: candStr,
 				evalStr: evalStr
