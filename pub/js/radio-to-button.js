@@ -1,11 +1,14 @@
 /*
-  radio-to-button.js
-    written by UTF-8
-*/
+ * radio-to-button.js
+ *
+ * Converts radio buttons which have 'radio-to-button' class
+ * into <a> elements with the same class name.
+ * <a> elements can be styled more easily by CSS.
+ */
 
 
 //************************************************//
-// ÉvÉâÉOÉCÉì
+// jQuery plugin definition
 //************************************************//
 
 (function($){
@@ -24,29 +27,19 @@
 			if(!_radio.is('input[type=radio]')) return;
 			
 			if(_radio.attr('label')){
-/*				var btn=$(document.createElement('input')).attr({
-					type: 'button',
-					value: _radio.attr('label'),
-					disabled: _radio.attr('disabled'),
-					className: _radio.attr('className')
-				});
-*/			var btn=$(document.createElement('a'))
+			var btn=$(document.createElement('a'))
 							.click(function(){return false;})
 							.addClass( _radio.attr('className') )
 							.text(_radio.attr('label'))
 							.attr('title',_radio.attr('title'));
-				
-				btn.css({
-					fontFamily: 'Arial'
-				});
-				
-				
 				btn.hover(
 					function(){
-						if( !_radio.attr('checked') && !_radio.attr('disabled') ) SetStyle($(this),'hover');
+						if( !_radio.attr('checked') && !_radio.attr('disabled') )
+							SetStyle($(this),'hover');
 					},
 					function(){
-						if( !_radio.attr('checked') && !_radio.attr('disabled') ) SetStyle($(this),'normal');
+						if( !_radio.attr('checked') && !_radio.attr('disabled') )
+							SetStyle($(this),'normal');
 					}
 				).click(function(){
 					_radio.click();
@@ -78,7 +71,7 @@
 })(jQuery);
 
 //************************************************//
-// èâä˙âª
+// Initialization
 //************************************************//
 
 $(function(){
@@ -97,78 +90,15 @@ $(function(){
 });
 
 
-
-//************************************************//
-// CSS Example
-//************************************************//
-/*
-.radio-to-button {
-	display:block;
-	cursor:pointer;
-	
-	border:0px none;
-	background-color:transparent;
-	background-repeat:repeat;
-	padding:0;
-	margin:0;
-	
-	outline:0;
-	overflow:hidden;
-	
-	float: left;
-	margin-right: 1px;
-}
-
-.radio-to-button {
-	background-image: url(./btn-radio.jpg);
-}
-
-.radio-to-button-normal {
-	color: #333;
-	border: 1px solid #333;
-	background-position: 0 0;
-}
-.radio-to-button-hover {
-	color: #333;
-	border: 1px solid #ff6600;
-	background-position: 0 -23px;
-}
-.radio-to-button-checked {
-	color: #fff;
-	border: 1px solid #8a3b2b;
-	background-position: 0 -46px;
-}
-.radio-to-button-disabled {
-	color: #ccc;
-	border: 1px solid #ccc;
-	background-position: 0 -69px;
-}
-</style>
-*/
-
 //************************************************//
 // HTML Example
 //************************************************//
 /*
 <form>
-<div style="background-color:#ffc; padding:20px;">
-	<input type="radio" name="hoge" value="1" label="ílÇÕÇPÇæ" />
-	<input type="radio" name="hoge" value="2" label="ílÇÕÇQÇæ" />
-	<input type="radio" name="hoge" value="3" label="ílÇÕÇRÇæ" />
-</div>
-
-<div style="background-color:#cff; padding:20px;">
-	<input type="radio" name="hoge" value="1" label="ílÇÕÇPÇæ" />
-	<input type="radio" name="hoge" value="2" label="ílÇÕÇQÇæ" disabled="disabled" />
-	<input type="radio" name="hoge" value="3" label="ílÇÕÇRÇæ" />
-</div>
-
-<div style="background-color:#fcf; padding:20px;">
-	<input type="radio" name="hoge" value="1" label="ílÇÕÇPÇæAAAAAAAA" />
-	<input type="radio" name="hoge" value="2" label="ílÇÕÇQÇæ" />
-	<input type="radio" name="hoge" value="3" label="ílÇÕÇRÇæ" />
+<div>
+	<input type="radio" name="foo" value="1" label="apples" />
+	<input type="radio" name="foo" value="2" label="bananas" disabled="disabled" />
+	<input type="radio" name="foo" value="3" label="oranges" />
 </div>
 </form>
 */
-
-
