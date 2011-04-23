@@ -243,7 +243,7 @@ abstract class ValidatorBase
 	public function setKey($key) {
 		$this->key = $key;
 		$this->label = $key;
-		if ($params['label']) $this->label = $params['label'];
+		if ($this->params['label']) $this->label = $this->params['label'];
 	}
 
 	/**
