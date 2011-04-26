@@ -121,11 +121,14 @@
 					$dispHeight = (int)((real)$attributes['crop_height'] * ($dispWidth / (real)$attributes['crop_width']) + 0.5);
 					$scale = $dispWidth/(real)$attributes['crop_width'];
 
-					$img = new Imagick();
-					$img->readImage($dstFname);
-					$width  = $img->getImageWidth();
-					$height = $img->getImageHeight();
-					$img->destroy();
+					$img = @imagecreatefrompng($dstFname);
+	
+				    if($img)
+					{
+						$width  = imagesx($img);
+						$height = imagesy($img);
+						imagedestroy($img);
+					}
 
 					// Create HTML statement
 					$latestHtml .= '<div class="result-record-3cols al-c">'
