@@ -12,14 +12,10 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"studyInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
-		"seriesInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid."),
+		"sid" => array(
+			"type" => "int",
+			"min" => 1,
+			"errorMes" => "[ERROR] Series sid is invalid."),
 		"listTabName" => array(
 			"type" => "select",
 			"options" => array("Today's series", "Series list"),
@@ -48,43 +44,43 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT sr.sid, pt.patient_id, pt.patient_name, sm.path, sm.apache_alias,"
-			        . " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
+			$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid,"
+					. " pt.patient_id, pt.patient_name, sm.path, sm.apache_alias,"
+					. " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality,"
 					. " sr.series_description, sr.body_part"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm "
-			        . " WHERE sr.study_instance_uid=?"
-			        . " AND sr.series_instance_uid=?"
-			        . " AND sr.study_instance_uid=st.study_instance_uid"
-			        . " AND pt.patient_id=st.patient_id"
-			        . " AND sr.storage_id=sm.storage_id;";
+					. " WHERE sr.sid=?"
+					. " AND st.study_instance_uid=sr.study_instance_uid"
+					. " AND pt.patient_id=st.patient_id"
+					. " AND sr.storage_id=sm.storage_id;";
 
-			$result = DBConnector::query($sqlStr, array($data['studyInstanceUID'], $data['seriesInstanceUID']), 'ARRAY_NUM');
+			$result = DBConnector::query($sqlStr, $data['sid'], 'ARRAY_NUM');
 
-			$data['sid']               = $result[0];
-			$data['patientID']         = $result[1];
-			$data['patientName']       = $result[2];
-			$data['sex']               = $result[7];
-			$data['age']               = $result[8];
-			$data['studyID']           = $result[9];
-			$data['seriesID']          = $result[10];
-			$data['seriesDate']        = $result[11];
-			$data['seriesTime']        = $result[12];
-			$data['modality']          = $result[13];
-			$data['seriesDescription'] = $result[14];
-			$data['bodyPart']          = $result[15];
+			$data['studyInstanceUID']  = $result[0];
+			$data['seriesInstanceUID'] = $result[1];
+			$data['patientID']         = $result[2];
+			$data['patientName']       = $result[3];
+			$data['orgWidth']          = $result[6];
+			$data['orgHeight']         = $result[7];
+			$data['sex']               = $result[8];
+			$data['age']               = $result[9];
+			$data['studyID']           = $result[10];
+			$data['seriesID']          = $result[11];
+			$data['seriesDate']        = $result[12];
+			$data['seriesTime']        = $result[13];
+			$data['modality']          = $result[14];
+			$data['seriesDescription'] = $result[15];
+			$data['bodyPart']          = $result[16];
 
 			$data['encryptedPtID']   = PinfoScramble::encrypt($data['patientID'], $_SESSION['key']);
 			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);
 
-			$data['seriesDir'] = $result[3] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
+			$data['seriesDir'] = $result[4] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
 					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
 
-			$data['seriesDirWeb'] = $result[4]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
+			$data['seriesDirWeb'] = $result[5]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
 					              . $DIR_SEPARATOR_WEB . $data['seriesInstanceUID'];
-
-			$data['orgWidth'] = $result[5];
-			$data['orgHeight'] = $result[6];
 
 			if($_SESSION['anonymizeFlg'] == 1)
 			{

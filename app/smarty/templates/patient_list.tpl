@@ -33,7 +33,7 @@ js/edit_tag.js
 		<tr>
 			{* {if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if} *}
 			<th>
-				{if $params.orderCol == 'Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Patient ID', '{if $params.orderCol == "Patient ID" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+				{if $params.orderCol == 'PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('PatientID', '{if $params.orderCol == "PatientID" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 			</th>
 
 			<th>
@@ -41,11 +41,11 @@ js/edit_tag.js
 			</th>
 
 			<th>
-				{if $params.orderCol == 'Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Sex', '{if $params.orderCol == "Sex" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+				{if $params.orderCol == 'Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Sex', '{if $params.orderCol == "Sex" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Sex</a></span>
 			</th>
 
 			<th>
-				{if $params.orderCol == 'Birth date'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('Birth date', '{if $params.orderCol == "Birth date" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Name</a></span>
+				{if $params.orderCol == 'BirthDate'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('BirthDate', '{if $params.orderCol == "BirthDate" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Name</a></span>
 			</th>
 
 			<th style="width:3.5em;">Detail</th>

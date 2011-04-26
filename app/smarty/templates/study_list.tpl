@@ -40,11 +40,11 @@ jq/ui/css/jquery-ui-1.7.3.custom.css
 		<tr>
 			{* {if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if} *}
 			<th>
-				{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+				{if $params.orderCol=='PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('PatientID', '{if $params.orderCol=="PatientID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 			</th>
 
 			<th>
-				{if $params.orderCol=='Name'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Name', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Name</a></span>
+				{if $params.orderCol=='Name'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Name', '{if $params.orderCol=="Name" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Name</a></span>
 			</th>
 
 			<th>
@@ -56,11 +56,11 @@ jq/ui/css/jquery-ui-1.7.3.custom.css
 			</th>
 
 			<th>
-				{if $params.orderCol=='Study ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Study ID', '{if $params.orderCol=="Study ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Study ID</a></span>
+				{if $params.orderCol=='StudyID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('StudyID', '{if $params.orderCol=="StudyID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Study ID</a></span>
 			</th>
 
 			<th>
-				{if $params.orderCol=='Study date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('Study date', '{if $params.orderCol=="Study date" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Study date</a></span>
+				{if $params.orderCol=='StudyDate'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfStudyList('StudyDate', '{if $params.orderCol=="StudyDate" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Study date</a></span>
 			</th>
 
 			<th>Study time</th>
@@ -80,7 +80,7 @@ jq/ui/css/jquery-ui-1.7.3.custom.css
 				{* {if $smarty.session.dataDeleteFlg}<td><input type="checkbox" name="sidList[]" value="{$item[0]|escape}"></td>{/if} *}
 				<td class="al-l"><a href="study_list.php?filterPtID={$item[2]|escape}">{$item[2]|escape}</td>
 				<td class="al-l">{$item[3]|escape}</td>
-				<td class="al-r">{$item[4]|escape}</td>
+				<td>{$item[4]|escape}</td>
 				<td>{$item[5]|escape}</td>
 				<td class="al-r">{$item[6]|escape}</td>
 				<td>{$item[7]|escape}</td>

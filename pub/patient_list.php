@@ -31,9 +31,9 @@
 				"oterwise" => "all"),
 			"orderCol" => array(
 				"type" => "select",
-				"options" => array('Name', 'Sex', 'Birth date', 'Patient ID'),
-				"default"=> 'Patient ID',
-				"oterwise" => 'Patient ID'),
+				"options" => array('Name', 'Sex', 'BirthDate', 'PatientID'),
+				"default"=> 'PatientID',
+				"oterwise" => 'PatientID'),
 			"orderMode" => array(
 				"type" => "select",
 				"options" => array('DESC', 'ASC'),
@@ -110,10 +110,10 @@
 			{
 				case "Name":		$orderColStr = 'patient_name ' . $params['orderMode'];  break;
 				case "Sex":			$orderColStr = 'sex '          . $params['orderMode'];  break;
-				case "Birth date":	$orderColStr = 'birth_date '   . $params['orderMode'];  break;
+				case "BirthDate":	$orderColStr = 'birth_date '   . $params['orderMode'];  break;
 				default:
 					$orderColStr = 'patient_id ' . $params['orderMode'];
-					$params['orderCol'] = "Patient ID";
+					$params['orderCol'] = "PatientID";
 					break;
 			}
 

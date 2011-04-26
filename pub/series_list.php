@@ -80,8 +80,10 @@
 				"errorMes" => "'Tag' is invalid."),
 			"orderCol" => array(
 				"type" => "select",
-				"options" => array('Patient ID','Name','Age','Sex','ID','Modality','Img.','Desc.','Date','Time'),
-				"default" => 'Date'),
+				"options" => array('PatientID','Name','Age','Sex','SeriesID',
+								   'Modality','ImgNum','SeriesDesc','Date','Time'),
+				"default" => 'Date',
+				"otherwise" => 'Date'),
 			"orderMode" => array(
 				"type" => "select",
 				"options" => array('DESC', 'ASC'),
@@ -313,14 +315,14 @@
 
 			switch($params['orderCol'])
 			{
-				case "Patient ID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;
+				case "PpatientID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;
 				case "Name":		$orderColStr = 'pt.patient_name '       . $params['orderMode'];  break;
 				case "Age":			$orderColStr = 'st.age '                . $params['orderMode'];  break;
 				case "Sex":			$orderColStr = 'pt.sex '                . $params['orderMode'];  break;
-				case "ID":          $orderColStr = 'sr.series_number '      . $params['orderMode'];  break;
-				case "Modality":    $orderColStr = 'sr.modality '           . $params['orderMode'];  break;
-				case "Img.":        $orderColStr = 'sr.image_number '       . $params['orderMode'];  break;
-				case "Desc.":       $orderColStr = 'sr.series_description ' . $params['orderMode'];  break;
+				case "SeriesID":	$orderColStr = 'sr.series_number '      . $params['orderMode'];  break;
+				case "Modality":	$orderColStr = 'sr.modality '           . $params['orderMode'];  break;
+				case "ImgNum":		$orderColStr = 'sr.image_number '       . $params['orderMode'];  break;
+				case "SeriesDesc":	$orderColStr = 'sr.series_description ' . $params['orderMode'];  break;
 				default: // Date
 					$orderColStr = 'sr.series_date ' . $params['orderMode'] . ', sr.series_time ' . $params['orderMode'];
 					$params['orderCol'] = ($params['mode'] == 'today') ? 'Time' : 'Date';

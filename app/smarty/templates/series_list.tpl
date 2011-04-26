@@ -66,7 +66,7 @@ css/popup.css
 				<tr>
 					{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
 					<th>
-						{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Patient ID', '{if $params.orderCol=="Patient ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+						{if $params.orderCol=='PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('PatientID', '{if $params.orderCol=="PatientID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 					</th>
 
 					<th>
@@ -78,7 +78,7 @@ css/popup.css
 					</th>
 
 					<th>
-						{if $params.orderCol=='Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Sex', '{if $params.orderCol=="Sex" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Sex</a></span>
+						{if $params.orderCol=='Sex'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Sex', '{if $params.orderCol=="sex" && $params.orderMode=="SSC"}DESC{else}ASC{/if}');">Sex</a></span>
 					</th>
 
 					{if $params.mode!='today'}
@@ -93,7 +93,7 @@ css/popup.css
 					{/if}
 
 					<th>
-						{if $params.orderCol=='ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('ID', '{if $params.orderCol=="ID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">ID</a></span>
+						{if $params.orderCol=='SeriesID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('SeriesID', '{if $params.orderCol=="SeriesID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">ID</a></span>
 					</th>
 
 					<th>
@@ -101,11 +101,11 @@ css/popup.css
 					</th>
 
 					<th>
-						{if $params.orderCol=='Img.'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Img.', '{if $params.orderCol=="Img." && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Img.</a></span>
+						{if $params.orderCol=='ImgNum'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('ImgNum', '{if $params.orderCol=="ImgNum" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Img.</a></span>
 					</th>
 
 					<th>
-						{if $params.orderCol=='Desc.'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('Desc.', '{if $params.orderCol=="Desc." && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Desc.</a></span>
+						{if $params.orderCol=='SeriesDesc'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('SeriesDesc', '{if $params.orderCol=="SeriesDesc" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Desc.</a></span>
 					</th>
 
 					<th>Detail</th>
@@ -126,9 +126,7 @@ css/popup.css
 						<td>{$item[10]|escape}</td>
 						<td class="al-r">{$item[11]|escape}</td>
 						<td class="al-l">{$item[12]|escape}</td>
-						<td>
-							<input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail('{$smarty.session.colorSet}', '{$item[1]|escape}', '{$item[2]|escape}');"/>
-						</td>
+						<td><input name="" type="button" value="show" class="s-btn form-btn" onclick="ShowSeriesDetail({$item[0]|escape});"/></td>
 
 						{* ----- CAD column ----- *}
 						<td class="al-l">

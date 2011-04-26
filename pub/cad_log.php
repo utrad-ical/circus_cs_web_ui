@@ -137,9 +137,9 @@
 				"otherwise"  => "all"),
 			"orderCol" => array(
 				"type" => "select",
-				"options" => array("Patient ID","Name","Age","Sex","Series","CAD","CAD date"),
-				"default" => "CAD date",
-				"otherwise" => "CAD date"),
+				"options" => array("PatientID","Name","Age","Sex","Series","CAD","CADdate"),
+				"default" => "CADdate",
+				"otherwise" => "CADdate"),
 			"orderMode" => array(
 				"type" => "select",
 				"options" => array('DESC', 'ASC'),
@@ -507,10 +507,10 @@
 
 		switch($params['orderCol'])
 		{
-			case "Patient ID":  $orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
-			case "Name":        $orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
-			case "Age":         $orderColStr = 'st.age '          . $params['orderMode'];  break;
-			case "Sex":         $orderColStr = 'pt.sex '          . $params['orderMode'];  break;
+			case "PatientID":	$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
+			case "Name":		$orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
+			case "Age":			$orderColStr = 'st.age '          . $params['orderMode'];  break;
+			case "Sex":			$orderColStr = 'pt.sex '          . $params['orderMode'];  break;
 			case "Series":
 					$orderColStr = 'sr.series_date '.$params['orderMode'].', sr.series_time '.$params['orderMode'];
 					break;
@@ -520,7 +520,7 @@
 					break;
 
 			default:
-					$params['orderCol'] = "CAD date";
+					$params['orderCol'] = "CADdate";
 					$orderColStr = 'el.executed_at '  . $params['orderMode'];
 					break;
 		}

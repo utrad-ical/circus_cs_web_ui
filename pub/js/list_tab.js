@@ -51,24 +51,20 @@ function EditTag(category, sid)
 //--------------------------------------------------------------------------------------------------
 function ShowStudyList(idNum, encryptedPtID)
 {
-	location.href = 'study_list.php?mode=patient&encryptedPtID=' + encodeURIComponent(encryptedPtID);
+	location.href = 'study_list.php?mode=patient&encryptedPtID='
+                  + encodeURIComponent(encryptedPtID);
 }
 
 function ChangeOrderOfPatientList(orderCol, orderMode)
 {
-	var id      = $("#hiddenFilterPtID").val();
-	var name    = $("#hiddenFilterPtName").val();
-	var sex     = $("#hiddenFfilterSex").val();
-	var showing = $("#hiddenShowing").val();
+	var params = { orderCol: orderCol,
+				   orderMode: orderMode,
+				   filterPtID: $("#hiddenFilterPtID").val(),
+				   filterPtName: $("#hiddenFilterPtName").val(),
+				   filterSex: $("#hiddenFilterSex").val(),
+				   showing: $("#hiddenShowing").val() };
 
-	var address = 'patient_list.php?orderCol=' + encodeURIComponent(orderCol)
-                + '&orderMode=' + encodeURIComponent(orderMode);
-
-	if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
-	if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
-	if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
-	if(showing != 10)             address += '&showing=' + encodeURIComponent(showing);
-
+	var address = 'patient_list.php?' + $.param(params);
 	location.replace(address);
 }
 //--------------------------------------------------------------------------------------------------
@@ -85,42 +81,29 @@ function ShowSeriesList(idNum, studyInstanceUID)
 
 function ChangeOrderOfStudyList(orderCol, orderMode)
 {
-	var id         = $("#encryptedPtID").val();
-	var name       = $("#hiddenFilterPtName").val();
-	var sex        = $("#hiddenFilterSex").val();
-	var ageMin     = $("#hiddenFilterAgeMin").val();
-	var ageMax     = $("#hiddenFilterAgeMax").val();
-	var modality   = $("#hiddenFilterModality").val();
-	var stDateFrom = $("#hiddenStDateFrom").val();
-	var stDateTo   = $("#hiddenStDateTo").val();
-	var stTimeTo   = $("#hiddenStTimeTo").val();
-	var showing    = $("#hiddenShowing").val();
-
-	var address = 'study_list.php?'
+	var params = { orderCol: orderCol,
+                   orderMode:orderMode,
+                   filterModality: $("#hiddenFilterModality").val(),
+				   filterAgeMin: $("#hiddenFilterAgeMin").val(),
+	               filterAgeMax: $("#hiddenFilterAgeMax").val(),
+	               stDateFrom: $("#hiddenStDateFrom").val(),
+	               stDateTo: $("#hiddenStDateTo").val(),
+	               stTimeTo: $("#hiddenStTimeTo").val(),
+	               showing: $("#hiddenShowing").val() };
 
 	if($("#mode").val() == 'patient')  
 	{
-		address += 'mode=patient&orderCol=' + encodeURIComponent(orderCol)
-                +  '&orderMode=' + encodeURIComponent(orderMode)
-                +  '&encryptedPtID=' + encodeURIComponent($("#encryptedPtID").val());
+		params.mode = "patient";
+        params.encryptedPtID = $("#encryptedPtID").val();
 	}
 	else
 	{
-		address += 'orderCol=' + encodeURIComponent(orderCol)
-                +  '&orderMode=' + encodeURIComponent(orderMode);
-		if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
-		if(name != "")                address += '&filterPtName=' + encodeURIComponent(name);
-		if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
+		params.filterPtID   = $("#encryptedPtID").val();
+		params.filterPtName = $("#hiddenFilterPtName").val();
+		params.filterSex    = $("#hiddenFilterSex").val();
 	}
 
-	if(modality != "all")	address += '&filterModality=' + encodeURIComponent(modality);
-	if(ageMin != "")		address += '&filterAgeMin=' + encodeURIComponent(ageMin);
-	if(ageMax != "")		address += '&filterAgeMax=' + encodeURIComponent(ageMax);
-	if(stDateFrom != "")	address += '&stDateFrom=' + encodeURIComponent(stDateFrom);
-	if(stDateTo != "")		address += '&stDateTo=' + encodeURIComponent(stDateTo);
-	if(stTimeTo != "")		address += '&stTimeTo=' + encodeURIComponent(stTimeTo);
-	if(showing != 10)		address += '&showing=' + encodeURIComponent(showing);
-
+	var address = 'study_list.php?' + $.param(params);
 	location.replace(address);
 }
 
@@ -132,54 +115,38 @@ function ChangeOrderOfStudyList(orderCol, orderMode)
 //--------------------------------------------------------------------------------------------------
 function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 {
-	var id          = $("#hiddenFilterPtID").val();
-	var name        = $("#hiddenFilterPtName").val();
-	var sex         = $("#hiddenFilterSex").val();
-	var ageMin      = $("#hiddenFilterAgeMin").val();
-	var ageMax      = $("#hiddenFilterAgeMax").val();
-	var modality    = $("#hiddenFilterModality").val();
-	var srDateFrom  = $("#hiddenSrDateFrom").val();
-	var srDateTo    = $("#hiddenSrDateTo").val();
-	var srTimeTo    = $("#hiddenSrTimeTo").val();
-	var description = $("#hiddenFilterSrDescription").val();
-	var showing     = $("#hiddenShowing").val();
+	var params = { orderCol:       orderCol,
+                   orderMode:      orderMode,
+                   filterModality:      $("#hiddenFilterModality").val(),
+                   filterSrDescription: $("#hiddenFilterSrDescription").val(),
+	               showing:             $("#hiddenShowing").val() };
 
-	var address = 'series_list.php?'
-
-	if(mode == 'study')  
+	if(mode == 'study')
 	{
-		address += 'mode=study&orderCol=' + encodeURIComponent(orderCol)
-                +  '&orderMode=' + encodeURIComponent(orderMode)
-                +  '&studyInstanceUID=' + encodeURIComponent($("#studyInstanceUID").val());
+		params.mode = 'study';
+        params.studyInstanceUID = $("#studyInstanceUID").val();
 	}
 	else
 	{
 		if(mode == 'today')
 		{
-			address += 'mode=today&';
+			params.mode = 'today';
 		}
-		address += 'orderCol=' + encodeURIComponent(orderCol)
-		        +  '&orderMode=' + encodeURIComponent(orderMode);
+		else
+		{
+			params.srDateFrom = $("#hiddenSrDateFrom").val();
+			params.srDateTo   = $("#hiddenSrDateTo").val();
+			params.srTimeTo   = $("#hiddenSrTimeTo").val();
+		}
 
-		if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
-		if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
-		if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
-		if(ageMin != "")              address += '&filterAgeMin=' + encodeURIComponent(ageMin);
-		if(ageMax != "")              address += '&filterAgeMax=' + encodeURIComponent(ageMax);
+		params.filterPtID   = $("#hiddenFilterPtID").val();
+		params.filterPtName = $("#hiddenFilterPtName").val();
+		params.filterSex    = $("#hiddenFilterSex").val();
+		params.filterAgeMin = $("#hiddenFilterAgeMin").val();
+		params.filterAgeMax = $("#hiddenFilterAgeMax").val();
 	}
 
-	if(mode != 'today')
-	{
-		if(srDateFrom != "")  address += '&srDateFrom=' + encodeURIComponent(srDateFrom);
-		if(srDateTo != "")	  address += '&srDateTo=' + encodeURIComponent(srDateTo);
-		if(srTimeTo != "")	  address += '&srTimeTo=' + encodeURIComponent(srTimeTo);
-	}
-
-	if(modality != "all")   address += '&filterModality=' + encodeURIComponent(modality);
-	if(description != "")	address += '&filterSrDescription=' + encodeURIComponent(description);
-	if(showing != 10)		address += '&showing=' + encodeURIComponent(showing);
-
-	return address;
+	return  'series_list.php?' + $.param(params);
 }
 
 
@@ -189,13 +156,12 @@ function ChangeOrderOfSeriesList(orderCol, orderMode)
 }
 
 
-function ShowSeriesDetail(colorSet, studyInstanceUID, seriesInstanceUID)
+function ShowSeriesDetail(sid)
 {
-	var mode    = $("#mode").val();
+	var params = { sid: sid,
+                   listTabName: ($("#mode").val() == 'today') ? "Today's series" : "Series list" };
 
-	location.href = "series_detail.php?studyInstanceUID=" + encodeURIComponent(studyInstanceUID)
-                  + "&seriesInstanceUID=" + encodeURIComponent(seriesInstanceUID)
-                  + "&listTabName=" + ((mode == 'today') ? "Today's series" : "Series list");
+	location.href = "series_detail.php?" + $.param(params);
 }
 
 
@@ -203,16 +169,13 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 {
 	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
-	var jobID = tmpStr[4];
 
-	var address = 'cad_results/show_cad_results.php?jobID=' + jobID;
+	var params = { jobID:   tmpStr[4],
+                   srcList: ($("#mode").val()=="today") ? 'todaysSeries' : 'series' };
 	
-	if(personalFeedbackFlg == 1)  address += '&feedbackMode=personal';
+	if(personalFeedbackFlg == 1)  params.feedbackMode = 'personal';
 
-	if($("#mode").val() == "today")		address += '&srcList=todaysSeries';
-	else								address += '&srcList=series';
-	
-	location.href = address;
+	location.href = 'cad_results/show_cad_results.php?' + $.param(params);
 }
 
 function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
@@ -286,78 +249,48 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 //--------------------------------------------------------------------------------------------------
 function ShowCADResultFromCADLog(jobID, personalFBFlg)
 {
-	var address = 'cad_results/show_cad_results.php'
-                + '?jobID=' + encodeURIComponent(jobID);
-	
-	if(personalFBFlg == 1)  address += '&feedbackMode=personal';
+	var params = { jobID:   jobID,
+                   srcList: ($("#mode").val() == "today") ? 'todaysCAD' : 'cadLog' };
 
-	if($("#mode").val() == "today")		address += '&srcList=todaysCAD';
-	else								address += '&srcList=cadLog';
+	if(personalFBFlg == 1)  params.feedbackMode = 'personal';
 
-	location.href = address;
+	location.href = 'cad_results/show_cad_results.php' + $.param(params);
 }
 
 
 function ChangeOrderOfCADList(orderCol, orderMode)
 {
-	var mode          = $("#mode").val();
-	var id            = $("#hiddenFilterPtID").val();
-	var name          = $("#hiddenFilterPtName").val();
-	var sex           = $("#hiddenFilterSex").val();
-	var ageMin        = $("#hiddenFilterAgeMin").val();
-	var ageMax        = $("#hiddenFilterAgeMax").val();
-	var modality      = $("#hiddenFilterModality").val();
-	var srDateFrom    = $("#hiddenSrDateFrom").val();
-	var srDateTo      = $("#hiddenSrDateTo").val();
-	var srTimeTo      = $("#hiddenSrTimeTo").val();
-	var cadDateFrom   = $("#hiddenCadDateFrom").val();
-	var cadDateTo     = $("#hiddenCadDateTo").val();
-	var cadTimeTo     = $("#hiddenCadTimeTo").val();
-	var filterCadID   = $("#hiddenFilterCadID ").val();
-	var filterCAD     = $("#hiddenFilterCAD").val();
-	var filterVersion = $("#hiddenFilterVersion").val();
-	var personalFB    = $("#hiddenFilterPersonalFB").val();
-	var consensualFB  = $("#hiddenFilterConsensualFB").val();
-	var filterTP      = $("#hiddenFilterTP").val();
-	var filterFN      = $("#hiddenFilterFN").val();
-	var showing       = $("#hiddenShowing").val();
-
-	var address = 'cad_log.php?'
+	var params = { orderCol:       orderCol,
+                   orderMode:      orderMode,
+				   filterPtID:     $("#hiddenFilterPtID").val(),
+				   filterPtName:   $("#hiddenFilterPtName").val(),
+				   filterSex:      $("#hiddenFilterSex").val(),
+                   filterModality: $("#hiddenFilterModality").val(),
+				   filterAgeMin:   $("#hiddenFilterAgeMin").val(),
+	               filterAgeMax:   $("#hiddenFilterAgeMax").val(),
+	               srDateFrom:     $("#hiddenSrDateFrom").val(),
+	               srDateTo:       $("#hiddenSrDateTo").val(),
+	               srTimeTo:       $("#hiddenSrTimeTo").val(),
+   	               filterCadID:    $("#hiddenFilterCadID").val(),
+	               filterCAD:      $("#hiddenFilterCAD").val(),
+	               filterVersion:  $("#hiddenFilterVersion").val(),
+                   personalFB:     $("#hiddenFilterPersonalFB").val(),
+                   consensualFB:   $("#hiddenFilterConsensualFB").val(), 
+                   filterTP:       $("#hiddenFilterTP").val(),
+                   filterFN:       $("#hiddenFilterFN").val(),
+	               showing:        $("#hiddenShowing").val() };
 
 	if(mode == 'today')
 	{
-		address += 'mode=today&';
+		params.mode = 'today';
 	}
-	
-	address += 'orderCol=' + encodeURIComponent(orderCol)
-            +  '&orderMode=' + encodeURIComponent(orderMode);
-
-	if(id != "")	              address += '&filterPtID=' + encodeURIComponent(id);
-	if(name != "")	              address += '&filterPtName=' + encodeURIComponent(name);
-	if(sex == "M" || sex == "F")  address += '&filterSex=' + encodeURIComponent(sex);
-	if(ageMin != "")              address += '&filterAgeMin=' + encodeURIComponent(ageMin);
-	if(ageMax != "")              address += '&filterAgeMax=' + encodeURIComponent(ageMax);
-
-	if(mode != 'today')
+	else
 	{
-		if(cadDateFrom != "")	address += '&cadDateFrom=' + encodeURIComponent(cadDateFrom);
-		if(cadDateTo != "")		address += '&cadDateTo=' + encodeURIComponent(cadDateTo);
-		if(cadTimeTo != "")		address += '&cadTimeTo=' + encodeURIComponent(cadTimeTo);
+		params.cadDateFrom = $("#hiddenCadDateFrom").val();
+		params.cadDateTo   = $("#hiddenCadDateTo").val();
+		params.cadTimeTo   = $("#hiddenCadTimeTo").val();
 	}
 
-	if(srDateFrom != "")		address += '&srDateFrom=' + encodeURIComponent(srDateFrom);
-	if(srDateTo != "")			address += '&srDateTo=' + encodeURIComponent(srDateTo);
-	if(srTimeTo != "")			address += '&srTimeTo=' + encodeURIComponent(srTimeTo);
-	if(modality != "all")       address += '&filterModality=' + encodeURIComponent(modality);
-	if(showing != 10)		    address += '&showing=' + encodeURIComponent(showing);
-	if(filterCadID != "all")    address += '&filterCadID=' + encodeURIComponent(filterCadID);
-	if(filterCAD != "all")	    address += '&filterCAD=' + encodeURIComponent(filterCAD);
-	if(filterVersion != "all")  address += '&filterVersion=' + encodeURIComponent(filterVersion);
-	if(personalFB != "all")     address += '&personalFB=' + encodeURIComponent(personalFB);
-	if(consensualFB != "all")	address += '&consensualFB=' + encodeURIComponent(consensualFB);
-	if(filterTP != "all")       address += '&filterTP=' + encodeURIComponent(filterTP);
-	if(filterFN != "all")       address += '&filterFN=' + encodeURIComponent(filterFN);
-
-	location.href = address;
+	location.href = 'cad_log.php?' + + $.param(params);
 }
 //--------------------------------------------------------------------------------------------------

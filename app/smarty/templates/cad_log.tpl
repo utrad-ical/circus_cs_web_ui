@@ -73,7 +73,7 @@ css/popup.css
 			<thead>
 				<tr>
 					<th rowspan="2">
-						{if $params.orderCol=='Patient ID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('Patient ID', '{if $params.orderCol=='Patient ID' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
+						{if $params.orderCol=='PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('PatientID', '{if $params.orderCol=='PatientID' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 					</th>
 
 					<th rowspan="2">
@@ -96,7 +96,7 @@ css/popup.css
 					</th>
 
 					<th rowspan="2">
-						{if $params.orderCol=='CAD date'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CAD date', '{if $params.orderCol=='CAD date' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
+						{if $params.orderCol=='CADdate'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('CADdate', '{if $params.orderCol=='CADdate' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">CAD date</a></span>
 					</th>
 
 					{if $smarty.session.colorSet != "guest"}<th rowspan="2">Executed<br />by</th>{/if}

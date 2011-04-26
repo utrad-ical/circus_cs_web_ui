@@ -68,9 +68,9 @@
 				"errorMes" => "'Study time' is invalid."),
 			"orderCol" => array(
 				"type" => "select",
-				"options" => array('Patient ID','Name','Age','Sex','ID','Study ID','Study date'),
-				"default" => 'Study date',
-				"otherwise" => 'Study date'),
+				"options" => array('PatientID','Name','Age','Sex','Modality','StudyID','StudyDate'),
+				"default" => 'StudyDate',
+				"otherwise" => 'StudyDate'),
 			"orderMode" => array(
 				"type" => "select",
 				"options" => array('DESC', 'ASC'),
@@ -251,15 +251,15 @@
 
 			switch($params['orderCol'])
 			{
-				case "Patient ID":		$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
+				case "PatientID":		$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
 				case "Name":			$orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
 				case "Age":				$orderColStr = 'st.age '          . $params['orderMode'];  break;
 				case "Sex":				$orderColStr = 'pt.sex '          . $params['orderMode'];  break;
 				case "Modality":		$orderColStr = 'st.modality '     . $params['orderMode'];  break;
-				case "Study ID":		$orderColStr = 'st.study_id" '    . $params['orderMode'];  break;
+				case "StudyID":			$orderColStr = 'st.study_id '     . $params['orderMode'];  break;
 				default:
 					$orderColStr = 'st.study_date ' . $params['orderMode'] . ', st.study_time ' . $params['orderMode'];
-					$params['orderCol']    = 'Study date';
+					$params['orderCol']    = 'StudyDate';
 					break;
 			}
 
