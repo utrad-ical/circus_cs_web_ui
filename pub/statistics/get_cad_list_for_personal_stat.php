@@ -7,11 +7,12 @@
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		$sqlStr = "SELECT DISTINCT el.plugin_name"
+		$sqlStr = "SELECT DISTINCT pm.plugin_name"
 				. " FROM executed_plugin_list el, plugin_master pm, plugin_cad_master cm"
-				. " WHERE el.plugin_name=pm.plugin_name AND el.version=pm.version"
-				. " AND cm.plugin_id=pm.plugin_id AND cm.result_type=1"
-				. " ORDER BY el.plugin_name ASC";
+				. " WHERE pm.plugin_id=el.plugin_id"
+				. " AND cm.plugin_id=pm.plugin_id"
+				. " AND cm.result_type=1"
+				. " ORDER BY pm.plugin_name ASC";
 
 		$resultCad = DBConnector::query($sqlStr, null, 'ALL_COLUMN');
 
@@ -21,7 +22,9 @@
 			{
 				$cadList[$key][0] = $item;
 
-				$sqlStr  = "SELECT DISTINCT version FROM executed_plugin_list WHERE plugin_name=?";
+				$sqlStr = "SELECT DISTINCT pm.version"
+						. " FROM executed_plugin_list el, plugin_master pm"
+						. " WHERE pm.plugin_name=? AND el.plugin_id=pm.plugin_id";
 				$resultVersion = DBConnector::query($sqlStr, $item, 'ALL_COLUMN');
 
 				$cadList[$key][1] = implode('^', $resultVersion);

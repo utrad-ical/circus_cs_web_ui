@@ -123,21 +123,23 @@
 			//--------------------------------------------------------------------------------------------------------------
 			if($userID == "all")
 			{
-				$sqlStr = "SELECT DISTINCT lf.entered_by"
-						. " FROM lesion_classification lf, executed_plugin_list el, executed_series_list es, series_list sr"
-						. " WHERE lf.job_id=el.job_id AND es.job_id=el.job_id"
-						. " AND el.plugin_name=?";
+				$sqlStr = "SELECT DISTINCT fl.entered_by"
+						. " FROM executed_plugin_list el, feedback_list fl, plugin_master pm,"
+						. " executed_series_list es, series_list sr"
+						. " WHERE lf.job_id=el.job_id"
+						. " AND pm.job_id=el.job_id"
+						. " AND es.job_id=el.job_id"
+						. " AND pm.plugin_name=?";
 
 				$sqlParams[] = $params['cadName'];
 
 				if($params['version'] != "all")
 				{
-					$sqlStr.= " AND el.version=?";
+					$sqlStr.= " AND pm.version=?";
 					$sqlParams[] = $params['version'];
 				}
 
-				$sqlStr .= " AND es.series_id=0"
-						.  " AND sr.series_instance_uid = es.series_instance_uid";
+				$sqlStr .= " AND es.series_id=0 AND sr.sid = es.series_sid";
 
 				if($params['dateFrom'] != "")
 				{
@@ -151,8 +153,8 @@
 					$sqlParams[] = $params['dateTo'];
 				}
 
-				$sqlStr .= " AND lf.is_consensual='f' AND lf.interrupted='f'"
-						.  "ORDER BY lf.entered_by ASC";
+				$sqlStr .= " AND fl.is_consensual='f' AND fl.status=1"
+						.  "ORDER BY fl.entered_by ASC";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
@@ -184,33 +186,39 @@
 				$sqlParamCntEval = array();
 				$sqlParamCntFN   = array();
 
-				$sqlStrCntEval = "SELECT DISTINCT(lf.job_id) FROM executed_plugin_list el,"
-							   . " executed_series_list es, lesion_classification lf, series_list sr";
-
-				$sqlStrCntFN  = "SELECT SUM(fn.false_negative_num) FROM executed_plugin_list el,"
-							  . " executed_series_list es, fn_count fn, series_list sr";
+				$sqlStrCntEval = "SELECT DISTINCT(el.job_id)"
+							   . " FROM executed_plugin_list el, executed_series_list es,"
+							   . " plugin_master pm, feedback_list fl, candidate_classification cc,"
+							   . " series_list sr";
 
 				if($params['version'] != "all")	$sqlStrCntEval .= ', "' . $resultTableName . '" cad';
 
-				$sqlStrCntEval .= " WHERE el.plugin_name=?";
-				$sqlStrCntFN   .= " WHERE el.plugin_name=?";
+				$sqlStrCntEval .= " WHERE pm.plugin_id=el.plugin_id"
+							   .  " AND fl.job_id=el.job_id AND cc.fb_id=fl.fb_id"
+							   .  " AND es.job_id=el.job_id AND es.series_id=0"
+						       .  " AND sr.sid = es.series_sid"
+							   .  " AND pm.plugin_name=?";
+
+				$sqlStrCntFN  = "SELECT SUM(fn.fn_num)"
+							  . " FROM executed_plugin_list el, executed_series_list es,"
+							  . " plugin_master pm, feedback_list fl, fn_count fn, series_list sr"
+							  . " WHERE pm.plugin_id=el.plugin_id"
+							  . " AND fl.job_id=el.job_id AND fn.fb_id=fl.fb_id"
+							  . " AND es.job_id=el.job_id AND es.series_id=0"
+							  . " AND sr.sid = es.series_sid"
+							  . " AND pm.plugin_name=?";
 
 				$sqlParamCntEval[] = $params['cadName'];
 				$sqlParamCntFN[]   = $params['cadName'];
 
 				if($params['version'] != "all")
 				{
-					$sqlStrCntEval .= " AND el.version=?";
-					$sqlStrCntFN   .= " AND el.version=?";
+					$sqlStrCntEval .= " AND pm.version=?";
+					$sqlStrCntFN   .= " AND pm.version=?";
 
 					$sqlParamCntEval[] = $params['version'];
 					$sqlParamCntFN[]   = $params['version'];
 				}
-
-				$sqlStrCntEval .= " AND es.job_id=el.job_id AND es.series_id=0"
-				               .  " AND sr.series_instance_uid = es.series_instance_uid";
-				$sqlStrCntFN   .= " AND es.job_id=el.job_id AND es.series_id=0"
-				               .  " AND sr.series_instance_uid = es.series_instance_uid";
 
 				if($params['dateFrom'] != "")
 				{
@@ -230,25 +238,21 @@
 					$sqlParamCntFN[]   = $params['dateTo'];
 				}
 
-				$sqlStrCntEval .= " AND lf.job_id=el.job_id";
-
 				if($params['version'] != "all")
 				{
 				  	$sqlStrCntEval .= " AND cad.job_id=el.job_id"
-								   .  " AND (cad.sub_id =lf.lesion_id OR lf.lesion_id=0)"
+								   .  " AND (cad.sub_id =cc.candidate_id OR cc.candidate_id=0)"
 								   .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 
 					$sqlParamCntEval[] = $minVolume;
 					$sqlParamCntEval[] = $maxVolume;
 				}
 
-				$sqlStrCntEval .= " AND lf.entered_by=?"
-					           .  " AND lf.is_consensual ='f' AND lf.interrupted='f'";
+				$sqlStrCntEval .= " AND fl.entered_by=?"
+					           .  " AND fl.is_consensual ='f' AND fl.status=1";
 
-				$sqlStrCntFN .= " AND fn.job_id=el.job_id"
-					           .  " AND fn.entered_by=?"
-				               .  " AND fn.is_consensual ='f'"
-				               .  " AND fn.status>=1";
+				$sqlStrCntFN .= " AND fl.entered_by=?"
+				             .  " AND fl.is_consensual ='f' AND fl.status=1";
 
 				$sqlParamCntEval[] = $userList[$k];
 				$sqlParamCntFN[]   = $userList[$k];
@@ -274,23 +278,28 @@
 
 					//------------------------------------------------------------------------------------------------
 					$sqlParams = array();
-					$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el,"
-					        . " executed_series_list es, lesion_classification lf, series_list sr";
+					$sqlStr = "SELECT cc.evaluation, COUNT(*)"
+							. " FROM executed_plugin_list el, executed_series_list es,"
+							. " plugin_master pm, feedback_list fl, candidate_classification cc,"
+							. " series_list sr";
 
 					if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
 
-					$sqlStr .= " WHERE el.plugin_name=?";
+					$sqlStr .= " WHERE el.job_id =?"
+							.  " AND fl.job_id=el.job_id AND cc.fb_id=fl.fb_id"
+							.  " AND es.job_id=el.job_id AND es.series_id=0"
+							.  " AND sr.sid = es.series_sid"
+							.  " AND pm.plugin_id=el.plugin_id"
+							.  " AND pm.plugin_name=?";
+
+					$sqlParams[] = $jobID;
 					$sqlParams[] = $params['cadName'];
 
 					if($params['version'] != "all")
 					{
-						$sqlStr.= " AND el.version=?";
+						$sqlStr.= " AND pm.version=?";
 						$sqlParams[] = $params['version'];
 					}
-
-					$sqlStr .= " AND es.job_id=el.job_id"
-							.  " AND es.series_id=0"
-							.  " AND sr.series_instance_uid = es.series_instance_uid";
 
 					if($params['dateFrom'] != "")
 					{
@@ -304,20 +313,17 @@
 						$sqlParams[] = $params['dateTo'];
 					}
 
-					$sqlStr .= " AND el.job_id =? AND lf.job_id=el.job_id";
-					$sqlParams[] = $jobID;
-
 					if($params['version'] != "all")
 					{
-						$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =lf.lesion_id"
+						$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =cc.candidate_id"
 							    .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 						$sqlParams[] = $minVolume;
 						$sqlParams[] = $maxVolume;
 					}
 
-					$sqlStr .= " AND lf.entered_by=?"
-					        .  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
-					        .  " GROUP BY lf.evaluation;";
+					$sqlStr .= " AND fl.entered_by=?"
+					        .  " AND fl.is_consensual ='f' AND fl.status=1"
+					        .  " GROUP BY cc.evaluation;";
 					$sqlParams[] = $userList[$k];
 
 					$stmtDetail = $pdo->prepare($sqlStr);
@@ -329,81 +335,81 @@
 						$totalNum += $result[1];
 					}
 
-					if($evaluation["2"][0] > 0)
-					{
-						$sqlParams = array();
-
-						$sqlStr = "SELECT lf.lesion_id FROM executed_plugin_list el,"
-						        . " executed_series_list es, lesion_classification lf, series_list sr";
-
-						if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
-
-						$sqlStr .= " WHERE el.plugin_name=?";
-						$sqlParams[] = $params['cadName'];
-
-						if($params['version'] != "all")
-						{
-							$sqlStr.= " AND el.version=?";
-							$sqlParams[] = $params['version'];
-						}
-
-						$sqlStr .= " AND es.job_id=el.job_id"
-								.  " AND es.series_id=0"
-								.  " AND sr.series_instance_uid = es.series_instance_uid";
-
-						if($params['dateFrom'] != "")
-						{
-							$sqlStr .= " AND sr.series_date>=?";
-							$sqlParams[] = $params['dateFrom'];
-						}
-						if($params['dateTo'] != "")
-						{
-							$sqlStr .= " AND sr.series_date<=?";
-							$sqlParams[] = $params['dateTo'];
-						}
-
-						$sqlStr .= " AND el.job_id =? AND lf.job_id=el.job_id";
-						$sqlParams[] = $jobID;
-
-						if($params['version'] != "all")
-						{
-							$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =lf.lesion_id"
-								    .  " AND cad.volume_size>=? AND cad.volume_size<=?";
-							$sqlParams[] = $minVolume;
-							$sqlParams[] = $maxVolume;
-						}
-
-						$sqlStr .= " AND lf.entered_by=?"
-						        .  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
-						        .  " AND lf.evaluation=2";
-						$sqlParams[] = $userList[$k];
-
-						//var_dump($sqlStrCntEval);
-						//var_dump($sqlParamCntEval);
-
-						$stmtDetail = $pdo->prepare($sqlStr);
-						$stmtDetail->execute($sqlParams);
-
-						while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
-						{
-							$sqlStr = "SELECT evaluation FROM lesion_classification"
-									. " WHERE job_id=? AND lesion_id=?"
-									. " AND is_consensual='t' AND interrupted='f';";
-
-							$stmtEvalDetail = $pdo->prepare($sqlStr);
-							$stmtEvalDetail->execute(array($jobID, $result[0]));
-
-							if($stmtEvalDetail->rowCount() > 0)
-							{
-								$tmp = $stmtEvalDetail->fetchColumn();
-
-								if($tmp > 0)       $detailMissedTP["TP"]++;
-								else if($tmp < 0)  $detailMissedTP["FP"]++;
-								else if($tmp == 0) $detailMissedTP["pending"]++;
-							}
-							else  $detailMissedTP["pending"]++;
-						}
-					}
+				//	if($evaluation["2"][0] > 0)
+				//	{
+				//		$sqlParams = array();
+				//
+				//						$sqlStr = "SELECT lf.lesion_id FROM executed_plugin_list el,"
+				//		        . " executed_series_list es, lesion_classification lf, series_list sr";
+//
+//						if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
+//
+//						$sqlStr .= " WHERE el.plugin_name=?";
+//						$sqlParams[] = $params['cadName'];
+//
+//						if($params['version'] != "all")
+//						{
+//							$sqlStr.= " AND el.version=?";
+//							$sqlParams[] = $params['version'];
+//						}
+//
+//						$sqlStr .= " AND es.job_id=el.job_id"
+//								.  " AND es.series_id=0"
+//								.  " AND sr.series_instance_uid = es.series_instance_uid";
+//
+//						if($params['dateFrom'] != "")
+//						{
+//							$sqlStr .= " AND sr.series_date>=?";
+//							$sqlParams[] = $params['dateFrom'];
+//						}
+//						if($params['dateTo'] != "")
+//						{
+//							$sqlStr .= " AND sr.series_date<=?";
+//							$sqlParams[] = $params['dateTo'];
+//						}
+//
+//						$sqlStr .= " AND el.job_id =? AND lf.job_id=el.job_id";
+//						$sqlParams[] = $jobID;
+//
+//						if($params['version'] != "all")
+//						{
+//							$sqlStr .= " AND cad.job_id=el.job_id AND cad.sub_id =lf.lesion_id"
+//								    .  " AND cad.volume_size>=? AND cad.volume_size<=?";
+//							$sqlParams[] = $minVolume;
+//							$sqlParams[] = $maxVolume;
+//						}
+//
+//						$sqlStr .= " AND lf.entered_by=?"
+//						        .  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
+//						        .  " AND lf.evaluation=2";
+//						$sqlParams[] = $userList[$k];
+//
+//						//var_dump($sqlStrCntEval);
+//						//var_dump($sqlParamCntEval);
+//
+//						$stmtDetail = $pdo->prepare($sqlStr);
+//						$stmtDetail->execute($sqlParams);
+//
+//						while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
+//						{
+//							$sqlStr = "SELECT evaluation FROM lesion_classification"
+//									. " WHERE job_id=? AND lesion_id=?"
+//									. " AND is_consensual='t' AND interrupted='f';";
+//
+//							$stmtEvalDetail = $pdo->prepare($sqlStr);
+//							$stmtEvalDetail->execute(array($jobID, $result[0]));
+//
+//							if($stmtEvalDetail->rowCount() > 0)
+//							{
+//								$tmp = $stmtEvalDetail->fetchColumn();
+//
+//								if($tmp > 0)       $detailMissedTP["TP"]++;
+//								else if($tmp < 0)  $detailMissedTP["FP"]++;
+//								else if($tmp == 0) $detailMissedTP["pending"]++;
+//							}
+//							else  $detailMissedTP["pending"]++;
+//						}
+//					}
 					//------------------------------------------------------------------------------------------------
 				} // end while
 
@@ -451,20 +457,23 @@
 					{
 						$sqlParams = array($minVolume, $maxVolume, $params['cadName'], $params['version'], $userList[0]);
 
-						$sqlStr = "SELECT el.job_id, lf.evaluation, cad.location_x, cad.location_y, cad.location_z"
-								. " FROM executed_plugin_list el, executed_series_list es, series_list sr, "
-								. $resultTableName . " cad, lesion_classification lf"
+						$sqlStr = "SELECT el.job_id, cc.evaluation, cad.location_x, cad.location_y, cad.location_z"
+								. " FROM executed_plugin_list el, executed_series_list es,"
+								. " feedback_list fl, candidate_classification cc, plugin_master pm,"
+								. " series_list sr, " . $resultTableName . " cad"
 								. " WHERE el.job_id=es.job_id"
 								. " AND el.job_id=cad.job_id"
-								. " AND el.job_id=lf.job_id"
-								. " AND cad.sub_id=lf.lesion_id"
+								. " AND el.job_id=fl.job_id"
+								. " AND cc.fb_id=fl.fb_id"
+								. " AND cad.sub_id=cc.candidate_id"
 								. " AND cad.volume_size>=?"
 								. " AND cad.volume_size<=?"
 								. " AND es.series_id=0"
-								. " AND es.series_instance_uid=sr.series_instance_uid"
-								. " AND el.plugin_name=? AND el.version=?"
-								. " AND lf.is_consensual='f' AND lf.interrupted='f'"
-								. " AND lf.entered_by=?";
+								. " AND es.series_sid=sr.sid"
+								. " AND pm.plugin_id=el.plugin_id"
+								. " AND pm.plugin_name=? AND pm.version=?"
+								. " AND fl.is_consensual='f' AND fl.status=1"
+								. " AND fl.entered_by=?";
 
 						if($params['dateFrom'] != "")
 						{
@@ -478,7 +487,7 @@
 							$sqlParams[] = $params['dateTo'];
 						}
 
-						$sqlStr .= "ORDER BY lf.evaluation ASC, el.job_id ASC, lf.lesion_id ASC";
+						$sqlStr .= "ORDER BY cc.evaluation ASC, el.job_id ASC, cc.candidate_id ASC";
 
 						$stmt = $pdo->prepare($sqlStr);
 						$stmt->execute($sqlParams);
@@ -503,9 +512,9 @@
 							$attrArr = $stmtAttr->fetch(PDO::FETCH_NUM);
 
 							$tmpDataArr[] = $result['evaluation'];
-							$tmpDataArr[] = $result['pos_x'];
-							$tmpDataArr[] = $result['pos_y'];
-							$tmpDataArr[] = $result['pos_z'];
+							$tmpDataArr[] = (real)($result['location_x'] - $attrArr[0]) / (real)$attrArr[3];
+							$tmpDataArr[] = (real)($result['location_y'] - $attrArr[1]) / (real)$attrArr[4];
+							$tmpDataArr[] = (real)(($result['location_z'] - $attrArr[6]) - $attrArr[2]) / (real)$attrArr[5];
 						}
 					}
 
