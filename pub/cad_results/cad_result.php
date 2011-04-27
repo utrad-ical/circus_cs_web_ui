@@ -44,18 +44,18 @@ function show_cad_results($job_id, $feedbackMode) {
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
-		'blocks' => $cadResult->getBlocks(),
+		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),
-		'blockContent' => prepare_block_content(),
-		'evalListener' => prepare_eval_listener(),
+		'displayPresenter' => prepare_display_presenter(),
+		'feedbackListener' => prepare_feedback_listener(),
 		'params' => array('toTopDir' => '../')
 	));
 	$smarty->display('cad_results/cad_result.tpl');
 }
 
-function prepare_eval_listener()
+function prepare_feedback_listener()
 {
-	$listener = new SelectionEvalListener();
+	$listener = new SelectionFeedbackListener();
 	$listener->setParameter(array(
 		"selections" => array(
 			array(
@@ -72,14 +72,14 @@ function prepare_eval_listener()
 			)
 		)
 	));
-	$js = 'js/selection_eval_listener.js';
+	$js = $listener->requiringFiles();
 	return $listener;
 }
 
-function prepare_block_content()
+function prepare_display_presenter()
 {
-	$content = new LesionCADBlockContent();
-	return $content;
+	$presenter = new LesionCADDisplayPresenter();
+	return $presenter;
 }
 
 ?>

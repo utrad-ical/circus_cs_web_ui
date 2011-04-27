@@ -6,11 +6,11 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class TextEvalListener extends EvalListener
+class TextFeedbackListener extends FeedbackListener
 {
 	function requiringFiles()
 	{
-		return 'text_eval_listener.js';
+		return 'text_feedback_listener.js';
 	}
 
 	function display($smarty)

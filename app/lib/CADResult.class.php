@@ -96,10 +96,10 @@ class CADResult
 	}
 
 	/**
-	 * Retrieves the list of blocks (such as lesion candidates).
-	 * @return array Array of blocks
+	 * Retrieves the list of displays (such as lesion candidates).
+	 * @return array Array of CAD dispalys
 	 */
-	public function getBlocks()
+	public function getDisplays()
 	{
 		$dummy = array();
 		for ($i = 0; $i < 5; $i++)

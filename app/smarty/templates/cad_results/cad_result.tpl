@@ -23,7 +23,7 @@ js/radio-to-button.js
   </div>
   <div style="clear: both"></div>
 
-{include file="cad_results/lesion_block_layout.tpl"}
+{include file="cad_results/block_layout.tpl"}
 
 
 </div><!-- /cadResult -->

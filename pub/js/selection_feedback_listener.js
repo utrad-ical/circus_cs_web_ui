@@ -1,16 +1,16 @@
 /**
- * Evaluation Listener for selection.
+ * Feedback Listener for selection.
  */
 var evalListener = (function() {
 	var global = {
 		setup: function () {
-			$('.evaluation-area a.radio-to-button').click(function () {
+			$('.feedback-area a.radio-to-button').click(function () {
 				CIRCUSFeedback.change();
 			});
 		},
 		set: function (target, value)
 		{
-			$('.evaluation-area input[type=radio]', target).each(function() {
+			$('.feedback-area input[type=radio]', target).each(function() {
 				if ($(this).val() == value) {
 					$(this).click().trigger('flush');
 				}
@@ -18,21 +18,21 @@ var evalListener = (function() {
 		},
 		get: function (target)
 		{
-			return $('.evaluation-area input[type=radio]:checked', target).val();
+			return $('.feedback-area input[type=radio]:checked', target).val();
 		},
 		validate: function (target)
 		{
-			return $('.evaluation-area input[type=radio]:checked', target).length > 0;
+			return $('.feedback-area input[type=radio]:checked', target).length > 0;
 		},
 		disable: function (target)
 		{
-			$('.evaluation-area input[type=radio]', target)
+			$('.feedback-area input[type=radio]', target)
 				.attr('disabled', 'disabled')
 				.trigger('flush');
 		},
 		enable: function (target)
 		{
-			$('.evaluation-area input[type=radio]', target)
+			$('.feedback-area input[type=radio]', target)
 				.attr('disabled', '')
 				.trigger('flush');
 		}

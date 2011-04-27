@@ -487,7 +487,7 @@ ul.inline li {
 	border-style: solid;
 }
 
-.lesion-block {
+.result-block {
 	display: inline-block;
 	margin: 5px;
 	padding: 2px 2px 3px 2px;
@@ -521,12 +521,12 @@ ul.inline li {
 	z-index: 2;
 }
 
-.evaluation-area {
+.feedback-area {
 	margin-top: 2px;
 	text-align: center;
 }
 
-.evaluation-area input.evaluation-text {
+.feedback-area input.evaluation-text {
 	width: 100%;
 	margin: 0;
 }

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * EvalListener is a base class for any lesion evaluation listeners.
+ * FeedbackListener is a base class for any lesion evaluation listeners.
  * An evaluation listener can gather feedback information for each block.
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-abstract class EvalListener extends BlockElement
+abstract class FeedbackListener extends BlockElement
 {
 	/*
 	 * Returns the HTML that renders this evaluation listener.
@@ -16,7 +16,7 @@ abstract class EvalListener extends BlockElement
 	 */
 	function display($smarty)
 	{
-		$smarty->assign('evalListenerParams', $this->params);
+		$smarty->assign('feedbackListenerParams', $this->params);
 	}
 
 	// abstract function saveBlockFeedback($id, $feedback);
