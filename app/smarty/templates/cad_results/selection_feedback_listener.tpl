@@ -6,6 +6,6 @@ Requires:
 *}
 <form>
 <div>
-{foreach from=$feedbackListenerParams.selections item=option}<input type="radio" name="radioCand" value="{$option.value|escape}" class="radio-to-button" label="{$option.label}" />{/foreach}
+{foreach from=$feedbackListenerParams.personal item=option}<input type="radio" name="radioCand" value="{$option.value|escape}" class="radio-to-button" label="{$option.label}" />{/foreach}
 </div>
 </form>

@@ -31,6 +31,7 @@ if ($validator->validate($_POST))
 
 show_cad_results($job_id, $feedbackMode);
 
+
 /**
  * Displays CAD Result
  */
@@ -41,45 +42,22 @@ function show_cad_results($job_id, $feedbackMode) {
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
 	$params['toTopDir'] = '../';
+
+	$presentation = new CADPluginPresentation();
+	$presentation->plugin_name = 'MRA-CAD_v2';
+	$presenter = $presentation->buildDisplayPresenter();
+	$listener  = $presentation->buildFeedbackListener();
+
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),
-		'displayPresenter' => prepare_display_presenter(),
-		'feedbackListener' => prepare_feedback_listener(),
+		'displayPresenter' => $presenter,
+		'feedbackListener' => $listener,
 		'params' => array('toTopDir' => '../')
 	));
 	$smarty->display('cad_results/cad_result.tpl');
-}
-
-function prepare_feedback_listener()
-{
-	$listener = new SelectionFeedbackListener();
-	$listener->setParameter(array(
-		"selections" => array(
-			array(
-				"label" => 'TP',
-				"value" => 1
-			),
-			array(
-				"label" => 'FP',
-				"value" => 2
-			),
-			array(
-				"label" => 'pending',
-				"value" => 3
-			)
-		)
-	));
-	$js = $listener->requiringFiles();
-	return $listener;
-}
-
-function prepare_display_presenter()
-{
-	$presenter = new LesionCADDisplayPresenter();
-	return $presenter;
 }
 
 ?>
