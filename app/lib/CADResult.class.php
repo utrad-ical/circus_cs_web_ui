@@ -7,11 +7,76 @@
  */
 class CADResult
 {
+	private $_jobID;
+	private $_cadResult;
+	private $_attributes;
+	private $_seriesUID;
+	private $_studyUID;
+	private $_cadName;
+	private $_cadVersion;
+
+	public function __construct($jobID = null)
+	{
+		if ($jobID)
+		{
+			$this->load($jobID);
+		}
+
+	}
+
+	public function jobID()
+	{
+		return $this->_jobID;
+	}
+
 	/**
-	 * The Job ID of this CAD Result. Do not modify this.
-	 * @var int
+	 * Load CAD results from the given job ID.
+	 * @param unknown_type $jobID
 	 */
-	public $job_id;
+	protected function load($jobID)
+	{
+		$pdo = DBConnector::getConnection();
+		//
+		// STEP 1: Get the plugin information which was executed in this job
+		//
+		$sqlStr =
+			"SELECT el.plugin_id, pm.plugin_name, pm.version," .
+			" sr.study_instance_uid, sr.series_instance_uid," .
+			" el.plugin_type, el.executed_at" .
+			" FROM executed_plugin_list el, executed_series_list es," .
+			" plugin_master pm, series_list sr" .
+			" WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0" .
+			" AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid";
+		$r = DBConnector::query($sqlStr, $jobID, 'ARRAY_ASSOC');
+		$pid = $r['plugin_id'];
+		$this->_seriesUID = $r['series_instance_uid'];
+		$this->_studyUID  = $r['study_instance_uid'];
+
+		//
+		// STEP 2: Get the table name which actually holds the result data
+		//
+		$sqlStr = "SELECT * FROM plugin_cad_master WHERE plugin_id = ?";
+		$cad_master = DBConnector::query($sqlStr, $pid, 'ARRAY_ASSOC');
+		$result_table = $cad_master['result_table'];
+
+		//
+		// STEP 3: Get the actual CAD results from the result table
+		//
+		$sqlStr = "SELECT * FROM $result_table WHERE job_id=?";
+		$this->_cadResult = DBConnector::query($sqlStr, $jobID, 'ALL_ASSOC');
+
+		//
+		// STEP 4: Get the executed pluguin attributes
+		//
+		$sqlStr =
+			"SELECT key, value FROM executed_plugin_attributes " .
+			"WHERE job_id = ?";
+		$r = DBConnector::query($sqlStr, $jobID, 'ALL_ASSOC');
+		if (is_array($r)) foreach ($r as $v) $a[$v['key']] = $v['value'];
+		$this->_attributes = $a;
+
+		// print "<pre>"; print_r($this); print "</pre>";
+	}
 
 	/**
 	 * Retrieves the list feedback data associated with this CAD Result.
@@ -101,24 +166,25 @@ class CADResult
 	 */
 	public function getDisplays()
 	{
-		$dummy = array();
-		for ($i = 0; $i < 5; $i++)
+		global $DIR_SEPARATOR_WEB;
+		$result = array();
+		foreach ($this->_cadResult as $display)
 		{
-			$lesion = array(
-				'confidence' => sprintf('%.3f', rand(0,1000)/1000),
-				'volume' => sprintf('%.3f', rand(200,10000)/1000),
-				'slice_location' => floor(rand(2,10)),
-				'width' => 400,
-				'height' => 300,
-				'src' => 'test.jpg',
-				'x' => rand(0,200),
-				'y' => rand(0,200),
-				'z' => 23,
-				'id' => $i
+			$seriesDirWeb = $params['webPath'] . $params['patientID'] .
+				$DIR_SEPARATOR_WEB . $params['studyInstanceUID'] .
+				$DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$webPathOfCADResult = $seriesDirWeb . $DIR_SEPARATOR_WEB .
+				$SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $this->_cadName .
+				'_v.' . $this->_cadVersion;
+			$display['src'] = sprintf(
+				"../%s%sresult%03d.png",
+				$webPathOfCADResult,
+				$DIR_SEPARATOR_WEB,
+				$display['sub_id']
 			);
-			$dummy[] = $lesion;
+			$result[] = $display;
 		}
-		return $dummy;
+		return $result;
 	}
 
 	/**
@@ -126,16 +192,7 @@ class CADResult
 	 */
 	public function getAttributes()
 	{
-		$dummy = array(
-			'width' => 400,
-			'height' => 300,
-			'cropX' => rand(0, 100),
-			'cropY' => rand(0, 100),
-			'cropWidth' => 300,
-			'cropHeight' => 200,
-			'dispWidth' => 200,
-		);
-		return $dummy;
+		return $this->_attributes;
 	}
 
 	/**

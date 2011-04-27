@@ -1,6 +1,9 @@
 {
 	"displayPresenter": {
-		"type": "LesionCADDisplayPresenter"
+		"type": "LesionCADDisplayPresenter",
+		"params": {
+			"dispWidth": 300
+		}
 	},
 	"feedbackListener": {
 		"type": "SelectionFeedbackListener",

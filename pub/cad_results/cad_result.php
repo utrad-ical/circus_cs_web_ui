@@ -24,18 +24,18 @@ $validator->addRules(array(
 		"errorMes" => "[ERROR] 'Feedback mode' is invalid."
 	)
 ));
-if ($validator->validate($_POST))
+if ($validator->validate($_REQUEST))
 {
 	$params = $validator->output;
 }
 
-show_cad_results($job_id, $feedbackMode);
+show_cad_results($params['jobID'], $params['feedbackMode']);
 
 
 /**
  * Displays CAD Result
  */
-function show_cad_results($job_id, $feedbackMode) {
+function show_cad_results($jobID, $feedbackMode) {
 	// Retrieve the CAD Result
 	$cadResult = new CADResult($jobID);
 
