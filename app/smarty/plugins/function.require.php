@@ -13,7 +13,7 @@ function smarty_function_require ($param, $smarty)
 		$req = trim($req);
 		$root = $smarty->get_template_vars('root');
 		if ($root)
-			$req = "$root/$req";
+			$req = "$root$req";
 		if (preg_match("/\\.css$/i", $req))
 		{
 			$results[] = '<link href="' . $req . '" rel="stylesheet" ' .
