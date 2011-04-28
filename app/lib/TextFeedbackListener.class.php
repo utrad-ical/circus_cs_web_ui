@@ -10,7 +10,7 @@ class TextFeedbackListener extends FeedbackListener
 {
 	function requiringFiles()
 	{
-		return 'text_feedback_listener.js';
+		return 'js/text_feedback_listener.js';
 	}
 
 	function display($smarty)

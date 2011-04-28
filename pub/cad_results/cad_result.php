@@ -55,7 +55,8 @@ function show_cad_results($jobID, $feedbackMode) {
 		'attr' => $cadResult->getAttributes(),
 		'displayPresenter' => $presenter,
 		'feedbackListener' => $listener,
-		'params' => array('toTopDir' => '../')
+		'params' => $params,
+		'feedbacks' => $cadResult->getFeedback()
 	));
 	$smarty->display('cad_results/cad_result.tpl');
 }

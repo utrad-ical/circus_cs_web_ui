@@ -11,7 +11,7 @@ class SelectionFeedbackListener extends FeedbackListener
 {
 	function requiringFiles()
 	{
-		return 'selection_feedback_listener.js';
+		return 'js/selection_feedback_listener.js';
 	}
 
 	function display($smarty)

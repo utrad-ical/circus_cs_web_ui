@@ -87,7 +87,7 @@ class CADResult
 	{
 		// TODO: Replace SQL
 		$dummy = new Feedback();
-		$arr = array();
+		$arr = array(0,0,0,1,1,1,-1,-1,-1);
 		shuffle($arr);
 		$dummy->blockFeedback = $arr;
 		return $dummy;
@@ -170,6 +170,7 @@ class CADResult
 		$result = array();
 		foreach ($this->_cadResult as $display)
 		{
+			$display['display_id'] = $display['sub_id'];
 			$seriesDirWeb = $params['webPath'] . $params['patientID'] .
 				$DIR_SEPARATOR_WEB . $params['studyInstanceUID'] .
 				$DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];

@@ -13,7 +13,7 @@ Required CSS file:
 	layout.css
 *}
 <div class="result-block">
-<input type="hidden" class="display-id" name="display_id" value="{$display.id}" />
+<input type="hidden" class="display-id" name="display_id" value="{$display.display_id}" />
 <div class="display-area">
 {displayPresenter}
 </div><!-- /display-area -->

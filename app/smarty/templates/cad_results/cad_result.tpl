@@ -3,9 +3,18 @@ Smarty Template for General CAD Result.
 *}
 {capture name="require"}
 js/radio-to-button.js
+js/cad_result.js
+{foreach from=$displayPresenter->requiringFiles() item=file}{$file}{/foreach}
+{foreach from=$feedbackListener->requiringFiles() item=file}{$file}{/foreach}
+{/capture}
+{capture name="extra"}
+<script type="text/javascript">
+data = {$cadResult->getDisplays()|@json_encode};
+feedbacks = {$feedbacks|@json_encode};
+</script>
 {/capture}
 {include file="header.tpl" body_class="cad-result"
-	require=$smarty.capture.require}
+	require=$smarty.capture.require head_extra=$smarty.capture.extra}
 <div id="cadResultTab" class="tabArea">
 <ul>
 	<li><a class="btn-tab" href="#">CAD Result</a></li>
