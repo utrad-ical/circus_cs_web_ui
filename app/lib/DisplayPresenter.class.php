@@ -9,12 +9,27 @@
  */
 abstract class DisplayPresenter extends BlockElement
 {
-	/*
+	/**
 	 * Returns the HTML of the element.
 	 */
 	public function display($smarty)
 	{
 		$smarty->assign('displayPresenterParams', $this->params);
+	}
+
+	/**
+	 * Extract the displays from the input table.
+	 * @param array $input The array of each table records.
+	 * @return array The list of displays.
+	 */
+	public function extractDisplays($input)
+	{
+		foreach ($input as &$rec)
+		{
+			$disp_id = $rec['display_id'] ?: $rec['sub_id'] ?: $rec['id'];
+			$rec['display_id'] = $disp_id;
+		}
+		return $input;
 	}
 }
 

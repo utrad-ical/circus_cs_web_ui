@@ -14,6 +14,8 @@ class CADResult
 	private $_studyUID;
 	private $_cadName;
 	private $_cadVersion;
+	private $_displayPresenter;
+	private $_feedbackListener;
 
 	public function __construct($jobID = null)
 	{
@@ -49,8 +51,10 @@ class CADResult
 			" AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid";
 		$r = DBConnector::query($sqlStr, $jobID, 'ARRAY_ASSOC');
 		$pid = $r['plugin_id'];
-		$this->_seriesUID = $r['series_instance_uid'];
-		$this->_studyUID  = $r['study_instance_uid'];
+		$this->_seriesUID  = $r['series_instance_uid'];
+		$this->_studyUID   = $r['study_instance_uid'];
+		$this->_cadName    = $r['plugin_name'];
+		$this->_cadVersion = $r['version'];
 
 		//
 		// STEP 2: Get the table name which actually holds the result data
@@ -166,26 +170,7 @@ class CADResult
 	 */
 	public function getDisplays()
 	{
-		global $DIR_SEPARATOR_WEB;
-		$result = array();
-		foreach ($this->_cadResult as $display)
-		{
-			$display['display_id'] = $display['sub_id'];
-			$seriesDirWeb = $params['webPath'] . $params['patientID'] .
-				$DIR_SEPARATOR_WEB . $params['studyInstanceUID'] .
-				$DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
-			$webPathOfCADResult = $seriesDirWeb . $DIR_SEPARATOR_WEB .
-				$SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $this->_cadName .
-				'_v.' . $this->_cadVersion;
-			$display['src'] = sprintf(
-				"../%s%sresult%03d.png",
-				$webPathOfCADResult,
-				$DIR_SEPARATOR_WEB,
-				$display['sub_id']
-			);
-			$result[] = $display;
-		}
-		return $result;
+		return $this->displayPresenter()->extractDisplays($this->_cadResult);
 	}
 
 	/**
@@ -203,6 +188,66 @@ class CADResult
 	public function getExecutedPlugin()
 	{
 		return null; // not implemented
+	}
+
+	protected function defaultPresentation()
+	{
+		return array(
+			'displayPresenter' => array(
+				'type' => 'LesionCADDisplayPresenter'
+			),
+			'feedbackListener' => array(
+				'type' => 'SelectionFeedbackListener'
+			)
+		);
+	}
+
+	protected function loadPresentationConfiguration()
+	{
+		global $WEB_UI_ROOT;
+		if (is_array($this->_presentation))
+			return;
+		$result = $this->defaultPresentation();
+		$plugin_name = $this->_cadName . "_v" . $this->_cadVersion;
+		try {
+			$json = file_get_contents(
+				"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
+			$tmp = json_decode($json, true);
+			$result = array_merge($result, $tmp);
+		} catch (Exception $e) {
+			print ($e->getMessage());
+		}
+		$this->_presentation = $result;
+	}
+
+	/**
+	 * Returns DisplayPresenter associated with this cad result.
+	 * @return DisplayPresenter The DisplayPresenter instance
+	 */
+	public function displayPresenter()
+	{
+		if ($this->_displayPresenter)
+			return $this->_displayPresenter;
+		$this->loadPresentationConfiguration();
+		$presenter = new $this->_presentation['displayPresenter']['type'];
+		$presenter->setParameter($this->_presentation['displayPresenter']['params']);
+		$this->_displayPresenter = $presenter;
+		return $presenter;
+	}
+
+	/**
+	 * Returns FeedbackListener associated with this cad result.
+	 * @return FeedbackListener The FeedbackListener instance
+	 */
+	public function feedbackListener()
+	{
+		if ($this->_feedbackListener)
+			return $this->_feedbackListener;
+		$this->loadPresentationConfiguration();
+		$listener = new $this->_presentation['feedbackListener']['type'];
+		$listener->setParameter($this->_presentation['feedbackListener']['params']);
+		$this->_feedbackListener = $listener;
+		return $listener;
 	}
 }
 

@@ -43,20 +43,15 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty = new SmartyEx();
 	$params['toTopDir'] = '../';
 
-	$presentation = new CADPluginPresentation();
-	$presentation->plugin_name = 'MRA-CAD_v2';
-	$presenter = $presentation->buildDisplayPresenter();
-	$listener  = $presentation->buildFeedbackListener();
-
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),
-		'displayPresenter' => $presenter,
-		'feedbackListener' => $listener,
-		'params' => $params,
-		'feedbacks' => $cadResult->getFeedback()
+		'displayPresenter' => $cadResult->displayPresenter(),
+		'feedbackListener' => $cadResult->feedbackListener(),
+		'feedbacks' => $cadResult->getFeedback(),
+		'params' => $params
 	));
 	$smarty->display('cad_results/cad_result.tpl');
 }

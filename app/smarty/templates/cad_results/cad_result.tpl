@@ -9,7 +9,7 @@ js/cad_result.js
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
-data = {$cadResult->getDisplays()|@json_encode};
+data = {$displays|@json_encode};
 feedbacks = {$feedbacks|@json_encode};
 </script>
 {/capture}
