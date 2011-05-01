@@ -185,7 +185,7 @@ class CADResult extends Model
 	{
 		return array(
 			'displayPresenter' => array(
-				'type' => 'LesionCADDisplayPresenter'
+				'type' => 'DumpDisplayPresenter'
 			),
 			'feedbackListener' => array(
 				'type' => 'SelectionFeedbackListener'
@@ -200,13 +200,13 @@ class CADResult extends Model
 			return;
 		$result = $this->defaultPresentation();
 		$plugin_name = $this->Plugin->fullName();
-		try {
-			$json = file_get_contents(
-				"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
-			$tmp = json_decode($json, true);
-			$result = array_merge($result, $tmp);
-		} catch (Exception $e) {
-			print ($e->getMessage());
+		$str = @file_get_contents(
+			"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
+		if ($str !== false)
+		{
+			$tmp = json_decode($str, true);
+			if (!is_null($tmp))
+				$result = array_merge($result, $tmp);
 		}
 		$this->presentation = $result;
 	}

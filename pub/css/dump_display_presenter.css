@@ -1,0 +1,19 @@
+div.dump-result-container {
+	height: 300px;
+	width: 300px;
+	overflow: auto;
+}
+
+table.dump-result {
+	border: 1px solid silver;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table.dump-result th, table.dump-result td {
+	border: 1px solid silver;
+}
+
+table.dump-result td {
+	text-align: right;
+}
