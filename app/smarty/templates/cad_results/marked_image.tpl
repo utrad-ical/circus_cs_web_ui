@@ -41,7 +41,7 @@ Parameters:
 {assign var=dispHeight value=`$cropHeight*$scale`}
 {assign var=markerRadius value=12}
 <div class="cropped-image" style="width: {$dispWidth}px; height: {$dispHeight}px">
-	<img class="lesion-image" src="{$src}"
+	<img class="lesion-image" src="{$src|escape}"
 		style="width: {$width*$scale}px; height: {$height*$scale}px;
 		left: -{$cropX*$scale}px; top: -{$cropY*$scale}px" />
 {if $marker ne 'none'}

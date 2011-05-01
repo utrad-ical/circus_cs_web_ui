@@ -5,85 +5,34 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class CADResult
+class CADResult extends Model
 {
-	private $_jobID;
-	private $_cadResult;
-	private $_attributes;
-	private $_seriesUID;
-	private $_studyUID;
-	private $_cadName;
-	private $_cadVersion;
-	private $_displayPresenter;
-	private $_feedbackListener;
+	protected static $_table = 'executed_plugin_list';
+	protected static $_primaryKey = 'job_id';
+	protected static $_belongsTo = array(
+		'Plugin' => array('key' => 'plugin_id'),
+		'Storage' => array('key' => 'storage_id')
+	);
+	protected static $_hasMany = array(
+		'Feedback' => array('key' => 'job_id'),
+		'PluginAttribute' => array('key' => 'job_id')
+	);
+	protected static $_hasAndBelongsToMany = array(
+		'Series' => array(
+			'joinTable' => 'executed_series_list',
+			'foreignKey' => 'job_id',
+			'associationForeignKey' => 'series_sid',
+			'foreignPrimaryKey' => 'sid'
+		)
+	);
 
-	public function __construct($jobID = null)
-	{
-		if ($jobID)
-		{
-			$this->load($jobID);
-		}
-
-	}
-
-	public function jobID()
-	{
-		return $this->_jobID;
-	}
-
-	/**
-	 * Load CAD results from the given job ID.
-	 * @param unknown_type $jobID
-	 */
-	protected function load($jobID)
-	{
-		$pdo = DBConnector::getConnection();
-		//
-		// STEP 1: Get the plugin information which was executed in this job
-		//
-		$sqlStr =
-			"SELECT el.plugin_id, pm.plugin_name, pm.version," .
-			" sr.study_instance_uid, sr.series_instance_uid," .
-			" el.plugin_type, el.executed_at" .
-			" FROM executed_plugin_list el, executed_series_list es," .
-			" plugin_master pm, series_list sr" .
-			" WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0" .
-			" AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid";
-		$r = DBConnector::query($sqlStr, $jobID, 'ARRAY_ASSOC');
-		$pid = $r['plugin_id'];
-		$this->_seriesUID  = $r['series_instance_uid'];
-		$this->_studyUID   = $r['study_instance_uid'];
-		$this->_cadName    = $r['plugin_name'];
-		$this->_cadVersion = $r['version'];
-
-		//
-		// STEP 2: Get the table name which actually holds the result data
-		//
-		$sqlStr = "SELECT * FROM plugin_cad_master WHERE plugin_id = ?";
-		$cad_master = DBConnector::query($sqlStr, $pid, 'ARRAY_ASSOC');
-		$result_table = $cad_master['result_table'];
-
-		//
-		// STEP 3: Get the actual CAD results from the result table
-		//
-		$sqlStr = "SELECT * FROM $result_table WHERE job_id=?";
-		$this->_cadResult = DBConnector::query($sqlStr, $jobID, 'ALL_ASSOC');
-
-		//
-		// STEP 4: Get the executed pluguin attributes
-		//
-		$sqlStr =
-			"SELECT key, value FROM executed_plugin_attributes " .
-			"WHERE job_id = ?";
-		$r = DBConnector::query($sqlStr, $jobID, 'ALL_ASSOC');
-		if (is_array($r)) foreach ($r as $v) $a[$v['key']] = $v['value'];
-		$this->_attributes = $a;
-
-		// print "<pre>"; print_r($this); print "</pre>";
-	}
+	protected $_attributes;
+	protected $_displayPresenter;
+	protected $_feedbackListener;
+	protected $_cadResult;
 
 	/**
-	 * Retrieves the list feedback data associated with this CAD Result.
+	 * Retrieves the list of feedback data associated with this CAD Result.
 	 * @param string $feedbackMode 'personal', 'consensual', or 'all'
 	 * @return array Array of Feedback objects
 	 */
@@ -178,7 +127,16 @@ class CADResult
 	 */
 	public function getAttributes()
 	{
-		return $this->_attributes;
+		if (is_array($this->_attributes))
+			return $this->_attributes;
+		$tmp = $this->PluginAttribute;
+		$result = array();
+		foreach ($tmp as $attribute)
+		{
+			$result[$attribute->key] = $attribute->value;
+		}
+		$this->_attributes = $result;
+		return $result;
 	}
 
 	/**
@@ -188,6 +146,28 @@ class CADResult
 	public function getExecutedPlugin()
 	{
 		return null; // not implemented
+	}
+
+	public function load($id)
+	{
+		//
+		// STEP: Load using inheriting load method
+		//
+		parent::load($id);
+
+		//
+		// STEP: Get the table name which actually holds the result data
+		//
+		$pid = $this->Plugin->plugin_id;
+		$sqlStr = "SELECT * FROM plugin_cad_master WHERE plugin_id = ?";
+		$cad_master = DBConnector::query($sqlStr, $pid, 'ARRAY_ASSOC');
+		$result_table = $cad_master['result_table'];
+
+		//
+		// STEP: Get the actual CAD results from the result table
+		//
+		$sqlStr = "SELECT * FROM $result_table WHERE job_id=?";
+		$this->_cadResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
 	}
 
 	protected function defaultPresentation()
@@ -208,7 +188,7 @@ class CADResult
 		if (is_array($this->_presentation))
 			return;
 		$result = $this->defaultPresentation();
-		$plugin_name = $this->_cadName . "_v" . $this->_cadVersion;
+		$plugin_name = $this->Plugin->plugin_name . "_v" . $this->Plugin->version;
 		try {
 			$json = file_get_contents(
 				"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
@@ -229,7 +209,7 @@ class CADResult
 		if ($this->_displayPresenter)
 			return $this->_displayPresenter;
 		$this->loadPresentationConfiguration();
-		$presenter = new $this->_presentation['displayPresenter']['type'];
+		$presenter = new $this->_presentation['displayPresenter']['type']($this);
 		$presenter->setParameter($this->_presentation['displayPresenter']['params']);
 		$this->_displayPresenter = $presenter;
 		return $presenter;
@@ -244,10 +224,47 @@ class CADResult
 		if ($this->_feedbackListener)
 			return $this->_feedbackListener;
 		$this->loadPresentationConfiguration();
-		$listener = new $this->_presentation['feedbackListener']['type'];
+		$listener = new $this->_presentation['feedbackListener']['type']($this);
 		$listener->setParameter($this->_presentation['feedbackListener']['params']);
 		$this->_feedbackListener = $listener;
 		return $listener;
+	}
+
+	/**
+	 * Returns CAD result directory web path.
+	 * @return string CAD result directory web path.
+	 */
+	public function webPathOfCADResult()
+	{
+		global $DIR_SEPARATOR_WEB, $SUBDIR_CAD_RESULT;
+		$webPath = $this->Storage->apache_alias;
+		$series = $this->Series[0];
+		// TODO: This should be replaced when WEB_BASE or something is implemented
+		$seriesDirWeb = '../' . $webPath .
+			$series->Study->Patient->patient_id . $DIR_SEPARATOR_WEB .
+			$series->Study->study_instance_uid . $DIR_SEPARATOR_WEB .
+			$series->series_instance_uid;
+		$result =  $seriesDirWeb . $DIR_SEPARATOR_WEB .
+			$SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $this->Plugin->fullName();
+		return $result;
+	}
+
+	/**
+	 * Returns CAD result directory path.
+	 * @return string CAD result directory path.
+	 */
+	public function pathOfCADResult()
+	{
+		global $DIR_SEPARATOR, $SUBDIR_CAD_RESULT;
+		$path = $this->Storage->path;
+		$series = $this->Series[0];
+		$seriesDir = $path . $DIR_SEPARATOR .
+			$series->Study->Patient->patient_id . $DIR_SEPARATOR .
+			$series->Study->study_instance_uid . $DIR_SEPARATOR .
+			$series->series_instance_uid;
+		$result =  $seriesDir . $DIR_SEPARATOR .
+			$SUBDIR_CAD_RESULT . $DIR_SEPARATOR . $this->Plugin->fullName();
+		return $result;
 	}
 }
 

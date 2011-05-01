@@ -4,7 +4,14 @@
  * Feedback represents the set of feedback data for one CAD result.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class Feedback {
+class Feedback extends Model
+{
+	protected static $_table = 'feedback_list';
+	protected static $_primaryKey = 'fb_id';
+	protected static $_belongsTo = array(
+		'CADResult' => array('key' => 'job_id')
+	);
+
 	/**
 	 * The block-based feedbacks.
 	 * keys are the lesion_id's, and values are feedback data for which
@@ -19,31 +26,6 @@ class Feedback {
 	 * @var unknown_type
 	 */
 	public $additional;
-
-	/**
-	 * If true, this data set is consensual feedback.
-	 * If false, this data set is personal feedback.
-	 * @var bool
-	 */
-	public $is_consensual = false;
-
-	/**
-	 * The creator of this feedback data.
-	 */
-	public $entered_by;
-
-	/**
-	 * The status of the feedback data.
-	 * Valid values are: (pending)
-	 * @var int
-	 */
-	public $status;
-
-	/**
-	 * Feedback ID in the database. Null if unsaved.
-	 * @var unknown_type
-	 */
-	private $fb_id = null;
 
 	/**
 	 * Save the feedback into the database.

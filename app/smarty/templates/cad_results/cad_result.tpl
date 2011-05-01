@@ -22,9 +22,13 @@ feedbacks = {$feedbacks|@json_encode};
 </div>
 <div class="tab-content">
 <div class="cadResult">
-<h2>CAD Result [{$cadResult->job_id}]</h2>
+<h2>CAD Result [{$cadResult->Plugin->plugin_name|escape}&nbsp;
+  v.{$cadResult->Plugin->version|escape} ID:{$cadResult->job_id}]</h2>
   <div class="headerArea">
-    NAME NAME / MRA / HEADER PENDING.
+    {$series->Study->Patient->patient_name|escape} ({$series->Study->Patient->patient_id})
+    {$series->Study->Patient->age()}{$series->Study->Patient->sex} /
+    {$series->Study->study_date} ({$series->Study->study_id}) /
+    {$series->Study->modality|escape}, {$series->series_description|escape} ({$series->series_number})
   </div>
   <div>
     <input type="radio" class="radio-to-button-l" name="mode" value="1" label="Personal Mode"/>

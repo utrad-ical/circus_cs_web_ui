@@ -48,6 +48,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),
+		'series' => $cadResult->Series[0],
 		'displayPresenter' => $cadResult->displayPresenter(),
 		'feedbackListener' => $cadResult->feedbackListener(),
 		'feedbacks' => $cadResult->getFeedback(),

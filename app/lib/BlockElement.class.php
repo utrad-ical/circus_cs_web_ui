@@ -11,6 +11,16 @@ abstract class BlockElement
 	protected $params;
 
 	/**
+	 * @var CADResult
+	 */
+	protected $owner;
+
+	function __construct($owner)
+	{
+		$this->owner = $owner;
+	}
+
+	/**
 	 * Returns the HTML of the element.
 	 * @param Smarty The Smarty instance
 	 */
