@@ -54,7 +54,7 @@ class LesionCADDisplayPresenter extends DisplayPresenter
 				'volume_size' => $rec['volume_size'],
 				'confidence' => $rec['confidence']
 			);
-			$result[] = $item;
+			$result[$rec['sub_id']] = $item;
 		}
 		return $result;
 	}

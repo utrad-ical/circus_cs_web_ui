@@ -7,7 +7,7 @@ By default, each block is displayed as inline-block and
 inserted into one div element.
 Individual plugins can override this template for custom layouts.
 *}
-<div class="result-blocks">
+<div class="result-blocks" id="result-blocks">
 {foreach from=$displays item=display}
 {include file="cad_results/block.tpl}
 {/foreach}

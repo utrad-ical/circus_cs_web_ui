@@ -4,13 +4,17 @@ Smarty Template for General CAD Result.
 {capture name="require"}
 js/radio-to-button.js
 js/cad_result.js
-{foreach from=$displayPresenter->requiringFiles() item=file}{$file}{/foreach}
-{foreach from=$feedbackListener->requiringFiles() item=file}{$file}{/foreach}
+{foreach from=$displayPresenter->requiringFiles() item=file}{$file}
+{/foreach}
+
+{foreach from=$feedbackListener->requiringFiles() item=file}{$file}
+{/foreach}
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
 data = {$displays|@json_encode};
 feedbacks = {$feedbacks|@json_encode};
+sort = {$sort|@json_encode};
 </script>
 {/capture}
 {include file="header.tpl" body_class="cad-result"
@@ -35,6 +39,19 @@ feedbacks = {$feedbacks|@json_encode};
     <input type="radio" class="radio-to-button-l" name="mode" value="2" label="Consensual Mode"/>
   </div>
   <div style="clear: both"></div>
+  {if $sorter.visible}
+  <div id="sorterArea" style="text-align: right;"><form name="sorter">
+    Sort:
+    <select id="sorter" name="sortKey">
+      {foreach from=$sorter.options item=sort}
+      <option value="{$sort.key|escape}">{$sort.label|escape}</option>
+      {/foreach}
+    </select>
+    <input type="radio" name="sortOrder" value="asc" />Asc.&nbsp;
+    <input type="radio" name="sortOrder" value="desc" />Desc.
+  </form></div><!-- /sorter -->
+  {/if}
+
 
 {include file="cad_results/block_layout.tpl"}
 

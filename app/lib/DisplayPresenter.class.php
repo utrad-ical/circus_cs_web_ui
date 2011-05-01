@@ -20,16 +20,19 @@ abstract class DisplayPresenter extends BlockElement
 	/**
 	 * Extract the displays from the input table.
 	 * @param array $input The array of each table records.
-	 * @return array The list of displays.
+	 * @return array The list of displays, each key holds a display id.
 	 */
 	public function extractDisplays($input)
 	{
-		foreach ($input as &$rec)
+		$result = array();
+		foreach ($input as $rec)
 		{
-			$disp_id = $rec['display_id'] ?: $rec['sub_id'] ?: $rec['id'];
-			$rec['display_id'] = $disp_id;
+			$item = $rec;
+			$disp_id = $item['display_id'] ?: $item['sub_id'] ?: $item['id'];
+			$item['display_id'] = $disp_id;
+			$result[$disp_id] = $item;
 		}
-		return $input;
+		return $result;
 	}
 }
 

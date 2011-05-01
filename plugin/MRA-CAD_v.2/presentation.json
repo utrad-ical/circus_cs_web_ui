@@ -20,5 +20,24 @@
 				{ "value": 0, "label": "pending" }
 			]
 		}
+	},
+	"sorter": {
+		"visible": true,
+		"defaultKey": "confidence",
+		"defaultOrder": "desc",
+		"options": [
+			{
+				"label": "Volume Size",
+				"key": "volume_size"
+			},
+			{
+				"label": "Image No.",
+				"key": "location_z"
+			},
+			{
+				"label": "Confidence",
+				"key": "confidence"
+			}
+		]
 	}
 }

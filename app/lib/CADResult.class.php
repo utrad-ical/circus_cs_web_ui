@@ -26,10 +26,12 @@ class CADResult extends Model
 		)
 	);
 
-	protected $_attributes;
-	protected $_displayPresenter;
-	protected $_feedbackListener;
-	protected $_cadResult;
+	protected $attributes;
+	protected $displayPresenter;
+	protected $feedbackListener;
+	protected $blockSorter;
+	protected $rawResult;
+	protected $presentation;
 
 	/**
 	 * Retrieves the list of feedback data associated with this CAD Result.
@@ -119,7 +121,16 @@ class CADResult extends Model
 	 */
 	public function getDisplays()
 	{
-		return $this->displayPresenter()->extractDisplays($this->_cadResult);
+		return $this->displayPresenter()->extractDisplays($this->rawResult);
+	}
+
+	/**
+	 * Returns the raw result of CAD.
+	 * @return array Array of raw CAD result from database table
+	 */
+	public function rawCadResult()
+	{
+		return $this->rawResult;
 	}
 
 	/**
@@ -127,15 +138,15 @@ class CADResult extends Model
 	 */
 	public function getAttributes()
 	{
-		if (is_array($this->_attributes))
-			return $this->_attributes;
+		if (is_array($this->attributes))
+			return $this->attributes;
 		$tmp = $this->PluginAttribute;
 		$result = array();
 		foreach ($tmp as $attribute)
 		{
 			$result[$attribute->key] = $attribute->value;
 		}
-		$this->_attributes = $result;
+		$this->attributes = $result;
 		return $result;
 	}
 
@@ -167,7 +178,7 @@ class CADResult extends Model
 		// STEP: Get the actual CAD results from the result table
 		//
 		$sqlStr = "SELECT * FROM $result_table WHERE job_id=?";
-		$this->_cadResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
+		$this->rawResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
 	}
 
 	protected function defaultPresentation()
@@ -185,10 +196,10 @@ class CADResult extends Model
 	protected function loadPresentationConfiguration()
 	{
 		global $WEB_UI_ROOT;
-		if (is_array($this->_presentation))
+		if (is_array($this->presentation))
 			return;
 		$result = $this->defaultPresentation();
-		$plugin_name = $this->Plugin->plugin_name . "_v" . $this->Plugin->version;
+		$plugin_name = $this->Plugin->fullName();
 		try {
 			$json = file_get_contents(
 				"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
@@ -197,7 +208,18 @@ class CADResult extends Model
 		} catch (Exception $e) {
 			print ($e->getMessage());
 		}
-		$this->_presentation = $result;
+		$this->presentation = $result;
+	}
+
+	/**
+	 * Return if block sorting is available in this CAD result, which is
+	 * defined in the presentation.json file.
+	 * @return mixed Data from presentation.json
+	 */
+	public function sorter()
+	{
+		$this->loadPresentationConfiguration();
+		return $this->presentation['sorter'];
 	}
 
 	/**
@@ -206,13 +228,7 @@ class CADResult extends Model
 	 */
 	public function displayPresenter()
 	{
-		if ($this->_displayPresenter)
-			return $this->_displayPresenter;
-		$this->loadPresentationConfiguration();
-		$presenter = new $this->_presentation['displayPresenter']['type']($this);
-		$presenter->setParameter($this->_presentation['displayPresenter']['params']);
-		$this->_displayPresenter = $presenter;
-		return $presenter;
+		return $this->blockElement('displayPresenter');
 	}
 
 	/**
@@ -221,13 +237,18 @@ class CADResult extends Model
 	 */
 	public function feedbackListener()
 	{
-		if ($this->_feedbackListener)
-			return $this->_feedbackListener;
+		return $this->blockElement('feedbackListener');
+	}
+
+	protected function blockElement($type)
+	{
+		if ($this->$type)
+			return $this->$type;
 		$this->loadPresentationConfiguration();
-		$listener = new $this->_presentation['feedbackListener']['type']($this);
-		$listener->setParameter($this->_presentation['feedbackListener']['params']);
-		$this->_feedbackListener = $listener;
-		return $listener;
+		$element = new $this->presentation[$type]['type']($this);
+		$element->setParameter($this->presentation[$type]['params']);
+		$this->$type = $element;
+		return $element;
 	}
 
 	/**

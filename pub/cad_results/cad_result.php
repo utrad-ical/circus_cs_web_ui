@@ -42,7 +42,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
 	$params['toTopDir'] = '../';
-
+	$sort = $cadResult->sorter();
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
@@ -52,8 +52,12 @@ function show_cad_results($jobID, $feedbackMode) {
 		'displayPresenter' => $cadResult->displayPresenter(),
 		'feedbackListener' => $cadResult->feedbackListener(),
 		'feedbacks' => $cadResult->getFeedback(),
-		'params' => $params
+		'params' => $params,
+		'sorter' => $cadResult->sorter(),
+		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])
 	));
+
+	// Render using Smarty
 	$smarty->display('cad_results/cad_result.tpl');
 }
 
