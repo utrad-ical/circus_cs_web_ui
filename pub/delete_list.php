@@ -12,7 +12,7 @@
 
 		foreach($data as $key => $val)
 		{
-			// 検証用配列に値が見つからなければ$tmpに格納
+			// 検証用配列に値が見つからなければ$retに格納
 			if( !in_array( $val, $ret ) )	$ret[] = $val;
 		}
 
@@ -61,15 +61,23 @@
 		{
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
+		}
+		catch (PDOException $e)
+		{
+			var_dump($e->getMessage());
+		}
 
+		try
+		{
 			//---------------------------------------------------------------------------------------------------------
 			// Begin transaction and lock tables (patient_list, series_list, study_list)
 			//---------------------------------------------------------------------------------------------------------
-			$pdo->beginTransaction();		// Begin transaction
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pdo->beginTransaction();	// Begin transaction
 
-			$sqlStr = "LOCK table patient_list, study_list, series_list, tag_list IN ACCESS EXCLUSIVE MODE";
-			$stmt = $pdo->prepare($sql);
-			$stmt->execute();
+			//$sqlStr = "LOCK table patient_list, study_list, series_list, tag_list IN ACCESS EXCLUSIVE MODE";
+			//$stmt = $pdo->prepare($sql);
+			//$stmt->execute();
 			//---------------------------------------------------------------------------------------------------------
 
 			//---------------------------------------------------------------------------------------------------------
@@ -121,29 +129,16 @@
 			//---------------------------------------------------------------------------------------------------------
 			foreach($seriesList as $vals)
 			{
-				$sqlStr = "SELECT COUNT(*) FROM plugin_job_list pj, job_series_list js "
-				        . " WHERE js.series_instance_uid=? AND pj.job_id=js.job_id";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $vals['srUID']);
-				$stmt->execute();
-
-				if($stmt->fetchColumn() > 0)
-				{
-					$dstData['message'] = 'Processing CAD job exists in selected series';
-					break;
-				}
-
 				$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list el, executed_series_list es "
-				        . " WHERE es.series_instance_uid=? AND el.job_id=es.job_id";
+				        . " WHERE es.series_sid=? AND el.job_id=es.job_id AND el.status>0";
 
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $vals['srUID']);
+				$stmt->bindParam(1, $vals['srSID']);
 				$stmt->execute();
 
 				if($stmt->fetchColumn() > 0)
 				{
-					$dstData['message'] = 'Executed CAD exists in selected series';
+					$dstData['message'] = 'Executed/processing plugin exists in selected series';
 					break;
 				}
 			}
@@ -254,6 +249,9 @@
 			}
 			//---------------------------------------------------------------------------------------------------------
 
+			//$stmt = $pdo->prepare("COMMIT WORK");
+			//$stmt->execute();
+
 			//---------------------------------------------------------------------------------------------------------
 			// Commit transaction
 			//---------------------------------------------------------------------------------------------------------
@@ -263,6 +261,7 @@
 		}
 		catch (PDOException $e)
 		{
+			$pdo->rollBack();
 			var_dump($e->getMessage());
 		}
 
