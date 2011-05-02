@@ -315,7 +315,7 @@
 
 			switch($params['orderCol'])
 			{
-				case "PpatientID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;
+				case "PatientID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;
 				case "Name":		$orderColStr = 'pt.patient_name '       . $params['orderMode'];  break;
 				case "Age":			$orderColStr = 'st.age '                . $params['orderMode'];  break;
 				case "Sex":			$orderColStr = 'pt.sex '                . $params['orderMode'];  break;
