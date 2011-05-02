@@ -21,43 +21,52 @@
 	$seriesNum = count($studyUIDArr);
 
 	$userID = $_SESSION['userID'];
+
+	$dstData = array('message'      => "",
+			         'registeredAt' => date("Y-m-d H:i:s"),
+			         'executedAt'   => "");
+	$sidArr = array();
 	//------------------------------------------------------------------------------------------------------------------
 
 	try
 	{
-		$dstData = array('message'      => "",
-				         'registeredAt' => date("Y-m-d H:i:s"),
-				         'executedAt'   => "");
-
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
 		// Get plugin ID
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 		$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
+		
+		// Get series sid
+		$sqlStr = "SELECT sid FROM series_list WHERE series_instance_uid=?";
+
+		foreach($seriesUIDArr as $item)
+		{
+			$sidArr[] = DBConnector::query($sqlStr, $item, 'SCALAR');
+		}
+
+		// Get storage ID of first series
+		$sqlStr= "SELECT storage_id FROM series_list WHERE sid=?";
+		$storageID =  DBConnector::query($sqlStr, $sidArr[0], 'SCALAR');
 
 		$colArr =array();
 
-		$sqlStr = "SELECT * FROM plugin_job_list pjob, job_series_list js"
-					. " WHERE pjob.plugin_name=? AND pjob.version=?"
-					. " AND pjob.status > 0"
-					. " AND pjob.job_id=js.job_id"
-					. " AND (";
+		$sqlStr = "SELECT * FROM executed_plugin_list el, executed_series_list es"
+				. " WHERE el.plugin_id=? AND el.job_id=es.job_id AND el.status>0"
+				. " AND (";
 
-		array_push($colArr, $cadName);
-		array_push($colArr, $version);
+		$colArr[] = $pluginID;
 
-		for($i=0; $i<$seriesNum; $i++)
+		for($i = 0; $i < count($seriesNum); $i++)
 		{
 			if($i > 0)  $sqlStr .= " OR ";
 
-			$sqlStr .= "(js.series_id=? AND js.study_instance_UID=? AND js.series_instance_UID=?)";
+			$sqlStr .= "(es.series_id=? AND es.study_sid=?)";
 
-			array_push($colArr, $i);
-			array_push($colArr, $studyUIDArr[$i]);
-			array_push($colArr, $seriesUIDArr[$i]);
+			$colArr[] = $i;
+			$colArr[] = $sidArr[$i];
 		}
-		$sqlStr .= ")";
+		$sqlStr .= ");";
 
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($colArr);
@@ -66,135 +75,93 @@
 		{
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-			$dstData['message'] = '<b>Already registerd by ' . $result['exec_user'] . ' !!</b>';
-		    $dstData['registeredAt'] = $result['registered_at'];
-		}
-		else
-		{
-			$colArr =array();
-
-			$sqlStr = "SELECT * FROM executed_plugin_list el, executed_series_list es"
-					. " WHERE el.plugin_name=? AND el.version=? AND el.job_id=es.job_id"
-					. " AND (";
-
-			array_push($colArr, $cadName);
-			array_push($colArr, $version);
-
-			for($i=0; $i<count($seriesNum); $i++)
+			if($status != $PLUGIN_SUCESSED)
 			{
-				if($i > 0)  $sqlStr .= " OR ";
-
-				$sqlStr .= "(es.series_id=? AND es.study_instance_UID=? AND es.series_instance_UID=?)";
-
-				array_push($colArr, $i);
-				array_push($colArr, $studyUIDArr[$i]);
-				array_push($colArr, $seriesUIDArr[$i]);
-			}
-			$sqlStr .= ");";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute($colArr);
-
-			if($stmt->rowCount() == $seriesNum)
-			{
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-				$dstData['message']    = '<b>Already executed by ' . $result['exec_user'] . '!!</b>';
-				$dsaData['executedAt'] = $result['executed_at'];
+				$dstData['message'] = '<b>Already registered by ' . $result['exec_user'] . '!!</b>';
 			}
 			else
 			{
-				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type,'
-						. ' status, registered_at) VALUES (?,?,?,1,2,?)';
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($userID, $cadName, $version, $dstData['registeredAt']));
-
-				if($stmt->rowCount() == 1)
-				{
-					$sqlStr = "SELECT job_id FROM plugin_job_list WHERE plugin_name=? AND version=? AND registered_at=?";
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute(array($cadName, $version, $dstData['registeredAt']));
-					$jobID = $stmt->fetchColumn();
-
-					$colArr = array();
-					$sqlStr = "INSERT INTO job_series_list (job_id, series_id, study_instance_uid, series_instance_uid,"
-							. "start_img_num, end_img_num, dump_type, required_private_tags) VALUES ";
-
-					for($i=0; $i<$seriesNum; $i++)
-					{
-						//----------------------------------------------------------------------------------------------
-						// Get start_img_num, end_img_num, required_private_tags
-						//----------------------------------------------------------------------------------------------
-						$seriesSqlStr = "SELECT cs.start_img_num, cs.end_img_num, cs.dump_type, cs.required_private_tags"
-									  . " FROM plugin_cad_series cs, series_list sr"
-									  . " WHERE cs.plugin_id=? AND cs.series_id=?"
-									  . " AND sr.series_instance_uid=?"
-									  . " AND cs.series_description=sr.series_description";
-
-						$stmtSeries = $pdo->prepare($seriesSqlStr);
-						$stmtSeries->execute(array($pluginID, $i, $seriesUIDArr[$i]));
-
-						if($stmtSeries->rowCount() != 1)
-						{
-							$seriesSqlStr = "SELECT start_img_num, end_img_num, dump_type, required_private_tags"
-										  . " FROM plugin_cad_series WHERE plugin_id=? AND series_id=?"
-										  . " AND series_instance_uid='(default)'";
-							$stmtSeries = $pdo->preapre($seriesSqlStr);
-							$stmtSeries->execute(array($pluginID, $i));
-						}
-
-						$seriesRes = $stmtSeries->fetch(PDO::FETCH_NUM);
-						//----------------------------------------------------------------------------------------------
-
-						if($i > 0) $sqlStr .= ",";
-						$sqlStr .= "(?,?,?,?,?,?,?,?)";
-						array_push($colArr, $jobID);
-						array_push($colArr, $i);
-						array_push($colArr, $studyUIDArr[$i]);
-						array_push($colArr, $seriesUIDArr[$i]);
-						array_push($colArr, $seriesRes[0]);
-						array_push($colArr, $seriesRes[1]);
-						array_push($colArr, $seriesRes[2]);
-						array_push($colArr, $seriesRes[3]);
-					}
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($colArr);
-
-					if($stmt->rowCount() != $seriesNum)
-					{
-						$tmp = $stmt->errorInfo();
-						$dstData['message'] = $tmp[2];
-						//$dstData['message'] = '<b>Fail to register in CAD job list!!</b>';
-						$dstData['registeredAt'] = "";
-
-						$sqlStr = "DELETE FROM job_series_list WHERE job_id=?; DELETE FROM plugin_job_list WHERE job_id=?;";
-						$stmt = $pdo->prepare($sqlStr);
-						$stmt->execute(array($jobID, $jobID));
-					}
-					else
-					{
-						$dstData['message'] = 'Successfully registered in CAD job list!!';
-					}
-				}
-				else
-				{
-					$tmp = $stmt->errorInfo();
-					$dstData['message'] = $tmp[2];
-					//$dstData['message'] = '<b>Fail to registered in CAD job list!!</b>';
-					$dstData['registeredAt'] = "";
-				}
+				$dstData['message'] = '<b>Already executed by ' . $result['exec_user'] . '!!</b>';
 			}
+			$dsaData['executedAt'] = $result['executed_at'];
 		}
-
-		echo json_encode($dstData);
 	}
 	catch (PDOException $e)
 	{
 		var_dump($e->getMessage());
 	}
+	
+	if($dstData['message'] == "")
+	{
+		try
+		{
+			//---------------------------------------------------------------------------------------------------------
+			// Begin transaction
+			//---------------------------------------------------------------------------------------------------------
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pdo->beginTransaction();
+			//---------------------------------------------------------------------------------------------------------
+
+			// Get priolity
+			$priolity = 1;
+
+			// Get new job ID
+			$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
+			$jobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
+			
+			// Set new job ID
+			$sqlStr = "SELECT setval('executed_plugin_list_job_id_seq', ?, true)";
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->bindValue(1, $jobID);
+			$stmt->execute();
+
+			// Register into "execxuted_plugin_list"
+			$sqlStr = "INSERT INTO executed_plugin_list"
+					. " (job_id, plugin_id, plugin_type, storage_id, status, exec_user, executed_at)"
+					. " VALUES (?, ?, 1, ?, 1, ?, ?)";
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute(array($jobID, $pluginID, $storageID, $userID, $dstData['registeredAt']));
+
+			// Register into "execxuted_plugin_list"
+			$sqlStr = "INSERT INTO job_queue"
+					. " (job_id, plugin_id, plugin_type, priolity, status, exec_user, registered_at)"
+					. " VALUES (?, ?, 1, ?, 1, ?, ?)";
+			$stmt = $pdo->prepare($sqlStr);
+			$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt']));
+
+			// Register into executed_series_list and job_queue_series
+			for($i=0; $i<$seriesNum; $i++)
+			{
+				$sqlParams = array($jobID, $i, $sidArr[$i]);
+				
+				$sqlStr = "INSERT INTO executed_series_list(job_id, series_id, series_sid)"
+						. " VALUES (?, ?, ?)";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute($sqlParams);
+				
+				$sqlStr = "INSERT INTO job_queue_series(job_id, series_id, series_sid)"
+						. " VALUES (?, ?, ?)";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute($sqlParams);
+			}
+			
+			//---------------------------------------------------------------------------------------------------------
+			// Commit transaction
+			//---------------------------------------------------------------------------------------------------------
+			$pdo->commit();
+			//---------------------------------------------------------------------------------------------------------
+			
+			$dstData['message'] = 'Successfully registered plug-in job';
+		}
+		catch (PDOException $e)
+		{
+			$pdo->rollBack();
+			$dstData['message'] = '<b>Fail to register plug-in job</b>';
+			//$dstData['message'] = $e->getMessage();
+		}
+	}
 
 	$pdo = null;
 
+	echo json_encode($dstData);
 ?>

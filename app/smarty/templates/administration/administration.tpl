@@ -197,10 +197,10 @@ $(function() {ldelim}
 			<div class="p5 ml10 mb10">
 				<table>
 					<tr>
-						<td class="pt5">Show plug-in jobs</td>
+						<td class="pt5">Show plug-in job queue</td>
 						<td class="pt5 pl10">
 							<input type="button" id="groupConfButton" value="show" class="form-btn"
-					 				onclick="location.href='show_plugin_job_list.php';" />
+					 				onclick="location.href='show_job_queue.php';" />
 						</td>
 					</tr>
 				</table>

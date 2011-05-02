@@ -4,7 +4,9 @@
 	//----------------------------------------------------------------------------------------------
 	$jobList = array();
 
-	$sqlStr  = "SELECT * FROM plugin_job_list WHERE status > 0 ORDER BY registered_at ASC;";
+	$sqlStr = "SELECT * FROM job_queue jq, plugin_master pm"
+			. " WHERE pm.plugin_id=jq.plugin_id AND jq.status > 0"
+			. " ORDER BY jq.registered_at ASC";
 	$result = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 
 	foreach($result as $item)
@@ -15,7 +17,6 @@
 		{
 			case 1: $pluginType = 'CAD';             break;
 			case 2: $pluginType = 'Research';        break;
-			case 3: $pluginType = 'Group research';  break;
 		}
 
 		$patientID    = "";
@@ -25,15 +26,11 @@
 		if($item['plugin_type'] == 1)
 		{
 			$sqlStr = "SELECT *"
-					. " FROM plugin_job_list cl, job_series_list cs, study_list st, series_list sr,"
-					. " plugin_master pm WHERE cl.job_id=?"
-					. " AND cl.job_id = cs.job_id"
-					. " AND pm.plugin_name = cl.plugin_name"
-					. " AND pm.version = cl.version"
-					. " AND cs.series_id=0"
-					. " AND sr.study_instance_uid=cs.study_instance_uid"
-					. " AND st.study_instance_uid=sr.study_instance_uid"
-					." AND sr.series_instance_uid=cs.series_instance_uid;";
+					. " FROM job_queue jq, job_queue_series js, study_list st, series_list sr"
+					. " WHERE jq.job_id=? AND jq.job_id=js.job_id"
+					. " AND js.series_id=0"
+					. " AND sr.sid=js.series_sid"
+					. " AND st.study_instance_uid=sr.study_instance_uid";
 
 			$resDetail = DBConnector::query($sqlStr, $item['job_id'], 'ARRAY_ASSOC');
 
