@@ -254,7 +254,7 @@ function ShowCADResultFromCADLog(jobID, personalFBFlg)
 
 	if(personalFBFlg == 1)  params.feedbackMode = 'personal';
 
-	location.href = 'cad_results/show_cad_results.php' + $.param(params);
+	location.href = 'cad_results/show_cad_results.php?' + $.param(params);
 }
 
 
