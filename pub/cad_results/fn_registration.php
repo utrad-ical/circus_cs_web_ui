@@ -270,7 +270,7 @@
 		}
 		catch (PDOException $e)
 		{
-			//$pdo->rollBack();
+			$pdo->rollBack();
 			//$dstData['errorMessage']  = $e->getMessage();
 			$dstData['errorMessage'] .= "Fail to save FN location.";
 		}
