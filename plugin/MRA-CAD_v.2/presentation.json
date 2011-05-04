@@ -1,6 +1,6 @@
 {
 	"displayPresenter": {
-		"type": "LesionCADDisplayPresenter",
+		"type": "LesionCandDisplayPresenter",
 		"params": {
 			"dispWidth": 300
 		}

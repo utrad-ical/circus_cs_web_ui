@@ -5,7 +5,7 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class LesionCADDisplayPresenter extends DisplayPresenter
+class LesionCandDisplayPresenter extends DisplayPresenter
 {
 	public $imageWidth;
 	public $imageHeight;
@@ -35,7 +35,7 @@ class LesionCADDisplayPresenter extends DisplayPresenter
 	function display($smarty)
 	{
 		parent::display($smarty);
-		return $smarty->fetch('cad_results/lesion_cad_display_presenter.tpl');
+		return $smarty->fetch('cad_results/lesion_cand_display_presenter.tpl');
 	}
 
 	function extractDisplays($input)

@@ -521,12 +521,12 @@ ul.inline li {
 	z-index: 2;
 }
 
-.feedback-area {
+.feedback-pane {
 	margin-top: 2px;
 	text-align: center;
 }
 
-.feedback-area input.evaluation-text {
+.feedback-pane input.evaluation-text {
 	width: 100%;
 	margin: 0;
 }

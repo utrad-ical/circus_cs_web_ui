@@ -4,13 +4,13 @@
 var evalListener = (function() {
 	var global = {
 		setup: function () {
-			$('.feedback-area a.radio-to-button').click(function () {
+			$('.feedback-pane a.radio-to-button').click(function () {
 				CIRCUSFeedback.change();
 			});
 		},
 		set: function (target, value)
 		{
-			$('.feedback-area input[type=radio]', target).each(function() {
+			$('.feedback-pane input[type=radio]', target).each(function() {
 				if ($(this).val() == value) {
 					$(this).click().trigger('flush');
 				}
@@ -18,21 +18,21 @@ var evalListener = (function() {
 		},
 		get: function (target)
 		{
-			return $('.feedback-area input[type=radio]:checked', target).val();
+			return $('.feedback-pane input[type=radio]:checked', target).val();
 		},
 		validate: function (target)
 		{
-			return $('.feedback-area input[type=radio]:checked', target).length > 0;
+			return $('.feedback-pane input[type=radio]:checked', target).length > 0;
 		},
 		disable: function (target)
 		{
-			$('.feedback-area input[type=radio]', target)
+			$('.feedback-pane input[type=radio]', target)
 				.attr('disabled', 'disabled')
 				.trigger('flush');
 		},
 		enable: function (target)
 		{
-			$('.feedback-area input[type=radio]', target)
+			$('.feedback-pane input[type=radio]', target)
 				.attr('disabled', '')
 				.trigger('flush');
 		}

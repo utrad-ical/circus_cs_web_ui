@@ -14,10 +14,10 @@ Required CSS file:
 *}
 <div class="result-block">
 <input type="hidden" class="display-id" name="display_id" value="{$display.display_id}" />
-<div class="display-area">
+<div class="display-pane">
 {displayPresenter}
-</div><!-- /display-area -->
-<div class="feedback-area">
+</div><!-- /display-pane -->
+<div class="feedback-pane">
 {feedbackListener}
-</div><!-- /feedback-area -->
+</div><!-- /feedback-pane -->
 </div><!-- /result-block -->
