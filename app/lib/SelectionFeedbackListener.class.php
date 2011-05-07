@@ -14,9 +14,9 @@ class SelectionFeedbackListener extends FeedbackListener
 		return 'js/selection_feedback_listener.js';
 	}
 
-	function display($smarty)
+	function show($smarty)
 	{
-		parent::display($smarty);
+		parent::show($smarty);
 		return $smarty->fetch('cad_results/selection_feedback_listener.tpl');
 	}
 }

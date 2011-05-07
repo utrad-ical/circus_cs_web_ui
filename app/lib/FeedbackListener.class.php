@@ -14,7 +14,7 @@ abstract class FeedbackListener extends BlockElement
 	 * HTML. Writing or reading the feedback data on this HTML will be
 	 * done by the supporting JavaScript file.
 	 */
-	function display($smarty)
+	function show($smarty)
 	{
 		$smarty->assign('feedbackListenerParams', $this->params);
 	}

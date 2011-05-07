@@ -1,18 +1,17 @@
 <?php
 
 /**
- * DisplayPresenter renders the main part of the CAD result.
- * Typically, this outputs a lesion candidate as a static image with a
- * circle marker, with some additional information (such as confidence).
- *
+ * DisplayPresenter renders the main part of the CAD result. It difines
+ * how 'CAD displays' are visualized in web browsers.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 abstract class DisplayPresenter extends BlockElement
 {
 	/**
-	 * Returns the HTML of the element.
+	 * Returns the HTML that describes one given CAD display.
+	 * @param Smarty the Smarty instance
 	 */
-	public function display($smarty)
+	public function show($smarty)
 	{
 		$smarty->assign('displayPresenterParams', $this->params);
 	}

@@ -1,13 +1,16 @@
 <?php
 
 /**
- * BlockElement is the common base class for EvalListener
- * and BlockContent classes.
+ * BlockElement is the common base class for FeedbackListener
+ * and DisplayPresenter classes.
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 abstract class BlockElement
 {
+	/**
+	 * @var array
+	 */
 	protected $params;
 
 	/**
@@ -24,7 +27,7 @@ abstract class BlockElement
 	 * Returns the HTML of the element.
 	 * @param Smarty The Smarty instance
 	 */
-	abstract function display($smarty);
+	abstract function show($smarty);
 
 	/**
 	 * Returns the javascript and CSS files for making this evaluator work.
@@ -38,10 +41,9 @@ abstract class BlockElement
 
 	/**
 	 * Provides additional information to set up this evaluation listener
-	 * (for instance, selections for EnumEvalListener, or min/max value for
-	 * SliderEvalListener).
-	 * This information will be defined by pluguin's evaluation definiton
-	 * XML file (not implemented).
+	 * (for instance, selections for SelectionFeedbackListener,
+	 * or min/max value for SliderFeedbackListener).
+	 * This information will be defined by plugin's presentation.json file.
 	 * @param array $params
 	 */
 	function setParameter($params)

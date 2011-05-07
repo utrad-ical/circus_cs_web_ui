@@ -32,9 +32,9 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			sprintf('result%03d.png', $display_id);
 	}
 
-	function display($smarty)
+	function show($smarty)
 	{
-		parent::display($smarty);
+		parent::show($smarty);
 		return $smarty->fetch('cad_results/lesion_cand_display_presenter.tpl');
 	}
 

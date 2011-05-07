@@ -1,7 +1,7 @@
 <?php
 
 /**
- * TextEvalListener, subclass of EvalListener, provides a text input box
+ * TextEvalListener, subclass of FeedbackListener, provides a text input box
  * for collecting feedback data.
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
@@ -13,9 +13,9 @@ class TextFeedbackListener extends FeedbackListener
 		return 'js/text_feedback_listener.js';
 	}
 
-	function display($smarty)
+	function show($smarty)
 	{
-		parent::display($smarty);
+		parent::show($smarty);
 		return '<input type="text" class="evaluation-text">';
 	}
 }
