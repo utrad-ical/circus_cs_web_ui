@@ -190,7 +190,7 @@ class CADResult extends Model
 				'type' => 'DisplayPresenter'
 			),
 			'feedbackListener' => array(
-				'type' => 'SelectionFeedbackListener'
+				'type' => 'NullFeedbackListener'
 			)
 		);
 	}
