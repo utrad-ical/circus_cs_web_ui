@@ -7,6 +7,7 @@
  */
 class CADResult extends Model
 {
+	/* Model Definitions */
 	protected static $_table = 'executed_plugin_list';
 	protected static $_primaryKey = 'job_id';
 	protected static $_belongsTo = array(
@@ -26,6 +27,7 @@ class CADResult extends Model
 		)
 	);
 
+	/* Protected Properties */
 	protected $attributes;
 	protected $displayPresenter;
 	protected $feedbackListener;
@@ -185,7 +187,7 @@ class CADResult extends Model
 	{
 		return array(
 			'displayPresenter' => array(
-				'type' => 'DumpDisplayPresenter'
+				'type' => 'DisplayPresenter'
 			),
 			'feedbackListener' => array(
 				'type' => 'SelectionFeedbackListener'
@@ -195,13 +197,11 @@ class CADResult extends Model
 
 	protected function loadPresentationConfiguration()
 	{
-		global $WEB_UI_ROOT;
 		if (is_array($this->presentation))
 			return;
 		$result = $this->defaultPresentation();
-		$plugin_name = $this->Plugin->fullName();
 		$str = @file_get_contents(
-			"$WEB_UI_ROOT/plugin/$plugin_name/presentation.json" );
+			$this->pathOfPluginWeb() . '/presentation.json');
 		if ($str !== false)
 		{
 			$tmp = json_decode($str, true);
@@ -240,6 +240,11 @@ class CADResult extends Model
 		return $this->blockElement('feedbackListener');
 	}
 
+	/**
+	 * Singleton builder function to build FeedbackListener and
+	 * DisplayPresenter.
+	 * @param unknown_type $type
+	 */
 	protected function blockElement($type)
 	{
 		if ($this->$type)
@@ -252,10 +257,34 @@ class CADResult extends Model
 	}
 
 	/**
+	 * Returns the plugin web configuration diretory.
+	 * This directory contains presentation.json configuration file,
+	 * plugin-specific templates, etc.
+	 * @return string Plugin web configuration directory.
+	 */
+	public function pathOfPluginWeb()
+	{
+		global $WEB_UI_ROOT;
+		$plugin_name = $this->Plugin->fullName();
+		return "$WEB_UI_ROOT/plugin/$plugin_name";
+	}
+
+	/**
+	 * Returns the plugin-specific public directory.
+	 * This directory contains plugin-specific image files, css files,
+	 * javascript files, etc.
+	 */
+	public function webPathOfPluginPub()
+	{
+		$plugin_name = $this->Plugin->fillName();
+		return "../plugin/$plugin_name";
+	}
+
+	/**
 	 * Returns CAD result directory web path.
 	 * @return string CAD result directory web path.
 	 */
-	public function webPathOfCADResult()
+	public function webPathOfCadResult()
 	{
 		global $DIR_SEPARATOR_WEB, $SUBDIR_CAD_RESULT;
 		$webPath = $this->Storage->apache_alias;
@@ -274,7 +303,7 @@ class CADResult extends Model
 	 * Returns CAD result directory path.
 	 * @return string CAD result directory path.
 	 */
-	public function pathOfCADResult()
+	public function pathOfCadResult()
 	{
 		global $DIR_SEPARATOR, $SUBDIR_CAD_RESULT;
 		$path = $this->Storage->path;

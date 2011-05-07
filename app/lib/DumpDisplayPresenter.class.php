@@ -19,8 +19,7 @@ class DumpDisplayPresenter extends DisplayPresenter
 
 	public function show($smarty)
 	{
-		parent::show($smarty);
-		$smarty->display('cad_results/dump_display_presenter.tpl');
+		return $this->executeTemplate($smarty, 'dump_display_presenter.tpl');
 	}
 }
 

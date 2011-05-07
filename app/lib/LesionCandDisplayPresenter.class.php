@@ -13,7 +13,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	protected function getImageSize($display_id)
 	{
 		global $DIR_SEPARATOR;
-		$imgfile = $this->owner->pathOfCADResult() . $DIR_SEPARATOR .
+		$imgfile = $this->owner->pathOfCadResult() . $DIR_SEPARATOR .
 			sprintf('result%03d.png', $display_id);
 		$img = @imagecreatefrompng($imgfile);
 	    if($img)
@@ -28,14 +28,14 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	{
 		global $DIR_SEPARATOR_WEB;
 		return
-			$this->owner->webPathOfCADResult() . $DIR_SEPARATOR_WEB .
+			$this->owner->webPathOfCadResult() . $DIR_SEPARATOR_WEB .
 			sprintf('result%03d.png', $display_id);
 	}
 
 	function show($smarty)
 	{
-		parent::show($smarty);
-		return $smarty->fetch('cad_results/lesion_cand_display_presenter.tpl');
+		return $this->executeTemplate(
+			$smarty, 'lesion_cand_display_presenter.tpl');
 	}
 
 	function extractDisplays($input)
