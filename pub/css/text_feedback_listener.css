@@ -1,0 +1,12 @@
+.feedback-pane input.evaluation-text {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.feedback-pane div.evaluation-text-container {
+	border: 1px solid silver;
+	background-color: white;
+	padding: 0;
+}

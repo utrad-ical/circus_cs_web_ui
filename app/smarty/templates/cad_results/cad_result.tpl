@@ -55,6 +55,9 @@ sort = {$sort|@json_encode};
 
 {include file="cad_results/block_layout.tpl"}
 
+<div class="register-pane">
+<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />
+</div>
 
 </div><!-- /cadResult -->
 </div><!-- /tab-content -->

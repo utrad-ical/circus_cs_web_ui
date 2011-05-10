@@ -18,7 +18,7 @@ abstract class BlockElement
 	 */
 	protected $owner;
 
-	function __construct($owner)
+	public function __construct($owner)
 	{
 		$this->owner = $owner;
 	}
@@ -27,16 +27,27 @@ abstract class BlockElement
 	 * Returns the HTML of the element.
 	 * @param Smarty The Smarty instance
 	 */
-	abstract function show($smarty);
+	abstract public function show($smarty);
 
 	/**
 	 * Returns the javascript and CSS files for making this evaluator work.
 	 * @return array|string the name, or the array of names, of the
 	 * supporting .js/.css file(s).
 	 */
-	function requiringFiles()
+	public function requiringFiles()
 	{
 		return null; // nothing
+	}
+
+	/**
+	 * Protected method that defines the default parameter set of this element.
+	 * The parameters from presentation.json file will be merged into this
+	 * default parameter set.
+	 * @return array The default parameter set of this element.
+	 */
+	protected function defaultParams()
+	{
+		return array();
 	}
 
 	/**
@@ -48,7 +59,7 @@ abstract class BlockElement
 	 */
 	function setParameter($params)
 	{
-		$this->params = $params;
+		$this->params = array_merge($this->defaultParams(), $params);
 	}
 }
 

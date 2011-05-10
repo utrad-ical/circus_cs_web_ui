@@ -3,22 +3,35 @@
  */
 var evalListener = (function() {
 	var global = {
+		setup: function ()
+		{
+			$('.evaluation-text').change(function() {
+				CircusFeedback.change();
+			})
+			.keyup(function() {
+				CircusFeedback.change();
+			});
+		},
 		set: function (target, value)
 		{
-			$('.feedback-pane input[type=text]', target).val(value);
+			$('.evaluation-text', target).val(value);
 		},
 		get: function (target)
 		{
-			return $('.feedback-pane input[type=text]', target).val();
+			return $('.evaluation-text', target).val();
+		},
+		validate: function (target)
+		{
+			return $('.evaluation-text', target).val().length > 0;
 		},
 		disable: function (target)
 		{
-			$('.feedback-pane input[type=text]', target)
+			$('.evaluationtext', target)
 				.attr('disabled', 'disabled');
 		},
 		enable: function (target)
 		{
-			$('.feedback-pane input[type=text]', target)
+			$('.evaluation-text', target)
 				.attr('disabled', '');
 		}
 	};

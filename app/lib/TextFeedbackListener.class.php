@@ -10,13 +10,16 @@ class TextFeedbackListener extends FeedbackListener
 {
 	function requiringFiles()
 	{
-		return 'js/text_feedback_listener.js';
+		return array(
+			'js/text_feedback_listener.js',
+			'css/text_feedback_listener.css'
+		);
 	}
 
 	function show($smarty)
 	{
 		parent::show($smarty);
-		return '<input type="text" class="evaluation-text">';
+		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
 	}
 }
 

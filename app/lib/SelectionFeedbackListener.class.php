@@ -9,16 +9,40 @@
  */
 class SelectionFeedbackListener extends FeedbackListener
 {
-	function requiringFiles()
+	/**
+	 * (non-PHPdoc)
+	 * @see BlockElement::requiringFiles()
+	 */
+	public function requiringFiles()
 	{
 		return 'js/selection_feedback_listener.js';
 	}
 
-	function show($smarty)
+	/**
+	 * (non-PHPdoc)
+	 * @see FeedbackListener::show()
+	 */
+	public function show($smarty)
 	{
 		parent::show($smarty);
 		return $smarty->fetch('cad_results/selection_feedback_listener.tpl');
 	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see BlockElement::defaultParams()
+	 */
+	protected function defaultParams()
+	{
+		return array(
+			'personal' => array(
+				array('value' => 'TP', 'label' => 1),
+				array('value' => 'FP', 'label' => -1),
+				array('value' => 'pending', 'label' => 0)
+			)
+		);
+	}
+
 }
 
 ?>

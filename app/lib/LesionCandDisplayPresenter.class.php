@@ -56,6 +56,8 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			);
 			$result[$rec['sub_id']] = $item;
 		}
+		$result = array_slice($result, 0, 5, true); // preserve keys
+		// TODO: num of displays config
 		return $result;
 	}
 }

@@ -3,22 +3,25 @@
  */
 var evalListener = (function() {
 	var global = {
-		setup: function () {
+		setup: function ()
+		{
 			$('.feedback-pane a.radio-to-button').click(function () {
-				CIRCUSFeedback.change();
+				CircusFeedback.change();
 			});
 		},
 		set: function (target, value)
 		{
 			$('.feedback-pane input[type=radio]', target).each(function() {
-				if ($(this).val() == value) {
+				if ($(this).val() == value.selection) {
 					$(this).click().trigger('flush');
 				}
 			});
 		},
 		get: function (target)
 		{
-			return $('.feedback-pane input[type=radio]:checked', target).val();
+			return {
+				selection: $('.feedback-pane input[type=radio]:checked', target).val()
+			};
 		},
 		validate: function (target)
 		{

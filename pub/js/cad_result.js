@@ -1,12 +1,12 @@
-CIRCUSFeedback = function() {
+CircusFeedback = function() {
 	var global = {
 		initialize: function(feedbacks) {
-		$('.result-block').each(function() {
-			var block = this;
-			var id = $("input.display-id", block).val();
-			$(block).data('displayid', id);
-			evalListener.set(block, feedbacks.blockFeedback[id]);
-		});
+			$('.result-block').each(function() {
+				var block = this;
+				var id = $("input.display-id", block).val();
+				$(block).data('displayid', id);
+				evalListener.set(block, feedbacks.blockFeedback[id]);
+			});
 		},
 		collect: function() {
 			var results = {};
@@ -28,9 +28,9 @@ CIRCUSFeedback = function() {
 			return register_ok;
 		},
 		change: function() {
-			var ok = CIRCUSFeedback.register_ok();
-			$('#register').attr('disabled', ok ? '' : 'disabled');
-			var data = CIRCUSFeedback.collect();
+			var ok = CircusFeedback.register_ok();
+			$('#register').attr('disabled', ok ? '' : 'disabled').trigger('flush');
+			var data = CircusFeedback.collect();
 			$('#result').val(JSON.stringify(data));
 		},
 		register: function() {
@@ -40,7 +40,7 @@ CIRCUSFeedback = function() {
 	return global;
 }();
 
-CIRCUSCADResult = function() {
+CircusCadResult = function() {
 	var global = {
 		sortBlocks: function(key, order) {
 			var sorted = $('#result-blocks .result-block').sort(function(a,b){
@@ -60,12 +60,12 @@ CIRCUSCADResult = function() {
 
 $(function(){
 	// Initialize the evaluator status.
-	CIRCUSFeedback.initialize(feedbacks);
+	CircusFeedback.initialize(feedbacks);
 	evalListener.setup();
 
 	if (sort.key && sort.order == 'asc' || sort.order == 'desc')
 	{
-		CIRCUSCADResult.sortBlocks(sort.key, sort.order);
+		CircusCadResult.sortBlocks(sort.key, sort.order);
 	}
 	if ($('#sorterArea'))
 	{
@@ -74,7 +74,12 @@ $(function(){
 		$('#sorterArea input, #sorterArea select').change(function() {
 			var key = $('#sorterArea select[name=sortKey]').val();
 			var order = $('#sorterArea input[name=sortOrder]:checked').val();
-			CIRCUSCADResult.sortBlocks(key, order);
+			CircusCadResult.sortBlocks(key, order);
 		});
 	}
+
+	$('#register').click(function(){
+		alert(JSON.stringify(CircusFeedback.collect()));
+	})
+
 });
