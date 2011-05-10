@@ -4,6 +4,7 @@ Smarty Template for General CAD Result.
 {capture name="require"}
 js/radio-to-button.js
 js/cad_result.js
+css/darkroom.css
 {foreach from=$displayPresenter->requiringFiles() item=file}{$file}
 {/foreach}
 
@@ -19,6 +20,7 @@ sort = {$sort|@json_encode};
 {/capture}
 {include file="header.tpl" body_class="cad-result"
 	require=$smarty.capture.require head_extra=$smarty.capture.extra}
+{include file="darkroom_button.tpl"}
 <div id="cadResultTab" class="tabArea">
 <ul>
 	<li><a class="btn-tab" href="#">CAD Result</a></li>

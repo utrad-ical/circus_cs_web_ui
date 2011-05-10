@@ -7,6 +7,11 @@
 
 .feedback-pane div.evaluation-text-container {
 	border: 1px solid silver;
-	background-color: white;
 	padding: 0;
+	margin: 5px 2px;
+}
+
+body.darkroom input.evaluation-text {
+	background-color: black;
+	color: white;
 }
