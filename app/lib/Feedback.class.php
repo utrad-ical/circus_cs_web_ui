@@ -14,7 +14,7 @@ class Feedback extends Model
 
 	/**
 	 * The block-based feedbacks.
-	 * keys are the lesion_id's, and values are feedback data for which
+	 * keys are the display_id's, and values are block feedback data for which
 	 * the associated evaluation listener can recognize.
 	 * @var array
 	 */
@@ -28,25 +28,42 @@ class Feedback extends Model
 	public $additional;
 
 	/**
-	 * Save the feedback into the database.
+	 * Save the feedback data into the database.
+	 * @return bool true if succeeds.
 	 */
-	public function save()
+	public function saveFeedback($job_id, $blockFeedback,
+		$additional, $user_id, $is_consensual)
 	{
-		// DB begin
-		if ($fb_id === null)
-		{
-			// Insert a new record into feedback_list table and fetch ID
+		$pdo = DBConnector::getConnection();
+		$cadResult = new CadResult($job_id);
+		$listener = $cadResult->feedbackListener();
+
+		try {
+			$pdo->beginTransaction();
+			$now = date('Y-m-d H:i:s');
+			$fb_id = $pdo->query("SELECT nextval('feedback_list_fb_id_seq')")->fetchColumn();
+			$sqlStr = 'INSERT INTO feedback_list(fb_id, job_id, entered_by, is_consensual, status, registered_at) ' .
+				'VALUES (?, ?, ?, ?, ?, ?)';
+			$sth = $pdo->prepare($sqlStr);
+			$sth->execute(array($fb_id, $job_id, $user, $is_consensual, 1, $now));
+
+			$listener->prepareSaveBlockFeedback();
+			foreach ($blockFeedback as $display_id => $block_fb)
+			{
+				$listener->saveBlockFeedback($fb_id, $display_id, $block_fb);
+			}
+			// $pdo->commit();
+			$pdo->rollBack();
+			$this->_data['fb_id'] = $fb_id;
+			$this->_data['job_id'] = $job_id;
+			$this->_data['entered_by'] = $user_id;
+			$this->_data['status'] = 1;
+			$this->_data['registered_at'] = $now;
+		} catch (Exception $e) {
+			$pdo->rollBack();
+			return false;
 		}
-		else
-		{
-			// Delete existing block feedbacks
-		}
-		// EvalListeners should save the evaluations of each block
-		foreach ($blockFeedback as $id => $feedback)
-		{
-			// Save block feedback
-		}
-		// DB commit
+		return true;
 	}
 
 	/**

@@ -21,6 +21,16 @@ class TextFeedbackListener extends FeedbackListener
 		parent::show($smarty);
 		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
 	}
+
+	function prepareSaveBlockFeedback()
+	{
+		// TODO: implement
+	}
+
+	function saveBlockFeedback($fb_id, $display_id, $feedback)
+	{
+		// TODO: implement
+	}
 }
 
 ?>

@@ -37,7 +37,7 @@ show_cad_results($params['jobID'], $params['feedbackMode']);
  */
 function show_cad_results($jobID, $feedbackMode) {
 	// Retrieve the CAD Result
-	$cadResult = new CADResult($jobID);
+	$cadResult = new CadResult($jobID);
 
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
@@ -53,7 +53,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'feedbackListener' => $cadResult->feedbackListener(),
 		'feedbacks' => $cadResult->getFeedback(),
 		'params' => $params,
-		'sorter' => $cadResult->sorter(),
+		'sorter' => $sort,
 		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])
 	));
 

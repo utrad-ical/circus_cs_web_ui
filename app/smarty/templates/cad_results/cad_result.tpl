@@ -60,6 +60,9 @@ sort = {$sort|@json_encode};
 <div class="register-pane">
 <input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />
 </div>
+<form>
+<input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />
+</form>
 
 </div><!-- /cadResult -->
 </div><!-- /tab-content -->

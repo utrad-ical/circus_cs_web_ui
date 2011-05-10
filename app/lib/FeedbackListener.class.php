@@ -8,6 +8,11 @@
  */
 abstract class FeedbackListener extends BlockElement
 {
+	/**
+	 * @var PDO
+	 */
+	protected $pdo;
+
 	/*
 	 * Returns the HTML that renders this evaluation listener.
 	 * For evaluation listeners, this method should return mere skeleton
@@ -19,7 +24,18 @@ abstract class FeedbackListener extends BlockElement
 		$smarty->assign('feedbackListenerParams', $this->params);
 	}
 
-	// abstract function saveBlockFeedback($id, $feedback);
+	/**
+	 * Called before saveBlockFeedback() loop.
+	 */
+	abstract function prepareSaveBlockFeedback();
+
+	/**
+	 * Inserts one block feedback.
+	 * @param int $fb_id
+	 * @param int $display_id
+	 * @param mixed $feedback
+	 */
+	abstract function saveBlockFeedback($fb_id, $display_id, $feedback);
 }
 
 ?>

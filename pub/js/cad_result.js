@@ -79,7 +79,20 @@ $(function(){
 	}
 
 	$('#register').click(function(){
-		alert(JSON.stringify(CircusFeedback.collect()));
+		// alert(JSON.stringify(CircusFeedback.collect()));
+		var blockFeedback = CircusFeedback.collect();
+		$.post("register_feedback.php",
+			{
+				jobID: $("#job-id").val(),
+				feedbackMode: 'personal',
+				feedback: JSON.stringify({blockFeedback:blockFeedback})
+			},
+			function (data)
+			{
+				alert(JSON.stringify(data));
+			},
+			"json"
+		);
 	})
 
 });

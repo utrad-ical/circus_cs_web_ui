@@ -1,11 +1,11 @@
 <?php
 
 /**
- * CADResult represents result set for one CAD process.
+ * CadResult represents result set for one CAD process.
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class CADResult extends Model
+class CadResult extends Model
 {
 	/* Model Definitions */
 	protected static $_table = 'executed_plugin_list';
@@ -111,9 +111,9 @@ class CADResult extends Model
 	 * Returns the CAD result visibility for the user currently logged in.
 	 * @return bool True if the user can view this CAD result.
 	 */
-	public function checkCADResultAvailability()
+	public function checkCadResultAvailability()
 	{
-		// TODO: implement checkCADResultAavailability
+		// TODO: implement checkCadResultAavailability
 		return true;
 	}
 

@@ -9,6 +9,8 @@
  */
 class SelectionFeedbackListener extends FeedbackListener
 {
+	private $_sth;
+
 	/**
 	 * (non-PHPdoc)
 	 * @see BlockElement::requiringFiles()
@@ -43,6 +45,32 @@ class SelectionFeedbackListener extends FeedbackListener
 		);
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see FeedbackListener::prepareSaveBlockFeedback()
+	 */
+	function prepareSaveBlockFeedback()
+	{
+		$this->pdo = DBConnector::getConnection();
+		$this->_sth = $this->pdo->prepare(
+			'INSERT INTO lesion_classification(sid, lesion_id, evaluation, fb_id) ' .
+			'VALUES(?, ?, ?, ?)'
+		);
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see FeedbackListener::saveBlockFeedback()
+	 */
+	function saveBlockFeedback($fb_id, $display_id, $feedback)
+	{
+		$this->_sth->execute(array(
+			null,
+			$display_id,
+			$feedback['selection'],
+			$fb_id
+		));
+	}
 }
 
 ?>
