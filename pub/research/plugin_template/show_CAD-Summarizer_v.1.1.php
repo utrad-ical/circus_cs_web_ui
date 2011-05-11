@@ -102,8 +102,8 @@
 
 			if($n==3)
 			{
-				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias,'
-						. ' fn.location_x, fn.location_y, fn.location_z'
+				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid,'
+						. ' sm.storage_id, sm.path, fn.location_x, fn.location_y, fn.location_z'
 						. ' FROM study_list st, series_list sr, storage_master sm, executed_plugin_list el,'
 						. ' executed_series_list es, feedback_list fl, fn_location fn'
 						. ' WHERE el.job_id=?  AND fl.job_id=el.job_id AND fn.fb_id=fl.fb_id AND fn.fn_id=?'
@@ -114,8 +114,8 @@
 			}
 			else
 			{
-				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias,'
-						. ' cad.location_x, cad.location_y, cad.location_z'
+				$sqlStr = 'SELECT st.patient_id, st.study_instance_uid, sr.series_instance_uid'
+						. ' sm.storage_id, sm.path, cad.location_x, cad.location_y, cad.location_z'
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, "' . $resultTableName . '" cad'
 						. ' WHERE el.job_id=?  AND cad.job_id=el.job_id AND cad.sub_id=?'
@@ -132,14 +132,15 @@
 
 			$result = $stmt->fetch(PDO::FETCH_NUM);
 
-			$seriesDir = $result[3] . $DIR_SEPARATOR . $result[0] . $DIR_SEPARATOR
+			$seriesDir = $result[4] . $DIR_SEPARATOR . $result[0] . $DIR_SEPARATOR
 					   . $result[1] . $DIR_SEPARATOR . $result[2];
-			$seriesDirWeb = $result[4] . $result[0]
-						  . $DIR_SEPARATOR_WEB . $result[1] . $DIR_SEPARATOR_WEB . $result[2];
+			$seriesDirWeb = 'storage/' . $result[3] . '/' . $result[0]
+						  . '/' . $result[1] . '/' . $result[2]
 
-			$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR . $cadName . '_v.' . $version;
-			$webPathOfCADReslut = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $cadName
-			                    . '_v.' . $version;
+			$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
+							. $DIR_SEPARATOR . $cadName . '_v.' . $version;
+			$webPathOfCADReslut = $seriesDirWeb . '/' . $SUBDIR_CAD_RESULT
+							    . '/' . $cadName . '_v.' . $version;
 
 			$posX = $result[5];
 			$posY = $result[6];

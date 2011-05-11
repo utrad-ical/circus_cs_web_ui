@@ -9,6 +9,7 @@ css/darkroom.css
 
 {capture name="extra"}
 <script language="Javascript">
+
 {if $data.errorMessage == ""}
 $(function() {ldelim}
 	SetUp({$data.imgNum}, {$data.fNum});
@@ -130,25 +131,17 @@ function DownloadVolume()
 		<div class="series-detail-img">
 			<form id="form1" name="form1">
 
-			<input type="hidden" id="dispMode"          name="dispMode"           value="{$data.dispMode|escape}" />
 			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"   value="{$data.studyInstanceUID|escape}" />
 			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID|escape}" />
-			<input type="hidden" id="encryptedPtID"     name="encryptedPtID"      value="{$data.encryptedPtID|escape}" />
-			<input type="hidden" id="encryptedPtName"   name="encryptedPtName"    value="{$data.encryptedPtName|escape}" />
 			<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName|escape}" />
 			<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel|escape}" />
 			<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth|escape}" />
-			<input type="hidden" id="orgWidth"          name="orgWidth"           value="{$data.orgWidth}" />
-			<input type="hidden" id="orgHeight"         name="orgHeight"          value="{$data.orgHeight}" />
-			<input type="hidden" id="dispWidth"         name="dispWidth"          value="{$data.dispWidth}" />
-			<input type="hidden" id="dispHeight"        name="dispheight"         value="{$data.dispHeight}" />
-			<input type="hidden" id="imgNum"            name="imgNum"             value="">
 
 			<table>
 				<tr>
 					<td valign=top align=left width="320" height="{$data.dispHeight}">
 						<div id="imgBox" style="width:{$data.dispWidth}; height:{$data.dispHeight}; position:relative;">
-							<img src="{$data.dstFnameWeb|escape}" width="{$data.dispWidth}" height="{$data.dispHeight}" style="position:absolute; left:{$data.imgLeftPos}px; top:0px; z-index:1;" />
+							<img src="storage/{$data.storageID|escape}/{$data.dstFnameWeb|escape}" width="{$data.dispWidth}" height="{$data.dispHeight}" style="position:absolute; left:{$data.imgLeftPos}px; top:0px; z-index:1;" />
 							<span style="color:#fff; font-weight:bold; position:absolute; left:{$data.imgNumStrLeftPos}px; top:0px; z-index:2;">Img. No. {$data.imgNum|string_format:"%04d"}</span>
 						</div>
 					</td>

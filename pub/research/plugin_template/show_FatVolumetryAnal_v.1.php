@@ -58,11 +58,11 @@
 	fclose($pipes[0]);
 
 	// error output
-	if (!empty($pipes[2]))
-	{
-		error_log($pipes[2], 0);
-	}
-	fclose($pipes[2]);
+	//if (!empty($pipes[2]))
+	//{
+	//	error_log($pipes[2], 0);
+	//}
+	//fclose($pipes[2]);
 
 	// end of proc
 	proc_close($gnuplot);

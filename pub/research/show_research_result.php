@@ -46,7 +46,7 @@
 			$pdo = DBConnector::getConnection();
 
 			//echo json_encode($dstData);
-			$sqlStr .= "SELECT pm.plugin_name, pm.version, el.executed_at, sm.path, sm.apache_alias"
+			$sqlStr .= "SELECT pm.plugin_name, pm.version, el.executed_at, sm.storage_id, sm.path"
 					.  " FROM executed_plugin_list el, plugin_master pm, storage_master sm"
 					.  " WHERE el.job_id=? AND pm.plugin_id=el.plugin_id"
 					.  " AND el.storage_id = sm.storage_id";
@@ -60,8 +60,8 @@
 			$params['pluginName'] = $result[0];
 			$params['version']    = $result[1];
 			$params['executedAt'] = $result[2];
-			$params['resPath']    = $result[3] . $DIR_SEPARATOR . $params['jobID'] . $DIR_SEPARATOR;
-			$params['resPathWeb'] = "../" . $result[4] . $params['jobID'] . $DIR_SEPARATOR_WEB;
+			$params['resPath']    = $result[4] . $DIR_SEPARATOR . $params['jobID'] . $DIR_SEPARATOR;
+			$params['resPathWeb'] = "../storage/" . $result[3] . '/' . $params['jobID'] . $DIR_SEPARATOR_WEB;
 
 			//----------------------------------------------------------------------------------------------------------
 			// Retrieve tag data

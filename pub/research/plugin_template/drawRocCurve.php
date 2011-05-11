@@ -30,7 +30,7 @@
 			else					$dataFile .= "CAD-SummarizerResult_1_froc.txt";
 		}
 	
-		// 初期設定
+		// Intialization
 		fwrite($pipes[0], "set term png size 360, 320\n");
 		fwrite($pipes[0], "set grid\n");
 		fwrite($pipes[0], "set border\n");
@@ -54,23 +54,23 @@
 	
 		//fwrite($pipes[0], "set style line 1 lt 3 lw 2 pt 0\n");
 
-		// グラフの種類
+		// Plot ROC(FROC) curvre
 		fwrite($pipes[0], "plot '" . $dataFile . "' with lines lc rgb \"red\" lw 2.5\n");	
 		fwrite($pipes[0], "set output '" . $dstFname . "'\n");	
 		fwrite($pipes[0], "replot\n");	
 		fclose($pipes[0]);
 
-		// グラフ出力
+		// Graph output
 		//header("Content-type: image/png");
 		//fpassthru($pipes[1]);
 		//fclose($pipes[1]);
  
-		// エラー出力
-		if (!empty($pipes[2]))
-		{
-			error_log($pipes[2], 0);
-		}
-		fclose($pipes[2]);
+		// Error output
+		//if (!empty($pipes[2]))
+		//{
+		//	error_log($pipes[2], 0);
+		//}
+		//fclose($pipes[2]);
  
 		// 終わり
 		proc_close($gnuplot);

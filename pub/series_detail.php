@@ -45,7 +45,7 @@
 			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT st.study_instance_uid, sr.series_instance_uid,"
-					. " pt.patient_id, pt.patient_name, sm.path, sm.apache_alias,"
+					. " pt.patient_id, pt.patient_name, sm.storage_id, sm.path,"
 					. " sr.image_width, sr.image_height, pt.sex, st.age, st.study_id,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality,"
 					. " sr.series_description, sr.body_part"
@@ -61,6 +61,7 @@
 			$data['seriesInstanceUID'] = $result[1];
 			$data['patientID']         = $result[2];
 			$data['patientName']       = $result[3];
+			$data['storageID']         = $result[4];
 			$data['orgWidth']          = $result[6];
 			$data['orgHeight']         = $result[7];
 			$data['sex']               = $result[8];
@@ -76,12 +77,11 @@
 			$data['encryptedPtID']   = PinfoScramble::encrypt($data['patientID'], $_SESSION['key']);
 			$data['encryptedPtName'] = PinfoScramble::encrypt($data['patientName'], $_SESSION['key']);
 
-			$data['seriesDir'] = $result[4] . $DIR_SEPARATOR . $data['patientID'] . $DIR_SEPARATOR . $data['studyInstanceUID']
-					           . $DIR_SEPARATOR . $data['seriesInstanceUID'];
+			$data['subPath'] = $data['patientID'] . '/' . $data['studyInstanceUID']
+							 . '/' . $data['seriesInstanceUID'];
 
-			$data['seriesDirWeb'] = $result[5]. $data['patientID'] . $DIR_SEPARATOR_WEB . $data['studyInstanceUID']
-					              . $DIR_SEPARATOR_WEB . $data['seriesInstanceUID'];
-
+			$data['seriesDir'] = $result[5] . '/' . $data['subPath'];
+			
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
 				$data['patientID'] = $data['encryptedPtID'];
@@ -165,8 +165,7 @@
 
 				$data['dstFname']    .= $subDir . $DIR_SEPARATOR . $tmpFname;
 				$dstBase = $data['dstFname'];
-				$data['dstFnameWeb'] .= $data['seriesDirWeb'] . $DIR_SEPARATOR_WEB
-				                     .  $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;
+				$data['dstFnameWeb'] .= $data['subPath'] . '/' . $SUBDIR_JPEG . '/' . $tmpFname;
 
 				$dumpFname = $data['dstFname'] . ".txt";
 

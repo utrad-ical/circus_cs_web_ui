@@ -106,7 +106,7 @@
 
 			$sqlStr = "SELECT pt.patient_id, pt.patient_name, pt.sex, st.age, st.study_id, st.study_date,"
 					. " sr.series_number, sr.series_date, sr.series_time, sr.modality, sr.series_description,"
-					. " sr.body_part, sr.image_width, sr.image_height, sm.path, sm.apache_alias"
+					. " sr.body_part, sr.image_width, sr.image_height, sm.storage_id, sm.path"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm"
 					. " WHERE sr.series_instance_uid=?"
 					. " AND sr.study_instance_uid=st.study_instance_uid"
@@ -128,8 +128,8 @@
 			$params['bodyPart']          = $result[11];
 			$params['orgWidth']          = $result[12];
 			$params['orgHeight']         = $result[13];
-			$params['storagePath']       = $result[14];
-			$params['webPath']           = $result[15];
+			$params['storageID']         = $result[14];
+			$params['storagePath']       = $result[15];
 
 			// Retrieve parameters for the plug-in
 			$sqlStr = "SELECT result_type, result_table, score_table"
@@ -170,14 +170,14 @@
 			$params['seriesDir'] = $params['storagePath'] . $DIR_SEPARATOR . $params['patientID']
 								 . $DIR_SEPARATOR . $params['studyInstanceUID']
 								 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-			$params['seriesDirWeb'] = $params['webPath'] . $params['patientID']
-								    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-								    . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$params['seriesDirWeb'] = 'storage/' . $params['storageID']
+								    . '/' . $params['patientID']
+								    . '/' . $params['studyInstanceUID']
+								    . '/' . $params['seriesInstanceUID'];
 			$params['pathOfCADReslut'] = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
 									   . $DIR_SEPARATOR . $params['cadName'] . '_v.' . $params['version'];
-			$params['webPathOfCADReslut'] = $params['seriesDirWeb'] . $DIR_SEPARATOR_WEB
-										  . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $params['cadName']
-										  . '_v.' . $params['version'];
+			$params['webPathOfCADReslut'] = $params['seriesDirWeb'] . '/' . $SUBDIR_CAD_RESULT
+										  . '/' . $params['cadName'] . '_v.' . $params['version'];
 
 			$params['encryptedPtID'] = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 

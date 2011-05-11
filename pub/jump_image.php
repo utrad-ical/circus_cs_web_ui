@@ -46,7 +46,7 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT st.patient_id, sm.path, sm.apache_alias"
+			$sqlStr = "SELECT st.patient_id,  sm.storage_id, sm.path"
 					. " FROM study_list st, series_list sr, storage_master sm"
 				    . " WHERE sr.study_instance_uid=?"
 				    . " AND sr.series_instance_uid=?"
@@ -57,13 +57,13 @@
 
 			$patientID = $result[0];
 
-			$seriesDir = $result[1] . $DIR_SEPARATOR . $patientID
+			$seriesDir = $result[2] . $DIR_SEPARATOR . $patientID
 					   . $DIR_SEPARATOR . $params['studyInstanceUID']
 					   . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 
-			$seriesDirWeb = $result[2]. $patientID
-					      . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-					      . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$seriesDirWeb = 'storage/' . $result[1]. '/' . $patientID
+					      . '/' . $params['studyInstanceUID']
+					      . '/' . $params['seriesInstanceUID'];
 
 			$flist = array();
 			$flist = GetDicomFileListInPath($seriesDir);

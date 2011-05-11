@@ -43,11 +43,10 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT st.patient_id, sm.apache_alias"
-					. " FROM study_list st, series_list sr, storage_master sm "
+			$sqlStr = "SELECT st.patient_id, sr.storage_id"
+					. " FROM study_list st, series_list sr"
 					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?"
-					. " AND sr.study_instance_uid=st.study_instance_uid"
-					. " AND sr.storage_id=sm.storage_id;";
+					. " AND sr.study_instance_uid=st.study_instance_uid";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
@@ -60,12 +59,11 @@
 			{
 				$result = $stmt->fetch(PDO::FETCH_NUM);
 
-				$webPathOfseriesDir = $result[1] . $result[0]
-				                    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-		    		                . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+				$webPathOfseriesDir = 'storage/' . $result[1] . '/' . $result[0]
+				                    . '/' . $params['studyInstanceUID']
+		    		                . '/' . $params['seriesInstanceUID'];
 
-				$params['fileName'] = "../" . $webPathOfseriesDir . $DIR_SEPARATOR_WEB
-								    . $params['seriesInstanceUID'] . ".zip";
+				$params['fileName'] = "../" . $webPathOfseriesDir . '/' . $params['seriesInstanceUID'] . ".zip";
 			}
 		}
 

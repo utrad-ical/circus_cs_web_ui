@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule storage/([0-9]+)/(.*)$ /CIRCUS-CS/storage.php?id=$1&subPath=$2
