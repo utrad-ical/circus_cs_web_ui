@@ -5,7 +5,8 @@ CircusFeedback = function() {
 				var block = this;
 				var id = $("input.display-id", block).val();
 				$(block).data('displayid', id);
-				evalListener.set(block, feedbacks.blockFeedback[id]);
+				if (feedbacks && feedbacks.blockFeedback)
+					evalListener.set(block, feedbacks.blockFeedback[id]);
 			});
 		},
 		collect: function() {
@@ -34,7 +35,19 @@ CircusFeedback = function() {
 			$('#result').val(JSON.stringify(data));
 		},
 		register: function() {
-
+			var blockFeedback = CircusFeedback.collect();
+			$.post("register_feedback.php",
+				{
+					jobID: $("#job-id").val(),
+					feedbackMode: 'personal',
+					feedback: JSON.stringify({blockFeedback:blockFeedback})
+				},
+				function (data)
+				{
+					alert(data);
+				},
+				"text"
+			);
 		}
 	};
 	return global;
@@ -78,21 +91,6 @@ $(function(){
 		});
 	}
 
-	$('#register').click(function(){
-		// alert(JSON.stringify(CircusFeedback.collect()));
-		var blockFeedback = CircusFeedback.collect();
-		$.post("register_feedback.php",
-			{
-				jobID: $("#job-id").val(),
-				feedbackMode: 'personal',
-				feedback: JSON.stringify({blockFeedback:blockFeedback})
-			},
-			function (data)
-			{
-				alert(JSON.stringify(data));
-			},
-			"json"
-		);
-	})
+	$('#register').click(CircusFeedback.register);
 
 });

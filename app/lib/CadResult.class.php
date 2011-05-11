@@ -37,17 +37,38 @@ class CadResult extends Model
 
 	/**
 	 * Retrieves the list of feedback data associated with this CAD Result.
-	 * @param string $feedbackMode 'personal', 'consensual', or 'all'
+	 * @param string $kind One of the following. 'personal', the list of
+	 * all personal feedback set. 'consensual', the consensual feedback.
+	 * 'all', the all feedback set. 'user', ID specified.
+	 * @param string $user_id Specifies the user ID when $kind is 'user'
 	 * @return array Array of Feedback objects
 	 */
-	public function getFeedback($feedbackMode = 'personal')
+	public function queryFeedback($kind = 'all', $user_id = null)
 	{
-		// TODO: Replace SQL
-		$dummy = new Feedback();
-		$arr = array(0,0,0,1,1,1,-1,-1,-1);
-		shuffle($arr);
-		$dummy->blockFeedback = $arr;
-		return $dummy;
+		$feedback_list = $this->Feedback;
+		switch ($kind)
+		{
+			case "personal":
+				return array_filter($feedback_list, function($in) {
+					return $in->is_consensual == false;
+				});
+				break;
+			case "consensual":
+				return array_filter($feedback_list, function($in) {
+					return $in->is_consenaual == true;
+				});
+				break;
+			case "all":
+				return $feedback_list;
+				break;
+			case "user":
+				return array_filter($feedback_list, function($in) use ($user_id) {
+					$bool = $in->is_consensual == false && $in->entered_by == $user_id;
+					return $bool;
+				});
+				break;
+		}
+		throw new BadMethodCallException();
 	}
 
 	/**

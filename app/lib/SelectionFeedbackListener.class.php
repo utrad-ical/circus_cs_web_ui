@@ -51,10 +51,10 @@ class SelectionFeedbackListener extends FeedbackListener
 	 */
 	function prepareSaveBlockFeedback()
 	{
-		$this->pdo = DBConnector::getConnection();
-		$this->_sth = $this->pdo->prepare(
-			'INSERT INTO lesion_classification(sid, lesion_id, evaluation, fb_id) ' .
-			'VALUES(?, ?, ?, ?)'
+		$pdo = DBConnector::getConnection();
+		$this->_sth = $pdo->prepare(
+			'INSERT INTO candidate_classification(candidate_id, evaluation, fb_id) ' .
+			'VALUES(?, ?, ?)'
 		);
 	}
 
@@ -62,14 +62,31 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::saveBlockFeedback()
 	 */
-	function saveBlockFeedback($fb_id, $display_id, $feedback)
+	function saveBlockFeedback($fb_id, $display_id, $block_feedback)
 	{
 		$this->_sth->execute(array(
-			null,
 			$display_id,
-			$feedback['selection'],
+			$block_feedback['selection'],
 			$fb_id
 		));
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see FeedbackListener::loadBlockFeedback()
+	 */
+	function loadBlockFeedback($fb_id)
+	{
+		$sql = 'SELECT * FROM candidate_classification WHERE fb_id=?';
+		$rows = DBConnector::query($sql, array($fb_id), 'ALL_ASSOC');
+		$result = array();
+		foreach ($rows as $row)
+		{
+			$result[$row['candidate_id']] = array(
+				'selection' => $row['evaluation']
+			);
+		}
+		return $result;
 	}
 }
 

@@ -9,12 +9,12 @@
 abstract class Model
 {
 	protected $_data;
-	protected $_modified = false;
 	protected static $_table;
 	protected static $_belongsTo;
 	protected static $_hasMany;
 	protected static $_hasAndBelongsToMany;
 	protected static $_primaryKey;
+	protected static $_sequence;
 
 	public function __construct($id = null)
 	{
@@ -105,7 +105,7 @@ abstract class Model
 	public function __get($key)
 	{
 		$class = get_class($this);
-		if ($this->_data[$key])
+		if (isset($this->_data[$key]))
 			return $this->_data[$key];
 		if (isset($class::$_belongsTo[$key]))
 		{
@@ -121,15 +121,43 @@ abstract class Model
 		}
 	}
 
-	public function __set($key, $value)
+	public function save($data)
 	{
-		$this->_data[$key] = $value;
-		$this->_modified = true;
-	}
+		$class = get_class($this);
+		$table = $class::$_table;
+		$pkey = $class::$_primaryKey;
+		$obj = $data[$class];
 
-	public function save()
-	{
-		$this->_modified = false;
+		if ($this->_data[$pkey])
+		{
+			// update
+			$sql = "UPDATE $table SET " .
+				implode(', ', array_map(function($k) {
+					return "$k=?";
+				}, $obj)) .
+				"WHERE $pkey=?";
+			$binds = array_values($obj);
+			$binds[] = $this->_data[$pkey];
+			DBConnector::query($sql, $binds);
+		}
+		else
+		{
+			// save new
+			$sql = "INSERT INTO $table (" .
+				implode(', ', array_keys($obj)) .
+				") VALUES (" .
+				implode(', ', array_fill(0, count($obj), '?')) .
+				")";
+			DBConnector::query($sql, array_values($obj));
+
+			$new_id = DBConnector::query(
+				"SELECT currval('{$class::$_sequence}')", array(), 'SCALAR');
+			$this->_data[$pkey] = $new_id;
+		}
+		foreach ($obj as $k => $v)
+		{
+			$this->_data[$k] = $v;
+		}
 	}
 }
 

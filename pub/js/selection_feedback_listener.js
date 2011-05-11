@@ -11,6 +11,7 @@ var evalListener = (function() {
 		},
 		set: function (target, value)
 		{
+			if (!value) value = {};
 			$('.feedback-pane input[type=radio]', target).each(function() {
 				if ($(this).val() == value.selection) {
 					$(this).click().trigger('flush');

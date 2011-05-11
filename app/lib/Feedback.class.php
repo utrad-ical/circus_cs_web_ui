@@ -1,15 +1,20 @@
 <?php
 
 /**
- * Feedback represents the set of feedback data for one CAD result.
+ * Model class for feedback.
+ * This class represents the set of feedback data from one CAD result.
+ * This class can load block feedback and additional feedback.
+ * You must call loadFeedback() manually after creating the instance of
+ * this class.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 class Feedback extends Model
 {
 	protected static $_table = 'feedback_list';
+	protected static $_sequence = 'feedback_list_fb_id_seq';
 	protected static $_primaryKey = 'fb_id';
 	protected static $_belongsTo = array(
-		'CADResult' => array('key' => 'job_id')
+		'CadResult' => array('key' => 'job_id')
 	);
 
 	/**
@@ -23,47 +28,42 @@ class Feedback extends Model
 	/**
 	 * Additional feedback is defined as key-value pairs of
 	 *
-	 * @var unknown_type
+	 * @var array
 	 */
-	public $additional;
+	public $additionalFeedback;
 
 	/**
 	 * Save the feedback data into the database.
 	 * @return bool true if succeeds.
 	 */
-	public function saveFeedback($job_id, $blockFeedback,
-		$additional, $user_id, $is_consensual)
+	public function save($data)
 	{
-		$pdo = DBConnector::getConnection();
+		$job_id = $data['Feedback']['job_id'];
 		$cadResult = new CadResult($job_id);
 		$listener = $cadResult->feedbackListener();
+		$pdo = DBConnector::getConnection();
 
-		try {
-			$pdo->beginTransaction();
-			$now = date('Y-m-d H:i:s');
-			$fb_id = $pdo->query("SELECT nextval('feedback_list_fb_id_seq')")->fetchColumn();
-			$sqlStr = 'INSERT INTO feedback_list(fb_id, job_id, entered_by, is_consensual, status, registered_at) ' .
-				'VALUES (?, ?, ?, ?, ?, ?)';
-			$sth = $pdo->prepare($sqlStr);
-			$sth->execute(array($fb_id, $job_id, $user, $is_consensual, 1, $now));
+		$pdo->beginTransaction();
+		parent::save($data);
 
-			$listener->prepareSaveBlockFeedback();
-			foreach ($blockFeedback as $display_id => $block_fb)
-			{
-				$listener->saveBlockFeedback($fb_id, $display_id, $block_fb);
-			}
-			// $pdo->commit();
-			$pdo->rollBack();
-			$this->_data['fb_id'] = $fb_id;
-			$this->_data['job_id'] = $job_id;
-			$this->_data['entered_by'] = $user_id;
-			$this->_data['status'] = 1;
-			$this->_data['registered_at'] = $now;
-		} catch (Exception $e) {
-			$pdo->rollBack();
-			return false;
+		$listener->prepareSaveBlockFeedback();
+		foreach ($data['blockFeedback'] as $display_id => $block_fb)
+		{
+			$listener->saveBlockFeedback($this->fb_id, $display_id, $block_fb);
 		}
+		$pdo->commit();
+		// $pdo->rollBack();
+		$this->blockFeedback = $data['blockFeedback'];
+		$this->additionalFeedback = $data['additionalFeedback'];
 		return true;
+	}
+
+	public function loadFeedback()
+	{
+		$cadResult = $this->CadResult;
+		$listener = $cadResult->feedbackListener();
+		$this->blockFeedback = $listener->loadBlockFeedback($this->fb_id);
+		$this->additionalFeedback = array();
 	}
 
 	/**

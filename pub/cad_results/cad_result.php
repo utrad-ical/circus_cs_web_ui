@@ -43,6 +43,17 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty = new SmartyEx();
 	$params['toTopDir'] = '../';
 	$sort = $cadResult->sorter();
+	$user = $_SESSION['userID'];
+	$feedback = $cadResult->queryFeedback('user', $_SESSION['userID']);
+	if (is_array($feedback) && count($feedback) > 0)
+	{
+		$feedback = array_shift($feedback);
+		$feedback->loadFeedback();
+	}
+	else
+	{
+		$feedback = null;
+	}
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
@@ -51,7 +62,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'series' => $cadResult->Series[0],
 		'displayPresenter' => $cadResult->displayPresenter(),
 		'feedbackListener' => $cadResult->feedbackListener(),
-		'feedbacks' => $cadResult->getFeedback(),
+		'feedbacks' => $feedback,
 		'params' => $params,
 		'sorter' => $sort,
 		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])

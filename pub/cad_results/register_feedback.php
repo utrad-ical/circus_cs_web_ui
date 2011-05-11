@@ -61,9 +61,20 @@ exit;
 function registerFeedback($job_id, $feedback, $is_consensual)
 {
 	$pdo = DBConnector::getConnection();
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$user_id = $_SESSION['userID'];
 	$fb = new Feedback();
-	return $fb->saveFeedback($job_id, $feedback['blockFeedback'], null, $user_id, false);
+	$fb->save(array(
+		"Feedback" => array(
+			"job_id" => $job_id,
+			"is_consensual" => $is_consensual ? 'TRUE' : 'FALSE',
+			"status" => 1,
+			"entered_by" => $user_id,
+			"registered_at" => date('Y-m-d H:i:s')
+		),
+		"blockFeedback" => $feedback['blockFeedback']
+	));
+	return true;
 }
 
 ?>
