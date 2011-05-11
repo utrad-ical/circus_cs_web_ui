@@ -52,18 +52,22 @@
 			// Connect to SQL Server
 			$pdo = DBConnector::getConnection();
 
-			$sqlStr = "SELECT DISTINCT lf.entered_by FROM executed_plugin_list el, lesion_classification lf"
-					. " WHERE el.job_id=lf.job_id AND el.plugin_name=?";
+			$sqlStr = "SELECT DISTINCT fl.entered_by"
+					. " FROM executed_plugin_list el, feedback_list fl, plugin_master pm"
+					. " WHERE el.job_id=fl.job_id"
+					. " AND pm.plugin_id=el.plugin_id"
+					. " AND pm.plugin_name=?";
+
 			$sqlParams = array($params['cadName']);
 
 			if($params['version'] != 'all')
 			{
-				$sqlStr .= " AND version=?";
+				$sqlStr .= " AND pm.version=?";
 				$sqlParams[] = $params['version'];
 			}
 
-			$sqlStr .= " AND lf.is_consensual='f' AND lf.interrupted='f'"
-					.  " ORDER BY entered_by ASC";
+			$sqlStr .= " AND fl.is_consensual='f' AND fl.status=1"
+					.  " ORDER BY fl.entered_by ASC";
 
 			//echo $sqlStr;
 

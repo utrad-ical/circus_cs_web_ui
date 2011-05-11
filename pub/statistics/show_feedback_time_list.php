@@ -60,20 +60,21 @@
 			//--------------------------------------------------------------------------------------------------------------
 			$sqlParams = array();
 
-			$sqlStr = "SELECT DISTINCT(fa.job_id) FROM executed_plugin_list el,"
-					. " executed_series_list es, feedback_action_log fa, series_list sr"
-					. " WHERE el.plugin_name=?";
+			$sqlStr = "SELECT DISTINCT(fa.job_id)"
+					. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm,"
+					. " feedback_action_log fa, series_list sr"
+					. " WHERE pm.plugin_id=el.plugin_id AND pm.plugin_name=?";
 
 			$sqlParams[] = $params['cadName'];
 
 			if($params['version'] != "all")
 			{
-				$sqlStr .= " AND el.version=?";
+				$sqlStr .= " AND pm.version=?";
 				$sqlParams[] = $params['version'];
 			}
 
 			$sqlStr .= " AND es.job_id=el.job_id AND fa.job_id=el.job_id AND es.series_id=0"
-					.  " AND sr.series_instance_uid = es.series_instance_uid";
+					.  " AND sr.sid = es.series_sid";
 
 			if($params['dateFrom'] != "")
 			{
@@ -95,14 +96,15 @@
 			for($j = 0; $j < count($jobIDList); $j++)
 			{
 				$sqlStr = "SELECT st.patient_id, sr.series_date, sr.series_time,"
-						. " el.plugin_name, el.version, el.executed_at,"
+						. " pm.plugin_name, pm.version, el.executed_at,"
 						. " fa.action, fa.options, fa.act_time"
-						. " FROM executed_plugin_list el, executed_series_list es,"
+						. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm,"
 						. " feedback_action_log fa, study_list st, series_list sr"
-						. " WHERE el.job_id=? AND es.job_id=el.job_id"
-						. " AND fa.job_id=el.job_id AND es.series_id=0"
-						. " AND sr.series_instance_uid = es.series_instance_uid"
-						. " AND st.study_instance_uid = es.study_instance_uid"
+						. " WHERE el.job_id=? AND pm.plugin_id=el.plugin_id"
+						. " AND fa.job_id=el.job_id"
+						. " AND es.job_id=el.job_id AND es.series_id=0"
+						. " AND sr.sid = es.series_sid"
+						. " AND st.study_instance_uid = sr.study_instance_uid"
 						. " ORDER BY fa.sid ASC";
 
 				$results = DBConnector::query($sqlStr, $jobIDList[$j], 'ALL_NUM');
@@ -191,24 +193,26 @@
 							//------------------------------------------------------------------------------------------
 							// For TP and FN column
 							//------------------------------------------------------------------------------------------
-							$sqlStr = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND entered_by=?"
-									. " AND is_consensual='f' AND interrupted='f' AND lesion_id>0";
+							$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+									. " WHERE fl.job_id=? AND fl.entered_by=? AND cc.fb_id=fl.fb_id"
+									. " AND fl.is_consensual='f' AND fl.status=1 AND cc.candidate_id>0";
 							$dispCandNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
-							$sqlStr = "SELECT false_negative_num FROM fn_count"
-									. " WHERE job_id=? AND entered_by=? AND is_consensual='f' AND status=2";
+							$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
+									. " WHERE fl.job_id=? AND fl.entered_by=? AND fn.fb_id=fl.fb_id"
+									. " AND fl.is_consensual='f' AND fl.status=1";
 							$enterFnNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
 
 							// SQL statement for count No. of TP
-							$sqlStr  = "SELECT COUNT(*) FROM lesion_classification WHERE job_id=? AND is_consensual=?"
-							         . " AND interrupted='f' AND evaluation>=1";
-
+							$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+									. " WHERE fl.job_id=? AND fl.entered_by=? AND cc.fb_id=fl.fb_id"
+									. " AND fl.is_consensual=? AND status=1 AND evaluation>=1";
 							$stmtTP = $pdo->prepare($sqlStr);
 
 							// SQL statement for count No. of FN
-							$sqlStr  = "SELECT false_negative_num FROM fn_count WHERE job_id=?"
-								     . " AND is_consensual=? AND false_negative_num>0 AND status=2";
-
+							$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
+									. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
+									. " AND fl.is_consensual=? AND fl.status=1 AND fn.fn_num>0";
 							$stmtFN = $pdo->prepare($sqlStr);
 
 							$tpColStr = "-";
