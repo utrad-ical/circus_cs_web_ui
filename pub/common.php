@@ -1,6 +1,6 @@
 <?php
 
-	$CIRCUS_CS_VERSION = "1.0 RC3";
+	$CIRCUS_CS_VERSION = "2.0 alpha";
 
 	//-------------------------------------------------------------------------------------------------------
 	// Define directories, commands, etc.
@@ -27,10 +27,6 @@
 	$cmdDcmToVolume = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "dcm2volume.exe");
 	$cmdDcmToPng = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "dcm2png.exe");
 	$cmdDcmCompress = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "CompressDcmFile.exe");
-
-	$APACHE_BASE = "C:\\apache2";
-	$APACHE_DOCUMENT_ROOT = $APACHE_BASE . "\\htdocs";
-	$apacheAliasFname = $APACHE_BASE . "\\conf\extra\httpd-aliases.conf";
 	//-------------------------------------------------------------------------------------------------------
 
 	//-------------------------------------------------------------------------------------------------------
