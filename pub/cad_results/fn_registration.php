@@ -137,7 +137,7 @@
 		try
 		{
 			//------------------------------------------------------------------------------------------------
-			// Set ID array for updating integrate_location_id
+			// Set ID array for updating integrate_fn_id
 			//------------------------------------------------------------------------------------------------
 			$idArr = array();
 
@@ -197,7 +197,7 @@
 				$stmt->execute();
 
 				//--------------------------------------------------------------------------------------------
-				// Update integrate_location_id
+				// Update integrate_fn_id
 				//--------------------------------------------------------------------------------------------
 				if($params['feedbackMode'] == "consensual")
 				{
@@ -216,7 +216,7 @@
 
 					if($idArr[$cnt]['srcID'] != 0)
 					{
-						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE fn_id=?";
+						$sqlStr = "UPDATE fn_location SET integrate_fn_id=? WHERE fn_id=?";
 						$stmtUpdate = $pdo->prepare($sqlStr);
 						$stmtUpdate->execute(array($dstID, $idArr[$cnt]['srcID']));
 					}
@@ -225,7 +225,7 @@
 					{
 						$tmpArr = explode(',', $idArr[$cnt]["idStr"]);
 
-						$sqlStr = "UPDATE fn_location SET integrate_location_id=? WHERE fn_id=?";
+						$sqlStr = "UPDATE fn_location SET integrate_fn_id=? WHERE fn_id=?";
 						$stmtUpdate = $pdo->prepare($sqlStr);
 						$stmtUpdate->bindValue(1, $dstID);
 
