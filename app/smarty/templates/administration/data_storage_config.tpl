@@ -37,8 +37,8 @@ function AddStorage(ticket)
 {
 	var address = 'data_storage_config.php?mode=add'
 				+ '&newPath=' + encodeURIComponent($("#newPath").val())
-	            +  '&newType=' + $("#typeList").val()
-				+  '&ticket='  + $("#ticket").val();
+	            + '&newType=' + $("#typeList").val()
+				+ '&ticket='  + $("#ticket").val();
 	location.replace(address);
 }
 
@@ -113,7 +113,6 @@ function ResetCurrentID()
 							<tr>
 								<th>ID</th>
 								<th>Path</th>
-								<th>Alias</th>
 								<th>Type</th>
 								<th>Current Use</th>
 								<th>&nbsp;</th>
@@ -124,13 +123,12 @@ function ResetCurrentID()
 							<tr {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 								<td>{$item[0]}</td>
 								<td class="al-l">{$item[1]}</td>
-								<td class="al-l">{$item[2]}</td>
-								<td>{if $item[3]==1}DICOM storage{else}Research{/if}</td>
-								<td>{if $item[4]==true}TRUE{else}FALSE{/if}</td>
+								<td>{if $item[2]==1}DICOM storage{else}Research{/if}</td>
+								<td>{if $item[3]==true}TRUE{else}FALSE{/if}</td>
 								<td>
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
 										{if $item[0] != $smarty.session.userID}
-										 	class="s-btn form-btn" onclick="deleteStorage({$item[0]}, {$item[3]});" />
+										 	class="s-btn form-btn" onclick="deleteStorage({$item[0]}, {$item[2]});" />
 									 	{else}
 										 	name="loginUser" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
 										{/if}
@@ -181,8 +179,8 @@ function ResetCurrentID()
 							<td>
 								<select id="currentDICOMList" style="width: 3.5em;">
 									{foreach from=$storageList item=item name=cnt}
-										{if $item[3]==1}
-											<option value="{$item[0]}"{if $item[4]==true} selected="selected"{/if}>{$item[0]}</option>
+										{if $item[2]==1}
+											<option value="{$item[0]}"{if $item[3]==true} selected="selected"{/if}>{$item[0]}</option>
 										{/if}
 									{/foreach}
 								</select>
@@ -194,8 +192,8 @@ function ResetCurrentID()
 							<td>
 								<select id="currentResearchList" style="width: 3.5em;">
 									{foreach from=$storageList item=item name=cnt}
-										{if $item[3]==2}
-											<option value="{$item[0]}"{if $item[4]==true} selected="selected"{/if}>{$item[0]}</option>
+										{if $item[2]==2}
+											<option value="{$item[0]}"{if $item[3]==true} selected="selected"{/if}>{$item[0]}</option>
 										{/if}
 									{/foreach}
 								</select>

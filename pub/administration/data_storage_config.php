@@ -59,35 +59,15 @@
 					$stmt = $pdo->prepare("SELECT nextval('storage_master_storage_id_seq')");
 					$stmt->execute();
 					$newStorageID = $stmt->fetchColumn();
-					$newAlias = sprintf("store%d/", $newStorageID);
 
 					//echo $newStorageID;
 
-					$sqlStr = "INSERT INTO storage_master(storage_id, path, apache_alias, current_use, type)"
-							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?, ?)";
+					$sqlStr = "INSERT INTO storage_master(storage_id, path, current_use, type)"
+							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?)";
 
 					$sqlParams[] = $newPath;
-					$sqlParams[] = $newAlias;
 					$sqlParams[] = $currentUse;
 					$sqlParams[] = $newType;
-				}
-			}
-			else if($mode == 'changeCurrent')
-			{
-				if($oldDicomID != 0 && $newDicomID != 0 && $oldDicomID != $newDicomID)
-				{
-					$sqlStr = "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
-					        . "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
-					$sqlParams[] = $oldDicomID;
-					$sqlParams[] = $newDicomID;
-				}
-
-				if($oldResearchID != 0 && $newResearchID != 0 && $oldResearchID != $newResearchID)
-				{
-					$sqlStr .= "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
-					        .  "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
-					$sqlParams[] = $oldResearchID;
-					$sqlParams[] = $newResearchID;
 				}
 			}
 			else if($mode == 'delete')
@@ -115,25 +95,30 @@
 					$sqlParams[] = $newStorageID;
 				}
 			}
-			else if($mode == 'restart')
+			else if($mode == 'changeCurrent')
 			{
-				echo 'DICOM storage server and HTTP server are restarting. Please relogin later.<br>';
-				flush();
+				if($oldDicomID != 0 && $newDicomID != 0 && $oldDicomID != $newDicomID)
+				{
+					$sqlStr = "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
+					        . "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
+					$sqlParams[] = $oldDicomID;
+					$sqlParams[] = $newDicomID;
+				}
 
-				win32_stop_service($DICOM_STORAGE_SERVICE);
-				win32_start_service($DICOM_STORAGE_SERVICE);
-
-				echo '<script language="Javascript">';
-				echo "top.location.replace('../index.php?mode=restartApache');";
-				echo '</script>';
-				flush();
+				if($oldResearchID != 0 && $newResearchID != 0 && $oldResearchID != $newResearchID)
+				{
+					$sqlStr .= "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
+					        .  "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
+					$sqlParams[] = $oldResearchID;
+					$sqlParams[] = $newResearchID;
+				}
 			}
 
 			if($mode == 'add')
 			{
 				$newPath = (realpath($newPath) == "") ? $newPath : realpath($newPath);
 
-				if(substr_count($newPath, $APACHE_DOCUMENT_ROOT)==0 && dirname($newPath) != "." && !is_dir($newPath))
+				if(dirname($newPath) != "." && !is_dir($newPath))
 				{
 					if(mkdir($newPath) == FALSE)
 					{
@@ -165,64 +150,40 @@
 
 				if($message == "")
 				{
-					$message = '<span style="color:#ff0000;">';
+					$message = '<span style="color:#0000ff;">';
 
 					switch($mode)
 					{
-						case 'add'          : $message .= 'New setting was successfully added.'; break;
-						case 'changeCurrent': $message .= 'The current storage was successfully changed.'; break;
-						case 'delete'       : $message .= 'The selected setting (ID=' . $newStorageID . ') was successfully deleted.'; break;
+						case 'add':
+							$message .= 'New setting was successfully added.';
+							break;
+						
+						case 'delete':
+							$message .= 'The selected setting (ID=' . $newStorageID . ') was successfully deleted.';
+							break;
+						
+						case 'changeCurrent':
+							$message .= 'The current storage was successfully changed.';
+							break;
 					}
 					$message .= '</span>';
 
-					if($mode == 'add' || $mode =='changeCurrent')
-					{
-						$restartButtonFlg = 1;
-					}
-
 					//--------------------------------------------------------------------------------------------
-					// Modify httpd-aliases.conf
+					// Modify storage.json
 					//--------------------------------------------------------------------------------------------
-					if($mode == 'add')
+					if($mode == 'add' || $mode == 'delete')
 					{
-						$newPath = str_replace("\\", "/", stripslashes($newPath));
-
-						$fp = fopen($apacheAliasFname, "a");
-
-						fprintf($fp, "\r\nAlias /CIRCUS-CS/%s \"%s/\"\r\n\r\n", $newAlias, $newPath);
-						fprintf($fp, "<Directory \"%s/\">\r\n", $newPath);
-						fprintf($fp, "\tOptions Indexes MultiViews\r\n");
-						fprintf($fp, "\tAllowOverride None\r\n");
-						fprintf($fp, "\tOrder allow,deny\r\n");
-						fprintf($fp, "\tAllow from all\r\n");
-						fprintf($fp, "</Directory>\r\n");
-
-						fclose($fp);
-					}
-					else if($mode == 'delete')
-					{
-						$srcData = file($apacheAliasFname);
-						$dstData = array();
-
-						$alias = "/CIRCUS-CS/store" . $newStorageID . "/";
-
-						for($i = 0; $i < count($srcData); $i++)
+						$sqlStr = "SELECT storage_id, path FROM storage_master ORDER BY storage_id ASC";
+						$tmpList = DBConnector::query($sqlStr, null, 'ALL_NUM');
+					
+						$storageList = array();
+					
+						foreach($tmpList as $item)
 						{
-							if(substr_count($srcData[$i], $alias)>=1)
-							{
-								$i += 8;
-							}
-							else
-							{
-								array_push($dstData, $srcData[$i]);
-								$count++;
-							}
+							$storageList[$item[0]] = $item[1];
 						}
-
-						file_put_contents($apacheAliasFname, $dstData);
-
-						unset($srcData);
-						unset($dstData);
+					
+						file_put_contents("../../config/storage.json", json_encode($storageList));
 					}
 					//--------------------------------------------------------------------------------------------
 				}
@@ -240,7 +201,7 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve storage list
 			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT storage_id, path, apache_alias, type, current_use"
+			$sqlStr = "SELECT storage_id, path, type, current_use"
 					. " FROM storage_master ORDER BY storage_id ASC;";
 
 			$stmt = $pdo->prepare($sqlStr);
@@ -253,10 +214,10 @@
 
 			foreach($storageList as $item)
 			{
-				if($item[4]==true)
+				if($item[3]==true)
 				{
-					if($item[3] ==1)      $oldDicomID    = $item[0];
-					else if($item[3] ==2) $oldResearchID = $item[0];
+					if($item[2] ==1)      $oldDicomID    = $item[0];
+					else if($item[2] ==2) $oldResearchID = $item[0];
 				}
 			}
 			//---------------------------------------------------------------------------------------------------
