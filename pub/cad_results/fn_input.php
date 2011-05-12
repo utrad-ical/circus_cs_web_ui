@@ -69,7 +69,8 @@
 			$sqlStr = "SELECT pt.patient_id, st.study_instance_uid, sr.series_instance_uid,"
 					. " pt.patient_name, sr.image_width, sr.image_height, pt.sex, st.age,"
 					. " st.study_id, st.study_date, sr.series_number, sr.series_date, sr.modality,"
-					. " sr.series_description, el.plugin_id, pm.plugin_name, pm.version, sm.path, sm.apache_alias"
+					. " sr.series_description, el.plugin_id, pm.plugin_name, pm.version,"
+					. " sm.storage_id, sm.path"
 					. " FROM patient_list pt, study_list st, series_list sr, storage_master sm,"
 					. " executed_plugin_list el, executed_series_list es, plugin_master pm"
 			        . " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
@@ -99,13 +100,13 @@
 			$params['cadName']           = $result[15];
 			$params['version']           = $result[16];
 
-			$params['seriesDir'] = $result[17] . $DIR_SEPARATOR . $params['patientID']
+			$params['seriesDir'] = $result[18] . $DIR_SEPARATOR . $params['patientID']
 								 . $DIR_SEPARATOR . $params['studyInstanceUID']
 								 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
 
-			$params['seriesDirWeb'] = $result[18] . $params['patientID']
-								    . $DIR_SEPARATOR_WEB . $params['studyInstanceUID']
-								    . $DIR_SEPARATOR_WEB . $params['seriesInstanceUID'];
+			$params['seriesDirWeb'] = 'storage/' . $result[17] . '/' . $params['patientID']
+								    . '/' . $params['studyInstanceUID']
+								    . '/' . $params['seriesInstanceUID'];
 
 			$params['encryptedPatientID'] = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 

@@ -72,7 +72,7 @@
 					$pluginParams = DBConnector::query($sqlStr, $idSet['plugin_id'], 'ARRAY_ASSOC');
 
 					$sqlStr = "SELECT pt.patient_id, pt.patient_name, st.study_date, st.study_time,"
-							. " sr.study_instance_uid, sr.series_instance_uid, sm.path, sm.apache_alias"
+							. " sr.study_instance_uid, sr.series_instance_uid, sm.storage_id, sm.path"
 							. " FROM patient_list pt, study_list st, series_list sr,"
 							. " storage_master sm, executed_series_list es"
 							. " WHERE es.job_id=? AND es.series_id=0 AND sr.sid=es.series_sid"
@@ -101,13 +101,14 @@
 					$seriesDir = $seriesParams['path'] . $DIR_SEPARATOR . $seriesParams['patient_id']
 							   . $DIR_SEPARATOR . $seriesParams['study_instance_uid']
 					           . $DIR_SEPARATOR . $seriesParams['series_instance_uid'];
-					$webPathOfseriesDir = $seriesParams['apache_alias'] . $seriesParams['patient_id']
-										. $DIR_SEPARATOR_WEB . $seriesParams['study_instance_uid']
-										. $DIR_SEPARATOR_WEB . $seriesParams['series_instance_uid'];
+					$webPathOfseriesDir = 'storage/' . $seriesParams['storage_id']
+									    . '/' . $seriesParams['patient_id']
+										. '/' . $seriesParams['study_instance_uid']
+										. '/' . $seriesParams['series_instance_uid'];
 					$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR
 					                 . $pluginParams['plugin_name'] . '_v.' . $pluginParams['version'];
-					$webPathOfCADReslut = $webPathOfseriesDir . $DIR_SEPARATOR_WEB . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB
-										. $pluginParams['plugin_name'] . '_v.' . $pluginParams['version'];
+					$webPathOfCADReslut = $webPathOfseriesDir . '/' . $SUBDIR_CAD_RESULT
+										. '/' . $pluginParams['plugin_name'] . '_v.' . $pluginParams['version'];
 
 					$dstFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $idSet['candidate_id']);
 					$dstFnameWeb = sprintf("%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $idSet['candidate_id']);
@@ -179,7 +180,7 @@
 		//--------------------------------------------------------------------------------------------------------------
 		$smarty = new SmartyEx();
 
-		$smarty->assign('newsData', $newsData);
+		$smarty->assign('newsData',         $newsData);
 		$smarty->assign('executionNum',     $executionNum);
 		$smarty->assign('oldestExecDate',   $oldestExecDate);
 		$smarty->assign('cadExecutionData', $cadExecutionData);

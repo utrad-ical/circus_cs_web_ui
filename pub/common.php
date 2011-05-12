@@ -45,9 +45,6 @@
 	//-------------------------------------------------------------------------------------------------------
 	// Definition of windows service
 	//-------------------------------------------------------------------------------------------------------
-	$APACHE_SERVICE = "Apache2.2";
-	$POSTGRESQL_SERVICE = "postgresql-9.0";
-	//$POSTGRESQL_SERVICE = "postgresql-8.4";			// for HIMEDIC
 	$DICOM_STORAGE_SERVICE = "DICOM Storage Server";
 	$CAD_JOB_MANAGER_SERVICE = "CAD Job Manager";
 	//-------------------------------------------------------------------------------------------------------
