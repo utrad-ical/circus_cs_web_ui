@@ -55,7 +55,7 @@ sort = {$sort|@json_encode};
   {/if}
 
 
-{include file="cad_results/block_layout.tpl"}
+{include file="block_layout.tpl"}
 
 <div class="register-pane">
 <input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />

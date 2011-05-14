@@ -9,6 +9,6 @@ Individual plugins can override this template for custom layouts.
 *}
 <div class="result-blocks" id="result-blocks">
 {foreach from=$displays item=display}
-{include file="cad_results/block.tpl}
+{include file="block.tpl}
 {/foreach}
 </div>

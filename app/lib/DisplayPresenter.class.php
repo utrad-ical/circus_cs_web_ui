@@ -9,27 +9,21 @@ class DisplayPresenter extends BlockElement
 {
 	/**
 	 * Protected method to execute Smarty.
-	 * This method first looks at the plugins directory.
-	 * If there is not template file of such name, it uses default
-	 * template directory of CIRCUS CS.
+	 * When there is 'display_presenter.tpl' template in the plugin's web
+	 * configuration directory, always use it instead of built-in templates.
 	 * @param Smarty $smarty
 	 * @param string $template The name of the template file.
 	 */
 	protected function executeTemplate($smarty, $template)
 	{
 		$smarty->assign('displayPresenterParams', $this->params);
-		$web_path = $this->owner->pathOfPluginWeb();
-		if ($smarty->template_exists("file:$web_path/display_presenter.tpl"))
+		if ($smarty->template_exists("display_presenter.tpl"))
 		{
-			return $smarty->fetch("file:$web_path/display_presenter.tpl");
-		}
-		elseif ($smarty->template_exists("file:$web_path/$template"))
-		{
-			return $smarty->fetch("file:$web_path/$template");
+			return $smarty->fetch("display_presenter.tpl");
 		}
 		else
 		{
-			return $smarty->fetch("cad_results/$template");
+			return $smarty->fetch("$template");
 		}
 	}
 
@@ -39,7 +33,7 @@ class DisplayPresenter extends BlockElement
 	 */
 	public function show($smarty)
 	{
-		return $this->executeTemplate($smarty, 'display_presenter.tpl');
+		return $this->executeTemplate($smarty, 'default_display_presenter.tpl');
 	}
 
 	/**

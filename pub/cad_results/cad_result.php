@@ -36,11 +36,14 @@ show_cad_results($params['jobID'], $params['feedbackMode']);
  * Displays CAD Result
  */
 function show_cad_results($jobID, $feedbackMode) {
+	global $DIR_SEPARATOR;
+
 	// Retrieve the CAD Result
 	$cadResult = new CadResult($jobID);
 
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
+
 	$params['toTopDir'] = '../';
 	$sort = $cadResult->sorter();
 	$user = $_SESSION['userID'];
@@ -54,6 +57,15 @@ function show_cad_results($jobID, $feedbackMode) {
 	{
 		$feedback = null;
 	}
+
+	// Enabling plugin-specific template directory
+	$td = $smarty->template_dir;
+	$smarty->template_dir = array(
+		$cadResult->pathOfPluginWeb(),
+		$td . $DIR_SEPARATOR . 'cad_results',
+		$td
+	);
+
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'cadResult' => $cadResult,
