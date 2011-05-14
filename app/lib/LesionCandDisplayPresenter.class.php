@@ -14,7 +14,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	{
 		global $DIR_SEPARATOR;
 		$imgfile = $this->owner->pathOfCadResult() . $DIR_SEPARATOR .
-			sprintf('result%03d.png', $display_id);
+			sprintf($this->params['resultImage'], $display_id);
 		$img = @imagecreatefrompng($imgfile);
 	    if($img)
 		{
@@ -24,25 +24,39 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		}
 	}
 
+	protected function defaultParams()
+	{
+		return array(
+			'resultImage' => 'result%03d.png',
+			'useCadDetail' => true,
+			'useFnInput' => true
+		);
+	}
+
+	/**
+	 * This function will be called by template file.
+	 * @param unknown_type $display_id
+	 */
 	public function resultImage($display_id)
 	{
 		global $DIR_SEPARATOR_WEB;
 		return
 			$this->owner->webPathOfCadResult() . $DIR_SEPARATOR_WEB .
-			sprintf('result%03d.png', $display_id);
+			sprintf($this->params['resultImage'], $display_id);
 	}
 
-	function show($smarty)
+	public function show($smarty)
 	{
 		return $this->executeTemplate(
 			$smarty, 'lesion_cand_display_presenter.tpl');
 	}
 
-	function extractDisplays($input)
+	public function extractDisplays($input)
 	{
 		$result = array();
 		foreach ($input as $rec)
 		{
+			// Remember the size of the image
 			if (!$this->imageWidth)
 				$this->getImageSize($rec['sub_id']);
 			$item = array(

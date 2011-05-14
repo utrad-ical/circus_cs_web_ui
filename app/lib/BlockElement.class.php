@@ -24,8 +24,17 @@ abstract class BlockElement
 	}
 
 	/**
+	 * Called just after setting up this block element.
+	 * @param Smarty $smarty The Smarty instance
+	 */
+	public function prepare($smarty)
+	{
+		return null; // nothing
+	}
+
+	/**
 	 * Returns the HTML of the element.
-	 * @param Smarty The Smarty instance
+	 * @param Smarty $smarty The Smarty instance
 	 */
 	abstract public function show($smarty);
 
@@ -59,7 +68,8 @@ abstract class BlockElement
 	 */
 	function setParameter($params)
 	{
-		$this->params = array_merge($this->defaultParams(), $params);
+		if (is_array($params))
+			$this->params = array_merge($this->defaultParams(), $params);
 	}
 }
 

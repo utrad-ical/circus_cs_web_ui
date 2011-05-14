@@ -65,6 +65,12 @@ CircusCadResult = function() {
 			$.each(sorted, function(index, item){
 				$('#result-blocks').append(item);
 			});
+		},
+		showTab: function(index) {
+			$('.tab-content > div').hide();
+			$('.tab-content > div:nth-child(' + (index+1) + ')').show();
+			$('.tabArea a').removeClass('btn-tab-active');
+			$('.tabArea ul li:nth-child(' + (index+1) + ') a').addClass('btn-tab-active');
 		}
 	};
 	return global;
@@ -92,5 +98,11 @@ $(function(){
 	}
 
 	$('#register').click(CircusFeedback.register);
+
+	$('.tabArea a').click(function(event) {
+		var target = $(event.target);
+		var index = $('.tabArea a').index(target);
+		CircusCadResult.showTab(index);
+	});
 
 });

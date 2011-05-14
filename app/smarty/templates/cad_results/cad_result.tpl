@@ -23,7 +23,10 @@ sort = {$sort|@json_encode};
 {include file="darkroom_button.tpl"}
 <div id="cadResultTab" class="tabArea">
 <ul>
-	<li><a class="btn-tab" href="#">CAD Result</a></li>
+	<li><a class="btn-tab btn-tab-active" href="#">CAD Result</a></li>
+	{foreach from=$tabs item=tab}
+	<li><a class="btn-tab" href="#">{$tab.label|escape}</a>
+	{/foreach}
 </ul>
 </div>
 <div class="tab-content">
@@ -54,7 +57,6 @@ sort = {$sort|@json_encode};
   </form></div><!-- /sorter -->
   {/if}
 
-
 {include file="block_layout.tpl"}
 
 <div class="register-pane">
@@ -63,7 +65,14 @@ sort = {$sort|@json_encode};
 <form>
 <input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />
 </form>
-
 </div><!-- /cadResult -->
+
+{* Additional Tabs *}
+{foreach from=$tabs item=tab}
+<div style="display: none">
+{$tab.content->show()}
+</div>
+{/foreach}
+
 </div><!-- /tab-content -->
 {include file="footer.tpl"}

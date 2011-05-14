@@ -101,7 +101,7 @@ a:link.btn-tab,a:active.btn-tab,a:visited.btn-tab{
 	color: #339966;
 	background: url(../img_common/btn/guest/tab.gif) no-repeat;
 }
-a:hover.btn-tab {
+a:hover.btn-tab,a.btn-tab.btn-tab-active {
 	color: #fff;
 	background: url(../img_common/btn/guest/tab0.gif) no-repeat;
 }
