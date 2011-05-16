@@ -11,6 +11,8 @@ class CadDetailTab extends CadResultExtension
 	public function requiringFiles()
 	{
 		return array(
+			'jq/ui/jquery-ui-1.7.3.min.js',
+			'jq/ui/css/jquery-ui-1.7.3.custom.css',
 			'js/jquery.imageviewer.js',
 			'js/cad_detail.js'
 		);
@@ -21,7 +23,7 @@ class CadDetailTab extends CadResultExtension
 		return array(
 			array (
 				'label' => 'CAD Detail',
-				'content' => 'Hello!'
+				'template' => 'cad_detail.tpl'
 			)
 		);
 	}

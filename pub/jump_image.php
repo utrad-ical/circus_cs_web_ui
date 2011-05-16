@@ -11,12 +11,21 @@
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
-		"studyInstanceUID"  => array("type" => "uid"),
-		"seriesInstanceUID" => array("type" => "uid"),
-		"imgNum" => array(
-			"type" => "int",
-			"min" => "1",
-			"errorMes" => "Image number is invalid.")
+		'studyInstanceUID'  => array(
+			'type' => 'uid',
+			'required' => true,
+			'errorMes' => 'Study Instance UID is invalid.'
+		),
+		'seriesInstanceUID' => array(
+			'type' => 'uid',
+			'required' => true,
+			'errorMes' => 'Series Instance UID is invalid.'
+		),
+		'imgNum' => array(
+			'type' => 'int',
+			'min' => '1',
+			'required' => true,
+			'errorMes' => 'Image number is invalid.')
 		));
 
 	if($validator->validate($_POST))
@@ -31,14 +40,18 @@
 	else
 	{
 		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
+		$params['errorMessage'] = implode("\n", $validator->errors);
+		echo(json_encode($params)); exit;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	$dstData = array('errorMessage' => $params['errorMessage'],
-					 'imgFname'     => '',
-					 'imgNum'    => $params['imgNum'],
-	                 'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum']));
+	$dstData = array(
+		'errorMessage' => $params['errorMessage'],
+		'imgFname'     => '',
+		'imgNum'    => $params['imgNum'],
+		'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum'])
+	);
+
 	try
 	{
 		if($params['errorMessage'] == "")
@@ -47,23 +60,23 @@
 			$pdo = DBConnector::getConnection();
 
 			$sqlStr = "SELECT st.patient_id,  sm.storage_id, sm.path"
-					. " FROM study_list st, series_list sr, storage_master sm"
-				    . " WHERE sr.study_instance_uid=?"
-				    . " AND sr.series_instance_uid=?"
-				    . " AND sr.study_instance_uid=st.study_instance_uid"
-				    . " AND sr.storage_id=sm.storage_id;";
+				. " FROM study_list st, series_list sr, storage_master sm"
+				. " WHERE sr.study_instance_uid=?"
+				. " AND sr.series_instance_uid=?"
+				. " AND sr.study_instance_uid=st.study_instance_uid"
+				. " AND sr.storage_id=sm.storage_id;";
 
 			$result = DBConnector::query($sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
 
 			$patientID = $result[0];
 
 			$seriesDir = $result[2] . $DIR_SEPARATOR . $patientID
-					   . $DIR_SEPARATOR . $params['studyInstanceUID']
-					   . $DIR_SEPARATOR . $params['seriesInstanceUID'];
+					. $DIR_SEPARATOR . $params['studyInstanceUID']
+					. $DIR_SEPARATOR . $params['seriesInstanceUID'];
 
 			$seriesDirWeb = 'storage/' . $result[1]. '/' . $patientID
-					      . '/' . $params['studyInstanceUID']
-					      . '/' . $params['seriesInstanceUID'];
+				. '/' . $params['studyInstanceUID']
+				. '/' . $params['seriesInstanceUID'];
 
 			$flist = array();
 			$flist = GetDicomFileListInPath($seriesDir);

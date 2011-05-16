@@ -311,12 +311,12 @@ class CadResult extends Model
 		$webPath = $this->Storage->apache_alias;
 		$series = $this->Series[0];
 		// TODO: This should be replaced when WEB_BASE or something is implemented
-		$seriesDirWeb = '../' . $webPath .
-			$series->Study->Patient->patient_id . $DIR_SEPARATOR_WEB .
-			$series->Study->study_instance_uid . $DIR_SEPARATOR_WEB .
+		$seriesDirWeb = '../' . $webPath . 'storage/' . $this->Storage->storage_id . '/' .
+			$series->Study->Patient->patient_id . '/' .
+			$series->Study->study_instance_uid . '/' .
 			$series->series_instance_uid;
-		$result =  $seriesDirWeb . $DIR_SEPARATOR_WEB .
-			$SUBDIR_CAD_RESULT . $DIR_SEPARATOR_WEB . $this->Plugin->fullName();
+		$result =  $seriesDirWeb . '/' .
+			$SUBDIR_CAD_RESULT . '/' . $this->Plugin->fullName();
 		return $result;
 	}
 

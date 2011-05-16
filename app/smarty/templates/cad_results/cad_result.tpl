@@ -66,9 +66,16 @@ sort = {$sort|@json_encode};
 {* Additional Tabs *}
 {foreach from=$tabs item=tab}
 <div style="display: none">
-{$tab.content}
+{include file=$tab.template}
 </div>
 {/foreach}
 
 </div><!-- /tab-content -->
+
+<!-- hidden elements -->
+<form>
+<input type="hidden" id="study-instance-uid" value="{$series->Study->study_instance_uid|escape}" />
+<input type="hidden" id="series-instance-uid" value="{$series->series_instance_uid|escape}" />
+</form>
+
 {include file="footer.tpl"}

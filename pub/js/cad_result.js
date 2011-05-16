@@ -71,6 +71,13 @@ CircusCadResult = function() {
 			$('.tab-content > div:nth-child(' + (index+1) + ')').show();
 			$('.tabArea a').removeClass('btn-tab-active');
 			$('.tabArea ul li:nth-child(' + (index+1) + ') a').addClass('btn-tab-active');
+		},
+		showTabLabel: function(label) {
+			$('.tabArea a').each(function () {
+				if ($(this).text() == label) {
+					CircusCadResult.showTab($('.tabArea a').index($(this)));
+				}
+			});
 		}
 	};
 	return global;
