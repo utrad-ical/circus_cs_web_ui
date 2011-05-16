@@ -30,22 +30,14 @@ if ($validator->validate($_REQUEST))
 	$params = $validator->output;
 }
 
-$tabs = array();
 show_cad_results($params['jobID'], $params['feedbackMode']);
 
-
-function register_result_tab($label, CadResultTab $content)
-{
-	global $tabs;
-	if ($content)
-		$tabs[] = array('label' => $label, 'content' => $content);
-}
 
 /**
  * Displays CAD Result
  */
 function show_cad_results($jobID, $feedbackMode) {
-	global $DIR_SEPARATOR, $tabs;
+	global $DIR_SEPARATOR;
 
 	// Retrieve the CAD Result
 	$cadResult = new CadResult($jobID);
@@ -88,11 +80,32 @@ function show_cad_results($jobID, $feedbackMode) {
 	$feedbackListener = $cadResult->feedbackListener();
 	$feedbackListener->prepare($smarty);
 
-	register_result_tab('CAD Detail', new CadDetailTab());
-	register_result_tab('FN Input', new CadDetailTab());
+	$requiringFiles = array();
+	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
+	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
+
+	$extensions = array(new CadDetailTab($cadResult, $smarty));
+	$tabs = array();
+	foreach ($extensions as $ext)
+	{
+		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
+		foreach ($ext->tabs() as $tab)
+			array_push($tabs, $tab);
+	}
+	$pop = $cadResult->webPathOfPluginPub() . '/';
+	if (file_exists($pop . 'cad_result.css'))
+	{
+		$requiringFiles[] = $pop . 'cad_result.css';
+	}
+	if (file_exists($pop . 'cad_result.js'))
+	{
+		$requiringFiles[] = $pop . 'cad_result.js';
+	}
+	$requiringFiles = array_unique($requiringFiles); // keys preserved
 
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
+		'requiringFiles' => implode("\n", $requiringFiles),
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),

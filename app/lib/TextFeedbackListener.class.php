@@ -31,6 +31,11 @@ class TextFeedbackListener extends FeedbackListener
 	{
 		// TODO: implement
 	}
+
+	function loadBlockFeedback($fb_id)
+	{
+		// TODO: implement
+	}
 }
 
 ?>

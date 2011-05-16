@@ -5,11 +5,7 @@ Smarty Template for General CAD Result.
 js/radio-to-button.js
 js/cad_result.js
 css/darkroom.css
-{foreach from=$displayPresenter->requiringFiles() item=file}{$file}
-{/foreach}
-
-{foreach from=$feedbackListener->requiringFiles() item=file}{$file}
-{/foreach}
+{$requiringFiles}
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
@@ -70,7 +66,7 @@ sort = {$sort|@json_encode};
 {* Additional Tabs *}
 {foreach from=$tabs item=tab}
 <div style="display: none">
-{$tab.content->show()}
+{$tab.content}
 </div>
 {/foreach}
 

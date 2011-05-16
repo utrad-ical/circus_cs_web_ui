@@ -297,7 +297,7 @@ class CadResult extends Model
 	 */
 	public function webPathOfPluginPub()
 	{
-		$plugin_name = $this->Plugin->fillName();
+		$plugin_name = $this->Plugin->fullName();
 		return "../plugin/$plugin_name";
 	}
 
