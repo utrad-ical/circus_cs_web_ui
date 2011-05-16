@@ -12,10 +12,16 @@
 
 	$fileName = $pathList[$id] . '/' . $subPath;
 
+	if (!file_exists($fileName))
+	{
+		header('HTTP/1.0 404 Not Found');
+		exit;
+	}
+
 	// get mime type
 	$finfo = finfo_open(FILEINFO_MIME_TYPE);
 	$mimeType = finfo_file($finfo, $fileName);
-	
+
 	// output the file
 	switch($mimeType)
 	{
@@ -23,16 +29,16 @@
 		case "text/csv":    // .csv
 		case "text/html":   // .html
 		case "text/css":    // .css
-		
+
 		// images
 		case "image/jpeg":  // .jpg .jpeg
 		case "image/png":   // .png
 		case "image/gif":   // .gif
-	
+
 			header("Content-type: {$mimeType}"); // set mime type
 			readfile($fileName);
 			break;
-	
+
 		// archives
 		case "application/zip":              // .zip
 		case "application/x-7z-compressed":  // .7z
@@ -45,11 +51,11 @@
 			header("Cache-Control: Private");
 			readfile($fileName);
 			break;
-			
+
 		// forbidden
 		default:
 			header('HTTP/1.0 403 Forbidden');
-			break; 
+			break;
 	}
 	finfo_close($finfo);
 ?>
