@@ -1,0 +1,17 @@
+.feedback-pane input.evaluation-text {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.feedback-pane div.evaluation-text-container {
+	border: 1px solid silver;
+	padding: 0;
+	margin: 5px 2px;
+}
+
+body.darkroom input.evaluation-text {
+	background-color: black;
+	color: white;
+}

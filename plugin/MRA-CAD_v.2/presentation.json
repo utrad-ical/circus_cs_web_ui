@@ -1,0 +1,43 @@
+{
+	"displayPresenter": {
+		"type": "LesionCandDisplayPresenter",
+		"params": {
+			"dispWidth": 300
+		}
+	},
+	"feedbackListener": {
+		"type": "SelectionFeedbackListener",
+		"params": {
+			"personal": [
+				{ "value": 1,  "label": "known TP", "consensualMapsTo": 1 },
+				{ "value": 2,  "label": "missed TP", "consensualMapsTo": 1 },
+				{ "value": -1, "label": "FP" },
+				{ "value": 0,  "label": "pending" }
+			],
+			"consensual": [
+				{ "value": 1, "label": "TP" },
+				{ "value": -1, "label": "FP" },
+				{ "value": 0, "label": "pending" }
+			]
+		}
+	},
+	"sorter": {
+		"visible": true,
+		"defaultKey": "confidence",
+		"defaultOrder": "desc",
+		"options": [
+			{
+				"label": "Volume Size",
+				"key": "volume_size"
+			},
+			{
+				"label": "Image No.",
+				"key": "location_z"
+			},
+			{
+				"label": "Confidence",
+				"key": "confidence"
+			}
+		]
+	}
+}

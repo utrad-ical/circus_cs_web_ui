@@ -35,6 +35,13 @@
 
 		return this.each(function(){
 			var _this=$(this);
+			var flush = function() {
+				if( _this.attr('disabled') ){
+					SetStyle(_this,'disabled');
+				}else{
+					SetStyle(_this,'normal');
+				}
+			}
 			_this.hover(
 				function(){
 					if( !_this.attr('disabled') ) SetStyle(_this,'hover');
@@ -43,11 +50,10 @@
 					if( !_this.attr('disabled') ) SetStyle(_this,'normal');
 				}
 			);
-			if( _this.attr('disabled') ){
-				SetStyle(_this,'disabled');
-			}else{
-				SetStyle(_this,'normal');
-			}
+			flush();
+			_this.bind('flush', function() {
+				flush();
+			});
 		});
 	}
 })(jQuery);
