@@ -9,6 +9,6 @@ Individual plugins can override this template for custom layouts.
 *}
 <div class="result-blocks" id="result-blocks">
 {foreach from=$displays item=display}
-{include file="block.tpl}
+{if !$display._hidden}{include file="block.tpl}{/if}
 {/foreach}
 </div>

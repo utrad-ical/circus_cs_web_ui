@@ -54,6 +54,8 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	public function extractDisplays($input)
 	{
 		$result = array();
+		$count = 0;
+		$pref = $this->owner->Plugin->userPreference();
 		foreach ($input as $rec)
 		{
 			// Remember the size of the image
@@ -68,10 +70,13 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 				'volume_size' => $rec['volume_size'],
 				'confidence' => $rec['confidence']
 			);
+
+			if ($pref['maxDispNum'] && ++$count > $pref['maxDispNum'])
+			{
+				$item['_hidden'] = true;
+			}
 			$result[$rec['sub_id']] = $item;
 		}
-		$result = array_slice($result, 0, 5, true); // preserve keys
-		// TODO: num of displays config
 		return $result;
 	}
 }
