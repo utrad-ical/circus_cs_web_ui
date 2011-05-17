@@ -84,7 +84,10 @@ function show_cad_results($jobID, $feedbackMode) {
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
 
-	$extensions = array(new CadDetailTab($cadResult, $smarty));
+	$extensions = array(
+		new CadDetailTab($cadResult, $smarty),
+		new FnInputTab($cadResult, $smarty)
+	);
 	$tabs = array();
 	foreach ($extensions as $ext)
 	{

@@ -526,7 +526,7 @@ ul.inline li {
 	text-align: center;
 }
 
-#cad-detail-viewer-container {
+#cad-detail-viewer-container, #fn-input-viewer-container {
 	border: 1px solid #7f7f7f;
 	padding: 7px;
 	float: left;
@@ -536,6 +536,15 @@ ul.inline li {
 #cad-detail-table tr.emphasis td {
 	background-color: gray;
 	font-weight: bold;
+}
+
+#fn-input-footer {
+	clear: both;
+	margin-top: 15px;
+}
+
+#fn-input-table {
+	margin: 5px 0 15px 0;
 }
 
 /* ===================================================

@@ -12,11 +12,12 @@ $.widget('ui.imageviewer', {
 	_init: function()
 	{
 		this._draw();
+		this._initialized = true;
 	},
 
 	_draw: function ()
 	{
-		var root = this.element;
+		var root = this.element.empty();
 		root.addClass('ui-imageviewer')
 		var imgdiv = $('<div class="ui-imageviewer-image">')
 			.css({ width: this.options.width, height: this.options.height })
@@ -52,10 +53,35 @@ $.widget('ui.imageviewer', {
 			$('<div class="ui-imageviewer-location" />').appendTo(root);
 		}
 		this.changeImage(this.options.index);
+		if (this.options.role == 'locator')
+		{
+			$('img', imgdiv).click(function(e) {
+				if (!e.offsetX){ e.offsetX = e.pageX - $(e.target).offset().left; }
+				if (!e.offsetY){ e.offsetY = e.pageY - $(e.target).offset().top; }
+				self._locate(e.offsetX, e.offsetY);
+				return false; // prevent seletion
+			})
+			.mousedown(function(){return false;}); // prevent selection/drag
+		}
+	},
+
+	_locate: function(x, y)
+	{
+		var newitem = {
+			location_x: parseInt(x / this._scale + 0.5),
+			location_y: parseInt(y / this._scale + 0.5),
+			location_z: this.options.index,
+			entered_by: (this.options.entered_by || '?')
+		};
+		this.options.markers.push(newitem);
+		this._drawMarkers();
+		this.element.trigger('locate');
 	},
 
 	_drawMarkers: function()
 	{
+		if (!(this.options.markers instanceof Array))
+			return;
 		var imgdiv = $('div.ui-imageviewer-image', this.element);
 		var index = this.options.index;
 		imgdiv.find('div.ui-imageviewer-dot, div.ui-imageviewer-dotlabel').remove();
@@ -73,7 +99,7 @@ $.widget('ui.imageviewer', {
 					.css({left: x - 1, top:  y - 1})
 					.appendTo(imgdiv);
 				$('<div class="ui-imageviewer-dotlabel" />')
-					.text(mark.display_id)
+					.text(mark.display_id || '*')
 					.css({left: x + 3, top: y - 1})
 					.appendTo(imgdiv);
 			}
@@ -96,7 +122,11 @@ $.widget('ui.imageviewer', {
 
 	changeImage: function(index)
 	{
-		this.options.index = Math.min(Math.max(index, this.options.min), this.options.max);
+		var old = this.options.index;
+		index = Math.min(Math.max(index, this.options.min), this.options.max);
+		this.options.index = index;
+		if (old == index && this._initialized)
+			return;
 		$('.ui-imageviewer-slider').slider('option', 'value', index);
 		var param = {
 				studyInstanceUID: this.options.study_instance_uid,
@@ -117,14 +147,33 @@ $.widget('ui.imageviewer', {
 				{
 					$('img', self.element).attr('src', toTopDir + data.imgFname);
 					self._label(data.sliceNumber);
+					self._drawMarkers();
 				}
 			},
 			'json'
 		);
-		if (this.options.markers instanceof Array) this._drawMarkers();
 		$(this.element).trigger('imagechange');
 	},
 
+	_setData: function(key, value, animated)
+	{
+		if (key == 'index')
+		{
+			this.changeImage(value);
+			return; // supress calling super method
+		}
+		$.widget.prototype._setData.apply(this, arguments);
+		switch (key) {
+			case 'markers':
+				this._drawMarkers();
+				break;
+			case 'role':
+			case 'imageWidth':
+			case 'imageHeight':
+				this._draw();
+				break;
+		}
+	},
 });
 
 $.extend($.ui.imageviewer, {
@@ -141,6 +190,7 @@ $.extend($.ui.imageviewer, {
 		useLocationText: true,
 		locationLabel: 'Image Number: ',
 		toTopDir: '',
+		role: 'viewer',
 		showMarkers: true,
 		markers: []
 	}

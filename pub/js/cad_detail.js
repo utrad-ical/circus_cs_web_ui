@@ -1,3 +1,7 @@
+/**
+ * CAD Detail related initialization.
+ */
+
 $(function() {
 	// Set up the stackable image viewer.
 	markers = [];
