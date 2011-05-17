@@ -151,7 +151,7 @@
 
 			if($stmt->rowCount() == 0)
 			{
-				$sqlParams[1] = $DEFAOULT_CAD_PREF_USER;
+				$sqlParams[1] = $DEFAULT_CAD_PREF_USER;
 				$stmt->execute($sqlParams);
 			}
 

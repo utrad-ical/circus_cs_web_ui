@@ -56,7 +56,7 @@
 					. " WHERE pp.plugin_id=pm.plugin_id AND pm.plugin_name=? AND pm.version=?"
 					. " AND pp.user_id=?";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['cadName'], $params['version'], $DEFAOULT_CAD_PREF_USER));
+			$stmt->execute(array($params['cadName'], $params['version'], $DEFAULT_CAD_PREF_USER));
 
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{

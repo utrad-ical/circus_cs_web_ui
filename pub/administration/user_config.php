@@ -42,7 +42,7 @@
 			//----------------------------------------------------------------------------------------------------
 			// Add / Update / Delete user
 			//----------------------------------------------------------------------------------------------------
-			if($mode!="" && $oldUserID!=$DEFAOULT_CAD_PREF_USER && $newUsewrID!=$DEFAOULT_CAD_PREF_USER)
+			if($mode!="" && $oldUserID!=$DEFAULT_CAD_PREF_USER && $newUsewrID!=$DEFAULT_CAD_PREF_USER)
 			{
 				$sqlStr = "";
 				$sqlParams = array();
@@ -206,7 +206,7 @@
 					. " show_missed, passcode FROM users WHERE user_id<>? ORDER BY user_id ASC";
 
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($DEFAOULT_CAD_PREF_USER));
+			$stmt->execute(array($DEFAULT_CAD_PREF_USER));
 
 			$userList = $stmt->fetchAll(PDO::FETCH_NUM);
 			//------------------------------------------------------------------------------------------------
