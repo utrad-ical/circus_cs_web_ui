@@ -12,6 +12,14 @@
 $.widget('ui.imageviewer', {
 	_init: function()
 	{
+		// preparing cache
+		var body = $('body');
+		var self = this;
+		this._cache = body.data('imageviewerCache') || {};
+		body.data('imageviewerCache', this._cache);
+		body.bind('imageviewerImageload', function (event, data) {
+			self._imageLoadHandler(data);
+		});
 		this._draw();
 		this._initialized = true;
 	},
@@ -51,6 +59,8 @@ $.widget('ui.imageviewer', {
 					value: this.options.index,
 					slide: function(event, ui) {
 						self._label(ui.value);
+						if (self.options.sliderHotTrack)
+							self.changeImage(ui.value);
 					},
 					change: function(event, ui) {
 						self.changeImage(ui.value);
@@ -109,7 +119,7 @@ $.widget('ui.imageviewer', {
 					.css({left: x - 1, top:  y - 1})
 					.appendTo(imgdiv);
 				$('<div class="ui-imageviewer-dotlabel" />')
-					.text(mark.display_id || '*')
+					.text(mark.display_id || i+1)
 					.css({left: x + 3, top: y - 1})
 					.appendTo(imgdiv);
 			}
@@ -130,42 +140,87 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	changeImage: function(index)
+	_drawImage: function(index, imgFileName)
 	{
-		var old = this.options.index;
-		index = Math.min(Math.max(index, this.options.min), this.options.max);
-		this.options.index = index;
-		if (old == index && this._initialized)
-			return;
-		$('.ui-imageviewer-slider').slider('option', 'value', index);
+		$('img', this.element).attr('src', this.options.toTopDir + imgFileName);
+		this._label(index);
+		this._drawMarkers();
+	},
+
+	_imageLoadHandler: function (data)
+	{
+		if (data.errorMessage)
+		{
+			console.log(data.errorMessage);
+		}
+		else if (data.imgFname && data.sliceNumber)
+		{
+			this._cache[data.sliceNumber] = data.imgFname;
+			if (this._waiting && this._waiting.index == data.sliceNumber)
+			{
+				this._drawImage(data.sliceNumber, data.imgFname);
+				this._waiting = null;
+			}
+			else
+			{
+				var dummy = new Image(); // browser image preload
+				dummy.src = this.options.toTopDir + data.imgFname;
+			}
+		}
+	},
+
+	_query: function(index)
+	{
+		var self = this;
 		var param = {
 				studyInstanceUID: this.options.study_instance_uid,
 				seriesInstanceUID: this.options.series_instance_uid,
 				imgNum: index,
 		};
-		var self = this;
-		this._waiting = {
-			index: index,
-		};
-		var toTopDir = this.options.toTopDir;
+		// prevent requesting image more than once
+		if (this._cache[index] instanceof Date)
+			return;
 		$.post(
-			toTopDir + 'jump_image.php',
+			this.options.toTopDir + 'jump_image.php',
 			param,
 			function (data) {
-				if (data.errorMessage)
-				{
-					console.log(data.errorMessage);
-				}
-				else if(data.imgFname != "" && self._waiting.index == data.sliceNumber)
-				{
-					$('img', self.element).attr('src', toTopDir + data.imgFname);
-					self._label(data.sliceNumber);
-					self._drawMarkers();
-					self._waiting = null;
-				}
+				$('body').trigger('imageviewerImageload', data); // broadcast
 			},
 			'json'
 		);
+		this._cache[index] = new Date();
+
+	},
+
+	preload: function()
+	{
+		for (var i = this.options.min; i <= this.options.max; i++)
+		{
+			this._query(i);
+		}
+	},
+
+	changeImage: function(index)
+	{
+		var old = this.options.index;
+		var self = this;
+		index = Math.min(Math.max(index, this.options.min), this.options.max);
+		this.options.index = index;
+		if (old == index && this._initialized)
+			return;
+		$('.ui-imageviewer-slider').slider('option', 'value', index);
+		var toTopDir = this.options.toTopDir;
+		if (typeof(this._cache[index]) == 'string')
+		{
+			// the image is already created
+			this._drawImage(index, this._cache[index]);
+		}
+		else
+		{
+			// the image may need creation
+			this._waiting = { index: index };
+			this._query(index);
+		}
 		$(this.element).trigger('imagechange');
 	},
 
@@ -179,6 +234,7 @@ $.widget('ui.imageviewer', {
 		$.widget.prototype._setData.apply(this, arguments);
 		switch (key) {
 			case 'markers':
+			case 'showMarkers':
 				this._drawMarkers();
 				break;
 			case 'role':
@@ -201,6 +257,7 @@ $.extend($.ui.imageviewer, {
 		imageWidth: 512,
 		imageHeight: 512,
 		useSlider: true,
+		sliderHotTrack: false,
 		useLocationText: true,
 		locationLabel: 'Image Number: ',
 		toTopDir: '',
