@@ -14,10 +14,10 @@
 		$newPath       = (isset($_REQUEST['newPath']))      ? $_REQUEST['newPath']      : "";
 		$newType       = (isset($_REQUEST['newType']))      ? $_REQUEST['newType']      : "";
 
-		$oldDicomID    = (isset($_REQUEST['oldDicomID']) && is_numeric($_REQUEST['oldDicomID'])) ? $_REQUEST['oldDicomID'] : 0;
-		$oldResearchID = (isset($_REQUEST['oldResearchID']) && is_numeric($_REQUEST['oldResearchID'])) ? $_REQUEST['oldResearchID'] : 0;
-		$newDicomID    = (isset($_REQUEST['newDicomID']) && is_numeric($_REQUEST['newDicomID'])) ? $_REQUEST['newDicomID'] : 0;
-		$newResearchID = (isset($_REQUEST['newResearchID']) && is_numeric($_REQUEST['newResearchID'])) ? $_REQUEST['newResearchID'] : 0;
+		$oldDicomID  = (isset($_REQUEST['oldDicomID']) && is_numeric($_REQUEST['oldDicomID'])) ? $_REQUEST['oldDicomID'] : 0;
+		$oldResultID = (isset($_REQUEST['oldResultID']) && is_numeric($_REQUEST['oldResultID'])) ? $_REQUEST['oldResultID'] : 0;
+		$newDicomID  = (isset($_REQUEST['newDicomID']) && is_numeric($_REQUEST['newDicomID'])) ? $_REQUEST['newDicomID'] : 0;
+		$newResultID = (isset($_REQUEST['newResultID']) && is_numeric($_REQUEST['newResultID'])) ? $_REQUEST['newResultID'] : 0;
 		//--------------------------------------------------------------------------------------------------------------
 
 		$params = array('toTopDir' => "../");
@@ -61,7 +61,6 @@
 					$newStorageID = $stmt->fetchColumn();
 
 					//echo $newStorageID;
-
 					$sqlStr = "INSERT INTO storage_master(storage_id, path, current_use, type)"
 							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?)";
 
@@ -78,7 +77,7 @@
 				}
 				else if($newType == 2)
 				{
-					$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list WHERE plugin_type>=2 AND storage_id=?";
+					$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list WHERE status > 0 AND storage_id=?";
 				}
 
 				$stmt = $pdo->prepare($sqlStr);
@@ -87,30 +86,45 @@
 
 				if($stmt->fetchColumn()>0)
 				{
-					$message = "<font color=#ff0000>Storage " . $newStorageID . " was already stored.</font>";
+					$message = '<span style="color:#ff0000;">Storage ' . $newStorageID . ' was already stored.</span>';
 				}
 				else
 				{
-					$sqlStr = "DELETE FROM storage_master WHERE storage_id=?";
-					$sqlParams[] = $newStorageID;
+					$stmt = $pdo->prepare("SELECT current_use FROM storage_master WHERE storage_id=?");
+					$stmt->bindParam(1, $newStorageID);
+					$stmt->execute();
+					
+					if($stmt->fetchColumn() == 't')
+					{
+						$message = '<span style="color:#ff0000;"> Error: storage ID ' . $newStorageID
+								 . ' is set as current use.</span>';
+					}
+					else
+					{
+						$sqlStr = "DELETE FROM storage_master WHERE storage_id=?";
+						$sqlParams[] = $newStorageID;
+					}
 				}
 			}
 			else if($mode == 'changeCurrent')
 			{
 				if($oldDicomID != 0 && $newDicomID != 0 && $oldDicomID != $newDicomID)
 				{
-					$sqlStr = "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
-					        . "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
-					$sqlParams[] = $oldDicomID;
-					$sqlParams[] = $newDicomID;
-				}
+					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=1");
+					$stmt->execute();
 
-				if($oldResearchID != 0 && $newResearchID != 0 && $oldResearchID != $newResearchID)
+					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
+					$sqlParams[] = $newDicomID;
+					
+				}
+				
+				if($oldResultID != 0 && $newResultID != 0 && $oldResultID != $newResultID)
 				{
-					$sqlStr .= "UPDATE storage_master SET current_use='f' WHERE storage_id=?;"
-					        .  "UPDATE storage_master SET current_use='t' WHERE storage_id=?;";
-					$sqlParams[] = $oldResearchID;
-					$sqlParams[] = $newResearchID;
+					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=2");
+					$stmt->execute();
+					
+					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
+					$sqlParams[] = $newResultID;
 				}
 			}
 
@@ -210,14 +224,14 @@
 			$storageList = $stmt->fetchAll(PDO::FETCH_NUM);
 
 			$oldDicomID = 0;
-			$oldResearchID = 0;
+			$oldResultID = 0;
 
 			foreach($storageList as $item)
 			{
 				if($item[3]==true)
 				{
-					if($item[2] ==1)      $oldDicomID    = $item[0];
-					else if($item[2] ==2) $oldResearchID = $item[0];
+					if($item[2] ==1)      $oldDicomID  = $item[0];
+					else if($item[2] ==2) $oldResultID = $item[0];
 				}
 			}
 			//---------------------------------------------------------------------------------------------------
@@ -227,11 +241,11 @@
 			//------------------------------------------------------------------------------------------------
 			$smarty = new SmartyEx();
 
-			$smarty->assign('params',        $params);
-			$smarty->assign('message',       $message);
-			$smarty->assign('storageList',   $storageList);
-			$smarty->assign('oldDicomID',    $oldDicomID);
-			$smarty->assign('oldResearchID', $oldResearchID);
+			$smarty->assign('params',       $params);
+			$smarty->assign('message',      $message);
+			$smarty->assign('storageList',  $storageList);
+			$smarty->assign('oldDicomID',   $oldDicomID);
+			$smarty->assign('oldResultID',  $oldResultID);
 
 			$smarty->assign('restartButtonFlg', $restartButtonFlg);
 

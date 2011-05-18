@@ -105,13 +105,17 @@
 									    . '/' . $seriesParams['patient_id']
 										. '/' . $seriesParams['study_instance_uid']
 										. '/' . $seriesParams['series_instance_uid'];
-					$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT . $DIR_SEPARATOR
-					                 . $pluginParams['plugin_name'] . '_v.' . $pluginParams['version'];
-					$webPathOfCADReslut = $webPathOfseriesDir . '/' . $SUBDIR_CAD_RESULT
-										. '/' . $pluginParams['plugin_name'] . '_v.' . $pluginParams['version'];
+										
+
+					$sqlStr = 'SELECT el.storage_id, sm.path FROM executed_plugin_list el, storage_master sm'
+							. ' WHERE el.job_id=? AND sm.storage_id=el.storage_id';
+					$result = DBConnector::query($sqlStr, $idSet['job_id'], 'ARRAY_NUM');
+
+					$pathOfCADReslut = $result[1] . $DIR_SEPARATOR . $idSet['job_id'];
+					$webPathOfCADReslut = './storage/' . $result[0] . '/' . $idSet['job_id'];
 
 					$dstFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $idSet['candidate_id']);
-					$dstFnameWeb = sprintf("%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $idSet['candidate_id']);
+					$dstFnameWeb = sprintf("%s/result%03d.png", $webPathOfCADReslut, $idSet['candidate_id']);
 
 					if(!is_file($dstFname))
 					{

@@ -54,9 +54,9 @@ function UpdateCurrentID(ticket)
 	{
 		var address = 'data_storage_config.php?mode=changeCurrent'
 		            + '&oldDicomID=' + $("#oldDicomID").val()
-		            + '&oldResearchID=' + $("#oldResearchID").val()
+		            + '&oldResultID=' + $("#oldResultID").val()
 		            + '&newDicomID=' + $("#currentDICOMList").val()
-		            + '&newResearchID=' + $("#currentResearchList").val()
+		            + '&newResultID=' + $("#currentResultList").val()
 					+ '&ticket=' + $("#ticket").val();
 
 		location.replace(address);	
@@ -67,7 +67,7 @@ function UpdateCurrentID(ticket)
 function ResetCurrentID()
 {
 	$("#currentDICOMList").val($("#oldDicomID").val());
-	$("#currentResearchList").val($("#oldResearchID").val());
+	$("#currentResultList").val($("#oldResultID").val());
 
 }
 
@@ -123,7 +123,7 @@ function ResetCurrentID()
 							<tr {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 								<td>{$item[0]}</td>
 								<td class="al-l">{$item[1]}</td>
-								<td>{if $item[2]==1}DICOM storage{else}Research{/if}</td>
+								<td>{if $item[2]==1}DICOM storage{else}Plug-in result{/if}</td>
 								<td>{if $item[3]==true}TRUE{else}FALSE{/if}</td>
 								<td>
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
@@ -152,7 +152,7 @@ function ResetCurrentID()
 							<td>
 								<select id="typeList">
 									<option value="1">DICOM storage</option>
-									<option value="2">research</option>
+									<option value="2">Plug-in result</option>
 								</select>
 							</td>
 						</tr>
@@ -170,8 +170,8 @@ function ResetCurrentID()
 				<h3>Change current storage id</h3>
 				<div class="mt10 ml40">
 
-					<input type="hidden" id="oldDicomID"    value="{$oldDicomID}" />
-					<input type="hidden" id="oldResearchID" value="{$oldResearchID}" />
+					<input type="hidden" id="oldDicomID"  value="{$oldDicomID}" />
+					<input type="hidden" id="oldResultID" value="{$oldResultID}" />
 
 					<table class="detail-tbl">
 						<tr>
@@ -188,9 +188,9 @@ function ResetCurrentID()
 						</tr>
 
 						<tr>
-							<th><span class="trim01">Research</th>
+							<th><span class="trim01">Plug-in result</th>
 							<td>
-								<select id="currentResearchList" style="width: 3.5em;">
+								<select id="currentResultList" style="width: 3.5em;">
 									{foreach from=$storageList item=item name=cnt}
 										{if $item[2]==2}
 											<option value="{$item[0]}"{if $item[3]==true} selected="selected"{/if}>{$item[0]}</option>

@@ -128,34 +128,31 @@
 						. ' AND sm.storage_id=sr.storage_id';
 			}
 
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindParam(1, $candList[$k][0]);
-			$stmt->bindParam(2, $candList[$k][1]);
-			$stmt->execute();
-
-			$result = $stmt->fetch(PDO::FETCH_NUM);
+			$result = DBConnector::query($sqlStr, array($candList[$k][0], $candList[$k][1]), 'ARRAY_NUM');
 
 			$seriesDir = $result[4] . $DIR_SEPARATOR . $result[0] . $DIR_SEPARATOR
 					   . $result[1] . $DIR_SEPARATOR . $result[2];
 			$seriesDirWeb = 'storage/' . $result[3] . '/' . $result[0]
 						  . '/' . $result[1] . '/' . $result[2];
 
-			$pathOfCADReslut = $seriesDir . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
-							. $DIR_SEPARATOR . $cadName . '_v.' . $version;
-			$webPathOfCADReslut = $seriesDirWeb . '/' . $SUBDIR_CAD_RESULT
-							    . '/' . $cadName . '_v.' . $version;
-
 			$posX = $result[5];
 			$posY = $result[6];
 			$posZ = $result[7];
+			
+			$sqlStr = 'SELECT el.storage_id, sm.path FROM executed_plugin_list el, storage_master sm'
+					. ' WHERE el.job_id=? AND sm.storage_id=el.storage_id';
+			$result = DBConnector::query($sqlStr, $candList[$k][0], 'ARRAY_NUM');
+
+			$pathOfCADReslut = $result[1] . $DIR_SEPARATOR . $candList[$k][0];
+			$webPathOfCADReslut = 'storage/' . $result[0] . '/' . $candList[$k][0];
 
 			$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $candList[$k][1]);
-			$srcFnameWeb = sprintf("../%s%sresult%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $candList[$k][1]);
+			$srcFnameWeb = sprintf("../%s/result%03d.png", $webPathOfCADReslut, $candList[$k][1]);
 
 			if($n==3)
 			{
 				$srcFname = sprintf("%s%sfnslice%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $posZ);
-				$srcFnameWeb = sprintf("../%s%sfnslice%03d.png", $webPathOfCADReslut, $DIR_SEPARATOR_WEB, $posZ);
+				$srcFnameWeb = sprintf("../%s/fnslice%03d.png", $webPathOfCADReslut, $posZ);
 			}
 
 			if(!is_file($srcFname))
