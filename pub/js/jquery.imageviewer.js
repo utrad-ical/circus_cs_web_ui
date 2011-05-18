@@ -5,6 +5,7 @@
  *   Soichiro Miki
  * Depends:
  *   jquery-ui-1.7.x.js with Slider widget (or newer)
+ *   jquery.mousewheel.(min).js (optional)
  *   layout.css
  */
 
@@ -18,19 +19,28 @@ $.widget('ui.imageviewer', {
 	_draw: function ()
 	{
 		var root = this.element.empty();
+		var self = this;
 		root.addClass('ui-imageviewer')
 		var imgdiv = $('<div class="ui-imageviewer-image">')
 			.css({ width: this.options.width, height: this.options.height })
 			.appendTo(root);
 		this._scale = this.options.width / this.options.imageWidth;
 		var height = this.options.imageHeight * this._scale;
-		$('<img>')
+		var img = $('<img>')
 			.css({ width: this.options.width, height: height })
 			.appendTo(imgdiv);
+		img.mousedown(function(){return false;}); // prevent selection/drag
+		if (this.options.useWheel && img.mousewheel)
+		{
+			imgdiv.mousewheel(function (event, delta) {
+				self.step(delta > 0 ? -1 : 1);
+				return false; // supress browser scroll
+			})
+		}
+
 		if (this.options.useSlider)
 		{
 			var table = $(this._sliderHtml()).appendTo(root);
-			var self = this;
 			table.find('td').eq(0).find('button').click(function () { self.step(-1); });
 			table.find('td').eq(2).find('button').click(function () { self.step(1); });
 			var sliderdiv = $('<div class="ui-imageviewer-slider">')
@@ -55,13 +65,13 @@ $.widget('ui.imageviewer', {
 		this.changeImage(this.options.index);
 		if (this.options.role == 'locator')
 		{
-			$('img', imgdiv).click(function(e) {
+			img.click(function(e) {
 				if (!e.offsetX){ e.offsetX = e.pageX - $(e.target).offset().left; }
 				if (!e.offsetY){ e.offsetY = e.pageY - $(e.target).offset().top; }
 				self._locate(e.offsetX, e.offsetY);
-				return false; // prevent seletion
+				return false; // prevent image selection on dblclick
 			})
-			.mousedown(function(){return false;}); // prevent selection/drag
+			.css('cursor', 'crosshair');
 		}
 	},
 
@@ -134,6 +144,9 @@ $.widget('ui.imageviewer', {
 				imgNum: index,
 		};
 		var self = this;
+		this._waiting = {
+			index: index,
+		};
 		var toTopDir = this.options.toTopDir;
 		$.post(
 			toTopDir + 'jump_image.php',
@@ -143,11 +156,12 @@ $.widget('ui.imageviewer', {
 				{
 					console.log(data.errorMessage);
 				}
-				else if(data.imgFname != "")
+				else if(data.imgFname != "" && self._waiting.index == data.sliceNumber)
 				{
 					$('img', self.element).attr('src', toTopDir + data.imgFname);
 					self._label(data.sliceNumber);
 					self._drawMarkers();
+					self._waiting = null;
 				}
 			},
 			'json'
@@ -192,6 +206,7 @@ $.extend($.ui.imageviewer, {
 		toTopDir: '',
 		role: 'viewer',
 		showMarkers: true,
+		useWheel: true,
 		markers: []
 	}
 });
