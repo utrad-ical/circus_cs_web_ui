@@ -68,7 +68,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT el.plugin_id, pm.plugin_name, pm.version,"
 					. " sr.study_instance_uid, sr.series_instance_uid,"
-					. " el.plugin_type, el.executed_at, el.storage_id, sm.path"
+					. " pm.type, el.executed_at, el.storage_id, sm.path"
 					. " FROM executed_plugin_list el, executed_series_list es,"
 					. " plugin_master pm, series_list sr, storage_master sm"
 					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"

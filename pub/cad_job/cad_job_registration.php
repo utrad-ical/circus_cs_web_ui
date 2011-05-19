@@ -117,15 +117,15 @@
 
 			// Register into "execxuted_plugin_list"
 			$sqlStr = "INSERT INTO executed_plugin_list"
-					. " (job_id, plugin_id, plugin_type, storage_id, status, exec_user, executed_at)"
-					. " VALUES (?, ?, 1, ?, 1, ?, ?)";
+					. " (job_id, plugin_id, storage_id, status, exec_user, executed_at)"
+					. " VALUES (?, ?, ?, 1, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($jobID, $pluginID, $storageID, $userID, $dstData['registeredAt']));
 
 			// Register into "execxuted_plugin_list"
 			$sqlStr = "INSERT INTO job_queue"
-					. " (job_id, plugin_id, plugin_type, priolity, status, exec_user, registered_at)"
-					. " VALUES (?, ?, 1, ?, 1, ?, ?)";
+					. " (job_id, plugin_id, priolity, status, exec_user, registered_at)"
+					. " VALUES (?, ?, ?, 1, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt']));
 

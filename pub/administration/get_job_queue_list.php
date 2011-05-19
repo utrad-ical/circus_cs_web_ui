@@ -13,7 +13,7 @@
 	{
 		$pluginType = '';
 
-		switch($item['plugin_type'])
+		switch($item['type'])
 		{
 			case 1: $pluginType = 'CAD';             break;
 			case 2: $pluginType = 'Research';        break;
@@ -23,7 +23,7 @@
 		$studyID      = "";
 		$seriesNumber = "";
 
-		if($item['plugin_type'] == 1)
+		if($item['type'] == 1)
 		{
 			$sqlStr = "SELECT *"
 					. " FROM job_queue jq, job_queue_series js, study_list st, series_list sr"

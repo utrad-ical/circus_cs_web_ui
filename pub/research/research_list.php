@@ -95,7 +95,7 @@
 			$sqlStr = "SELECT el.job_id, pm.plugin_name, pm.version, el.executed_at, el.exec_user"
 					. " FROM executed_plugin_list el, plugin_master pm";
 
-			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND el.plugin_type=2";
+			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND pm.type=2";
 
 			if($params['resDateFrom'] != "" && $params['resDateTo'] != ""
 			   && $params['resDateFrom'] == $params['resDateTo'])
@@ -217,7 +217,7 @@
 			//----------------------------------------------------------------------------------------------------------
 
 			$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version FROM executed_plugin_list el, plugin_master pm"
-					. " WHERE pm.plugin_id=el.plugin_id AND el.plugin_type=2";
+					. " WHERE pm.plugin_id=el.plugin_id AND pm.type=2";
 			$stmtCad = $pdo->prepare($sqlStr);
 			$stmtCad->execute();
 			$pluginList = $stmtCad->fetchAll(PDO::FETCH_NUM);
