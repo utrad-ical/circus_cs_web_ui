@@ -60,6 +60,8 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
 
 {include file="block_layout.tpl"}
 
+<div style="clear: both"></div>
+
 <div class="register-pane">
 <input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />
 </div>
