@@ -52,8 +52,8 @@
 		$evalVal[$j][$i] = 0;
 	}
 	
-	$sqlStr = "SELECT va.key, va.value FROM feedback_list fl, visual_assessment va"
-			. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+	$sqlStr = "SELECT fa.key, fa.value FROM feedback_list fl, feedback_attributes fa"
+			. " WHERE fl.job_id=? AND fava.fb_id=fl.fb_id"
 			. " AND fl.is_consensual='f' AND fl.entered_by=?";
 	
 	$stmt = $pdo->prepare($sqlStr);

@@ -214,7 +214,7 @@
 
 				if($params['resultType'] == 2)
 				{
-					$params['tableName'] = ($params['scoreTableName'] !== "") ? $params['scoreTableName'] : "visual_assessment";
+					$params['tableName'] = ($params['scoreTableName'] !== "") ? $params['scoreTableName'] : "feedback_attributes";
 				}
 
 				$sqlStr = "SELECT registered_at, entered_by FROM feedback_list WHERE job_id=? AND status=1";

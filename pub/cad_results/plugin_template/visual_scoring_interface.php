@@ -6,9 +6,9 @@
 	{
 		$sqlParams = array();
 		
-		$sqlStr = "SELECT value FROM feedback_list fl, visual_assessment va"
-				. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
-				. " AND va.key='total'";
+		$sqlStr = "SELECT fa.value FROM feedback_list fl, feedback_attributes fa"
+				. " WHERE fl.job_id=? AND fa.fb_id=fl.fb_id"
+				. " AND fa.key='total'";
 		$sqlParams[] = $params['jobID'];
 		
 		
@@ -52,9 +52,9 @@
 
 	if($params['feedbackMode'] == "consensual")
 	{
-		$sqlStr = "SELECT va.value FROM feedback_list fl, visual_assessment va"
-				. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
-	            . " AND fl.is_consensual='f' AND fl.status=1 AND va.key='total'";
+		$sqlStr = "SELECT fa.value FROM feedback_list fl, feedback_attributes fa"
+				. " WHERE fl.job_id=? AND fa.fb_id=fl.fb_id"
+	            . " AND fl.is_consensual='f' AND fl.status=1 AND fa.key='total'";
 		$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
 		foreach($result as $item)  $enterNumArr[$item[0]-1]++;
@@ -81,10 +81,10 @@
 		{
 			$evalStr = " " . $enterNumArr[$j-1];
 			
-			$sqlStr = "SELECT fl.entered_by FROM feedback_list fl, visual_assessment va"
-					. " WHERE fl.job_id=? AND va.fb_id=fl.fb_id"
+			$sqlStr = "SELECT fl.entered_by FROM feedback_list fl, feedback_attributes fa"
+					. " WHERE fl.job_id=? AND fa.fb_id=fl.fb_id"
 					. " AND fl.is_consensual='f' AND fl.status=1"
-					. " AND va.key='total' AND va.value=?";
+					. " AND fa.key='total' AND fa.value=?";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($params['jobID'], strval($j)));

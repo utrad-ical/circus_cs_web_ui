@@ -221,14 +221,14 @@
 					// begin transaction
 					$pdo->beginTransaction();
 
-					$sqlStr = "DELETE FROM visual_assessment WHERE fb_id=?";
+					$sqlStr = "DELETE FROM feedback_attributes WHERE fb_id=?";
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindvalue(1, $feedbackID);
 					$stmt->execute();
 
 					$evalArr = explode("^", $params['evalStr']);
 
-					$sqlStr = "INSERT INTO visual_assessment"
+					$sqlStr = "INSERT INTO feedback_attributes"
 							    . " (fb_id, key, value) VALUES (?, ?, ?);";
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindvalue(1, $feedbackID);
