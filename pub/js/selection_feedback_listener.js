@@ -1,12 +1,15 @@
 /**
  * Feedback Listener for selection.
  */
-var evalListener = (function() {
+
+var circus = circus || {};
+
+circus.evalListener = (function() {
 	var global = {
 		setup: function ()
 		{
 			$('.feedback-pane a.radio-to-button').click(function () {
-				CircusFeedback.change();
+				circus.feedback.change();
 			});
 		},
 		set: function (target, value)

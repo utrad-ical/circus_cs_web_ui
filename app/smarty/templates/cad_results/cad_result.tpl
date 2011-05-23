@@ -9,9 +9,9 @@ css/darkroom.css
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
-data = {$displays|@json_encode};
-feedbacks = {$feedbacks|@json_encode};
-sort = {$sort|@json_encode};
+circus.cadresult.displays = {$displays|@json_encode};
+circus.cadresult.sort = {$sort|@json_encode};
+circus.feedback.initdata = {$feedbacks|@json_encode};
 </script>
 {/capture}
 {include file="header.tpl" body_class="cad-result"

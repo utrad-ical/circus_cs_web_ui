@@ -1,15 +1,18 @@
 /**
  * Feedback Listener by text input.
  */
-var evalListener = (function() {
+
+var circus = circus || {};
+
+circus.evalListener = (function() {
 	var global = {
 		setup: function ()
 		{
 			$('.evaluation-text').change(function() {
-				CircusFeedback.change();
+				circus.feedback.change();
 			})
 			.keyup(function() {
-				CircusFeedback.change();
+				circus.feedback.change();
 			});
 		},
 		set: function (target, value)
