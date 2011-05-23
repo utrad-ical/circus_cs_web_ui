@@ -12,6 +12,7 @@ css/darkroom.css
 circus.cadresult.displays = {$displays|@json_encode};
 circus.cadresult.sort = {$sort|@json_encode};
 circus.feedback.initdata = {$feedbacks|@json_encode};
+circus.feedback.feedbackMode = "{$feedbackMode}";
 </script>
 {/capture}
 {include file="header.tpl" body_class="cad-result"
@@ -74,6 +75,7 @@ circus.feedback.initdata = {$feedbacks|@json_encode};
 
 <!-- hidden elements -->
 <form>
+<input type="hidden" id="userID" value="{$smarty.session.userID|escape}" />
 <input type="hidden" id="study-instance-uid" value="{$series->Study->study_instance_uid|escape}" />
 <input type="hidden" id="series-instance-uid" value="{$series->series_instance_uid|escape}" />
 </form>

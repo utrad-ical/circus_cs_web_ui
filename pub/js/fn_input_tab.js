@@ -23,7 +23,7 @@ $(function() {
 			$('<td><input type="checkbox"/></td>').appendTo(tr);
 			$('<td>').text(i+1).appendTo(tr);
 			$.each(
-				['location_x', 'location_y', 'location_z', 'entered_by'],
+				['location_x', 'location_y', 'location_z', 'nearest', 'entered_by'],
 				function (dum, key) {
 					$('<td>').text(markers[i][key]).appendTo(tr);
 				}
@@ -37,8 +37,39 @@ $(function() {
 		}
 	};
 
+	var locating = function (event)
+	{
+		var newitem = event.newItem;
+		newitem.entered_by = $('#userID').val();
+		newitem.nearest = checkNearestHiddenFP(
+			newitem.location_x, newitem.location_y, newitem.location_z);
+	};
+
+	var checkNearestHiddenFP = function (posX, posY, posZ)
+	{
+		var distTh = 5.0;
+		distTh = distTh * distTh;
+		var distMin = 10000;
+		var ret = '- / -';
+		for (var id in circus.cadresult.displays)
+		{
+			var item = circus.cadresult.displays[id];
+			var dx = item.location_x - posX;
+			var dy = item.location_y - posY;
+			var dz = item.location_z - posZ;
+			var dist = dx * dx + dy * dy + dz * dz;
+			if(dist < distMin)
+			{
+				distMin = dist;
+				if(distMin < distTh)
+					ret = item.display_id + ' / ' + Math.sqrt(distMin).toFixed(2);
+			}
+		}
+		return ret;
+	};
+
 	// Handles FN location input
-	viewer.bind('locate', updateTable);
+	viewer.bind('locate', updateTable).bind('locating', locating);
 
 	$('#fn-delete').click(function(){
 		var indexes = [];

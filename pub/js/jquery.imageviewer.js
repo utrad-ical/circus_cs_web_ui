@@ -91,11 +91,18 @@ $.widget('ui.imageviewer', {
 			location_x: parseInt(x / this._scale + 0.5),
 			location_y: parseInt(y / this._scale + 0.5),
 			location_z: this.options.index,
-			entered_by: (this.options.entered_by || '?')
 		};
-		this.options.markers.push(newitem);
+		// The handler for 'locating' event can modify the new item.
+		var event = $.Event('locating');
+		event.newItem = newitem;
+		this.element.trigger(event);
+		if (!event.isDefaultPrevented()) {
+			this.options.markers.push(newitem);
+			var event = $.Event('locate');
+			event.newItem = newitem;
+			this.element.trigger(event);
+		}
 		this._drawMarkers();
-		this.element.trigger('locate');
 	},
 
 	_drawMarkers: function()
@@ -151,7 +158,7 @@ $.widget('ui.imageviewer', {
 	{
 		if (data.errorMessage)
 		{
-			console.log(data.errorMessage);
+			console && console.log(data.errorMessage);
 		}
 		else if (data.imgFname && data.sliceNumber)
 		{
