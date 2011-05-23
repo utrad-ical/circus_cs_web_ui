@@ -5,8 +5,9 @@
 $(function() {
 	// Prepares an image viewer widget for FN locating
 	var viewer = $('#fn-input-viewer').imageviewer({
-		study_instance_uid: $('#study-instance-uid').val(),
-		series_instance_uid: $('#series-instance-uid').val(),
+		study_instance_uid: circus.cadresult.studyUID,
+		series_instance_uid: circus.cadresult.seriesUID,
+		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
 		role: 'locator',
 		markers: []
@@ -40,7 +41,7 @@ $(function() {
 	var locating = function (event)
 	{
 		var newitem = event.newItem;
-		newitem.entered_by = $('#userID').val();
+		newitem.entered_by = circus.userID;
 		newitem.nearest = checkNearestHiddenFP(
 			newitem.location_x, newitem.location_y, newitem.location_z);
 	};

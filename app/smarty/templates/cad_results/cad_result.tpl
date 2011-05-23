@@ -9,8 +9,12 @@ css/darkroom.css
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
+circus.userID = "{$smarty.session.userID|escape:javascript}";
 circus.cadresult.displays = {$displays|@json_encode};
 circus.cadresult.sort = {$sort|@json_encode};
+circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascript}";
+circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
+circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 </script>
@@ -72,12 +76,5 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
 {/foreach}
 
 </div><!-- /tab-content -->
-
-<!-- hidden elements -->
-<form>
-<input type="hidden" id="userID" value="{$smarty.session.userID|escape}" />
-<input type="hidden" id="study-instance-uid" value="{$series->Study->study_instance_uid|escape}" />
-<input type="hidden" id="series-instance-uid" value="{$series->series_instance_uid|escape}" />
-</form>
 
 {include file="footer.tpl"}
