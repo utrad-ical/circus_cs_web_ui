@@ -21,6 +21,7 @@ $(function() {
 		{
 			var tr = $('<tr>');
 			$('<td><input type="checkbox"/></td>').appendTo(tr);
+			$('<td>').text(i+1).appendTo(tr);
 			$.each(
 				['location_x', 'location_y', 'location_z', 'entered_by'],
 				function (dum, key) {

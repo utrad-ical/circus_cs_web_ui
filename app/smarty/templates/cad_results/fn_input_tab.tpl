@@ -8,14 +8,18 @@
 </div>
 <div>
 <input type="button" class="form-btn" id="fn-delete" value="Delete" disabled="disabled" />
+{if $feedbackMode=='consensual'}
 <input type="button" class="form-btn" id="fn-integrate" value="Integrate" disabled="disabled" />
+{/if}
 <table id="fn-input-table" class="col-tbl">
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
+			<th>ID</th>
 			<th>Pos X</th>
 			<th>Pos Y</th>
 			<th>Pos Z</th>
+			<th>Nearest Candidate<br/>rank / dist. [voxel]</th>
 			<th>entered by</th>
 		</tr>
 	</thead>
