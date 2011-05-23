@@ -1,7 +1,7 @@
 <?php
-	session_start();
-
 	include("../common.php");
+	Auth::checkSession();
+
 	include("server_status_private.php");
 
 	$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
@@ -15,7 +15,7 @@
 	{
 		win32_start_service($serviceName);
 	}
-	
+
 	$dstData = ShowWindowsServiceStatus($serviceName);
 
 	echo json_encode($dstData);

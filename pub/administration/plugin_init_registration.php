@@ -1,8 +1,7 @@
 <?php
-	//session_cache_limiter('none');
-	session_start();
-
 	include_once("../common.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
 	function DropTableIfExists($pdo, $tableName)
 	{

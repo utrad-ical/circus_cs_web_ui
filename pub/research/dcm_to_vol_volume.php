@@ -1,12 +1,11 @@
 <?php
-	session_cache_limiter('nocache');
-	session_start();
-
+	$params['toTopDir'] = "../";
 	include("../common.php");
+	Auth::checkSession(false);
 
 	$errorFlg = 0;
 
-	if($_SESSION['researchShowFlg'] == 0 && $_SESSION['researchExecFlg'] == 0)
+	if (Auth::currentGroup()->hasPrivilege(Auth::RESEARCH_SHOW))
 	{
 		$errorFlg = 1;
 	}
@@ -40,7 +39,6 @@
 		$errorFlg = 1;
 	}
 
-	$params['toTopDir'] = "../";
 	//-----------------------------------------------------------------------------------------------------------------
 
 	try

@@ -1,11 +1,8 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("auto_logout_research.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::RESEARCH_SHOW);
 
 	try
 	{

@@ -1,9 +1,7 @@
 <?php
-
-	session_cache_limiter('nocache');
-	session_start();
-
 	include("../common.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(AUTH::VOLUME_DOWNLOAD);
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation

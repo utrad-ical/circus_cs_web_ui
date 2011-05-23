@@ -1,8 +1,7 @@
 <?php
-
-	session_start();
 	include("../common.php");
-	include("auto_logout_administration.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
 	$params = array('toTopDir' => "../");
 

@@ -1,14 +1,14 @@
 <?php
+	require_once("../common.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
-	session_start();
-	include("../common.php");
-	include("auto_logout_administration.php");
-	include("server_status_private.php");
+	include_once("server_status_private.php");
 
 	$params = array('toTopDir' => "../");
 	$cadList = array();
 
-	$userID = $_SESSION['userID'];
+	$userID = Auth::currentUser()->user_id;
 
 	$adminModeFlg = $mode = (isset($_REQUEST['adminModeFlg'])) ? $_REQUEST['adminModeFlg'] : 0;
 	if($adminModeFlg == 1) $_SESSION['adminModeFlg'] = 1;

@@ -1,8 +1,6 @@
 <?php
-
-	session_start();
-
 	include("../common.php");
+	Auth::checkSession(false);
 
 	//--------------------------------------------------------------------------------------------------------
 	// Import $_REQUEST variables

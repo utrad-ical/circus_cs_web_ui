@@ -1,10 +1,7 @@
 <?php
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	Auth::checkSession();
 
 	$cadList = array();
 

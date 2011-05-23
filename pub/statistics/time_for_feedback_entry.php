@@ -1,11 +1,7 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once('../common.php');
-	include_once("../auto_logout.php");
+	Auth::checkSession();
 
 	include('get_cad_list_for_personal_stat.php');	// create $cadList
 

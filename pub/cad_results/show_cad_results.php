@@ -1,11 +1,7 @@
 <?php
-	//session_cache_limiter('none');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	Auth::checkSession();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation
@@ -97,7 +93,7 @@
 				$params['errorMessage'] = "[ERROR] Specified job ID (" . $params['jobID'] . ") is not existed.";
 			}
 		}
-		
+
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
@@ -218,7 +214,7 @@
 				}
 
 				$sqlStr = "SELECT registered_at, entered_by FROM feedback_list WHERE job_id=? AND status=1";
-				
+
 				if($params['feedbackMode'] == "personal")  $sqlStr .= " AND is_consensual='f' AND entered_by=?";
 				else                                       $sqlStr .= " AND is_consensual='t'";
 

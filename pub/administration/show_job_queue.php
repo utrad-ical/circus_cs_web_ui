@@ -1,11 +1,8 @@
 <?php
-	session_cache_limiter('nocache');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include("auto_logout_administration.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
 	try
 	{

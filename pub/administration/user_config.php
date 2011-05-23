@@ -1,9 +1,7 @@
 <?php
-
-	session_start();
-
 	include("../common.php");
-	include("auto_logout_administration.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
 	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
 	{

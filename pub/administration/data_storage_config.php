@@ -1,8 +1,7 @@
 <?php
-	session_start();
-
 	include("../common.php");
-	include("auto_logout_administration.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
 	if($_SESSION['serverSettingsFlg']==1)
 	{
@@ -93,7 +92,7 @@
 					$stmt = $pdo->prepare("SELECT current_use FROM storage_master WHERE storage_id=?");
 					$stmt->bindParam(1, $newStorageID);
 					$stmt->execute();
-					
+
 					if($stmt->fetchColumn() == 't')
 					{
 						$message = '<span style="color:#ff0000;"> Error: storage ID ' . $newStorageID
@@ -115,14 +114,14 @@
 
 					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
 					$sqlParams[] = $newDicomID;
-					
+
 				}
-				
+
 				if($oldResultID != 0 && $newResultID != 0 && $oldResultID != $newResultID)
 				{
 					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=2");
 					$stmt->execute();
-					
+
 					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
 					$sqlParams[] = $newResultID;
 				}
@@ -171,11 +170,11 @@
 						case 'add':
 							$message .= 'New setting was successfully added.';
 							break;
-						
+
 						case 'delete':
 							$message .= 'The selected setting (ID=' . $newStorageID . ') was successfully deleted.';
 							break;
-						
+
 						case 'changeCurrent':
 							$message .= 'The current storage was successfully changed.';
 							break;
@@ -189,14 +188,14 @@
 					{
 						$sqlStr = "SELECT storage_id, path FROM storage_master ORDER BY storage_id ASC";
 						$tmpList = DBConnector::query($sqlStr, null, 'ALL_NUM');
-					
+
 						$storageList = array();
-					
+
 						foreach($tmpList as $item)
 						{
 							$storageList[$item[0]] = $item[1];
 						}
-					
+
 						file_put_contents("../../config/storage.json", json_encode($storageList));
 					}
 					//--------------------------------------------------------------------------------------------

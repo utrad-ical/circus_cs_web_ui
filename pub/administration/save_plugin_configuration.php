@@ -1,8 +1,6 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	include_once("../common.php");
+	Auth::checkSession(false);
 
 	//-----------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
@@ -51,7 +49,7 @@
 		if($dstData['errorFlg'] == 0)
 		{
 
-			// 
+			//
 			try
 			{
 				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

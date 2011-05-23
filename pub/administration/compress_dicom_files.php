@@ -1,8 +1,3 @@
-<?php
-	//session_cache_limiter('none');
-	session_start();
-?>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,23 +14,24 @@
 -->
 </script>
 </head>
-<body bgcolor="#ffffff"> 
+<body bgcolor="#ffffff">
 
 <?php
 
 	include("../common.php");
-	include("auto_logout_administration.php");
+	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
 	// Prevent timeout error
 	set_time_limit(0);
 
 	//--------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables 
+	// Import $_REQUEST variables
 	//--------------------------------------------------------------------------------------------------------
 	$seriesDir = "";
-	
+
 	$seriesUID = $_REQUEST['seriesInstanceUID'];
-	
+
 	if(isset($_REQUEST['seriesDir']))
 	{
 		if(ini_get('magic_quotes_gpc') == "1")  $seriesDir = stripslashes($_REQUEST['seriesDir']);
@@ -47,11 +43,11 @@
 		flush();
 		exit(-1);
 	}
-	
+
 	$flist = array();
 	$flist = GetDicomFileListInPath($seriesDir);
 	$fNum = count($flist);
-		
+
 	echo '<div class="listTitle" style="margin-left:5px;">Compress DICOM files</div>';
 	flush();
 
@@ -60,20 +56,20 @@
 	for($i=0; $i<$fNum; $i++)
 	{
 		$fileName = $seriesDir . $DIR_SEPARATOR . $flist[$i];
-	
+
 		echo $flist[$i] . "...";
 		flush();
-		
+
 		$cmdStr  = $cmdForProcess . ' "' . $cmdDcmCompress . ' ' . $seriesDir . ' ' . $flist[$i] . '"';
 		flush();
-		
+
 		$res = shell_exec($cmdStr);
 		echo $res . "<br>";
 		flush();
-		
+
 		if(!(strncmp($res,"successed",9) || strncmp($res,"already compressed",18)))  exit(-1);
 	}
-	
+
 	//--------------------------------------------------------------------------------------------------------
 	// Connect to SQL server
 	//--------------------------------------------------------------------------------------------------------
@@ -87,7 +83,7 @@
 
 	$res = pg_get_result($dbConn);
 	$msg = pg_result_error($res);
-	
+
 	if($msg != "")
 	{
 		echo '<font color=#ff0000>' . $msg . '</font><br>';

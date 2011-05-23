@@ -1,7 +1,6 @@
 <?php
-	session_start();
-
 	include("../common.php");
+	Auth::checkSession(false);
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation

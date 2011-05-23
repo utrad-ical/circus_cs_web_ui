@@ -1,11 +1,7 @@
 <?php
-	session_cache_limiter('nocache');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	Auth::checkSession();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables

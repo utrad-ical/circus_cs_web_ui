@@ -1,11 +1,7 @@
 <?php
-	session_cache_limiter('nocache');
-	session_start();
-
 	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	Auth::checkSession(false);
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables
@@ -36,7 +32,7 @@
 		// Get plugin ID
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 		$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
-		
+
 		// Get series sid
 		$sqlStr = "SELECT sid FROM series_list WHERE series_instance_uid=?";
 
@@ -90,7 +86,7 @@
 	{
 		var_dump($e->getMessage());
 	}
-	
+
 	if($dstData['message'] == "")
 	{
 		try
@@ -108,7 +104,7 @@
 			// Get new job ID
 			$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
 			$jobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
-			
+
 			// Set new job ID
 			$sqlStr = "SELECT setval('executed_plugin_list_job_id_seq', ?, true)";
 			$stmt = $pdo->prepare($sqlStr);
@@ -133,24 +129,24 @@
 			for($i=0; $i<$seriesNum; $i++)
 			{
 				$sqlParams = array($jobID, $i, $sidArr[$i]);
-				
+
 				$sqlStr = "INSERT INTO executed_series_list(job_id, series_id, series_sid)"
 						. " VALUES (?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
-				
+
 				$sqlStr = "INSERT INTO job_queue_series(job_id, series_id, series_sid)"
 						. " VALUES (?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 			}
-			
+
 			//---------------------------------------------------------------------------------------------------------
 			// Commit transaction
 			//---------------------------------------------------------------------------------------------------------
 			$pdo->commit();
 			//---------------------------------------------------------------------------------------------------------
-			
+
 			$dstData['message'] = 'Successfully registered plug-in job';
 		}
 		catch (PDOException $e)
