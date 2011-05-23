@@ -5,13 +5,15 @@
 $(function() {
 	// Set up the stackable image viewer.
 	markers = [];
+	var data = circus.cadresult.displays;
 	for (var dp in data)
 	{
 		markers.push(data[dp]);
 	}
 	$('#cad-detail-viewer').imageviewer({
-		study_instance_uid: $('#study-instance-uid').val(),
-		series_instance_uid: $('#series-instance-uid').val(),
+		study_instance_uid: circus.cadresult.studyUID,
+		series_instance_uid: circus.cadresult.seriesUID,
+		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
 		markers: markers
 	})
@@ -34,7 +36,7 @@ $(function() {
 	// Add double click handlers.
 	$('.display-pane').dblclick(function(event) {
 		var display_id = $(event.target).closest('div.result-block').data('displayid');
-		CircusCadResult.showTabLabel('CAD Detail');
+		circus.cadresult.showTabLabel('CAD Detail');
 		var pos_z = data[display_id].location_z;
 		$('#cad-detail-viewer').imageviewer('changeImage', pos_z);
 	})

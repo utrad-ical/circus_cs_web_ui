@@ -9,10 +9,19 @@ css/darkroom.css
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
-data = {$displays|@json_encode};
-feedbacks = {$feedbacks|@json_encode};
-sort = {$sort|@json_encode};
+circus.userID = "{$smarty.session.userID|escape:javascript}";
+circus.cadresult.displays = {$displays|@json_encode};
+circus.cadresult.sort = {$sort|@json_encode};
+circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascript}";
+circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
+circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
+circus.feedback.initdata = {$feedbacks|@json_encode};
+circus.feedback.feedbackMode = "{$feedbackMode}";
 </script>
+
+{foreach from=$extensions item=ext}
+{$ext->head()}
+{/foreach}
 {/capture}
 {include file="header.tpl" body_class="cad-result"
 	require=$smarty.capture.require head_extra=$smarty.capture.extra}
@@ -48,15 +57,26 @@ sort = {$sort|@json_encode};
       <option value="{$sort.key|escape}">{$sort.label|escape}</option>
       {/foreach}
     </select>
-    <input type="radio" name="sortOrder" value="asc" />Asc.&nbsp;
-    <input type="radio" name="sortOrder" value="desc" />Desc.
+    <input type="radio" name="sortOrder" value="asc" id="sort-asc"/><label for="sort-asc">Asc.</label>&nbsp;
+    <input type="radio" name="sortOrder" value="desc" id="sort-desc"/><label for="sort-desc">Desc.</label>
   </form></div><!-- /sorter -->
   {/if}
 
+{foreach from=$extensions item=ext}
+{$ext->beforeBlocks()}
+{/foreach}
+
 {include file="block_layout.tpl"}
 
-<div class="register-pane">
-<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />
+<div style="clear: both"></div>
+
+{foreach from=$extensions item=ext}
+{$ext->afterBlocks()}
+{/foreach}
+
+<div id="register-pane">
+<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" /><br />
+<ul id="register-error"></ul>
 </div>
 <form>
 <input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />
@@ -71,11 +91,5 @@ sort = {$sort|@json_encode};
 {/foreach}
 
 </div><!-- /tab-content -->
-
-<!-- hidden elements -->
-<form>
-<input type="hidden" id="study-instance-uid" value="{$series->Study->study_instance_uid|escape}" />
-<input type="hidden" id="series-instance-uid" value="{$series->series_instance_uid|escape}" />
-</form>
 
 {include file="footer.tpl"}

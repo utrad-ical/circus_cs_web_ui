@@ -2,11 +2,46 @@
  * FN Input related initialization.
  */
 
+circus.feedback.additional = circus.feedback.additional || [];
+
+(function () {
+	var f = {
+		validate: function () {
+			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
+			var ok = $('#fn-found:checked').length > 0 && markers.length > 0;
+			ok = ok || $('#fn-not-found:checked').length > 0;
+			if (ok) {
+				return {
+					register_ok: true,
+					message: 'FN Input: <span class="register-ok">Complete</span>'
+				};
+			} else {
+				return {
+					register_ok: false,
+					message: 'FN Input: <span class="register-not-ok">Incomplete</span>'
+				};
+			}
+		},
+		collect: function (additionalFeedback) {
+			var fns = [];
+			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
+			for (var i in markers)
+			{
+				fns.push(markers[i]);
+			}
+			console.log(fns);
+			additionalFeedback.fn_location = fns;
+		}
+	};
+	circus.feedback.additional.push(f);
+})();
+
 $(function() {
 	// Prepares an image viewer widget for FN locating
 	var viewer = $('#fn-input-viewer').imageviewer({
-		study_instance_uid: $('#study-instance-uid').val(),
-		series_instance_uid: $('#series-instance-uid').val(),
+		study_instance_uid: circus.cadresult.studyUID,
+		series_instance_uid: circus.cadresult.seriesUID,
+		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
 		role: 'locator',
 		markers: []
@@ -23,7 +58,7 @@ $(function() {
 			$('<td><input type="checkbox"/></td>').appendTo(tr);
 			$('<td>').text(i+1).appendTo(tr);
 			$.each(
-				['location_x', 'location_y', 'location_z', 'entered_by'],
+				['location_x', 'location_y', 'location_z', 'nearest', 'entered_by'],
 				function (dum, key) {
 					$('<td>').text(markers[i][key]).appendTo(tr);
 				}
@@ -37,8 +72,39 @@ $(function() {
 		}
 	};
 
+	var locating = function (event)
+	{
+		var newitem = event.newItem;
+		newitem.entered_by = circus.userID;
+		newitem.nearest = checkNearestHiddenFP(
+			newitem.location_x, newitem.location_y, newitem.location_z);
+	};
+
+	var checkNearestHiddenFP = function (posX, posY, posZ)
+	{
+		var distTh = 5.0;
+		distTh = distTh * distTh;
+		var distMin = 10000;
+		var ret = '- / -';
+		for (var id in circus.cadresult.displays)
+		{
+			var item = circus.cadresult.displays[id];
+			var dx = item.location_x - posX;
+			var dy = item.location_y - posY;
+			var dz = item.location_z - posZ;
+			var dist = dx * dx + dy * dy + dz * dz;
+			if(dist < distMin)
+			{
+				distMin = dist;
+				if(distMin < distTh)
+					ret = item.display_id + ' / ' + Math.sqrt(distMin).toFixed(2);
+			}
+		}
+		return ret;
+	};
+
 	// Handles FN location input
-	viewer.bind('locate', updateTable);
+	viewer.bind('locate', updateTable).bind('locating', locating);
 
 	$('#fn-delete').click(function(){
 		var indexes = [];
@@ -69,6 +135,15 @@ $(function() {
 		updateTable();
 	});
 
+	$('#fn-found, #fn-not-found').click(function () {
+		circus.feedback.change();
+	});
+
+	$('#jump-fn-input').click(function () {
+		$('#fn-found').click();
+		circus.cadresult.showTabLabel('FN Input');
+	});
+
 	// Jump to an image by clicking rows on the FN location table
 	tbl.click(function (event) {
 		var tr = $(event.target).closest('tr');
@@ -79,7 +154,7 @@ $(function() {
 
 	// Back to main tab button
 	$('.backMain').click(function () {
-		CircusCadResult.showTabLabel('CAD Result');
+		circus.cadresult.showTabLabel('CAD Result');
 	});
 
 });

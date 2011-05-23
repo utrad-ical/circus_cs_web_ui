@@ -32,6 +32,11 @@ class NullFeedbackListener extends FeedbackListener
 	{
 		throw new Exception('NullFeedbackListener does not support saving');
 	}
+
+	function loadBlockFeedback($fb_id)
+	{
+		throw new Exception('NullFeedbackListener does not support loading feedback');
+	}
 }
 
 ?>

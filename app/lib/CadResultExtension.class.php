@@ -9,14 +9,17 @@ class CadResultExtension
 	protected $owner;
 	protected $smarty;
 
-	public function __construct($owner, $smarty)
+	public $priority;
+
+	public function __construct($owner, $smarty, $priority = 0)
 	{
 		$this->owner = $owner;
 		$this->smarty = $smarty;
+		$this->priority = $priority;
 	}
 
 	public function requiringFiles() { return null; }
-	public function initialize() {}
+	public function head() { return ''; }
 	public function beforeBlocks() { return ''; }
 	public function afterBlocks() { return ''; }
 	public function tabs() { return array(); }

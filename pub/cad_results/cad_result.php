@@ -85,9 +85,11 @@ function show_cad_results($jobID, $feedbackMode) {
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
 
 	$extensions = array(
-		new CadDetailTab($cadResult, $smarty),
-		new FnInputTab($cadResult, $smarty)
+		new CadDetailTab($cadResult, $smarty, 1),
+		new FnInputTab($cadResult, $smarty, 2)
 	);
+	usort($extensions, function ($a, $b) { return $b->priority - $a->priority; });
+
 	$tabs = array();
 	foreach ($extensions as $ext)
 	{
@@ -95,6 +97,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);
 	}
+
 	$pop = $cadResult->webPathOfPluginPub() . '/';
 	if (file_exists($pop . 'cad_result.css'))
 	{
@@ -119,6 +122,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'params' => $params,
 		'sorter' => $sort,
 		'tabs' => $tabs,
+		'extensions' => $extensions,
 		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])
 	));
 

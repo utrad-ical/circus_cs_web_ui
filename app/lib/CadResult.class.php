@@ -308,16 +308,8 @@ class CadResult extends Model
 	public function webPathOfCadResult()
 	{
 		global $DIR_SEPARATOR_WEB, $SUBDIR_CAD_RESULT;
-		$webPath = $this->Storage->apache_alias;
-		$series = $this->Series[0];
-		// TODO: This should be replaced when WEB_BASE or something is implemented
-		$seriesDirWeb = '../' . $webPath . 'storage/' . $this->Storage->storage_id . '/' .
-			$series->Study->Patient->patient_id . '/' .
-			$series->Study->study_instance_uid . '/' .
-			$series->series_instance_uid;
-		$result =  $seriesDirWeb . '/' .
-			$SUBDIR_CAD_RESULT . '/' . $this->Plugin->fullName();
-		return $result;
+		$str_id = $this->storage_id;
+		return '../' . $webPath . 'storage/' . $str_id . '/' . $this->job_id;
 	}
 
 	/**
@@ -328,13 +320,7 @@ class CadResult extends Model
 	{
 		global $DIR_SEPARATOR, $SUBDIR_CAD_RESULT;
 		$path = $this->Storage->path;
-		$series = $this->Series[0];
-		$seriesDir = $path . $DIR_SEPARATOR .
-			$series->Study->Patient->patient_id . $DIR_SEPARATOR .
-			$series->Study->study_instance_uid . $DIR_SEPARATOR .
-			$series->series_instance_uid;
-		$result =  $seriesDir . $DIR_SEPARATOR .
-			$SUBDIR_CAD_RESULT . $DIR_SEPARATOR . $this->Plugin->fullName();
+		$result =  $path . $DIR_SEPARATOR . $this->job_id;
 		return $result;
 	}
 }
