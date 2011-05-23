@@ -58,7 +58,6 @@
 
 	try
 	{
-
 		if($params['errorMessage'] == "")
 		{
 			// Connect to SQL Server
@@ -69,11 +68,12 @@
 			//----------------------------------------------------------------------------------------------------------
 			$sqlStr = "SELECT el.plugin_id, pm.plugin_name, pm.version,"
 					. " sr.study_instance_uid, sr.series_instance_uid,"
-					. " el.plugin_type, el.executed_at"
+					. " pm.type, el.executed_at, el.storage_id, sm.path"
 					. " FROM executed_plugin_list el, executed_series_list es,"
-					. " plugin_master pm, series_list sr"
+					. " plugin_master pm, series_list sr, storage_master sm"
 					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
-					. " AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid";
+					. " AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid"
+					. " AND sm.storage_id=el.storage_id";
 			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');
 
 			if(!is_null($result))
@@ -84,6 +84,8 @@
 				$params['studyInstanceUID']  = $result[3];
 				$params['seriesInstanceUID'] = $result[4];
 				$params['cadExecutedAt']     = $result[6];
+				$params['cadStorageID']      = $result[7];
+				$params['cadStoragePath']    = $result[8];
 
 				if($result[5] != 1)
 				{
@@ -128,8 +130,8 @@
 			$params['bodyPart']          = $result[11];
 			$params['orgWidth']          = $result[12];
 			$params['orgHeight']         = $result[13];
-			$params['storageID']         = $result[14];
-			$params['storagePath']       = $result[15];
+			$params['dcmStorageID']      = $result[14];
+			$params['dcmStoragePath']    = $result[15];
 
 			// Retrieve parameters for the plug-in
 			$sqlStr = "SELECT result_type, result_table, score_table"
@@ -167,17 +169,16 @@
 			}
 			//------------------------------------------------------------------------------------------------------
 
-			$params['seriesDir'] = $params['storagePath'] . $DIR_SEPARATOR . $params['patientID']
+			$params['seriesDir'] = $params['dcmStoragePath'] . $DIR_SEPARATOR . $params['patientID']
 								 . $DIR_SEPARATOR . $params['studyInstanceUID']
 								 . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-			$params['seriesDirWeb'] = 'storage/' . $params['storageID']
+			$params['seriesDirWeb'] = 'storage/' . $params['dcmStorageID']
 								    . '/' . $params['patientID']
 								    . '/' . $params['studyInstanceUID']
 								    . '/' . $params['seriesInstanceUID'];
-			$params['pathOfCADReslut'] = $params['seriesDir'] . $DIR_SEPARATOR . $SUBDIR_CAD_RESULT
-									   . $DIR_SEPARATOR . $params['cadName'] . '_v.' . $params['version'];
-			$params['webPathOfCADReslut'] = $params['seriesDirWeb'] . '/' . $SUBDIR_CAD_RESULT
-										  . '/' . $params['cadName'] . '_v.' . $params['version'];
+
+			$params['pathOfCADReslut'] = $params['cadStoragePath'] . $DIR_SEPARATOR . $params['jobID'];
+			$params['webPathOfCADReslut'] = 'storage/' . $params['cadStorageID'] . '/' . $params['jobID'];
 
 			$params['encryptedPtID'] = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 

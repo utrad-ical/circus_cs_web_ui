@@ -158,8 +158,8 @@
 
 			if($dstData['message'] == "")
 			{
-				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, plugin_type, status, registered_at)'
-				        . ' VALUES (?,?,?,2,2,?)';
+				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, status, registered_at)'
+				        . ' VALUES (?,?,?,2,?)';
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($userID, $pluginName, $version, $dstData['registeredAt']));
 

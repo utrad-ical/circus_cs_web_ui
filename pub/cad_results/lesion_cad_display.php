@@ -150,7 +150,7 @@
 		$dispSid[] = $result['sid'];
 
 		$srcFname = sprintf("%s%sresult%03d.png", $params['pathOfCADReslut'], $DIR_SEPARATOR, $candID);
-		$srcFnameWeb = sprintf("../%s%sresult%03d.png", $params['webPathOfCADReslut'], $DIR_SEPARATOR_WEB, $candID);
+		$srcFnameWeb = sprintf("../%s/result%03d.png", $params['webPathOfCADReslut'], $candID);
 
 		if(!is_file($srcFname)) DcmExport::dcm2png($srcFname, $posZ, $params['windowLevel'], $params['windowWidth']);
 

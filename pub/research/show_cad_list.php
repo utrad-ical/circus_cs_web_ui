@@ -88,6 +88,8 @@
 		// Create SQL queries
 		//--------------------------------------------------------------------------------------------------------------
 
+		// including bug in SQL statement (2011.05.19)
+
 		if($params['errorMessage'] == "")
 		{
 			$sqlStr = "SELECT cm.result_type FROM plugin_master pm, plugin_cad_master cm"
