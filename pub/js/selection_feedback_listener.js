@@ -29,7 +29,14 @@ circus.evalListener = (function() {
 		},
 		validate: function (target)
 		{
-			return $('.feedback-pane input[type=radio]:checked', target).length > 0;
+			if ($('.feedback-pane input[type=radio]:checked', target).length > 0) {
+				return { register_ok: true };
+			} else {
+				return {
+					register_ok: false,
+					message: 'Classification: <span class="register-not-ok">Incomplete</span>'
+				};
+			}
 		},
 		disable: function (target)
 		{

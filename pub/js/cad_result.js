@@ -27,19 +27,43 @@ circus.feedback = function() {
 		},
 		register_ok: function() {
 			var register_ok = true;
+			var messages = [];
 			$('.result-block').each(function() {
 				var block = this;
 				var id = $(block).data('displayid');
-				if (!circus.evalListener.validate(block))
+				var tmp = circus.evalListener.validate(block);
+				if (!tmp.register_ok) {
 					register_ok = false;
+				}
+				if (tmp.message && messages.indexOf(tmp.message) == -1)
+					messages.push(tmp.message);
 			});
-			return register_ok;
+			if (circus.feedback.additional instanceof Array) {
+				var ad = circus.feedback.additional;
+				for (var i = 0; i < ad.length; i++) {
+					var tmp = ad[i].validate();
+					if (!tmp.register_ok) {
+						register_ok = false;
+					}
+					if (tmp.message && messages.indexOf(tmp.message) == -1)
+						messages.push(tmp.message);
+				}
+			}
+			return { register_ok: register_ok, messages: messages };
 		},
 		change: function() {
 			var ok = circus.feedback.register_ok();
-			$('#register').attr('disabled', ok ? '' : 'disabled').trigger('flush');
-			var data = circus.feedback.collect();
-			$('#result').val(JSON.stringify(data));
+			if (ok.register_ok === true) {
+				$('#register').attr('disabled', '').trigger('flush');
+				var data = circus.feedback.collect();
+				$('#result').val(JSON.stringify(data));
+			} else {
+				$('#register').attr('disabled', 'disabled').trigger('flush');
+			}
+			$('#register-error').empty();
+			$.each(ok.messages, function (index, msg) {
+				$('<li>').html(msg).appendTo('#register-error');
+			})
 		},
 		register: function() {
 			var blockFeedback = circus.feedback.collect();
@@ -96,6 +120,7 @@ $(function(){
 	// Initialize the evaluator status.
 	circus.feedback.initialize();
 	circus.evalListener.setup();
+	circus.feedback.change();
 
 	var sort = circus.cadresult.sort;
 	if (sort.key && (sort.order == 'asc' || sort.order == 'desc'))

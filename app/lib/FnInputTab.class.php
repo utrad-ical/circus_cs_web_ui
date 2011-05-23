@@ -22,6 +22,11 @@ class FnInputTab extends CadResultExtension
 			)
 		);
 	}
+
+	public function afterBlocks()
+	{
+		return $this->smarty->fetch('fn_input_afterblocks.tpl');
+	}
 }
 
 ?>

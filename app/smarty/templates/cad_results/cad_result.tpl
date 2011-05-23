@@ -18,6 +18,10 @@ circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 </script>
+
+{foreach from=$extensions item=ext}
+{$ext->head()}
+{/foreach}
 {/capture}
 {include file="header.tpl" body_class="cad-result"
 	require=$smarty.capture.require head_extra=$smarty.capture.extra}
@@ -58,12 +62,21 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
   </form></div><!-- /sorter -->
   {/if}
 
+{foreach from=$extensions item=ext}
+{$ext->beforeBlocks()}
+{/foreach}
+
 {include file="block_layout.tpl"}
 
 <div style="clear: both"></div>
 
-<div class="register-pane">
-<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" />
+{foreach from=$extensions item=ext}
+{$ext->afterBlocks()}
+{/foreach}
+
+<div id="register-pane">
+<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" /><br />
+<ul id="register-error"></ul>
 </div>
 <form>
 <input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />

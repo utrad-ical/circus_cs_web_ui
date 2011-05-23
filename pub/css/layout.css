@@ -465,7 +465,7 @@ ul.inline li {
 	 for CAD result
  =================================================== */
 
-.result-record-2cols {
+.result-record-2cols { /* Deprecated */
 	width:388px;
 	float:left;
 	margin:5px 20px 15px 0px;
@@ -476,7 +476,7 @@ ul.inline li {
 	border-style: solid;
 }
 
-.result-record-3cols {
+.result-record-3cols { /* Deprecated */
 	width:260px;
 	float:left;
 	margin:5px 20px 15px 0px;
@@ -527,6 +527,10 @@ ul.inline li {
 	text-align: center;
 }
 
+#register-pane {
+	text-align: right;
+}
+
 #cad-detail-viewer-container, #fn-input-viewer-container {
 	border: 1px solid #7f7f7f;
 	padding: 7px;
@@ -546,6 +550,16 @@ ul.inline li {
 
 #fn-input-table {
 	margin: 5px 0 15px 0;
+}
+
+span.register-ok {
+	color: green;
+	font-weight: bold;
+}
+
+span.register-not-ok {
+	color: red;
+	font-weight: bold;
 }
 
 /* ===================================================

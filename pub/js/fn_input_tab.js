@@ -2,6 +2,40 @@
  * FN Input related initialization.
  */
 
+circus.feedback.additional = circus.feedback.additional || [];
+
+(function () {
+	var f = {
+		validate: function () {
+			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
+			var ok = $('#fn-found:checked').length > 0 && markers.length > 0;
+			ok = ok || $('#fn-not-found:checked').length > 0;
+			if (ok) {
+				return {
+					register_ok: true,
+					message: 'FN Input: <span class="register-ok">Complete</span>'
+				};
+			} else {
+				return {
+					register_ok: false,
+					message: 'FN Input: <span class="register-not-ok">Incomplete</span>'
+				};
+			}
+		},
+		collect: function (additionalFeedback) {
+			var fns = [];
+			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
+			for (var i in markers)
+			{
+				fns.push(markers[i]);
+			}
+			console.log(fns);
+			additionalFeedback.fn_location = fns;
+		}
+	};
+	circus.feedback.additional.push(f);
+})();
+
 $(function() {
 	// Prepares an image viewer widget for FN locating
 	var viewer = $('#fn-input-viewer').imageviewer({
@@ -101,6 +135,15 @@ $(function() {
 		updateTable();
 	});
 
+	$('#fn-found, #fn-not-found').click(function () {
+		circus.feedback.change();
+	});
+
+	$('#jump-fn-input').click(function () {
+		$('#fn-found').click();
+		circus.cadresult.showTabLabel('FN Input');
+	});
+
 	// Jump to an image by clicking rows on the FN location table
 	tbl.click(function (event) {
 		var tr = $(event.target).closest('tr');
@@ -111,7 +154,7 @@ $(function() {
 
 	// Back to main tab button
 	$('.backMain').click(function () {
-		CircusCadResult.showTabLabel('CAD Result');
+		circus.cadresult.showTabLabel('CAD Result');
 	});
 
 });
