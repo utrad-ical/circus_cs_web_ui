@@ -53,8 +53,8 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
       <option value="{$sort.key|escape}">{$sort.label|escape}</option>
       {/foreach}
     </select>
-    <input type="radio" name="sortOrder" value="asc" />Asc.&nbsp;
-    <input type="radio" name="sortOrder" value="desc" />Desc.
+    <input type="radio" name="sortOrder" value="asc" id="sort-asc"/><label for="sort-asc">Asc.</label>&nbsp;
+    <input type="radio" name="sortOrder" value="desc" id="sort-desc"/><label for="sort-desc">Desc.</label>
   </form></div><!-- /sorter -->
   {/if}
 
