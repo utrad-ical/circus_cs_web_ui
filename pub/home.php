@@ -1,8 +1,6 @@
 <?php
-	session_start();
-
-	include_once('common.php');
-	include_once("auto_logout.php");
+	require_once('common.php');
+	Auth::checkSession();
 
 	$data = array();
 
@@ -105,7 +103,7 @@
 									    . '/' . $seriesParams['patient_id']
 										. '/' . $seriesParams['study_instance_uid']
 										. '/' . $seriesParams['series_instance_uid'];
-										
+
 
 					$sqlStr = 'SELECT el.storage_id, sm.path FROM executed_plugin_list el, storage_master sm'
 							. ' WHERE el.job_id=? AND sm.storage_id=el.storage_id';
@@ -127,7 +125,7 @@
 					$scale = $dispWidth/(real)$attributes['crop_width'];
 
 					$img = @imagecreatefrompng($dstFname);
-	
+
 				    if($img)
 					{
 						$width  = imagesx($img);

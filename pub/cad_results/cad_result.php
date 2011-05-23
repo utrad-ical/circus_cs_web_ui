@@ -1,9 +1,8 @@
 <?php
 
-session_cache_limiter('none');
-session_start();
-
+$params['toTopDir'] = '../';
 include("../common.php");
+Auth::checkSession();
 
 //------------------------------------------------------------------------------
 // Import and validate $_POST data

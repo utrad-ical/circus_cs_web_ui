@@ -1,10 +1,6 @@
 <?php
-
-	session_cache_limiter('nocache');
-	session_start();
-
 	include_once('common.php');
-	include_once("auto_logout.php");
+	Auth::checkSession();
 
 	function DeleteDupeRows($data)
 	{

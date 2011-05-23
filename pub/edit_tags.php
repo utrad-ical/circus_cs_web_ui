@@ -1,8 +1,6 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	include("common.php");
+	Auth::checkSession(false);
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation

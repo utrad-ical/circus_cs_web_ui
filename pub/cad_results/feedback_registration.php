@@ -1,9 +1,7 @@
 <?php
 
-	session_cache_limiter('none');
-	session_start();
-
 	include("../common.php");
+	Auth::checkSession(false);
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_POST variables and validation
@@ -77,7 +75,7 @@
 
 			$sqlStr = "SELECT result_type, score_table FROM plugin_cad_master WHERE plugin_id=?";
 			$result = DBConnector::query($sqlStr, $params['pluginID'], 'ARRAY_NUM');
-			
+
 			$resultType     = $result[0];
 			$scoreTableName = $result[1];
 
@@ -87,9 +85,9 @@
 			// Insert (or update) feedback_list
 			//------------------------------------------------------------------------------------------------
 			$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
-			
+
 			$sqlParams = array();
-			
+
 			if($feedbackID == 0)
 			{
 				$sqlStr = "INSERT INTO feedback_list(job_id, entered_by, is_consensual, status, registered_at)"

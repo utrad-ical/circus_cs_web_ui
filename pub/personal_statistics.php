@@ -1,9 +1,6 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	include_once('common.php');
-	include_once("auto_logout.php");
+	Auth::checkSession();
 
 	include('statistics/get_cad_list_for_personal_stat.php');	// create $cadList
 

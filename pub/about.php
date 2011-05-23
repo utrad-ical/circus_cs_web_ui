@@ -1,8 +1,6 @@
 <?php
-	session_start();
-
-	include_once('common.php');
-	include_once("auto_logout.php");
+	require_once('common.php');
+	Auth::checkSession();
 
 	try
 	{

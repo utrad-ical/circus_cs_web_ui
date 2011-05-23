@@ -1,12 +1,6 @@
 <?php
-
-	session_cache_limiter('none');
-	session_start();
-
-	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	Auth::checkSession(false);
 
 	function DeleteFnTables($pdo, $feedbackID)
 	{
@@ -102,7 +96,7 @@
 			$feedbackID = CadFeedback::GetFeedbackID($pdo, $params['jobID'], $params['feedbackMode'], $userID);
 
 			$sqlParams = array();
-			
+
 			if($feedbackID == 0)
 			{
 				$sqlStr = "INSERT INTO feedback_list (job_id, entered_by, is_consensual, status, registered_at)"
@@ -153,10 +147,10 @@
 									   $item["x"],
 									   $item["y"],
 									   $item["z"]);
-					
+
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
-					
+
 					$idArr[] = array('srcID' => ($stmt->rowCount() == 1) ? 0 :$stmt->fetchColumn(),
 									 'idStr' => $item["idStr"]);
 				}
@@ -209,7 +203,7 @@
 									   $item["x"],
 									   $item["y"],
 									   $item["z"]);
-					
+
 					$dstID = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 
 					//echo $dstID;

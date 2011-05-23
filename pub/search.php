@@ -1,9 +1,6 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
 	include_once('common.php');
-	include_once("auto_logout.php");
+	Auth::checkSession();
 
 	try
 	{

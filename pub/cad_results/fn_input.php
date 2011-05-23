@@ -1,11 +1,7 @@
 <?php
-	session_cache_limiter('none');
-	session_start();
-
-	$params = array('toTopDir' => "../");
-
 	include_once("../common.php");
-	include_once("../auto_logout.php");
+	$params = array('toTopDir' => "../");
+	Auth::checkSession();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Definitions

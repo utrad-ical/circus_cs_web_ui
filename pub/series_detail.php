@@ -1,9 +1,6 @@
 <?php
-	//session_cache_limiter('nocache');
-	session_start();
-
 	include_once('common.php');
-	include_once("auto_logout.php");
+	Auth::checkSession();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Import $_GET variables and validation
@@ -81,7 +78,7 @@
 							 . '/' . $data['seriesInstanceUID'];
 
 			$data['seriesDir'] = $result[5] . '/' . $data['subPath'];
-			
+
 			if($_SESSION['anonymizeFlg'] == 1)
 			{
 				$data['patientID'] = $data['encryptedPtID'];
