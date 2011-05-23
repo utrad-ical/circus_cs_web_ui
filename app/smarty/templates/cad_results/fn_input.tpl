@@ -192,8 +192,8 @@ function Minus()
 							<tr>
 								<td colspan="3" valign="top">
 									<div id="imgBlock" style="margin:0px;padding:0px;width:{$dispWidth}px;height:{$dispHeight}px;position:relative;">
-										{*<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2) && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />*}
-										<img id="imgArea" class="{if ($params.registTime == "" || $params.status != 2)}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
+										{*<img id="imgArea" class="{if ($params.registTime == "" || $params.status == 0) && $smarty.session.groupID != 'demo'}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />*}
+										<img id="imgArea" class="{if ($params.registTime == "" || $params.status == 0)}enter{else}ng{/if}" src="../{$params.dstFnameWeb|escape}" width="{$params.dispWidth|escape}" "height={$params.dispHeight|escape}" />
 									</div>
 								</td>
 							</tr>
@@ -242,7 +242,7 @@ function Minus()
 
 					<div class="fl-l" style="width: 40%;">
 
-						{if $params.registTime == "" || $params.status != 2}
+						{if $params.registTime == "" || $params.status == 0}
 						<div style="margin-bottom:5px;">
 							Action for checked item(s)
 							<select id="actionMenu" onchange="RefreshOperationButtons();" disabled="disabled">
@@ -257,7 +257,7 @@ function Minus()
 						<table id="posTable" class="col-tbl mb10" style="width:100%;">
 							<thead>
 								<tr>
-									{if $params.registTime == "" || $params.status != 2}<th>&nbsp;</th>{/if}
+									{if $params.registTime == "" || $params.status == 0}<th>&nbsp;</th>{/if}
 									<th>ID</th>
 									<th>Pos X</th>
 									<th>Pos Y</th>
@@ -274,7 +274,7 @@ function Minus()
 							</tbody>
 						</table>
 
-						{if $params.registTime == "" || $params.status != 2}
+						{if $params.registTime == "" || $params.status == 0}
 						<div id="blockDeleteButton" style="text-align:right; margin-top:5px; font-size:14px;">
 							<input type="button" id="undoBtn" class="form-btn form-btn-normal" value="undo" onclick="UndoFnTable();"{if $params.status!=1} style="display:none;"{/if} />
 							<input type="button" id="resetBtn" class="form-btn form-btn-normal" value="Reset" onclick="ResetFnTable();"{if $params.status!=0} style="display:none;"{/if} />

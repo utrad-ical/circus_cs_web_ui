@@ -613,7 +613,7 @@
 		// SQL statement for count No. of FN
 		$sqlStr = "SELECT fn.fn_num FROM feedback_list fl, fn_count fn"
 				. " WHERE fl.job_id=? AND fl.fb_id=fn.fb_id"
-				. " AND fl.is_consensual=? AND fn.fn_num>0 AND fn.status=2";
+				. " AND fl.is_consensual=? AND fn.fn_num>0 AND fl.status=1";
 		$stmtFN = $pdo->prepare($sqlStr);
 		//------------------------------------------------------------------------------------------
 

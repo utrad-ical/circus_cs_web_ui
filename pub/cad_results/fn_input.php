@@ -212,7 +212,7 @@
 			$consensualFlg = ($params['feedbackMode'] == "consensual") ? 't' : 'f';
 			$sqlParams = array();
 
-			$sqlStr = "SELECT fn.fn_num, fn.status, fl.registered_at, fl.entered_by"
+			$sqlStr = "SELECT fn.fn_num, fl.status, fl.registered_at, fl.entered_by"
 					. " FROM feedback_list fl, fn_count fn"
 					. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id AND fl.is_consensual=?";
 
@@ -289,10 +289,10 @@
 			}
 			else if($params['feedbackMode'] == "consensual")
 			{
-				$sqlStr = "SELECT fn.fn_num, fn.status, fl.registered_at, fl.entered_by"
+				$sqlStr = "SELECT fn.fn_num, fl.status, fl.registered_at, fl.entered_by"
 						. " FROM feedback_location fl, fn_count fn"
 						. " WHERE fl.job_id=? AND fl.fb_id=fn.fb_id"
-						. " AND fl.is_consensual='t' AND fn.status=2";
+						. " AND fl.is_consensual='t' AND fl.status=1";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindValue(1, $params['jobID']);
