@@ -2,26 +2,16 @@
 	require_once("../common.php");
 	$params = array('toTopDir' => "../");
 	Auth::checkSession();
+
+	if ($_REQUEST['open'] == 1) {
+		$_SESSION['adminModeFlg'] = 1;
+		exit;
+	}
+
+	//--------------------------------------------------------------------------
+	// Group privilege check
+	//--------------------------------------------------------------------------
 	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
-
-	include_once("server_status_private.php");
-
-	$cadList = array();
-
-	$userID = Auth::currentUser()->user_id;
-
-	$adminModeFlg = $mode = (isset($_REQUEST['adminModeFlg'])) ? $_REQUEST['adminModeFlg'] : 0;
-	if($adminModeFlg == 1) $_SESSION['adminModeFlg'] = 1;
-
-	// Connect to SQL Server
-	$pdo = DBConnector::getConnection();
-
-	//--------------------------------------------------------------------------
-	// Check server status
-	//--------------------------------------------------------------------------
-	$storageSvStatus  = ShowWindowsServiceStatus($DICOM_STORAGE_SERVICE);
-	$jobManagerStatus = ShowWindowsServiceStatus($PLUGIN_JOB_MANAGER_SERVICE);
-	//--------------------------------------------------------------------------
 
 	//--------------------------------------------------------------------------
 	// Generate one-time ticket
@@ -35,11 +25,11 @@
 	//--------------------------------------------------------------------------
 	$smarty = new SmartyEx();
 
-	$smarty->assign('params',           $params);
-	$smarty->assign('storageSvStatus',  $storageSvStatus);
-	$smarty->assign('jobManagerStatus', $jobManagerStatus);
+	$smarty->assign('params', $params);
+	$smarty->assign('adminModeFlg', $_SESSION['adminModeFlg'] ? 1 : 0);
+	$smarty->assign('storageServerName', $DICOM_STORAGE_SERVICE);
+	$smarty->assign('managerServerName', $PLUGIN_JOB_MANAGER_SERVICE);
 
 	$smarty->display('administration/administration.tpl');
 	//--------------------------------------------------------------------------
-
 ?>

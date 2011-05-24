@@ -19,5 +19,4 @@
 	$dstData = ShowWindowsServiceStatus($serviceName);
 
 	echo json_encode($dstData);
-
 ?>

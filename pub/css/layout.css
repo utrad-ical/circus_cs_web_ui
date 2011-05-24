@@ -640,3 +640,16 @@ div.imgnum {
 	background-color:#000;
 	color:#fff;
 }
+
+/* ===================================================
+	SMOKE
+ =================================================== */
+ div #smoke {
+ 	position:absolute;
+ 	top: 0; left: 0; right: 0; bottom: 0;
+ 	background-color: black;
+ 	opacity: 0.5;
+ 	-moz-opacity: 0.5;
+ 	filter: alpha(opacity=50);
+ 	-ms-filter: alpha(opacity=50);
+ }
