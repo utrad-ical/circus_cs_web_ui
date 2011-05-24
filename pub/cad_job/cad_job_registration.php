@@ -122,12 +122,12 @@
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute(array($jobID, $pluginID, $storageID, $userID, $dstData['registeredAt']));
 
-			// Register into "execxuted_plugin_list"
+			// Register into "job_queue"
 			$sqlStr = "INSERT INTO job_queue"
-					. " (job_id, plugin_id, priolity, status, exec_user, registered_at)"
-					. " VALUES (?, ?, ?, 1, ?, ?)";
+					. " (job_id, plugin_id, priolity, status, exec_user, registered_at, updated_at)"
+					. " VALUES (?, ?, ?, 1, ?, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt']));
+			$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
 
 			// Register into executed_series_list and job_queue_series
 			for($i=0; $i<$seriesNum; $i++)
@@ -156,8 +156,8 @@
 		catch (PDOException $e)
 		{
 			$pdo->rollBack();
-			$dstData['message'] = '<b>Fail to register plug-in job</b>';
-			//$dstData['message'] = $e->getMessage();
+			//$dstData['message'] = '<b>Fail to register plug-in job</b>';
+			$dstData['message'] = $e->getMessage();
 		}
 	}
 
