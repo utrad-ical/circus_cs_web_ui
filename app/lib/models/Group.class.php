@@ -29,13 +29,13 @@ class Group extends Model
 		{
 			// upper level privilege can match
 			$pl = Auth::getPrivilegeTypes();
-			if ($pl['priv_name'][2] && $this->hasPrivilege($pl['priv_name'][2]))
+			if ($pl[$priv_name][2] && $this->hasPrivilege($pl[$priv_name][2]))
 				return true;
 		}
 		$cnt = DBConnector::query(
 			'SELECT COUNT(*) FROM group_privileges WHERE group_id=? AND privilege=?',
 			array($this->group_id, $priv_name),
-			'FETCH_COLUMN'
+			'SCALAR'
 		);
 		return $cnt > 0;
 	}

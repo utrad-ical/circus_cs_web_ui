@@ -16,6 +16,9 @@
 
 	switch ($mode)
 	{
+		case 'unauthorized':
+			displayLoginPage('Login as a user with sufficient privilege.');
+			break;
 		case 'timeout':
 			displayLoginPage('Login has expired. Please login again.');
 			break;

@@ -140,7 +140,7 @@ class Auth
 	 */
 	public static function getPrivilegeTypes()
 	{
-		return $self::privs;
+		return self::$privs;
 	}
 
 	/**
@@ -303,10 +303,10 @@ class Auth
 	public static function purgeUnlessGranted($priv_name)
 	{
 		$group = self::currentGroup();
-		if (!is_subclass_of($group, 'Group'))
+		if (!($group instanceof Group))
 			Auth::purge();
 		if (!$group->hasPrivilege($priv_name))
-			Auth::purge();
+			Auth::purge('unauthorized');
 	}
 
 	private static function log($str, $logfile)
