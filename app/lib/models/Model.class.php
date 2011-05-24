@@ -33,19 +33,24 @@ abstract class Model
 		$this->_data = $row;
 	}
 
-	public function find($condition)
+	public function find($condition = array())
 	{
 		$class = get_class($this);
 		$sql =
-			"SELECT * FROM {$class::$_table} WHERE ";
+			"SELECT * FROM {$class::$_table}";
+		$conds = array();
+		$vals  = array();
 		foreach ($condition as $key => $value)
 		{
 			$conds[] = "$key = ?";
 			$vals[] = $value;
 		}
-		$sql .= implode(', ', $conds);
+		if (count($condition))
+			$sql .= ' WHERE ' . implode(', ', $conds);
 		$rows = DBConnector::query($sql, $vals, 'ALL_ASSOC');
 		$results = array();
+		if (!is_array($rows))
+			return $results;
 		foreach ($rows as $row)
 		{
 			$item = new $class();

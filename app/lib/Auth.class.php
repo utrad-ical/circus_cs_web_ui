@@ -53,6 +53,12 @@ class Auth
 	const SERVER_SETTINGS = 'serverSettings';
 
 	/**
+	 * Name of 'serverOperation' privilege.
+	 * @var string
+	 */
+	const SERVER_OPERATION = 'serverOperation';
+
+	/**
 	 * Name of 'personalInfoView' privilege.
 	 * @var string
 	 */
@@ -77,16 +83,14 @@ class Auth
 	const DATA_DELETE = 'dataDelete';
 
 	/**
-	 * Name of 'serverOperation' privilege.
-	 * @var string
-	 */
-	const SERVER_OPERATION = 'serverOperation';
-
-	/**
 	 * Private (thus unchangable) data that holds the privileges information.
 	 * @var array
 	 */
 	private static $privs = array(
+		array (
+			self::CAD_EXEC,
+			'Can execute CAD plug-in.'
+		),
 		array (
 			self::PERSONAL_FEEDBACK_ENTER,
 			'Can register personal feedback.'

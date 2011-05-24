@@ -1,381 +1,186 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="../js/hover.js"></script>
-<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
-<link rel="shortcut icon" href="../favicon.ico" />
-
-<script language="Javascript">;
+{capture name="extra"}
+<script language="Javascript" type="text/javascript">
 <!--
+
+var data = {$groupList|@json_encode};
+
 {literal}
-
-function deleteGroup(groupID)
-{
-	if(confirm('Do you want to delete "'+ groupID + '" ?'))
-	{
-		var address = 'group_config.php?mode=delete'
-		            + '&newGroupID=' + groupID
-					+ '&ticket=' + $("#ticket").val();
-
-		location.replace(address);	
-	}
-}
-
-
-function GroupSetting(mode, ticket)
-{
-
-    var flg = 1;
-
-	if(mode == 'update' && $("#oldGroupID").val() == "") 
-	{
-		mode = 'add';
+$(function () {
+	var cancel = function (time) {
+		$('#editor').hide(time);
+		$('#groups tr').removeClass('editing');
 	}
 
-	if(mode == 'update')
-	{
-		if(!confirm('Do you want to update "'+ $("#oldGroupID").val() +'" ?'))  flg = 0;
-	}
+	$('.edit-button').click(function (event) {
+		cancel(0);
+		var tr = $(event.target).closest('tr.group').addClass('editing');
+		var group_id = $('.group-id', tr).text();
+		var group_data = data[group_id];
+		if (!group_data)
+			return;
+		var editor = $('#editor');
+		$('input.privCheck', editor).each(function () {
+			var targetPriv = $(this).val();
+			var checked = group_data.privs.indexOf(targetPriv) >= 0;
+			$(this).attr('checked', checked ? 'checked' : '');
+		});
+		editingTarget = group_id;
+		$('#editor-header').text('Editing Gruop: ' + group_id);
+		$('#color-set').val(group_data.color_set);
+		$('#target-group').val(group_id);
+		$('#new-name').val(group_id);
+		editor.show(300);
+	});
 
-	if(flg == 1)
-	{
-		var address = 'group_config.php?mode=' + mode;
+	$('#add-group-button').click(function () {
+		cancel();
+		var editor = $('#editor');
+		$('input.privCheck', editor).attr('checked', '');
+		$('#editor-header').text('Adding New Group');
+		$('#target-group').val('');
+		$('#new-name').val('');
+		editingTarget = null;
+		editor.show(300);
+	});
 
-		if(mode == 'update')
-		{
-		    address += '&oldGroupID=' + $("#oldGroupID").val()
+	$('.delete-button').click(function (event) {
+		cancel(0);
+		var tr = $(event.target).closest('tr.group');
+		var group_id = $('.group-id', tr).text();
+		if (!confirm('Delete user ' + group_id + '? This cannot be undone.'))
+			return;
+		var form = $('#delete-form');
+		$('input[name=target]', form).val(group_id);
+		form.submit();
+	});
+
+	$('#cancel-button').click(function () {
+		$('#groups tr').removeClass('editing');
+		cancel(300);
+	});
+
+	$('#save-button').click(function () {
+		if (!$('#new-name').val()) {
+			alert('Specify the group name.');
+			return;
 		}
-
-		address += '&newGroupID='         + $("#inputGroupID").val()
-		        + '&newColorSet='         + $("#colorSet").val()
-		        + '&newExecCAD='          + $("input[name='newExecCAD']:checked").val()
-		        + '&newPersonalFB='       + $("input[name='newPersonalFB']:checked").val()
-		        + '&newConsensualFB='     + $("input[name='newConsensualFB']:checked").val()
-		        + '&newModifyConsensual=' + $("input[name='newModifyConsensual']:checked").val()
-		        + '&newAllStatistics='    + $("input[name='newAllStatistics']:checked").val()
-		        + '&newResearchShow='     + $("input[name='newResearchShow']:checked").val()
-		        + '&newResearchExec='     + $("input[name='newResearchExec']:checked").val()
-		        + '&newVolumeDL='         + $("input[name='newVolumeDL']:checked").val()
-		        + '&newAnonymized='       + $("input[name='newAnonymized']:checked").val()
-		        + '&newDataDelete='       + $("input[name='newDataDelete']:checked").val()
-		        + '&newServerOperation='  + $("input[name='newServerOperation']:checked").val()
-		        + '&newServerSettings='   + $("input[name='newServerSettings']:checked").val()
-				+ '&ticket=' + ticket
-
-		location.replace(address);	
-	}
-}
-
-function SetEditBox(groupID, colorSet, execCAD, personalFB, consensualFB, modifyConsensual, 
-                    allStatistics, researchShow, researchExec, volumeDL, anonymized, dataDelete,
-                    serverOperation, serverSettings)
-{
-	$("#oldGroupID").val(groupID);
-	$("#oldColorSet").val(colorSet);
-	$("#oldExecCAD").val(execCAD);
-	$("#oldPersonalFB").val(personalFB);
-	$("#oldConsensualFB").val(consensualFB);
-	$("#oldModifyConsensual").val(modifyConsensual);
-	$("#oldAllStatistics").val(allStatistics);
-	$("#oldResearchShow").val(researchShow);
-	$("#oldResearchExec").val(researchExec);
-	$("#oldVolumeDL").val(volumeDL);
-	$("#oldAnonymized").val(anonymized);
-	$("#oldDataDelete").val(dataDelete);
-	$("#oldServerOperation").val(serverOperation);
-	$("#oldServerSettings").val(serverSettings);
-	
-	$("#inputGroupID").val(groupID);
-
-	// select 
-	$("#colorSet").val(colorSet);
-
-	$("input[name='newExecCAD']").filter(function(){ return ($(this).val() == execCAD) }).attr("checked", true);
-	$("input[name='newPersonalFB']").filter(function(){ return ($(this).val() == personalFB) }).attr("checked", true);
-	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == consensualFB) }).attr("checked", true);
-	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == modifyConsensual) }).attr("checked", true);
-	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == allStatistics) }).attr("checked", true);
-	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == researchShow) }).attr("checked", true);
-	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == researchExec) }).attr("checked", true);
-	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == volumeDL) }).attr("checked", true);
-	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == anonymized) }).attr("checked", true);
-	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == dataDelete) }).attr("checked", true);
-	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == serverOperation) }).attr("checked", true);
-	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == serverSettings) }).attr("checked", true);
-
-	$("#updateBtn, #cancelBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-	$("#addBtn, #groupList input[type='button']").attr('disabled', 'disabled')
-                                                 .removeClass('form-btn-normal, form-btn-hover')
-                                                 .addClass('form-btn-disabled');
-}
-
-function CancelUpdate()
-{
-
-	$("input[type='hidden'][name^='old'], #inputGroupID").val("");
-	$("#colorSet").children().removeAttr("selected");
-
-	$("input[name='newExecCAD']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
-	$("input[name='newPersonalFB']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
-	$("input[name='newConsensualFB']").filter(function(){ return ($(this).val() == 't') }).attr("checked", true);
-	$("input[name='newModifyConsensual']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newAllStatistics']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newResearchShow']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newResearchExec']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newVolumeDL']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newAnonymized']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newDataDelete']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newServerOperation']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-	$("input[name='newServerSettings']").filter(function(){ return ($(this).val() == 'f') }).attr("checked", true);
-
-	$("#addBtn, #groupList input[type='button']").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
-	$("#updateBtn, #cancelBtn, #groupList input[name='noDelete']").attr('disabled', 'disabled')
-                                                                  .removeClass('form-btn-normal, form-btn-hover')
-                                                                  .addClass('form-btn-disabled');
-}
+		$('#editor-form').submit();
+	});
 
 
-{/literal}
+	$('span.privname').hover(
+		function (event) {
+			var privname = $(event.target).text();
+			$('span.priv-' + privname).addClass('highlight')
+			.closest('tr').addClass('column');
+		},
+		function () {
+			$('span.privname').removeClass('highlight');
+			$('#groups tr').removeClass('column');
+		}
+	);
+
+});
 -->
 </script>
 
-<link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="../js/hover.js"></script>
-</head>
+<style type="text/css">
 
-<body class="spot">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
-		</div>
-		<!-- / #leftside END -->
+#message { margin: 1em 0; padding: 1em; font-weight: bold; color: red; }
 
-		<div id="content">
-			<h2>Group configuration</h2>
+#editor { margin: 2em 0 0 0; }
+#editor li.priv { margin: 0.2em; 0; }
+#editor span.desc { color: gray; font-size: small; }
 
-			<form id="form1" name="form1">
-				<input type="hidden" id="ticket" value="{$ticket|escape}" />
-				<input type="hidden" id="oldGroupID"          value="" />
-				<input type="hidden" id="oldColorSet"         value="" />
-				<input type="hidden" id="oldExecCAD"          value="" />
-				<input type="hidden" id="oldPersonalFB"       value="" />
-				<input type="hidden" id="oldConsensualFB"     value="" />
-				<input type="hidden" id="oldModifyConsensual" value="" />
-				<input type="hidden" id="oldAllStatistics"    value="" />
-				<input type="hidden" id="oldResearchShow"     value="" />
-				<input type="hidden" id="oldResearchExec"     value="" />
-				<input type="hidden" id="oldVolumeDL"         value="" />
-				<input type="hidden" id="oldAnonymized"       value="" />
-				<input type="hidden" id="oldDataDelete"       value="" />
-				<input type="hidden" id="oldServerOperation"  value="" />
-				<input type="hidden" id="oldServerSettings"   value="" />
+#groups { width: 100%; }
+#groups td.group-id { font-weight: bold; text-align: left; width: 100px; }
+#groups td.privileges { text-align: left; }
+#groups td.operations { width: 10em; }
 
+#panel { margin: 0.5em; }
 
-				<div id="message" class="mt5 mb5 ml10">{$params.message}</div>
+span.privname { background-color: #eee; border-radius: 3px; padding: 0 0.5em; }
+#editor span.privname { font-weight: bold; }
 
-				<div id="groupList" class="ml10">
-					<table class="col-tbl">
-						<tr>
-							<th>Group ID</th>
-							<th style="width:3.5em;">Color set</th>
-							<th style="width:3em;">Exec CAD</th>
-							<th style="width:5em;">Personal feedback</th>
-							<th style="width:6em;">Consensual feedback</th>
-							<th style="width:4.5em;">Modify cons.</th>
-							<th style="width:3em;">All stat.</th>
-							<th style="width:4.5em;">Show research</th>
-							<th style="width:4.5em;">Exec research</th>
-							<th style="width:5em;">Download volume</th>
-							<th>Anonymize</th>
-							<th style="width:4em;">Data delete</th>
-							<th style="width:5em;">Server operation</th>
-							<th style="width:5em;">Server settings</th>
-							<th>&nbsp;</th>
-						</tr>
+span.highlight { background-color: #8a3b2b; color: white; }
+#groups tr.editing td.group-id { background-color: salmon; }
+</style>
 
-						{foreach from=$groupList item=item name=cnt}
-							<tr {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
+{/literal}
+{/capture}
+{include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 
-								<td class="al-l">{$item[0]}</td>
-								<td>{$item[1]}</td>
-								<td>{$item[2]|OorMinus}</td>
-								<td>{$item[3]|OorMinus}</td>
-								<td>{$item[4]|OorMinus}</td>
-								<td>{$item[5]|OorMinus}</td>
-								<td>{$item[6]|OorMinus}</td>
-								<td>{$item[7]|OorMinus}</td>
-								<td>{$item[8]|OorMinus}</td>
-								<td>{$item[9]|OorMinus}</td>
-								<td>{$item[10]|OorMinus}</td>
-								<td>{$item[11]|OorMinus}</td>
-								<td>{$item[12]|OorMinus}</td>
-								<td>{$item[13]|OorMinus}</td>
-								{if $item[0] != "admin"}
-									<td>
-										<input type="button" id="editButton{$smarty.foreach.cnt.iteration}" value="edit" class="s-btn form-btn"
-                                   		  onclick="SetEditBox('{$item[0]}','{$item[1]}','{$item[2]|TorF}', '{$item[3]|TorF}', '{$item[4]|TorF}',
-                                                              '{$item[5]|TorF}','{$item[6]|TorF}','{$item[7]|TorF}','{$item[8]|TorF}',
-                                                              '{$item[9]|TorF}','{$item[10]|TorF}','{$item[11]|TorF}',
-                                                              '{$item[12]|TorF}', '{$item[13]|TorF}');" />
-										<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
-											{if $item[0] != $smarty.session.userID}
-									 			class="s-btn form-btn" onclick="deleteGroup('{$item[0]}');" />
-								 			{else}
-									 			name="noDelete" class="s-btn form-btn form-btn-disabled" disabled="disabled" />
-											{/if}
-									</td>
-								{else}
-									<td>&nbsp;</td>
-								{/if}
-							</tr>
-						{/foreach}
-					</table>
-				</div>
+<h2>Group configuration</h2>
 
-				<div class="mt20 ml40">
-					<table class="detail-tbl">
-						<tr>
-							<th style="width: 18em;"><span class="trim01">Group ID</th>
-							<td><input class="loginForm" size="40" type="text" id="inputGroupID" name="inputGroupID" /></td>
-						</tr>
+<div id="message">{$message|escape}</div>
 
-						<tr>
-							<th><span class="trim01">Color set</th>
-							<td>
-								<select id="colorSet">
-									<option value="user" selected="selected">user</option>
-									<option value="admin">admin</option>
-									<option value="guest">guest</option>
-								</select>
-							</td>
-						</tr>
+<table id="groups" class="col-tbl">
+	<tr>
+		<th>Group ID</th>
+		<th>Color Set</th>
+		<th>Privileges</th>
+		<th>Operation</th>
+	</tr>
+	{foreach from=$groupList item=group name=cnt}
+	<tr class="group">
+		{if $group.group_id != "admin"}
+		{/if}
+		<td class="group-id">{$group.group_id|escape}</td>
+		<td class="color-set">{$group.color_set|escape}</td>
+		<td class="privileges">
+			{foreach from=$group.privs item=priv}
+			<span class="privname priv-{$priv}">{$priv}</span>
+			{/foreach}
+		</td>
+		<td class="operations">{if $group.group_id != 'admin'}
+			<input type="button" class="edit-button form-btn" value="edit" />
+			<input type="button" class="delete-button form-btn" value="delete" />
+		{/if}</td>
+	</tr>
+	{/foreach}
+</table>
 
-						<tr>
-							<th><span class="trim01">CAD execution</span></th>
-							<td>
-								<input name="newExecCAD" type="radio" value="t" checked="checked" />TRUE
-								<input name="newExecCAD" type="radio" value="f" />FALSE
-							</td>
-						</tr>
+<div id="panel">
+	<input type="button" class="form-btn" value="Add new group" id="add-group-button" />
+</div>
 
-						<tr>
-							<th><span class="trim01">Personal feedback</span></th>
-							<td>
-								<input name="newPersonalFB" type="radio" value="t" checked="checked" />TRUE
-								<input name="newPersonalFB" type="radio" value="f"  />FALSE
-							</td>
-						</tr>
+<div id="editor" style="display: none">
+<form id="editor-form" method="post">
+	<input type="hidden" name="mode" value="set" />
+	<input type="hidden" id="target-group" name="target" />
+	<h3 id="editor-header"></h3>
+	<p>New group name: <input type="text" name="newname" id="new-name" /></p>
+	<ul>
+		<li>
+			Color Set:
+			<select id="color-set" name="colorSet">
+				<option value="user">user</option>
+				<option value="admin">admin</option>
+				<option value="guest">guest</option>
+			</select>
+		</li>
+		{foreach from=$privs item=priv}
+		<li class="priv">
+			<div>
+			<input type="checkbox" class="privCheck" name="priv[]" id="cbx-{$priv[0]}" value="{$priv[0]|escape}"/>
+			<label for="cbx-{$priv[0]}">
+			<span class="privname priv-{$priv[0]}">{$priv[0]|escape}</span>
+			<span class="desc">{$priv[1]|escape}</span>
+			</label>
+			</div>
+		</li>
+		{/foreach}
+	</ul>
+	<div id="editor-commit">
+		<input type="button" id="save-button" class="form-btn" value="Save" />
+		<input type="button" id="cancel-button" class="form-btn" value="Cancel" />
+	</div>
+</form>
+</div>
 
-						<tr>
-							<th><span class="trim01">Consensual feedback</span></th>
-							<td>
-								<input name="newConsensualFB" type="radio" value="t" checked="checked" />TRUE
-								<input name="newConsensualFB" type="radio" value="f"  />FALSE
-							</td>
-						</tr>
+<form id="delete-form" method="post">
+	<input type="hidden" name="mode" value="delete" />
+	<input type="hidden" name="target" />
+</form>
 
-						<tr>
-							<th><span class="trim01">Modify consensual feedback</span></th>
-							<td>
-								<input name="newModifyConsensual" type="radio" value="t"  />TRUE
-								<input name="newModifyConsensual" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">View all user's statistics</span></th>
-							<td>
-								<input name="newAllStatistics" type="radio" value="t" />TRUE
-								<input name="newAllStatistics" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Show research</span></th>
-							<td>
-								<input name="newResearchShow" type="radio" value="t" />TRUE
-								<input name="newResearchShow" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Exec research</span></th>
-							<td>
-								<input name="newResearchExec" type="radio" value="t" />TRUE
-								<input name="newResearchExec" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Download volume data</span></th>
-							<td>
-								<input name="newVolumeDL" type="radio" value="t" />TRUE
-								<input name="newVolumeDL" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Anonymization</span></th>
-							<td>
-								<input name="newAnonymized" type="radio" value="t" />TRUE
-								<input name="newAnonymized" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Delete data</span></th>
-							<td>
-								<input name="newDataDelete" type="radio" value="t" />TRUE
-								<input name="newDataDelete" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Server operation</span></th>
-							<td>
-								<input name="newServerOperation" type="radio" value="t" />TRUE
-								<input name="newServerOperation" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-						<tr>
-							<th><span class="trim01">Server settings</span></th>
-							<td>
-								<input name="newServerSettings" type="radio" value="t" />TRUE
-								<input name="newServerSettings" type="radio" value="f" checked="checked" />FALSE
-							</td>
-						</tr>
-
-
-					</table>
-
-					<div class="pl20 mb20 mt10">
-						<p>
-							<input type="button" id="addBtn" class="form-btn" value="add" onclick="GroupSetting('add','{$ticket}');" />&nbsp;
-							<input type="button" id="updateBtn" class="form-btn form-btn-disabled" value="update"
-                                   onclick="GroupSetting('update','{$ticket}');" disabled="disabled" />
-							<input type="button" id="cancelBtn" class="form-btn form-btn-disabled" value="cancel"
-                                   onclick="CancelUpdate();" disabled="disabled" />
-						</p>
-					</div>
-				</div>
-			</form>
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+{include file="footer.tpl"}

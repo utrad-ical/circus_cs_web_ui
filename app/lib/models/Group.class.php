@@ -53,6 +53,33 @@ class Group extends Model
 		);
 		return $result;
 	}
+
+	/**
+	 * Updates the privilege list of this group.
+	 * @param array $priv_list The list of privilege names.
+	 */
+	public function updatePrivilege($priv_list)
+	{
+		$pl = Auth::getPrivilegeTypes();
+		foreach ($pl as $priv)
+			$privTypes[$priv[0]] = $priv;
+
+		$pdo = DBConnector::getConnection();
+		$pdo->beginTransaction();
+		DBConnector::query(
+			'DELETE FROM group_privileges WHERE group_id = ?',
+			array($this->group_id),
+			'SCALAR'
+		);
+		$sth = $pdo->prepare(
+			'INSERT INTO group_privileges(group_id, privilege) VALUES(?, ?)');
+		foreach ($priv_list as $priv)
+		{
+			if ($privTypes[$priv])
+				$sth->execute(array($this->group_id, $priv));
+		}
+		$pdo->commit();
+	}
 }
 
 ?>
