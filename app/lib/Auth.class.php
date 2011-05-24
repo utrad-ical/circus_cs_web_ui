@@ -17,40 +17,46 @@ class Auth
 	const CAD_EXEC = 'cadExec';
 
 	/**
-	 * Name of 'personalFeedback' privilege.
+	 * Name of 'personalFeedbackEnter' privilege.
 	 * @var string
 	 */
-	const PERSONAL_FEEDBACK = 'personalFeedback';
+	const PERSONAL_FEEDBACK_ENTER = 'personalFeedbackEnter';
 
 	/**
-	 * Name of 'consensualFeedback' privilege.
+	 * Name of 'consensualFeedbackEnter' privilege.
 	 * @var string
 	 */
-	const CONSENSUAL_FEEDBACK = 'consensualFeedback';
+	const CONSENSUAL_FEEDBACK_ENTER = 'consensualFeedbackEnter';
 
 	/**
-	 * Name of 'consensualFeedback' privilege.
+	 * Name of 'consensualFeedbackModify' privilege.
 	 * @var string
 	 */
-	const VIEW_ALL_STATISTICS = 'viewAllStatistics';
+	const CONSENSUAL_FEEDBACK_MODIFY = 'consensualFeedbackModify';
 
 	/**
-	 * Name of 'consensualFeedback' privilege.
+	 * Name of 'allStatisticsView' privilege.
+	 * @var string
+	 */
+	const ALL_STATISTICS_VIEW = 'allStatisticsView';
+
+	/**
+	 * Name of 'volumeDownload' privilege.
 	 * @var string
 	 */
 	const VOLUME_DOWNLOAD = 'volumeDownload';
 
 	/**
-	 * Name of 'consensualFeedback' privilege.
+	 * Name of 'serverSettings' privilege.
 	 * @var string
 	 */
 	const SERVER_SETTINGS = 'serverSettings';
 
 	/**
-	 * Name of 'rawNameShow' privilege.
+	 * Name of 'personalInfoView' privilege.
 	 * @var string
 	 */
-	const RAW_NAME_SHOW = 'rawNameShow';
+	const PERSONAL_INFO_VIEW = 'personalInfoView';
 
 	/**
 	 * Name of 'researchExec' privilege.
@@ -63,12 +69,6 @@ class Auth
 	 * @var string
 	 */
 	const RESEARCH_SHOW = 'researchShow';
-
-	/**
-	 * Name of 'modifyConsensual' privilege.
-	 * @var string
-	 */
-	const MODIFY_CONSENSUAL = 'modifyConsensual';
 
 	/**
 	 * Name of 'dateDelete' privilege.
@@ -88,21 +88,19 @@ class Auth
 	 */
 	private static $privs = array(
 		array (
-		),
-		array (
-			self::PERSONAL_FEEDBACK,
+			self::PERSONAL_FEEDBACK_ENTER,
 			'Can register personal feedback.'
 		),
 		array (
-			self::CONSENSUAL_FEEDBACK,
+			self::CONSENSUAL_FEEDBACK_ENTER,
 			'Can register consensual feedback.'
 		),
 		array (
-			self::MODIFY_CONSENSUAL,
+			self::CONSENSUAL_FEEDBACK_MODIFY,
 			'(Not implemented) Unregister the consensual feedback.'
 		),
 		array (
-			self::VIEW_ALL_STATISTICS,
+			self::ALL_STATISTICS_VIEW,
 			'Can view statistics for all users.'
 		),
 		array (
@@ -119,8 +117,8 @@ class Auth
 			self::SERVER_SETTINGS // upper level
 		),
 		array (
-			self::RAW_NAME_SHOW,
-			'Can skip anonymization and show real names from DICOM images.'
+			self::PERSONAL_INFO_VIEW,
+			'Can view personal information (names, birthdays, etc) without anonymization.'
 		),
 		array (
 			self::RESEARCH_EXEC,
