@@ -224,7 +224,7 @@ $(function() {ldelim}
                         </td>
                     </tr>
 	                <tr>
-                        <td class="pt5">CAD Job Manager</td>
+                        <td class="pt5">Plug-in Job Manager</td>
                         <td class="pt5 pl10" style="width: 90px;"><span id="managerStatusStr" style="font-weight:bold;">{$jobManagerStatus.str}</span></td>
                         <td class="pt5 pl5">
 	                        <input type="button" id="startManager" value="start" 

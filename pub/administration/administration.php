@@ -20,7 +20,7 @@
 	// Check server status
 	//-------------------------------------------------------------------------------------------------------------
 	$storageSvStatus  = ShowWindowsServiceStatus($DICOM_STORAGE_SERVICE);
-	$jobManagerStatus = ShowWindowsServiceStatus($CAD_JOB_MANAGER_SERVICE);
+	$jobManagerStatus = ShowWindowsServiceStatus($PLUGIN_JOB_MANAGER_SERVICE);
 	//-------------------------------------------------------------------------------------------------------------
 
 	//-------------------------------------------------------------------------------------------------------------
