@@ -435,15 +435,19 @@
 						$cadColSettings[$cadNum][3] = $execResult[1];  // status
 						$tmpDate = $execResult[2];
 
-						// 2つ目の条件は自明だが念のために
-						if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
+						// Set executed date or time (if successed)
+						if($cadColSettings[$cadNum][3] == $PLUGIN_SUCESSED)
 						{
-							$cadColSettings[$cadNum][4] = substr($tmpDate, 11);
+							if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
+							{
+								$cadColSettings[$cadNum][4] = substr($tmpDate, 11);
+							}
+							else
+							{
+								$cadColSettings[$cadNum][4] = substr($tmpDate, 0, 10);
+							}
 						}
-						else
-						{
-							$cadColSettings[$cadNum][4] = substr($tmpDate, 0, 10);
-						}
+
 					}
 
 					$cadNum++;
