@@ -167,6 +167,7 @@ class Auth
 		return null;
 	}
 
+
 	/**
 	 * Login to the CIRCUS CS.
 	 * If login succeeds, creates a new session ID and prepares the session
@@ -202,38 +203,37 @@ class Auth
 			$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
 			$_SESSION['showMissed']    = $user->show_missed;
 
-			$pdo = DBConnector::getConnection();
-			$stmt = $pdo->prepare("UPDATE users SET last_login_dt=?, ip_address=? WHERE user_id=?");
-			$stmt->execute(array($loginDateTime, $_SESSION['nowIPAddr'], $_SESSION['userID']));
+			$user->save(array('User' => array(
+				'last_login_dt' => date('Y-m-d h:i:s'),
+				'ip_address' => getenv("REMOTE_ADDR"),
+			)));
 
-			$stmt = $pdo->prepare("SELECT * FROM groups WHERE group_id=?");
-			$stmt->execute(array($_SESSION['groupID']));
-			$result = $stmt->fetch(PDO::FETCH_ASSOC);
+			$group = $user->Group;
+			$priv = array_flip($group->listPrivilege());
 
-			$_SESSION['colorSet']            = $result['color_set'];
-			$_SESSION['execCADFlg']          = ($result['exec_cad'] == 't') ? 1 : 0;
-			$_SESSION['personalFBFlg']       = ($result['personal_feedback'] == 't') ? 1 : 0;
-			$_SESSION['consensualFBFlg']     = ($result['consensual_feedback'] == 't') ? 1 : 0;
-			$_SESSION['modifyConsensualFlg'] = ($result['modify_consensual'] == 't') ? 1 : 0;
-			$_SESSION['allStatFlg']          = ($result['view_all_statistics'] == 't') ? 1 : 0;
-			$_SESSION['researchShowFlg']     = ($result['research_show'] == 't') ? 1 : 0;
-			$_SESSION['researchExecFlg']     = ($result['research_exec'] == 't') ? 1 : 0;
-			$_SESSION['volumeDLFlg']         = ($result['volume_download'] == 't') ? 1 : 0;
-			$_SESSION['dataDeleteFlg']       = ($result['data_delete'] == 't') ? 1 : 0;
-			$_SESSION['serverOperationFlg']  = ($result['server_operation'] == 't') ? 1 : 0;
-			$_SESSION['serverSettingsFlg']   = ($result['server_settings'] == 't') ? 1 : 0;
-			$_SESSION['anonymizeGroupFlg']   = ($result['anonymized'] == 't') ? 1 : 0;
+			$_SESSION['colorSet']            = $group->color_set;
+
+			$_SESSION['execCADFlg']          = isset($priv['cadExec']) ? 1 : 0;
+			$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
+			$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
+			$_SESSION['modifyConsensualFlg'] = isset($priv['consensualFeedbackModify']) ? 1 : 0;
+			$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
+			$_SESSION['volumeDLFlg']         = isset($priv['volumeDownload']) ? 1 : 0;
+			$_SESSION['serverOperationFlg']  = isset($priv['serverOperation']) ? 1 : 0;
+			$_SESSION['serverSettingsFlg']   = isset($priv['serverSettings']) ? 1 : 0;
+			$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
+			$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
+			$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
+			$_SESSION['dataDeleteFlg']       = isset($priv['dataDelete']) ? 1 : 0;
 
 			if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
 
-			$_SESSION['adminModeFlg'] = 0;
 			$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
 
 			self::log(
 				sprintf("Login: userID=%s", $_SESSION['userID']),
 				$LOGIN_LOG
 			);
-			var_dump($_SESSION);
 			return true;
 		} else {
 			// login failed
