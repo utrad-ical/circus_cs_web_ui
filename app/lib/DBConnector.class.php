@@ -46,6 +46,7 @@ class DBConnector
 				"user=$param[user] dbname=$param[dbname] " .
 				"password=$param[password]";
 			$h = new PDO($dsn);
+			$h->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			if ($h)
 			{
 				self::$_conn = $h;
