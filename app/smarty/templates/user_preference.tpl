@@ -4,46 +4,53 @@ js/hover.js
 {/capture}
 {capture name="extra"}
 
-<script language="Javascript">;
+<script language="Javascript" type="text/javascript">;
 <!--
 {literal}
 
 function ChangePassword()
 {
 	$.post("./preference/change_password.php",
-           {oldPassword:     $("#oldPassword").val(),
-            newPassword:     $("#newPassword").val(),
-            reenterPassword: $("#reenterPassword").val()},
-            function(ret){
-				alert(ret);
-				$("#oldPassword, #newPassword, #reenterPassword").val("");
-			 });
+		{
+			oldPassword:     $("#oldPassword").val(),
+			newPassword:     $("#newPassword").val(),
+			reenterPassword: $("#reenterPassword").val()
+		},
+		function(ret){
+			alert(ret);
+			$("#oldPassword, #newPassword, #reenterPassword").val("");
+		}
+	);
 }
 
 function ChangePagePreference()
 {
-	$.post("./preference/change_page_preference.php",
-           {oldTodayDisp:  $("#oldTodayDisp").val(),
-            newTodayDisp:  $('input[name="newTodayDisp"]:checked').val(),
-            oldDarkroom:   $("#oldDarkroom").val(),
-            newDarkroom:   $('input[name="newDarkroom"]:checked').val(),
-            oldAnonymized: $("#oldAnonymized").val(),
-            newAnonymized: $('input[name="newAnonymized"]:checked').val(),
-            oldShowMissed: $("#oldShowMissed").val(),
-            newShowMissed: $('input[name="newShowMissed"]:checked').val()},
-
-            function(data){
-				if(data.message == "Success")
-				{
-					alert('Page preference was successfully changed.');
-					$("#oldTodayDisp").val($('input[name="newTodayDisp"]:checked').val());
-					$("#oldDarkroom").val($('input[name="newDarkroom"]:checked').val());
-					$("#oldAnonymized").val($('input[name="newAnonymized"]:checked').val());
-					$("#oldShowMissed").val($('input[name="newShowMissed"]:checked').val());
-					$("#linkTodayDisp").attr("href", data.todayList + ".php?mode=today");
-				}
-				else  alert(data.message);
-			}, "json");
+	$.post(
+		"./preference/change_page_preference.php",
+		{
+			oldTodayDisp:  $("#oldTodayDisp").val(),
+			newTodayDisp:  $('input[name="newTodayDisp"]:checked').val(),
+			oldDarkroom:   $("#oldDarkroom").val(),
+			newDarkroom:   $('input[name="newDarkroom"]:checked').val(),
+			oldAnonymized: $("#oldAnonymized").val(),
+			newAnonymized: $('input[name="newAnonymized"]:checked').val(),
+			oldShowMissed: $("#oldShowMissed").val(),
+			newShowMissed: $('input[name="newShowMissed"]:checked').val()
+		},
+		function(data){
+			if(data.message == "Success")
+			{
+				alert('Page preference was successfully changed.');
+				$("#oldTodayDisp").val($('input[name="newTodayDisp"]:checked').val());
+				$("#oldDarkroom").val($('input[name="newDarkroom"]:checked').val());
+				$("#oldAnonymized").val($('input[name="newAnonymized"]:checked').val());
+				$("#oldShowMissed").val($('input[name="newShowMissed"]:checked').val());
+				$("#linkTodayDisp").attr("href", data.todayList + ".php?mode=today");
+			}
+			else  alert(data.message);
+		},
+		"json"
+	);
 }
 
 function ShowCadPreferenceDetail()
@@ -51,42 +58,41 @@ function ShowCadPreferenceDetail()
 	var cadName = $("#cadMenu option:selected").text();
 	var version = $("#versionMenu").val();
 
-	$.post("./preference/show_cad_preference_detail.php",
-            {cadName: cadName, version: version},
-             function(data){
-				$("#cadName").val(data.cadName);
-				$("#version").val(data.version);
-				$("#preferenceFlg").val(data.preferenceFlg);
-				$("#defaultSortKey").val(data.sortKey[0]);
-				$("#defaultSortOrder").val(data.sortOrder[0]);
-				$("#defaultMaxDispNum").val(data.maxDispNum[0]);
-				$("#defaultConfidenceTh").val(data.confidenceTh[0]);
-				$("#defaultDispConfidence").val(data.dispConfidence[0]);
-				$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
-				$("#message").html(data.message);
-				$("#maxDispNum").val(data.maxDispNum[1]);
-				$("#confidenceTh").val(data.confidenceTh[1]);
-				$("#sortKey").val(data.sortKey[1]);
-				$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
-					return ($(this).val() == data.sortOrder[1])
-				}).attr("checked", true);
-				$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-					return ($(this).val() == data.dispConfidence[1])
-				}).attr("checked", true);
-				$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-					return ($(this).val() == data.dispCandidateTag[1])
-				}).attr("checked", true);
-				$("#preferenceFlg").val(data.preferenceFlg);
-
-				$("#detailCadPrefrence").show();
-				$("#updateCADPrefBtn").show();
-
-				if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
-				else						 $("#deleteCADPrefBtn").hide();
-
-				$("#container").height( $(document).height() - 10 );
-
-			   }, "json");
+	$.post(
+		"./preference/show_cad_preference_detail.php",
+		{cadName: cadName, version: version},
+		function(data){
+			$("#cadName").val(data.cadName);
+			$("#version").val(data.version);
+			$("#preferenceFlg").val(data.preferenceFlg);
+			$("#defaultSortKey").val(data.sortKey[0]);
+			$("#defaultSortOrder").val(data.sortOrder[0]);
+			$("#defaultMaxDispNum").val(data.maxDispNum[0]);
+			$("#defaultConfidenceTh").val(data.confidenceTh[0]);
+			$("#defaultDispConfidence").val(data.dispConfidence[0]);
+			$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
+			$("#message").html(data.message);
+			$("#maxDispNum").val(data.maxDispNum[1]);
+			$("#confidenceTh").val(data.confidenceTh[1]);
+			$("#sortKey").val(data.sortKey[1]);
+			$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
+				return ($(this).val() == data.sortOrder[1])
+			}).attr("checked", true);
+			$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
+				return ($(this).val() == data.dispConfidence[1])
+			}).attr("checked", true);
+			$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+				return ($(this).val() == data.dispCandidateTag[1])
+			}).attr("checked", true);
+			$("#preferenceFlg").val(data.preferenceFlg);
+			$("#detailCadPrefrence").show();
+			$("#updateCADPrefBtn").show();
+			if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
+			else						 $("#deleteCADPrefBtn").hide();
+			$("#container").height( $(document).height() - 10 );
+		},
+		"json"
+	);
 }
 
 function RegisterCadPreference(mode)
@@ -98,53 +104,55 @@ function RegisterCadPreference(mode)
 			var cadName = $("#cadMenu option:selected").text();
 			var version = $("#versionMenu").val();
 
-			$.post("./preference/regist_cad_preference.php",
-                   { mode: mode, cadName: cadName, version: version,
-				     sortKey: $("#sortKey").val(),
-					 sortOrder: $('#detailCadPrefrence input[name="sortOrder"]:checked').val(),
-                     maxDispNum: $("#maxDispNum").val(),
-                     confidenceTh: $("#confidenceTh").val(),
-					 preferenceFlg: $("#preferenceFlg").val(),
-					 dispConfidenceFlg: $('#detailCadPrefrence input[name="dispConfidence"]:checked').val(),
-					 dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()},
-  					 function(data){
-
-						if(data.message != null)
+			$.post(
+				"./preference/regist_cad_preference.php",
+				{
+					mode: mode, cadName: cadName, version: version,
+					sortKey: $("#sortKey").val(),
+					sortOrder: $('#detailCadPrefrence input[name="sortOrder"]:checked').val(),
+					maxDispNum: $("#maxDispNum").val(),
+					confidenceTh: $("#confidenceTh").val(),
+					preferenceFlg: $("#preferenceFlg").val(),
+					dispConfidenceFlg: $('#detailCadPrefrence input[name="dispConfidence"]:checked').val(),
+					dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()
+				},
+				function(data){
+					if(data.message != null)
+					{
+						alert(data.message);
+						if(data.message == 'Succeeded!')
 						{
-							alert(data.message);
-
-							if(data.message == 'Succeeded!')
+							$("#preferenceFlg").val(data.preferenceFlg);
+							if(mode == 'delete')
 							{
-								$("#preferenceFlg").val(data.preferenceFlg);
+								$("#message").html('Default settings');
+								$("#maxDispNum").val($("#defaultMaxDispNum").val());
+								$("#confidenceTh").val($("#defaultConfidenceTh").val());
+								$("#sortKey").val($("#defaultSortKey").val());
+								$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
+									return ($(this).val() == $("#defaultSortOrder").val())
+								}).attr("checked", true);
+								$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
+									return ($(this).val() == $("#defaultDispConfidence").val())
+								}).attr("checked", true);
+								$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+									return ($(this).val() == $("#defaultDispCandidateTag").val())
+								}).attr("checked", true);
+								$("#deleteCADPrefBtn").hide();
+							}
+							else
+							{
+								$("#message").html("&nbsp;");
+								if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
 
-								if(mode == 'delete')
-								{
-									$("#message").html('Default settings');
-									$("#maxDispNum").val($("#defaultMaxDispNum").val());
-									$("#confidenceTh").val($("#defaultConfidenceTh").val());
-									$("#sortKey").val($("#defaultSortKey").val());
-									$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
-										return ($(this).val() == $("#defaultSortOrder").val())
-									}).attr("checked", true);
-									$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-										return ($(this).val() == $("#defaultDispConfidence").val())
-									}).attr("checked", true);
-									$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-										return ($(this).val() == $("#defaultDispCandidateTag").val())
-									}).attr("checked", true);
-									$("#deleteCADPrefBtn").hide();
-								}
-								else
-								{
-									$("#message").html("&nbsp;");
-									if(data.preferenceFlg == 1)  $("#deleteCADPrefBtn").show();
-
-									if(data.newMaxDispNum==0)	$("#maxDispNum").val("all");
-									else						$("#maxDispNum").val(data.newMaxDispNum);
-								}
+								if(data.newMaxDispNum==0)	$("#maxDispNum").val("all");
+								else						$("#maxDispNum").val(data.newMaxDispNum);
 							}
 						}
-					}, "json");
+					}
+				},
+				"json"
+			);
 		}
 	}
 }
@@ -167,7 +175,7 @@ function ChangeCadMenu()
 	}
 	$("#versionMenu").html(optionStr);
 }
-
+-->
 {/literal}
 </script>
 {/capture}
@@ -309,7 +317,7 @@ function ChangeCadMenu()
 					<th><span class="trim01">Sort order</span></th>
 					<td>
 						<input type="radio" name="sortOrder" value="ASC" />Asc.
-		    			<input type="radio" name="sortOrder" value="DESC" />Desc.
+						<input type="radio" name="sortOrder" value="DESC" />Desc.
 					</td>
 				</tr>
 				<tr>
@@ -328,21 +336,21 @@ function ChangeCadMenu()
 					<th><span class="trim01">Disp confidence</span></th>
 					<td>
 						<input type="radio" name="dispConfidence" value="1" />True
-		    			<input type="radio" name="dispConfidence" value="0" />False
+						<input type="radio" name="dispConfidence" value="0" />False
 					</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Disp tags for lesion candidate</span></th>
 					<td>
 						<input type="radio" name="dispCandidateTag" value="1" />True
-		    			<input type="radio" name="dispCandidateTag" value="0" />False
+						<input type="radio" name="dispCandidateTag" value="0" />False
 					</td>
 				</tr>
 			</table>
 
 			<div class="pl20 mb20 mt10">
 					<input id="updateCADPrefBtn" type="button" value="Update" class="w100 form-btn" onclick="RegisterCadPreference('update');">
-   					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
+					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
 			</div>
 		</div>
 	</div>
