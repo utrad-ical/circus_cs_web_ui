@@ -134,7 +134,7 @@ abstract class Model
 			$sql = "UPDATE $table SET " .
 				implode(', ', array_map(function($k) {
 					return "$k=?";
-				}, $obj)) .
+				}, array_keys($obj))) .
 				"WHERE $pkey=?";
 			$binds = array_values($obj);
 			$binds[] = $this->_data[$pkey];
@@ -149,10 +149,12 @@ abstract class Model
 				implode(', ', array_fill(0, count($obj), '?')) .
 				")";
 			DBConnector::query($sql, array_values($obj));
-
-			$new_id = DBConnector::query(
-				"SELECT currval('{$class::$_sequence}')", array(), 'SCALAR');
-			$this->_data[$pkey] = $new_id;
+			if (!$obj[$pkey] && $class::$_sequence)
+			{
+				$new_id = DBConnector::query(
+					"SELECT currval('{$class::$_sequence}')", array(), 'SCALAR');
+				$this->_data[$pkey] = $new_id;
+			}
 		}
 		foreach ($obj as $k => $v)
 		{
