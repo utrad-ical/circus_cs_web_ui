@@ -23,7 +23,6 @@ Parameters:
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="content-style-type" content="text/css" />
 <meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
