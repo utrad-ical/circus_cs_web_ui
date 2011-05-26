@@ -274,7 +274,7 @@ abstract class ScalarValidator extends ValidatorBase
 					$this->error = "The field '$this->label' is required.";
 				}
 				return false;
-			} else if ($this->params['default']) {
+			} else if (isset($this->params['default'])) {
 				$this->output = $this->params['default'];
 				return true;
 			} else {
