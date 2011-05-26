@@ -84,21 +84,21 @@ $(function() {
 	<tr>
 		<td>DICOM storage server</td>
 		<td>
-			<input type="button" id="dicomStorageConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='dicom_storage_server_config.php';" />
 		</td>
 	</tr>
 	<tr>
 		<td>Data storages</td>
 		<td>
-			<input type="button" id="diskStorageConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='data_storage_config.php';"/>
 		</td>
 	</tr>
 	<tr>
 		<td>Add plug-in from packaged file</td>
 		<td>
-			<input type="button" id="pluginConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='add_plugin.php';" />
 		</td>
 	</tr>
@@ -106,8 +106,16 @@ $(function() {
 	<tr>
 		<td>Basic configuration for plug-ins</td>
 		<td>
-			<input type="button" id="pluginConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='plugin_basic_configuration.php';">
+		</td>
+	</tr>
+
+	<tr>
+		<td>Cofiguration for CAD result policies</td>
+		<td>
+			<input type="button" value="config" class="form-btn"
+				onclick="location.href='result_policy_config.php';">
 		</td>
 	</tr>
 	{/if}
@@ -115,7 +123,7 @@ $(function() {
 	<tr>
 		<td>Users</td>
 		<td>
-			<input type="button" id="userConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='user_config.php';" />
 		</td>
 	</tr>
@@ -124,7 +132,7 @@ $(function() {
 	<tr>
 		<td>Groups</td>
 		<td>
-			<input type="button" id="groupConfButton" value="config" class="form-btn"
+			<input type="button" value="config" class="form-btn"
 				onclick="location.href='group_config.php';" />
 		</td>
 	</tr>
@@ -133,7 +141,7 @@ $(function() {
 	<tr>
 		<td>Server logs</td>
 		<td>
-			<input type="button" id="groupConfButton" value="show" class="form-btn"
+			<input type="button" value="show" class="form-btn"
 				onclick="location.href='server_logs.php';" />
 		</td>
 	</tr>
@@ -145,7 +153,7 @@ $(function() {
 		<tr>
 			<td>Show plug-in job queue</td>
 			<td>
-				<input type="button" id="groupConfButton" value="show" class="form-btn"
+				<input type="button" value="show" class="form-btn"
 					onclick="location.href='show_job_queue.php';" />
 			</td>
 		</tr>
