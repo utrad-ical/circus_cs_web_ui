@@ -30,6 +30,7 @@ try
 			'type' => 'select',
 			'options' => array ('admin', 'user', 'guest')
 		),
+		'ticket' => array ( 'type' => 'string' )
 	));
 
 	if ($validator->validate($_POST)) {
@@ -46,6 +47,9 @@ try
 	//--------------------------------------------------------------------------
 	$sqlStr = "";
 	$sqlParams = array();
+
+	if ($req['mode'] && $req['ticket'] != $_SESSION['ticket'])
+		throw new Exception('Invalid page transition detected. Try again.');
 
 	if($req['mode'] == 'delete')
 	{
@@ -96,7 +100,7 @@ try
 catch (Exception $e)
 {
 	if ($e instanceof PDOException)
-		$message = 'Database Error.' . $e->getMessage() . $e->getTraceAsString();
+		$message = 'Database Error.';
 	else
 		$message = $e->getMessage();
 }

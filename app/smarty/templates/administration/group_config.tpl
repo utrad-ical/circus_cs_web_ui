@@ -47,7 +47,7 @@ $(function () {
 		cancel(0);
 		var tr = $(event.target).closest('tr.group');
 		var group_id = $('.group-id', tr).text();
-		if (!confirm('Delete user ' + group_id + '? This cannot be undone.'))
+		if (!confirm("Delete user group '" + group_id + "'? This cannot be undone."))
 			return;
 		var form = $('#delete-form');
 		$('input[name=target]', form).val(group_id);
@@ -88,9 +88,10 @@ $(function () {
 
 #message { margin: 1em 0; padding: 1em; font-weight: bold; color: red; }
 
-#editor { margin: 2em 0 0 0; }
+#editor { margin: 2em 0 0 0; background-color: #f9f9f9; }
+#editor table#privs-table { margin: 1em; }
 #editor li.priv { margin: 0.2em; 0; }
-#editor span.desc { color: gray; font-size: small; }
+#editor td.priv-desc { color: gray; font-size: small; }
 
 #groups { width: 100%; }
 #groups td.group-id { font-weight: bold; text-align: left; width: 100px; }
@@ -99,7 +100,7 @@ $(function () {
 
 #panel { margin: 0.5em; }
 
-span.privname { background-color: #eee; border-radius: 3px; padding: 0 0.5em; }
+span.privname { background-color: #ddd; border-radius: 3px; padding: 0 0.5em; }
 #editor span.privname { font-weight: bold; }
 
 span.highlight { background-color: #8a3b2b; color: white; }
@@ -108,7 +109,11 @@ span.highlight { background-color: #8a3b2b; color: white; }
 
 {/literal}
 {/capture}
-{include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
+{capture name="require"}
+css/popup.css
+{/capture}
+{include file="header.tpl" require=$smarty.capture.require
+	head_extra=$smarty.capture.extra body_class="spot"}
 
 <h2>Group configuration</h2>
 
@@ -148,29 +153,30 @@ span.highlight { background-color: #8a3b2b; color: white; }
 <form id="editor-form" method="post">
 	<input type="hidden" name="mode" value="set" />
 	<input type="hidden" id="target-group" name="target" />
+	<input type="hidden" name="ticket" value="{$ticket|escape}" />
 	<h3 id="editor-header"></h3>
 	<p>New group name: <input type="text" name="newname" id="new-name" /></p>
-	<ul>
-		<li>
-			Color Set:
-			<select id="color-set" name="colorSet">
-				<option value="user">user</option>
-				<option value="admin">admin</option>
-				<option value="guest">guest</option>
-			</select>
-		</li>
+	<p>Color Set:
+		<select id="color-set" name="colorSet">
+			<option value="user">user</option>
+			<option value="admin">admin</option>
+			<option value="guest">guest</option>
+		</select>
+	</p>
+
+	<table class="detail-tbl" id="privs-table">
 		{foreach from=$privs item=priv}
-		<li class="priv">
-			<div>
-			<input type="checkbox" class="privCheck" name="priv[]" id="cbx-{$priv[0]}" value="{$priv[0]|escape}"/>
-			<label for="cbx-{$priv[0]}">
-			<span class="privname priv-{$priv[0]}">{$priv[0]|escape}</span>
-			<span class="desc">{$priv[1]|escape}</span>
-			</label>
-			</div>
-		</li>
+		<tr class="priv">
+			<td>
+				<input type="checkbox" class="privCheck" name="priv[]" id="cbx-{$priv[0]}" value="{$priv[0]|escape}"/>
+				<label for="cbx-{$priv[0]}">
+				<span class="privname priv-{$priv[0]}">{$priv[0]|escape}</span>
+				</label>
+			</td>
+			<td class="priv-desc">{$priv[1]|escape}</span></td>
+		</tr>
 		{/foreach}
-	</ul>
+	</table>
 	<div id="editor-commit">
 		<input type="button" id="save-button" class="form-btn" value="Save" />
 		<input type="button" id="cancel-button" class="form-btn" value="Cancel" />
@@ -181,6 +187,7 @@ span.highlight { background-color: #8a3b2b; color: white; }
 <form id="delete-form" method="post">
 	<input type="hidden" name="mode" value="delete" />
 	<input type="hidden" name="target" />
+	<input type="hidden" name="ticket" value="{$ticket|escape}" />
 </form>
 
 {include file="footer.tpl"}
