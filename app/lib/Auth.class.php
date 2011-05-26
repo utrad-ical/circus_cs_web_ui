@@ -83,6 +83,12 @@ class Auth
 	const DATA_DELETE = 'dataDelete';
 
 	/**
+	 * Name of 'menuShow' privilege.
+	 * @var unknown_type
+	 */
+	const MENU_SHOW = 'menuShow';
+
+	/**
 	 * Private (thus unchangable) data that holds the privileges information.
 	 * @var array
 	 */
@@ -136,6 +142,10 @@ class Auth
 		array (
 			self::DATA_DELETE,
 			'(Not implemented) Can delete series/patient/study data.'
+		),
+		array (
+			self::MENU_SHOW,
+			'(Not implemented) Can show navigation menu.'
 		)
 	);
 
