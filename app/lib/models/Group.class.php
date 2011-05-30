@@ -66,6 +66,7 @@ class Group extends Model
 
 	/**
 	 * Updates the privilege list of this group.
+	 * Should be used with transactioning.
 	 * @param array $priv_list The list of privilege names.
 	 */
 	public function updatePrivilege($priv_list)
@@ -75,7 +76,6 @@ class Group extends Model
 			$privTypes[$priv[0]] = $priv;
 
 		$pdo = DBConnector::getConnection();
-		$pdo->beginTransaction();
 		DBConnector::query(
 			'DELETE FROM group_privileges WHERE group_id = ?',
 			array($this->group_id),
@@ -89,7 +89,6 @@ class Group extends Model
 				$sth->execute(array($this->group_id, $priv));
 		}
 		$this->privileges = null;
-		$pdo->commit();
 	}
 }
 
