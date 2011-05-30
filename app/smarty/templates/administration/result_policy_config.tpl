@@ -16,7 +16,6 @@ $(function () {
 		var tr = $(event.target).closest('tr.policy');
 		var pol_id = $('.pol-id', tr).val();
 		var pol_data = data[pol_id];
-		console.log('data', data, 'id=' + pol_id, data[pol_id]);
 		$('#editor-header', editor).text('Editing: ' + pol_data.policy_name);
 		$('#target-policy', editor).val(pol_id);
 		for (var key in pol_data)
@@ -112,11 +111,11 @@ css/popup.css
 		<td class="pol-name">{$pol.policy_name|escape}
 		<input type="hidden" class="pol-id" value="{$pol.policy_id|escape}" /></td>
 		<td class="allow-reference allow"><div class="al">{$pol.allow_result_reference|escape}</div></td>
-		<td class="allow-personal allow"><div class="al">{$pol.allow_personal_feedback|escape}</div></td>
-		<td class="allow-consensual allow"><div class="al">{$pol.allow_consensual_feedback|escape}</div></td>
-		<td class="num">{$pol.time_to_freeze_personal_feedback|escape}</td>
-		<td class="num">{$pol.max_personal_feedback|escape}</td>
-		<td class="num">{$pol.min_personal_feedback_to_make_consensus|escape}</td>
+		<td class="allow-personal allow"><div class="al">{$pol.allow_personal_fb|escape}</div></td>
+		<td class="allow-consensual allow"><div class="al">{$pol.allow_consensual_fb|escape}</div></td>
+		<td class="num">{$pol.time_to_freeze_personal_fb|escape}</td>
+		<td class="num">{$pol.max_personal_fb|escape}</td>
+		<td class="num">{$pol.min_personal_fb_to_make_consensus|escape}</td>
 		<td>{$pol.automatic_consensus|OorMinus}</td>
 		<td class="operation"><input type="button" class="edit-button form-btn" value="Edit" /></td>
 	</tr>
@@ -145,25 +144,25 @@ css/popup.css
 		</tr>
 		<tr>
 			<th>Allow personal feedback</th>
-			<td><input type="text" name="allow_personal_feedback" id="allow-personal" />
+			<td><input type="text" name="allow_personal_fb" id="allow-personal" />
 			<input type="button" class="select-user form-btn" value="Select" /></td>
 		</tr>
 		<tr>
 			<th>Allow consensual feedback</th>
-			<td><input type="text" name="allow_consensual_feedback" id="allow-consensual" />
+			<td><input type="text" name="allow_consensual_fb" id="allow-consensual" />
 			<input type="button" class="select-user form-btn" value="Select" /></td>
 		</tr>
 		<tr>
 			<th>Time to freeze personal feedback (min.)</th>
-			<td><input type="text" name="time_to_freeze_personal_feedback" id="freeze-time" class="num"/> (0: freeze at once)</td>
+			<td><input type="text" name="time_to_freeze_personal_fb" id="freeze-time" class="num"/> (0: freeze at once)</td>
 		</tr>
 		<tr>
 			<th>Max personal feedback</th>
-			<td><input type="text" name="max_personal_feedback" id="max-pfb" class="num"/> (0: unlimited)</td>
+			<td><input type="text" name="max_personal_fb" id="max-pfb" class="num"/> (0: unlimited)</td>
 		</tr>
 		<tr>
 			<th>Min personal feedback to make consensus</th>
-			<td><input type="text" name="min_personal_feedback_to_make_consensus" id="min-cons" class="num"/> (0: unlimited)</td>
+			<td><input type="text" name="min_personal_fb_to_make_consensus" id="min-cons" class="num"/> (0: unlimited)</td>
 		</tr>
 		<tr>
 			<th>Automatic consensus</th>
