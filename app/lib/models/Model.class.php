@@ -9,6 +9,7 @@
 abstract class Model
 {
 	protected $_data;
+
 	protected static $_table;
 	protected static $_belongsTo;
 	protected static $_hasMany;
@@ -33,7 +34,7 @@ abstract class Model
 		$this->_data = $row;
 	}
 
-	public function find($condition = array())
+	public function find($condition = array(), $options = array())
 	{
 		$class = get_class($this);
 		$sql =
@@ -47,6 +48,16 @@ abstract class Model
 		}
 		if (count($condition))
 			$sql .= ' WHERE ' . implode(', ', $conds);
+
+		if (is_array($options['order']))
+		{
+			$sql .= ' ORDER BY ' . implode(', ', $options['order']);
+		}
+		if (is_array($options['limit']))
+		{
+			$sql .= ' LIMIT ' . implode(', ', $options['limit']);
+		}
+
 		$rows = DBConnector::query($sql, $vals, 'ALL_ASSOC');
 		$results = array();
 		if (!is_array($rows))
@@ -165,6 +176,19 @@ abstract class Model
 		{
 			$this->_data[$k] = $v;
 		}
+	}
+
+	public function getData()
+	{
+		return $this->_data;
+	}
+
+	public static function delete($id)
+	{
+		$tbl = static::$_table;
+		$pkey = static::$_primaryKey;
+		$sql = "DELETE FROM $tbl WHERE $pkey = ?";
+		DBConnector::query($sql, array($id), 'SCALAR');
 	}
 }
 
