@@ -29,9 +29,10 @@
 		case 'Login':
 			try
 			{
-				$success = Auth::login($_POST['userID'], $_POST['pswd']);
-				if($success)
+				$valid_user = Auth::checkAuth($_POST['userID'], md5($_POST['pswd']));
+				if($valid_user)
 				{
+					Auth::createSession($valid_user);
 					header('location: home.php');
 					exit;
 				} else {

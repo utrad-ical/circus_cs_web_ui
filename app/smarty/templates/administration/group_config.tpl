@@ -26,7 +26,6 @@ $(function () {
 		});
 		editingTarget = group_id;
 		$('#editor-header').text('Editing Gruop: ' + group_id);
-		$('#color-set').val(group_data.color_set);
 		$('#target-group').val(group_id);
 		$('#new-name').val(group_id);
 		editor.show(300);
@@ -122,7 +121,6 @@ css/popup.css
 <table id="groups" class="col-tbl">
 	<tr>
 		<th>Group ID</th>
-		<th>Color Set</th>
 		<th>Privileges</th>
 		<th>Operation</th>
 	</tr>
@@ -131,7 +129,6 @@ css/popup.css
 		{if $group.group_id != "admin"}
 		{/if}
 		<td class="group-id">{$group.group_id|escape}</td>
-		<td class="color-set">{$group.color_set|escape}</td>
 		<td class="privileges">
 			{foreach from=$group.privs item=priv}
 			<span class="privname priv-{$priv}">{$priv}</span>
@@ -156,13 +153,6 @@ css/popup.css
 	<input type="hidden" name="ticket" value="{$ticket|escape}" />
 	<h3 id="editor-header"></h3>
 	<p>New group name: <input type="text" name="newname" id="new-name" /></p>
-	<p>Color Set:
-		<select id="color-set" name="colorSet">
-			<option value="user">user</option>
-			<option value="admin">admin</option>
-			<option value="guest">guest</option>
-		</select>
-	</p>
 
 	<table class="detail-tbl" id="privs-table">
 		{foreach from=$privs item=priv}

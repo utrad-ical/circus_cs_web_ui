@@ -8,9 +8,15 @@ class Group extends Model
 {
 	protected static $_table = 'groups';
 	protected static $_primaryKey = 'group_id';
-	protected static $_hasMany = array(
-		'User' => array('key' => 'group_id')
+	protected static $_hasAndBelongsToMany = array(
+		'User' => array(
+			'joinTable' => 'user_groups',
+			'foreignKey' => 'group_id',
+			'associationForeignKey' => 'user_id'
+		)
 	);
+
+	protected $privileges;
 
 	/**
 	 * Checks the privilege for this group.
@@ -25,6 +31,7 @@ class Group extends Model
 	{
 		if (!$priv_name)
 			return false;
+		$this->fetchPrivilege();
 		if ($recursive)
 		{
 			// upper level privilege can match
@@ -32,12 +39,20 @@ class Group extends Model
 			if ($pl[$priv_name][2] && $this->hasPrivilege($pl[$priv_name][2]))
 				return true;
 		}
-		$cnt = DBConnector::query(
-			'SELECT COUNT(*) FROM group_privileges WHERE group_id=? AND privilege=?',
-			array($this->group_id, $priv_name),
-			'SCALAR'
-		);
-		return $cnt > 0;
+		return array_search($priv_name, $this->privileges) !== false;
+	}
+
+	protected function fetchPrivilege()
+	{
+		if (!$this->privileges)
+		{
+			$this->privileges = DBConnector::query(
+				'SELECT privilege FROM group_privileges WHERE group_id=?',
+				array($this->group_id),
+				'ALL_COLUMN'
+			);
+		}
+		return $this->privileges;
 	}
 
 	/**
@@ -46,12 +61,7 @@ class Group extends Model
 	 */
 	public function listPrivilege()
 	{
-		$result = DBConnector::query(
-			'SELECT privilege FROM group_privileges WHERE group_id=?',
-			array($this->group_id),
-			'ALL_COLUMN'
-		);
-		return $result;
+		return $this->fetchPrivilege();
 	}
 
 	/**
@@ -78,6 +88,7 @@ class Group extends Model
 			if ($privTypes[$priv])
 				$sth->execute(array($this->group_id, $priv));
 		}
+		$this->privileges = null;
 		$pdo->commit();
 	}
 }

@@ -167,89 +167,81 @@ class Auth
 	}
 
 	/**
-	 * Returns the instance of Group which the current user belongs to.
-	 * @return Group The Group instance.
+	 * Checks if a user exists for given ID / Password pair.
+	 * This method only checks whether the given ID/pass pair is valid.
+	 * You will want to Auth::createSession() for the valid user.
+	 * @param string $id
+	 * @param string $passwd The MD5 hash of the password.
+	 * @return User If the authentication succeeds, returns the new User.
+	 * If the authentication fails, returns null.
 	 */
-	public static function currentGroup()
+	public static function checkAuth($id, $password)
 	{
-		if ($u = self::currentUser())
-			return $u->Group;
-		return null;
+		$user = new User($id);
+		if (!$user || !$user->passcode)
+			return null;
+		if ($password != $user->passcode)
+			return null;
+		return $user;
 	}
 
 
 	/**
-	 * Login to the CIRCUS CS.
-	 * If login succeeds, creates a new session ID and prepares the session
-	 * variables, and return true.
-	 * If login fails, return false.
-	 * @param string $id
-	 * @param string $passwd The MD5 hash of the password.
-	 * @return bool True if the authentication succeeds, false otherwise.
+	 * Creates a session for the newly logged-in user.
+	 * Creates a new session ID and prepares the session variables.
+	 * @param User $user The User object of the user just logged-in.
 	 */
-	public static function login($id, $passwd)
+	public static function createSession($user)
 	{
-		global $LOGIN_LOG, $CIRCUS_CS_VERSION, $SESSION_TIME_LIMIT;
-		$user = new User($id);
-		if (!$user || !$user->passcode)
-		{
-			self::log_failure();
-			return false;
-		}
-		if (md5($passwd) == $user->passcode)
-		{
-			// login succeed
-			$loginDateTime = date("Y-m-d H:i:s");
-			$_SESSION['circusVersion'] = $CIRCUS_CS_VERSION;
-			$_SESSION['userID']        = $user->user_id;
-			$_SESSION['userName']      = $user->user_name;
-			$_SESSION['key']           = sha1($user->user_id);
-			$_SESSION['lastLogin']     = $user->last_login_dt;
-			$_SESSION['lastIPAddr']    = $user->ip_address;
-			$_SESSION['nowIPAddr']     = getenv("REMOTE_ADDR");
-			$_SESSION['groupID']       = $user->group_id;
-			$_SESSION['todayDisp']     = $user->today_disp;
-			$_SESSION['darkroomFlg']   = ($user->darkroom == 't') ? 1 : 0;
-			$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
-			$_SESSION['showMissed']    = $user->show_missed;
+		// login succeed
+		$loginDateTime = date("Y-m-d H:i:s");
+		$_SESSION['circusVersion'] = $CIRCUS_CS_VERSION;
+		$_SESSION['userID']        = $user->user_id;
+		$_SESSION['userName']      = $user->user_name;
+		$_SESSION['key']           = sha1($user->user_id);
+		$_SESSION['lastLogin']     = $user->last_login_dt;
+		$_SESSION['lastIPAddr']    = $user->ip_address;
+		$_SESSION['nowIPAddr']     = getenv("REMOTE_ADDR");
+		$_SESSION['groupID']       = $user->Group[0]->group_id;
+		$_SESSION['todayDisp']     = $user->today_disp;
+		$_SESSION['darkroomFlg']   = ($user->darkroom == 't') ? 1 : 0;
+		$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
+		$_SESSION['showMissed']    = $user->show_missed;
 
-			$user->save(array('User' => array(
-				'last_login_dt' => date('Y-m-d h:i:s'),
-				'ip_address' => getenv("REMOTE_ADDR"),
-			)));
+		$user->save(array('User' => array(
+			'last_login_dt' => date('Y-m-d h:i:s'),
+			'ip_address' => getenv("REMOTE_ADDR"),
+		)));
 
-			$group = $user->Group;
-			$priv = array_flip($group->listPrivilege());
+		$priv = array_flip($user->listPrivilege());
 
-			$_SESSION['colorSet']            = $group->color_set;
+		$color_set = $user->hasPrivilege(Auth::PERSONAL_INFO_VIEW) ? 'user' : 'guest';
+		if ($user->hasPrivilege(Auth::SERVER_OPERATION)) $color_set = 'admin';
 
-			$_SESSION['execCADFlg']          = isset($priv['cadExec']) ? 1 : 0;
-			$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
-			$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
-			$_SESSION['modifyConsensualFlg'] = isset($priv['consensualFeedbackModify']) ? 1 : 0;
-			$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
-			$_SESSION['volumeDLFlg']         = isset($priv['volumeDownload']) ? 1 : 0;
-			$_SESSION['serverOperationFlg']  = isset($priv['serverOperation']) ? 1 : 0;
-			$_SESSION['serverSettingsFlg']   = isset($priv['serverSettings']) ? 1 : 0;
-			$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
-			$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
-			$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
-			$_SESSION['dataDeleteFlg']       = isset($priv['dataDelete']) ? 1 : 0;
+		$_SESSION['colorSet']            = $color_set;
 
-			if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
+		$_SESSION['execCADFlg']          = isset($priv['cadExec']) ? 1 : 0;
+		$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
+		$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
+		$_SESSION['modifyConsensualFlg'] = isset($priv['consensualFeedbackModify']) ? 1 : 0;
+		$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
+		$_SESSION['volumeDLFlg']         = isset($priv['volumeDownload']) ? 1 : 0;
+		$_SESSION['serverOperationFlg']  = isset($priv['serverOperation']) ? 1 : 0;
+		$_SESSION['serverSettingsFlg']   = isset($priv['serverSettings']) ? 1 : 0;
+		$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
+		$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
+		$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
+		$_SESSION['dataDeleteFlg']       = isset($priv['dataDelete']) ? 1 : 0;
 
-			$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
+		if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
 
-			self::log(
-				sprintf("Login: userID=%s", $_SESSION['userID']),
-				$LOGIN_LOG
-			);
-			return true;
-		} else {
-			// login failed
-			self::log_failure();
-			return false;
-		}
+		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
+
+		self::log(
+			sprintf("Login: userID=%s", $_SESSION['userID']),
+			$LOGIN_LOG
+		);
+		return true;
 	}
 
 	public static function manualLogout()
@@ -316,10 +308,10 @@ class Auth
 	 */
 	public static function purgeUnlessGranted($priv_name)
 	{
-		$group = self::currentGroup();
-		if (!($group instanceof Group))
+		$user = self::currentUser();
+		if (!($user instanceof User))
 			Auth::purge();
-		if (!$group->hasPrivilege($priv_name))
+		if (!$user->hasPrivilege($priv_name))
 			Auth::purge('unauthorized');
 	}
 
@@ -333,13 +325,18 @@ class Auth
 		fclose($fp);
 	}
 
-	private static function log_failure()
+	/**
+	 * Outputs the login erro log file.
+	 * @param string $user_id Who tried to log-in
+	 * @param string $password MD5 hash of the given password
+	 */
+	public static function log_failure($user_id, $password)
 	{
 		global $LOGIN_ERROR_LOG;
 		self::log(
 			sprintf(
 				"Login error: userID=%s, password=%s",
-				$_POST['userID'], MD5($_POST['pswd'])
+				$user_id, $password
 			),
 			$LOGIN_ERROR_LOG
 		);

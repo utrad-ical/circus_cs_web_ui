@@ -15,7 +15,6 @@
 		$oldUserID     = (isset($_GET['oldUserID']))     ? $_GET['oldUserID']     : "";
 		$oldUserName   = (isset($_GET['oldUserName']))   ? $_GET['oldUserName']   : "";
 		$oldPassword   = (isset($_GET['oldPassword']))   ? $_GET['oldPassword']   : "";
-		$oldGroupID    = (isset($_GET['oldGroupID']))    ? $_GET['oldGroupID']    : "";
 		$oldTodayDisp  = (isset($_GET['oldTodayDisp']))  ? $_GET['oldTodayDisp']  : "";
 		$oldDarkroom   = (isset($_GET['oldDarkroom']))   ? $_GET['oldDarkroom']   : "";
 		$oldAnonymized = (isset($_GET['oldAnonymized'])) ? $_GET['oldAnonymized'] : "";
@@ -47,13 +46,12 @@
 
 				if($mode == 'add')
 				{
-					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, group_id, today_disp, darkroom, "
-					         . " anonymized, show_missed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, today_disp, darkroom, "
+					         . " anonymized, show_missed) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
 					$sqlParams[] = $newUserID;
 					$sqlParams[] = $newUserName;
 					$sqlParams[] = md5($newPassword);
-					$sqlParams[] = $newGroupID;
 					$sqlParams[] = $newTodayDisp;
 					$sqlParams[] = $newDarkroom;
 					$sqlParams[] = $newAnonymized;
@@ -200,7 +198,7 @@
 			//------------------------------------------------------------------------------------------------
 			// Retrieve user lists
 			//------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT user_id, user_name, group_id, today_disp, darkroom, anonymized,"
+			$sqlStr = "SELECT user_id, user_name, today_disp, darkroom, anonymized,"
 					. " show_missed, passcode FROM users WHERE user_id<>? ORDER BY user_id ASC";
 
 			$stmt = $pdo->prepare($sqlStr);

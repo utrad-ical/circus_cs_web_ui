@@ -26,10 +26,6 @@ try
 			'type' => 'array',
 			'childrenRule' => array('type' => 'string', 'regex' => '/^[A-Za-z]+$/')
 		),
-		'colorSet' => array(
-			'type' => 'select',
-			'options' => array ('admin', 'user', 'guest')
-		),
 		'ticket' => array ( 'type' => 'string' )
 	));
 
@@ -88,7 +84,6 @@ try
 
 		$set = array(
 			'Group' => array(
-				'color_set' => $req['colorSet'],
 				'group_id' => $req['newname']
 			)
 		);
