@@ -2,31 +2,53 @@
 function count_images($api_request)
 {
 	$params = $api_request['params'];
+	$action = $api_request['action'];
 	
+	$seriesUIDs = $params['seriesInstanceUID'];
+	$studyUIDs = $params['studyInstanceUID'];
+	
+	if(check_params($params) == FALSE)
+	{
+		$res = new ApiResponse();
+		$res->setError($action, ApiResponse::STATUS_ERR_OPE, "Invalid parameter.");
+		return $res;
+	}
+	
+	try
+	{
+		$result = array();
+		if(isset($seriesUIDs))
+		{
+			$result = get_series_counts($seriesUIDs);
+		}
+		else if(isset($studyUIDs))
+		{
+			$result = get_study_counts($studyUIDs);
+		}
+		
+		$res = new ApiResponse();
+		$res->setResult($action, $result);
+		return $res;
+	}
+	catch (Exception $e)
+	{
+		$res = new ApiResponse();
+		$res->setError($action, ApiResponse::STATUS_ERR_SYS, "Database connection error.");
+		return $res;
+	}
+}
+
+function check_params($params)
+{
 	$seriesUIDs = $params['seriesInstanceUID'];
 	$studyUIDs = $params['studyInstanceUID'];
 	
 	if((isset($seriesUIDs) && isset($studyUIDs))
 		|| (!isset($seriesUIDs) && !isset($studyUIDs)))
 	{
-		throw new ApiException("OperationError", "Invalid parameters.");
+		return FALSE;
 	}
-	
-	try
-	{
-		if(isset($seriesUIDs))
-		{
-			return get_series_counts($seriesUIDs);
-		}
-		else if(isset($studyUIDs))
-		{
-			return get_study_counts($studyUIDs);
-		}
-	}
-	catch (Exception $e)
-	{
-		throw new ApiException("SystemError", "Database connection error.");
-	}
+	return TRUE;
 }
 
 function get_series_counts($UIDs)

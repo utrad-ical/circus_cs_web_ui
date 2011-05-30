@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * WebAPI exception class.
+ * !! This class is not used. !!
+ *
+ * @author Yukihiro Ohno <y-ohno@j-mac.co.jp>
+ */
 class ApiException extends Exception
 {
 	private $_status;
