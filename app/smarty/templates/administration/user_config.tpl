@@ -168,7 +168,7 @@ $(function () {
 			</tr>
 			<tr>
 				<th>Password</th>
-				<td><input size="40" type="password" name="passcode"></td>
+				<td><input size="40" type="password" name="passcode" /></td>
 			</tr>
 			<tr>
 				<th>Enabled</th>
@@ -231,7 +231,7 @@ $(function () {
 	</div>
 </form>
 
-<form id="delete-user-form" method="post">
+<form id="delete-user-form" method="post" action="user_config.php">
 	<div style="display: none">
 		<input type="hidden" name="ticket" value="{$ticket|escape}" />
 		<input type="hidden" name="mode" value="delete" />
