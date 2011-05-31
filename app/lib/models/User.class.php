@@ -70,4 +70,27 @@ class User extends Model
 		}
 		return array_search($priv_name, $this->privileges) !== false;
 	}
+
+	/**
+	 * Updates the group list of this user.
+	 * This does not check if the group IDs are valid.
+	 * Should be used with transactioning.
+	 * @param array $group_list The list of group IDs.
+	 */
+	public function updateGroups($group_list)
+	{
+		$pdo = DBConnector::getConnection();
+		DBConnector::query(
+			'DELETE FROM user_groups WHERE user_id = ?',
+			array($this->user_id),
+			'SCALAR'
+		);
+		$sth = $pdo->prepare(
+			'INSERT INTO user_groups(user_id, group_id) VALUES(?, ?)');
+		foreach ($group_list as $group_id)
+		{
+			$sth->execute(array($this->user_id, $group_id));
+		}
+		$this->_data['Group'] = null;
+	}
 }

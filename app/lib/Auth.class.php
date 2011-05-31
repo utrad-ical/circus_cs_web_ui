@@ -167,8 +167,9 @@ class Auth
 	}
 
 	/**
-	 * Checks if a user exists for given ID / Password pair.
-	 * This method only checks whether the given ID/pass pair is valid.
+	 * Checks if an enabled user exists for given ID / Password pair.
+	 * This method only checks whether the given ID/pass pair is valid,
+	 * and the user is not disabled for login.
 	 * You will want to Auth::createSession() for the valid user.
 	 * @param string $id
 	 * @param string $passwd The MD5 hash of the password.
@@ -180,7 +181,7 @@ class Auth
 		$user = new User($id);
 		if (!$user || !$user->passcode)
 			return null;
-		if ($password != $user->passcode)
+		if (!$user->enabled || $password != $user->passcode)
 			return null;
 		return $user;
 	}
