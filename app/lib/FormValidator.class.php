@@ -3,7 +3,7 @@
 /**
  * Very simple web form validator classes.
  * This is a part of CIRCUS CS project.
- * @author S. Miki <smiki-tky@umin.ac.jp>
+ * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  * @package formValidators
  */
 
@@ -42,7 +42,7 @@ class FormValidator
 	public $output;
 
 	/**
-	 * If validation failes, this is an array which holds the error messages.
+	 * If validation fails, this is an array which holds the error messages.
 	 */
 	public $errors;
 
@@ -196,7 +196,7 @@ class FormValidator
 /**
  * Base class of indivisual validators.
  * Each validator will check the input and returns whether the data is valid.
- * When nesessary the validator can modify (normalize) the input data.
+ * When necessary the validator can modify (normalize) the input data.
  * This is an abstract class: do not directly instantiate this class.
  * @package formValidators
  */
