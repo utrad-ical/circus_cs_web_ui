@@ -47,7 +47,7 @@ class ApiExec
 		catch (ApiException $e)
 		{
 			$api_result = new ApiResponse();
-			$api_result->setError($action, $e->getStatus(), $e->getMessage());
+			$api_result->setError($action, $e->getCode(), $e->getMessage());
 			return $api_result;
 		}
 	}

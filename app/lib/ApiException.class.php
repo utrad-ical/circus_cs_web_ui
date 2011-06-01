@@ -7,17 +7,11 @@
  */
 class ApiException extends Exception
 {
-	protected $status;
-	
-	function __construct($message, $status = NULL, $code = 0)
+	function __construct($message, $code = "")
 	{
-		parent::__construct($message, $code);
-		$this->status = $status;
-	}
-	
-	function getStatus()
-	{
-		return $this->status;
+		parent::__construct($message, 0);
+		
+		$this->code = $code;
 	}
 }
 ?>
