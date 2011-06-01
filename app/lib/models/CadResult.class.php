@@ -12,7 +12,8 @@ class CadResult extends Model
 	protected static $_primaryKey = 'job_id';
 	protected static $_belongsTo = array(
 		'Plugin' => array('key' => 'plugin_id'),
-		'Storage' => array('key' => 'storage_id')
+		'Storage' => array('key' => 'storage_id'),
+		'PluginResultPolicy' => array('key' => 'policy_id')
 	);
 	protected static $_hasMany = array(
 		'Feedback' => array('key' => 'job_id'),
@@ -130,11 +131,20 @@ class CadResult extends Model
 
 	/**
 	 * Returns the CAD result visibility for the user currently logged in.
-	 * @return bool True if the user can view this CAD result.
+	 * @param array $groups The array of Group instances or group ID strings
+	 * @return bool True if the current user can view this CAD result.
 	 */
-	public function checkCadResultAvailability()
+	public function checkCadResultAvailability(array $groups)
 	{
-		// TODO: implement checkCadResultAavailability
+		$policy = $this->PluginResultPolicy;
+		if ($policy->allow_result_reference)
+		{
+			if ($policy->searchGroup($policy->allow_result_reference, $groups))
+				return true;
+			else
+				return false;
+		}
+		// if allow_result_reference is empty, anyone can see the result
 		return true;
 	}
 
