@@ -102,7 +102,7 @@
 						. " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
 						. " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
 						. " JOIN (executed_series_list es JOIN executed_plugin_list el"
-						. " ON (es.job_id=el.job_id AND es.series_id=0 AND el.plugin_type=1))"
+						. " ON (es.job_id=el.job_id AND es.volume_id=0 AND el.plugin_type=1))"
 						. " ON (sr.series_instance_uid = es.series_instance_uid)"
 						. " LEFT JOIN lesion_classification lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
 						. " WHERE el.plugin_name=? AND el.version=? AND lf.is_consensual='t'";
@@ -114,7 +114,7 @@
 						. " FROM patient_list pt, study_list st, series_list sr, "
 						. " executed_plugin_list el, executed_series_list es"
 						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND el.job_id=es.job_id AND es.series_id=0"
+						. " AND el.job_id=es.job_id AND es.volume_id=0"
 						. " AND sr.series_instance_uid = es.series_instance_uid"
 						. " AND st.study_instance_uid = sr.study_instance_uid"
 						. " AND pt.patient_id=st.patient_id";

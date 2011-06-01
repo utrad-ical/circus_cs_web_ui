@@ -97,9 +97,9 @@ $(function(){
 			$description = $result['description'];
 
 			// Series info
-			$sqlStr = "SELECT DISTINCT series_id, modality FROM plugin_cad_series"
+			$sqlStr = "SELECT DISTINCT volume_id, modality FROM plugin_cad_series"
 					. " WHERE plugin_name=? AND version=?"
-					. " ORDER BY series_id ASC;";
+					. " ORDER BY volume_id ASC;";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($condArr);
@@ -108,15 +108,15 @@ $(function(){
 
 			while($result = $stmt->fetch(PDO::FETCH_NUM))
 			{
-				$seriesID = $result[0];
+				$volumeID = $result[0];
 				$modality = $result[1];
 
 				$sqlStr = "SELECT series_description, min_slice, max_slice FROM plugin_cad_series"
 						. " WHERE plugin_name=? AND version=?"
-						. " AND series_id=? ORDER BY series_description DESC;";
+						. " AND volume_id=? ORDER BY series_description DESC;";
 
 				$stmtDescription = $pdo->prepare($sqlStr);
-				$stmtDescription->execute(array($cadName, $version, $seriesID));
+				$stmtDescription->execute(array($cadName, $version, $volumeID));
 
 
 				while($resultDescription = $stmtDescription->fetch(PDO::FETCH_NUM))
@@ -124,7 +124,7 @@ $(function(){
 					if(!($resultDescription[0] == '(default)'
 					      && $resultDescription[1] == 0 && $resultDescription[2] == 0))
 					{
-						array_push($seriesList, array( 'seriesID'    => $seriesID,
+						array_push($seriesList, array( 'volumeID'    => $volumeID,
 						                               'modality'    => $modality,
 				                                       'description' => $resultDescription[0],
 													   'minSlice'    => $resultDescription[1],
@@ -258,7 +258,7 @@ $(function(){
 					{
 						echo '<td';
 						if($descriptionNumArr[$j]>1) echo ' rowspan=' . $descriptionNumArr[$j];
-						echo ' align=center>' . ($j+1) . '</td>';
+						echo ' align=center>' . $j . '</td>';
 						echo '<td';
 						if($descriptionNumArr[$j]>1) echo ' rowspan=' . $descriptionNumArr[$j];
 						echo ' align=center>' . $seriesList[$i]['modality'] . '</td>';

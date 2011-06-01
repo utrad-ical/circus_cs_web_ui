@@ -110,7 +110,7 @@
 						. ' FROM study_list st, series_list sr, storage_master sm, executed_plugin_list el,'
 						. ' executed_series_list es, feedback_list fl, fn_location fn'
 						. ' WHERE el.job_id=?  AND fl.job_id=el.job_id AND fn.fb_id=fl.fb_id AND fn.fn_id=?'
-						. ' AND es.job_id=el.job_id AND es.series_id=0'
+						. ' AND es.job_id=el.job_id AND es.volume_id=0'
 						. ' AND sr.sid=es.series_sid'
 						. ' AND st.study_instance_uid=sr.study_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';
@@ -122,7 +122,7 @@
 						. ' FROM study_list st, series_list sr, storage_master sm,'
 						. ' executed_plugin_list el, executed_series_list es, "' . $resultTableName . '" cad'
 						. ' WHERE el.job_id=?  AND cad.job_id=el.job_id AND cad.sub_id=?'
-						. ' AND es.job_id=el.job_id AND es.series_id=0'
+						. ' AND es.job_id=el.job_id AND es.volume_id=0'
 						. ' AND sr.sid=es.series_sid '
 						. ' AND st.study_instance_uid=sr.study_instance_uid '
 						. ' AND sm.storage_id=sr.storage_id';

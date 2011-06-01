@@ -112,8 +112,8 @@
 			$params['pluginID'] = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'SCALAR');
 
 			// Set series array
-			$sqlStr = "SELECT DISTINCT series_id, modality FROM plugin_cad_series"
-	    			. " WHERE plugin_id=? ORDER BY series_id ASC;";
+			$sqlStr = "SELECT DISTINCT volume_id, modality FROM plugin_cad_series"
+	    			. " WHERE plugin_id=? ORDER BY volume_id ASC;";
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->bindValue(1, $params['pluginID']);
 			$stmt->execute();
@@ -129,7 +129,7 @@
 				$modalityArr[$j] = $seriesIdRes[1];		// modality
 
 				$sqlStr = "SELECT series_description, min_slice, max_slice FROM plugin_cad_series"
-						. " WHERE plugin_id=? AND series_id=? ORDER BY series_description DESC";
+						. " WHERE plugin_id=? AND volume_id=? ORDER BY series_description DESC";
 
 				$stmtDesc = $pdo->prepare($sqlStr);
 				$stmtDesc->execute(array($params['pluginID'], $seriesIdRes[0]));

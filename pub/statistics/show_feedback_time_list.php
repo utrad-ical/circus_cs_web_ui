@@ -73,7 +73,7 @@
 				$sqlParams[] = $params['version'];
 			}
 
-			$sqlStr .= " AND es.job_id=el.job_id AND fa.job_id=el.job_id AND es.series_id=0"
+			$sqlStr .= " AND es.job_id=el.job_id AND fa.job_id=el.job_id AND es.volume_id=0"
 					.  " AND sr.sid = es.series_sid";
 
 			if($params['dateFrom'] != "")
@@ -102,7 +102,7 @@
 						. " feedback_action_log fa, study_list st, series_list sr"
 						. " WHERE el.job_id=? AND pm.plugin_id=el.plugin_id"
 						. " AND fa.job_id=el.job_id"
-						. " AND es.job_id=el.job_id AND es.series_id=0"
+						. " AND es.job_id=el.job_id AND es.volume_id=0"
 						. " AND sr.sid = es.series_sid"
 						. " AND st.study_instance_uid = sr.study_instance_uid"
 						. " ORDER BY fa.sid ASC";
