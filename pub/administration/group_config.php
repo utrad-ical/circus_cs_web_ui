@@ -45,8 +45,6 @@ try
 	if($req['mode'] == 'delete')
 	{
 		$target = $req['target'];
-		if ($target == 'admin')
-			throw new Exception("You can not delete 'admin' group.");
 		$group = new Group($target);
 		if (!$group->group_id)
 			throw new Exception("The group '$target'does not exist.");
@@ -58,8 +56,6 @@ try
 	}
 	else if ($req['mode'] == 'set')
 	{
-		if ($req['target'] == 'admin')
-			throw new Exception("You can not modify 'admin' group.");
 		if ($req['target']) {
 			$group = new Group($req['target']);
 			if (!$group)
@@ -75,6 +71,19 @@ try
 			if ($dummy->group_id)
 				throw new Exception("That group name already exists.");
 		}
+
+		$user = Auth::currentUser();
+		foreach ($user->Group as $my_group)
+		{
+			if ($req['target'] == $my_group->group_id)
+				$editing_my_group = true;
+			if ($my_group->hasPrivilege(Auth::SERVER_SETTINGS))
+				$my_admin_groups[] = $my_group;
+		}
+		if ($editing_my_group && count($my_admin_groups) == 1 &&
+			array_search(Auth::SERVER_SETTINGS, $req['priv']) === false)
+			throw new Exception('You cannot revoke serverSettings privilege ' .
+				'from this group because you belong to this group.');
 
 		$pdo = DBConnector::getConnection();
 		$pdo->beginTransaction();

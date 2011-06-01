@@ -122,6 +122,8 @@ try
 			// update existing user
 			$user = new User($req['target']);
 			$update_mode = true;
+			if ($user->user_id == $currentUser->user_id)
+				$update_mine = true;
 			if (!$user)
 				throw new Exception('The target user does not exist anymore.');
 			if ($req['passcode'])
@@ -167,8 +169,10 @@ try
 						"You do not have sufficient privilege to add this user to '$group->group_id' group.");
 		}
 
-		if ($update_mode && $currentUser->user_id == $user->user_id && !$admin_new)
+		if ($update_mine && !$admin_new)
 			throw new Exception('You cannot revoke serverSettings privilege from yourself.');
+		if ($update_mine && $req['enabled'] != 'true')
+			throw new Exception('You cannot disable yourself.');
 
 		$fields = array(
 			'user_id', 'user_name', 'enabled', 'today_disp', 'darkroom', 'anonymized', 'show_missed'

@@ -126,18 +126,16 @@ css/popup.css
 	</tr>
 	{foreach from=$groupList item=group name=cnt}
 	<tr class="group">
-		{if $group.group_id != "admin"}
-		{/if}
 		<td class="group-id">{$group.group_id|escape}</td>
 		<td class="privileges">
 			{foreach from=$group.privs item=priv}
 			<span class="privname priv-{$priv}">{$priv}</span>
 			{/foreach}
 		</td>
-		<td class="operations">{if $group.group_id != 'admin'}
+		<td class="operations">
 			<input type="button" class="edit-button form-btn" value="edit" />
 			<input type="button" class="delete-button form-btn" value="delete" />
-		{/if}</td>
+		</td>
 	</tr>
 	{/foreach}
 </table>
