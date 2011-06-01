@@ -36,8 +36,9 @@ class Group extends Model
 		{
 			// upper level privilege can match
 			$pl = Auth::getPrivilegeTypes();
-			if ($pl[$priv_name][2] && $this->hasPrivilege($pl[$priv_name][2]))
-				return true;
+			foreach ($pl as $prv)
+				if ($prv[0] == $priv_name && $prv[2] && $this->hasPrivilege($prv[2]))
+					return true;
 		}
 		return array_search($priv_name, $this->privileges) !== false;
 	}
@@ -66,6 +67,7 @@ class Group extends Model
 
 	/**
 	 * Updates the privilege list of this group.
+	 * Should be used with transactioning.
 	 * @param array $priv_list The list of privilege names.
 	 */
 	public function updatePrivilege($priv_list)
@@ -75,7 +77,6 @@ class Group extends Model
 			$privTypes[$priv[0]] = $priv;
 
 		$pdo = DBConnector::getConnection();
-		$pdo->beginTransaction();
 		DBConnector::query(
 			'DELETE FROM group_privileges WHERE group_id = ?',
 			array($this->group_id),
@@ -89,7 +90,6 @@ class Group extends Model
 				$sth->execute(array($this->group_id, $priv));
 		}
 		$this->privileges = null;
-		$pdo->commit();
 	}
 }
 

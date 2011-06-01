@@ -1,241 +1,272 @@
 <?php
-	include("../common.php");
-	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+include("../common.php");
+Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
-	if($_SESSION['serverOperationFlg']==1 || $_SESSION['serverSettingsFlg']==1)
+$params = array('toTopDir' => "../");
+$message = '';
+
+
+try
+{
+	$pdo = DBConnector::getConnection();
+
+	//--------------------------------------------------------------------------
+	// Import $_REQUEST variables
+	//--------------------------------------------------------------------------
+
+	$validator = new FormValidator();
+	$validator->addRules(array(
+		'mode' => array(
+			'type' => 'select',
+			'options' => array('delete', 'set')
+		),
+		'target' => array( 'type' => 'string' ),
+	));
+
+	if ($_POST['mode'] == 'set')
 	{
-		$params = array('toTopDir' => "../",
-		                'message'  => "&nbsp;");
+		$validator->addRules(array(
+			'user_id' => array(
+				'label' => 'user ID',
+				'type' => 'string',
+				'regex' => '/^[_A-Za-z][_A-Za-z0-9]*$/',
+				'errorMes' => 'Invalid user ID. Use only alphabets and numerals.'
+			),
+			'user_name' => array(
+				'label' => 'user name',
+				'required' => true,
+				'type' => 'string',
+				'label' => 'User name',
+				'maxLength' => 50,
+			),
+			'enabled' => array(
+				'type' => 'select',
+				'options' => array('true', 'false'),
+				'default' => 'false'
+			),
+			'passcode' => array(
+				'label' => 'password',
+				'type' => 'string',
+				'minLength' => 3,
+			),
+			'groups' => array(
+				'type' => 'array',
+				'minLength' => 1,
+				childrenRules => array('type' => 'string')
+			),
+			'today_disp' => array(
+				'label' => 'today display',
+				'required' => true,
+				'type' => 'select',
+				'options' => array('series', 'cad')
+			),
+			'darkroom' => array(
+				'label' => 'darkroom mode',
+				'required' => true,
+				'type' => 'select',
+				'options' => array('true', 'false')
+			),
+			'anonymized' => array(
+				'required' => true,
+				'type' => 'select',
+				'options' => array('true', 'false')
+			),
+			'show_missed' => array(
+				'label' => 'missed lesions display',
+				'required' => true,
+				'type' => 'select',
+				'options' => array('own', 'all', 'none')
+			),
+			'ticket' => array('required' => true, 'type' => 'string')
+		));
+	}
 
-		//--------------------------------------------------------------------------------------------------------------
-		// Import $_REQUEST variables
-		//--------------------------------------------------------------------------------------------------------------
-		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_GET['ticket'])) ? $_GET['mode'] : "";
-		$oldUserID     = (isset($_GET['oldUserID']))     ? $_GET['oldUserID']     : "";
-		$oldUserName   = (isset($_GET['oldUserName']))   ? $_GET['oldUserName']   : "";
-		$oldPassword   = (isset($_GET['oldPassword']))   ? $_GET['oldPassword']   : "";
-		$oldTodayDisp  = (isset($_GET['oldTodayDisp']))  ? $_GET['oldTodayDisp']  : "";
-		$oldDarkroom   = (isset($_GET['oldDarkroom']))   ? $_GET['oldDarkroom']   : "";
-		$oldAnonymized = (isset($_GET['oldAnonymized'])) ? $_GET['oldAnonymized'] : "";
-		$oldShowMissed = (isset($_GET['oldShowMissed'])) ? $_GET['oldShowMissed'] : "";
-		$newUserID     = (isset($_GET['newUserID']))     ? $_GET['newUserID']     : "";
-		$newUserName   = (isset($_GET['newUserName']))   ? $_GET['newUserName']   : "";
-		$newPassword   = (isset($_GET['newPassword']))   ? $_GET['newPassword']   : "";
-		$newGroupID    = (isset($_GET['newGroupID']))    ? $_GET['newGroupID']    : "";
-		$newTodayDisp  = (isset($_GET['newTodayDisp']))  ? $_GET['newTodayDisp']  : "";
-		$newDarkroom   = (isset($_GET['newDarkroom']))   ? $_GET['newDarkroom']   : "";
-		$newAnonymized = (isset($_GET['newAnonymized'])) ? $_GET['newAnonymized'] : "";
-		$newShowMissed = (isset($_GET['newShowMissed'])) ? $_GET['newShowMissed'] : "";
-		//--------------------------------------------------------------------------------------------------------------
+	if ($_POST['mode'] == 'delete')
+	{
+		$validator->addRules(array(
+			'user_id' => array(
+				'label' => 'user ID',
+				'type' => 'string',
+				'regex' => '/^[_A-Za-z][_A-Za-z0-9]*$/',
+				'errorMes' => 'Invalid user ID. Use only alphabets and numerals.'
+			),
+			'ticket' => array('required' => true, 'type' => 'string')
+		));
+	}
 
-		$longinUser = $_SESSION['userID'];
+	if ($validator->validate($_POST)) {
+		$req = $validator->output;
+	} else {
+		throw new Exception(implode(" ", $validator->errors));
+	}
+
+	//--------------------------------------------------------------------------
+	// Add / Update / Delete user
+	//--------------------------------------------------------------------------
+	if ($req['mode'])
+	{
+		if ($req['ticket'] != $_SESSION['ticket'])
+		{
+			throw new Exception('Invalid page transition detected. Try again.');
+		}
+	}
+
+	$currentUser = Auth::currentUser();
+
+	if ($req['mode'] == 'set')
+	{
+		$param = array();
+		if ($req['target'])
+		{
+			// update existing user
+			$user = new User($req['target']);
+			$update_mode = true;
+			if ($user->user_id == $currentUser->user_id)
+				$update_mine = true;
+			if (!$user)
+				throw new Exception('The target user does not exist anymore.');
+			if ($req['passcode'])
+			{
+				$param['passcode'] = md5($req['passcode']);
+			}
+		}
+		else
+		{
+			// create new user
+			$user = new User();
+			$tmp = new User($req['user_id']);
+			if ($tmp->user_id)
+				throw new Exception("The user with ID '{$req['user_id']}' already exists.");
+			if (!$req['passcode'])
+				throw new Exception('Password must be specified.');
+			$param['passcode'] = md5($req['passcode']);
+		}
+
+		$groups = array();
+		$group_ids = array();
+		foreach ($req['groups'] as $group_id)
+		{
+			$group = new Group($group_id);
+			if (!$group->group_id)
+				throw new Exception('Invalid group ID.');
+			if ($group->hasPrivilege(Auth::SERVER_SETTINGS))
+				$admin_new = true;
+			$groups[] = $group;
+			$group_ids[] = $group->group_id;
+		}
+
+		if (!$currentUser->hasPrivilege(Auth::SERVER_SETTINGS))
+		{
+			// Secrity Rule:
+			// User with only 'serverOperation' privilege can not edit user
+			// with 'serverOperation' or 'serverSettings' privilege.
+			if ($update_mode && $user->hasPrivilege(Auth::SERVER_OPERATION))
+				throw new Exception("You do not have sufficient privilege to modify user '$req[target]'.");
+			foreach ($groups as $group)
+				if ($group->hasPrivilege(Auth::SERVER_OPERATION))
+					throw new Exception(
+						"You do not have sufficient privilege to add this user to '$group->group_id' group.");
+		}
+
+		if ($update_mine && !$admin_new)
+			throw new Exception('You cannot revoke serverSettings privilege from yourself.');
+		if ($update_mine && $req['enabled'] != 'true')
+			throw new Exception('You cannot disable yourself.');
+
+		$fields = array(
+			'user_id', 'user_name', 'enabled', 'today_disp', 'darkroom', 'anonymized', 'show_missed'
+		);
+		foreach ($fields as $col)
+			$param[$col] = $req[$col];
+
+		$pdo->beginTransaction();
+		$transaction_started = true;
+		$user->save(array('User' => $param));
+		$user->updateGroups($group_ids);
+		$pdo->commit();
+
+		$message = "User '$req[user_name]' was successfully updated.";
+	}
+	else if ($req['mode'] == 'delete')
+	{
+		$user = new User($req['target']);
+		if (!$user->user_id)
+			throw new Exception('The specified user does not exist.');
+		if ($currentUser->user_id == $user->user_id)
+			throw new Exception('You cannot delete your user ID.');
+
+		if (!$currentUser->hasPrivilege(Auth::SERVER_SETTINGS))
+		{
+			if ($user->hasPrivilege(Auth::SERVER_OPERATION))
+				throw new Exception("You do not have sufficient privilege to delete user '$req[target]'.");
+		}
 
 		try
 		{
-			// Connect to SQL Server
-			$pdo = DBConnector::getConnection();
-
-			//----------------------------------------------------------------------------------------------------
-			// Add / Update / Delete user
-			//----------------------------------------------------------------------------------------------------
-			if($mode!="" && $oldUserID!=$DEFAULT_CAD_PREF_USER && $newUsewrID!=$DEFAULT_CAD_PREF_USER)
-			{
-				$sqlStr = "";
-				$sqlParams = array();
-
-				if($mode == 'add')
-				{
-					$sqlStr  = "INSERT INTO users(user_id, user_name, passcode, today_disp, darkroom, "
-					         . " anonymized, show_missed) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-					$sqlParams[] = $newUserID;
-					$sqlParams[] = $newUserName;
-					$sqlParams[] = md5($newPassword);
-					$sqlParams[] = $newTodayDisp;
-					$sqlParams[] = $newDarkroom;
-					$sqlParams[] = $newAnonymized;
-					$sqlParams[] = $newShowMissed;
-
-					if($newUserID == "" || $newPassword == "")  $sqlStr = "";
-				}
-				else if($mode == 'update') // update user config
-				{
-					$updateCnt = 0;
-
-					$sqlStr = 'UPDATE users SET ';
-					if($oldUserID == $longinUser && $newUserID != $oldUserID)
-					{
-						$sqlStr = "";
-						$params['message'] = "You can't change own user ID (" . $longinUser . " -> " . $newUserID . ")";
-					}
-					else if($newUserID != $oldUserID)
-					{
-						$sqlStr .= "user_id=?";
-						$sqlParams[] = $newUserID;
-						$updateCnt++;
-					}
-
-					if($params['message'] == "&nbsp;")
-					{
-						if($oldUserName != $newUserName)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "user_name=?";
-							$sqlParams[] = $newUserName;
-							$updateCnt++;
-						}
-
-						if($oldPassword != $newPassword && $oldPassword != md5($newPassword))
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "passcode=?";
-							$sqlParams[] = md5($newPassword);
-							$updateCnt++;
-						}
-
-						if($oldUserID == $longinUser && $oldGroupID != $newGroupID)
-						{
-							$msg = "You can't change your group ID (" . $oldGroupID . " -> " . $newGroupID . ")";
-						}
-						else if($oldGroupID != $newGroupID)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "group_id=?";
-							$sqlParams[] = $newGroupID;
-							$updateCnt++;
-						}
-
-						if($oldTodayDisp != $newTodayDisp)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "today_disp=?";
-							$sqlParams[] = $newTodayDisp;
-							$updateCnt++;
-						}
-
-						if($oldDarkroomFlg != $newDarkroom)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "darkroom=?";
-							$sqlParams[] = $newDarkroom;
-							$updateCnt++;
-						}
-
-						if($oldAnonymizeFlg != $newAnonymizeFlg)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "anonymized=?";
-							$sqlParams[] = $newAnonymized;
-							$updateCnt++;
-						}
-
-						if($oldLatestResults != $newLatestResults)
-						{
-							if($updateCnt > 0)	$sqlStr .= ",";
-							$sqlStr .= "show_missed=?";
-							$sqlParams[] = $newShowMissed;
-							$updateCnt++;
-						}
-
-						$sqlStr .= " WHERE user_id=?";
-						$sqlParams[] = $oldUserID;
-
-						if($updateCnt == 0)  $sqlStr  = "";
-					}
-				}
-				else if($mode == 'delete')	// delete user
-				{
-					if($newUserID == $longinUser)
-					{
-						$params['message'] = "You can't delete own user ID (" . $longinUser . ")";
-					}
-					else if($newUserID != "")
-					{
-						$sqlStr = "DELETE FROM users WHERE user_id=?";
-						$sqlParams[0] = $newUserID;
-					}
-				}
-
-				if($params['message'] == "&nbsp;" && $sqlStr != "")
-				{
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($sqlParams);
-
-					$tmp = $stmt->errorInfo();
-					$message = $tmp[2];
-
-					if($stmt->errorCode() == '00000')
-					{
-						$params['message'] = '<span style="color: #0000ff;" >';
-
-						switch($mode)
-						{
-							case 'add'    :  $params['message'] .= '"' . $newUserID . '" was successfully added.'; break;
-							case 'update' :  $params['message'] .= '"' . $oldUserID . '" was successfully updated.'; break;
-							case 'delete' :  $params['message'] .= '"' . $newUserID . '" was successfully deleted.'; break;
-						}
-						$params['message'] .= '</span>';
-					}
-					else
-					{
-						$params['message'] = '<span style="color: #ff0000;">Fail to ' . $mode
-						                   . 'user (userID:' . (($mode=='update') ? $oldUserID : $newUserID)
-										   . '</span>';
-					}
-				}
-				else $params['message'] = '<span style="color: #ff0000;">' . $params['message'] . '</span>';
-			}
-			//------------------------------------------------------------------------------------------------
-
-			//------------------------------------------------------------------------------------------------
-			// Make one-time ticket
-			//------------------------------------------------------------------------------------------------
-			$_SESSION['ticket'] = md5(uniqid().mt_rand());
-			$params['ticket'] = $_SESSION['ticket'] ;
-			//------------------------------------------------------------------------------------------------
-
-			//------------------------------------------------------------------------------------------------
-			// Retrieve user lists
-			//------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT user_id, user_name, today_disp, darkroom, anonymized,"
-					. " show_missed, passcode FROM users WHERE user_id<>? ORDER BY user_id ASC";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($DEFAULT_CAD_PREF_USER));
-
-			$userList = $stmt->fetchAll(PDO::FETCH_NUM);
-			//------------------------------------------------------------------------------------------------
-
-			//------------------------------------------------------------------------------------------------
-			// Retrieve group lists
-			//------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT group_id FROM groups ORDER BY group_id ASC";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute();
-
-			$groupList = $stmt->fetchAll(PDO::FETCH_NUM);
-			//------------------------------------------------------------------------------------------------
-
-			//------------------------------------------------------------------------------------------------
-			// Settings for Smarty
-			//------------------------------------------------------------------------------------------------
-			$smarty = new SmartyEx();
-
-			$smarty->assign('params',    $params);
-			$smarty->assign('userList',  $userList);
-			$smarty->assign('groupList', $groupList);
-
-			$smarty->display('administration/user_config.tpl');
-			//------------------------------------------------------------------------------------------------
+			User::delete($user->user_id);
+		} catch (PDOException $e) {
+			if (preg_match('/^23/', $e->getCode())) // Constraint error
+				throw new Exception("The user '$req[target]' could not be deleted. " .
+					'Perhaps this user already has given feedback or done other activities.');
+			else
+				throw $e;
 		}
-		catch (PDOException $e)
-		{
-			var_dump($e->getMessage());
-		}
-
-		$pdo = null;
+		$message = "User '$user->user_id' was deleted.";
 	}
+}
+catch (Exception $e)
+{
+	if ($e instanceof PDOException)
+	{
+		$message = 'Database Error.' . $e->getMessage() . $e->getTraceAsString();
+		if ($pdo && $transaction_started) $pdo->rollBack();
+	}
+	else $message = $e->getMessage();
+}
+
+//------------------------------------------------------------------------------
+// Make one-time ticket
+//------------------------------------------------------------------------------
+$ticket =md5(uniqid().mt_rand());
+$_SESSION['ticket'] = $ticket;
+
+
+//------------------------------------------------------------------------------
+// Retrieve user list and group list
+//------------------------------------------------------------------------------
+$dum = new User();
+$userList = array();
+$users = $dum->find(array(), array('order' => array('enabled DESC', 'user_id ASC')));
+foreach ($users as $user) {
+	if ($user->user_id == $DEFAULT_CAD_PREF_USER)
+		continue;
+	$item = $user->getData() ?: array();
+	$item['groups'] = array();
+	foreach ($user->Group as $group)
+	{
+		$item['groups'][] = $group->group_id;
+	}
+	$userList[$user->user_id] = $item;
+}
+
+$dum = new Group();
+$groupList = $dum->find(array());
+
+
+//------------------------------------------------------------------------------
+// Settings for Smarty
+//------------------------------------------------------------------------------
+$smarty = new SmartyEx();
+$smarty->assign(array(
+	'user' => Auth::currentUser(),
+	'message' => $message,
+	'ticket' => $ticket,
+	'params' => $params,
+	'userList' => $userList,
+	'groupList' => $groupList
+));
+$smarty->display('administration/user_config.tpl');
+
 
 ?>

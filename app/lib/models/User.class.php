@@ -56,7 +56,7 @@ class User extends Model
 	 * If false, matches the privilege of exactly the same type.
 	 * @return bool True if the user has the specified privilege.
 	 */
-	public function hasPrivilege($priv_name)
+	public function hasPrivilege($priv_name, $recursive = true)
 	{
 		if (!$priv_name)
 			return false;
@@ -65,9 +65,33 @@ class User extends Model
 		{
 			// upper level privilege can match
 			$pl = Auth::getPrivilegeTypes();
-			if ($pl[$priv_name][2] && $this->hasPrivilege($pl[$priv_name][2]))
-				return true;
+			foreach ($pl as $prv)
+				if ($prv[0] == $priv_name && $prv[2] && $this->hasPrivilege($prv[2]))
+					return true;
 		}
 		return array_search($priv_name, $this->privileges) !== false;
+	}
+
+	/**
+	 * Updates the group list of this user.
+	 * This does not check if the group IDs are valid.
+	 * Should be used with transactioning.
+	 * @param array $group_list The list of group IDs.
+	 */
+	public function updateGroups($group_list)
+	{
+		$pdo = DBConnector::getConnection();
+		DBConnector::query(
+			'DELETE FROM user_groups WHERE user_id = ?',
+			array($this->user_id),
+			'SCALAR'
+		);
+		$sth = $pdo->prepare(
+			'INSERT INTO user_groups(user_id, group_id) VALUES(?, ?)');
+		foreach ($group_list as $group_id)
+		{
+			$sth->execute(array($this->user_id, $group_id));
+		}
+		$this->_data['Group'] = null;
 	}
 }

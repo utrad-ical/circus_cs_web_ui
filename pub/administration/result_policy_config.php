@@ -10,11 +10,11 @@ $message = '';
 $fields = array(
 	'policy_name',
 	'allow_result_reference',
-	'allow_personal_feedback',
-	'allow_consensual_feedback',
-	'time_to_freeze_personal_feedback',
-	'max_personal_feedback',
-	'min_personal_feedback_to_make_consensus',
+	'allow_personal_fb',
+	'allow_consensual_fb',
+	'time_to_freeze_personal_fb',
+	'max_personal_fb',
+	'min_personal_fb_to_make_consensus',
 	'automatic_consensus'
 );
 
@@ -36,11 +36,11 @@ try {
 			'errorMes' => 'Invalid policy name. Use only alphabets and numerals.'
 		),
 		'allow_result_reference' => array('type' => 'string'),
-		'allow_personal_feedback' => array('type' => 'string'),
-		'allow_consensual_feedback' => array('type' => 'string'),
-		'time_to_freeze_personal_feedback' => array('type' => 'int', 'min' => 0),
-		'max_personal_feedback' => array('type' => 'int', 'min' => 0),
-		'min_personal_feedback_to_make_consensus' => array('type' => 'int', 'min' => 0),
+		'allow_personal_fb' => array('type' => 'string'),
+		'allow_consensual_fb' => array('type' => 'string'),
+		'time_to_freeze_personal_fb' => array('type' => 'int', 'min' => 0),
+		'max_personal_fb' => array('type' => 'int', 'min' => 0),
+		'min_personal_fb_to_make_consensus' => array('type' => 'int', 'min' => 0),
 		'automatic_consensus' => array(
 			'type' => 'int',
 			'min' => 1,
