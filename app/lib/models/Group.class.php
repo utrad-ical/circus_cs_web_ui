@@ -36,8 +36,9 @@ class Group extends Model
 		{
 			// upper level privilege can match
 			$pl = Auth::getPrivilegeTypes();
-			if ($pl[$priv_name][2] && $this->hasPrivilege($pl[$priv_name][2]))
-				return true;
+			foreach ($pl as $prv)
+				if ($prv[0] == $priv_name && $prv[2] && $this->hasPrivilege($prv[2]))
+					return true;
 		}
 		return array_search($priv_name, $this->privileges) !== false;
 	}
