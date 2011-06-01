@@ -17,7 +17,15 @@ if (is_null($api_request))
 }
 else
 {
-	$res = ApiExec::doAction($api_request);
-	echo $res->getJson();
+	try {
+		$res = ApiExec::doAction($api_request);
+		echo $res->getJson();
+	}
+	catch (Exception $e)
+	{
+		$res = new ApiResponse();
+		$res->setError($action, ApiResponse::STATUS_ERR_SYS, "Internal system error.");
+		echo $res->getJson();
+	}
 }
 ?>

@@ -13,10 +13,10 @@ class ApiExec
 	const EXECUTE_PLUGIN = "executePlugin";
 
 	static $action_list = array(
-		self::LOGIN,
-		self::COUNT_IMAGES,
-		self::QUERY_JOB,
-		self::EXECUTE_PLUGIN
+		self::LOGIN          => "LoginAction",
+		self::COUNT_IMAGES   => "CountImagesAction",
+		self::QUERY_JOB      => "QueryJobAction",
+		self::EXECUTE_PLUGIN => "ExecutePluginAction"
 	);
 
 	protected static $currentUser;
@@ -31,38 +31,24 @@ class ApiExec
 			$api_result->setError($action, ApiResponse::STATUS_ERR_AUTH, $auth_result);
 			return $api_result;
 		}
-
-		switch ($action)
+		
+		try
 		{
-			case self::LOGIN:
-				include("api_login.php");
-				$api_result = api_login($api_request);
-				return $api_result;
-			break;
-
-			case self::COUNT_IMAGES:
-				include("api_count_images.php");
-				$api_result = count_images($api_request);
-				return $api_result;
-			break;
-
-			case self::QUERY_JOB:
-				include("api_query_job.php");
-				$api_result = query_job($api_request);
-				return $api_result;
-			break;
-
-			case self::EXECUTE_PLUGIN:
-				include("api_execute_plugin.php");
-				$api_result = execute_plugin($api_request);
-				return $api_result;
-			break;
-
-			default:
-				$res = new ApiResponse();
-				$res->setError($action, ApiResponse::STATUS_ERR_OPE, "Requested action is not defined.");
-				return $res;
-			break;
+			$cls = ApiExec::$action_list[$action];
+			if(!isset($cls))
+			{
+				throw new ApiException("Requested action is not defined.", ApiResponse::STATUS_ERR_OPE);
+			}
+			
+			$api = new $cls;
+			$res = $api->execute($api_request);
+			return $res;
+		}
+		catch (ApiException $e)
+		{
+			$api_result = new ApiResponse();
+			$api_result->setError($action, $e->getStatus(), $e->getMessage());
+			return $api_result;
 		}
 	}
 
@@ -80,30 +66,30 @@ class ApiExec
 		try
 		{
 			if (!is_array($auth))
-				throw new Exception('Authentication required');
+				throw new ApiException('Authentication required');
 			switch (strtolower($auth['type']))
 			{
 				case 'basic':
 					$user = Auth::checkAuth($auth['user'], $auth['pass']);
 					if (!$user->user_id)
-						throw new Exception('Basic authentication failed');
+						throw new ApiException('Basic authentication failed');
 					self::$currentUser = $user;
 					break;
 				case 'session':
 					$user = Auth::checkSession(false);
 					$user = Auth::currentUser();
 					if (!$user->user_id)
-						throw new Exception('Session not established. login first.');
+						throw new ApiException('Session not established. login first.');
 					self::$currentUser = $user;
 					break;
 				default:
-					throw new Exception('Authentication type not valid');
+					throw new ApiException('Authentication type not valid');
 					break;
 			}
 			// if (!$user->hasPrivilege(Auth::ApiExec))
 			// 	throw new Exception('This user cannot execute web API.')
 		}
-		catch (Exception $e)
+		catch (ApiException $e)
 		{
 			return $e->getMessage();
 		}

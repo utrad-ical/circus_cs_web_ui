@@ -2,31 +2,22 @@
 
 /**
  * WebAPI exception class.
- * !! This class is not used. !!
  *
  * @author Yukihiro Ohno <y-ohno@j-mac.co.jp>
  */
 class ApiException extends Exception
 {
-	private $_status;
-	private $_errmsg;
+	protected $status;
 	
-	public function __construct($status, $errmsg, $message = "", $code = 0, Exception $previous = null)
+	function __construct($message, $status = NULL, $code = 0)
 	{
-		$this->_status = $status;
-		$this->_errmsg = $errmsg;
-		
-		parent::__construct($message, $code, $previous);
+		parent::__construct($message, $code);
+		$this->status = $status;
 	}
 	
-	public function getStatus()
+	function getStatus()
 	{
-		return $this->_status;
-	}
-	
-	public function getErrmsg()
-	{
-		return $this->_errmsg;
+		return $this->status;
 	}
 }
 ?>
