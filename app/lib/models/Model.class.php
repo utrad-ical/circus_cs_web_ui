@@ -6,7 +6,7 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-abstract class Model
+abstract class Model implements Iterator
 {
 	protected $_data;
 
@@ -189,6 +189,16 @@ abstract class Model
 		$pkey = static::$_primaryKey;
 		$sql = "DELETE FROM $tbl WHERE $pkey = ?";
 		DBConnector::query($sql, array($id), 'SCALAR');
+	}
+
+	// Iterators
+	public function rewind() { reset($this->_data); }
+	public function current() { return current($this->_data); }
+	public function key() { return key($this->_data); }
+	public function next() { return next($this->_data); }
+	public function valid() {
+		$key = key($this->_data);
+		return ($key !== null && $key !== false);
 	}
 }
 
