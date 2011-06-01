@@ -65,18 +65,6 @@ class Feedback extends Model
 		$this->blockFeedback = $listener->loadBlockFeedback($this->fb_id);
 		$this->additionalFeedback = array();
 	}
-
-	/**
-	 * Delete this feedback data from the database.
-	 */
-	public function delete()
-	{
-		if ($fb_id === null)
-		{
-			return;
-		}
-		// DB Delete: hopefully 'on delete cascade' can do most of the job
-	}
 }
 
 ?>
