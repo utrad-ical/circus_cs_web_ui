@@ -67,7 +67,7 @@
 					. " pm.type, el.executed_at, el.storage_id, sm.path"
 					. " FROM executed_plugin_list el, executed_series_list es,"
 					. " plugin_master pm, series_list sr, storage_master sm"
-					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.series_id=0"
+					. " WHERE el.job_id=? AND es.job_id=el.job_id AND es.volume_id=0"
 					. " AND pm.plugin_id=el.plugin_id AND sr.sid=es.series_sid"
 					. " AND sm.storage_id=el.storage_id";
 			$result = DBConnector::query($sqlStr, $params['jobID'], 'ARRAY_NUM');

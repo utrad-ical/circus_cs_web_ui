@@ -152,9 +152,9 @@
 
 					foreach($seriesDefinition->SeriesItem as $item)
 					{
-						if($cnt = 0 || (string)$item->SeriesID[0] == 1)  $mainModality = (string)$item->Modality[0];
+						if($cnt = 0 || (string)$item->VolumeID[0] == 1)  $mainModality = (string)$item->Modality[0];
 
-						$cadSeriesSqlStr .= "INSERT INTO cad_series (plugin_name, version, series_id,"
+						$cadSeriesSqlStr .= "INSERT INTO cad_series (plugin_name, version, volume_id,"
 										 .  " series_description, manufacturer, model_name, station_name,"
 										 .  " modality, min_slice, max_slice, isotropic_type, start_img_num,"
 										 .  " end_img_num, export_series_number)"
@@ -162,7 +162,7 @@
 
 						$cadSeriesSqlParams[] = $pluginName;
 						$cadSeriesSqlParams[] = $version;
-						$cadSeriesSqlParams[] = (string)$item->SeriesID[0];
+						$cadSeriesSqlParams[] = (string)$item->VolumeID[0];
 
 						$tmpStr = (string)$item->DefaultSeriesDescription[0];
 						$cadSeriesSqlParams[] = ($tmpStr == "") ? $tmpStr : '(default)';
@@ -205,7 +205,7 @@
 						$sqlStr = "SELECT MAX(cm.label_order) FROM plugin_master pm, cad_master cm, cad_series cs"
 								. " WHERE cm.plugin_name=pm.plugin_name AND cs.plugin_name=cm.plugin_name"
 								. " WHERE cm.version=pm.version AND cs.version=cm.version"
-								. " AND pm.exec_enabled='t' AND cs.series_id=0 AND cs.modality=?";
+								. " AND pm.exec_enabled='t' AND cs.volume_id=0 AND cs.modality=?";
 						$maxLabelOrder = DBConnector::query($sqlStr, $mainModality, 'SCALAR');
 
 						$sqlParams = array();

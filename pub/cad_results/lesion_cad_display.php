@@ -27,7 +27,7 @@
 	//--------------------------------------------------------------------------------------------------------
 
 	// Get main modality (1st series)
-	$sqlStr = "SELECT modality FROM plugin_cad_series WHERE plugin_id=? AND series_id=0";
+	$sqlStr = "SELECT modality FROM plugin_cad_series WHERE plugin_id=? AND volume_id=0";
 	$params['mainModality'] = DBConnector::query($sqlStr, $params['pluginID'], 'SCALAR');
 
 	//--------------------------------------------------------------------------------------------------------

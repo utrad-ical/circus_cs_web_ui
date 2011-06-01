@@ -57,7 +57,7 @@
 		{
 			if($i > 0)  $sqlStr .= " OR ";
 
-			$sqlStr .= "(es.series_id=? AND es.study_sid=?)";
+			$sqlStr .= "(es.volume_id=? AND es.study_sid=?)";
 
 			$colArr[] = $i;
 			$colArr[] = $sidArr[$i];
@@ -130,12 +130,12 @@
 			{
 				$sqlParams = array($jobID, $i, $sidArr[$i]);
 
-				$sqlStr = "INSERT INTO executed_series_list(job_id, series_id, series_sid)"
+				$sqlStr = "INSERT INTO executed_series_list(job_id, volume_id, series_sid)"
 						. " VALUES (?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 
-				$sqlStr = "INSERT INTO job_queue_series(job_id, series_id, series_sid)"
+				$sqlStr = "INSERT INTO job_queue_series(job_id, volume_id, series_sid)"
 						. " VALUES (?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);

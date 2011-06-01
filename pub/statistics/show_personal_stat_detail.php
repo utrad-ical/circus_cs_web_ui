@@ -139,7 +139,7 @@
 					$sqlParams[] = $params['version'];
 				}
 
-				$sqlStr .= " AND es.series_id=0 AND sr.sid = es.series_sid";
+				$sqlStr .= " AND es.volume_id=0 AND sr.sid = es.series_sid";
 
 				if($params['dateFrom'] != "")
 				{
@@ -195,7 +195,7 @@
 
 				$sqlStrCntEval .= " WHERE pm.plugin_id=el.plugin_id"
 							   .  " AND fl.job_id=el.job_id AND cc.fb_id=fl.fb_id"
-							   .  " AND es.job_id=el.job_id AND es.series_id=0"
+							   .  " AND es.job_id=el.job_id AND es.volume_id=0"
 						       .  " AND sr.sid = es.series_sid"
 							   .  " AND pm.plugin_name=?";
 
@@ -204,7 +204,7 @@
 							  . " plugin_master pm, feedback_list fl, fn_count fn, series_list sr"
 							  . " WHERE pm.plugin_id=el.plugin_id"
 							  . " AND fl.job_id=el.job_id AND fn.fb_id=fl.fb_id"
-							  . " AND es.job_id=el.job_id AND es.series_id=0"
+							  . " AND es.job_id=el.job_id AND es.volume_id=0"
 							  . " AND sr.sid = es.series_sid"
 							  . " AND pm.plugin_name=?";
 
@@ -287,7 +287,7 @@
 
 					$sqlStr .= " WHERE el.job_id =?"
 							.  " AND fl.job_id=el.job_id AND cc.fb_id=fl.fb_id"
-							.  " AND es.job_id=el.job_id AND es.series_id=0"
+							.  " AND es.job_id=el.job_id AND es.volume_id=0"
 							.  " AND sr.sid = es.series_sid"
 							.  " AND pm.plugin_id=el.plugin_id"
 							.  " AND pm.plugin_name=?";
@@ -354,7 +354,7 @@
 //						}
 //
 //						$sqlStr .= " AND es.job_id=el.job_id"
-//								.  " AND es.series_id=0"
+//								.  " AND es.volume_id=0"
 //								.  " AND sr.series_instance_uid = es.series_instance_uid";
 //
 //						if($params['dateFrom'] != "")
@@ -468,7 +468,7 @@
 								. " AND cad.sub_id=cc.candidate_id"
 								. " AND cad.volume_size>=?"
 								. " AND cad.volume_size<=?"
-								. " AND es.series_id=0"
+								. " AND es.volume_id=0"
 								. " AND es.series_sid=sr.sid"
 								. " AND pm.plugin_id=el.plugin_id"
 								. " AND pm.plugin_name=? AND pm.version=?"

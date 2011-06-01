@@ -376,7 +376,7 @@
 			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled, max(cs.series_description)"
 					. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
 					. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id=cm.plugin_id"
-					. " AND cs.series_id=0"
+					. " AND cs.volume_id=0"
 					. " AND cs.modality=?"
 					. " AND ((cs.series_description=?)"
 					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
@@ -390,7 +390,7 @@
 					. " WHERE pm.plugin_name=? AND pm.version=?"
 					. " AND pm.plugin_id=el.plugin_id"
 					. " AND el.job_id=es.job_id"
-					. " AND es.series_id=0"
+					. " AND es.volume_id=0"
 					. " AND es.series_sid=?";
 
 			$stmtCADExec = $pdo->prepare($sqlStr);

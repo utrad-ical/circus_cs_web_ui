@@ -542,7 +542,7 @@
 				. " WHERE pm.type=1 AND el.status=" . $PLUGIN_SUCESSED
 				. " AND pm.plugin_id=el.plugin_id"
 				. " AND es.job_id=el.job_id"
-				. " AND es.series_id=0 AND sr.sid=es.series_sid"
+				. " AND es.volume_id=0 AND sr.sid=es.series_sid"
 				. " AND st.study_instance_uid=sr.study_instance_uid"
 				. " AND pt.patient_id=st.patient_id"
 				. $sqlCond;

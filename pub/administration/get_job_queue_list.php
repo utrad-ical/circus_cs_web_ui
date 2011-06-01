@@ -28,7 +28,7 @@
 			$sqlStr = "SELECT *"
 					. " FROM job_queue jq, job_queue_series js, study_list st, series_list sr"
 					. " WHERE jq.job_id=? AND jq.job_id=js.job_id"
-					. " AND js.series_id=0"
+					. " AND js.volume_id=0"
 					. " AND sr.sid=js.series_sid"
 					. " AND st.study_instance_uid=sr.study_instance_uid";
 

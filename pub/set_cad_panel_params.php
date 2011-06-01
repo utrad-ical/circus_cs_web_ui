@@ -13,7 +13,7 @@
 				. " FROM executed_plugin_list el, plugin_master pm, plugin_cad_series cs"
 				. " WHERE el.status=?"
 				. " AND pm.plugin_id=el.plugin_id AND cs.plugin_id=el.plugin_id"
-				. " AND cs.series_id=0";
+				. " AND cs.volume_id=0";
 
 		if($modalityList[$i] != 'all')  $sqlStr .= " AND cs.modality=?";
 		$sqlStr .= " ORDER BY pm.plugin_name ASC, pm.version DESC";

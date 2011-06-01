@@ -73,7 +73,7 @@
 							. " sr.study_instance_uid, sr.series_instance_uid, sm.storage_id, sm.path"
 							. " FROM patient_list pt, study_list st, series_list sr,"
 							. " storage_master sm, executed_series_list es"
-							. " WHERE es.job_id=? AND es.series_id=0 AND sr.sid=es.series_sid"
+							. " WHERE es.job_id=? AND es.volume_id=0 AND sr.sid=es.series_sid"
 							. " AND st.study_instance_uid = sr.study_instance_uid"
 							. " AND pt.patient_id=st.patient_id"
 							. " AND sm.storage_id=sr.storage_id";
