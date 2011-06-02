@@ -78,39 +78,46 @@ class CadResult extends Model
 	 * This is based on the user group settings and the feedback policy.
 	 *
 	 * @param string $feedbackMode 'consensual' or 'personal'
+	 * @param User $user The user
 	 * @return string 'normal', 'disabled', 'locked', or 'hidden'.
 	 * The 'normal' status means the login user can input or see his feedback.
 	 * The 'disabled' status means the user can inspect the feedback
 	 * result, but you cannot enter or modify it. (But he may go back
-	 * to 'normal' status for personal feedback by unregistering)
+	 * to 'normal' status by unregistering)
 	 * The 'locked' status applies only for consensual feedback and
 	 * means that the user cannot enter the consensual mode.
-	 * The 'hidden' status means the feedback information is completely hidden
-	 * (typically for guest users).
 	 */
-	public function feedbackAvailability($feedbackMode = 'personal')
+	public function feedbackAvailability($feedbackMode = 'personal', User $user = null)
 	{
-		// TODO: implemente the feedbackAvailability
-
-		// The availability is 'hidden' when the user has such privilege
-		if (false) {
-			return 'hidden';
-		}
+		$policy = $this->PluginResultPolicy;
 
 		// The availability is 'locked' when the user has not yet entered
-		// his personal feedback.
-		if ($feedbackMode == 'consensual' && false) {
-			return 'locked';
+		// his personal feedback, or there is no enough sets of personal
+		// feedback to make consensus (configured by plugin result policy)
+		$my_personal_feedback = $this->queryFeedback('user', $user->user_id);
+		if ($feedbackMode == 'consensual')
+		{
+			if (!count($my_personal_feedback))
+				return 'locked';
+			$personal_feedback = $this->queryFeedback('personal');
+			if ($policy->min_personal_fb_to_make_consensus > count($personal_feedback))
+				return 'locked';
 		}
 
 		// The availability is 'disabled' when:
 		// (1) The user has no privileges to give personal/consensual feedback
-		//     at all.
 		// (2) The user has already entered the feedback.
 		// (3) Consensual feedback is already registered by someone.
-		if (false) {
+		if ($feedbackMode == 'personal' && !$user->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))
 			return 'disabled';
-		}
+		if ($feedbackMode == 'consensual' && !$user->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
+			return 'disabled';
+		if (count($my_personal_feedback))
+			return 'disabled';
+		$consensual_feedback = $this->queryFeedback('consensual');
+		if (count($consensual_feedback))
+			return 'disabled';
+
 		return 'normal';
 	}
 
@@ -198,6 +205,9 @@ class CadResult extends Model
 		// STEP: Load using inheriting load method
 		//
 		parent::load($id);
+
+		if (!isset($this->_data['job_id']))
+			return;
 
 		//
 		// STEP: Get the table name which actually holds the result data
