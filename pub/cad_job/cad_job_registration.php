@@ -57,7 +57,7 @@
 		{
 			if($i > 0)  $sqlStr .= " OR ";
 
-			$sqlStr .= "(es.volume_id=? AND es.study_sid=?)";
+			$sqlStr .= "(es.volume_id=? AND es.series_sid=?)";
 
 			$colArr[] = $i;
 			$colArr[] = $sidArr[$i];
