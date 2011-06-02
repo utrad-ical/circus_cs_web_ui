@@ -53,6 +53,15 @@ class ApiExec
 	}
 
 	/**
+	 * Returns the instance of User currently logged-in.
+	 * @return User The User instance.
+	 */
+	public static function currentUser()
+	{
+		return self::$currentUser;
+	}
+
+	/**
 	 * Handles basic/session authentication.
 	 * If authentication succeeds, this method sets self::$currentUser and
 	 * return true.
