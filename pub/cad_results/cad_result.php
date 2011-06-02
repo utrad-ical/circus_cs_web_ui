@@ -11,31 +11,35 @@ Auth::checkSession();
 $validator = new FormValidator();
 $validator->addRules(array(
 	'jobID' => array(
-		"type" => "int",
-		"required" => false, // true, // transient
-		"min" => 1,
-		"errorMes" => "[ERROR] CAD ID is invalid."
+		'label' => 'Job ID',
+		'type' => 'int',
+		'required' => false, // true, // transient
+		'min' => 1
 	),
 	'feedbackMode' => array(
-		"type" => "select",
-		"required" => false, // true, // transient
-		"default" => 'personal',
-		"options" => array("personal", "consensual"),
-		"errorMes" => "[ERROR] 'Feedback mode' is invalid."
+		'label' => 'feedback mode',
+		'type' => 'select',
+		'required' => false, // true, // transient
+		'default' => 'personal',
+		'options' => array('personal', 'consensual'),
 	)
 ));
-if ($validator->validate($_REQUEST))
-{
-	$params = $validator->output;
-}
 
 try
 {
+	if ($validator->validate($_REQUEST))
+	{
+		$params = $validator->output;
+	}
+	else
+	{
+		throw new Exception(implode("\n", $validator->errors));
+	}
 	show_cad_results($params['jobID'], $params['feedbackMode']);
 }
 catch (Exception $e)
 {
-	critical_error($e->getMessage(), get_class($e));
+	critical_error($e->getMessage(), 'Error');
 }
 
 
@@ -47,6 +51,10 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	// Retrieve the CAD Result
 	$cadResult = new CadResult($jobID);
+	if (!isset($cadResult->job_id))
+	{
+		critical_error('The CAD result for this ID was not found.', 'Not Found');
+	}
 
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
@@ -76,6 +84,13 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	if (!$cadResult->checkCadResultAvailability($user->Group))
 		critical_error('You do not have privilege to see this CAD result.');
+
+	$avail_pfb = $cadResult->feedbackAvailability('personal', $user);
+	$avail_cfb = $cadResult->feedbackAvailability('consensual', $user);
+	if ($avail_cfb == 'locked' && $feedbackMode == 'consensual')
+		critical_error('You can not enter consensual mode.');
+	$feedback_status = $feedbackMode == 'personal' ? $avail_pfb : $avail_cfb;
+
 
 	// Enabling plugin-specific template directory
 	$td = $smarty->template_dir;
@@ -121,6 +136,7 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
+		'feedbackStatus' => $feedback_status,
 		'requiringFiles' => implode("\n", $requiringFiles),
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
@@ -146,7 +162,7 @@ function critical_error($message, $title = null)
 	$smarty->assign(array(
 		'params' => array('toTopDir' => '../'),
 		'message' => $message,
-		'title' => $title
+		'errorTitle' => $title
 	));
 	$smarty->display('critical_error.tpl');
 	exit();

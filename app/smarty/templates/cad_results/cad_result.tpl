@@ -17,6 +17,7 @@ circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
 circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
+circus.feedback.feedbackStatus = "{$feedbackStatus}";
 </script>
 
 {foreach from=$extensions item=ext}
