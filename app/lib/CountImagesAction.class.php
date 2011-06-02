@@ -38,10 +38,6 @@ class CountImagesAction extends ApiAction
 		if((isset($seriesUIDs) && isset($studyUIDs))
 			|| (!isset($seriesUIDs) && !isset($studyUIDs)))
 		{
-			echo "error<br>";
-			var_dump($seriesUIDs);
-			var_dump($studyUIDs);
-			
 			return FALSE;
 		}
 		return TRUE;
