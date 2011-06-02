@@ -41,12 +41,12 @@
 			$sidArr[] = DBConnector::query($sqlStr, $item, 'SCALAR');
 		}
 
-		// Get storage ID of first series
-		$sqlStr= "SELECT storage_id FROM series_list WHERE sid=?";
-		$storageID =  DBConnector::query($sqlStr, $sidArr[0], 'SCALAR');
+		// Get current storage ID for plugin result
+		$sqlStr= "SELECT storage_id FROM storage_master WHERE type=2 AND current_use='t'";
+		$storageID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
 
+		// Dupe check 
 		$colArr =array();
-
 		$sqlStr = "SELECT * FROM executed_plugin_list el, executed_series_list es"
 				. " WHERE el.plugin_id=? AND el.job_id=es.job_id AND el.status>0"
 				. " AND (";
@@ -104,12 +104,6 @@
 			// Get new job ID
 			$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
 			$jobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
-
-			// Set new job ID
-			$sqlStr = "SELECT setval('executed_plugin_list_job_id_seq', ?, true)";
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->bindValue(1, $jobID);
-			$stmt->execute();
 
 			// Register into "execxuted_plugin_list"
 			$sqlStr = "INSERT INTO executed_plugin_list"
