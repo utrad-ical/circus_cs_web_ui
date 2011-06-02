@@ -29,7 +29,14 @@ if ($validator->validate($_REQUEST))
 	$params = $validator->output;
 }
 
-show_cad_results($params['jobID'], $params['feedbackMode']);
+try
+{
+	show_cad_results($params['jobID'], $params['feedbackMode']);
+}
+catch (Exception $e)
+{
+	critical_error($e->getMessage(), get_class($e));
+}
 
 
 /**
@@ -46,11 +53,12 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	$params['toTopDir'] = '../';
 	$sort = $cadResult->sorter();
-	$user = $_SESSION['userID'];
+	$user = Auth::currentUser();
+	$user_id = $user->user_id;
 
 	if ($feedbackMode == 'personal')
 	{
-		$feedback = $cadResult->queryFeedback('user', $_SESSION['userID']);
+		$feedback = $cadResult->queryFeedback('user', $user_id);
 	}
 	else
 	{
@@ -65,6 +73,9 @@ function show_cad_results($jobID, $feedbackMode) {
 	{
 		$feedback = null;
 	}
+
+	if (!$cadResult->checkCadResultAvailability($user->Group))
+		critical_error('You do not have privilege to see this CAD result.');
 
 	// Enabling plugin-specific template directory
 	$td = $smarty->template_dir;
@@ -127,6 +138,18 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	// Render using Smarty
 	$smarty->display('cad_result.tpl');
+}
+
+function critical_error($message, $title = null)
+{
+	$smarty = new SmartyEx();
+	$smarty->assign(array(
+		'params' => array('toTopDir' => '../'),
+		'message' => $message,
+		'title' => $title
+	));
+	$smarty->display('critical_error.tpl');
+	exit();
 }
 
 ?>
