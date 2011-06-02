@@ -410,16 +410,12 @@
 
 	$detailParams['imgLeftPos'] = (256 * $RESCALE_RATIO_OF_SERIES_DETAIL / 2) - ($detailParams['dispWidth'] / 2);
 	$detailParams['imgNumStrLeftPos'] = $detailParams['imgLeftPos'] + 5;
-
-	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
-	$stmt->bindParam(1, $params['modality']);
-	$stmt->execute();
 	//------------------------------------------------------------------------------------------------------------------
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Retrieve preset grayscales
 	//------------------------------------------------------------------------------------------------------------------
-	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
+	$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priority ASC");
 	$stmt->bindParam(1, $params['modality']);
 	$stmt->execute();
 
@@ -428,7 +424,7 @@
 
 	while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 	{
-		if($result['priolity'] == 1)
+		if($result['priority'] == 1)
 		{
 			$detailParams['windowLevel'] = $result['window_level'];
 			$detailParams['windowWidth'] = $result['window_width'];

@@ -98,8 +98,8 @@
 			$pdo->beginTransaction();
 			//---------------------------------------------------------------------------------------------------------
 
-			// Get priolity
-			$priolity = 1;
+			// Get priority
+			$priority = 1;
 
 			// Get new job ID
 			$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
@@ -120,10 +120,10 @@
 
 			// Register into "job_queue"
 			$sqlStr = "INSERT INTO job_queue"
-					. " (job_id, plugin_id, priolity, status, exec_user, registered_at, updated_at)"
+					. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
 					. " VALUES (?, ?, ?, 1, ?, ?, ?)";
 			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
+			$stmt->execute(array($jobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
 
 			// Register into executed_series_list and job_queue_series
 			for($i=0; $i<$seriesNum; $i++)
