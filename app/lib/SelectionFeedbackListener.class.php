@@ -49,7 +49,7 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::prepareSaveBlockFeedback()
 	 */
-	function prepareSaveBlockFeedback()
+	public function prepareSaveBlockFeedback()
 	{
 		$pdo = DBConnector::getConnection();
 		$this->_sth = $pdo->prepare(
@@ -62,7 +62,7 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::saveBlockFeedback()
 	 */
-	function saveBlockFeedback($fb_id, $display_id, $block_feedback)
+	public function saveBlockFeedback($fb_id, $display_id, $block_feedback)
 	{
 		$this->_sth->execute(array(
 			$display_id,
@@ -75,7 +75,7 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::loadBlockFeedback()
 	 */
-	function loadBlockFeedback($fb_id)
+	public function loadBlockFeedback($fb_id)
 	{
 		$sql = 'SELECT * FROM candidate_classification WHERE fb_id=?';
 		$rows = DBConnector::query($sql, array($fb_id), 'ALL_ASSOC');
@@ -85,6 +85,50 @@ class SelectionFeedbackListener extends FeedbackListener
 			$result[$row['candidate_id']] = array(
 				'selection' => $row['evaluation']
 			);
+		}
+		return $result;
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see FeedbackListener::integrateConsensualFeedback()
+	 */
+	public function integrateConsensualFeedback(array $personal_fb_list)
+	{
+		if (!is_array($personal_fb_list))
+			return array();
+		$result = array();
+		$map = array();
+
+		// Build personal => consensual opinion map
+		foreach ($this->params['personal'] as $p_selection)
+		{
+			$v = $p_selection['value'];
+			if (isset($p_selection['consensualMapsTo']))
+				$map[$v] = $p_selection['consensualMapsTo'];
+			else
+				$map[$v] = $v;
+		}
+		// Integrate personal opinions and make consensual opinion
+		foreach ($personal_fb_list as $pfb)
+		{
+			foreach ($pfb->blockFeedback as $display_id => $block)
+			{
+				if (!isset($result[$display_id]))
+					$result[$display_id] = array(
+						'opinions' => array()
+					);
+				$opinion = $map[$block['selection']];
+				$result[$display_id]['opinions'][$opinion][] = $pfb->entered_by;
+			}
+		}
+		foreach ($result as &$block)
+		{
+			if (count($block['opinions']) == 1) // All opinions are the same
+			{
+				$selection = array_keys($block['opinions']);
+				$block['selection'] = $selection[0];
+			}
 		}
 		return $result;
 	}

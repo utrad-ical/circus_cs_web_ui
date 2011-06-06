@@ -64,6 +64,22 @@ function show_cad_results($jobID, $feedbackMode) {
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
 
+	if (!$cadResult->checkCadResultAvailability($user->Group))
+		critical_error('You do not have privilege to see this CAD result.');
+
+	// Enabling plugin-specific template directory
+	$td = $smarty->template_dir;
+	$smarty->template_dir = array(
+		$cadResult->pathOfPluginWeb(),
+		$td . $DIR_SEPARATOR . 'cad_results',
+		$td
+	);
+
+	$displayPresenter = $cadResult->displayPresenter();
+	$displayPresenter->prepare($smarty);
+	$feedbackListener = $cadResult->feedbackListener();
+	$feedbackListener->prepare($smarty);
+
 	if ($feedbackMode == 'personal')
 	{
 		$feedback = $cadResult->queryFeedback('user', $user_id);
@@ -80,30 +96,21 @@ function show_cad_results($jobID, $feedbackMode) {
 	else
 	{
 		$feedback = null;
+		if ($feedbackMode == 'consensual')
+		{
+			$pfbs = $cadResult->queryFeedback('personal');
+			foreach ($pfbs as $pfb) $pfb->loadFeedback();
+			$feedback = array(
+				'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs)
+			);
+		}
 	}
-
-	if (!$cadResult->checkCadResultAvailability($user->Group))
-		critical_error('You do not have privilege to see this CAD result.');
 
 	$avail_pfb = $cadResult->feedbackAvailability('personal', $user);
 	$avail_cfb = $cadResult->feedbackAvailability('consensual', $user);
 	if ($avail_cfb == 'locked' && $feedbackMode == 'consensual')
 		critical_error('You can not enter consensual mode.');
 	$feedback_status = $feedbackMode == 'personal' ? $avail_pfb : $avail_cfb;
-
-
-	// Enabling plugin-specific template directory
-	$td = $smarty->template_dir;
-	$smarty->template_dir = array(
-		$cadResult->pathOfPluginWeb(),
-		$td . $DIR_SEPARATOR . 'cad_results',
-		$td
-	);
-
-	$displayPresenter = $cadResult->displayPresenter();
-	$displayPresenter->prepare($smarty);
-	$feedbackListener = $cadResult->feedbackListener();
-	$feedbackListener->prepare($smarty);
 
 	$requiringFiles = array();
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());

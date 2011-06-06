@@ -60,7 +60,7 @@ abstract class BlockElement
 	}
 
 	/**
-	 * Provides additional information to set up this evaluation listener
+	 * Provides additional information to set up this block element.
 	 * (for instance, selections for SelectionFeedbackListener,
 	 * or min/max value for SliderFeedbackListener).
 	 * This information will be defined by plugin's presentation.json file.
@@ -70,6 +70,15 @@ abstract class BlockElement
 	{
 		if (is_array($params))
 			$this->params = array_merge($this->defaultParams(), $params);
+	}
+
+	/**
+	 * Returns the parameters.
+	 * @return array The element parameters.
+	 */
+	function getParameter()
+	{
+		return $this->params;
 	}
 }
 

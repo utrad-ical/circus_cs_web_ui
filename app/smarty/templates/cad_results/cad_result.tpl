@@ -19,6 +19,8 @@ circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 circus.feedback.feedbackStatus = "{$feedbackStatus}";
 circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
+circus.feedback.feedbackListenerParams = {$feedbackListener->getParameter()|@json_encode};
+circus.feedback.displayPresenterParams = {$displayPresenter->getParameter()|@json_encode};
 </script>
 
 {foreach from=$extensions item=ext}

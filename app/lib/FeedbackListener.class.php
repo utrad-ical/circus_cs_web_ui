@@ -39,6 +39,19 @@ abstract class FeedbackListener extends BlockElement
 	 * @return array The list of block feedback. Each key holds a display ID.
 	 */
 	abstract public function loadBlockFeedback($fb_id);
+
+	/**
+	 * Create the initial consensual feedback data from the given list of
+	 * persoanl feedback.
+	 * @param array $personal_fb_list The list of Feedback instance.
+	 * @return array The array of block feedback. The keys are
+	 * display IDs, and the values are the block feedback data.
+	 * If personal/consensual integration is not supported, returns null.
+	 */
+	public function integrateConsensualFeedback(array $personal_fb_list)
+	{
+		return null;
+	}
 }
 
 ?>
