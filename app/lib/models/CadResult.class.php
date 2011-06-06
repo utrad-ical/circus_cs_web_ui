@@ -298,6 +298,25 @@ class CadResult extends Model
 	}
 
 	/**
+	 * Builds extensions.
+	 */
+	public function buildExtensions(Smarty $smarty)
+	{
+		$this->loadPresentationConfiguration();
+		$pr = $this->presentation;
+		$result = array();
+		if (!is_array($pr['extensions']))
+			return $result;
+		foreach ($pr['extensions'] as $ext)
+		{
+			$type = $ext['type'];
+			$result[] = new $type($this, $smarty, $ext['priority'] ?: 0);
+		}
+		usort($result, function ($a, $b) { return $b->priority - $a->priority; });
+		return $result;
+	}
+
+	/**
 	 * Returns the plugin web configuration diretory.
 	 * This directory contains presentation.json configuration file,
 	 * plugin-specific templates, etc.

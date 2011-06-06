@@ -27,9 +27,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	protected function defaultParams()
 	{
 		return array(
-			'resultImage' => 'result%03d.png',
-			'useCadDetail' => true,
-			'useFnInput' => true
+			'resultImage' => 'result%03d.png'
 		);
 	}
 

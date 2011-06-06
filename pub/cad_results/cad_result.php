@@ -116,11 +116,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
 
-	$extensions = array(
-		new CadDetailTab($cadResult, $smarty, 1),
-		new FnInputTab($cadResult, $smarty, 2)
-	);
-	usort($extensions, function ($a, $b) { return $b->priority - $a->priority; });
+	$extensions = $cadResult->buildExtensions($smarty);
 
 	$tabs = array();
 	foreach ($extensions as $ext)

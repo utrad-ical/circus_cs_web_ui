@@ -21,6 +21,16 @@
 			]
 		}
 	},
+	"extensions": [
+		{
+			"type": "CadDetailTab",
+			"priority": 1
+		},
+		{
+			"type": "FnInputTab",
+			"priority": 2
+		}
+	],
 	"sorter": {
 		"visible": true,
 		"defaultKey": "confidence",
