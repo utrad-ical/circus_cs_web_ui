@@ -29,7 +29,6 @@ $(function () {
 				var dat = user_data[key];
 				if (dat === true) dat = 'true';
 				if (dat === false) dat = 'false';
-				console.log(key, '=>', dat);
 				$('input[type=radio][name=' + key + ']', editor).val([dat]);
 				$('input[type=checkbox][name=' + key + ']', editor).val([dat]);
 				$('input[type=text][name=' + key + ']', editor).val(dat);
