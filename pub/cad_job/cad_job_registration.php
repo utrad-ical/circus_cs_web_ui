@@ -34,11 +34,13 @@
 		$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
 
 		// Get series sid
-		$sqlStr = "SELECT sid FROM series_list WHERE series_instance_uid=?";
+		$sqlStr = "SELECT sr.sid, sr.series_description, st.manufacturer, st.model_name, st.station_name"
+				. " FROM series_list sr, study_list st"
+				. " WHERE sr.series_instance_uid=? AND st.study_instance_uid=sr.study_instance_uid";
 
 		foreach($seriesUIDArr as $item)
 		{
-			$sidArr[] = DBConnector::query($sqlStr, $item, 'SCALAR');
+			$sidArr[] = DBConnector::query($sqlStr, $item, 'ARRAY_NUM');
 		}
 
 		// Get current storage ID for plugin result
@@ -60,7 +62,7 @@
 			$sqlStr .= "(es.volume_id=? AND es.series_sid=?)";
 
 			$colArr[] = $i;
-			$colArr[] = $sidArr[$i];
+			$colArr[] = $sidArr[$i][0];
 		}
 		$sqlStr .= ");";
 
@@ -122,15 +124,45 @@
 			// Register into executed_series_list and job_queue_series
 			for($i=0; $i<$seriesNum; $i++)
 			{
-				$sqlParams = array($jobID, $i, $sidArr[$i]);
+				$sqlParams = array($jobID, $i, $sidArr[$i][0]);
 
 				$sqlStr = "INSERT INTO executed_series_list(job_id, volume_id, series_sid)"
 						. " VALUES (?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
+				
+				// Match plug-in cad series (using series description only)
+				$sqlStr = "SELECT start_img_num, end_img_num, required_private_tags"
+						. " FROM plugin_cad_series"
+						. " WHERE plugin_id=? AND volume_id=? AND series_description=?";
 
-				$sqlStr = "INSERT INTO job_queue_series(job_id, volume_id, series_sid)"
-						. " VALUES (?, ?, ?)";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute(array($pluginID, $i, $sidArr[$i][1]));
+				
+				if($stmt->rowCount() == 1)
+				{
+					$res = $stmt->fetch(PDO::FETCH_NUM);
+					$sqlParams[] = $res[0];
+					$sqlParams[] = $res[1];
+					$sqlParams[] = $res[2];
+				}
+				else
+				{
+					$sqlStr = "SELECT start_img_num, end_img_num, required_private_tags "
+							. " FROM plugin_cad_series"
+							. " WHERE plugin_id=? AND volume_id=? AND series_description='(default)'";
+					
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute(array($pluginID, $i));
+					$res = $stmt->fetch(PDO::FETCH_NUM);
+					$sqlParams[] = $res[0];
+					$sqlParams[] = $res[1];
+					$sqlParams[] = $res[2];
+				}
+				
+				$sqlStr = "INSERT INTO job_queue_series"
+						. " (job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags)"
+						. " VALUES (?, ?, ?, ?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
 			}
