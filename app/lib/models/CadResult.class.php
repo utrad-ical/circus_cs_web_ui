@@ -56,7 +56,7 @@ class CadResult extends Model
 				break;
 			case "consensual":
 				return array_filter($feedback_list, function($in) {
-					return $in->is_consenaual == true;
+					return $in->is_consensual == true;
 				});
 				break;
 			case "all":
@@ -112,7 +112,7 @@ class CadResult extends Model
 			return 'disabled';
 		if ($feedbackMode == 'consensual' && !$user->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
 			return 'disabled';
-		if (count($my_personal_feedback))
+		if ($feedbackMode == 'personal' && count($my_personal_feedback))
 			return 'disabled';
 		$consensual_feedback = $this->queryFeedback('consensual');
 		if (count($consensual_feedback))

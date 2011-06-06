@@ -137,6 +137,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
+		'avail_cfb' => $avail_cfb,
 		'requiringFiles' => implode("\n", $requiringFiles),
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),

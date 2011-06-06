@@ -18,6 +18,18 @@ class Feedback extends Model
 	);
 
 	/**
+	 * Feedback status is 'registered'.
+	 * @var int
+	 */
+	const REGISTERED = 1;
+
+	/**
+	 * Feedback status is 'temporary' (not registered).
+	 * @var int
+	 */
+	const TEMPORARY = 0;
+
+	/**
 	 * The block-based feedbacks.
 	 * keys are the display_id's, and values are block feedback data for which
 	 * the associated evaluation listener can recognize.
@@ -52,7 +64,6 @@ class Feedback extends Model
 			$listener->saveBlockFeedback($this->fb_id, $display_id, $block_fb);
 		}
 		$pdo->commit();
-		// $pdo->rollBack();
 		$this->blockFeedback = $data['blockFeedback'];
 		$this->additionalFeedback = $data['additionalFeedback'];
 		return true;
