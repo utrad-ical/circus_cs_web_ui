@@ -149,22 +149,6 @@ $(function(){
 		circus.feedback.disable();
 	}
 
-	var sort = circus.cadresult.sort;
-	if (sort.key && (sort.order == 'asc' || sort.order == 'desc'))
-	{
-		circus.cadresult.sortBlocks(sort.key, sort.order);
-	}
-	if ($('#sorterArea'))
-	{
-		$('#sorterArea select[name=sortKey]').val(sort.key);
-		$('#sorterArea input[name=sortOrder]').val([sort.order]);
-		$('#sorterArea input, #sorterArea select').change(function() {
-			var key = $('#sorterArea select[name=sortKey]').val();
-			var order = $('#sorterArea input[name=sortOrder]:checked').val();
-			circus.cadresult.sortBlocks(key, order);
-		});
-	}
-
 	$('#register').click(circus.feedback.register);
 
 	$('.tabArea a').click(function(event) {

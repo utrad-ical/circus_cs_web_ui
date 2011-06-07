@@ -60,7 +60,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty = new SmartyEx();
 
 	$params['toTopDir'] = '../';
-	$sort = $cadResult->sorter();
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
 
@@ -121,13 +120,21 @@ function show_cad_results($jobID, $feedbackMode) {
 	$extensions = $cadResult->buildExtensions();
 
 	$tabs = array();
+	$extParameters = array();
 	foreach ($extensions as $ext)
 	{
 		$ext->setSmarty($smarty);
 		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);
+		$extParameters[get_class($ext)] = $ext->getParameter();
 	}
+
+	$presentationParams = array(
+		'displayPresenter' => $displayPresenter->getParameter(),
+		'feedbackListener' => $feedbackListener->getParameter(),
+		'extensions' => $extParameters
+	);
 
 	$pop = $cadResult->webPathOfPluginPub() . '/';
 	if (file_exists($pop . 'cad_result.css'))
@@ -151,12 +158,11 @@ function show_cad_results($jobID, $feedbackMode) {
 		'series' => $cadResult->Series[0],
 		'displayPresenter' => $displayPresenter,
 		'feedbackListener' => $feedbackListener,
+		'presentationParams' => $presentationParams,
 		'feedbacks' => $feedback,
 		'params' => $params,
-		'sorter' => $sort,
 		'tabs' => $tabs,
 		'extensions' => $extensions,
-		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])
 	));
 
 	// Render using Smarty

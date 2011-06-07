@@ -32,7 +32,6 @@ class CadResult extends Model
 	protected $attributes;
 	protected $displayPresenter;
 	protected $feedbackListener;
-	protected $blockSorter;
 	protected $rawResult;
 	protected $presentation;
 
@@ -250,17 +249,6 @@ class CadResult extends Model
 				$result = array_merge($result, $tmp);
 		}
 		$this->presentation = $result;
-	}
-
-	/**
-	 * Return if block sorting is available in this CAD result, which is
-	 * defined in the presentation.json file.
-	 * @return mixed Data from presentation.json
-	 */
-	public function sorter()
-	{
-		$this->loadPresentationConfiguration();
-		return $this->presentation['sorter'];
 	}
 
 	/**
