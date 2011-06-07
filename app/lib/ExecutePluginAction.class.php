@@ -20,8 +20,10 @@ class ExecutePluginAction extends ApiAction
 			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
 		}
 		
-		$plugin = $params['plugin'];
-		$jobID = self::register_job($plugin);
+		// Throws ApiException if failed
+		self::check_register($params);
+		
+		$jobID = self::register_job($params);
 		
 //		$result = QueryJobAction::queryJob(jobID);
 		$result = array("jobID" => $jobID);
@@ -33,21 +35,93 @@ class ExecutePluginAction extends ApiAction
 	
 	private function check_params($params)
 	{
-		$plugin = $params['plugin'];
-		
-		if (!is_array($plugin)) {
-			return FALSE;
-		}
-		
-		$name      = $plugin['pluginName'];
-		$version   = $plugin['pluginVersion'];
-		$seriesUID = $plugin['seriesUID'];
+		$name      = $params['pluginName'];
+		$version   = $params['pluginVersion'];
+		$seriesUID = $params['seriesUID'];
 		
 		if (!isset($name) || !isset($version) || !is_array($seriesUID)) {
 			return FALSE;
 		}
 		
 		return TRUE;
+	}
+	
+	private function check_register($params)
+	{
+		$name         = $params['pluginName'];
+		$version      = $params['pluginVersion'];
+		$seriesUIDArr = $params['seriesUID'];
+		
+		// Connect to SQL Server
+		$pdo = DBConnector::getConnection();
+		
+		// Check series record count
+		
+		// Search plugin id
+		$sqlStr = "SELECT pm.plugin_id, pm.plugin_name, pm.version, pm.exec_enabled, max(cs.series_description)"
+				. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
+				. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id=cm.plugin_id"
+				. " AND pm.plugin_name=?"
+				. " AND pm.version=?"
+				. " AND cs.volume_id=0"
+				. " GROUP BY pm.plugin_id, pm.plugin_name, pm.version, pm.exec_enabled, cm.label_order"
+				. " ORDER BY cm.label_order ASC";
+		
+		$stmtCADMaster = $pdo->prepare($sqlStr);
+		$stmtCADMaster->execute(array($name, $version));
+		
+		if ($stmtCADMaster->rowCount() <= 0) {
+			throw new ApiException("Plugin(name:".$name.", version:".$version.") is not found.", ApiResponse::STATUS_ERR_OPE);
+		}
+		
+		$result = $stmtCADMaster->fetch(PDO::FETCH_ASSOC);
+		$plugin_id = $result['plugin_id'];
+		
+		// Check ruleset
+		for ($vid = 0; $vid < $stmtSeries->rowCount(); $vid++)
+		{
+			$sqlStr = "SELECT * FROM plugin_cad_series"
+					. " WHERE plugin_id=?"
+					. " AND volume_id=?";
+			
+			$stmtRule = $pdo->prepare($sqlStr);
+			$stmtRule->execute(array($plugin_id, $vid));
+			
+			if ($stmtRule->rowCount() <= 0) {
+				throw new ApiException("Series count is not match.", ApiResponse::STATUS_ERR_OPE);
+			}
+			
+			$result = $stmtRule->fetch(PDO::FETCH_ASSOC);
+		}
+		
+		throw new ApiException("Series count is not match.", ApiResponse::STATUS_ERR_OPE);
+		
+		
+		// Check plugin status
+		while($resultCADMaster = $stmtCADMaster->fetch(PDO::FETCH_NUM))
+		{
+			$sqlStr = "SELECT el.job_id, el.status, el.executed_at"
+					. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm"
+					. " WHERE pm.plugin_name=? AND pm.version=?"
+					. " AND pm.plugin_id=el.plugin_id"
+					. " AND el.job_id=es.job_id"
+					. " AND es.volume_id=0"
+					. " AND es.series_sid=?"
+					. " ORDER BY el.job_id DESC";
+			
+			$stmtCADExec = $pdo->prepare($sqlStr);
+			$stmtCADExec->execute(array($name, $version, $seriesUIDArr));
+			if ($stmtCADExec->rowCount() >= 1)
+			{
+				while($resultCADExec = $stmtCADExec->fetch(PDO::FETCH_NUM))
+				{
+					// executed or failed
+					;
+				}
+			}
+		}
+		
+		$pdo = null;
 	}
 	
 	
