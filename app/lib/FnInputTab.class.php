@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * FnInputTab adds 'FN Input' tab and provides 'fn_location'
+ * additional feedback mechanism.
+ * @author Soichiro Miki <smiki-tky@umin.ac.jp>
+ */
 class FnInputTab extends CadResultExtension
 {
 	public function requiringFiles()
@@ -23,9 +28,9 @@ class FnInputTab extends CadResultExtension
 		);
 	}
 
-	public function afterBlocks($smarty)
+	public function afterBlocks()
 	{
-		return $smarty->fetch('fn_input_afterblocks.tpl');
+		return $this->smarty->fetch('fn_input_afterblocks.tpl');
 	}
 
 	public function saveAdditionalFeedback($data)

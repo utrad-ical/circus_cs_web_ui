@@ -6,7 +6,7 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-abstract class FeedbackListener extends BlockElement
+abstract class FeedbackListener extends CadBlockElement
 {
 	/*
 	 * Returns the HTML that renders this evaluation listener.
@@ -14,9 +14,9 @@ abstract class FeedbackListener extends BlockElement
 	 * HTML. Writing or reading the feedback data on this HTML will be
 	 * done by the supporting JavaScript file.
 	 */
-	public function show($smarty)
+	public function show()
 	{
-		$smarty->assign('feedbackListenerParams', $this->params);
+		$this->smarty->assign('feedbackListenerParams', $this->params);
 	}
 
 	/**

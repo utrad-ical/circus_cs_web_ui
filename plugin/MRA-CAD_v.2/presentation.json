@@ -24,11 +24,15 @@
 	"extensions": [
 		{
 			"type": "CadDetailTab",
-			"priority": 1
+			"params": {
+				"priority": 1
+			}
 		},
 		{
 			"type": "FnInputTab",
-			"priority": 2
+			"params": {
+				"priority": 2
+			}
 		}
 	],
 	"sorter": {

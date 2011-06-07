@@ -43,10 +43,9 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			sprintf($this->params['resultImage'], $display_id);
 	}
 
-	public function show($smarty)
+	public function show()
 	{
-		return $this->executeTemplate(
-			$smarty, 'lesion_cand_display_presenter.tpl');
+		return $this->executeTemplate('lesion_cand_display_presenter.tpl');
 	}
 
 	public function extractDisplays($input)

@@ -300,7 +300,7 @@ class CadResult extends Model
 	/**
 	 * Builds extensions.
 	 */
-	public function buildExtensions(Smarty $smarty)
+	public function buildExtensions()
 	{
 		$this->loadPresentationConfiguration();
 		$pr = $this->presentation;
@@ -310,9 +310,15 @@ class CadResult extends Model
 		foreach ($pr['extensions'] as $ext)
 		{
 			$type = $ext['type'];
-			$result[] = new $type($this, $smarty, $ext['priority'] ?: 0);
+			$item = new $type($this);
+			$item->setParameter($ext['params']);
+			$result[] = $item;
 		}
-		usort($result, function ($a, $b) { return $b->priority - $a->priority; });
+		usort($result, function ($a, $b) {
+			$ap = $a->getParameter();
+			$bp = $b->getparameter();
+			return $bp['priority'] - $ap['priority'];
+		});
 		return $result;
 	}
 

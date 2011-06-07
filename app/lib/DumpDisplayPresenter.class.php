@@ -17,9 +17,9 @@ class DumpDisplayPresenter extends DisplayPresenter
 		return 'css/dump_display_presenter.css';
 	}
 
-	public function show($smarty)
+	public function show()
 	{
-		return $this->executeTemplate($smarty, 'dump_display_presenter.tpl');
+		return $this->executeTemplate('dump_display_presenter.tpl');
 	}
 }
 

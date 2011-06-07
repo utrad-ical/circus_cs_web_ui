@@ -18,7 +18,7 @@ class NullFeedbackListener extends FeedbackListener
 	/**
 	 * @see FeedbackListener::show()
 	 */
-	public function show($smarty)
+	public function show()
 	{
 		return '';
 	}

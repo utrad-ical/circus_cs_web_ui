@@ -24,10 +24,10 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::show()
 	 */
-	public function show($smarty)
+	public function show()
 	{
-		parent::show($smarty);
-		return $smarty->fetch('selection_feedback_listener.tpl');
+		parent::show();
+		return $this->smarty->fetch('selection_feedback_listener.tpl');
 	}
 
 	/**

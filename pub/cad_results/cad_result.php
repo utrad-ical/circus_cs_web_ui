@@ -13,13 +13,13 @@ $validator->addRules(array(
 	'jobID' => array(
 		'label' => 'Job ID',
 		'type' => 'int',
-		'required' => false, // true, // transient
+		'required' => true,
 		'min' => 1
 	),
 	'feedbackMode' => array(
 		'label' => 'feedback mode',
 		'type' => 'select',
-		'required' => false, // true, // transient
+		'required' => false,
 		'default' => 'personal',
 		'options' => array('personal', 'consensual'),
 	)
@@ -76,9 +76,11 @@ function show_cad_results($jobID, $feedbackMode) {
 	);
 
 	$displayPresenter = $cadResult->displayPresenter();
-	$displayPresenter->prepare($smarty);
+	$displayPresenter->setSmarty($smarty);
+	$displayPresenter->prepare();
 	$feedbackListener = $cadResult->feedbackListener();
-	$feedbackListener->prepare($smarty);
+	$feedbackListener->setSmarty($smarty);
+	$feedbackListener->prepare();
 
 	if ($feedbackMode == 'personal')
 	{
@@ -116,11 +118,12 @@ function show_cad_results($jobID, $feedbackMode) {
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
 
-	$extensions = $cadResult->buildExtensions($smarty);
+	$extensions = $cadResult->buildExtensions();
 
 	$tabs = array();
 	foreach ($extensions as $ext)
 	{
+		$ext->setSmarty($smarty);
 		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);

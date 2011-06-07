@@ -5,7 +5,7 @@
  * how 'CAD displays' are visualized in web browsers.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class DisplayPresenter extends BlockElement
+class DisplayPresenter extends CadBlockElement
 {
 	/**
 	 * Protected method to execute Smarty.
@@ -14,8 +14,9 @@ class DisplayPresenter extends BlockElement
 	 * @param Smarty $smarty
 	 * @param string $template The name of the template file.
 	 */
-	protected function executeTemplate($smarty, $template)
+	protected function executeTemplate($template)
 	{
+		$smarty = $this->smarty;
 		$smarty->assign('displayPresenterParams', $this->params);
 		if ($smarty->template_exists("display_presenter.tpl"))
 		{
@@ -31,7 +32,7 @@ class DisplayPresenter extends BlockElement
 	 * Returns the HTML that describes one given CAD display.
 	 * @param Smarty the Smarty instance
 	 */
-	public function show($smarty)
+	public function show()
 	{
 		return $this->executeTemplate($smarty, 'default_display_presenter.tpl');
 	}

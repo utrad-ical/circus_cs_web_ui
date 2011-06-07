@@ -16,9 +16,9 @@ class TextFeedbackListener extends FeedbackListener
 		);
 	}
 
-	public function show($smarty)
+	public function show()
 	{
-		parent::show($smarty);
+		parent::show();
 		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
 	}
 
