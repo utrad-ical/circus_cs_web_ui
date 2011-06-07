@@ -391,7 +391,8 @@
 					. " AND pm.plugin_id=el.plugin_id"
 					. " AND el.job_id=es.job_id"
 					. " AND es.volume_id=0"
-					. " AND es.series_sid=?";
+					. " AND es.series_sid=?"
+					. " ORDER BY el.job_id DESC";
 
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
@@ -423,7 +424,7 @@
 
 					$stmtCADExec->execute($cadCondArr);
 
-					if($stmtCADExec->rowCount() == 1)
+					if($stmtCADExec->rowCount() >= 1)
 					{
 						$cadColSettings[$cadNum][3] = 1;
 
@@ -451,7 +452,7 @@
 					$cadNum++;
 
 				} // end while
-
+				
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
 					$ptID   = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);

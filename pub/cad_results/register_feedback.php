@@ -13,43 +13,39 @@ $validator->addRules(array(
 		"type" => "int",
 		"required" => true,
 		"min" => 1,
-		"errorMes" => "[ERROR] CAD Job ID is invalid."
 	),
 	"feedbackMode" => array(
 		"type" => "select",
 		"required" => true,
 		"options" => array("personal", "consensual"),
-		"errorMes" => "[ERROR] 'Feedback mode' is invalid."
 	),
 	"feedback" => array(
 		"type" => "json",
 		"required" => true,
-		"errorMes" => "[ERROR] Feedback data is invalid."
 	)
 ));
 
-if($validator->validate($_POST))
-{
-	$params = $validator->output;
-	$params['errorMessage'] = "";
-}
-else
-{
-	$params = $validator->output;
-	$params['errorMessage'] = implode('<br/>', $validator->errors);
-}
-
-$dstData = array();
-$is_consensual = $params['feedbackMode'] == 'consensual';
 try {
+	if($validator->validate($_POST))
+		$params = $validator->output;
+	else
+		throw new Exception(implode("\n", $validator->errors));
+	$is_consensual = $params['feedbackMode'] == 'consensual';
+
+	$dstData = array();
+
 	if (registerFeedback($params['jobID'], $params['feedback'], $is_consensual) === true)
-	{
-		echo json_encode(array('message' => 'Success!'));
-	} else {
-		echo json_encode(array('message' => 'Failed!'));
-	}
+		echo json_encode(array('status' => 'OK'));
+	else
+		throw new Exception('Failed!');
 } catch (Exception $e) {
-	echo json_encode(array('mesasge' => $e->getMessage()));
+	echo json_encode(array(
+		'action' => 'registerFeedback',
+		'status' => 'SysError',
+		'error' => array(
+			'mesasge' => $e->getMessage()
+		)
+	));
 }
 exit;
 
@@ -59,8 +55,7 @@ exit;
 function registerFeedback($job_id, $feedback, $is_consensual)
 {
 	$pdo = DBConnector::getConnection();
-	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$user_id = $_SESSION['userID'];
+	$user_id = Auth::currentUser()->user_id;
 	$fb = new Feedback();
 	$fb->save(array(
 		"Feedback" => array(

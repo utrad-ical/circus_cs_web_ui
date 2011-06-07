@@ -12,60 +12,59 @@
 //************************************************//
 
 (function($){
-	$.fn.radioToButton=function( styles ){
-
-		var SetStyle=function(jq,_mode){
-			$.each( styles, function(k,v){
-				jq.removeClass( v );
+	$.fn.radioToButton = function(styles) {
+		var SetStyle = function(jq, _mode) {
+			$.each(styles, function(k, v) {
+				jq.removeClass(v);
 			});
 			jq.addClass(styles[_mode]);
-			
 		};
 
-		return this.each(function(){
-			var _radio=$(this);
-			if(!_radio.is('input[type=radio]')) return;
-			
-			if(_radio.attr('label')){
-			var btn=$(document.createElement('a'))
-							.click(function(){return false;})
-							.addClass( _radio.attr('className') )
-							.text(_radio.attr('label'))
-							.attr('title',_radio.attr('title'));
+		return this.each(function() {
+			var _radio = $(this);
+			if (!_radio.is('input[type=radio]')) return;
+
+			if (_radio.attr('label')) {
+				var btn=$('<a>')
+					.addClass(_radio.attr('className'))
+					.text(_radio.attr('label'))
+					.attr('title', _radio.attr('title'));
 				btn.hover(
 					function(){
-						if( !_radio.attr('checked') && !_radio.attr('disabled') )
-							SetStyle($(this),'hover');
+						if (!_radio.attr('checked') && !_radio.attr('disabled'))
+							SetStyle($(this), 'hover');
 					},
 					function(){
-						if( !_radio.attr('checked') && !_radio.attr('disabled') )
-							SetStyle($(this),'normal');
+						if (!_radio.attr('checked') && !_radio.attr('disabled'))
+							SetStyle($(this), 'normal');
 					}
 				).click(function(){
 					_radio.click();
-					$(':radio[name='+_radio.attr('name')+']').trigger('flush');
+					var container = $(_radio).closest('form');
+					if (container.length == 0) container = $('body');
+					$(':radio[name='+_radio.attr('name')+']', container).trigger('flush');
+					return false;
 				})
 				.insertAfter(_radio);
 
-				_radio.bind('flush',function(){
-					// disabled
-					if( _radio.attr('disabled') ){
-						SetStyle( btn, 'disabled' );
-					}
+				_radio.bind('flush', function() {
 					// checked
-					else if( _radio.attr('checked') ){
-						SetStyle( btn, 'checked' );
+					if (_radio.attr('checked')) {
+						SetStyle(btn, 'checked');
+					}
+					// disabled
+					else if (_radio.attr('disabled')) {
+						SetStyle(btn, 'disabled');
 					}
 					// normal
 					else {
-						SetStyle( btn, 'normal' );
+						SetStyle(btn, 'normal');
 					}
 				});
-				
+
 				_radio.trigger('flush');
 				_radio.hide();
 			}
-
 		});
 	}
 })(jQuery);

@@ -22,13 +22,13 @@ $(function () {
 		var user_data = data[user_id];
 		$('#editor-header', editor).text('Editing: ' + user_data.user_id);
 		$('#target-user', editor).val(user_id);
+		$('#user-id, #enabled-true').attr('disabled', current_user == user_id ? 'disabled': '');
 		$.each(
 			['user_id', 'user_name', 'enabled', 'today_disp', 'darkroom', 'show_missed', 'anonymized'],
 			function (dum, key) {
 				var dat = user_data[key];
 				if (dat === true) dat = 'true';
 				if (dat === false) dat = 'false';
-				console.log(key, '=>', dat);
 				$('input[type=radio][name=' + key + ']', editor).val([dat]);
 				$('input[type=checkbox][name=' + key + ']', editor).val([dat]);
 				$('input[type=text][name=' + key + ']', editor).val(dat);
@@ -56,6 +56,7 @@ $(function () {
 		var editor = $('#editor');
 		$('#editor-header', editor).text('Add New User');
 		$('#target-user', editor).val('');
+		$('#user-id, #enabled-true').attr('disabled', '');
 		$('input[type=radio]', editor).val([]);
 		$('input[type=text]', editor).val('');
 		$('input[name=enabled]', editor).val(['true']);
@@ -159,7 +160,7 @@ $(function () {
 		<table class="detail-tbl">
 			<tr>
 				<th>User ID</th>
-				<td><input size="20" type="text" name="user_id" />
+				<td><input size="20" type="text" name="user_id" id="user-id" />
 				Use only alphabets and numbers.</td>
 			</tr>
 			<tr>

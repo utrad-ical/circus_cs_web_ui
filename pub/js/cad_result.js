@@ -25,8 +25,20 @@ circus.feedback = function() {
 			});
 			return results;
 		},
+		disable: function () {
+			$('.result-block').each(function () {
+				circus.evalListener.disable(this);
+			});
+		},
+		enable: function () {
+			$('.result-block').each(function () {
+				circus.evalListener.enable(this);
+			})
+		},
 		register_ok: function() {
 			var register_ok = true;
+			if (circus.feedback.feedbackStatus != 'normal')
+				register_ok = false;
 			var messages = [];
 			$('.result-block').each(function() {
 				var block = this;
@@ -70,14 +82,17 @@ circus.feedback = function() {
 			$.post("register_feedback.php",
 				{
 					jobID: $("#job-id").val(),
-					feedbackMode: 'personal',
+					feedbackMode: circus.feedback.feedbackMode,
 					feedback: JSON.stringify({blockFeedback:blockFeedback})
 				},
 				function (data)
 				{
-					alert(data);
+					if (data.status == 'OK')
+						location.reload(true);
+					else
+						alert(data.error.message);
 				},
-				"text"
+				"json"
 			);
 		}
 	};
@@ -121,6 +136,10 @@ $(function(){
 	circus.feedback.initialize();
 	circus.evalListener.setup();
 	circus.feedback.change();
+	if (circus.feedback.feedbackStatus == 'disabled')
+	{
+		circus.feedback.disable();
+	}
 
 	var sort = circus.cadresult.sort;
 	if (sort.key && (sort.order == 'asc' || sort.order == 'desc'))
@@ -145,5 +164,19 @@ $(function(){
 		var index = $('.tabArea a').index(target);
 		circus.cadresult.showTab(index);
 	});
+
+	$('#mode-form input[name=feedbackMode]')
+		.val([circus.feedback.feedbackMode])
+		.trigger('flush');
+	$('#mode-form a.radio-to-button-l').click(function() {
+		var mode = $('#mode-form input[name=feedbackMode]:checked').val();
+		if (mode != circus.feedback.feedbackMode)
+			$('#mode-form').submit();
+	});
+
+	if (circus.feedback.consensualFeedbackAvail != 'locked')
+	{
+		$('#consensual-mode').removeAttr('disabled').trigger('flush');
+	}
 
 });

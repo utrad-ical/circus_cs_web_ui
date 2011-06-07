@@ -130,7 +130,7 @@
 			//----------------------------------------------------------------------------------------------------
 			// Retrieve preset grayscales
 			//----------------------------------------------------------------------------------------------------
-			$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC");
+			$stmt = $pdo->prepare("SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priority ASC");
 			$stmt->bindParam(1, $params['modality']);
 			$stmt->execute();
 
@@ -139,7 +139,7 @@
 
 			while($result = $stmt->fetch(PDO::FETCH_ASSOC))
 			{
-				if($result['priolity'] == 1)
+				if($result['priority'] == 1)
 				{
 					$params['windowLevel'] = $result['window_level'];
 					$params['windowWidth'] = $result['window_width'];

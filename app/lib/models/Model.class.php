@@ -137,6 +137,11 @@ abstract class Model implements Iterator
 		}
 	}
 
+	public function __isset($name)
+	{
+		return isset($this->_data[$name]);
+	}
+
 	public function save($data)
 	{
 		$class = get_class($this);

@@ -113,14 +113,14 @@
 			$data['windowWidth']  = 0;
 			$data['presetName']   = "";
 
-			$sqlStr = "SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priolity ASC";
+			$sqlStr = "SELECT * FROM grayscale_preset WHERE modality=? ORDER BY priority ASC";
 			$result = DBConnector::query($sqlStr, $data['modality'], 'ALL_ASSOC');
 
 			$data['presetArr'] = array();
 
 			foreach($result as $key=>$item)
 			{
-				if($item['priolity'] == 1)
+				if($item['priority'] == 1)
 				{
 					$data['windowLevel'] = $item['window_level'];
 					$data['windowWidth'] = $item['window_width'];

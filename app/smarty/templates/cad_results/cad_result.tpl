@@ -17,6 +17,8 @@ circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
 circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
+circus.feedback.feedbackStatus = "{$feedbackStatus}";
+circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 </script>
 
 {foreach from=$extensions item=ext}
@@ -44,11 +46,18 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
     {$series->Study->study_date} ({$series->Study->study_id}) /
     {$series->Study->modality|escape}, {$series->series_description|escape} ({$series->series_number})
   </div>
+
+  <form id="mode-form" method="get" action="cad_result.php">
   <div>
-    <input type="radio" class="radio-to-button-l" name="mode" value="1" label="Personal Mode"/>
-    <input type="radio" class="radio-to-button-l" name="mode" value="2" label="Consensual Mode"/>
+    <input type="hidden" name="jobID" value="{$cadResult->job_id|escape}" />
+    <input type="radio" class="radio-to-button-l" name="feedbackMode" value="personal"
+      label="Personal Mode" />
+    <input type="radio" class="radio-to-button-l" name="feedbackMode" value="consensual"
+      label="Consensual Mode" disabled="disabled" id="consensual-mode" />
   </div>
+  </form>
   <div style="clear: both"></div>
+
   {if $sorter.visible}
   <div id="sorterArea" style="text-align: right;"><form name="sorter">
     Sort:
@@ -76,7 +85,9 @@ circus.feedback.feedbackMode = "{$feedbackMode}";
 
 <div id="register-pane">
 <input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" /><br />
-<ul id="register-error"></ul>
+<ul id="register-message"></ul>
+{if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}
+  {if $feedbacks->is_consensual}(by {$feedbacks->entered_by|escape}){/if}</p>{/if}
 </div>
 <form>
 <input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />
