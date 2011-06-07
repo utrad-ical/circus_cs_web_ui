@@ -58,11 +58,19 @@ class Feedback extends Model
 		$pdo->beginTransaction();
 		parent::save($data);
 
+		// insert block feedback
 		$listener->prepareSaveBlockFeedback();
 		foreach ($data['blockFeedback'] as $display_id => $block_fb)
 		{
 			$listener->saveBlockFeedback($this->fb_id, $display_id, $block_fb);
 		}
+		// insert additional feedback
+		$extensions = $cadResult->buildExtensions(null);
+		foreach ($extensions as $ext)
+		{
+			$ext->saveAdditionalFeedback($data['additionalFeedback']);
+		}
+
 		$pdo->commit();
 		$this->blockFeedback = $data['blockFeedback'];
 		$this->additionalFeedback = $data['additionalFeedback'];

@@ -17,13 +17,20 @@ circus.feedback = function() {
 			});
 		},
 		collect: function() {
-			var results = {};
+			var blockFeedback = {};
+			var additionalFeedback = {};
 			$('.result-block').each(function() {
 				var block = this;
 				var id = $(block).data('displayid');
-				results[id] = circus.evalListener.get(block);
+				blockFeedback[id] = circus.evalListener.get(block);
 			});
-			return results;
+			$.each(circus.feedback.additional, function (name, afb) {
+				additionalFeedback[afb.name] = afb.collect();
+			});
+			return {
+				blockFeedback: blockFeedback,
+				additionalFeedback: additionalFeedback
+			};
 		},
 		disable: function () {
 			$('.result-block').each(function () {
@@ -78,12 +85,13 @@ circus.feedback = function() {
 			})
 		},
 		register: function() {
-			var blockFeedback = circus.feedback.collect();
+			var feedback = circus.feedback.collect();
+			alert(JSON.stringify(feedback));
 			$.post("register_feedback.php",
 				{
 					jobID: $("#job-id").val(),
 					feedbackMode: circus.feedback.feedbackMode,
-					feedback: JSON.stringify({blockFeedback:blockFeedback})
+					feedback: JSON.stringify(feedback)
 				},
 				function (data)
 				{

@@ -58,14 +58,15 @@ function registerFeedback($job_id, $feedback, $is_consensual)
 	$user_id = Auth::currentUser()->user_id;
 	$fb = new Feedback();
 	$fb->save(array(
-		"Feedback" => array(
-			"job_id" => $job_id,
-			"is_consensual" => $is_consensual ? 'TRUE' : 'FALSE',
-			"status" => 1,
-			"entered_by" => $user_id,
-			"registered_at" => date('Y-m-d H:i:s')
+		'Feedback' => array(
+			'job_id' => $job_id,
+			'is_consensual' => $is_consensual ? 'TRUE' : 'FALSE',
+			'status' => 1,
+			'entered_by' => $user_id,
+			'registered_at' => date('Y-m-d H:i:s')
 		),
-		"blockFeedback" => $feedback['blockFeedback']
+		'blockFeedback' => $feedback['blockFeedback'],
+		'additionalFeedback' => $feedback['additionalFeedback']
 	));
 	return true;
 }

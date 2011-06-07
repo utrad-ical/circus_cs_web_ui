@@ -6,6 +6,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 
 (function () {
 	var f = {
+		name: 'fnInput',
 		validate: function () {
 			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
 			var ok = $('#fn-found:checked').length > 0 && markers.length > 0;
@@ -22,15 +23,14 @@ circus.feedback.additional = circus.feedback.additional || [];
 				};
 			}
 		},
-		collect: function (additionalFeedback) {
+		collect: function () {
 			var fns = [];
 			var markers = $('#fn-input-viewer').imageviewer('option', 'markers');
 			for (var i in markers)
 			{
 				fns.push(markers[i]);
 			}
-			console.log(fns);
-			additionalFeedback.fn_location = fns;
+			return fns;
 		}
 	};
 	circus.feedback.additional.push(f);
