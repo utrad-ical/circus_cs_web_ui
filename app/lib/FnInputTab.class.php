@@ -5,7 +5,7 @@
  * additional feedback mechanism.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class FnInputTab extends CadResultExtension
+class FnInputTab extends CadResultExtension implements IFeedbackListener
 {
 	public function requiringFiles()
 	{
@@ -33,7 +33,7 @@ class FnInputTab extends CadResultExtension
 		return $this->smarty->fetch('fn_input_afterblocks.tpl');
 	}
 
-	public function saveAdditionalFeedback($data)
+	public function saveFeedback($fb_id, $data)
 	{
 		if (!is_array($data) || !is_array($data['fnInput']))
 			return;
@@ -53,6 +53,21 @@ class FnInputTab extends CadResultExtension
 		}
 		$pdo = DBConnector::getConnection();
 		// $sth = $pdo->prepare('INSERT INTO fn_location');
+	}
+
+	public function loadFeedback($fb_id)
+	{
+		//
+	}
+
+	public function integrateConsensualFeedback(array $personal_fb_list)
+	{
+		//
+	}
+
+	public function additionalFeedbackID()
+	{
+		return 'fn_input';
 	}
 }
 

@@ -143,7 +143,7 @@ class CadResult extends Model
 	public function checkCadResultAvailability(array $groups)
 	{
 		$policy = $this->PluginResultPolicy;
-		if ($policy->allow_result_reference)
+		if (strlen($policy->allow_result_reference) > 0)
 		{
 			if ($policy->searchGroup($policy->allow_result_reference, $groups))
 				return true;
@@ -302,11 +302,6 @@ class CadResult extends Model
 			$item->setParameter($ext['params']);
 			$result[] = $item;
 		}
-		usort($result, function ($a, $b) {
-			$ap = $a->getParameter();
-			$bp = $b->getparameter();
-			return $bp['priority'] - $ap['priority'];
-		});
 		return $result;
 	}
 

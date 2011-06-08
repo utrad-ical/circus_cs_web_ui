@@ -22,22 +22,17 @@ class TextFeedbackListener extends FeedbackListener
 		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
 	}
 
-	public function prepareSaveBlockFeedback()
+	public function saveFeedback($fb_id, $data)
 	{
 		// TODO: implement
 	}
 
-	public function saveBlockFeedback($fb_id, $display_id, $feedback)
+	public function loadFeedback($fb_id)
 	{
 		// TODO: implement
 	}
 
-	public function loadBlockFeedback($fb_id)
-	{
-		// TODO: implement
-	}
-
-	public function integrateConsensualFeedback(array $personal_fb_list)
+	public function integrateConsensualFeedback($personal_fb_list)
 	{
 		// TODO: implement
 	}

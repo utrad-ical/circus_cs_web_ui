@@ -13,11 +13,11 @@ class CadResultExtension extends CadResultElement
 	 */
 	public function requiringFiles() { return null; }
 
+	// Methods for views
 	public function head() { return ''; }
 	public function beforeBlocks() { return ''; }
 	public function afterBlocks() { return ''; }
 	public function tabs() { return array(); }
-	public function saveAdditionalFeedback($data) { return; }
 }
 
 ?>

@@ -25,13 +25,11 @@
 		{
 			"type": "CadDetailTab",
 			"params": {
-				"priority": 1
 			}
 		},
 		{
 			"type": "FnInputTab",
 			"params": {
-				"priority": 2
 			}
 		},
 		{

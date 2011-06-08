@@ -9,11 +9,9 @@
  */
 class SelectionFeedbackListener extends FeedbackListener
 {
-	private $_sth;
-
 	/**
 	 * (non-PHPdoc)
-	 * @see BlockElement::requiringFiles()
+	 * @see CadResultElement::requiringFiles()
 	 */
 	public function requiringFiles()
 	{
@@ -32,7 +30,7 @@ class SelectionFeedbackListener extends FeedbackListener
 
 	/**
 	 * (non-PHPdoc)
-	 * @see BlockElement::defaultParams()
+	 * @see CadResultElement::defaultParams()
 	 */
 	protected function defaultParams()
 	{
@@ -47,35 +45,30 @@ class SelectionFeedbackListener extends FeedbackListener
 
 	/**
 	 * (non-PHPdoc)
-	 * @see FeedbackListener::prepareSaveBlockFeedback()
+	 * @see FeedbackListener::saveFeedback()
 	 */
-	public function prepareSaveBlockFeedback()
+	public function saveFeedback($fb_id, $data)
 	{
 		$pdo = DBConnector::getConnection();
-		$this->_sth = $pdo->prepare(
+		$sth = $pdo->prepare(
 			'INSERT INTO candidate_classification(candidate_id, evaluation, fb_id) ' .
 			'VALUES(?, ?, ?)'
 		);
+		foreach ($data as $display_id => $block_feedback)
+		{
+			$sth->execute(array(
+				$display_id,
+				$block_feedback['selection'],
+				$fb_id
+			));
+		}
 	}
 
 	/**
 	 * (non-PHPdoc)
-	 * @see FeedbackListener::saveBlockFeedback()
+	 * @see IFeedbackListener::loadFeedback()
 	 */
-	public function saveBlockFeedback($fb_id, $display_id, $block_feedback)
-	{
-		$this->_sth->execute(array(
-			$display_id,
-			$block_feedback['selection'],
-			$fb_id
-		));
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see FeedbackListener::loadBlockFeedback()
-	 */
-	public function loadBlockFeedback($fb_id)
+	public function loadFeedback($fb_id)
 	{
 		$sql = 'SELECT * FROM candidate_classification WHERE fb_id=?';
 		$rows = DBConnector::query($sql, array($fb_id), 'ALL_ASSOC');
@@ -91,7 +84,7 @@ class SelectionFeedbackListener extends FeedbackListener
 
 	/**
 	 * (non-PHPdoc)
-	 * @see FeedbackListener::integrateConsensualFeedback()
+	 * @see IFeedbackListener::integrateConsensualFeedback()
 	 */
 	public function integrateConsensualFeedback(array $personal_fb_list)
 	{
