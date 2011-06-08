@@ -30,6 +30,14 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		);
 	}
 
+	protected function defaultParams()
+	{
+		return array_merge(
+			parent::defaultParams(),
+			array('distThreshold' => 5)
+		);
+	}
+
 	public function afterBlocks()
 	{
 		return $this->smarty->fetch('fn_input_afterblocks.tpl');

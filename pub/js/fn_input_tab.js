@@ -147,9 +147,9 @@ circus.feedback.additional = circus.feedback.additional || [];
 		},
 		_checkNearestHiddenFP: function(posX, posY, posZ)
 		{
-			var distTh = 5.0;
+			var distTh = circus.cadresult.presentation.extensions.FnInputTab.distThreshold;
 			distTh = distTh * distTh;
-			var distMin = 10000;
+			var distMin = 1000000;
 			var ret = '- / -';
 			for (var id in circus.cadresult.displays)
 			{

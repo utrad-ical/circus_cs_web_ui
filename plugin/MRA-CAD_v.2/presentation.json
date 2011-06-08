@@ -30,7 +30,6 @@
 		{
 			"type": "FnInputTab",
 			"params": {
-				"distThreshold": 5
 			}
 		},
 		{
