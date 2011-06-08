@@ -20,6 +20,13 @@ abstract class CadResultElement
 	 */
 	protected $smarty;
 
+	protected $owner;
+
+	public function __construct($owner)
+	{
+		$this->owner = $owner;
+	}
+
 	/**
 	 * Returns the javascript and CSS files for making this element work.
 	 * @return array|string the name, or the array of names, of the

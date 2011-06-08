@@ -32,6 +32,7 @@ class CadResult extends Model
 	protected $attributes;
 	protected $displayPresenter;
 	protected $feedbackListener;
+	protected $extensions;
 	protected $rawResult;
 	protected $presentation;
 
@@ -290,6 +291,8 @@ class CadResult extends Model
 	 */
 	public function buildExtensions()
 	{
+		if ($this->extensions)
+			return $this->extensions;
 		$this->loadPresentationConfiguration();
 		$pr = $this->presentation;
 		$result = array();
@@ -302,6 +305,7 @@ class CadResult extends Model
 			$item->setParameter($ext['params']);
 			$result[] = $item;
 		}
+		$this->extensions = $result;
 		return $result;
 	}
 

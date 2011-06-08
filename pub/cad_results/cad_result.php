@@ -80,6 +80,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	$feedbackListener = $cadResult->feedbackListener();
 	$feedbackListener->setSmarty($smarty);
 	$feedbackListener->prepare();
+	$extensions = $cadResult->buildExtensions();
 
 	if ($feedbackMode == 'personal')
 	{
@@ -101,8 +102,16 @@ function show_cad_results($jobID, $feedbackMode) {
 		{
 			$pfbs = $cadResult->queryFeedback('personal');
 			foreach ($pfbs as $pfb) $pfb->loadFeedback();
+			foreach ($extensions as $ext)
+			{
+				if (!($ext instanceof IFeedbackListener))
+					continue;
+				$type = $ext->additionalFeedbackID();
+				$additionalFeedback[$type] = $ext->integrateConsensualFeedback($pfbs);
+			}
 			$feedback = array(
-				'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs)
+				'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs),
+				'additionalFeedback' => $additionalFeedback ?: array()
 			);
 		}
 	}
@@ -116,8 +125,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	$requiringFiles = array();
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
-
-	$extensions = $cadResult->buildExtensions();
 
 	$tabs = array();
 	$extParameters = array();

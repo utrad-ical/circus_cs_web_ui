@@ -24,9 +24,9 @@ interface IFeedbackListener
 	/**
 	 * Create the initial consensual feedback data from the given list of
 	 * persoanl feedback.
-	 * @param array $personal_fb_list The list of the feedback.
+	 * @param array $personal_fb_list The list of Feedback objects.
 	 * @return mixed The integrated feedback data.
-	 * If personal/consensual integration is not supported, returns null.
+	 * If personal/consensual integration is not supported, just return null.
 	 */
 	public function integrateConsensualFeedback(array $personal_fb_list);
 
