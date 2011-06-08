@@ -58,7 +58,7 @@ class ExecutePluginAction extends ApiAction
 		$plugin = $dummy->find(array('plugin_name' => $name, 'version' => $version));
 		
 		if (count($plugin) != 1) {
-			throw new ApiException("Plugin('$name') is not found.", ApiResponse::STATUS_ERR_OPE);
+			throw new ApiException("Plugin('$name'_v'$version') is not found.", ApiResponse::STATUS_ERR_OPE);
 		}
 		$plugin = $plugin[0];
 		if (!$plugin->exec_enabled) {
@@ -100,7 +100,7 @@ class ExecutePluginAction extends ApiAction
 				$rulearr = json_decode($ruleset, true);
 				
 				$ret = $filter->processRuleSets($series_data, $rulearr);
-
+				
 				if ($ret) {
 					return $ret;
 				}
