@@ -103,18 +103,18 @@ class SeriesFilter {
 		switch ($operator)
 		{
 			case '=':
-				return $value == $cmp_target;
+				return $cmp_target == $value;
 			case '>':
-				return $value > $cmp_target;
+				return $cmp_target > $value;
 			case '<':
-				return $value < $cmp_target;
+				return $cmp_target < $value;
 			case '>=':
-				return $value >= $cmp_target;
+				return $cmp_target >= $value;
 			case '<=':
-				return $value <= $cmp_target;
+				return $cmp_target <= $value;
 			case '<>':
 			case '!=':
-				return $value != cmp_target;
+				return $cmp_target != $value;
 			case '*=': // contains
 				return strpos($cmp_target, $value) !== false;
 			case '^=': // begins with
