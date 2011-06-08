@@ -47,12 +47,12 @@ class SeriesFilterTest extends PHPUnit_Framework_TestCase
 		$this->doTestNode('{"key":"no", "value":121, "condition":"<>"}', true);
 		$this->doTestNode('{"key":"no", "value":120, "condition":"="}', true);
 
-		$this->doTestNode('{"key":"no", "value":121, "condition":">"}', true);
-		$this->doTestNode('{"key":"no", "value":121, "condition":">="}', true);
-		$this->doTestNode('{"key":"no", "value":100, "condition":"<"}', true);
-		$this->doTestNode('{"key":"no", "value":121, "condition":"<="}', false);
+		$this->doTestNode('{"key":"no", "value":121, "condition":"<"}', true);
+		$this->doTestNode('{"key":"no", "value":121, "condition":"<="}', true);
+		$this->doTestNode('{"key":"no", "value":100, "condition":">"}', true);
+		$this->doTestNode('{"key":"no", "value":121, "condition":">="}', false);
 
-		$this->doTestNode('{"key":"fl", "value":3.1415, "condition":">"}', true);
+		$this->doTestNode('{"key":"fl", "value":3.1415, "condition":"<"}', true);
 		$this->doTestNode('{"key":"fl", "value":3.14, "condition":"="}', true);
 
 	}
