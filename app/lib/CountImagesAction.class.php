@@ -65,7 +65,7 @@ class CountImagesAction extends ApiAction
 	private function get_study_counts($UIDs)
 	{
 		$result = array();
-		foreach ($studyUIDs as $id)
+		foreach ($UIDs as $id)
 		{
 			$series = new Series();
 			$studies = $series->find(array('study_instance_uid' => $id));
