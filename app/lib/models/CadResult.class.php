@@ -32,7 +32,6 @@ class CadResult extends Model
 	protected $attributes;
 	protected $displayPresenter;
 	protected $feedbackListener;
-	protected $blockSorter;
 	protected $rawResult;
 	protected $presentation;
 
@@ -144,7 +143,7 @@ class CadResult extends Model
 	public function checkCadResultAvailability(array $groups)
 	{
 		$policy = $this->PluginResultPolicy;
-		if ($policy->allow_result_reference)
+		if (strlen($policy->allow_result_reference) > 0)
 		{
 			if ($policy->searchGroup($policy->allow_result_reference, $groups))
 				return true;
@@ -253,17 +252,6 @@ class CadResult extends Model
 	}
 
 	/**
-	 * Return if block sorting is available in this CAD result, which is
-	 * defined in the presentation.json file.
-	 * @return mixed Data from presentation.json
-	 */
-	public function sorter()
-	{
-		$this->loadPresentationConfiguration();
-		return $this->presentation['sorter'];
-	}
-
-	/**
 	 * Returns DisplayPresenter associated with this cad result.
 	 * @return DisplayPresenter The DisplayPresenter instance
 	 */
@@ -295,6 +283,26 @@ class CadResult extends Model
 		$element->setParameter($this->presentation[$type]['params']);
 		$this->$type = $element;
 		return $element;
+	}
+
+	/**
+	 * Builds extensions.
+	 */
+	public function buildExtensions()
+	{
+		$this->loadPresentationConfiguration();
+		$pr = $this->presentation;
+		$result = array();
+		if (!is_array($pr['extensions']))
+			return $result;
+		foreach ($pr['extensions'] as $ext)
+		{
+			$type = $ext['type'];
+			$item = new $type($this);
+			$item->setParameter($ext['params']);
+			$result[] = $item;
+		}
+		return $result;
 	}
 
 	/**

@@ -47,7 +47,7 @@ abstract class Model implements Iterator
 			$vals[] = $value;
 		}
 		if (count($condition))
-			$sql .= ' WHERE ' . implode(', ', $conds);
+			$sql .= ' WHERE ' . implode(' AND ', $conds);
 
 		if (is_array($options['order']))
 		{

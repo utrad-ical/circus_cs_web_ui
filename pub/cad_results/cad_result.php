@@ -13,13 +13,13 @@ $validator->addRules(array(
 	'jobID' => array(
 		'label' => 'Job ID',
 		'type' => 'int',
-		'required' => false, // true, // transient
+		'required' => true,
 		'min' => 1
 	),
 	'feedbackMode' => array(
 		'label' => 'feedback mode',
 		'type' => 'select',
-		'required' => false, // true, // transient
+		'required' => false,
 		'default' => 'personal',
 		'options' => array('personal', 'consensual'),
 	)
@@ -60,9 +60,26 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty = new SmartyEx();
 
 	$params['toTopDir'] = '../';
-	$sort = $cadResult->sorter();
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
+
+	if (!$cadResult->checkCadResultAvailability($user->Group))
+		critical_error('You do not have privilege to see this CAD result.');
+
+	// Enabling plugin-specific template directory
+	$td = $smarty->template_dir;
+	$smarty->template_dir = array(
+		$cadResult->pathOfPluginWeb(),
+		$td . $DIR_SEPARATOR . 'cad_results',
+		$td
+	);
+
+	$displayPresenter = $cadResult->displayPresenter();
+	$displayPresenter->setSmarty($smarty);
+	$displayPresenter->prepare();
+	$feedbackListener = $cadResult->feedbackListener();
+	$feedbackListener->setSmarty($smarty);
+	$feedbackListener->prepare();
 
 	if ($feedbackMode == 'personal')
 	{
@@ -80,10 +97,15 @@ function show_cad_results($jobID, $feedbackMode) {
 	else
 	{
 		$feedback = null;
+		if ($feedbackMode == 'consensual')
+		{
+			$pfbs = $cadResult->queryFeedback('personal');
+			foreach ($pfbs as $pfb) $pfb->loadFeedback();
+			$feedback = array(
+				'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs)
+			);
+		}
 	}
-
-	if (!$cadResult->checkCadResultAvailability($user->Group))
-		critical_error('You do not have privilege to see this CAD result.');
 
 	$avail_pfb = $cadResult->feedbackAvailability('personal', $user);
 	$avail_cfb = $cadResult->feedbackAvailability('consensual', $user);
@@ -91,37 +113,28 @@ function show_cad_results($jobID, $feedbackMode) {
 		critical_error('You can not enter consensual mode.');
 	$feedback_status = $feedbackMode == 'personal' ? $avail_pfb : $avail_cfb;
 
-
-	// Enabling plugin-specific template directory
-	$td = $smarty->template_dir;
-	$smarty->template_dir = array(
-		$cadResult->pathOfPluginWeb(),
-		$td . $DIR_SEPARATOR . 'cad_results',
-		$td
-	);
-
-	$displayPresenter = $cadResult->displayPresenter();
-	$displayPresenter->prepare($smarty);
-	$feedbackListener = $cadResult->feedbackListener();
-	$feedbackListener->prepare($smarty);
-
 	$requiringFiles = array();
 	array_splice($requiringFiles, -1, 0, $displayPresenter->requiringFiles());
 	array_splice($requiringFiles, -1, 0, $feedbackListener->requiringFiles());
 
-	$extensions = array(
-		new CadDetailTab($cadResult, $smarty, 1),
-		new FnInputTab($cadResult, $smarty, 2)
-	);
-	usort($extensions, function ($a, $b) { return $b->priority - $a->priority; });
+	$extensions = $cadResult->buildExtensions();
 
 	$tabs = array();
+	$extParameters = array();
 	foreach ($extensions as $ext)
 	{
+		$ext->setSmarty($smarty);
 		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);
+		$extParameters[get_class($ext)] = $ext->getParameter();
 	}
+
+	$presentationParams = array(
+		'displayPresenter' => $displayPresenter->getParameter(),
+		'feedbackListener' => $feedbackListener->getParameter(),
+		'extensions' => $extParameters
+	);
 
 	$pop = $cadResult->webPathOfPluginPub() . '/';
 	if (file_exists($pop . 'cad_result.css'))
@@ -145,12 +158,11 @@ function show_cad_results($jobID, $feedbackMode) {
 		'series' => $cadResult->Series[0],
 		'displayPresenter' => $displayPresenter,
 		'feedbackListener' => $feedbackListener,
+		'presentationParams' => $presentationParams,
 		'feedbacks' => $feedback,
 		'params' => $params,
-		'sorter' => $sort,
 		'tabs' => $tabs,
 		'extensions' => $extensions,
-		'sort' => array('key' => $sort['defaultKey'], 'order' => $sort['defaultOrder'])
 	));
 
 	// Render using Smarty

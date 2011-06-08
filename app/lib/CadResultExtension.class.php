@@ -1,24 +1,19 @@
 <?php
 
 /**
- * CadResultExtension
+ * CadResultExtension is the base class which adds some functionality
+ * to the CAD result page.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class CadResultExtension
+class CadResultExtension extends CadResultElement
 {
-	protected $owner;
-	protected $smarty;
-
-	public $priority;
-
-	public function __construct($owner, $smarty, $priority = 0)
-	{
-		$this->owner = $owner;
-		$this->smarty = $smarty;
-		$this->priority = $priority;
-	}
-
+	/**
+	 * (non-PHPdoc)
+	 * @see CadResultElement::requiringFiles()
+	 */
 	public function requiringFiles() { return null; }
+
+	// Methods for views
 	public function head() { return ''; }
 	public function beforeBlocks() { return ''; }
 	public function afterBlocks() { return ''; }

@@ -21,23 +21,38 @@
 			]
 		}
 	},
-	"sorter": {
-		"visible": true,
-		"defaultKey": "confidence",
-		"defaultOrder": "desc",
-		"options": [
-			{
-				"label": "Volume Size",
-				"key": "volume_size"
-			},
-			{
-				"label": "Image No.",
-				"key": "location_z"
-			},
-			{
-				"label": "Confidence",
-				"key": "confidence"
+	"extensions": [
+		{
+			"type": "CadDetailTab",
+			"params": {
 			}
-		]
-	}
+		},
+		{
+			"type": "FnInputTab",
+			"params": {
+			}
+		},
+		{
+			"type": "BlockSorter",
+			"params": {
+				"visible": true,
+				"defaultKey": "confidence",
+				"defaultOrder": "desc",
+				"options": [
+					{
+						"label": "Volume Size",
+						"key": "volume_size"
+					},
+					{
+						"label": "Image No.",
+						"key": "location_z"
+					},
+					{
+						"label": "Confidence",
+						"key": "confidence"
+					}
+				]
+			}
+		}
+	]
 }

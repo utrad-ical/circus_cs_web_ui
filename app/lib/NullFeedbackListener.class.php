@@ -18,24 +18,24 @@ class NullFeedbackListener extends FeedbackListener
 	/**
 	 * @see FeedbackListener::show()
 	 */
-	public function show($smarty)
+	public function show()
 	{
 		return '';
 	}
 
-	function prepareSaveBlockFeedback()
+	public function saveFeedback($fb_id, $data)
 	{
-		throw new Exception('NullFeedbackListener does not support saving');
+		throw new BadMethodCallException('NullFeedbackListener does not support saving');
 	}
 
-	function saveBlockFeedback($fb_id, $display_id, $feedback)
+	public function loadFeedback($fb_id)
 	{
-		throw new Exception('NullFeedbackListener does not support saving');
+		throw new BadMethodCallException('NullFeedbackListener does not support loading');
 	}
 
-	function loadBlockFeedback($fb_id)
+	public function integrateConsensualFeedback($personal_fb_list)
 	{
-		throw new Exception('NullFeedbackListener does not support loading feedback');
+		throw new BadMethodCallException('NullFeedbackListener does not support integrating');
 	}
 }
 

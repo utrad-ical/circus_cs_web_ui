@@ -38,8 +38,7 @@ class Feedback extends Model
 	public $blockFeedback;
 
 	/**
-	 * Additional feedback is defined as key-value pairs of
-	 *
+	 * Additional feedback.
 	 * @var array
 	 */
 	public $additionalFeedback;
@@ -58,11 +57,17 @@ class Feedback extends Model
 		$pdo->beginTransaction();
 		parent::save($data);
 
-		$listener->prepareSaveBlockFeedback();
-		foreach ($data['blockFeedback'] as $display_id => $block_fb)
+		// insert block feedback
+		$listener->saveFeedback($this->fb_id, $data['blockFeedback']);
+
+		// insert additional feedback
+		$extensions = $cadResult->buildExtensions(null);
+		foreach ($extensions as $ext)
 		{
-			$listener->saveBlockFeedback($this->fb_id, $display_id, $block_fb);
+			if ($ext instanceof IFeedbackListener)
+				$ext->saveFeedback($this->fb_id, $data['additionalFeedback']);
 		}
+
 		$pdo->commit();
 		$this->blockFeedback = $data['blockFeedback'];
 		$this->additionalFeedback = $data['additionalFeedback'];
@@ -73,8 +78,13 @@ class Feedback extends Model
 	{
 		$cadResult = $this->CadResult;
 		$listener = $cadResult->feedbackListener();
-		$this->blockFeedback = $listener->loadBlockFeedback($this->fb_id);
-		$this->additionalFeedback = array();
+		$this->blockFeedback = $listener->loadFeedback($this->fb_id);
+
+		$extensions = $cadResult->buildExtensions(null);
+		foreach ($extensions as $ext)
+		{
+			$this->additionalFeedback = array();
+		}
 	}
 }
 

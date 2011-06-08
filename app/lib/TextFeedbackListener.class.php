@@ -8,7 +8,7 @@
  */
 class TextFeedbackListener extends FeedbackListener
 {
-	function requiringFiles()
+	public function requiringFiles()
 	{
 		return array(
 			'js/text_feedback_listener.js',
@@ -16,23 +16,23 @@ class TextFeedbackListener extends FeedbackListener
 		);
 	}
 
-	function show($smarty)
+	public function show()
 	{
-		parent::show($smarty);
+		parent::show();
 		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
 	}
 
-	function prepareSaveBlockFeedback()
+	public function saveFeedback($fb_id, $data)
 	{
 		// TODO: implement
 	}
 
-	function saveBlockFeedback($fb_id, $display_id, $feedback)
+	public function loadFeedback($fb_id)
 	{
 		// TODO: implement
 	}
 
-	function loadBlockFeedback($fb_id)
+	public function integrateConsensualFeedback($personal_fb_list)
 	{
 		// TODO: implement
 	}
