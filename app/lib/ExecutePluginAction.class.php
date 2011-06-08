@@ -46,82 +46,68 @@ class ExecutePluginAction extends ApiAction
 		return TRUE;
 	}
 	
+	
 	private function check_register($params)
 	{
 		$name         = $params['pluginName'];
 		$version      = $params['pluginVersion'];
 		$seriesUIDArr = $params['seriesUID'];
 		
+		// Check plugin exists
+		$dummy = new Plugin();
+		$plugin = $dummy->find(array('plugin_name' => $name, 'version' => $version));
+		
+		if (count($plugin) != 1) {
+			throw new ApiException("Plugin('$name') is not found.", ApiResponse::STATUS_ERR_OPE);
+		}
+		$plugin = $plugin[0];
+		if (!$plugin->exec_enabled) {
+			throw new ApiException("Plugin(".$plugin->fullName().") is not executable.", ApiResponse::STATUS_ERR_OPE);
+		}
+		
+		// Get plugin id
+		$plugin_id = $plugin->plugin_id;
+		
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 		
-		// Check series record count
-		
-		// Search plugin id
-		$sqlStr = "SELECT pm.plugin_id, pm.plugin_name, pm.version, pm.exec_enabled, max(cs.series_description)"
-				. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
-				. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id=cm.plugin_id"
-				. " AND pm.plugin_name=?"
-				. " AND pm.version=?"
-				. " AND cs.volume_id=0"
-				. " GROUP BY pm.plugin_id, pm.plugin_name, pm.version, pm.exec_enabled, cm.label_order"
-				. " ORDER BY cm.label_order ASC";
-		
-		$stmtCADMaster = $pdo->prepare($sqlStr);
-		$stmtCADMaster->execute(array($name, $version));
-		
-		if ($stmtCADMaster->rowCount() <= 0) {
-			throw new ApiException("Plugin(name:".$name.", version:".$version.") is not found.", ApiResponse::STATUS_ERR_OPE);
-		}
-		
-		$result = $stmtCADMaster->fetch(PDO::FETCH_ASSOC);
-		$plugin_id = $result['plugin_id'];
-		
 		// Check ruleset
-		for ($vid = 0; $vid < $stmtSeries->rowCount(); $vid++)
+		$filter = new SeriesFilter();
+		
+		for ($vid = 0; $vid < count($seriesUIDArr); $vid++)
 		{
+			// Get Series data
+			$s = new Series();
+			$sdata = $s->find(array("series_instance_uid" => $seriesUIDArr[$vid]));
+			if (count($sdata) != 1) {
+				throw new ApiException("Series not found.", ApiResponse::STATUS_ERR_OPE);
+			}
+			$series_data = $sdata[0]->getData();
+			
+			// Get ruleset
 			$sqlStr = "SELECT * FROM plugin_cad_series"
 					. " WHERE plugin_id=?"
 					. " AND volume_id=?";
 			
-			$stmtRule = $pdo->prepare($sqlStr);
-			$stmtRule->execute(array($plugin_id, $vid));
-			
-			if ($stmtRule->rowCount() <= 0) {
-				throw new ApiException("Series count is not match.", ApiResponse::STATUS_ERR_OPE);
+			$result = DBConnector::query($sqlStr, array($plugin_id, $vid), 'ALL_ASSOC');
+			if (count($result) <= 0) {
+				throw new ApiException("ruleset not found.", ApiResponse::STATUS_ERR_OPE);
 			}
 			
-			$result = $stmtRule->fetch(PDO::FETCH_ASSOC);
-		}
-		
-		throw new ApiException("Series count is not match.", ApiResponse::STATUS_ERR_OPE);
-		
-		
-		// Check plugin status
-		while($resultCADMaster = $stmtCADMaster->fetch(PDO::FETCH_NUM))
-		{
-			$sqlStr = "SELECT el.job_id, el.status, el.executed_at"
-					. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm"
-					. " WHERE pm.plugin_name=? AND pm.version=?"
-					. " AND pm.plugin_id=el.plugin_id"
-					. " AND el.job_id=es.job_id"
-					. " AND es.volume_id=0"
-					. " AND es.series_sid=?"
-					. " ORDER BY el.job_id DESC";
-			
-			$stmtCADExec = $pdo->prepare($sqlStr);
-			$stmtCADExec->execute(array($name, $version, $seriesUIDArr));
-			if ($stmtCADExec->rowCount() >= 1)
+			foreach ($result as $r)
 			{
-				while($resultCADExec = $stmtCADExec->fetch(PDO::FETCH_NUM))
-				{
-					// executed or failed
-					;
+				$ruleset = $r['ruleset'];
+				$rulearr = json_decode($ruleset, true);
+				
+				$ret = $filter->processRuleSets($series_data, $rulearr);
+
+				if ($ret) {
+					return $ret;
 				}
 			}
 		}
 		
-		$pdo = null;
+		throw new ApiException("ruleset matching error.", ApiResponse::STATUS_ERR_OPE);
 	}
 	
 	
@@ -133,11 +119,11 @@ class ExecutePluginAction extends ApiAction
 		$seriesUIDArr = $plugin['seriesUID'];
 		$cadName      = $plugin['pluginName'];
 		$version      = $plugin['pluginVersion'];
-		$priolity     = $plugin['priolity'];
+		$priority     = $plugin['priority'];
 		$resultPolicy = $plugin['resultPolicy'];
 		
-		if (!isset($priolity)) {
-			$priolity = 1;
+		if (!isset($priority)) {
+			$priority = 1;
 		}
 		if (!isset($resultPolicy)) {
 			$resultPolicy = "default";
@@ -240,10 +226,10 @@ class ExecutePluginAction extends ApiAction
 	
 				// Register into "job_queue"
 				$sqlStr = "INSERT INTO job_queue"
-						. " (job_id, plugin_id, priolity, status, exec_user, registered_at, updated_at)"
+						. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
 						. " VALUES (?, ?, ?, 1, ?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($jobID, $pluginID, $priolity, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
+				$stmt->execute(array($jobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
 	
 				// Register into executed_series_list and job_queue_series
 				for($i=0; $i<$seriesNum; $i++)
