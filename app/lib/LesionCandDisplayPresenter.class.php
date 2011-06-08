@@ -26,8 +26,12 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 
 	protected function defaultParams()
 	{
-		return array(
-			'resultImage' => 'result%03d.png'
+		return array_merge(
+			parent::defaultParams(),
+			array(
+				'resultImage' => 'result%03d.png',
+				'caption' => 'Lesion Classification'
+			)
 		);
 	}
 

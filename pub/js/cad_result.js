@@ -8,13 +8,21 @@ var circus = circus || {};
 circus.feedback = function() {
 	var global = {
 		initialize: function() {
+			var idata = circus.feedback.initdata;
 			$('.result-block').each(function() {
 				var block = this;
 				var id = $("input.display-id", block).val();
 				$(block).data('displayid', id);
-				if (circus.feedback.initdata && circus.feedback.initdata.blockFeedback instanceof Object)
-					circus.evalListener.set(block, circus.feedback.initdata.blockFeedback[id]);
+				if (idata && idata.blockFeedback instanceof Object)
+					circus.evalListener.set(block, idata.blockFeedback[id]);
 			});
+			$.each(circus.feedback.additional, function(key, additional) {
+				if (idata && idata.additionalFeedback)
+					data = idata.additionalFeedback[additional.name];
+				else
+					data = null;
+				additional.initialize(data);
+			})
 		},
 		collect: function() {
 			var blockFeedback = {};
@@ -43,20 +51,27 @@ circus.feedback = function() {
 			})
 		},
 		register_ok: function() {
-			var register_ok = true;
 			if (circus.feedback.feedbackStatus != 'normal')
-				register_ok = false;
+				return { register_ok: false, messages: [] }
+			var register_ok = true;
 			var messages = [];
+			var caption = circus.cadresult.presentation.displayPresenter.caption;
 			$('.result-block').each(function() {
 				var block = this;
 				var id = $(block).data('displayid');
 				var tmp = circus.evalListener.validate(block);
 				if (!tmp.register_ok) {
 					register_ok = false;
+					if (tmp.message)
+					{
+						var mes = caption + ': <span class="register-not-ok">' + tmp.message + '</span>';
+						if (messages.indexOf(mes) == -1)
+						messages.push(mes);
+					}
 				}
-				if (tmp.message && messages.indexOf(tmp.message) == -1)
-					messages.push(tmp.message);
 			});
+			if (register_ok)
+				messages.push(caption + ': <span class="register-ok">Complete</span>');
 			if (circus.feedback.additional instanceof Array) {
 				var ad = circus.feedback.additional;
 				for (var i = 0; i < ad.length; i++) {
@@ -93,14 +108,20 @@ circus.feedback = function() {
 					feedbackMode: circus.feedback.feedbackMode,
 					feedback: JSON.stringify(feedback)
 				},
-				function (data)
+				function (result)
 				{
-					if (data.status == 'OK')
-						location.reload(true);
+					var obj = JSON.parse(result)
+					if (obj)
+					{
+						if (obj.status == 'OK')
+							location.reload(true);
+						else
+							alert("Error while registering feedback:\n" + obj.error.message);
+					}
 					else
-						alert(data.error.message);
+						alert("System Error:\n" + result);
 				},
-				"json"
+				"text"
 			);
 		}
 	};

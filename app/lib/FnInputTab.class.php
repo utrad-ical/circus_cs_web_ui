@@ -7,6 +7,8 @@
  */
 class FnInputTab extends CadResultExtension implements IFeedbackListener
 {
+	const FEEDBACK_ID = 'fn_input';
+
 	public function requiringFiles()
 	{
 		return array(
@@ -35,29 +37,53 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 
 	public function saveFeedback($fb_id, $data)
 	{
-		if (!is_array($data) || !is_array($data['fnInput']))
-			return;
-		$fns = array();
-		$no = 0;
-		foreach ($data['fnInput'] as $fn)
-		{
-			$fns[] = array(
-				'fn_id' => $no++,
-				'fb_id' => 0,
-				'location_x' => $fn['location_x'],
-				'location_y' => $fn['location_y'],
-				'location_z' => $fn['location_z'],
-				'nearest_lesion_id' => 0,
-				'integrate_fn_id' => ''
-			);
-		}
+		if (!is_array($data))
+			throw new LogicException('Invalid FN list data.');
 		$pdo = DBConnector::getConnection();
-		// $sth = $pdo->prepare('INSERT INTO fn_location');
+		$sth = $pdo->prepare(
+			'INSERT INTO fn_location(fb_id, location_x, ' .
+			'location_y, location_z, nearest_lesion_id, integrate_fn_id) ' .
+			'VALUES (?, ?, ?, ?, ?, ?)'
+		);
+		foreach ($data as $fn)
+		{
+			if (!is_array($fn))
+				throw new LogicException('Invalid FN data.');
+			$sth->execute(array(
+				$fb_id,
+				$fn['location_x'],
+				$fn['location_y'],
+				$fn['location_z'],
+				0,
+				0
+			));
+		}
+		DBConnector::query(
+			'INSERT INTO fn_count(fb_id, fn_num) VALUES(?, ?)',
+			array($fb_id, count($data)),
+			'SCALAR'
+		);
 	}
 
 	public function loadFeedback($fb_id)
 	{
-		//
+		$rows = DBConnector::query(
+			'SELECT * FROM fn_location WHERE fb_id=?',
+			array($fb_id),
+			'ALL_ASSOC'
+		);
+		$result = array();
+		foreach ($rows as $row)
+		{
+			$result[] = array(
+				'location_x' => $row['location_x'],
+				'location_y' => $row['location_y'],
+				'location_z' => $row['location_z'],
+				'nearest_lesion_id' => $row['nearest_lesion_id'],
+				'integrate_fn_id' => $row['integrate_fn_id']
+			);
+		}
+		return $result;
 	}
 
 	public function integrateConsensualFeedback(array $personal_fb_list)
@@ -67,7 +93,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 
 	public function additionalFeedbackID()
 	{
-		return 'fn_input';
+		return self::FEEDBACK_ID;
 	}
 }
 

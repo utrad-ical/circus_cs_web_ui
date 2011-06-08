@@ -54,7 +54,7 @@ circus.evalListener = (function() {
 			} else {
 				return {
 					register_ok: false,
-					message: 'Classification: <span class="register-not-ok">Incomplete</span>'
+					message: 'Imcomplete'
 				};
 			}
 		},

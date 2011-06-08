@@ -28,6 +28,11 @@ class DisplayPresenter extends CadBlockElement
 		}
 	}
 
+	protected function defaultParams()
+	{
+		return array('caption' => 'Block Feedback');
+	}
+
 	/**
 	 * Returns the HTML that describes one given CAD display.
 	 * @param Smarty the Smarty instance

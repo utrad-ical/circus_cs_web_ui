@@ -64,8 +64,12 @@ class Feedback extends Model
 		$extensions = $cadResult->buildExtensions(null);
 		foreach ($extensions as $ext)
 		{
-			if ($ext instanceof IFeedbackListener)
-				$ext->saveFeedback($this->fb_id, $data['additionalFeedback']);
+			if (!($ext instanceof IFeedbackListener))
+				continue;
+			$id = $ext->additionalFeedbackID();
+			if (!isset($data['additionalFeedback'][$id]))
+				continue;
+			$ext->saveFeedback($this->fb_id, $data['additionalFeedback'][$id]);
 		}
 
 		$pdo->commit();
@@ -81,9 +85,14 @@ class Feedback extends Model
 		$this->blockFeedback = $listener->loadFeedback($this->fb_id);
 
 		$extensions = $cadResult->buildExtensions(null);
+		$this->additionalFeedback = array();
 		foreach ($extensions as $ext)
 		{
-			$this->additionalFeedback = array();
+			if ($ext instanceof IFeedbackListener)
+			{
+				$id = $ext->additionalFeedbackID();
+				$this->additionalFeedback[$id] = $ext->loadFeedback($this->fb_id);
+			}
 		}
 	}
 }

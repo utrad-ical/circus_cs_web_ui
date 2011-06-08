@@ -1,4 +1,4 @@
-<div>
+<div id="fn-found-container">
 <input type="radio" name="fn_found" id="fn-not-found" value="1" />
 <label for="fn-not-found">FN Not Found</label>
 <br />

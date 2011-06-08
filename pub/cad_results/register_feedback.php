@@ -43,7 +43,7 @@ try {
 		'action' => 'registerFeedback',
 		'status' => 'SysError',
 		'error' => array(
-			'mesasge' => $e->getMessage()
+			'message' => $e->getMessage()
 		)
 	));
 }
@@ -56,6 +56,8 @@ function registerFeedback($job_id, $feedback, $is_consensual)
 {
 	$pdo = DBConnector::getConnection();
 	$user_id = Auth::currentUser()->user_id;
+	if (strlen($user_id) == 0)
+		throw new Exception('Session not established.');
 	$fb = new Feedback();
 	$fb->save(array(
 		'Feedback' => array(
