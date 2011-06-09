@@ -25,6 +25,10 @@ class CountImagesAction extends ApiAction
 			$result = self::get_study_counts($studyUIDs);
 		}
 		
+		if (count($result) == 0) {
+			unset($result);
+		}
+		
 		$res = new ApiResponse();
 		$res->setResult($action, $result);
 		return $res;
@@ -49,14 +53,17 @@ class CountImagesAction extends ApiAction
 		foreach ($UIDs as $id)
 		{
 			$series = new Series($id);
-			array_push(
-				$result,
-				array(
-					"studyInstanceUID" => $series->study_instance_uid,
-					"seriesInstanceUID" => $id,
-					"number" => $series->image_number
-				)
-			);
+			if ($series->image_number)
+			{
+				array_push(
+					$result,
+					array(
+						"studyInstanceUID" => $series->study_instance_uid,
+						"seriesInstanceUID" => $id,
+						"number" => $series->image_number
+					)
+				);
+			}
 		}
 		
 		return $result;
@@ -71,14 +78,17 @@ class CountImagesAction extends ApiAction
 			$studies = $series->find(array('study_instance_uid' => $id));
 			foreach ($studies as $s)
 			{
-				array_push(
-					$result,
-					array(
-						"studyInstanceUID" => $s,
-						"seriesInstanceUID" => $s->series_instance_uid,
-						"number" => $s->image_number
-					)
-				);
+				if ($s->image_number)
+				{
+					array_push(
+						$result,
+						array(
+							"studyInstanceUID" => $s->study_instance_uid,
+							"seriesInstanceUID" => $s->series_instance_uid,
+							"number" => $s->image_number
+						)
+					);
+				}
 			}
 		}
 		
