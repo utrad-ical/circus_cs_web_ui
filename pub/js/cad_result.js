@@ -16,13 +16,16 @@ circus.feedback = function() {
 				if (idata && idata.blockFeedback instanceof Object)
 					circus.evalListener.set(block, idata.blockFeedback[id]);
 			});
-			$.each(circus.feedback.additional, function(key, additional) {
-				if (idata && idata.additionalFeedback)
-					data = idata.additionalFeedback[additional.name];
-				else
-					data = null;
-				additional.initialize(data);
-			})
+			if (circus.feedback.additional instanceof Array)
+			{
+				$.each(circus.feedback.additional, function(key, additional) {
+					if (idata && idata.additionalFeedback)
+						data = idata.additionalFeedback[additional.name];
+					else
+						data = null;
+					additional.initialize(data);
+				});
+			}
 		},
 		collect: function() {
 			var blockFeedback = {};

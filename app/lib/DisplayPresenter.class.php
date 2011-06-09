@@ -24,7 +24,7 @@ class DisplayPresenter extends CadBlockElement
 		}
 		else
 		{
-			return $smarty->fetch("$template");
+			return $smarty->fetch($template);
 		}
 	}
 
@@ -39,7 +39,7 @@ class DisplayPresenter extends CadBlockElement
 	 */
 	public function show()
 	{
-		return $this->executeTemplate($smarty, 'default_display_presenter.tpl');
+		return $this->executeTemplate('default_display_presenter.tpl');
 	}
 
 	/**

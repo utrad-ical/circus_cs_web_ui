@@ -1,7 +1,10 @@
 /**
  * Null feedback listener.
  */
-var evalListener = (function() {
+
+var circus = circus || {};
+
+circus.evalListener = (function() {
 	var global = {
 		setup: function () {
 			// nothing to do

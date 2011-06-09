@@ -33,7 +33,7 @@ class NullFeedbackListener extends FeedbackListener
 		throw new BadMethodCallException('NullFeedbackListener does not support loading');
 	}
 
-	public function integrateConsensualFeedback($personal_fb_list)
+	public function integrateConsensualFeedback(array $personal_fb_list)
 	{
 		throw new BadMethodCallException('NullFeedbackListener does not support integrating');
 	}
