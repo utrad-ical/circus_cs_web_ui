@@ -50,7 +50,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		$pdo = DBConnector::getConnection();
 		$sth = $pdo->prepare(
 			'INSERT INTO fn_location(fb_id, location_x, ' .
-			'location_y, location_z, nearest_lesion_id, integrate_fn_id) ' .
+			'location_y, location_z, nearest_lesion_id, integrated_from) ' .
 			'VALUES (?, ?, ?, ?, ?, ?)'
 		);
 		foreach ($data as $fn)
@@ -62,7 +62,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				$fn['location_x'],
 				$fn['location_y'],
 				$fn['location_z'],
-				0,
+				$fn['nearest_lesion_id'] > 0 ? $fn['nearest_lesion_id'] : 0,
 				0
 			));
 		}
@@ -87,8 +87,8 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				'location_x' => $row['location_x'],
 				'location_y' => $row['location_y'],
 				'location_z' => $row['location_z'],
-				'nearest_lesion_id' => $row['nearest_lesion_id'],
-				'integrate_fn_id' => $row['integrate_fn_id']
+				'nearest_lesion_id' => $row['nearest_lesion_id'] ?: null,
+				'entered_by' => ''
 			);
 		}
 		return $result;
@@ -96,7 +96,25 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 
 	public function integrateConsensualFeedback(array $personal_fb_list)
 	{
-		//
+		// Actual integration will be done by browser-side.
+		// So we will just create the list of FN location input as
+		// personal feedback.
+		$displays = $this->owner->getDisplays();
+		$result = array();
+		foreach ($personal_fb_list as $pfb)
+		{
+			$fns = $pfb->additionalFeedback['fn_input'];
+			foreach ($fns as $fn)
+			{
+				$result[] = array(
+					'location_x' => $fn['location_x'],
+					'location_y' => $fn['location_y'],
+					'location_z' => $fn['location_z'],
+					'entered_by' => $pfb->entered_by
+				);
+			}
+		}
+		return array('to_integrate' => $result);
 	}
 
 	public function additionalFeedbackID()

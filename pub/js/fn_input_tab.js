@@ -10,7 +10,15 @@ circus.feedback.additional = circus.feedback.additional || [];
 		initialize: function(data)
 		{
 			var canEdit = circus.feedback.feedbackStatus == 'normal';
-			if (!(data instanceof Array)) data = [];
+			f.params = circus.cadresult.presentation.extensions.FnInputTab;
+
+			// Prepare FN locations.
+			// If the list is passed
+			var markers = [];
+			if (data instanceof Array) markers = data;
+			if (data instanceof Object && data.to_integrate)
+				markers = f._integrateConsensual(data.to_integrate);
+
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
 				study_instance_uid: circus.cadresult.studyUID,
@@ -18,43 +26,22 @@ circus.feedback.additional = circus.feedback.additional || [];
 				max: circus.cadresult.seriesNumImages,
 				toTopDir: '../',
 				role: (canEdit ? 'locator' : 'viewer'),
-				markers: data
-			});
-			if (data.length > 0)
+				markers: markers
+			})
+			.bind('locate', f._updateTable).bind('locating', f._locating);
+			if (markers.length > 0)
 				f._updateTable();
+
 			var tbl = $('#fn-input-table tbody');
-			// Handles FN location input
-			f._viewer.bind('locate', f._updateTable).bind('locating', f._locating);
-			$('#fn-delete').click(function(){
-				var indexes = [];
-				$('tr:has(input:checked)', tbl).each(
-					function () { indexes.push(tbl.find('tr').index(this)); } );
-				var markers = f._viewer.imageviewer('option', 'markers');
-				for (var i = indexes.length-1; i >= 0; i--)
-				{
-					markers.splice(indexes[i], 1);
-				}
-				$('input:checked', tbl).attr('checked', '');
-				f._viewer.imageviewer('option', 'markers', markers); // commit and redraw
-				f._updateTable();
+			$('#fn-delete').click(function() {
+				f._marker_process(f._fn_delete);
 			});
+			$('#fn-integrate').click(function() {
+				f._marker_process(f._fn_integrate);
+			});
+
 			if (!canEdit)
 				$('input:checkbox', tbl).attr('disabled', 'disabled');
-
-			$('#fn-integrate').click(function(){
-				var indexes = [];
-				$('tr:has(input:checked)', tbl).each(
-					function () { indexes.push(tbl.index(this)); } );
-				var markers = f._viewer.imageviewer('option', 'markers');
-				var sum = {x:0, y:0, z:0};
-				for (var i = indexes.length-1; i >= 0; i--)
-				{
-					markers.splice(indexes[i], 1);
-				}
-				$('input:checked', tbl).attr('checked', '');
-				f._viewer.imageviewer('option', 'markers', markers); // commit and redraw
-				updateTable();
-			});
 
 			$('#fn-found, #fn-not-found').click(function () {
 				circus.feedback.change();
@@ -112,6 +99,45 @@ circus.feedback.additional = circus.feedback.additional || [];
 			}
 			return fns;
 		},
+		_marker_process: function(action)
+		{
+			var tbl = $('#fn-input-table tbody');
+			var indexes = [];
+			var markers = f._viewer.imageviewer('option', 'markers');
+			$('tr:has(input:checked)', tbl).each(
+				function () { indexes.push(tbl.find('tr').index(this)); } );
+			action(indexes, markers);
+			$('input:checked', tbl).removeAttr('checked');
+			f._viewer.imageviewer('option', 'markers', markers); // commit and redraw
+			f._updateTable();
+		},
+		_fn_delete: function(indexes, markers)
+		{
+			for (var i = indexes.length-1; i >= 0; i--)
+			{
+				markers.splice(indexes[i], 1);
+			}
+		},
+		_fn_integrate: function(indexes, markers)
+		{
+			var sum = {x:0, y:0, z:0};
+			for (var i = indexes.length-1; i >= 0; i--)
+			{
+				var idx = indexes[i];
+				sum.x += markers[idx].location_x;
+				sum.y += markers[idx].location_y;
+				sum.z += markers[idx].location_z;
+				markers.splice(idx, 1);
+			}
+			var newFn = {
+				location_x: Math.floor(sum.x / indexes.length + 0.5),
+				location_y: Math.floor(sum.y / indexes.length + 0.5),
+				location_z: Math.floor(sum.z / indexes.length + 0.5),
+				entered_by: circus.userID
+			};
+			f._snapToNearestHiddenCand(newFn);
+			markers.push(newFn);
+		},
 		_updateTable: function()
 		{
 			var tbl = $('#fn-input-table tbody');
@@ -123,10 +149,24 @@ circus.feedback.additional = circus.feedback.additional || [];
 				var tr = $('<tr>');
 				$('<td><input type="checkbox"/></td>').appendTo(tr);
 				$('<td>').text(i+1).appendTo(tr);
+				var nearest = '-';
+				if (markers[i].nearest_lesion_id)
+				{
+					var lid = markers[i].nearest_lesion_id;
+					var nearestLesion = circus.cadresult.displays[lid];
+					nearest = lid + ' / ' +
+						Math.sqrt(f._distance2(markers[i], nearestLesion)).toFixed(1);
+				}
 				$.each(
-					['location_x', 'location_y', 'location_z', 'nearest_lesion_id', 'entered_by'],
-					function (dum, key) {
-						$('<td>').appendTo(tr).text(markers[i][key]);
+					[
+						markers[i].location_x,
+						markers[i].location_y,
+						markers[i].location_z,
+						nearest,
+						markers[i].entered_by
+					],
+					function (dum, value) {
+						$('<td>').appendTo(tr).text(value);
 					}
 				);
 				$('input[type=checkbox]', tr).click(function () {
@@ -138,35 +178,104 @@ circus.feedback.additional = circus.feedback.additional || [];
 			}
 			circus.feedback.change();
 		},
+		_assignLoc: function(target, from)
+		{
+			target.location_x = from.location_x;
+			target.location_y = from.location_y;
+			target.location_z = from.location_z;
+			return target;
+		},
 		_locating: function(event)
 		{
 			var newitem = event.newItem;
 			newitem.entered_by = circus.userID;
-			newitem.nearest_lesion_id = f._checkNearestHiddenFP(
-				newitem.location_x, newitem.location_y, newitem.location_z);
+			newitem.nearest_lesion_id = f._findNearestHiddenCand(newitem);
 		},
-		_checkNearestHiddenFP: function(posX, posY, posZ)
+		_distance2: function(a, b)
 		{
-			var distTh = circus.cadresult.presentation.extensions.FnInputTab.distThreshold;
+			var dx = a.location_x - b.location_x;
+			var dy = a.location_y - b.location_y;
+			var dz = a.location_z - b.location_z;
+			return dx * dx + dy * dy + dz * dz;
+		},
+		_findNearestHiddenCand: function(item)
+		{
+			var distTh = f.params.distThreshold;
 			distTh = distTh * distTh;
 			var distMin = 1000000;
-			var ret = '- / -';
+			var ret = null;
 			for (var id in circus.cadresult.displays)
 			{
-				var item = circus.cadresult.displays[id];
-				var dx = item.location_x - posX;
-				var dy = item.location_y - posY;
-				var dz = item.location_z - posZ;
-				var dist = dx * dx + dy * dy + dz * dz;
+				var display = circus.cadresult.displays[id]
+				var dist = f._distance2(display, item);
 				if(dist < distMin)
 				{
 					distMin = dist;
 					if(distMin < distTh)
-						ret = item.display_id + ' / ' + Math.sqrt(distMin).toFixed(2);
+						ret = id;
 				}
 			}
 			return ret;
 		},
+		_snapToNearestHiddenCand: function(fn)
+		{
+			var nearest = f._findNearestHiddenCand(fn);
+			if (nearest != null)
+			{
+				var item = circus.cadresult.displays[nearest];
+				f._assignLoc(fn, item);
+				fn.nearest_lesion_id = nearest;
+			}
+		},
+		_integrateConsensual: function(fn_list)
+		{
+			var max = fn_list.length;
+			var result = [];
+			for (var i = 0; i < max; i++)
+			{
+				var fn = fn_list[i];
+				var item = {
+					entered_by: fn.entered_by
+				};
+				f._assignLoc(item, fn);
+				f._snapToNearestHiddenCand(item);
+				result.push(item);
+			}
+			result = f._makeUnique(result);
+			return result;
+		},
+		_makeUnique: function(fn_list)
+		{
+			var buf = {};
+			var result = [];
+			var max = fn_list.length;
+			for (var i = 0; i < max; i++)
+			{
+				var fn = fn_list[i];
+				var key = fn.location_x + ',' + fn.location_y + ',' + fn.location_z;
+				buf[key] = buf[key] || {
+					nearest_lesion_id: fn.nearest_lesion_id,
+					entered_by: {}
+				};
+				f._assignLoc(buf[key], fn);
+				buf[key].entered_by[fn.entered_by] = 1;
+			}
+			for (var key in buf)
+			{
+				var joined = '';
+				var item = buf[key];
+				for (var user_id in item.entered_by)
+					joined = joined ? joined + ',' + user_id : user_id;
+				result.push({
+					location_x: item.location_x,
+					location_y: item.location_y,
+					location_z: item.location_z,
+					nearest_lesion_id: item.nearest_lesion_id,
+					entered_by: joined
+				});
+			}
+			return result;
+		}
 	};
 	circus.feedback.additional.push(f);
 })();
