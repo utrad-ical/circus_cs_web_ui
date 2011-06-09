@@ -12,14 +12,14 @@ interface IFeedbackListener
 	 * @param int $fb_id The feedback ID.
 	 * @param mixed $data The data to store.
 	 */
-	public function saveFeedback($fb_id, $data);
+	public function saveFeedback(Feedback $fb, $data);
 
 	/**
 	 * Loads feedback.
 	 * @param int $fb_id The feedback ID.
 	 * @return mixed The feedback data.
 	 */
-	public function loadFeedback($fb_id);
+	public function loadFeedback(Feedback $fb);
 
 	/**
 	 * Create the initial consensual feedback data from the given list of

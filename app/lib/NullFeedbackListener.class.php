@@ -23,12 +23,12 @@ class NullFeedbackListener extends FeedbackListener
 		return '';
 	}
 
-	public function saveFeedback($fb_id, $data)
+	public function saveFeedback(Feedback $fb, $data)
 	{
 		throw new BadMethodCallException('NullFeedbackListener does not support saving');
 	}
 
-	public function loadFeedback($fb_id)
+	public function loadFeedback(Feedback $fb)
 	{
 		throw new BadMethodCallException('NullFeedbackListener does not support loading');
 	}

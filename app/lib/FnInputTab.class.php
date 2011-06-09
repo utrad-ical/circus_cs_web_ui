@@ -43,7 +43,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		return $this->smarty->fetch('fn_input_afterblocks.tpl');
 	}
 
-	public function saveFeedback($fb_id, $data)
+	public function saveFeedback(Feedback $fb, $data)
 	{
 		if (!is_array($data))
 			throw new LogicException('Invalid FN list data.');
@@ -58,7 +58,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			if (!is_array($fn))
 				throw new LogicException('Invalid FN data.');
 			$sth->execute(array(
-				$fb_id,
+				$fb->fb_id,
 				$fn['location_x'],
 				$fn['location_y'],
 				$fn['location_z'],
@@ -68,16 +68,16 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		}
 		DBConnector::query(
 			'INSERT INTO fn_count(fb_id, fn_num) VALUES(?, ?)',
-			array($fb_id, count($data)),
+			array($fb->fb_id, count($data)),
 			'SCALAR'
 		);
 	}
 
-	public function loadFeedback($fb_id)
+	public function loadFeedback(Feedback $fb)
 	{
 		$rows = DBConnector::query(
 			'SELECT * FROM fn_location WHERE fb_id=?',
-			array($fb_id),
+			array($fb->fb_id),
 			'ALL_ASSOC'
 		);
 		$result = array();
@@ -88,7 +88,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				'location_y' => $row['location_y'],
 				'location_z' => $row['location_z'],
 				'nearest_lesion_id' => $row['nearest_lesion_id'] ?: null,
-				'entered_by' => ''
+				'entered_by' => $fb->entered_by
 			);
 		}
 		return $result;

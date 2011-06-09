@@ -58,7 +58,7 @@ class Feedback extends Model
 		parent::save($data);
 
 		// insert block feedback
-		$listener->saveFeedback($this->fb_id, $data['blockFeedback']);
+		$listener->saveFeedback($this, $data['blockFeedback']);
 
 		// insert additional feedback
 		$extensions = $cadResult->buildExtensions(null);
@@ -69,7 +69,7 @@ class Feedback extends Model
 			$id = $ext->additionalFeedbackID();
 			if (!isset($data['additionalFeedback'][$id]))
 				continue;
-			$ext->saveFeedback($this->fb_id, $data['additionalFeedback'][$id]);
+			$ext->saveFeedback($this, $data['additionalFeedback'][$id]);
 		}
 
 		$pdo->commit();
@@ -82,7 +82,7 @@ class Feedback extends Model
 	{
 		$cadResult = $this->CadResult;
 		$listener = $cadResult->feedbackListener();
-		$this->blockFeedback = $listener->loadFeedback($this->fb_id);
+		$this->blockFeedback = $listener->loadFeedback($this);
 
 		$extensions = $cadResult->buildExtensions(null);
 		$this->additionalFeedback = array();
@@ -91,7 +91,7 @@ class Feedback extends Model
 			if ($ext instanceof IFeedbackListener)
 			{
 				$id = $ext->additionalFeedbackID();
-				$this->additionalFeedback[$id] = $ext->loadFeedback($this->fb_id);
+				$this->additionalFeedback[$id] = $ext->loadFeedback($this);
 			}
 		}
 	}

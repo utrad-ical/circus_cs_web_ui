@@ -47,7 +47,7 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see FeedbackListener::saveFeedback()
 	 */
-	public function saveFeedback($fb_id, $data)
+	public function saveFeedback(Feedback $fb, $data)
 	{
 		$pdo = DBConnector::getConnection();
 		$sth = $pdo->prepare(
@@ -59,7 +59,7 @@ class SelectionFeedbackListener extends FeedbackListener
 			$sth->execute(array(
 				$display_id,
 				$block_feedback['selection'],
-				$fb_id
+				$fb->fb_id
 			));
 		}
 	}
@@ -68,10 +68,10 @@ class SelectionFeedbackListener extends FeedbackListener
 	 * (non-PHPdoc)
 	 * @see IFeedbackListener::loadFeedback()
 	 */
-	public function loadFeedback($fb_id)
+	public function loadFeedback(Feedback $fb)
 	{
 		$sql = 'SELECT * FROM candidate_classification WHERE fb_id=?';
-		$rows = DBConnector::query($sql, array($fb_id), 'ALL_ASSOC');
+		$rows = DBConnector::query($sql, array($fb->fb_id), 'ALL_ASSOC');
 		$result = array();
 		foreach ($rows as $row)
 		{
