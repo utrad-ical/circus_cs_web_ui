@@ -25,10 +25,10 @@ class ExecutePluginAction extends ApiAction
 		
 		$jobID = self::register_job($params);
 		
-//		$result = QueryJobAction::queryJob(jobID);
-		$result = array("jobID" => $jobID);
 		$res = new ApiResponse();
-		$res->setResult($action, $result);
+		$result = QueryJobAction::query_job(array($jobID));
+		$res->setResult($action, $result[0]);
+		
 		return $res;
 	}
 	
