@@ -104,7 +104,7 @@ circus.feedback = function() {
 		},
 		register: function() {
 			var feedback = circus.feedback.collect();
-			alert(JSON.stringify(feedback));
+			if (console && console.log) console.log(feedback);
 			$.post("register_feedback.php",
 				{
 					jobID: $("#job-id").val(),
