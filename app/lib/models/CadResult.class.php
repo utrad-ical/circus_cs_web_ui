@@ -243,11 +243,13 @@ class CadResult extends Model
 		$result = $this->defaultPresentation();
 		$str = @file_get_contents(
 			$this->pathOfPluginWeb() . '/presentation.json');
-		if ($str !== false)
+		if ($str !== false && strlen($str) > 0)
 		{
 			$tmp = json_decode($str, true);
-			if (!is_null($tmp))
-				$result = array_merge($result, $tmp);
+			if (is_null($tmp))
+				throw new Exception("Syntax error found in presentation.json file.\n".
+					"Consult the administrator.");
+			$result = array_merge($result, $tmp);
 		}
 		$this->presentation = $result;
 	}
