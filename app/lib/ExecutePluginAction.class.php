@@ -10,6 +10,8 @@ class ExecutePluginAction extends ApiAction
 		"PLUGIN_SUCESSED"      =>  4
 	);
 	
+	protected $rule;
+	
 	
 	function execute($api_request)
 	{
@@ -20,8 +22,11 @@ class ExecutePluginAction extends ApiAction
 			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
 		}
 		
-		// Throws ApiException if failed
-		self::check_register($params);
+		// Get rule
+		$this->rule = self::check_register($params);
+		if (!$this->rule) {
+			throw new ApiException("ruleset matching error.", ApiResponse::STATUS_ERR_SYS);
+		}
 		
 		$jobID = self::register_job($params);
 		
@@ -73,6 +78,7 @@ class ExecutePluginAction extends ApiAction
 		
 		// Check ruleset
 		$filter = new SeriesFilter();
+		$retrule = false;
 		
 		for ($vid = 0; $vid < count($seriesUIDArr); $vid++)
 		{
@@ -102,12 +108,14 @@ class ExecutePluginAction extends ApiAction
 				$ret = $filter->processRuleSets($series_data, $rulearr);
 				
 				if ($ret) {
-					return $ret;
+					$retrule = $ret;
+				} else {
+					$retrule = false;
 				}
 			}
 		}
 		
-		throw new ApiException("ruleset matching error.", ApiResponse::STATUS_ERR_OPE);
+		return $retrule;
 	}
 	
 	
@@ -146,19 +154,21 @@ class ExecutePluginAction extends ApiAction
 		$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
 
 		// Get series sid
-		$sqlStr = "SELECT sid FROM series_list WHERE series_instance_uid=?";
+		$sqlStr = "SELECT sl.series_sid, sl.series_description"
+				. " FROM series_join_list sl"
+				. " WHERE sl.series_instance_uid=?";
 		
 		foreach($seriesUIDArr as $item)
 		{
-			$sidArr[] = DBConnector::query($sqlStr, $item, 'SCALAR');
+			$sidArr[] = DBConnector::query($sqlStr, $item, 'ARRAY_NUM');
 		}
-
-		// Get storage ID of first series
-		$sqlStr= "SELECT storage_id FROM series_list WHERE sid=?";
-		$storageID =  DBConnector::query($sqlStr, $sidArr[0], 'SCALAR');
+		
+		// Get current storage ID for plugin result
+		$sqlStr = "SELECT storage_id FROM storage_master WHERE type=2 AND current_use='t'";
+		$storageID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
 		
 		// jobID duplication check
-		$colArr =array();
+		$colArr = array();
 
 		$sqlStr = "SELECT * FROM executed_plugin_list el, executed_series_list es"
 				. " WHERE el.plugin_id=? AND el.job_id=es.job_id AND el.status>0"
@@ -166,20 +176,20 @@ class ExecutePluginAction extends ApiAction
 
 		$colArr[] = $pluginID;
 
-		for($i = 0; $i < count($seriesNum); $i++)
+		for($i = 0; $i < count($seriesUIDArr); $i++)
 		{
 			if($i > 0)  $sqlStr .= " OR ";
 
 			$sqlStr .= "(es.volume_id=? AND es.series_sid=?)";
 
 			$colArr[] = $i;
-			$colArr[] = $sidArr[$i];
+			$colArr[] = $sidArr[$i][0];
 		}
 		$sqlStr .= ");";
-
+		
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($colArr);
-
+		
 		if($stmt->rowCount() == $seriesNum)
 		{
 			$result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -211,12 +221,6 @@ class ExecutePluginAction extends ApiAction
 				$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
 				$jobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
 	
-				// Set new job ID
-				$sqlStr = "SELECT setval('executed_plugin_list_job_id_seq', ?, true)";
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindValue(1, $jobID);
-				$stmt->execute();
-	
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
 						. " (job_id, plugin_id, storage_id, status, exec_user, executed_at)"
@@ -230,23 +234,30 @@ class ExecutePluginAction extends ApiAction
 						. " VALUES (?, ?, ?, 1, ?, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->execute(array($jobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
-	
+				
 				// Register into executed_series_list and job_queue_series
 				for($i=0; $i<$seriesNum; $i++)
 				{
-					$sqlParams = array($jobID, $i, $sidArr[$i]);
-	
+					$sqlParams = array($jobID, $i, $sidArr[$i][0]);
+					
 					$sqlStr = "INSERT INTO executed_series_list(job_id, volume_id, series_sid)"
 							. " VALUES (?, ?, ?)";
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
-	
-					$sqlStr = "INSERT INTO job_queue_series(job_id, volume_id, series_sid)"
-							. " VALUES (?, ?, ?)";
+					
+					// Match plug-in cad series
+					$sqlStr = "INSERT INTO job_queue_series"
+							. " (job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags)"
+							. " VALUES (?, ?, ?, ?, ?, ?)";
+					
+					$sqlParams = array($jobID, $i, $sidArr[$i][0]);
+					$sqlParams[] = $this->rule['start_img_num'];
+					$sqlParams[] = $this->rule['end_img_num'];
+					$sqlParams[] = $this->rule['required_private_tags'];
+					
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
 				}
-	
 				//---------------------------------------------------------------------------------------------------------
 				// Commit transaction
 				//---------------------------------------------------------------------------------------------------------
@@ -263,9 +274,9 @@ class ExecutePluginAction extends ApiAction
 			}
 		}
 		
-		return $jobID;
-	
 		$pdo = null;
+		
+		return $jobID;
 	}
 }
 ?>
