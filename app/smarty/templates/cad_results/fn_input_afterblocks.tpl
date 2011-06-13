@@ -5,4 +5,5 @@
 <input type="radio" name="fn_found" id="fn-found" value="0" />
 <label for="fn-found">FN Found</label>
 <input type="button" value="Input FN" id="jump-fn-input" />
+&nbsp;(<span id="fn-count">0</span> input)
 </div>

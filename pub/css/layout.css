@@ -552,6 +552,11 @@ ul.inline li {
 	margin: 5px 0 15px 0;
 }
 
+#fn-count {
+	color: red;
+	font-weight: bold;
+}
+
 span.register-ok {
 	color: green;
 	font-weight: bold;
