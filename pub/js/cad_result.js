@@ -6,6 +6,8 @@
 var circus = circus || {};
 
 circus.feedback = function() {
+	var postUrl = null;
+
 	var global = {
 		initialize: function() {
 			var idata = circus.feedback.initdata;
@@ -102,30 +104,36 @@ circus.feedback = function() {
 				$('<li>').html(msg).appendTo('#register-error');
 			})
 		},
-		register: function() {
+		register: function(temporary, postLocation) {
 			var feedback = circus.feedback.collect();
-			if (console && console.log) console.log(feedback);
+			postUrl = temporary ? postLocation : null;
 			$.post("register_feedback.php",
 				{
 					jobID: $("#job-id").val(),
 					feedbackMode: circus.feedback.feedbackMode,
+					temporary: temporary ? 1 : 0,
 					feedback: JSON.stringify(feedback)
 				},
-				function (result)
-				{
-					var obj = JSON.parse(result)
-					if (obj)
-					{
-						if (obj.status == 'OK')
-							location.reload(true);
-						else
-							alert("Error while registering feedback:\n" + obj.error.message);
-					}
-					else
-						alert("System Error:\n" + result);
-				},
+				global.register_success,
 				"text"
 			);
+		},
+		register_success: function(result) {
+			var obj = JSON.parse(result)
+			if (obj)
+			{
+				if (obj.status == 'OK')
+				{
+					if (postUrl)
+						location.replace(postUrl);
+					else
+						location.reload(true);
+				}
+				else
+					alert("Error while registering feedback:\n" + obj.error.message);
+			}
+			else
+				alert("System Error:\n" + result);
 		}
 	};
 	return global;
@@ -173,7 +181,9 @@ $(function(){
 		circus.feedback.disable();
 	}
 
-	$('#register').click(circus.feedback.register);
+	$('#register').click(function() {
+		circus.feedback.register(false);
+	});
 
 	$('.tabArea a').click(function(event) {
 		var target = $(event.target);
@@ -189,6 +199,20 @@ $(function(){
 		if (mode != circus.feedback.feedbackMode)
 			$('#mode-form').submit();
 	});
+
+	if (circus.feedback.feedbackStatus == 'normal')
+	{
+		$('#menu .jq-btn').click(function(event) {
+			var save = confirm('Do you want to temporarily save changes ' +
+				'before leaving this page?');
+			if (save)
+			{
+				var postLocation = $(event.currentTarget).attr('href');
+				circus.feedback.register(true, postLocation);
+				return false;
+			}
+		});
+	}
 
 	if (circus.feedback.consensualFeedbackAvail != 'locked')
 	{

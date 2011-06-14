@@ -84,11 +84,11 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	if ($feedbackMode == 'personal')
 	{
-		$feedback = $cadResult->queryFeedback('user', $user_id);
+		$feedback = $cadResult->queryFeedback('user', $user_id, false);
 	}
 	else
 	{
-		$feedback = $cadResult->queryFeedback('consensual');
+		$feedback = $cadResult->queryFeedback('consensual', null, false);
 	}
 	if (is_array($feedback) && count($feedback) > 0)
 	{

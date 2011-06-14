@@ -42,11 +42,17 @@ class CadResult extends Model
 	 * all personal feedback set. 'consensual', the consensual feedback.
 	 * 'all', the all feedback set. 'user', ID specified.
 	 * @param string $user_id Specifies the user ID when $kind is 'user'
+	 * @param bool $ignoreTemporary If true, temporarily saved feedback sets
+	 * are ignored.
 	 * @return array Array of Feedback objects
 	 */
-	public function queryFeedback($kind = 'all', $user_id = null)
+	public function queryFeedback($kind = 'all', $user_id = null, $ignoreTemporary = true)
 	{
 		$feedback_list = $this->Feedback;
+		if ($ignoreTemporary)
+			$feedback_list = array_filter($feedback_list, function($in) {
+				return $in->status == Feedback::REGISTERED;
+			});
 		switch ($kind)
 		{
 			case "personal":
