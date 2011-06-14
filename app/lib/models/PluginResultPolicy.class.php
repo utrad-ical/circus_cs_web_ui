@@ -15,6 +15,8 @@ class PluginResultPolicy extends Model
 	 */
 	public function searchGroup($allow_list, array $groups)
 	{
+		if (strlen($allow_list) == 0 || is_null($allow_list))
+			return true;
 		$tmp = preg_split('/,/', $allow_list);
 		$allow_groups = array();
 		foreach ($tmp as $gp)

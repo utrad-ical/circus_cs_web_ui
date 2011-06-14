@@ -106,12 +106,25 @@ class CadResult extends Model
 
 		// The availability is 'disabled' when:
 		// (1) The user has no privileges to give personal/consensual feedback
-		// (2) The user has already entered the feedback.
-		// (3) Consensual feedback is already registered by someone.
-		if ($feedbackMode == 'personal' && !$user->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))
-			return 'disabled';
-		if ($feedbackMode == 'consensual' && !$user->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
-			return 'disabled';
+		// (2) Feedback registration is declined by result policy
+		// (3) The user has already entered the feedback.
+		// (4) Consensual feedback is already registered by someone.
+		$currentUser = Auth::currentUser();
+		$policy = $this->PluginResultPolicy;
+		if ($feedbackMode == 'personal')
+		{
+			if (!$currentUser->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))
+				return 'disabled';
+			if (!$policy->searchGroup($policy->allow_personal_fb, $currentUser->Group))
+				return 'disabled';
+		}
+		if ($feedbackMode == 'consensual')
+		{
+			if (!$currentUser->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
+				return 'disabled';
+			if (!$policy->searchGroup($policy->allow_consensual_fb, $currentUser->Group))
+				return 'disabled';
+		}
 		if ($feedbackMode == 'personal' && count($my_personal_feedback))
 			return 'disabled';
 		$consensual_feedback = $this->queryFeedback('consensual');
@@ -144,15 +157,7 @@ class CadResult extends Model
 	public function checkCadResultAvailability(array $groups)
 	{
 		$policy = $this->PluginResultPolicy;
-		if (strlen($policy->allow_result_reference) > 0)
-		{
-			if ($policy->searchGroup($policy->allow_result_reference, $groups))
-				return true;
-			else
-				return false;
-		}
-		// if allow_result_reference is empty, anyone can see the result
-		return true;
+		return $policy->searchGroup($policy->allow_result_reference, $groups);
 	}
 
 	/**
