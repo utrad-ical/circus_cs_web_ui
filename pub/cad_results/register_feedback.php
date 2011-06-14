@@ -61,7 +61,15 @@ exit;
 function registerFeedback($job_id, $feedback, $temporary, $is_consensual)
 {
 	$pdo = DBConnector::getConnection();
-	$user_id = Auth::currentUser()->user_id;
+	$user = Auth::currentUser();
+	$user_id = $user->user_id;
+
+	// 'demo' as magic group: No actual feedback registration performed!
+	$groups = $user->Group;
+	foreach ($groups as $grp)
+		if ($grp->group_id == 'demo')
+			return true;
+
 	if (strlen($user_id) == 0)
 		throw new Exception('Session not established.');
 
