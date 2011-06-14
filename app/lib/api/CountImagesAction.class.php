@@ -2,6 +2,17 @@
 
 class CountImagesAction extends ApiAction
 {
+	protected static $required_privileges = array(
+		Auth::API_EXEC
+	);
+	
+	
+	function requiredPrivileges()
+	{
+		return self::$required_privileges;
+	}
+	
+	
 	function execute($api_request)
 	{
 		$params = $api_request['params'];

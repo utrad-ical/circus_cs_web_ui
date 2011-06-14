@@ -89,6 +89,12 @@ class Auth
 	const MENU_SHOW = 'menuShow';
 
 	/**
+	 * Name of 'ApiExec' privilege.
+	 * @var unknown_type
+	 */
+	const API_EXEC = 'apiExec';
+
+	/**
 	 * Private (thus unchangable) data that holds the privileges information.
 	 * @var array
 	 */
@@ -146,6 +152,10 @@ class Auth
 		array (
 			self::MENU_SHOW,
 			'(Not implemented) Can show navigation menu.'
+		),
+		array (
+			self::API_EXEC,
+			'Can execute Web API.'
 		)
 	);
 

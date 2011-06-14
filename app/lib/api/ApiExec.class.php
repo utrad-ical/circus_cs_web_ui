@@ -41,12 +41,12 @@ class ApiExec
 			}
 			
 			$api = new $cls;
-//			$required_privileges = $api->requiredPrivileges();
-//			foreach ($required_privileges as $priv)
-//			{
-//				if (!self::$currentUser->hasPrivilege($priv))
-//					throw new ApiException('Required privilege '.$priv, ApiResponse::STATUS_ERR_OPE);
-//			}
+			$required_privileges = $api->requiredPrivileges();
+			foreach ($required_privileges as $priv)
+			{
+				if (!self::$currentUser->hasPrivilege($priv))
+					throw new ApiException('Required privilege '.$priv, ApiResponse::STATUS_ERR_OPE);
+			}
 			$res = $api->execute($api_request);
 			return $res;
 		}
