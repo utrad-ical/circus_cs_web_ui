@@ -9,6 +9,7 @@ css/darkroom.css
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
+circus.jobID = {$cadResult->job_id};
 circus.userID = "{$smarty.session.userID|escape:javascript}";
 circus.cadresult.displays = {$displays|@json_encode};
 circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascript}";

@@ -125,9 +125,15 @@ circus.feedback = function() {
 				if (obj.status == 'OK')
 				{
 					if (postUrl)
+					{
+						$(window).trigger('actionlog', { action: 'save' });
 						location.replace(postUrl);
+					}
 					else
+					{
+						$(window).trigger('actionlog', { action: 'register' });
 						location.reload(true);
+					}
 				}
 				else
 					alert("Error while registering feedback:\n" + obj.error.message);
@@ -218,5 +224,7 @@ $(function(){
 	{
 		$('#consensual-mode').removeAttr('disabled').trigger('flush');
 	}
+
+	$(window).trigger('actionlog', { action: "open", options: "CAD result" });
 
 });

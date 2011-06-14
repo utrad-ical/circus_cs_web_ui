@@ -53,6 +53,11 @@
 					}
 				]
 			}
+		},
+		{
+			"type": "CadActionLog",
+			"params": {
+			}
 		}
 	]
 }
