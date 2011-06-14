@@ -26,6 +26,7 @@ else
 		$action = $api_request['action'];
 		
 		$res = new ApiResponse();
+//		$res->setError($action, ApiResponse::STATUS_ERR_SYS, "Internal system error." . $e->getMessage());
 		$res->setError($action, ApiResponse::STATUS_ERR_SYS, "Internal system error.");
 		echo $res->getJson();
 	}

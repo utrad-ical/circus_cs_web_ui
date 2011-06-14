@@ -7,5 +7,8 @@
  */
 abstract class ApiAction
 {
+//	protected $required_privileges;
+	
+//	abstract protected function requiredPrivileges();
 	abstract protected function execute($api_request);
 }
