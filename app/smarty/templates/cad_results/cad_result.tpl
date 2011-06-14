@@ -11,7 +11,6 @@ css/darkroom.css
 <script type="text/javascript">
 circus.userID = "{$smarty.session.userID|escape:javascript}";
 circus.cadresult.displays = {$displays|@json_encode};
-circus.cadresult.sort = {$sort|@json_encode};
 circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascript}";
 circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
 circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
