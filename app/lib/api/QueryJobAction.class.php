@@ -2,17 +2,27 @@
 
 class QueryJobAction extends ApiAction
 {
-	const studyUID  = "studyUID";
-	const seriesUID = "seriesUID";
-	const jobID     = "jobID";
+	const studyUID  = "studyuid";
+	const seriesUID = "seriesuid";
+	const jobID     = "jobid";
 	const show      = "show";
 	
 	static $param_strings = array(
-		studyUID,
-		seriesUID,
-		jobID,
-		show	// "queue_list" or "error_list"
+		self::studyUID,
+		self::seriesUID,
+		self::jobID,
+		self::show	// "queue_list" or "error_list"
 	);
+	
+	protected static $required_privileges = array(
+		Auth::API_EXEC
+	);
+	
+	
+	function requiredPrivileges()
+	{
+		return self::$required_privileges;
+	}
 	
 	
 	function execute($api_request)
@@ -25,25 +35,36 @@ class QueryJobAction extends ApiAction
 			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
 		}
 		
-		$cond = $params[1];
+		$result = array();
+		
+		$cond = strtolower(key($params));
 		switch ($cond)
 		{
-			case studyUID:
+			case self::studyUID:
+				$result = self::query_job_study($params['studyUID']);
 				break;
 				
-			case seriesUID:
+			case self::seriesUID:
+				$result = self::query_job_series($params['seriesUID']);
 				break;
 				
-			case jobID:
+			case self::jobID:
+				$result = self::query_job($params['jobID']);
 				break;
 				
-			case show:
-				if ("queue_list") {
-					
-				} elseif ("error_list") {
-					
+			case self::show:
+				if ($params['show'] == "queue_list")
+				{
+					$result = self::queue_list();
 				}
-				throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+				elseif ($params['show'] == "error_list")
+				{
+					$result = self::error_list();
+				}
+				else
+				{
+					throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+				}
 				break;
 				
 			default:
@@ -51,84 +72,205 @@ class QueryJobAction extends ApiAction
 				break;
 		}
 		
-		$result = array();
-		
 		$res = new ApiResponse();
-		$res->setResult($action, $result);
+		$res->setResult($action, null);
+		if(count($result) > 0) {
+			$res->setResult($action, $result);
+		}
+		
 		return $res;
 	}
 	
 	
 	private function check_params($params)
 	{
-		if(count($params) != 1) {
-			return FALSE;
+		if(count($params) < 1) {
+			return false;
 		}
 		
-		$p = $params[1];
-		if(!array_search($p, self::$param_strings)) {
-			return FALSE;
-		}
-		
-		return TRUE;
+		return true;
 	}
 	
 	
-	function query_job($jobIDlist)
+	function queue_list()
 	{
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
-
-		$sqlStr = "select"
-		. "   job.*,"
-		. "   count(jq.job_id) as waiting"
-		. " from"
-		. "   job_queue jq,"
-		. " ("
-		. "   select"
-		. "     sl.study_instance_uid as studyUID,"
-		. "     sl.series_instance_uid as seriesUID,"
-		. "     jq.job_id as jobID,"
-		. "     pm.plugin_name as pluginName,"
-		. "     pm.version as pluginVersion,"
-		. "     rp.policy_name as resultPolicy,"
-		. "     jq.registered_at as registeredAt,"
-		. "     jq.status,"
-		. "     jq.priority"
-		. "   from"
-		. "     job_queue jq,"
-		. "     job_queue_series qs,"
-		. "     series_list sl,"
-		. "     plugin_master pm,"
-		. "     plugin_result_policy rp,"
-		. "     executed_plugin_list el"
-		. "   where jq.plugin_id = pm.plugin_id"
-		. "     and jq.job_id = qs.job_id"
-		. "     and qs.series_sid = sl.sid"
-		. "     and jq.job_id = el.job_id"
-		. "     and el.policy_id = rp.policy_id"
-		. "     and jq.job_id = ?"
-		. " ) job"
-		. " where"
-		. "   jq.priority >= job.priority"
-		. " and"
-		. "   jq.registered_at <= job.registeredAt"
-		. " group by"
-		. "   job.studyUID,"
-		. "   job.seriesUID,"
-		. "   job.jobID,"
-		. "   job.pluginName,"
-		. "   job.pluginVersion,"
-		. "   job.resultPolicy,"
-		. "   job.registeredAt,"
-		. "   job.status,"
-		. "   job.priority";
 		
-		$result = DBConnector::query($sqlStr, $jobIDlist, 'ALL_ASSOC');
+		$sqlStr = 'select'
+		. '      sl.study_instance_uid  as "studyUID",'
+		. '      sl.series_instance_uid as "seriesUID",'
+		. '      jq.job_id              as "jobID",'
+		. '      pm.plugin_name         as "pluginName",'
+		. '      pm.version             as "pluginVersion",'
+		. '      rp.policy_name         as "resultPolicy",'
+		. '      jq.registered_at       as "registeredAt",'
+		. '      pl.status              as "status",'
+		. '      jq.priority            as "priority"'
+		. ' from job_queue            jq,'
+		. '      job_queue_series     qs,'
+		. '      series_list          sl,'
+		. '      plugin_master        pm,'
+		. '      executed_plugin_list pl,'
+		. '      plugin_result_policy rp'
+		. ' where jq.job_id     = qs.job_id'
+		. ' and   qs.series_sid = sl.sid'
+		. ' and   jq.plugin_id  = pm.plugin_id'
+		. ' and   jq.job_id     = pl.job_id'
+		. ' and   pl.policy_id  = rp.policy_id';
+		
+		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
 		
 		$pdo = null;
 		
 		return $result;
+	}
+	
+	
+	function error_list()
+	{
+		// Connect to SQL Server
+		$pdo = DBConnector::getConnection();
+		
+		$sqlStr = 'select'
+		. ' sl.study_instance_uid  as "studyUID",'
+		. ' sl.series_instance_uid as "seriesUID",'
+		. ' el.job_id              as "jobID",'
+		. ' pm.plugin_name         as "pluginName",'
+		. ' pm.version             as "pluginVersion",'
+		. ' rp.policy_name         as "resultPolicy",'
+		. ' el.executed_at         as "executedAt",'
+		. ' \'error\'              as "status"'
+		. ' from'
+		. ' executed_plugin_list el,'
+		. ' series_list          sl,'
+		. ' plugin_master        pm,'
+		. ' plugin_result_policy rp,'
+		. ' executed_series_list esl'
+		. ' where el.plugin_id = pm.plugin_id'
+		. ' and   el.job_id = esl.job_id'
+		. ' and   esl.series_sid = sl.sid'
+		. ' and   el.policy_id = rp.policy_id'
+		. ' and   el.status = -1';
+		
+		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
+		
+		$pdo = null;
+		
+		return $result;
+	}
+	
+	
+	function query_job($jobIDArr)
+	{
+		// Connect to SQL Server
+		$pdo = DBConnector::getConnection();
+		
+		$ret = array();
+		foreach ($jobIDArr as $id)
+		{
+			$sqlStr = 'select'
+			. ' sl.study_instance_uid  as "studyUID",'
+			. ' sl.series_instance_uid as "seriesUID",'
+			. ' el.job_id              as "jobID",'
+			. ' pm.plugin_name         as "pluginName",'
+			. ' pm.version             as "pluginVersion",'
+			. ' rp.policy_name         as "resultPolicy",'
+			. ' jq.registered_at       as "registeredAt",'
+			. ' el.executed_at         as "executedAt",'
+			. ' el.status              as "status",'
+			. ' jq.priority            as "priority"'
+			. ' from executed_plugin_list el'
+			. ' left join'
+			. ' job_queue jq'
+			. ' on	el.job_id = jq.job_id'
+			. ' left join'
+			. '	executed_series_list es'
+			. ' on	el.job_id     = es.job_id'
+			. ' left join'
+			. '	series_list sl'
+			. ' on	es.series_sid = sl.sid'
+			. ' left join'
+			. '	plugin_master pm'
+			. ' on	el.plugin_id  = pm.plugin_id'
+			. ' left join'
+			. '	plugin_result_policy rp'
+			. ' on	el.policy_id  = rp.policy_id'
+			. ' where el.job_id = ?';
+			
+			$result = DBConnector::query($sqlStr, array($id), 'ALL_ASSOC');
+			
+			// Set status
+			if(isset($result[0]['status'])) {
+				$result[0]['status'] = self::get_status($result[0]['status']);
+			}
+			
+			// Set waiting
+			$waiting = self::get_waiting($result[0][registeredAt], $result[0]['priority']);
+			if ($waiting >= 0) {
+				$result[0]['waiting'] = $waiting;
+			}
+			
+			if($result) {
+				array_push($ret, $result);
+			}
+		}
+		
+		$pdo = null;
+		
+		return $ret;
+	}
+	
+	
+	function query_job_study($studyArr)
+	{
+		throw new ApiException("Not implemented.", ApiResponse::STATUS_ERR_SYS);
+	}
+	
+	
+	function query_job_series($seriesArr)
+	{
+		throw new ApiException("Not implemented.", ApiResponse::STATUS_ERR_SYS);
+	}
+	
+	
+	private function get_status($stat)
+	{
+		switch ($stat)
+		{
+			case -1:
+				return "error";
+				break;
+			case 1:
+				return "in_queue";
+				break;
+			case 2:
+				return "processing";
+				break;
+			case 3:
+				return "processing";
+				break;
+			case 4:
+				return "finished";
+				break;
+			default:
+				break;
+		}
+		
+		return $stat;
+	}
+	
+	private function get_waiting($reg, $pri)
+	{
+		// Count waiting
+		$sqlStr = 'select count(*) cnt'
+		. ' from job_queue'
+		. ' where priority > ?'
+		. ' or (registered_at <= ? and priority = ?)';
+		
+		$waiting = DBConnector::query($sqlStr, array($pri, $reg, $pri),'ALL_ASSOC');
+		
+		return ($waiting[0]['cnt'] - 1);
 	}
 }
 
