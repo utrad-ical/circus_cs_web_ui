@@ -31,15 +31,15 @@ class ApiExec
 			$api_result->setError($action, ApiResponse::STATUS_ERR_AUTH, $auth_result);
 			return $api_result;
 		}
-		
+
 		try
 		{
-			$cls = ApiExec::$action_list[$action];
+			$cls = self::$action_list[$action];
 			if(!isset($cls))
 			{
 				throw new ApiException("Requested action is not defined.", ApiResponse::STATUS_ERR_OPE);
 			}
-			
+
 			$api = new $cls;
 			$required_privileges = $api->requiredPrivileges();
 			foreach ($required_privileges as $priv)
@@ -101,8 +101,6 @@ class ApiExec
 					throw new ApiException('Authentication type not valid');
 					break;
 			}
-			// if (!$user->hasPrivilege(Auth::ApiExec))
-			// 	throw new Exception('This user cannot execute web API.')
 		}
 		catch (ApiException $e)
 		{

@@ -5,51 +5,51 @@ class CountImagesAction extends ApiAction
 	protected static $required_privileges = array(
 		Auth::API_EXEC
 	);
-	
-	
+
+
 	function requiredPrivileges()
 	{
 		return self::$required_privileges;
 	}
-	
-	
+
+
 	function execute($api_request)
 	{
 		$params = $api_request['params'];
 		$action = $api_request['action'];
-		
+
 		$seriesUIDs = $params['seriesInstanceUID'];
 		$studyUIDs = $params['studyInstanceUID'];
-		
-		if(self::check_params($params) == FALSE)
+
+		if($this->check_params($params) == FALSE)
 		{
 			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
 		}
-		
+
 		$result = array();
 		if(isset($seriesUIDs))
 		{
-			$result = self::get_series_counts($seriesUIDs);
+			$result = $this->get_series_counts($seriesUIDs);
 		}
 		else if(isset($studyUIDs))
 		{
-			$result = self::get_study_counts($studyUIDs);
+			$result = $this->get_study_counts($studyUIDs);
 		}
-		
+
 		if (count($result) == 0) {
 			unset($result);
 		}
-		
+
 		$res = new ApiResponse();
 		$res->setResult($action, $result);
 		return $res;
 	}
-	
+
 	private function check_params($params)
 	{
 		$seriesUIDs = $params['seriesInstanceUID'];
 		$studyUIDs = $params['studyInstanceUID'];
-		
+
 		if((isset($seriesUIDs) && isset($studyUIDs))
 			|| (!isset($seriesUIDs) && !isset($studyUIDs)))
 		{
@@ -57,7 +57,7 @@ class CountImagesAction extends ApiAction
 		}
 		return TRUE;
 	}
-	
+
 	private function get_series_counts($UIDs)
 	{
 		$result = array();
@@ -76,10 +76,10 @@ class CountImagesAction extends ApiAction
 				);
 			}
 		}
-		
+
 		return $result;
 	}
-	
+
 	private function get_study_counts($UIDs)
 	{
 		$result = array();
@@ -102,7 +102,7 @@ class CountImagesAction extends ApiAction
 				}
 			}
 		}
-		
+
 		return $result;
 	}
 }
