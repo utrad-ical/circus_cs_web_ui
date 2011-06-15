@@ -34,6 +34,7 @@
 	//-------------------------------------------------------------------------------------------------------
 	set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR);
 	set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'models');
+	set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'api');
 	function __autoLoad($class)
 	{
 		if (!class_exists($class))
