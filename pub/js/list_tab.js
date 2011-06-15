@@ -16,7 +16,7 @@ function DeleteData(mode)
 
 		$.post("delete_list.php",
                {mode: mode, 'sidArr[]': sids, ticket: $("#ticket").val()},
-				function(data){ 
+				function(data){
 					alert(data.message);
 					location.reload();
 				}, "json");
@@ -91,7 +91,7 @@ function ChangeOrderOfStudyList(orderCol, orderMode)
 	               stTimeTo: $("#hiddenStTimeTo").val(),
 	               showing: $("#hiddenShowing").val() };
 
-	if($("#mode").val() == 'patient')  
+	if($("#mode").val() == 'patient')
 	{
 		params.mode = "patient";
         params.encryptedPtID = $("#encryptedPtID").val();
@@ -172,7 +172,7 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 
 	var params = { jobID:   tmpStr[4],
                    srcList: ($("#mode").val()=="today") ? 'todaysSeries' : 'series' };
-	
+
 	if(personalFeedbackFlg == 1)  params.feedbackMode = 'personal';
 
 	location.href = 'cad_results/show_cad_results.php?' + $.param(params);
@@ -195,7 +195,7 @@ function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
 	else
 	{
 		$("#resultButton" + seriesID).hide();
-	
+
 		if(jobStatus > 0)
 		{
 			$("#cadInfo"+seriesID).html('Registered in CAD job list');
@@ -228,9 +228,9 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 
 	var cadName = tmpStr[0];
 	var version = tmpStr[1];
-	
+
 	var orderCol  = $("#orderCol").val();
-	var orderMode = $("#orderMode").val();	
+	var orderMode = $("#orderMode").val();
 
 	var address = 'cad_job/cad_execution.php?cadName=' + encodeURIComponent(cadName)
                 + '&version=' + encodeURIComponent(version)
@@ -249,12 +249,12 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 //--------------------------------------------------------------------------------------------------
 function ShowCADResultFromCADLog(jobID, personalFBFlg)
 {
-	var params = { jobID:   jobID,
-                   srcList: ($("#mode").val() == "today") ? 'todaysCAD' : 'cadLog' };
-
-	if(personalFBFlg == 1)  params.feedbackMode = 'personal';
-
-	location.href = 'cad_results/show_cad_results.php?' + $.param(params);
+	var params = {
+		jobID: jobID,
+		srcList: ($("#mode").val() == "today") ? 'todaysCAD' : 'cadLog'
+	};
+	if(personalFBFlg == 1) params.feedbackMode = 'personal';
+	location.href = 'cad_results/cad_result.php?' + $.param(params);
 }
 
 
@@ -275,7 +275,7 @@ function ChangeOrderOfCADList(orderCol, orderMode)
 	               filterCAD:      $("#hiddenFilterCAD").val(),
 	               filterVersion:  $("#hiddenFilterVersion").val(),
                    personalFB:     $("#hiddenFilterPersonalFB").val(),
-                   consensualFB:   $("#hiddenFilterConsensualFB").val(), 
+                   consensualFB:   $("#hiddenFilterConsensualFB").val(),
                    filterTP:       $("#hiddenFilterTP").val(),
                    filterFN:       $("#hiddenFilterFN").val(),
 	               showing:        $("#hiddenShowing").val() };
