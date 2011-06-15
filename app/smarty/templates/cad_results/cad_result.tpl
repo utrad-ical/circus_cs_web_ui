@@ -5,6 +5,8 @@ Smarty Template for General CAD Result.
 js/radio-to-button.js
 js/cad_result.js
 css/darkroom.css
+js/edit_tags.js
+jq/jquery.blockUI.js
 {$requiringFiles}
 {/capture}
 {capture name="extra"}
@@ -78,6 +80,9 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}
   {if $feedbacks->is_consensual}(by {$feedbacks->entered_by|escape}){/if}</p>{/if}
 </div>
+
+<p id="tagArea">Tags: <span id="cad-tags">Loading Tags...</span> <a id="edit-cad-tags">(Edit)</a></p>
+
 <form>
 <input type="hidden" id="job-id" value="{$cadResult->job_id|escape}" />
 </form>

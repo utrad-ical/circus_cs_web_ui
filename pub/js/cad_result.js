@@ -227,4 +227,12 @@ $(function(){
 
 	$(window).trigger('actionlog', { action: "open", options: "CAD result" });
 
+	// tags
+	var refresh = function(tags) {
+		$('#cad-tags').refreshTags(tags, '../cad_log.php', 'filterTag');
+	};
+	$('#edit-cad-tags').click(function() {
+		circus.edittag.openEditor(4, circus.jobID, '../', refresh);
+	})
+	circus.edittag.load(4, circus.jobID, '../', refresh);
 });
