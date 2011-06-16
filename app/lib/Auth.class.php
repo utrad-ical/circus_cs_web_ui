@@ -105,7 +105,8 @@ class Auth
 		),
 		array (
 			self::PERSONAL_FEEDBACK_ENTER,
-			'Can register personal feedback.'
+			'Can register personal feedback.',
+			self::CONSENSUAL_FEEDBACK_ENTER // upper level
 		),
 		array (
 			self::CONSENSUAL_FEEDBACK_ENTER,
