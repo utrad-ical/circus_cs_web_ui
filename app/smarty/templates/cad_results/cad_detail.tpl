@@ -24,7 +24,6 @@
 					<th>Pos Z</th>
 					<th style="width:4em;">Volume [mm3]</th>
 					<th>Confidence</th>
-					<th>Tag</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -36,10 +35,6 @@
 					<td class="z">{$display.location_z|escape}</td>
 					<td class="volume">{$display.volume_size|string_format:"%.1f"|escape}</td>
 					<td class="confidence">{$display.confidence|string_format:"%.3f"|escape}</td>
-					<td class="tagColumn">
-						<input id="tagBtn{$display.display_id|escape}" type="button" value="tag" class="s-btn form-btn"
-							    onclick="EditTag(5, '{$item[0]|escape}', '../')" title="{$item[8]|escape}" />
-					</td>
 				</tr>
 				{/foreach}
 			</tbody>
