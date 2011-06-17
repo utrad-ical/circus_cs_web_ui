@@ -1,8 +1,9 @@
 {capture name="require"}
 jq/ui/jquery-ui-1.7.3.min.js
+jq/jquery.blockUI.js
 js/search_panel.js
 js/list_tab.js
-js/edit_tag.js
+js/edit_tags.js
 {/capture}
 
 {include file="header.tpl" body_class="patient-list spot" require=$smarty.capture.require}
@@ -66,7 +67,7 @@ js/edit_tag.js
 				</td>
 				{if $smarty.session.personalFBFlg}
 				<td>
-					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="EditTag(1, '{$item[0]|escape}', '')" title="{$item[6]|escape}" />
+					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="circus.edittag.openEditor(1, '{$item[0]|escape}', '')" title="{$item[6]|escape}" />
 				</td>
 				{/if}
 			</tr>

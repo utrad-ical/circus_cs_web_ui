@@ -94,9 +94,6 @@ class QueryJobAction extends ApiAction
 
 	function queue_list()
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
-
 		$sqlStr = 'select'
 		. '      sl.study_instance_uid  as "studyUID",'
 		. '      sl.series_instance_uid as "seriesUID",'
@@ -121,17 +118,12 @@ class QueryJobAction extends ApiAction
 
 		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
 
-		$pdo = null;
-
 		return $result;
 	}
 
 
 	function error_list()
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
-
 		$sqlStr = 'select'
 		. ' sl.study_instance_uid  as "studyUID",'
 		. ' sl.series_instance_uid as "seriesUID",'
@@ -155,17 +147,12 @@ class QueryJobAction extends ApiAction
 
 		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
 
-		$pdo = null;
-
 		return $result;
 	}
 
 
 	function query_job($jobIDArr)
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
-
 		$ret = array();
 		foreach ($jobIDArr as $id)
 		{
@@ -215,22 +202,66 @@ class QueryJobAction extends ApiAction
 				array_push($ret, $result);
 			}
 		}
-
-		$pdo = null;
-
+		
 		return $ret;
 	}
 
 
 	function query_job_study($studyArr)
 	{
-		throw new ApiException("Not implemented.", ApiResponse::STATUS_ERR_SYS);
+		$sqlStr = 'select'
+		. '  sl.study_instance_uid,'
+		. '  sl.series_instance_uid,'
+		. '  esl.job_id'
+		. ' from'
+		. '  executed_series_list esl'
+		. ' left join'
+		. '  series_list sl'
+		. ' on'
+		. '  sl.sid = esl.series_sid'
+		. ' where'
+		. '  sl.study_instance_uid = ?';
+
+		$jobIDArr = array();
+		foreach ($studyArr as $s)
+		{
+			$result = DBConnector::query($sqlStr, array($s), 'ALL_ASSOC');
+			foreach ($result as $r)
+			{
+				$jobIDArr[] = $r['job_id'];
+			}
+		}
+
+		return self::query_job($jobIDArr);
 	}
 
 
 	function query_job_series($seriesArr)
 	{
-		throw new ApiException("Not implemented.", ApiResponse::STATUS_ERR_SYS);
+		$sqlStr = 'select'
+		. '  sl.study_instance_uid,'
+		. '  sl.series_instance_uid,'
+		. '  esl.job_id'
+		. ' from'
+		. '  executed_series_list esl'
+		. ' left join'
+		. '  series_list sl'
+		. ' on'
+		. '  sl.sid = esl.series_sid'
+		. ' where'
+		. '  sl.series_instance_uid = ?';
+
+		$jobIDArr = array();
+		foreach ($seriesArr as $s)
+		{
+			$result = DBConnector::query($sqlStr, array($s), 'ALL_ASSOC');
+			foreach ($result as $r)
+			{
+				$jobIDArr[] = $r['job_id'];
+			}
+		}
+		
+		return self::query_job($jobIDArr);
 	}
 
 

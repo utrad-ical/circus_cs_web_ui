@@ -1,7 +1,8 @@
 {capture name="require"}
 jq/ui/jquery-ui-1.7.3.min.js
+jq/jquery.blockUI.js
 js/search_panel.js
-js/edit_tag.js
+js/edit_tags.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
 css/popup.css
 css/darkroom.css
@@ -9,6 +10,8 @@ css/darkroom.css
 
 {capture name="extra"}
 <script language="Javascript">
+
+var sid = {$data.sid};
 
 {if $data.errorMessage == ""}
 $(function() {ldelim}
@@ -104,6 +107,16 @@ function DownloadVolume()
 	document.form1.method = 'POST';
 	document.form1.submit();
 }
+
+$(function() {
+	var refresh = function(tags) {
+		$('#series-tags').refreshTags(tags, 'series_list.php', 'filterTag');
+	};
+	$('#edit-tag').click(function() {
+		circus.edittag.openEditor(3, sid, '', refresh);
+	});
+	circus.edittag.load(3, sid, '', refresh);
+});
 
 {/literal}
 </script>
@@ -253,12 +266,9 @@ function DownloadVolume()
 	</div>
 	<!-- / Series detail END -->
 
-	<div id="tagArea" class="mt10" style="width:500px;">
-		Tags:
-		{foreach from=$tagArray item=item}
-			<a href="series_list.php?filterTag={$item[0]|escape}" title="Entered by {$item[1]|escape}">{$item[0]|escape}</a>&nbsp;
-		{/foreach}
-		{if $smarty.session.personalFBFlg==1}<a href="#" onclick="EditTag(3,'{$data.sid|escape}', '');">(Edit)</a>{/if}
+	<div id="tagArea">
+		Tags: <span id="series-tags">Loading Tags...</span>
+		{if $smarty.session.personalFBFlg==1}<a href="#" id="edit-tag">(Edit)</a>{/if}
 	</div>
 
 	<div class="al-r ">

@@ -1,8 +1,9 @@
 {capture name="require"}
 jq/ui/jquery-ui-1.7.3.min.js
+jq/jquery.blockUI.js
 js/search_panel.js
 js/list_tab.js
-js/edit_tag.js
+js/edit_tags.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
 {/capture}
 
@@ -93,7 +94,7 @@ jq/ui/css/jquery-ui-1.7.3.custom.css
 				</td>
 				{if $smarty.session.personalFBFlg}
 				<td>
-					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="EditTag(2,'{$item[0]|escape}', '')" title="{$item[11]|escape}" />
+					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="circus.edittag.openEditor(2,'{$item[0]|escape}','')" title="{$item[11]|escape}" />
 				</td>
 				{/if}
 			</tr>
