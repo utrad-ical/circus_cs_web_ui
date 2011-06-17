@@ -23,16 +23,25 @@
 			'type' => 'int',
 			'min' => '1',
 			'required' => true,
-			'errorMes' => 'Image number is invalid.')
+			'errorMes' => 'Image number is invalid.'),
+		'windowLevel' => array(
+			'type' => 'int',
+			'min' => '-32768',
+			'max' => '32767',
+			'default' => '0',
+			'errorMes' => 'Window level is invalid.'),
+		'windowWidth' => array(
+			'type' => 'int',
+			'min' => '0',
+			'max' => '65536',
+			'default' => '0',
+			'errorMes' => 'Window width is invalid.')
 		));
 
 	if($validator->validate($_POST))
 	{
 		$params = $validator->output;
 		$params['errorMessage'] = "";
-
-		$params['windowLevel'] = (isset($_POST['windowLevel']) && is_numeric($_POST['windowLevel'])) ? $_POST['windowLevel'] : 0;
-		$params['windowWidth'] = (isset($_POST['windowWidth']) && is_numeric($_POST['windowWidth'])) ? $_POST['windowWidth'] : 0;
 		$params['presetName']  = (isset($_POST['presetName'])) ? $_POST['presetName'] : "";
 	}
 	else
