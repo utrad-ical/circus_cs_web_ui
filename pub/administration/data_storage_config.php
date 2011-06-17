@@ -17,10 +17,11 @@
 		$oldResultID = (isset($_REQUEST['oldResultID']) && is_numeric($_REQUEST['oldResultID'])) ? $_REQUEST['oldResultID'] : 0;
 		$newDicomID  = (isset($_REQUEST['newDicomID']) && is_numeric($_REQUEST['newDicomID'])) ? $_REQUEST['newDicomID'] : 0;
 		$newResultID = (isset($_REQUEST['newResultID']) && is_numeric($_REQUEST['newResultID'])) ? $_REQUEST['newResultID'] : 0;
+		$oldCacheID = (isset($_REQUEST['oldCacheID']) && is_numeric($_REQUEST['oldCacheID'])) ? $_REQUEST['oldCacheID'] : 0;
+		$newCacheID = (isset($_REQUEST['newCacheID']) && is_numeric($_REQUEST['newCacheID'])) ? $_REQUEST['newCacheID'] : 0;
 		//--------------------------------------------------------------------------------------------------------------
 
 		$params = array('toTopDir' => "../");
-		$restartButtonFlg = 0;
 
 		try
 		{
@@ -125,6 +126,15 @@
 					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
 					$sqlParams[] = $newResultID;
 				}
+
+				if($oldCacheID != 0 && $newCacheID != 0 && $oldCacheID != $newCacheID)
+				{
+					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=3");
+					$stmt->execute();
+
+					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
+					$sqlParams[] = $newCacheID;
+				}
 			}
 
 			if($mode == 'add')
@@ -138,7 +148,7 @@
 						$message = '<span style="color:#ff0000;"> Fail to create directory: ' . $newPath . '</span>';
 					}
 
-					if($message == "&nbsp;")
+					if($newType == 1 && $message == "&nbsp;")
 					{
 						if(mkdir($newPath.$DIR_SEPARATOR."tmp") == FALSE)
 						{
@@ -231,6 +241,7 @@
 				{
 					if($item[2] ==1)      $oldDicomID  = $item[0];
 					else if($item[2] ==2) $oldResultID = $item[0];
+					else if($item[2] ==3) $oldCacheID  = $item[0];
 				}
 			}
 			//---------------------------------------------------------------------------------------------------
@@ -245,8 +256,7 @@
 			$smarty->assign('storageList',  $storageList);
 			$smarty->assign('oldDicomID',   $oldDicomID);
 			$smarty->assign('oldResultID',  $oldResultID);
-
-			$smarty->assign('restartButtonFlg', $restartButtonFlg);
+			$smarty->assign('oldCacheID',   $oldCacheID);
 
 			$smarty->assign('ticket',  rawurlencode($_SESSION['ticket']));
 

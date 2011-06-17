@@ -24,21 +24,24 @@ function deleteStorage(storageID, type)
 {
 	if(confirm('Do you want to delete storage ID='+ storageID + ' ?'))
 	{
-		var address = 'data_storage_config.php?mode=delete'
-		            + '&newStorageID=' + storageID
-					+ '&newType='+ type
-					+ '&ticket=' + $("#ticket").val();
+		var params = {  mode:         'delete',
+						newStorageID: storageID,
+						newType: type,
+						ticket:  $("#ticket").val() };
 
-		location.replace(address);	
+		var address = 'data_storage_config.php?' + $.param(params);
+		location.replace(address);
 	}
 }
 
-function AddStorage(ticket)
+function AddStorage()
 {
-	var address = 'data_storage_config.php?mode=add'
-				+ '&newPath=' + encodeURIComponent($("#newPath").val())
-	            + '&newType=' + $("#typeList").val()
-				+ '&ticket='  + $("#ticket").val();
+	var params = {  mode:    'add',
+					newPath: $("#newPath").val(),
+					newType: $("#typeList").val(),
+					ticket:  $("#ticket").val() };
+
+	var address = 'data_storage_config.php?' + $.param(params);
 	location.replace(address);
 }
 
@@ -48,18 +51,21 @@ function ResetAddStorage()
 	$("#typeList").children().removeAttr("selected");
 }
 
-function UpdateCurrentID(ticket)
+function UpdateCurrentID()
 {
 	if(confirm('Do you want to change current ID?'))
 	{
-		var address = 'data_storage_config.php?mode=changeCurrent'
-		            + '&oldDicomID=' + $("#oldDicomID").val()
-		            + '&oldResultID=' + $("#oldResultID").val()
-		            + '&newDicomID=' + $("#currentDICOMList").val()
-		            + '&newResultID=' + $("#currentResultList").val()
-					+ '&ticket=' + $("#ticket").val();
+		var params = {  mode: 'changeCurrent',
+						oldDicomID:  $("#oldDicomID").val(),
+						oldResultID: $("#oldResultID").val(),
+						oldChacheID: $("#oldChacheID").val(),
+						newDicomID:  $("#currentDICOMList").val(),
+						newResultID: $("#currentResultList").val(),
+						newChacheID: $("#currentChacheList").val(),
+						ticket:      $("#ticket").val() };
 
-		location.replace(address);	
+		var address = 'data_storage_config.php?' + $.param(params);
+		location.replace(address);
 	}
 }
 
@@ -68,6 +74,7 @@ function ResetCurrentID()
 {
 	$("#currentDICOMList").val($("#oldDicomID").val());
 	$("#currentResultList").val($("#oldResultID").val());
+	$("#currentCacheList").val($("#oldCacheID").val());
 
 }
 
@@ -98,15 +105,6 @@ function ResetCurrentID()
 
 				<div id="message" class="mt5 mb5 ml10">{$message}</div>
 
-				{if $restartButtonFlg == 1}
-					<p class="mb5 ml10">
-						<span style="color:#ff0000; font-weight:bold;">
-							Please restart DICOM storage server and HTTP server to activate settings.
-						</span>
-						<input type="button" class="form-btn" value="restart" onclick="RestartServer('{$ticket}');">
-					</p>
-				{/if}
-
 				<div id="storageList" class="ml10 mb20">
 					<table class="col-tbl">
 						<thead>
@@ -123,7 +121,7 @@ function ResetCurrentID()
 							<tr {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 								<td>{$item[0]}</td>
 								<td class="al-l">{$item[1]}</td>
-								<td>{if $item[2]==1}DICOM storage{else}Plug-in result{/if}</td>
+								<td>{if $item[2]==1}DICOM storage{elseif $item[2]==2}Plug-in result{else}Web cache{/if}</td>
 								<td>{if $item[3]==true}TRUE{else}FALSE{/if}</td>
 								<td>
 									<input type="button" id="deleteButton{$smarty.foreach.cnt.iteration}" value="delete"
@@ -153,6 +151,7 @@ function ResetCurrentID()
 								<select id="typeList">
 									<option value="1">DICOM storage</option>
 									<option value="2">Plug-in result</option>
+									<option value="3">Web cache</option>
 								</select>
 							</td>
 						</tr>
@@ -161,7 +160,7 @@ function ResetCurrentID()
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" class="form-btn" value="add"   onclick="AddStorage('{$ticket}');" />&nbsp;
+							<input type="button" class="form-btn" value="add"   onclick="AddStorage();" />&nbsp;
 							<input type="button" class="form-btn" value="reset" onclick="ResetAddStorage();" />
 						</p>
 					</div>
@@ -172,6 +171,7 @@ function ResetCurrentID()
 
 					<input type="hidden" id="oldDicomID"  value="{$oldDicomID}" />
 					<input type="hidden" id="oldResultID" value="{$oldResultID}" />
+					<input type="hidden" id="oldCacheID"  value="{$oldCacheID}" />
 
 					<table class="detail-tbl">
 						<tr>
@@ -199,12 +199,25 @@ function ResetCurrentID()
 								</select>
 							</td>
 						</tr>
+
+						<tr>
+							<th><span class="trim01">Web cache</th>
+							<td>
+								<select id="currentCacheList" style="width: 3.5em;">
+									{foreach from=$storageList item=item name=cnt}
+										{if $item[2]==3}
+											<option value="{$item[0]}"{if $item[3]==true} selected="selected"{/if}>{$item[0]}</option>
+										{/if}
+									{/foreach}
+								</select>
+							</td>
+						</tr>
 						
 					</table>
 
 					<div class="pl20 mb20 mt10">
 						<p>
-							<input type="button" class="form-btn" value="update" onclick="UpdateCurrentID('{$ticket}');" />&nbsp;
+							<input type="button" class="form-btn" value="update" onclick="UpdateCurrentID();" />&nbsp;
 							<input type="button" class="form-btn" value="reset"  onclick="ResetCurrentID();" />
 						</p>
 					</div>
