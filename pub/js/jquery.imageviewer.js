@@ -275,10 +275,16 @@ $.widget('ui.imageviewer', {
 
 	_setData: function(key, value, animated)
 	{
-		if (key == 'index')
-		{
-			this.changeImage(value);
-			return; // supress calling super method
+		switch (key) {
+			case 'index':
+				this.changeImage(value);
+				return;
+			case 'ww':
+				this.changeWindow(this.options.wl, value);
+				return;
+			case 'wl':
+				this.changeWindow(value, this.options.ww);
+				return;
 		}
 		$.widget.prototype._setData.apply(this, arguments);
 		switch (key) {

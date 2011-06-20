@@ -9,14 +9,14 @@ CSS information
 
 /* =================================================
 	DETAIL
-	
+
 		.headerArea
-		
+
 		#detailArea
 			Image .series-detail-img
 			Div .detail-panel
 				Table .detail-tbl
-	
+
 ==================================================== */
 /*
 	headerArea
@@ -42,10 +42,8 @@ CSS information
 ---------------------------------------------------- */
 .series-detail-img {
 	float: left;
-	width: 320px;  /* modified by Y.Nomura */
 	padding: 5px;
 	border: 1px solid #7f7f7f;
-	text-align: center;
 	margin-right: 20px;
 }
 
@@ -81,7 +79,7 @@ table.detail-tbl td {
 	border-right: 1px solid #ffffff;
 	border-bottom: 1px solid #fffff;
 	border-left: 2px solid #ffffff;
-	background-color:#fff; 
+	background-color:#fff;
 	text-align: center;
 	padding: .5em 0;
 }
@@ -90,19 +88,19 @@ table.detail-tbl td {
 }
 
 /* ===================================================
-	User preference 
+	User preference
 	(move to mode.xxx.css by Y.Nomura 2010.04.03)
 		h3
 		h4
  =================================================== */
 /*h4.upSec {
-	color: #09f;  
+	color: #09f;
 	font-weight: bold;
 }*/
 
 /* ===================================================
-	Favorites 
-	
+	Favorites
+
 		tree
  =================================================== */
 .tree1 {
