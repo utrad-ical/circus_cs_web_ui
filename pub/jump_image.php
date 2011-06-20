@@ -17,21 +17,25 @@ $validator->addRules(array(
 	'imgNum' => array(
 		'type' => 'int',
 		'min' => '1',
-		'required' => true),
+		'required' => true
+	),
 	'windowLevel' => array(
 		'type' => 'int',
 		'min' => '-32768',
 		'max' => '32767',
-		'default' => '0'),
+		'default' => '0'
+	),
 	'windowWidth' => array(
 		'type' => 'int',
 		'min' => '0',
 		'max' => '65536',
-		'default' => '0'),
+		'default' => '0'
+	),
 	'imgWidth' => array(
 		'type' => 'int',
 		'min' => '0',
-		'default' => '0'),
+		'default' => '0'
+	),
 	'imgHeight' => array(
 		'type' => 'int',
 		'min' => '0',
@@ -120,6 +124,8 @@ try
 		{
 			$dstData['cached'] = 'true';
 		}
+		$dstData['windowLevel'] = $req['windowLevel'];
+		$dstData['windowWidth'] = $req['windowWidth'];
 
 		// Get slice number and slice location from dump data
 		$dstData['sliceNumber'] = "";
