@@ -17,7 +17,7 @@ var seriesInstanceUID = "{$data.seriesInstanceUID|escape}";
 {if $data.errorMessage == ""}
 $(function() {ldelim}
 	SetUp({$data.imgNum}, {$data.fNum});
-	JumpImgNumber({$data.imgNum}, {$data.windowLevel}, {$data.windowWidth});
+	//JumpImgNumber({$data.imgNum}, {$data.windowLevel}, {$data.windowWidth});
 {rdelim});
 {/if}
 
@@ -147,6 +147,7 @@ $(function() {
 		<div class="series-detail-img">
 			<form id="form1" name="form1">
 
+			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID|escape}" />
 			<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName|escape}" />
 			<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel|escape}" />
 			<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth|escape}" />

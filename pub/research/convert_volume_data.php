@@ -1,75 +1,65 @@
 <?php
-	$params = array('toTopDir' => "../");
-	include_once("../common.php");
-	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
+$params = array('toTopDir' => "../");
+include_once("../common.php");
+Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables and validation
-	//------------------------------------------------------------------------------------------------------------------
-	$params = array();
-	$validator = new FormValidator();
+//------------------------------------------------------------------------------------------------------------------
+// Import $_POST variables and validation
+//------------------------------------------------------------------------------------------------------------------
+$params = array();
+$validator = new FormValidator();
 
-	$validator->addRules(array(
-		"studyInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
-		"seriesInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
-		));
+$validator->addRules(array(
+	"seriesInstanceUID" => array(
+		"type" => "uid",
+		"required" => true,
+		"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
+	));
 
-	if($validator->validate($_POST))
-	{
-		$params = $validator->output;
-		$params['message'] = "";
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['message'] = implode('<br/>', $validator->errors);
-	}
+if($validator->validate($_POST))
+{
+	$params = $validator->output;
+	$params['message'] = "";
+}
+else
+{
+	$params = $validator->output;
+	$params['message'] = implode('<br/>', $validator->errors);
+}
 
-	$params['toTopDir'] = "../";
-	//-----------------------------------------------------------------------------------------------------------------
+$params['toTopDir'] = "../";
+//-----------------------------------------------------------------------------------------------------------------
 
+if($params['message'] == "")
+{
 	try
 	{
-		if($params['message'] == "")
+
+		$pdo = DBConnector::getConnection();
+
+		$sqlStr = "SELECT patient_id, study_instance_uid,"
+				. " series_date, series_time, modality, series_description"
+				. " FROM series_join_list"
+				. " WHERE series_instance_uid=?";
+					
+		$result = DBConnector::query($sqlStr, $params['seriesInstanceUID'], 'ARRAY_NUM');
+
+		if(!is_array($result))
 		{
-			// Connect to SQL Server
-			$pdo = DBConnector::getConnection();
+			$params['message'] = "[Error] DICOM series is unspecified!!";
+		}
+		else
+		{
+			$params['patientID']         = $result[0];
+			$params['studyInstanceUID']  = $result[1];
+			$params['seriesTime']        = $result[2] . ' ' . $result[3];
+			$params['modality']          = $result[4];
+			$params['seriesDescription'] = $result[5];
 
-			$sqlStr = "SELECT pt.patient_id, pt.patient_name, sr.series_date, sr.series_time,"
-					. " sr.modality, sr.series_description"
-					. " FROM patient_list pt, study_list st, series_list sr"
-					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?"
-					. " AND sr.study_instance_uid=st.study_instance_uid"
-					. " AND pt.patient_id=st.patient_id";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
-
-			if($stmt->rowCount() != 1)
+			if($_SESSION['anonymizeFlg'] == 1)
 			{
-				$params['message'] = "[Error] DICOM series is unspecified!!";
-			}
-			else
-			{
-				$result = $stmt->fetch(PDO::FETCH_NUM);
-
-				$params['patientID']         = $result[0];
-				$params['seriesTime']        = $result[2] . ' ' . $result[3];
-				$params['modality']          = $result[4];
-				$params['seriesDescription'] = $result[5];
-
-
-				if($_SESSION['anonymizeFlg'] == 1)
-				{
-					$params['encryptedPtID'] =  PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
-				}
+				$params['encryptedPtID'] =  PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 			}
 		}
 
@@ -89,5 +79,5 @@
 	}
 
 	$pdo = null;
-
+}
 ?>

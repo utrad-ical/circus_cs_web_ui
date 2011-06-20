@@ -1,117 +1,110 @@
 <?php
-	$params['toTopDir'] = "../";
-	include("../common.php");
-	Auth::checkSession(false);
+$params['toTopDir'] = "../";
+include("../common.php");
+Auth::checkSession(false);
 
-	$errorFlg = 0;
+$errorFlg = 0;
 
-	if (Auth::currentGroup()->hasPrivilege(Auth::RESEARCH_SHOW))
-	{
-		$errorFlg = 1;
-	}
+if(!Auth::currentUser()->hasPrivilege(Auth::VOLUME_DOWNLOAD))
+{
+	$errorFlg = 1;
+}
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables and validation
-	//------------------------------------------------------------------------------------------------------------------
-	$params = array();
-	$validator = new FormValidator();
+//------------------------------------------------------------------------------------------------------------------
+// Import $_POST variables and validation
+//------------------------------------------------------------------------------------------------------------------
+$params = array();
+$validator = new FormValidator();
 
-	$validator->addRules(array(
-		"studyInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (studyInstanceUID) is invalid."),
-		"seriesInstanceUID" => array(
-			"type" => "uid",
-			"required" => true,
-			"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
-		));
+$validator->addRules(array(
+	"seriesInstanceUID" => array(
+		"type" => "uid",
+		"required" => true,
+		"errorMes" => "[ERROR] Parameter of URL (seriesInstanceUID) is invalid.")
+	));
 
-	if($validator->validate($_POST))
-	{
-		$params = $validator->output;
-		//$params['message'] = "";
-	}
-	else
-	{
-		$params = $validator->output;
-		//$params['message'] = implode('<br/>', $validator->errors);
-		$errorFlg = 1;
-	}
+if($validator->validate($_POST))
+{
+	$params = $validator->output;
+	//$params['message'] = "";
+}
+else
+{
+	$params = $validator->output;
+	//$params['message'] = implode('<br/>', $validator->errors);
+	$errorFlg = 1;
+}
 
-	//-----------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------
 
+if(!$errorFlg)
+{
 	try
 	{
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
-		if(!$errorFlg)
+		// Get cache area
+		$sqlStr = "SELECT path FROM storage_master WHERE type=3 AND current_use='t'";
+		$webCachePath = DBConnector::query($sqlStr, NULL, 'SCALAR');
+
+		$sqlStr = "SELECT path, patient_id, study_instance_uid"
+				. " FROM series_join_list"
+				. " WHERE series_instance_uid=?";
+
+		$result = DBConnector::query($sqlStr, $params['seriesInstanceUID'], 'ARRAY_NUM');
+
+		if(!is_array($result))
 		{
-			$sqlStr = "SELECT st.patient_id, sm.path"
-					. " FROM study_list st, series_list sr, storage_master sm "
-					. " WHERE sr.series_instance_uid=? AND sr.study_instance_uid=?"
-					. " AND sr.study_instance_uid=st.study_instance_uid"
-					. " AND sr.storage_id=sm.storage_id;";
+			$errorFlg = 1;
+		}
+		else
+		{
+			// Prevent timeout error
+			set_time_limit(0);
 
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($params['seriesInstanceUID'], $params['studyInstanceUID']));
+			$seriesDir = $result[0] . $DIR_SEPARATOR . $result[1]
+						. $DIR_SEPARATOR . $result[2]
+						. $DIR_SEPARATOR .  $params['seriesInstanceUID'];
 
-			if($stmt->rowCount() != 1)
+			$baseName = $webCachePath . $DIR_SEPARATOR . $params['seriesInstanceUID'];
+			$dstFileName = $baseName . ".zip";
+
+			if(!is_file($dstFileName))
 			{
-				$errorFlg = 1;
-			}
-			else
-			{
-				// Prevent timeout error
-				set_time_limit(0);
+				//--------------------------------------------------------------------------------------------------
+				// Convert DICOM files to Volume-One data
+				//--------------------------------------------------------------------------------------------------
+				$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir . ' ' . $webCachePath
+						. ' ' . $params['seriesInstanceUID'] . '"';
+				shell_exec($cmdStr);
+				//--------------------------------------------------------------------------------------------------
 
-				$result = $stmt->fetch(PDO::FETCH_NUM);
+				//--------------------------------------------------------------------------------------------------
+				// create a zip archive
+				//--------------------------------------------------------------------------------------------------
+				$zip = new ZipArchive();
 
-				$seriesDir = $result[1] . $DIR_SEPARATOR . $result[0]
-				           . $DIR_SEPARATOR . $params['studyInstanceUID']
-				           . $DIR_SEPARATOR .  $params['seriesInstanceUID'];
-
-				$baseName = $seriesDir . $DIR_SEPARATOR . $params['seriesInstanceUID'];
-				$dstFileName = $baseName . ".zip";
-
-				if(!is_file($dstFileName))
+				if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
 				{
-					//--------------------------------------------------------------------------------------------------
-					// Convert DICOM files to Volume-One data
-					//--------------------------------------------------------------------------------------------------
-					$cmdStr = $cmdForProcess . ' "' . $cmdDcmToVolume . ' ' . $seriesDir
-							. ' ' . $params['seriesInstanceUID'] . '"';
-					shell_exec($cmdStr);
-					//--------------------------------------------------------------------------------------------------
-
-					//--------------------------------------------------------------------------------------------------
-					// create a zip archive
-					//--------------------------------------------------------------------------------------------------
-					$zip = new ZipArchive();
-
-					if ($zip->open($dstFileName, ZIPARCHIVE::CREATE)!==TRUE)
+					$errorFlg = 1;
+				}
+				else
+				{
+					if($zip->addFile($baseName . ".vol", "/" .  $params['seriesInstanceUID'] . ".vol") !== TRUE
+					    || $zip->addFile($baseName . ".txt", "/" .  $params['seriesInstanceUID'] . ".txt") !== TRUE)
 					{
 						$errorFlg = 1;
 					}
-					else
-					{
-						if($zip->addFile($baseName . ".vol", "/" .  $params['seriesInstanceUID'] . ".vol") !== TRUE
-						    || $zip->addFile($baseName . ".txt", "/" .  $params['seriesInstanceUID'] . ".txt") !== TRUE)
-						{
-							$errorFlg = 1;
-						}
-					}
-					$zip->close();
-
-					if($errorFlg == 1 && is_file($dstFileName))  unlink($dstFileName);
-					if(is_file($baseName . ".vol"))  unlink($baseName . ".vol");
-					if(is_file($baseName . ".txt"))  unlink($baseName . ".txt");
 				}
+				$zip->close();
+
+				if($errorFlg == 1 && is_file($dstFileName))  unlink($dstFileName);
+				if(is_file($baseName . ".vol"))  unlink($baseName . ".vol");
+				if(is_file($baseName . ".txt"))  unlink($baseName . ".txt");
 				//------------------------------------------------------------------------------------------------------
 			}
 		}
-		echo $errorFlg;
 	}
 	catch (PDOException $e)
 	{
@@ -119,4 +112,7 @@
 	}
 
 	$pdo = null;
+}
+echo $errorFlg;
+
 ?>

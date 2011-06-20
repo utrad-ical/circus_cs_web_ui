@@ -13,13 +13,11 @@
 <!-- 
 	$(function() {
 		$.post('dcm_to_vol_volume.php', 
-               {studyInstanceUID:  $("#studyInstanceUID").val(),
-                seriesInstanceUID: $("#seriesInstanceUID").val()},
+               {seriesInstanceUID: $("#seriesInstanceUID").val()},
 		        function(ret){
 			    	if(ret == 0)
 		   		    {
-						var address = 'download_volume.php?studyInstanceUID=' + $("#studyInstanceUID").val()
-                                    + '&seriesInstanceUID=' + $("#seriesInstanceUID").val();
+						var address = 'download_volume.php?seriesInstanceUID=' + $("#seriesInstanceUID").val();
 					    location.replace(address);
 					}
 					else
@@ -54,7 +52,6 @@ input.close-btn {
 
 <body>
 	<form>
-	<input type="hidden" id="studyInstanceUID"  value="{$params.studyInstanceUID}" />
 	<input type="hidden" id="seriesInstanceUID" value="{$params.seriesInstanceUID}" />
 
 	{if $params.message == ""}
