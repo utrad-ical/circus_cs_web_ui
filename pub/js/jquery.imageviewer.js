@@ -167,11 +167,13 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	_drawImage: function(index, imgFileName)
+	_drawImage: function(index, obj)
 	{
-		$('img', this.element).attr('src', this.options.toTopDir + imgFileName);
+		$('img', this.element).attr('src', this.options.toTopDir + obj.fileName);
 		this._label(index);
+		this.options.sliceLocation = obj.sliceLocation,
 		this._drawMarkers();
+		this.element.trigger('imagechange');
 	},
 
 	_cacheKey: function(index, wl, ww)
@@ -179,7 +181,7 @@ $.widget('ui.imageviewer', {
 		return index + '_' + wl + '_' + ww;
 	},
 
-	_imageLoadHandler: function (data)
+	_imageLoadHandler: function(data)
 	{
 		if (data.status != 'OK')
 		{
@@ -188,11 +190,14 @@ $.widget('ui.imageviewer', {
 		else if (data.imgFname && data.sliceNumber)
 		{
 			var key = this._cacheKey(data.sliceNumber, data.windowLevel, data.windowWidth);
-			this._cache[key] = data.imgFname;
+			this._cache[key] = {
+				fileName: data.imgFname,
+				sliceLocation: data.sliceLocation
+			};
 			var w = this._waiting;
 			if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
 			{
-				this._drawImage(data.sliceNumber, data.imgFname);
+				this._drawImage(data.sliceNumber, this._cache[key]);
 				this._waiting = null;
 			}
 			else
@@ -259,7 +264,7 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-slider').slider('option', 'value', index);
 		var toTopDir = this.options.toTopDir;
 		var cacheKey = this._cacheKey(index, wl, ww);
-		if (typeof(this._cache[cacheKey]) == 'string')
+		if (this._cache[cacheKey] && this._cache[cacheKey].fileName)
 		{
 			// the image is already created
 			this._drawImage(index, this._cache[cacheKey]);
@@ -270,7 +275,7 @@ $.widget('ui.imageviewer', {
 			this._waiting = { index: index, wl: wl, ww: ww };
 			this._query(index, wl, ww);
 		}
-		$(this.element).trigger('imagechange');
+		this.element.trigger('imagechanging');
 	},
 
 	_setData: function(key, value, animated)

@@ -30,7 +30,11 @@ $(function() {
 	var viewer_params = { series_instance_uid: seriesInstanceUID };
 	$.extend(viewer_params, viewer);
 	console.log(viewer_params);
-	$('#series-detail-viewer').imageviewer(viewer_params);
+	var v = $('#series-detail-viewer').imageviewer(viewer_params);
+	v.bind('imagechange', function() {
+		$('#slice-number').text(v.imageviewer('option', 'index'));
+		$('#slice-location').text(v.imageviewer('option', 'sliceLocation'));
+	});
 
 	// tag editor
 	var refresh = function(tags) {
@@ -116,11 +120,11 @@ $(function() {
 				</tr>
 				<tr>
 					<th><span class="trim01">Image number</span></th>
-					<td><span id="sliceNumber">******</span></td>
+					<td><span id="slice-number"></span></td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Slice location</span></th>
-					<td><span id="sliceLocation">******</span></td>
+					<td><span id="slice-location"></span></td>
 				</tr>
 			</table>
 			{if $currentUser->hasPrivilege('volumeDownload')}
