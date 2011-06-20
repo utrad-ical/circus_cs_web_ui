@@ -12,10 +12,12 @@ css/darkroom.css
 <script language="Javascript">
 
 var sid = {$data.sid};
+var seriesInstanceUID = "{$data.seriesInstanceUID|escape}";
 
 {if $data.errorMessage == ""}
 $(function() {ldelim}
 	SetUp({$data.imgNum}, {$data.fNum});
+	JumpImgNumber({$data.imgNum}, {$data.windowLevel}, {$data.windowWidth});
 {rdelim});
 {/if}
 
@@ -34,7 +36,7 @@ function SetUp(imgNum, fNum)
 		change: function(event, ui) {
 			$("#sliderValue").html(ui.value);
 			JumpImgNumber(ui.value, $("#windowLevel").val(),
-				$("#windowWidth").val(), $("#presetName").val());
+				$("#windowWidth").val());
 		}
 	});
 	$("#slider").css("width", "220px");
@@ -73,18 +75,19 @@ function ChangePresetMenu()
 	$("#windowWidth").val(tmpStr[1]);
 	$("#presetName").val(presetName);
 
-	JumpImgNumber($("#slider").slider("value"), tmpStr[0], tmpStr[1], presetName);
+	JumpImgNumber($("#slider").slider("value"), tmpStr[0], tmpStr[1]);
 }
 
-function JumpImgNumber(imgNum, windowLevel, windowWidth, presetName)
+function JumpImgNumber(imgNum, windowLevel, windowWidth)
 {
+	console.log(imgNum, windowLevel, windowWidth);
 	$.post("jump_image.php",
-			{ studyInstanceUID: $("#studyInstanceUID").val(),
-			  seriesInstanceUID: $("#seriesInstanceUID").val(),
+			  { seriesInstanceUID: seriesInstanceUID,
 			  imgNum: imgNum,
 			  windowLevel: windowLevel,
 			  windowWidth: windowWidth,
-			  presetName:  presetName },
+			  imgWidth: $("#imgBox img").attr('width'), 
+			  imgHeight: $("#imgBox img").attr('height') },
   			  function(data){
 
 				if(data.errorMessage != "")  alert(data.errorMessage);
@@ -144,8 +147,6 @@ $(function() {
 		<div class="series-detail-img">
 			<form id="form1" name="form1">
 
-			<input type="hidden" id="studyInstanceUID"  name="studyInstanceUID"   value="{$data.studyInstanceUID|escape}" />
-			<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID|escape}" />
 			<input type="hidden" id="presetName"        name="presetName"         value="{$data.presetName|escape}" />
 			<input type="hidden" id="windowLevel"       name="windowLevel"        value="{$data.windowLevel|escape}" />
 			<input type="hidden" id="windowWidth"       name="windowWidth"        value="{$data.windowWidth|escape}" />
