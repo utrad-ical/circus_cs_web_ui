@@ -21,7 +21,6 @@ circus.feedback.additional = circus.feedback.additional || [];
 
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
-				study_instance_uid: circus.cadresult.studyUID,
 				series_instance_uid: circus.cadresult.seriesUID,
 				max: circus.cadresult.seriesNumImages,
 				toTopDir: '../',

@@ -156,7 +156,7 @@ $.widget('ui.imageviewer', {
 
 	_imageLoadHandler: function (data)
 	{
-		if (data.errorMessage)
+		if (data.status != 'OK')
 		{
 			console && console.log(data.errorMessage);
 		}
@@ -180,9 +180,8 @@ $.widget('ui.imageviewer', {
 	{
 		var self = this;
 		var param = {
-				studyInstanceUID: this.options.study_instance_uid,
-				seriesInstanceUID: this.options.series_instance_uid,
-				imgNum: index,
+			seriesInstanceUID: this.options.series_instance_uid,
+			imgNum: index,
 		};
 		// prevent requesting image more than once
 		if (this._cache[index] instanceof Date)

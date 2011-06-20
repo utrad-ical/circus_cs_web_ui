@@ -1,13 +1,13 @@
 <?php
+
+/**
+ * Converts DICOM image on-demand and returns the path to that file.
+ */
+
 include_once("common.php");
 Auth::checkSession(false);
 
-//----------------------------------------------------------------------------------------------------------------------
-// Import $_POST variables and validation
-//----------------------------------------------------------------------------------------------------------------------
-$params = array();
 $validator = new FormValidator();
-
 $validator->addRules(array(
 	'seriesInstanceUID' => array(
 		'type' => 'uid',
@@ -36,121 +36,125 @@ $validator->addRules(array(
 		'type' => 'int',
 		'min' => '0',
 		'default' => '0')
-	));
-
-if($validator->validate($_POST))
-{
-	$params = $validator->output;
-	$params['errorMessage'] = "";
-}
-else
-{
-	$params = $validator->output;
-	$params['errorMessage'] = implode("\n", $validator->errors);
-	echo(json_encode($params)); exit;
-}
-//----------------------------------------------------------------------------------------------------------------------
+	)
+);
 
 $dstData = array(
-	'errorMessage' => $params['errorMessage'],
+	'status' => 'OK',
 	'imgFname'     => '',
-	'imgNum'    => $params['imgNum'],
-	'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum'])
+	'imgNum'    => $params['imgNum']
 );
 
 try
 {
+	if (Auth::currentUser() === null)
+		throw new Exception('Session not established properly.');
+
+	if (!$validator->validate($_REQUEST))
+		throw new Exception(implode("\n", $validator->errors));
+	$req = $validator->output;
+
 	if($params['errorMessage'] == "")
 	{
 		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
-		
+
 		// Get cache area
 		$sqlStr = "SELECT storage_id, path FROM storage_master"
 				. "  WHERE type=3 AND current_use='t'";
 		$webCacheRes = DBConnector::query($sqlStr, NULL, 'ARRAY_ASSOC');
+		if (!is_array($webCacheRes))
+			throw new Exception('Web cache directory not configured');
 
 		$sqlStr = "SELECT path, patient_id, study_instance_uid, image_width, image_height"
 				. " FROM series_join_list"
 				. " WHERE series_instance_uid=?";
 
-		$result = DBConnector::query($sqlStr, $params['seriesInstanceUID'], 'ARRAY_NUM');
+		$result = DBConnector::query($sqlStr, array($req['seriesInstanceUID']), 'ARRAY_NUM');
 
 		// check original size
-		if($params['imgWidth']  == $result[3])  $params['imgWidth']  = 0;
-		if($params['imgHeight'] == $result[4])  $params['imgHeight'] = 0;
+		if($req['imgWidth']  == $result[3])
+			$req['imgWidth']  = 0;
+		if($req['imgHeight'] == $result[4])
+			$req['imgHeight'] = 0;
 
-		$baseName = sprintf('%s_%d_%d_%d_%d_%d.jpg', $params['seriesInstanceUID'],
-													 $params['imgNum'],
-													 $params['windowLevel'],
-													 $params['windowWidth'],
-													 $params['imgWidth'],
-													 $params['imgHeight']);
+		$baseName = sprintf(
+			'%s_%d_%d_%d_%d_%d.jpg',
+			$req['seriesInstanceUID'],
+			$req['imgNum'],
+			$req['windowLevel'],
+			$req['windowWidth'],
+			$req['imgWidth'],
+			$req['imgHeight']
+		);
 
 		$dstFname = $webCacheRes['path'] . $DIR_SEPARATOR . $baseName;
 		$dstData['imgFname'] = 'storage/' . $webCacheRes['storage_id'] . '/' . $baseName;
 
-		$dumpFname = sprintf("%s%s%s_%d.txt", $webCacheRes['path'],
-											  $DIR_SEPARATOR,
-											  $params['seriesInstanceUID'],
-											  $params['imgNum']);
+		$dumpFname = sprintf(
+			"%s%s%s_%d.txt",
+			$webCacheRes['path'],
+			$DIR_SEPARATOR,
+			$req['seriesInstanceUID'],
+			$req['imgNum']);
 
 		if(!is_file($dstFname) || !is_file($dumpFname))
 		{
 			$seriesDir = $result[0] . $DIR_SEPARATOR . $result[1]
-					. $DIR_SEPARATOR . $result[2]
-					. $DIR_SEPARATOR . $params['seriesInstanceUID'];
-					
-			$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $params['imgNum']);
+				. $DIR_SEPARATOR . $result[2]
+				. $DIR_SEPARATOR . $req['seriesInstanceUID'];
 
-			if(!DcmExport::createThumbnailJpg($srcFname, $dstFname, $dumpFname, 100,
-											 $params['windowLevel'], $params['windowWidth'],
-											 $params['imgWidth'], $params['imgHeight']))
+			$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $req['imgNum']);
+
+			$dcmResult = DcmExport::createThumbnailJpg(
+				$srcFname, $dstFname, $dumpFname, 100,
+				$req['windowLevel'], $req['windowWidth'],
+				$req['imgWidth'], $req['imgHeight']
+			);
+			if(!$dcmResult)
 			{
-				$dstData['imgFname'] = "";
-				$dstData['errorMessage'] = "[ERROR] Fail to create thumbnail image.";
+				throw new Exception('Error while creating thumbnail image.');
 			}
+		}
+		else
+		{
+			$dstData['cached'] = 'true';
 		}
 
 		// Get slice number and slice location from dump data
 		$dstData['sliceNumber'] = "";
 		$dstData['sliceLocation'] = "";
-		
+
 		$fp = fopen($dumpFname, "r");
-
-		if($fp != NULL)
+		if($fp == null)
+			throw new Exception('Failed to open dump file.');
+		while($str = fgets($fp))
 		{
-			while($str = fgets($fp))
+			$dumpTitle   = strtok($str,":");
+			$dumpContent = strtok("\r\n");
+			switch($dumpTitle)
 			{
-				$dumpTitle   = strtok($str,":");
-				$dumpContent = strtok("\r\n");
-
-				switch($dumpTitle)
-				{
-					case 'Img. No.':
-					case 'Image No.':
-						$dstData['sliceNumber'] = $dumpContent;
-						break;
-
-					case 'Slice location':
-						$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
-						break;
-				}
+				case 'Img. No.':
+				case 'Image No.':
+					$dstData['sliceNumber'] = $dumpContent;
+					break;
+				case 'Slice location':
+					$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
+					break;
 			}
-			fclose($fp);
 		}
-		else
-		{
-			$dstData['errorMessage'] = "[ERROR] Fail to open dump file.";
-		}
+		fclose($fp);
 	}
-	//header('');
 	echo json_encode($dstData);
 }
-catch (PDOException $e)
+catch (Exception $e)
 {
-	var_dump($e->getMessage());
+	echo json_encode(array(
+		'status' => 'OperationError',
+		'error' => array(
+			'message' => $e->getMessage() . ' at ' . $e->getLine()
+		)
+	));
 }
-$pdo = null;
 
 ?>

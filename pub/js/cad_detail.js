@@ -11,7 +11,6 @@ $(function() {
 		markers.push(data[dp]);
 	}
 	$('#cad-detail-viewer').imageviewer({
-		study_instance_uid: circus.cadresult.studyUID,
 		series_instance_uid: circus.cadresult.seriesUID,
 		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
