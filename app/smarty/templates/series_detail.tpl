@@ -29,7 +29,6 @@ $(function() {
 
 	var viewer_params = { series_instance_uid: seriesInstanceUID };
 	$.extend(viewer_params, viewer);
-	console.log(viewer_params);
 	var v = $('#series-detail-viewer').imageviewer(viewer_params);
 	v.bind('imagechange', function() {
 		$('#slice-number').text(v.imageviewer('option', 'index'));
