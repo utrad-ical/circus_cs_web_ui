@@ -1,167 +1,166 @@
 <?php
-	include_once("common.php");
-	Auth::checkSession(false);
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables and validation
-	//------------------------------------------------------------------------------------------------------------------
-	$params = array();
-	$validator = new FormValidator();
+/**
+ * Converts DICOM image on-demand and returns the path to that file.
+ */
 
-	$validator->addRules(array(
-		'studyInstanceUID'  => array(
-			'type' => 'uid',
-			'required' => true,
-			'errorMes' => 'Study Instance UID is invalid.'
-		),
-		'seriesInstanceUID' => array(
-			'type' => 'uid',
-			'required' => true,
-			'errorMes' => 'Series Instance UID is invalid.'
-		),
-		'imgNum' => array(
-			'type' => 'int',
-			'min' => '1',
-			'required' => true,
-			'errorMes' => 'Image number is invalid.'),
-		'windowLevel' => array(
-			'type' => 'int',
-			'min' => '-32768',
-			'max' => '32767',
-			'default' => '0',
-			'errorMes' => 'Window level is invalid.'),
-		'windowWidth' => array(
-			'type' => 'int',
-			'min' => '0',
-			'max' => '65536',
-			'default' => '0',
-			'errorMes' => 'Window width is invalid.')
-		));
+include_once("common.php");
+Auth::checkSession(false);
 
-	if($validator->validate($_POST))
+$validator = new FormValidator();
+$validator->addRules(array(
+	'seriesInstanceUID' => array(
+		'type' => 'uid',
+		'required' => true,
+		'errorMes' => 'Series Instance UID is invalid.'
+	),
+	'imgNum' => array(
+		'type' => 'int',
+		'min' => '1',
+		'required' => true
+	),
+	'windowLevel' => array(
+		'type' => 'int',
+		'min' => '-32768',
+		'max' => '32767',
+		'default' => '0'
+	),
+	'windowWidth' => array(
+		'type' => 'int',
+		'min' => '0',
+		'max' => '65536',
+		'default' => '0'
+	),
+	'imgWidth' => array(
+		'type' => 'int',
+		'min' => '0',
+		'default' => '0'
+	),
+	'imgHeight' => array(
+		'type' => 'int',
+		'min' => '0',
+		'default' => '0')
+	)
+);
+
+$dstData = array(
+	'status' => 'OK',
+	'imgFname'     => '',
+	'imgNum'    => $params['imgNum']
+);
+
+try
+{
+	if (Auth::currentUser() === null)
+		throw new Exception('Session not established properly.');
+
+	if (!$validator->validate($_REQUEST))
+		throw new Exception(implode("\n", $validator->errors));
+	$req = $validator->output;
+
+	if($params['errorMessage'] == "")
 	{
-		$params = $validator->output;
-		$params['errorMessage'] = "";
-		$params['presetName']  = (isset($_POST['presetName'])) ? $_POST['presetName'] : "";
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = implode("\n", $validator->errors);
-		echo(json_encode($params)); exit;
-	}
-	//------------------------------------------------------------------------------------------------------------------
+		// Connect to SQL Server
+		$pdo = DBConnector::getConnection();
 
-	$dstData = array(
-		'errorMessage' => $params['errorMessage'],
-		'imgFname'     => '',
-		'imgNum'    => $params['imgNum'],
-		'imgNumStr'    => sprintf("Img. No. %04d", $params['imgNum'])
-	);
+		// Get cache area
+		$sqlStr = "SELECT storage_id, path FROM storage_master"
+				. "  WHERE type=3 AND current_use='t'";
+		$webCacheRes = DBConnector::query($sqlStr, NULL, 'ARRAY_ASSOC');
+		if (!is_array($webCacheRes))
+			throw new Exception('Web cache directory not configured');
 
-	try
-	{
-		if($params['errorMessage'] == "")
+		$sqlStr = "SELECT path, patient_id, study_instance_uid, image_width, image_height"
+				. " FROM series_join_list"
+				. " WHERE series_instance_uid=?";
+
+		$result = DBConnector::query($sqlStr, array($req['seriesInstanceUID']), 'ARRAY_NUM');
+
+		// check original size
+		if($req['imgWidth']  == $result[3])
+			$req['imgWidth']  = 0;
+		if($req['imgHeight'] == $result[4])
+			$req['imgHeight'] = 0;
+
+		$baseName = sprintf(
+			'%s_%d_%d_%d_%d_%d.jpg',
+			$req['seriesInstanceUID'],
+			$req['imgNum'],
+			$req['windowLevel'],
+			$req['windowWidth'],
+			$req['imgWidth'],
+			$req['imgHeight']
+		);
+
+		$dstFname = $webCacheRes['path'] . $DIR_SEPARATOR . $baseName;
+		$dstData['imgFname'] = 'storage/' . $webCacheRes['storage_id'] . '/' . $baseName;
+
+		$dumpFname = sprintf(
+			"%s%s%s_%d.txt",
+			$webCacheRes['path'],
+			$DIR_SEPARATOR,
+			$req['seriesInstanceUID'],
+			$req['imgNum']);
+
+		if(!is_file($dstFname) || !is_file($dumpFname))
 		{
-			// Connect to SQL Server
-			$pdo = DBConnector::getConnection();
+			$seriesDir = $result[0] . $DIR_SEPARATOR . $result[1]
+				. $DIR_SEPARATOR . $result[2]
+				. $DIR_SEPARATOR . $req['seriesInstanceUID'];
 
-			$sqlStr = "SELECT st.patient_id,  sm.storage_id, sm.path"
-				. " FROM study_list st, series_list sr, storage_master sm"
-				. " WHERE sr.study_instance_uid=?"
-				. " AND sr.series_instance_uid=?"
-				. " AND sr.study_instance_uid=st.study_instance_uid"
-				. " AND sr.storage_id=sm.storage_id;";
+			$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $req['imgNum']);
 
-			$result = DBConnector::query($sqlStr, array($params['studyInstanceUID'], $params['seriesInstanceUID']), 'ARRAY_NUM');
-
-			$patientID = $result[0];
-
-			$seriesDir = $result[2] . $DIR_SEPARATOR . $patientID
-					. $DIR_SEPARATOR . $params['studyInstanceUID']
-					. $DIR_SEPARATOR . $params['seriesInstanceUID'];
-
-			$seriesDirWeb = 'storage/' . $result[1]. '/' . $patientID
-				. '/' . $params['studyInstanceUID']
-				. '/' . $params['seriesInstanceUID'];
-
-			$flist = array();
-			$flist = GetDicomFileListInPath($seriesDir);
-
-			//$fNum = count($flist);
-
-			$subDir = $seriesDir . $DIR_SEPARATOR . $SUBDIR_JPEG;
-			if(!is_dir($subDir))	mkdir($subDir);
-
-			$tmpFname = $flist[$params['imgNum']-1];
-
-			$srcFname = $seriesDir . $DIR_SEPARATOR . $tmpFname;
-
-			// For compresed DICOM file
-			$tmpFname = str_ireplace("c_", "_", $tmpFname);
-			$tmpFname = substr($tmpFname, 0, strlen($tmpFname)-4);
-
-			$dstBase   = $subDir . $DIR_SEPARATOR . $tmpFname;
-			$dstFname  = $dstBase;
-			$dstFnameWeb = $seriesDirWeb . $DIR_SEPARATOR_WEB . $SUBDIR_JPEG . $DIR_SEPARATOR_WEB . $tmpFname;
-
-			$dumpFname = $dstFname . ".txt";
-
-			if($params['presetName'] != "" && $params['presetName'] != "Auto")
+			$dcmResult = DcmExport::createThumbnailJpg(
+				$srcFname, $dstFname, $dumpFname, 100,
+				$req['windowLevel'], $req['windowWidth'],
+				$req['imgWidth'], $req['imgHeight']
+			);
+			if(!$dcmResult)
 			{
-				$dstFname .= "_" . $params['presetName'];
-				$dstFnameWeb .= "_" . $params['presetName'];
-			}
-			$dstFname .= '.jpg';
-			$dstFnameWeb .= '.jpg';
-
-			// Create thumbnail image
-			if(is_file($dstFname)
-			   || DcmExport::createThumbnailJpg($srcFname, $dstBase, $params['presetName'],
-			                                    $JPEG_QUALITY, 1, $params['windowLevel'], $params['windowWidth']))
-			{
-				$dstData['imgFname'] = $dstFnameWeb;
-			}
-			else
-			{
-				$dstData['errorMessage'] = "[ERROR] Fail to create thumbnail image.";
-			}
-
-			$fp = fopen($dumpFname, "r");
-
-			if($fp != NULL)
-			{
-				while($str = fgets($fp))
-				{
-					$dumpTitle   = strtok($str,":");
-					$dumpContent = strtok("\r\n");
-
-					switch($dumpTitle)
-					{
-						case 'Img. No.':
-						case 'Image No.':
-							$dstData['sliceNumber'] = $dumpContent;
-							break;
-
-						case 'Slice location':
-							$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
-							break;
-					}
-				}
-				fclose($fp);
-			}
-			else
-			{
-				$dstData['errorMessage'] = "[ERROR] Fail to open DICOM dump file.";
+				throw new Exception('Error while creating thumbnail image.');
 			}
 		}
-		echo json_encode($dstData);
-	}
-	catch (PDOException $e)
-	{
-		var_dump($e->getMessage());
-	}
-	$pdo = null;
+		else
+		{
+			$dstData['cached'] = 'true';
+		}
+		$dstData['windowLevel'] = $req['windowLevel'];
+		$dstData['windowWidth'] = $req['windowWidth'];
 
+		// Get slice number and slice location from dump data
+		$dstData['sliceNumber'] = "";
+		$dstData['sliceLocation'] = "";
+
+		$fp = fopen($dumpFname, "r");
+		if($fp == null)
+			throw new Exception('Failed to open dump file.');
+		while($str = fgets($fp))
+		{
+			$dumpTitle   = strtok($str,":");
+			$dumpContent = strtok("\r\n");
+			switch($dumpTitle)
+			{
+				case 'Img. No.':
+				case 'Image No.':
+					$dstData['sliceNumber'] = $dumpContent;
+					break;
+				case 'Slice location':
+					$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
+					break;
+			}
+		}
+		fclose($fp);
+	}
+	echo json_encode($dstData);
+}
+catch (Exception $e)
+{
+	echo json_encode(array(
+		'status' => 'OperationError',
+		'error' => array(
+			'message' => $e->getMessage() . ' at ' . $e->getLine()
+		)
+	));
+}
 
 ?>

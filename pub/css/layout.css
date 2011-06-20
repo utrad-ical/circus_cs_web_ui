@@ -599,6 +599,10 @@ span.register-not-ok {
 	text-align: center;
 }
 
+.ui-imageviewer div.ui-imageviewer-grayscale-preset {
+	text-align: center;
+}
+
 .ui-imageviewer div.ui-imageviewer-dot {
 	position: absolute;
 	width: 3px;

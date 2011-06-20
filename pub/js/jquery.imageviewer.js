@@ -72,6 +72,26 @@ $.widget('ui.imageviewer', {
 		{
 			$('<div class="ui-imageviewer-location" />').appendTo(root);
 		}
+		if (this.options.grayscalePresets instanceof Array &&
+			this.options.grayscalePresets.length > 0)
+		{
+			var pr = $('<div class="ui-imageviewer-grayscale-preset">')
+			pr.appendTo(root).append(this.options.grayscaleLabel);
+			var select = $('<select>').appendTo(pr);
+			var max = this.options.grayscalePresets.length;
+			var self = this;
+			for (var i = 0; i < max; i++)
+			{
+				var preset = this.options.grayscalePresets[i];
+				$('<option>').text(preset.label)
+					.data('wl', preset.wl).data('ww', preset.ww)
+					.appendTo(select);
+			}
+			select.change(function (event) {
+				var sel = $('option:selected', select);
+				self.changeWindow(sel.data('wl'), sel.data('ww'));
+			});
+		}
 		this.changeImage(this.options.index);
 		if (this.options.role == 'locator')
 		{
@@ -147,45 +167,58 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	_drawImage: function(index, imgFileName)
+	_drawImage: function(index, obj)
 	{
-		$('img', this.element).attr('src', this.options.toTopDir + imgFileName);
+		$('img', this.element).attr('src', this.options.toTopDir + obj.fileName);
 		this._label(index);
+		this.options.sliceLocation = obj.sliceLocation,
 		this._drawMarkers();
+		this.element.trigger('imagechange');
 	},
 
-	_imageLoadHandler: function (data)
+	_cacheKey: function(index, wl, ww)
 	{
-		if (data.errorMessage)
+		return index + '_' + wl + '_' + ww;
+	},
+
+	_imageLoadHandler: function(data)
+	{
+		if (data.status != 'OK')
 		{
 			console && console.log(data.errorMessage);
 		}
 		else if (data.imgFname && data.sliceNumber)
 		{
-			this._cache[data.sliceNumber] = data.imgFname;
-			if (this._waiting && this._waiting.index == data.sliceNumber)
+			var key = this._cacheKey(data.sliceNumber, data.windowLevel, data.windowWidth);
+			this._cache[key] = {
+				fileName: data.imgFname,
+				sliceLocation: data.sliceLocation
+			};
+			var w = this._waiting;
+			if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
 			{
-				this._drawImage(data.sliceNumber, data.imgFname);
+				this._drawImage(data.sliceNumber, this._cache[key]);
 				this._waiting = null;
 			}
 			else
 			{
-				var dummy = new Image(); // browser image preload
+				var dummy = new Image(); // just starts preloading the image
 				dummy.src = this.options.toTopDir + data.imgFname;
 			}
 		}
 	},
 
-	_query: function(index)
+	_query: function(index, wl, ww)
 	{
 		var self = this;
 		var param = {
-				studyInstanceUID: this.options.study_instance_uid,
-				seriesInstanceUID: this.options.series_instance_uid,
-				imgNum: index,
+			seriesInstanceUID: this.options.series_instance_uid,
+			imgNum: index,
+			windowLevel: wl,
+			windowWidth: ww
 		};
 		// prevent requesting image more than once
-		if (this._cache[index] instanceof Date)
+		if (this._cache[this._cacheKey(index, wl, ww)] instanceof Date)
 			return;
 		$.post(
 			this.options.toTopDir + 'jump_image.php',
@@ -196,7 +229,6 @@ $.widget('ui.imageviewer', {
 			'json'
 		);
 		this._cache[index] = new Date();
-
 	},
 
 	preload: function()
@@ -209,34 +241,55 @@ $.widget('ui.imageviewer', {
 
 	changeImage: function(index)
 	{
-		var old = this.options.index;
+		this._internalChangeImage(index, this.options.wl, this.options.ww);
+	},
+
+	changeWindow: function(level, width)
+	{
+		this._internalChangeImage(this.options.index, level, width);
+	},
+
+	_internalChangeImage: function(index, wl, ww)
+	{
+		var oldIndex = this.options.index;
+		var oldWL = this.options.wl;
+		var oldWW = this.options.ww;
 		var self = this;
 		index = Math.min(Math.max(index, this.options.min), this.options.max);
 		this.options.index = index;
-		if (old == index && this._initialized)
+		this.options.wl = wl;
+		this.options.ww = ww;
+		if (oldIndex == index && oldWL == wl && oldWW == ww && this._initialized)
 			return;
 		$('.ui-imageviewer-slider').slider('option', 'value', index);
 		var toTopDir = this.options.toTopDir;
-		if (typeof(this._cache[index]) == 'string')
+		var cacheKey = this._cacheKey(index, wl, ww);
+		if (this._cache[cacheKey] && this._cache[cacheKey].fileName)
 		{
 			// the image is already created
-			this._drawImage(index, this._cache[index]);
+			this._drawImage(index, this._cache[cacheKey]);
 		}
 		else
 		{
-			// the image may need creation
-			this._waiting = { index: index };
-			this._query(index);
+			// the image may need server-side generating
+			this._waiting = { index: index, wl: wl, ww: ww };
+			this._query(index, wl, ww);
 		}
-		$(this.element).trigger('imagechange');
+		this.element.trigger('imagechanging');
 	},
 
 	_setData: function(key, value, animated)
 	{
-		if (key == 'index')
-		{
-			this.changeImage(value);
-			return; // supress calling super method
+		switch (key) {
+			case 'index':
+				this.changeImage(value);
+				return;
+			case 'ww':
+				this.changeWindow(this.options.wl, value);
+				return;
+			case 'wl':
+				this.changeWindow(value, this.options.ww);
+				return;
 		}
 		$.widget.prototype._setData.apply(this, arguments);
 		switch (key) {
@@ -247,10 +300,14 @@ $.widget('ui.imageviewer', {
 			case 'role':
 			case 'imageWidth':
 			case 'imageHeight':
+			case 'useSlider':
+			case 'useLocationText':
+			case 'grayscalePresets':
+				this._initialized = false;
 				this._draw();
 				break;
 		}
-	},
+	}
 });
 
 $.extend($.ui.imageviewer, {
@@ -260,6 +317,8 @@ $.extend($.ui.imageviewer, {
 		windowLevel: 10,
 		windowWidth: 100,
 		index: 1,
+		ww: 0,
+		wl: 0,
 		width: 300,
 		imageWidth: 512,
 		imageHeight: 512,
@@ -267,6 +326,8 @@ $.extend($.ui.imageviewer, {
 		sliderHotTrack: false,
 		useLocationText: true,
 		locationLabel: 'Image Number: ',
+		grayscalePresets: [],
+		grayscaleLabel: 'Grayscale Preset: ',
 		toTopDir: '',
 		role: 'viewer',
 		showMarkers: true,

@@ -39,17 +39,42 @@
 			readfile($fileName);
 			break;
 
-		// archives
+		// archives (download)
 		case "application/zip":              // .zip
 		case "application/x-7z-compressed":  // .7z
 		case "application/x-lzh":            // .lha .lzh
 		case "application/x-tar":            // .tar .tgz
 
 			$pathInfo = pathinfo($fileName);			// get path info
-			header("Content-type: {$mimeType}");		// set mime type
-			header("Content-Disposition: attachment");
-			header("Cache-Control: Private");
-			readfile($fileName);
+			$fileSize = filesize($fileName);
+
+			@apache_setenv('no-gzip', 1); 
+			@ini_set('zlib.output_compression', 0);
+			header("Content-type: application/force-download"); 
+			header('Content-Type: application/octet-stream'); 
+			header('Content-Length: ' .  $fileSize);
+			
+			set_time_limit(300); 
+
+			$chunkSize = 1 * (1024 * 1024); // how many bytes per chunk 
+
+			if ($fileSize > $chunkSize)
+			{ 
+				$fp = fopen($fileName, 'rb'); 
+				$buffer = ''; 
+				while (!feof($fp))
+				{
+					$buffer = fread($fp, $chunkSize);
+					echo $buffer;
+					ob_flush();
+					flush();
+				}
+				fclose($fp);
+			}
+			else
+			{ 
+				readfile($fileName);
+			} 
 			break;
 
 		// forbidden
