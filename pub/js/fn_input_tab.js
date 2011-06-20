@@ -5,19 +5,15 @@
 circus.feedback.additional = circus.feedback.additional || [];
 
 (function () {
+	var initData;
+
 	var f = {
 		name: 'fn_input',
 		initialize: function(data)
 		{
+			initData = data;
 			var canEdit = circus.feedback.feedbackStatus == 'normal';
 			f.params = circus.cadresult.presentation.extensions.FnInputTab;
-
-			// Prepare FN locations.
-			// If the list is passed
-			var markers = [];
-			if (data instanceof Array) markers = data;
-			if (data instanceof Object && data.to_integrate)
-				markers = f._integrateConsensual(data.to_integrate);
 
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
@@ -26,23 +22,31 @@ circus.feedback.additional = circus.feedback.additional || [];
 				max: circus.cadresult.seriesNumImages,
 				toTopDir: '../',
 				role: (canEdit ? 'locator' : 'viewer'),
-				markers: markers
 			})
 			.bind('locate', f._updateTable).bind('locating', f._locating);
-			if (markers.length > 0)
-				f._updateTable();
+
+			f._resetMarkers();
 
 			var tbl = $('#fn-input-table tbody');
-			$('#fn-delete').click(function() {
-				if (confirm('Do you delete the selected location(s)?'))
-					f._marker_process(f._fn_delete);
-			});
-			$('#fn-integrate').click(function() {
-				f._marker_process(f._fn_integrate);
-			});
+			if (canEdit) {
+				$('#fn-delete').click(function() {
+					if (confirm('Do you delete the selected location(s)?'))
+						f._marker_process(f._fn_delete);
+				});
+				$('#fn-integrate').click(function() {
+					f._marker_process(f._fn_integrate);
+				});
+				$('#fn-reset').click(function() {
+					if (confirm('Discard changes?'))
+						f._resetMarkers();
+				})
+			}
 
-			if (!canEdit)
+			if (!canEdit) {
 				$('input:checkbox', tbl).attr('disabled', 'disabled');
+				$('#fn-delete, #fn-integrate, #fn-reset')
+					.attr('disabled', 'disabled').trigger('flush');
+			}
 
 			$('#fn-found, #fn-not-found').click(function () {
 				circus.feedback.change();
@@ -99,6 +103,16 @@ circus.feedback.additional = circus.feedback.additional || [];
 				fns.push(markers[i]);
 			}
 			return fns;
+		},
+		_resetMarkers: function()
+		{
+			var markers = [];
+			if (initData instanceof Array) markers = data;
+			if (initData instanceof Object && initData.to_integrate)
+				markers = f._integrateConsensual(initData.to_integrate);
+			f._viewer.imageviewer('option', 'markers', markers);
+			if (markers.length > 0)
+				f._updateTable();
 		},
 		_marker_process: function(action)
 		{
