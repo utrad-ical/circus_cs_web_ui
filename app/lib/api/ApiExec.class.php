@@ -11,12 +11,14 @@ class ApiExec
 	const COUNT_IMAGES   = "countImages";
 	const QUERY_JOB      = "queryJob";
 	const EXECUTE_PLUGIN = "executePlugin";
+	const QUERY_FEEDBACK = "queryFeedback";
 
 	static $action_list = array(
 		self::LOGIN          => "LoginAction",
 		self::COUNT_IMAGES   => "CountImagesAction",
 		self::QUERY_JOB      => "QueryJobAction",
-		self::EXECUTE_PLUGIN => "ExecutePluginAction"
+		self::EXECUTE_PLUGIN => "ExecutePluginAction",
+		self::QUERY_FEEDBACK => "QueryFeedbackAction"
 	);
 
 	protected static $currentUser;
