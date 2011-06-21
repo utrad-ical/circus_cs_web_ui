@@ -617,6 +617,16 @@ span.register-not-ok {
 	z-index: 8;
 }
 
+.ui-imageviewer div.ui-imageviewer-loading {
+	position: absolute;
+	left: 3px;
+	top: 3px;
+	width: 15px;
+	height: 15px;
+	z-index: 15;
+	background-image: url('../images/busy_black.gif');
+}
+
 
 /* ===================================================
 	TABLE

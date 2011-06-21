@@ -36,7 +36,13 @@ $.widget('ui.imageviewer', {
 		var height = this.options.imageHeight * this._scale;
 		var img = $('<img>')
 			.css({ width: this.options.width, height: height })
-			.appendTo(imgdiv);
+			.appendTo(imgdiv)
+			.load(function() {
+				self._clearTimeout();
+				img.css('cursor', 'auto');
+				$('.ui-imageviewer-loading', self.element).hide(0);
+			});
+		$('<div class="ui-imageviewer-loading">').appendTo(imgdiv).hide(0);
 		img.mousedown(function(){return false;}); // prevent selection/drag
 		if (this.options.useWheel && img.mousewheel)
 		{
@@ -169,7 +175,8 @@ $.widget('ui.imageviewer', {
 
 	_drawImage: function(index, obj)
 	{
-		$('img', this.element).attr('src', this.options.toTopDir + obj.fileName);
+		$('.ui-imageviewer-image img', this.element)
+			.attr('src', this.options.toTopDir + obj.fileName);
 		this._label(index);
 		this.options.sliceLocation = obj.sliceLocation,
 		this._drawMarkers();
@@ -273,9 +280,27 @@ $.widget('ui.imageviewer', {
 		{
 			// the image may need server-side generating
 			this._waiting = { index: index, wl: wl, ww: ww };
+			this._timerID = setTimeout(function() {
+				self._loadingIndicate();
+			}, this.options.loadingIndicateDelay);
 			this._query(index, wl, ww);
 		}
 		this.element.trigger('imagechanging');
+	},
+
+	_clearTimeout: function()
+	{
+		if (this._timerID)
+			clearTimeout(this._timerID);
+	},
+
+	_loadingIndicate: function()
+	{
+		if (this._waiting != null)
+		{
+			$('.ui-imageviewer-image img', this.element).css('cursor', 'wait');
+			$('.ui-imageviewer-loading', this.element).show(0);
+		}
 	},
 
 	_setData: function(key, value, animated)
@@ -324,6 +349,7 @@ $.extend($.ui.imageviewer, {
 		imageHeight: 512,
 		useSlider: true,
 		sliderHotTrack: false,
+		loadingIndicateDelay: 300,
 		useLocationText: true,
 		locationLabel: 'Image Number: ',
 		grayscalePresets: [],
