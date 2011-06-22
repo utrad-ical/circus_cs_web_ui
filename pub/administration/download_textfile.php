@@ -11,7 +11,7 @@ $filename = $_REQUEST['filename'];
 //--------------------------------------------------------------------------
 // Check privilege
 //--------------------------------------------------------------------------
-if (!Auth::currentGroup() || !Auth::currentGroup()->hasPrivilege(Auth::SERVER_OPERATION)) {
+if (!Auth::currentUser()->hasPrivilege(Auth::SERVER_OPERATION)) {
 	forbidden();
 }
 
