@@ -206,7 +206,8 @@ class Auth
 	public static function createSession($user)
 	{
 		global $LOGIN_LOG;
-		
+		global $SESSION_TIME_LIMIT;
+
 		// login succeed
 		$loginDateTime = date("Y-m-d H:i:s");
 		$_SESSION['circusVersion'] = $CIRCUS_CS_VERSION;
