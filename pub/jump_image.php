@@ -5,7 +5,7 @@
  */
 
 include_once("common.php");
-Auth::checkSession(false);
+//Auth::checkSession(false);
 
 $validator = new FormValidator();
 $validator->addRules(array(
@@ -44,116 +44,109 @@ $validator->addRules(array(
 );
 
 $dstData = array(
-	'status' => 'OK',
-	'imgFname'     => ''
+	'status'   => 'OK',
+	'imgFname' => ''
 );
 
 try
 {
-	if (Auth::currentUser() === null)
-		throw new Exception('Session not established properly.');
+	//if (Auth::currentUser() === null)
+	//	throw new Exception('Session not established properly.');
 
 	if (!$validator->validate($_REQUEST))
 		throw new Exception(implode("\n", $validator->errors));
 	$req = $validator->output;
 	$dstData['request'] = $req;
 
-	if($params['errorMessage'] == "")
+
+	$pdo = DBConnector::getConnection();
+
+	// Get cache area
+	$sqlStr = "SELECT storage_id, path FROM storage_master"
+			. "  WHERE type=3 AND current_use='t'";
+	$webCacheRes = DBConnector::query($sqlStr, NULL, 'ARRAY_ASSOC');
+	if (!is_array($webCacheRes))
+		throw new Exception('Web cache directory not configured');
+
+	$sqlStr = "SELECT path, patient_id, study_instance_uid, image_width, image_height"
+			. " FROM series_join_list"
+			. " WHERE series_instance_uid=?";
+	$result = DBConnector::query($sqlStr, array($req['seriesInstanceUID']), 'ARRAY_ASSOC');
+
+	// check original size
+	if($req['imgWidth']  == $result['image_width'] && $req['imgHeight'] == $result['image_height'])
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
-
-		// Get cache area
-		$sqlStr = "SELECT storage_id, path FROM storage_master"
-				. "  WHERE type=3 AND current_use='t'";
-		$webCacheRes = DBConnector::query($sqlStr, NULL, 'ARRAY_ASSOC');
-		if (!is_array($webCacheRes))
-			throw new Exception('Web cache directory not configured');
-
-		$sqlStr = "SELECT path, patient_id, study_instance_uid, image_width, image_height"
-				. " FROM series_join_list"
-				. " WHERE series_instance_uid=?";
-
-		$result = DBConnector::query($sqlStr, array($req['seriesInstanceUID']), 'ARRAY_NUM');
-
-		// check original size
-		if($req['imgWidth']  == $result[3] && $req['imgHeight'] == $result[4])
-		{
-			$req['imgWidth']  = 0;
-			$req['imgHeight'] = 0;
-		}
-		if ($req['windowWidth'] == 0) $req['windowLevel'] = 0;
-
-		$baseName = sprintf(
-			'%s_%d_%d_%d_%d_%d.jpg',
-			$req['seriesInstanceUID'],
-			$req['imgNum'],
-			$req['windowLevel'],
-			$req['windowWidth'],
-			$req['imgWidth'],
-			$req['imgHeight']
-		);
-
-		$dstFname = $webCacheRes['path'] . $DIR_SEPARATOR . $baseName;
-		$dstData['imgFname'] = 'storage/' . $webCacheRes['storage_id'] . '/' . $baseName;
-
-		$dumpFname = sprintf(
-			"%s%s%s_%d.txt",
-			$webCacheRes['path'],
-			$DIR_SEPARATOR,
-			$req['seriesInstanceUID'],
-			$req['imgNum']);
-
-		if(!is_file($dstFname) || !is_file($dumpFname))
-		{
-			$seriesDir = $result[0] . $DIR_SEPARATOR . $result[1]
-				. $DIR_SEPARATOR . $result[2]
-				. $DIR_SEPARATOR . $req['seriesInstanceUID'];
-
-			$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $req['imgNum']);
-
-			$dcmResult = DcmExport::createThumbnailJpg(
-				$srcFname, $dstFname, $dumpFname, 100,
-				$req['windowLevel'], $req['windowWidth'],
-				$req['imgWidth'], $req['imgHeight']
-			);
-			if(!$dcmResult)
-			{
-				throw new Exception('Error while creating thumbnail image.');
-			}
-		}
-		else
-		{
-			$dstData['cached'] = 'true';
-		}
-		$dstData['windowLevel'] = $req['windowLevel'];
-		$dstData['windowWidth'] = $req['windowWidth'];
-
-		// Get slice number and slice location from dump data
-		$fp = fopen($dumpFname, "r");
-		if($fp == null)
-			throw new Exception('Could not open dump file.');
-		while($str = fgets($fp))
-		{
-			$dumpTitle   = strtok($str,":");
-			$dumpContent = strtok("\r\n");
-			switch($dumpTitle)
-			{
-				case 'Img. No.':
-				case 'Image No.':
-					$dstData['sliceNumber'] = $dumpContent;
-					break;
-				case 'Slice location':
-					$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
-					break;
-			}
-		}
-		fclose($fp);
-		if (!isset($dstData['sliceNumber']))
-			throw new Exception('Could not determine slice number from dump file.');
-		if (!isset($dstData['sliceLocation']))
-			throw new Exception('Could not determine slice location from dump file.');
+		$req['imgWidth']  = 0;
+		$req['imgHeight'] = 0;
 	}
+	if ($req['windowWidth'] == 0) $req['windowLevel'] = 0;
+
+	$baseName = sprintf(
+		'%s_%d_%d_%d_%d_%d.jpg',
+		$req['seriesInstanceUID'],
+		$req['imgNum'],
+		$req['windowLevel'],
+		$req['windowWidth'],
+		$req['imgWidth'],
+		$req['imgHeight']
+	);
+
+	$dstFname = $webCacheRes['path'] . $DIR_SEPARATOR . $baseName;
+	$dstData['imgFname'] = 'storage/' . $webCacheRes['storage_id'] . '/' . $baseName;
+
+	$dumpFname = sprintf(
+		"%s%s%s_%d.txt",
+		$webCacheRes['path'],
+		$DIR_SEPARATOR,
+		$req['seriesInstanceUID'],
+		$req['imgNum']);
+
+	if(!is_file($dstFname) || !is_file($dumpFname))
+	{
+		$seriesDir = $result['path'] . $DIR_SEPARATOR . $result['patient_id']
+			. $DIR_SEPARATOR . $result['study_instance_uid']
+			. $DIR_SEPARATOR . $req['seriesInstanceUID'];
+
+		$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $req['imgNum']);
+
+		$dcmResult = DcmExport::createThumbnailJpg(
+			$srcFname, $dstFname, $dumpFname, 100,
+			$req['windowLevel'], $req['windowWidth'],
+			$req['imgWidth'], $req['imgHeight']
+			);
+	}
+	else
+	{
+		$dstData['cached'] = 'true';
+	}
+	$dstData['windowLevel'] = $req['windowLevel'];
+	$dstData['windowWidth'] = $req['windowWidth'];
+		
+	// Get slice number and slice location from dump data
+	$fp = fopen($dumpFname, "r");
+	if($fp == null)
+		throw new Exception('Could not open dump file.');
+	while($str = fgets($fp))
+	{
+		$dumpTitle   = strtok($str,":");
+		$dumpContent = strtok("\r\n");
+		switch($dumpTitle)
+		{
+			case 'Img. No.':
+			case 'Image No.':
+				$dstData['sliceNumber'] = $dumpContent;
+				break;
+			case 'Slice location':
+				$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
+				break;
+		}
+	}
+	fclose($fp);
+	if (!isset($dstData['sliceNumber']))
+		throw new Exception('Could not determine slice number from dump file.');
+	if (!isset($dstData['sliceLocation']))
+		throw new Exception('Could not determine slice location from dump file.');
+
 	echo json_encode($dstData);
 }
 catch (Exception $e)
@@ -168,5 +161,6 @@ catch (Exception $e)
 		'error' => array('message' => $message)
 	));
 }
+
 
 ?>

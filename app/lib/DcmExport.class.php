@@ -28,31 +28,23 @@ class DcmExport
 	public static function createThumbnailJpg($srcFname, $dstFname, $dumpFname, $quality,
 												$windowLevel, $windowWidth, $imgWidth, $imgHeight)
 	{
-		// validation
-		if(!is_numeric($quality)     || $sliceNum < 0         || $quality > 100)        $quality = 100;
-		if(!is_numeric($windowLevel) || $windowLevel < -32768 || $windowLevel > 32767)  $windowLevel = 0;
-		if(!is_numeric($windowWidth) || $windowWidth < 0      || $windowWidth > 65536)  $windowWidth = 0;
-
 		global $cmdForProcess, $cmdCreateThumbnail;	// refer common.php
 
-		$pathInfo = pathinfo($srcFname);
+		//$cmdStr = sprintf('%s "%s %s %s %d %d %d %d %d %s"', $cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname,
+		//												 $quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
+		//												 $dumpFname);
 
-		if(is_file($srcFname) && $pathInfo['extension'] == 'dcm')
+		$cmdStr = sprintf('%s %s %s %d %d %d %d %d %s', $cmdCreateThumbnail, $srcFname, $dstFname,
+														$quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
+														$dumpFname);
+
+		//throw new Exception($cmdStr);
+		shell_exec($cmdStr);
+
+		for($i=0; $i<100; $i++)
 		{
-			$cmdStr = sprintf('%s "%s %s %s %d %d %d %d %d', $cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname,
-															 $quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight);
-			if(!is_file($dumpFname))  $cmdStr .= " " . $dumpFname;
-			$cmdStr .= '"';
-
-			//echo $cmdStr;
-
-			shell_exec($cmdStr);
-
-			for($i=0; $i<100; $i++)
-			{
-				if(is_file($dstFname))	return true;
-				else                    sleep(1);
-			}
+			if(is_file($dstFname))	return true;
+			else                    sleep(1);
 		}
 		return false;
 	}
