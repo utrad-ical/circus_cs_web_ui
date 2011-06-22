@@ -20,6 +20,18 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		);
 	}
 
+	public function head()
+	{
+		$cadResult = $this->owner;
+		$series = $cadResult->Series[0];
+		$modality = $series->modality;
+		$presets = GrayscalePreset::findPresetsAssoc($modality);
+		$result = '<script type="text/javascript">'
+			. 'circus.cadresult.fnInputGrayscalePresets = ' . json_encode($presets)
+			. '</script>';
+		return $result;
+	}
+
 	public function tabs()
 	{
 		return array(

@@ -15,12 +15,25 @@ circus.feedback.additional = circus.feedback.additional || [];
 			var canEdit = circus.feedback.feedbackStatus == 'normal';
 			f.params = circus.cadresult.presentation.extensions.FnInputTab;
 
+			var presets = [];
+			var wl = 0;
+			var ww = 0;
+			if (circus.cadresult.fnInputGrayscalePresets.length > 0)
+			{
+				presets = circus.cadresult.fnInputGrayscalePresets;
+				wl = presets[0].wl;
+				ww = presets[0].ww;
+			}
+
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
 				series_instance_uid: circus.cadresult.seriesUID,
 				max: circus.cadresult.seriesNumImages,
 				toTopDir: '../',
 				role: (canEdit ? 'locator' : 'viewer'),
+				grayscalePresets: presets,
+				wl: wl,
+				ww: ww
 			})
 			.bind('locate', f._updateTable).bind('locating', f._locating);
 

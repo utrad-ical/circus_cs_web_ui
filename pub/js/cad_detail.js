@@ -10,11 +10,23 @@ $(function() {
 	{
 		markers.push(data[dp]);
 	}
+	var presets = [];
+	var wl = 0;
+	var ww = 0;
+	if (circus.cadresult.cadDetailGrayscalePresets.length > 0)
+	{
+		presets = circus.cadresult.cadDetailGrayscalePresets;
+		wl = presets[0].wl;
+		ww = presets[0].ww;
+	}
 	$('#cad-detail-viewer').imageviewer({
 		series_instance_uid: circus.cadresult.seriesUID,
 		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
-		markers: markers
+		markers: markers,
+		grayscalePresets: presets,
+		wl: wl,
+		ww: ww
 	})
 
 	// Emphasize the rows of detail result table
