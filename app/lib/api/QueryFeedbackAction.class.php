@@ -70,7 +70,7 @@ class QueryFeedbackAction extends ApiAction
 		}
 		
 		$kind = $params['kind'];
-		if (!in_array($kind, array("all", "personal", "consensual", "user"))) {
+		if (isset($kind) && !in_array($kind, array("all", "personal", "consensual", "user"))) {
 			return false;
 		}
 		
