@@ -192,7 +192,7 @@ $.widget('ui.imageviewer', {
 	{
 		if (data.status != 'OK')
 		{
-			console && console.log(data.errorMessage);
+			console && console.log(data.error.message);
 		}
 		else if (data.imgFname && data.sliceNumber)
 		{
