@@ -2,7 +2,6 @@
 jq/ui/jquery-ui-1.7.3.min.js
 js/search_panel.js
 js/list_tab.js
-js/edit_tag.js
 js/radio-to-button.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
 css/popup.css
