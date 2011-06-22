@@ -17,8 +17,8 @@ class DcmExport
 
 			for($i=0; $i<100; $i++)
 			{
-				if(!(@imagecreatefromjpeg($dstFname)))	return true;
-				else                                    sleep(100000);
+				if(is_file($dstFname))	return true;
+				else					sleep(1);
 			}
 		}
 		return false;
@@ -50,8 +50,8 @@ class DcmExport
 
 			for($i=0; $i<100; $i++)
 			{
-				if(!(@imagecreatefrompng($dstFname)))	return true;
-				else                                    sleep(100000);
+				if(is_file($dstFname))	return true;
+				else                    sleep(1);
 			}
 		}
 		return false;
