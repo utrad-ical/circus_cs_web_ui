@@ -225,7 +225,8 @@ $.widget('ui.imageviewer', {
 			windowWidth: ww
 		};
 		// prevent requesting image more than once
-		if (this._cache[this._cacheKey(index, wl, ww)] instanceof Date)
+		var cacheKey = this._cacheKey(index, wl, ww);
+		if (this._cache[cacheKey] instanceof Date)
 			return;
 		$.post(
 			this.options.toTopDir + 'jump_image.php',
@@ -235,7 +236,7 @@ $.widget('ui.imageviewer', {
 			},
 			'json'
 		);
-		this._cache[index] = new Date();
+		this._cache[cacheKey] = new Date();
 	},
 
 	preload: function()
