@@ -155,11 +155,14 @@ try
 }
 catch (Exception $e)
 {
+	$message = $e->getMessage();
+	if ($e instanceof LogicException)
+	{
+		$message .= "\n" . $e->getTraceAsString();
+	}
 	echo json_encode(array(
 		'status' => 'OperationError',
-		'error' => array(
-			'message' => $e->getMessage() . ' at ' . $e->getLine()
-		)
+		'error' => array('message' => $message)
 	));
 }
 
