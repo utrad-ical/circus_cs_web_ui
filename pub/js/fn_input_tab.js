@@ -24,10 +24,14 @@ circus.feedback.additional = circus.feedback.additional || [];
 				wl = presets[0].wl;
 				ww = presets[0].ww;
 			}
+			var minImg = 1;
+			if (circus.cadresult.attributes.start_img_num)
+				minImg = Number(circus.cadresult.attributes.start_img_num);
 
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
 				series_instance_uid: circus.cadresult.seriesUID,
+				min: minImg,
 				max: circus.cadresult.seriesNumImages,
 				toTopDir: '../',
 				role: (canEdit ? 'locator' : 'viewer'),

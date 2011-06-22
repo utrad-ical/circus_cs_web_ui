@@ -18,6 +18,7 @@ circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascri
 circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
 circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
 circus.cadresult.presentation = {$presentationParams|@json_encode};
+circus.cadresult.attributes = {$attr|@json_encode};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 circus.feedback.feedbackStatus = "{$feedbackStatus}";

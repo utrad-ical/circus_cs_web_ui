@@ -285,7 +285,7 @@ $.widget('ui.imageviewer', {
 		this.options.ww = ww;
 		if (oldIndex == index && oldWL == wl && oldWW == ww && this._initialized)
 			return;
-		$('.ui-imageviewer-slider').slider('option', 'value', index);
+		$('.ui-imageviewer-slider', this.element).slider('option', 'value', index);
 		var toTopDir = this.options.toTopDir;
 		var cacheKey = this._cacheKey(index, wl, ww);
 		if (this._cache[cacheKey] && this._cache[cacheKey].fileName)
