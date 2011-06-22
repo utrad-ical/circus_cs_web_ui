@@ -15,8 +15,11 @@ $.widget('ui.imageviewer', {
 		// preparing cache
 		var body = $('body');
 		var self = this;
-		this._cache = body.data('imageviewerCache') || {};
-		body.data('imageviewerCache', this._cache);
+		var cacheRoot = body.data('imageviewerCache') || {};
+		body.data('imageviewerCache', cacheRoot);
+		this._cache = cacheRoot[this.options.series_instance_uid] || {};
+		cacheRoot[this.options.series_instance_uid] = this._cache;
+
 		body.bind('imageviewerImageload', function (event, data) {
 			self._imageLoadHandler(data);
 		});
