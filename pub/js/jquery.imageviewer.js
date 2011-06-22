@@ -183,6 +183,16 @@ $.widget('ui.imageviewer', {
 		this.element.trigger('imagechange');
 	},
 
+	_errorMode: function(message)
+	{
+		this._waiting = null;
+		var errdiv = $('<div class="ui-imageviewer-error">')
+			.append('Error while loading images.')
+			.appendTo($('.ui-imageviewer-image', this.element));
+		if (message)
+			errdiv.append('<br>').append(message);
+	},
+
 	_cacheKey: function(index, wl, ww)
 	{
 		return index + '_' + wl + '_' + ww;
@@ -193,6 +203,8 @@ $.widget('ui.imageviewer', {
 		if (data.status != 'OK')
 		{
 			console && console.log(data.error.message);
+			this._error = true;
+			this._errorMode(data.error.message);
 		}
 		else if (data.imgFname && data.sliceNumber)
 		{
@@ -259,6 +271,7 @@ $.widget('ui.imageviewer', {
 
 	_internalChangeImage: function(index, wl, ww)
 	{
+		if (this._error) return;
 		var oldIndex = this.options.index;
 		var oldWL = this.options.wl;
 		var oldWW = this.options.ww;

@@ -45,8 +45,7 @@ $validator->addRules(array(
 
 $dstData = array(
 	'status' => 'OK',
-	'imgFname'     => '',
-	'imgNum'    => $params['imgNum']
+	'imgFname'     => ''
 );
 
 try
@@ -57,6 +56,7 @@ try
 	if (!$validator->validate($_REQUEST))
 		throw new Exception(implode("\n", $validator->errors));
 	$req = $validator->output;
+	$dstData['request'] = $req;
 
 	if($params['errorMessage'] == "")
 	{
@@ -77,10 +77,12 @@ try
 		$result = DBConnector::query($sqlStr, array($req['seriesInstanceUID']), 'ARRAY_NUM');
 
 		// check original size
-		if($req['imgWidth']  == $result[3])
+		if($req['imgWidth']  == $result[3] && $req['imgHeight'] == $result[4])
+		{
 			$req['imgWidth']  = 0;
-		if($req['imgHeight'] == $result[4])
 			$req['imgHeight'] = 0;
+		}
+		if ($req['windowWidth'] == 0) $req['windowLevel'] = 0;
 
 		$baseName = sprintf(
 			'%s_%d_%d_%d_%d_%d.jpg',
@@ -128,12 +130,9 @@ try
 		$dstData['windowWidth'] = $req['windowWidth'];
 
 		// Get slice number and slice location from dump data
-		$dstData['sliceNumber'] = "";
-		$dstData['sliceLocation'] = "";
-
 		$fp = fopen($dumpFname, "r");
 		if($fp == null)
-			throw new Exception('Failed to open dump file.');
+			throw new Exception('Could not open dump file.');
 		while($str = fgets($fp))
 		{
 			$dumpTitle   = strtok($str,":");
@@ -150,6 +149,10 @@ try
 			}
 		}
 		fclose($fp);
+		if (!isset($dstData['sliceNumber']))
+			throw new Exception('Could not determine slice number from dump file.');
+		if (!isset($dstData['sliceLocation']))
+			throw new Exception('Could not determine slice location from dump file.');
 	}
 	echo json_encode($dstData);
 }
