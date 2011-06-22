@@ -28,10 +28,10 @@ class Plugin extends Model
 	public function userPreference($user = null)
 	{
 		global $DEFAULT_CAD_PREF_USER;
-		if (is_a($user, 'User'))
+		if ($user instanceof User)
 			$userid = $user->user_id;
 		else
-			$userid = $user ?: $_SESSION[userID];
+			$userid = $user ?: (Auth::currentUser()->user_id);
 		if (is_array($this->userPreference[$userid]))
 			return $this->userPreference[$userid];
 		$sql = 'SELECT * FROM plugin_user_preference '
@@ -41,23 +41,18 @@ class Plugin extends Model
 			array($this->plugin_id, $userid, $DEFAULT_CAD_PREF_USER),
 			'ALL_ASSOC');
 
-		$prefs = array_filter($items, function($in) use ($userid) {
-			return $in['user_id'] == $userid;
-		});
-		if (count($user_pref) == 0)
+		$user_prefs = array();
+		$default_prefs = array();
+		foreach ($items as $item)
 		{
-			$prefs = array_filter($items, function ($in) {
-				global $DEFAULT_CAD_PREF_USER;
-				return $in['user_id'] == $DEFAULT_CAD_PREF_USER;
-			});
+			if ($item['user_id'] == $DEFAULT_CAD_PREF_USER)
+				$default_prefs[$item['key']] = $item['value'];
+			else
+				$user_prefs[$item['key']] = $item['value'];
 		}
-
-		$result = array();
-		foreach ($prefs as $item)
-		{
-			$result[$item['key']] = $item['value'];
-		}
+		$result = array_merge($default_prefs, $user_prefs);
 		$this->userPreference[$userid] = $result;
+
 		return $result;
 	}
 
