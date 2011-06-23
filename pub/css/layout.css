@@ -615,6 +615,7 @@ span.register-not-ok {
 	position: absolute;
 	color: magenta;
 	z-index: 8;
+	font-weight: bold;
 }
 
 .ui-imageviewer div.ui-imageviewer-loading {
