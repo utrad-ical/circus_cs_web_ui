@@ -19,8 +19,14 @@ $(function() {
 		wl = presets[0].wl;
 		ww = presets[0].ww;
 	}
+
+	var minImg = 1;
+	if (circus.cadresult.attributes.start_img_num)
+		minImg = Number(circus.cadresult.attributes.start_img_num);
+
 	$('#cad-detail-viewer').imageviewer({
 		series_instance_uid: circus.cadresult.seriesUID,
+		min: minImg,
 		max: circus.cadresult.seriesNumImages,
 		toTopDir: '../',
 		markers: markers,
