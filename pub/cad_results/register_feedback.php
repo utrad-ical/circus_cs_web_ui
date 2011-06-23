@@ -39,8 +39,22 @@ try {
 	$is_consensual = $params['feedbackMode'] == 'consensual';
 
 	$dstData = array();
+	$job_id = $params['jobID'];
 
-	if (registerFeedback($params['jobID'], $params['feedback'], $params['temporary'], $is_consensual) === true)
+	$currentUser = Auth::currentUser();
+
+	$cadResult = new CadResult($job_id);
+	if (!$cadResult->job_id)
+		throw new Exception('No CAD result found for the specified Job ID.');
+	$reason = 'You can not enter the feedback for unknown reason.';
+	if ($is_consensual)
+		$av = $cadResult->feedbackAvailability('consensual', $currentUser, $reason);
+	else
+		$av = $cadResult->feedbackAvailability('personal', $currentUser, $reason);
+	if ($av != 'normal')
+		throw new Exception($reason);
+
+	if (registerFeedback($job_id, $params['feedback'], $params['temporary'], $is_consensual) === true)
 		echo json_encode(array('status' => 'OK'));
 	else
 		throw new Exception('Failed!');
