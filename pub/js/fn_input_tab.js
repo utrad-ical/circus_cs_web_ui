@@ -60,7 +60,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 
 			if (!canEdit) {
 				$('input:checkbox', tbl).attr('disabled', 'disabled');
-				$('#fn-delete, #fn-integrate, #fn-reset')
+				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input')
 					.attr('disabled', 'disabled').trigger('flush');
 			}
 
