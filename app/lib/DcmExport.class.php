@@ -15,10 +15,12 @@ class DcmExport
 			$cmdStr = sprintf('%s "%s %s %s %d %d"', $cmdForProcess, $cmdDcmToPng, $srcFname, $dstFname, $windowLevel, $windowWidth);
 			shell_exec($cmdStr);
 
-			for($i=0; $i<100; $i++)
+			for($i=0; $i<5; $i++)
 			{
-				if(is_file($dstFname))	return true;
-				else					sleep(1);
+				if(is_file($dstFname))
+					return true;
+				else
+					sleep(1);
 			}
 		}
 		return false;
@@ -41,10 +43,12 @@ class DcmExport
 		//throw new Exception($cmdStr);
 		shell_exec($cmdStr);
 
-		for($i=0; $i<100; $i++)
+		for($i=0; $i<5; $i++)
 		{
-			if(is_file($dstFname))	return true;
-			else                    sleep(1);
+			if(is_file($dstFname))
+				return true;
+			else
+				sleep(1);
 		}
 		return false;
 	}
