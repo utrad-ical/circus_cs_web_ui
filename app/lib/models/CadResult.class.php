@@ -85,6 +85,8 @@ class CadResult extends Model
 	 *
 	 * @param string $feedbackMode 'consensual' or 'personal'
 	 * @param User $user The user
+	 * @param string &$reason Outputs the reason why the specified feedback mode
+	 * is disabled or locked.
 	 * @return string 'normal', 'disabled', 'locked', or 'hidden'.
 	 * The 'normal' status means the login user can input or see his feedback.
 	 * The 'disabled' status means the user can inspect the feedback
@@ -93,7 +95,7 @@ class CadResult extends Model
 	 * The 'locked' status applies only for consensual feedback and
 	 * means that the user cannot enter the consensual mode.
 	 */
-	public function feedbackAvailability($feedbackMode = 'personal', User $user = null)
+	public function feedbackAvailability($feedbackMode = 'personal', User $user = null, &$reason)
 	{
 		$policy = $this->PluginResultPolicy;
 
@@ -101,13 +103,21 @@ class CadResult extends Model
 		// his personal feedback, or there is no enough sets of personal
 		// feedback to make consensus (configured by plugin result policy)
 		$my_personal_feedback = $this->queryFeedback('user', $user->user_id);
+		$consensual_feedback = $this->queryFeedback('consensual');
+		$personal_feedback = $this->queryFeedback('personal');
 		if ($feedbackMode == 'consensual')
 		{
-			if (!count($my_personal_feedback))
+			if (!count($my_personal_feedback) && !count($consensual_feedback))
+			{
+				$reason = 'You can not enter consensual feedback before entering personal feedback.';
 				return 'locked';
-			$personal_feedback = $this->queryFeedback('personal');
-			if ($policy->min_personal_fb_to_make_consensus > count($personal_feedback))
+			}
+			$minfb = $policy->min_personal_fb_to_make_consensus;
+			if ($minfb > count($personal_feedback))
+			{
+				$reason = "You need at least $minfb feedback to enter consensual mode.";
 				return 'locked';
+			}
 		}
 
 		// The availability is 'disabled' when:
@@ -120,22 +130,45 @@ class CadResult extends Model
 		if ($feedbackMode == 'personal')
 		{
 			if (!$currentUser->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))
+			{
+				$reason = "You do not have privilege to give personal feedback.";
 				return 'disabled';
+			}
 			if (!$policy->searchGroup($policy->allow_personal_fb, $currentUser->Group))
+			{
+				$reason = "Your personal feedback is refused by result policy settings.";
 				return 'disabled';
+			}
+			$max = $policy->max_personal_fb;
+			if ($max > 0 && count($personal_feedback) >= $max)
+			{
+				$reason = "You can not enter more than $max sets of personal feedback.";
+				return 'disabled';
+			}
 		}
 		if ($feedbackMode == 'consensual')
 		{
 			if (!$currentUser->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
+			{
+				$reason = "You do not have privilege to give personal feedback.";
 				return 'disabled';
+			}
 			if (!$policy->searchGroup($policy->allow_consensual_fb, $currentUser->Group))
+			{
+				$reason = "Your consensual feedback is refused by result policy settings.";
 				return 'disabled';
+			}
 		}
 		if ($feedbackMode == 'personal' && count($my_personal_feedback))
+		{
+			$reason = 'Your personal feedback is already registered.';
 			return 'disabled';
-		$consensual_feedback = $this->queryFeedback('consensual');
+		}
 		if (count($consensual_feedback))
+		{
+			$reason = 'The consensual feedback is already registered.';
 			return 'disabled';
+		}
 
 		return 'normal';
 	}

@@ -55,9 +55,10 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
   <div>
     <input type="hidden" name="jobID" value="{$cadResult->job_id|escape}" />
     <input type="radio" class="radio-to-button-l" name="feedbackMode" value="personal"
-      label="Personal Mode" />
+      label="Personal Mode" title="{$avail_pfb_reason|escape}" />
     <input type="radio" class="radio-to-button-l" name="feedbackMode" value="consensual"
-      label="Consensual Mode" disabled="disabled" id="consensual-mode" />
+      label="Consensual Mode" disabled="disabled" id="consensual-mode"
+      title="{$avail_cfb_reason|escape}" />
   </div>
   </form>
   <div style="clear: both"></div>

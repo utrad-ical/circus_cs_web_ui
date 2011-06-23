@@ -116,10 +116,12 @@ function show_cad_results($jobID, $feedbackMode) {
 		}
 	}
 
-	$avail_pfb = $cadResult->feedbackAvailability('personal', $user);
-	$avail_cfb = $cadResult->feedbackAvailability('consensual', $user);
+	$avail_pfb_reason = '';
+	$avail_pfb = $cadResult->feedbackAvailability('personal', $user, $avail_pfb_reason);
+	$avail_cfb_reason = '';
+	$avail_cfb = $cadResult->feedbackAvailability('consensual', $user, $avail_cfb_reason);
 	if ($avail_cfb == 'locked' && $feedbackMode == 'consensual')
-		critical_error('You can not enter consensual mode.');
+		critical_error($avail_cfb_reason);
 	$feedback_status = $feedbackMode == 'personal' ? $avail_pfb : $avail_cfb;
 
 	$requiringFiles = array();
@@ -158,6 +160,8 @@ function show_cad_results($jobID, $feedbackMode) {
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
 		'avail_cfb' => $avail_cfb,
+		'avail_cfb_reason' => $avail_cfb_reason,
+		'avail_pfb_reason' => $avail_pfb_reason,
 		'requiringFiles' => implode("\n", $requiringFiles),
 		'cadResult' => $cadResult,
 		'displays' => $cadResult->getDisplays(),
