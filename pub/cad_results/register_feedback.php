@@ -75,7 +75,10 @@ function registerFeedback($job_id, $feedback, $temporary, $is_consensual)
 
 	// Delete existing feedback set (temporary or not)
 	$dummy = new Feedback();
-	$cond = array('is_consensual' => $is_consensual ? 'TRUE' : 'FALSE');
+	$cond = array(
+		'is_consensual' => $is_consensual ? 'TRUE' : 'FALSE',
+		'job_id' => $job_id
+	);
 	if (!$is_consensual)
 		$cond['entered_by'] = $user_id; // only delete my personal feedback
 	$fbs = $dummy->find($cond);
