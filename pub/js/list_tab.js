@@ -175,7 +175,7 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 
 	if(personalFeedbackFlg == 1)  params.feedbackMode = 'personal';
 
-	location.href = 'cad_results/show_cad_results.php?' + $.param(params);
+	location.href = 'cad_results/cad_result.php?' + $.param(params);
 }
 
 function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
