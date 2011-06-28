@@ -161,7 +161,7 @@
 			imagedestroy($img);
 
 			$listHtml[$n] .= '<td style="padding:3px 10px;">'
-						  .  '<a href="../cad_results/show_cad_results.php?jobID=' . $candList[$k][0]
+						  .  '<a href="../cad_results/cad_result.php?jobID=' . $candList[$k][0]
 						  .  '&feedbackMode=personal&remarkCand=' . $candList[$k][1] . '&sortKey=confidence&sortOrder=DESC"'
 						  .  ' title="ID:'. $candList[$k][0];
 			if($n!=3)	$listHtml[$n] .= ', rank:'.$candList[$k][1].' (confidence:'.sprintf("%.3f", $candList[$k][2]).')';

@@ -155,7 +155,7 @@
 								.  '&nbsp;' . $seriesParams['study_time'] . '<br/>'
 								.  '<b>&nbsp;CAD: </b>' . $pluginParams['plugin_name'] . ' v.' . $pluginParams['version']
 								.  '<input name="" type="button" value="detail" class="form-btn"'
-								.  ' onclick="location.href=\'cad_results/show_cad_results.php?jobID=' . $idSet['job_id']
+								.  ' onclick="location.href=\'cad_results/cad_result.php?jobID=' . $idSet['job_id']
 								.  '&feedbackMode=personal&remarkCand=' . $idSet['candidate_id'] . '&sortKey=confidence'
 								.  '&sortOrder=DESC\';" style="margin-left:70px;"><br/>'
 								.  '<b>&nbsp;Candidate ID: </b>' . $idSet['candidate_id'] . '<br/>'
