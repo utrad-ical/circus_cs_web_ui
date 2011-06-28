@@ -36,8 +36,8 @@
 			"type": "BlockSorter",
 			"params": {
 				"visible": true,
-				"defaultKey": "confidence",
-				"defaultOrder": "desc",
+				"defaultKey": "location_z",
+				"defaultOrder": "asc",
 				"options": [
 					{
 						"label": "Volume Size",
