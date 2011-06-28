@@ -69,7 +69,6 @@ circus.feedback.additional = circus.feedback.additional || [];
 			});
 
 			$('#jump-fn-input').click(function () {
-				$('#fn-found').click();
 				circus.cadresult.showTabLabel('FN Input');
 			});
 
