@@ -127,7 +127,6 @@ css/popup.css
 		</tr>
 	</table>
 
-	{*<div class="pl20 mb20 mt10">*}
 	<div id="editor-commit">
 		<p>
 			<input type="button" value="Update" onclick="UpdateConfig();"
