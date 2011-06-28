@@ -141,6 +141,9 @@
 					. ' WHERE el.job_id=? AND sm.storage_id=el.storage_id';
 			$result = DBConnector::query($sqlStr, $candList[$k][0], 'ARRAY_NUM');
 
+			$pathOfCADReslut = $result[1] . $DIR_SEPARATOR . $candList[$k][0];
+			$webPathOfCADReslut = 'storage/' . $result[0] . '/' . $candList[$k][0];
+
 			$srcFname = sprintf("%s%sresult%03d.png", $pathOfCADReslut, $DIR_SEPARATOR, $candList[$k][1]);
 			$srcFnameWeb = sprintf("../%s/result%03d.png", $webPathOfCADReslut, $candList[$k][1]);
 
