@@ -97,27 +97,28 @@
 
 			if($resultType == 1)
 			{
-				$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+				$sqlStr = "SELECT el.job_id, sr.patient_id, sr.patient_name, sr.age, sr.sex,"
 						. " sr.series_date, sr.series_time, el.executed_at"
-						. " FROM patient_list pt JOIN (study_list st JOIN series_list sr"
-						. " ON (st.study_instance_uid = sr.study_instance_uid)) ON (pt.patient_id=st.patient_id)"
-						. " JOIN (executed_series_list es JOIN executed_plugin_list el"
-						. " ON (es.job_id=el.job_id AND es.volume_id=0 AND el.plugin_type=1))"
-						. " ON (sr.series_instance_uid = es.series_instance_uid)"
-						. " LEFT JOIN lesion_classification lf ON (es.job_id=lf.job_id AND lf.interrupted='f')"
-						. " WHERE el.plugin_name=? AND el.version=? AND lf.is_consensual='t'";
+						. " FROM series_join_list sr, executed_plugin_list el,"
+						. " executed_series_list es, feedback_list fl, plugin_master pm"
+						. " WHERE pm.plugin_id=el.plugin_id"
+						. " AND pm.plugin_name=? AND pm.version=?"
+						. " AND es.job_id=el.job_id"
+						. " AND es.volume_id=0"
+						. " AND sr.series_sid=es.series_sid"
+						. " AND fl.job_id=el.job_id"
+						. " AND fl.is_consensual='t' AND fl.status=1";
 			}
 			else
 			{
-				$sqlStr = "SELECT el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+				$sqlStr = "SELECT el.job_id, sr.patient_id, sr.patient_name, sr.age, sr.sex,"
 						. " sr.series_date, sr.series_time, el.executed_at"
-						. " FROM patient_list pt, study_list st, series_list sr, "
+						. " FROM series_join_list sr, plugin_master pm,"
 						. " executed_plugin_list el, executed_series_list es"
-						. " WHERE el.plugin_name=? AND el.version=?"
+						. " WHERE pm.plugin_id=el.plugin_id"
+						. " AND pm.plugin_name=? AND pm.version=?"
 						. " AND el.job_id=es.job_id AND es.volume_id=0"
-						. " AND sr.series_instance_uid = es.series_instance_uid"
-						. " AND st.study_instance_uid = sr.study_instance_uid"
-						. " AND pt.patient_id=st.patient_id";
+						. " AND sr.series_sid = es.series_sid";
 			}
 
 			if($params['cadDateFrom'] != "" && $params['cadDateTo'] != ""
@@ -183,26 +184,26 @@
 
 			if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 			{
-				$sqlStr .= " AND pt.sex=?";
+				$sqlStr .= " AND sr.sex=?";
 				$condArr[] = $params['filterSex'];
 			}
 
 			if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
 			{
-				$sqlStr .= " AND st.age=?";
+				$sqlStr .= " AND sr.age=?";
 				$condArr[] = $params['filterAgeMin'];
 			}
 			else
 			{
 				if($params['filterAgeMin'] != "")
 				{
-					$sqlStr .= " AND ?<=st.age";
+					$sqlStr .= " AND ?<=sr.age";
 					$condArr[] = $params['filterAgeMin'];
 				}
 
 				if($params['filterAgeMax'] != "")
 				{
-					$sqlStr .= " AND st.age<=?";
+					$sqlStr .= " AND sr.age<=?";
 					$condArr[] = $params['filterAgeMax'];
 				}
 			}
@@ -213,7 +214,7 @@
 				$condArr[] = $params['filterTag'];
 			}
 
-			$sqlStr .= " GROUP BY el.job_id, pt.patient_id, pt.patient_name, st.age, pt.sex,"
+			$sqlStr .= " GROUP BY el.job_id, sr.patient_id, sr.patient_name, sr.age, sr.sex,"
 					.  " sr.series_date, sr.series_time, el.executed_at ORDER BY el.job_id ASC";
 			//echo $sqlStr;
 

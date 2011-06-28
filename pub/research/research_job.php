@@ -30,8 +30,11 @@
 		{
 			if($resultPlugin[$i][2] == 1)
 			{
-				$sqlStr = "SELECT DISTINCT plugin_name, version FROM executed_plugin_list"
-	    		        . " WHERE plugin_name=? AND version>=? AND version<=?";
+				$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version"
+						. " FROM executed_plugin_list el, plugin_master pm"
+	    		        . " WHERE pm.plugin_id=el.plugin_id"
+	    		        . " AND pm.plugin_name=?"
+	    		        . " AND pm.version>=? AND pm.version<=?";
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindParam(1, $resultPlugin[$i][3]);
 				$stmt->bindParam(2, $resultPlugin[$i][4]);
@@ -39,13 +42,16 @@
 			}
 			else if($resultPlugin[$i][2] == 2)
 			{
-				$sqlStr = "SELECT DISTINCT ep.plugin_name, ep.version"
-						. " FROM executed_plugin_list ep, lesion_classification lf,"
+				$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version"
+						. " FROM executed_plugin_list el, feedback_list fl,"
 						. " plugin_master pm, plugin_cad_master cm"
-	    		        . " WHERE ep.plugin_name=pm.plugin_name AND ep.version=pm.version"
-						. " AND cm.plugin_id=pm.plugin_id AND cm.result_type=1"
-						. " AND ep.job_id=lf.job_id AND lf.is_consensual='t'"
-						. " ORDER BY ep.plugin_name ASC, ep.version ASC";
+						. " WHERE pm.plugin_id=el.plugin_id"
+						. " AND cm.plugin_id=pm.plugin_id"
+						. " AND cm.result_type=1"
+						. " AND el.job_id=fl.job_id"
+						. " AND fl.is_consensual='t'"
+						. " AND fl.status=1"
+						. " ORDER BY pm.plugin_name ASC, pm.version ASC";
 				$stmt = $pdo->prepare($sqlStr);
 			}
 
