@@ -17,7 +17,7 @@
 	$SUBDIR_JPEG       = "jpg_img";
 	$SUBDIR_CAD_RESULT = "cad_results";
 
-	$CONFIG_DICOM_STORAGE = "DICOMStorageServer.conf";
+	$CONFIG_DICOM_STORAGE = "DICOMStorageServer.ini";
 
 	$LOGIN_LOG               = "loginUser_log.txt";
 	$LOGIN_ERROR_LOG         = "loginUser_errlog.txt";
