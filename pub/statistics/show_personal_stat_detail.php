@@ -531,16 +531,26 @@
 
 					$section = array('XY', 'XZ', 'YZ');
 					include('create_scatter_plot.php');
+					
+					// Get cache area
+					$sqlStr = "SELECT storage_id, path FROM storage_master"
+							. "  WHERE type=3 AND current_use='t'";
+					$webCacheRes = DBConnector::query($sqlStr, NULL, 'ARRAY_ASSOC');
+					//if (!is_array($webCacheRes))
+					//	throw new Exception('Web cache directory not configured');
 
 					foreach($section as $val)
 					{
-						$tmpFname = '../tmp/plot' . $val . '_' . microtime(true) . '.png';
+						$tmpFname = 'plot' . $val . '_' . microtime(true) . '.png';
 
-						CreateScatterPlot($plotData, $val, $tmpFname,
-				                          $params['knownTpFlg'], $params['missedTpFlg'],
-										  $params['fpFlg'], $params['pendingFlg']);
+						CreateScatterPlot($plotData, $val,
+											$webCacheRes['path'] . $DIR_SEPARATOR . $tmpFname,
+											$params['knownTpFlg'],
+											$params['missedTpFlg'],
+											$params['fpFlg'],
+											$params['pendingFlg']);
 
-						$dstData[$val] = 'statistics/show_scatter_plot.php?fname=' . $tmpFname;
+						$dstData[$val] = 'storage/' . $webCacheRes['storage_id'] . '/' . $tmpFname;
 					}
 				}
 
