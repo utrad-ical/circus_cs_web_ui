@@ -56,6 +56,8 @@ class SelectionFeedbackListener extends FeedbackListener
 		);
 		foreach ($data as $display_id => $block_feedback)
 		{
+			if (!isset($block_feedback['selection']))
+				continue;
 			$sth->execute(array(
 				$display_id,
 				$block_feedback['selection'],
