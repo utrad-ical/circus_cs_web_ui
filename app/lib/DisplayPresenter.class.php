@@ -16,11 +16,13 @@ class DisplayPresenter extends CadBlockElement
 	 */
 	protected function executeTemplate($template)
 	{
+		global $DIR_SEPARATOR;
 		$smarty = $this->smarty;
 		$smarty->assign('displayPresenterParams', $this->params);
-		if ($smarty->template_exists("display_presenter.tpl"))
+		$path = $this->owner->pathOfPluginWeb();
+		if ($smarty->template_exists($path . $DIR_SEPARATOR . "display_presenter.tpl"))
 		{
-			return $smarty->fetch("display_presenter.tpl");
+			return $smarty->fetch($path . $DIR_SEPARATOR . "display_presenter.tpl");
 		}
 		else
 		{
