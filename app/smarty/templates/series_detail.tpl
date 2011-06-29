@@ -27,7 +27,9 @@ $(function() {
 		$('#dl-form').submit();
 	});
 
-	var viewer_params = { series_instance_uid: seriesInstanceUID };
+	var viewer_params = {
+		source: new DicomDynamicImageSource(seriesInstanceUID, '')
+	};
 	$.extend(viewer_params, viewer);
 	var v = $('#series-detail-viewer').imageviewer(viewer_params);
 	v.bind('imagechange', function() {

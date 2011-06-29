@@ -25,10 +25,9 @@ $(function() {
 		minImg = Number(circus.cadresult.attributes.start_img_num);
 
 	$('#cad-detail-viewer').imageviewer({
-		series_instance_uid: circus.cadresult.seriesUID,
+		source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 		min: minImg,
 		max: circus.cadresult.seriesNumImages,
-		toTopDir: '../',
 		markers: markers,
 		grayscalePresets: presets,
 		wl: wl,

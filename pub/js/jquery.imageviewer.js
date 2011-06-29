@@ -15,14 +15,19 @@ $.widget('ui.imageviewer', {
 		// preparing cache
 		var body = $('body');
 		var self = this;
-		var cacheRoot = body.data('imageviewerCache') || {};
-		body.data('imageviewerCache', cacheRoot);
-		this._cache = cacheRoot[this.options.series_instance_uid] || {};
-		cacheRoot[this.options.series_instance_uid] = this._cache;
-
-		body.bind('imageviewerImageload', function (event, data) {
-			self._imageLoadHandler(data);
-		});
+		if (this.options.source instanceof Object)
+		{
+			this.options.source.onLoad = function(data) {
+				self._imageLoadHandler(data);
+			}
+			this.options.source.onError = function(message) {
+				self._errorMode(message);
+			}
+		}
+		else
+		{
+			self._errorMode('Image source not set correctly.');
+		}
 		this._draw();
 		this._initialized = true;
 	},
@@ -45,6 +50,16 @@ $.widget('ui.imageviewer', {
 				img.css('cursor', self._cursor);
 				$('.ui-imageviewer-loading', self.element).hide(0);
 			});
+
+		if (this._error)
+		{
+			var errdiv = $('<div class="ui-imageviewer-error">')
+				.append('Error while loading images.')
+				.appendTo(imgdiv);
+			if (this._error)
+				errdiv.append('<br>').append(this._error);
+		}
+
 		$('<div class="ui-imageviewer-loading">').appendTo(imgdiv).hide(0);
 		img.mousedown(function(){return false;}); // prevent selection/drag
 		if (this.options.useWheel && img.mousewheel)
@@ -67,7 +82,8 @@ $.widget('ui.imageviewer', {
 					step: 1,
 					value: this.options.index,
 					slide: function(event, ui) {
-						self._label(ui.value);
+						if (self.options.useLocationText)
+							self._label(ui.value);
 						if (self.options.sliderHotTrack)
 							self.changeImage(ui.value);
 					},
@@ -179,12 +195,10 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	_drawImage: function(index, obj)
+	_drawImage: function(index, fileName)
 	{
-		$('.ui-imageviewer-image img', this.element)
-			.attr('src', this.options.toTopDir + obj.fileName);
+		$('.ui-imageviewer-image img', this.element).attr('src', fileName);
 		this._label(index);
-		this.options.sliceLocation = obj.sliceLocation,
 		this._drawMarkers();
 		this.element.trigger('imagechange');
 	},
@@ -192,69 +206,24 @@ $.widget('ui.imageviewer', {
 	_errorMode: function(message)
 	{
 		this._waiting = null;
-		var errdiv = $('<div class="ui-imageviewer-error">')
-			.append('Error while loading images.')
-			.appendTo($('.ui-imageviewer-image', this.element));
-		if (message)
-			errdiv.append('<br>').append(message);
-	},
-
-	_cacheKey: function(index, wl, ww)
-	{
-		return index + '_' + wl + '_' + ww;
+		this._error = message;
+		this._draw();
 	},
 
 	_imageLoadHandler: function(data)
 	{
-		if (data.status != 'OK')
+		var w = this._waiting;
+		if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
 		{
-			console && console.log(data.error.message);
-			this._error = true;
-			this._errorMode(data.error.message);
+			this._drawImage(data.sliceNumber, data.fileName);
+			this.options.sliceLocation = data.sliceLocation,
+			this._waiting = null;
 		}
-		else if (data.imgFname && data.sliceNumber)
+		else
 		{
-			var key = this._cacheKey(data.sliceNumber, data.windowLevel, data.windowWidth);
-			this._cache[key] = {
-				fileName: data.imgFname,
-				sliceLocation: data.sliceLocation
-			};
-			var w = this._waiting;
-			if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
-			{
-				this._drawImage(data.sliceNumber, this._cache[key]);
-				this._waiting = null;
-			}
-			else
-			{
-				var dummy = new Image(); // just starts preloading the image
-				dummy.src = this.options.toTopDir + data.imgFname;
-			}
+			var dummy = new Image(); // just starts preloading the image
+			dummy.src = data.fileName;
 		}
-	},
-
-	_query: function(index, wl, ww)
-	{
-		var self = this;
-		var param = {
-			seriesInstanceUID: this.options.series_instance_uid,
-			imgNum: index,
-			windowLevel: wl,
-			windowWidth: ww
-		};
-		// prevent requesting image more than once
-		var cacheKey = this._cacheKey(index, wl, ww);
-		if (this._cache[cacheKey] instanceof Date)
-			return;
-		$.post(
-			this.options.toTopDir + 'jump_image.php',
-			param,
-			function (data) {
-				$('body').trigger('imageviewerImageload', data); // broadcast
-			},
-			'json'
-		);
-		this._cache[cacheKey] = new Date();
 	},
 
 	preload: function()
@@ -289,22 +258,11 @@ $.widget('ui.imageviewer', {
 		if (oldIndex == index && oldWL == wl && oldWW == ww && this._initialized)
 			return;
 		$('.ui-imageviewer-slider', this.element).slider('option', 'value', index);
-		var toTopDir = this.options.toTopDir;
-		var cacheKey = this._cacheKey(index, wl, ww);
-		if (this._cache[cacheKey] && this._cache[cacheKey].fileName)
-		{
-			// the image is already created
-			this._drawImage(index, this._cache[cacheKey]);
-		}
-		else
-		{
-			// the image may need server-side generating
-			this._waiting = { index: index, wl: wl, ww: ww };
-			this._timerID = setTimeout(function() {
-				self._loadingIndicate();
-			}, this.options.loadingIndicateDelay);
-			this._query(index, wl, ww);
-		}
+		this._waiting = { index: index, wl: wl, ww: ww };
+		this._timerID = setTimeout(function() {
+			self._loadingIndicate();
+		}, this.options.loadingIndicateDelay);
+		this.options.source.query(index, wl, ww);
 		this.element.trigger('imagechanging');
 	},
 
@@ -351,6 +309,9 @@ $.widget('ui.imageviewer', {
 				this._initialized = false;
 				this._draw();
 				break;
+			case 'source':
+				this._initialized = false;
+				this._init();
 		}
 	}
 });
@@ -374,10 +335,112 @@ $.extend($.ui.imageviewer, {
 		locationLabel: 'Image Number: ',
 		grayscalePresets: [],
 		grayscaleLabel: 'Grayscale Preset: ',
-		toTopDir: '',
 		role: 'viewer',
 		showMarkers: true,
 		useWheel: true,
 		markers: []
 	}
 });
+
+/**
+ * DicomDynamicImageSource asks jump_image.php to dynamically create
+ * JPEG/PNG image file from DICOM file.
+ */
+var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
+	var self = this;
+	var cache = {};
+	var top = toTopDir;
+	var series_uid = series_instance_uid;
+	initialize();
+
+	function initialize()
+	{
+		var body = $('body');
+		var cacheRoot = body.data('imageviewerCache') || {};
+		body.data('imageviewerCache', cacheRoot);
+		cache = cacheRoot[self.series__uid] || {};
+		cacheRoot[series_uid] = cache;
+		body.bind('imageviewerImageload', function (event, data) {
+			loadedHandler(data);
+		});
+	}
+
+	function cacheKey(index, wl, ww)
+	{
+		return index + '_' + wl + '_' + ww;
+	}
+
+	function loadedHandler(data)
+	{
+		if (data.status != 'OK')
+		{
+			console && console.log(data.error.message);
+			self.error = true;
+			if (self.onError instanceof Function)
+				self.onError(data.error.message);
+		}
+		else if (data.imgFname && data.sliceNumber)
+		{
+			var key = cacheKey(data.sliceNumber, data.windowLevel, data.windowWidth);
+			cache[key] = {
+				fileName: top + data.imgFname,
+				sliceNumber: data.sliceNumber,
+				sliceLocation: data.sliceLocation,
+				windowLevel: data.windowLevel,
+				windowWidth: data.windowWidth
+			};
+			if (self.onLoad instanceof Function)
+				self.onLoad(cache[key]);
+		}
+	}
+
+	this.query = function(index, wl, ww)
+	{
+		var key = cacheKey(index, wl, ww);
+		if (cache[key] && cache[key].fileName)
+		{
+			if (this.onLoad instanceof Function)
+				this.onLoad(cache[key]);
+		}
+		else
+		{	var param = {
+				seriesInstanceUID: series_uid,
+				imgNum: index,
+				windowLevel: wl,
+				windowWidth: ww
+			};
+			if (cache[key] instanceof Date)
+				return;
+			$.get(
+				top + 'jump_image.php',
+				param,
+				function (data) {
+					$('body').trigger('imageviewerImageload', data); // broadcast
+				},
+				'json'
+			);
+			cache[key] = new Date();
+		}
+	}
+};
+
+/**
+ * StaticImageSource just maps image index to static file name.
+ */
+var StaticImageSource = function()
+{
+	this.query = function(index, wl, ww) {
+		if (this.onLoad instanceof Function)
+		{
+			var ev = {
+				fileName: index + '.jpg',
+				sliceNumber: index,
+				sliceLocation: 0,
+				windowLevel: wl,
+				windowWidth: ww,
+			};
+			this.onLoad(ev);
+		}
+	}
+};
+

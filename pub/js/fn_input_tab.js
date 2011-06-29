@@ -30,10 +30,9 @@ circus.feedback.additional = circus.feedback.additional || [];
 
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
-				series_instance_uid: circus.cadresult.seriesUID,
 				min: minImg,
 				max: circus.cadresult.seriesNumImages,
-				toTopDir: '../',
+				source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 				role: (canEdit ? 'locator' : 'viewer'),
 				grayscalePresets: presets,
 				wl: wl,
