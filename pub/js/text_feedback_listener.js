@@ -17,25 +17,32 @@ circus.evalListener = (function() {
 		},
 		set: function (target, value)
 		{
-			$('.evaluation-text', target).val(value);
+			$('.evaluation-text', target).val(value.text);
 		},
 		get: function (target)
 		{
-			return $('.evaluation-text', target).val();
+			return {text: $('.evaluation-text', target).val()};
 		},
 		validate: function (target)
 		{
-			return $('.evaluation-text', target).val().length > 0;
+			if (!circus.cadresult.presentation.feedbackListener.required)
+				return { register_ok: true };
+			if ($('.evaluation-text', target).val().length > 0)
+			{
+				return { register_ok: true };
+			}
+			else
+			{
+				return { register_ok: false, message: 'Incomplete' };
+			}
 		},
 		disable: function (target)
 		{
-			$('.evaluationtext', target)
-				.attr('disabled', 'disabled');
+			$('.evaluation-text', target).attr('disabled', 'disabled');
 		},
 		enable: function (target)
 		{
-			$('.evaluation-text', target)
-				.attr('disabled', '');
+			$('.evaluation-text', target).removeAttr('disabled');
 		}
 	};
 	return global;
