@@ -27,7 +27,7 @@ Parameters:
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
 <link href="{$root}css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="{$root}jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="{$root}jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="{$root}js/circus-common.js"></script>
 
 <link rel="shortcut icon" href="{$root}favicon.ico" />
