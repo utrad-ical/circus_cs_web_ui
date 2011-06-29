@@ -55,6 +55,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	{
 		critical_error('The CAD result for this ID was not found.', 'Not Found');
 	}
+	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->pathOfPluginWeb());
 
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
