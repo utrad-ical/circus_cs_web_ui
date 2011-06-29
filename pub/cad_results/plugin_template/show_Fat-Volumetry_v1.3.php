@@ -41,7 +41,7 @@
 	//------------------------------------------------------------------------------------------------------------------
 	$scoreTitle = array("Heart, diaphragm", "Pelvic floor", "Abdominal cavity", "Other", "Abdominal wall");
 	$colName    = array("heart_", "pelvic_", "cavity_", "other_", "wall_");
-	
+
 	$evalStr = "";
 	$scoringHTML = "";
 
@@ -51,14 +51,14 @@
 	{
 		$evalVal[$j][$i] = 0;
 	}
-	
+
 	$sqlStr = "SELECT fa.key, fa.value FROM feedback_list fl, feedback_attributes fa"
-			. " WHERE fl.job_id=? AND fava.fb_id=fl.fb_id"
+			. " WHERE fl.job_id=? AND fa.fb_id=fl.fb_id"
 			. " AND fl.is_consensual='f' AND fl.entered_by=?";
-	
+
 	$stmt = $pdo->prepare($sqlStr);
 	$stmt->execute(array($params['jobID'], $userID));
-	
+
 	if($stmt->rowCount()>0)
 	{
 		$result = array();
@@ -74,7 +74,7 @@
 			$evalVal[$j][1] = $result[$colName[$j] . 'sat'];
 			$evalVal[$j][2] = $result[$colName[$j] . 'bound'];
 		}
-	
+
 		$evalStr = $result['heart_vat']."^".$result['heart_sat']."^".$result['heart_bound']."^"
 		         . $result['cavity_vat']."^".$result['cavity_sat']."^".$result['cavity_bound']."^"
 			     . $result['wall_vat']."^".$result['wall_sat']."^".$result['wall_bound']."^"
@@ -82,72 +82,72 @@
 				 . $result['other_vat']."^".$result['other_sat']."^".$result['other_bound']."^"
 				 . $result['comment'];
 	}
-	
+
 	$scoringHTML .= '<table class="mt10 ml10">'
 	             .  '<tr>'
 	             .  '<th>&nbsp;</th><th class="al-c">VAT</th><th class="al-c">SAT</th><th class="al-c">Bound</th>'
 				 .  '<th width=15>&nbsp;</th>'
 				 .  '<th>&nbsp;</th><th class="al-c">VAT</th><th class="al-c">SAT</th><th class="al-c">Bound</th>'
 		         .  '</tr>';
-	
+
 	for($j=0; $j<5; $j++)
 	{
 		$scoringHTML .= ($j%2 == 0) ? '<tr>' : '<td width=15></td>';
-	
+
 		$scoringHTML .= '<th class="al-l">' . $scoreTitle[$j] . '&nbsp;</th>';
-	
+
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'vat"';
 		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
-	
+
 		for($i=-2; $i<=2; $i++)
 		{
 			$scoringHTML .= '<option value=' . $i;
 			if($i == $evalVal[$j][0])  $scoringHTML .= ' selected="selected"';
 			$scoringHTML .= '>' . $i . '</option>';
 		}
-	
+
 		$scoringHTML .= '</select>';
 		$scoringHTML .= '&nbsp;</td>';
-	
+
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'sat"';
 		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
-	
+
 		for($i=-2; $i<=2; $i++)
 		{
 			$scoringHTML .= '<option value=' . $i;
 			if($i == $evalVal[$j][1])  $scoringHTML .= ' selected="selected"';
 			$scoringHTML .= '>' . $i . '</option>';
 		}
-	
+
 		$scoringHTML .= '</select>';
 		$scoringHTML .= '&nbsp;</td>';
-	
+
 		$scoringHTML .= '<td class="al-c">';
 		$scoringHTML .= '<select id="' . $colName[$j] . 'bound"';
 		if($params['registTime'] != "") $scoringHTML .= ' disabled="disabled"';
 		$scoringHTML .= '>';
-	
+
 		for($i=-2; $i<=2; $i++)
 		{
 			$scoringHTML .= '<option value=' . $i;
 			if($i == $evalVal[$j][2])  $scoringHTML .= ' selected="selected"';
 			$scoringHTML .= '>' . $i . '</option>';
 		}
-	
+
 		$scoringHTML .= '</select>';
 		$scoringHTML .= '&nbsp;</td>';
-	
-	
+
+
 		if($j%2 == 1)   $scoringHTML .= '</tr>';
 		else if($j==4)  $scoringHTML .= '<td></td><td>&nbsp;</td></tr>';
 	}
-	
+
 	$scoringHTML .= '</table>';
-	
+
 	$scoringHTML .= '<div style="margin:10px; font-size:14px;">'
 				 .  '<table>'
 				 .  '<tr align=left valign=top>'
