@@ -42,7 +42,7 @@ $.widget('ui.imageviewer', {
 			.appendTo(imgdiv)
 			.load(function() {
 				self._clearTimeout();
-				img.css('cursor', 'auto');
+				img.css('cursor', self._cursor);
 				$('.ui-imageviewer-loading', self.element).hide(0);
 			});
 		$('<div class="ui-imageviewer-loading">').appendTo(imgdiv).hide(0);
@@ -102,6 +102,8 @@ $.widget('ui.imageviewer', {
 			});
 		}
 		this.changeImage(this.options.index);
+		this._cursor = 'auto';
+
 		if (this.options.role == 'locator')
 		{
 			img.click(function(e) {
@@ -109,9 +111,10 @@ $.widget('ui.imageviewer', {
 				if (!e.offsetY){ e.offsetY = e.pageY - $(e.target).offset().top; }
 				self._locate(e.offsetX, e.offsetY);
 				return false; // prevent image selection on dblclick
-			})
-			.css('cursor', 'crosshair');
+			});
+			this._cursor = 'crosshair';
 		}
+		img.css('cursor', this._cursor);
 	},
 
 	_locate: function(x, y)
