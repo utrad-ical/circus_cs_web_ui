@@ -264,7 +264,7 @@ class CadResult extends Model
 		//
 		// STEP: Get the actual CAD results from the result table
 		//
-		$sqlStr = "SELECT * FROM $result_table WHERE job_id=?";
+		$sqlStr = "SELECT * FROM \"$result_table\" WHERE job_id=?";
 		$this->rawResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
 	}
 
