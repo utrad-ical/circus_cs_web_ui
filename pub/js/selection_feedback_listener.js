@@ -54,7 +54,7 @@ circus.evalListener = (function() {
 			} else {
 				return {
 					register_ok: false,
-					message: 'Imcomplete'
+					message: 'Incomplete'
 				};
 			}
 		},
