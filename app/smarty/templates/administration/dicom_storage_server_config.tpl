@@ -45,7 +45,7 @@ function RestartStorageSv()
 
 <style type="text/css">
 
-#message { margin: 1em 0 0 0 1em; padding: 1em; font-weight: bold; color: red; }
+#message { margin: 1em 0 0 0; padding: 1em; font-weight: bold; color: red; }
 #editor { margin: 1em 0 0 1em; }
 #editor-commit { margin: 1em 0 0 1em; }
 
