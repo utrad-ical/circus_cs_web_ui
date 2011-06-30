@@ -7,14 +7,19 @@ $(function(){// <body onload="...." />
 		hover: 'registration-hover',
 		disabled: 'registration-disabled'
 	});
+	makeFormBtn();
 
+});
+
+
+function makeFormBtn()
+{
 	$('.form-btn').hoverStyle({
 		normal: 'form-btn-normal',
 		hover: 'form-btn-hover',
 		disabled: 'form-btn-disabled'
 	});
-
-});
+}
 
 
 

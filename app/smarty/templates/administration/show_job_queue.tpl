@@ -13,6 +13,7 @@ function GetJobQueueList()
 				if(data.message=="")
 				{
 					$("#jobList tbody").html(data.jobListHtml);
+					makeFormBtn();
 				}
 				else
 				{
@@ -79,7 +80,6 @@ $(function () {
 {/capture}
 {capture name="require"}
 css/popup.css
-js/hover.js
 {/capture}
 {include file="header.tpl" require=$smarty.capture.require
 	head_extra=$smarty.capture.extra body_class="spot"}
