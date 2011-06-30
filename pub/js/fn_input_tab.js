@@ -39,7 +39,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 				wl: wl,
 				ww: ww
 			})
-			.bind('locate', f._updateTable).bind('locating', f._locating);
+			.bind('locate', f._locate).bind('locating', f._locating);
 
 			f._resetMarkers();
 
@@ -232,7 +232,17 @@ circus.feedback.additional = circus.feedback.additional || [];
 		{
 			var newitem = event.newItem;
 			newitem.entered_by = circus.userID;
-			newitem.nearest_lesion_id = f._findNearestHiddenCand(newitem);
+			if (circus.feedback.feedbackMode == 'consensual')
+				f._snapToNearestHiddenCand(newitem);
+			else
+				newitem.nearest_lesion_id = f._findNearestHiddenCand(newitem);
+		},
+		_locate: function(event)
+		{
+			var markers = f._viewer.imageviewer('option', 'markers');
+			markers = f._makeUnique(markers);
+			f._viewer.imageviewer('option', 'markers', markers);
+			f._updateTable();
 		},
 		_distance2: function(a, b)
 		{
