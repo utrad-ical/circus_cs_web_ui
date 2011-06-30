@@ -71,6 +71,7 @@ $(function() {
 
 <div id="administration" style="display: none">
 <form onsubmit="return false;">
+<input type="hidden" id="ticket" value="{$params.ticket|escape}" />
 
 <h2>Administration</h2>
 
