@@ -1,11 +1,17 @@
 <?php
 
-	//--------------------------------------------------------------------------
-	// Function for displaying status of windows service
-	//--------------------------------------------------------------------------
-	function ShowWindowsServiceStatus($serviceName)
+/**
+ * Class for windows service control.
+ * @author Yukihiro Nomura <nomuray-tky@umin.ac.jp>
+ */
+
+class WinServiceControl
+{
+	function GetStatus($serviceName, $hostName)
 	{
-		$statusArr = win32_query_service_status($serviceName);
+		if($hostName == "")  $hostName = 'localhost';
+
+		$statusArr = win32_query_service_status($serviceName, $hostName);
 
 		$result = array('serviceName' => $serviceName,
 		                'val' => 0,
@@ -46,5 +52,5 @@
 
 		return $result;
 	}
-	//--------------------------------------------------------------------------
+}
 ?>

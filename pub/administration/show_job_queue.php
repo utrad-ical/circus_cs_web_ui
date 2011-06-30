@@ -1,37 +1,18 @@
 <?php
-	$params = array('toTopDir' => "../");
-	include_once("../common.php");
-	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+$params = array('toTopDir' => "../");
+include_once("../common.php");
+Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
-	try
-	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
+//------------------------------------------------------------------------------
+// Settings for Smarty
+//------------------------------------------------------------------------------
+$smarty = new SmartyEx();
 
-		//--------------------------------------------------------------------------------------------------------
-		// Create job list
-		//--------------------------------------------------------------------------------------------------------
-		include('get_job_queue_list.php');
-		//--------------------------------------------------------------------------------------------------------
+$smarty->assign('params', $params);
+//$smarty->assign('userID',  $_SESSION['userID']);
 
-		//--------------------------------------------------------------------------------------------------------
-		// Settings for Smarty
-		//--------------------------------------------------------------------------------------------------------
-		$smarty = new SmartyEx();
+$smarty->display('administration/show_job_queue.tpl');
+//------------------------------------------------------------------------------
 
-		$smarty->assign('params', $params);
-
-		$smarty->assign('userID',  $_SESSION['userID']);
-		$smarty->assign('jobList', $jobList);
-
-		$smarty->display('administration/show_job_queue.tpl');
-		//--------------------------------------------------------------------------------------------------------
-	}
-	catch (PDOException $e)
-	{
-		var_dump($e->getMessage());
-	}
-
-	$pdo = null;
 ?>

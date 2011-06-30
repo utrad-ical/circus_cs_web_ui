@@ -16,7 +16,8 @@
 		win32_start_service($serviceName);
 	}
 
-	$dstData = ShowWindowsServiceStatus($serviceName);
+	$hostName = '127.0.0.1';
+	$dstData = WinServiceControl::GetStatus($serviceName, $hostName);
 
 	echo json_encode($dstData);
 ?>
