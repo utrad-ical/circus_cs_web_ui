@@ -37,9 +37,10 @@ circus.feedback = function() {
 				var id = $(block).data('displayid');
 				blockFeedback[id] = circus.evalListener.get(block);
 			});
-			$.each(circus.feedback.additional, function (name, afb) {
-				additionalFeedback[afb.name] = afb.collect();
-			});
+			if (circus.feedback.additional instanceof Array)
+				$.each(circus.feedback.additional, function (name, afb) {
+					additionalFeedback[afb.name] = afb.collect();
+				});
 			return {
 				blockFeedback: blockFeedback,
 				additionalFeedback: additionalFeedback
@@ -140,7 +141,8 @@ circus.feedback = function() {
 			}
 			else
 				alert("System Error:\n" + result);
-		}
+		},
+		additional: []
 	};
 	return global;
 }();
