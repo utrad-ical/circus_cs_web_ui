@@ -9,24 +9,21 @@ $(function() {
 		$('input[type=button]', this).each(function () {
 			$(this).click(function(event) {
 				var mode = $(event.target).attr('value');
-				$('.serviceStatus', panel).text('...');
+				$('.serviceStatus', panel).empty().append($('.loading').clone().show(0));
 				$('input[type=button]', panel).attr('disabled', 'disabled').trigger('flush');
 				$.post(
 					"change_server_status.php",
 					{ serviceName: serviceName, mode: mode, ticket: $("#ticket").val() },
 					function (data) {
-						var panel = $('.panel:has(input[name=serviceName][value=' + serviceName + '])');
-						$('.serviceStatus', panel).text(data.str);
+						$('.serviceStatus', panel).empty().text(data.str);
 						var started = data.val == 1;
 						$('input[type=button][value=start]', panel)
-							.attr('disabled', started ? 'disabled': '')
-							.trigger('flush');
+							.attr('disabled', started ? 'disabled': '');
 						$('input[type=button][value=stop]', panel)
-							.attr('disabled', started ? '' : 'disabled')
-							.trigger('flush');
+							.attr('disabled', started ? '' : 'disabled');
 						$('input[type=button][value=status]', panel)
-							.attr('disabled', '')
-							.trigger('flush');
+							.attr('disabled', '');
+						$('input[type=button]', panel).trigger('flush');
 					},
 					"json"
 				);
@@ -165,7 +162,7 @@ $(function() {
 	<tbody>
 		<tr id="storagePanel" class="panel">
 			<td>DICOM Storage Server</td>
-			<td class="serviceStatus themeColor" id="storageStatusStr">...</td>
+			<td class="serviceStatus themeColor" id="storageStatusStr"></td>
 			<td>
 				<input type="hidden" name="serviceName" value="{$storageServerName|escape}" />
 				<input type="button" value="start" class="form-btn" disabled="disabled" />
@@ -175,7 +172,7 @@ $(function() {
 		</tr>
 		<tr id="managerPanel" class="panel">
 			<td>Plug-in Job Manager</td>
-			<td class="serviceStatus themeColor" id="managerStatusStr">...</td>
+			<td class="serviceStatus themeColor" id="managerStatusStr"></td>
 			<td>
 				<input type="hidden" name="serviceName" value="{$managerServerName|escape}" />
 				<input type="button" value="start" class="form-btn" disabled="disabled" />
@@ -187,5 +184,5 @@ $(function() {
 </table>
 </div>
 </form>
-
+<img class="loading" width="15" height="15" src="../images/busy.gif" style="display: none" />
 {include file="footer.tpl"}
