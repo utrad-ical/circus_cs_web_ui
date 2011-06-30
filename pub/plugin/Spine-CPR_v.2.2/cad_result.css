@@ -1,0 +1,9 @@
+.result-block { border: none; }
+
+.spine-title { font-size:14px; font-weight:bold; }
+
+.spine-caption { font-weight: bold; text-align: center; }
+.spine-caption-sub { text-align: center; }
+
+.spine-table td { padding: 0 10px; }
+.spine-table { margin-bottom: 15px; }
