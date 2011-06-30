@@ -1,35 +1,41 @@
 {capture name="extra"}
-<script language="Javascript">;
+<script type="text/javascript">;
 <!--
 {literal}
 
 function GetJobQueueList()
 {
-	$.ajax({url: "get_job_queue_list.php",
+	$.ajax(
+		{
+			url: "get_job_queue_list.php",
 			dataType: "json",
 			success: function(data){
 				if(data.message=="")
 				{
 					$("#jobList tbody").html(data.jobListHtml);
-					$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 				}
 				else
 				{
 					$("#message").append(data.message);
-				}}
-			});
+				}
+			}
+		}
+	);
 }
 
 function DeleteJob(jobID)
 {
 	if(confirm('Do you delete the job (JobID:'+ jobID + ') ?'))
 	{
-		$.post("delete_plugin_job.php",
+		$.post(
+			"delete_plugin_job.php",
 			{ jobID: jobID },
-			  function(data){
+			function(data){
 				$("#message").text(data.message);
 				GetJobQueueList();
-		  }, "json");
+			},
+			"json"
+		);
 	}
 }
 
@@ -40,20 +46,20 @@ $(function () {
 	});
 
 	$('#reset-button').click(function () {
-
 		if(confirm('Reset plug-in job queue?'))
 		{
-			$.ajax({url: "reset_plugin_job.php",
+			$.ajax(
+				{
+					url: "reset_plugin_job.php",
 					dataType: "json",
 					success: function(data){
 						$("#message").text(data.message);
 						GetJobQueueList();
 					}
-			});
+				}
+			);
 		}
 	});
-
-
 
 	GetJobQueueList();
 });
@@ -68,18 +74,12 @@ $(function () {
 #content h3 { margin: 1.5em 0 0.5em 0; }
 #resetQueue table td { padding: 0.5em; }
 
-div.line{
-	margin-top: 10px;
-	margin-bottom: 10px;
-	border-bottom: solid 2px #8a3b2b;
-}
-
-
 </style>
 {/literal}
 {/capture}
 {capture name="require"}
 css/popup.css
+js/hover.js
 {/capture}
 {include file="header.tpl" require=$smarty.capture.require
 	head_extra=$smarty.capture.extra body_class="spot"}
@@ -130,9 +130,6 @@ css/popup.css
 			</tbody>
 		</table>
 	</div>
-
-	{*<div class="line"></div>*}
-
 </form>
 
 {include file="footer.tpl"}
