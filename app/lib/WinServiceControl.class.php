@@ -4,18 +4,17 @@
  * Class for windows service control.
  * @author Yukihiro Nomura <nomuray-tky@umin.ac.jp>
  */
-
 class WinServiceControl
 {
-	function GetStatus($serviceName, $hostName)
+	public static function getStatus($serviceName, $hostName = 'localhost')
 	{
-		if($hostName == "")  $hostName = 'localhost';
-
 		$statusArr = win32_query_service_status($serviceName, $hostName);
 
-		$result = array('serviceName' => $serviceName,
-		                'val' => 0,
-		                'str' => 'Status error');
+		$result = array(
+			'serviceName' => $serviceName,
+			'val' => 0,
+			'str' => 'Status error'
+		);
 
 		switch($statusArr['CurrentState'])
 		{
@@ -49,7 +48,6 @@ class WinServiceControl
 				$result['str'] = 'Pause pending';
 				break;
 		}
-
 		return $result;
 	}
 }

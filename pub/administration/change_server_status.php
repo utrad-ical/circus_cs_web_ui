@@ -15,7 +15,7 @@
 	}
 
 	$hostName = '127.0.0.1';
-	$dstData = WinServiceControl::GetStatus($serviceName, $hostName);
+	$dstData = WinServiceControl::getStatus($serviceName, $hostName);
 
 	echo json_encode($dstData);
 ?>

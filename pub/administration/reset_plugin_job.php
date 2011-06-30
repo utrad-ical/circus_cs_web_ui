@@ -7,7 +7,7 @@ Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 $dstData = array('message' => "");
 
 $hostName = '127.0.0.1';
-$svStat = WinServiceControl::GetStatus($PLUGIN_JOB_MANAGER_SERVICE, $hostName);
+$svStat = WinServiceControl::getStatus($PLUGIN_JOB_MANAGER_SERVICE, $hostName);
 
 if($svStat['str'] != 'Stopped')
 {
