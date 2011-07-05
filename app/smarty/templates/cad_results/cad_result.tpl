@@ -2,7 +2,6 @@
 Smarty Template for General CAD Result.
 *}
 {capture name="require"}
-js/radio-to-button.js
 js/cad_result.js
 css/darkroom.css
 js/edit_tags.js

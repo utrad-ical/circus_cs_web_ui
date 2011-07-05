@@ -13,7 +13,7 @@ function GetJobQueueList()
 				if(data.message=="")
 				{
 					$("#jobList tbody").html(data.jobListHtml);
-					makeFormBtn();
+					$('#jobList').autoStylize();
 				}
 				else
 				{

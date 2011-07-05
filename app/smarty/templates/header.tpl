@@ -28,8 +28,7 @@ Parameters:
 
 <link href="{$root}css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="{$root}jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}jq/jq-btn.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}js/hover.js"></script>
+<script language="javascript" type="text/javascript" src="{$root}js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="{$root}js/viewControl.js"></script>
 
 <link rel="shortcut icon" href="{$root}favicon.ico" />
