@@ -75,7 +75,7 @@ $.fn.hoverStyle = function(styles) {
 			.bind('flush', function() { flush(); });
 		flush();
 	});
-}
+};
 
 // 'radioToButton' can make radio buttons have appearance of normal buttons.
 $.fn.radioToButton = function(styles) {
@@ -121,4 +121,4 @@ $.fn.radioToButton = function(styles) {
 			.data('radioToButtonInit', true);
 		flush();
 	});
-}
+};

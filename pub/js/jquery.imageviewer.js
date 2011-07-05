@@ -12,13 +12,11 @@
 $.widget('ui.imageviewer', {
 	_init: function()
 	{
-		// preparing cache
-		var body = $('body');
 		var self = this;
 		if (this.options.source instanceof Object)
 		{
 			this.options.source.onLoad = function(data) {
-				self._imageLoadHandler(data);
+				self._imageDeterminedHandler(data);
 			}
 			this.options.source.onError = function(message) {
 				self._errorMode(message);
@@ -28,6 +26,13 @@ $.widget('ui.imageviewer', {
 		{
 			self._errorMode('Image source not set correctly.');
 		}
+		this._initialized = false;
+		delete this._imageWidth;
+		delete this._imageHeight;
+		delete this._scale;
+		delete this._cache;
+		delete this._waiting;
+		delete this._error;
 		this._draw();
 		this._initialized = true;
 	},
@@ -36,20 +41,20 @@ $.widget('ui.imageviewer', {
 	{
 		var root = this.element.empty();
 		var self = this;
-		root.addClass('ui-imageviewer')
+		root.addClass('ui-imageviewer');
+
 		var imgdiv = $('<div class="ui-imageviewer-image">')
-			.css({ width: this.options.width, height: this.options.height })
 			.appendTo(root);
-		this._scale = this.options.width / this.options.imageWidth;
-		var height = this.options.imageHeight * this._scale;
-		var img = $('<img>')
-			.css({ width: this.options.width, height: height })
-			.appendTo(imgdiv)
-			.load(function() {
-				self._clearTimeout();
-				img.css('cursor', self._cursor);
-				$('.ui-imageviewer-loading', self.element).hide(0);
+
+		var img = $('<img>').appendTo(imgdiv);
+		if ('_imageWidth' in this)
+		{
+			this._scale = this.options.width / this._imageWidth;
+			img.css({
+				width: this._imageWidth * this._scale,
+				height: this._imageHeight * this._scale
 			});
+		}
 
 		if (this._error)
 		{
@@ -168,15 +173,21 @@ $.widget('ui.imageviewer', {
 			var mark = this.options.markers[i];
 			var x = mark.location_x * this._scale;
 			var y = mark.location_y * this._scale;
-			if (mark.location_z == index)
+			if (mark.location_z != index)
+				continue;
+			switch (this.options.markerStyle)
 			{
-				$('<div class="ui-imageviewer-dot" />')
-					.css({left: x - 1, top:  y - 1})
-					.appendTo(imgdiv);
-				$('<div class="ui-imageviewer-dotlabel" />')
-					.text(mark.display_id || i+1)
-					.css({left: x + 3, top: y - 1})
-					.appendTo(imgdiv);
+				case 'circle':
+					break;
+				case 'dot':
+				default:
+					$('<div class="ui-imageviewer-dot" />')
+						.css({left: x - 1, top:  y - 1})
+						.appendTo(imgdiv);
+					$('<div class="ui-imageviewer-dotlabel" />')
+						.text(mark.display_id || i+1)
+						.css({left: x + 3, top: y - 1})
+						.appendTo(imgdiv);
 			}
 		}
 	},
@@ -195,14 +206,6 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	_drawImage: function(index, fileName)
-	{
-		$('.ui-imageviewer-image img', this.element).attr('src', fileName);
-		this._label(index);
-		this._drawMarkers();
-		this.element.trigger('imagechange');
-	},
-
 	_errorMode: function(message)
 	{
 		this._waiting = null;
@@ -210,20 +213,46 @@ $.widget('ui.imageviewer', {
 		this._draw();
 	},
 
-	_imageLoadHandler: function(data)
+	_imageLoadHandler: function(data, image)
 	{
 		var w = this._waiting;
 		if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
 		{
-			this._drawImage(data.sliceNumber, data.fileName);
 			this.options.sliceLocation = data.sliceLocation,
+			this._label(data.sliceNumber);
 			this._waiting = null;
+			var img = $('.ui-imageviewer-image img', this.element);
+			img.attr('src', image.src);
+			this._drawMarkers();
+			this.element.trigger('imagechange');
+
+			if (!('_imageWidth' in this))
+			{
+				this._imageWidth = image.width;
+				this._imageHeight = image.height;
+				if (parseFloat(this.options.width) > 0)
+				{
+					this._scale = this.options.width / this._imageWidth;
+					img.width(this._imageWidth * this._scale);
+					img.height(this._imageHeight * this._scale);
+				}
+				else
+				{
+					this._scale = 1;
+				}
+			}
+			this._clearTimeout();
+			img.css('cursor', this._cursor);
+			$('.ui-imageviewer-loading', this.element).hide(0);
 		}
-		else
-		{
-			var dummy = new Image(); // just starts preloading the image
-			dummy.src = data.fileName;
-		}
+	},
+
+	_imageDeterminedHandler: function(data)
+	{
+		var img = new Image(); // just starts preloading the image
+		var self = this;
+		img.onload = function (event) { self._imageLoadHandler(data, img); };
+		img.src = data.fileName;
 	},
 
 	preload: function()
@@ -298,11 +327,11 @@ $.widget('ui.imageviewer', {
 		switch (key) {
 			case 'markers':
 			case 'showMarkers':
+			case 'markerStyle':
 				this._drawMarkers();
 				break;
 			case 'role':
-			case 'imageWidth':
-			case 'imageHeight':
+			case 'width':
 			case 'useSlider':
 			case 'useLocationText':
 			case 'grayscalePresets':
@@ -320,23 +349,20 @@ $.extend($.ui.imageviewer, {
 	defaults: {
 		min: 1,
 		max: 100,
-		windowLevel: 10,
-		windowWidth: 100,
 		index: 1,
 		ww: 0,
 		wl: 0,
-		width: 300,
-		imageWidth: 512,
-		imageHeight: 512,
+		width: 'auto',
+		useLocationText: true,
 		useSlider: true,
 		sliderHotTrack: false,
 		loadingIndicateDelay: 300,
-		useLocationText: true,
 		locationLabel: 'Image Number: ',
 		grayscalePresets: [],
 		grayscaleLabel: 'Grayscale Preset: ',
 		role: 'viewer',
 		showMarkers: true,
+		markerStyle: 'dot',
 		useWheel: true,
 		markers: []
 	}
@@ -427,13 +453,42 @@ var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
 /**
  * StaticImageSource just maps image index to static file name.
  */
-var StaticImageSource = function()
+var StaticImageSource = function(source)
 {
+	var self = this;
+	var src = source;
+
+	var pad = function(num, width, pad)
+	{
+		var str = '' + num;
+		while (str.length < width) str = pad + str;
+		return str;
+	}
+
+	var internalImageFunc = function(index, wl, ww)
+	{
+		if (src instanceof String) return null;
+		return src.replace(
+			/%((0?)\d)?d/g,
+			function(str, width, zero) {
+				if (width.length > 0)
+					return pad(parseInt(index), parseInt(width), zero == '0' ? '0' : ' ');
+				else
+					return parsetInt(index);
+			}
+		);
+	}
+
 	this.query = function(index, wl, ww) {
+		var func = internalImageFunc;
+		if (src instanceof Function)
+			func = src;
+		var imageFile = func(index, wl, ww);
+
 		if (this.onLoad instanceof Function)
 		{
 			var ev = {
-				fileName: index + '.jpg',
+				fileName: imageFile,
 				sliceNumber: index,
 				sliceLocation: 0,
 				windowLevel: wl,
