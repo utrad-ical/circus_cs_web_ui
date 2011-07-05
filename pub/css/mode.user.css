@@ -146,23 +146,6 @@ p.add-favorite {
 	border: 1px solid #808080 !important;
 }
 
-/* "Registration of feedback" button */
-.registration-normal {
-	color: #000;
-	background-color: #b4ebfa;
-	border: 1px solid #0041ff;
-}
-.registration-hover {
-	color: #fff;
-	background-color: #66ccff;
-	border: 1px solid #0041ff;
-}
-.registration-disabled {
-	color: #ccc;
-	background-color: #999;
-	border: 1px solid #0041ff;
-}
-
 input.form-btn {
 	display:inline-block;
 	cursor:pointer;

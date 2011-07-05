@@ -75,7 +75,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {/foreach}
 
 <div id="register-pane">
-<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" /><br />
+<input id="register" type="button" value="Register Feedback" class="form-btn registration" disabled="disabled" /><br />
 <ul id="register-error"></ul>
 <ul id="register-message"></ul>
 {if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}

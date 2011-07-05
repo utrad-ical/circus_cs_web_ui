@@ -180,12 +180,6 @@ circus.cadresult = function() {
 
 
 $(function(){
-	$('.registration').hoverStyle({
-		normal: 'registration-normal',
-		hover: 'registration-hover',
-		disabled: 'registration-disabled'
-	});
-
 	// Initialize the evaluator status.
 	circus.feedback.initialize();
 	circus.evalListener.setup();

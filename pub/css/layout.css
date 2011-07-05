@@ -351,8 +351,6 @@ table.search-tbl th, table.search-tbl td {
 
 /* "Registration of feedback" button */
 input.registration {
-	display:inline-block;
-	cursor:pointer;
 	padding: 5px 0;
 	width: 200px;
 }
