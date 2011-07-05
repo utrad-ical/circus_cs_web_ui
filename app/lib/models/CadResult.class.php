@@ -368,26 +368,37 @@ class CadResult extends Model
 		return "$WEB_UI_ROOT/plugin/$plugin_name";
 	}
 
+
+	/**
+	 * Returns the URL of plugin-specific public directory.
+	 */
+	public function webPathOfPluginPub()
+	{
+		$plugin_name = $this->Plugin->fullName();
+		return "plugin/$plugin_name";
+	}
+
 	/**
 	 * Returns the plugin-specific public directory.
 	 * This directory contains plugin-specific image files, css files,
 	 * javascript files, etc.
 	 */
-	public function webPathOfPluginPub()
+	public function pathOfPluginPub()
 	{
+		global $WEB_UI_ROOT;
 		$plugin_name = $this->Plugin->fullName();
-		return "../plugin/$plugin_name";
+		return "$WEB_UI_ROOT/pub/plugin/$plugin_name";
 	}
 
 	/**
-	 * Returns CAD result directory web path.
+	 * Returns CAD result directory URL.
 	 * @return string CAD result directory web path.
 	 */
 	public function webPathOfCadResult()
 	{
 		global $DIR_SEPARATOR_WEB, $SUBDIR_CAD_RESULT;
 		$str_id = $this->storage_id;
-		return '../' . $webPath . 'storage/' . $str_id . '/' . $this->job_id;
+		return '../storage/' . $str_id . '/' . $this->job_id; // TODO: change
 	}
 
 	/**
