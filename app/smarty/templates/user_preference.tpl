@@ -1,7 +1,3 @@
-{capture name="require"}
-css/popup.css
-js/hover.js
-{/capture}
 {capture name="extra"}
 
 <script language="Javascript" type="text/javascript">;
@@ -181,7 +177,7 @@ function ChangeCadMenu()
 {/capture}
 
 {include file="header.tpl" body_class="spot"
-	head_extra=$smarty.capture.extra require=$smarty.capture.require}
+	head_extra=$smarty.capture.extra}
 
 <form id="form1" name="form1" onsubmit="return false;">
 <input type="hidden" id="oldTodayDisp"            value="{$oldTodayDisp|escape}">

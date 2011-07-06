@@ -6,7 +6,6 @@ js/edit_tags.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
 jq/jquery.mousewheel.min.js
 js/jquery.imageviewer.js
-css/popup.css
 css/darkroom.css
 {/capture}
 

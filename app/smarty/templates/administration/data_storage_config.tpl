@@ -84,7 +84,6 @@ function ResetCurrentID()
 
 
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 </head>
 

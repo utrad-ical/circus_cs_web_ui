@@ -28,7 +28,6 @@ input.close-btn {
 {/literal}
 
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body>

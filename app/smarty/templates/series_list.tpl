@@ -3,7 +3,6 @@ jq/ui/jquery-ui-1.7.3.min.js
 js/search_panel.js
 js/list_tab.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
-css/popup.css
 {/capture}
 
 {include file="header.tpl" body_class="series-list" require=$smarty.capture.require}

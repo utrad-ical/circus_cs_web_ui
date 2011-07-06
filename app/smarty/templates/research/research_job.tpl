@@ -232,7 +232,6 @@ $(function() {
 <link rel="shortcut icon" href="favicon.ico" />
 <link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body class="research">

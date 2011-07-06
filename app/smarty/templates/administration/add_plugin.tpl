@@ -42,7 +42,6 @@ $(function() {
 </script>
 
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/popup.css" rel="stylesheet" type="text/css" media="all" />
 
 {literal}
 <style type="text/css">

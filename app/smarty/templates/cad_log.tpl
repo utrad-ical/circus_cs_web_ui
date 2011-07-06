@@ -4,7 +4,6 @@ js/search_panel.js
 js/list_tab.js
 js/radio-to-button.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
-css/popup.css
 {/capture}
 
 {include file="header.tpl" body_class="cad-log" require=$smarty.capture.require}

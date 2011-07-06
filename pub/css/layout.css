@@ -391,9 +391,43 @@ ul.inline li {
 	line-height: 2;
 }
 
+
 /* ===================================================
-	 for CAD result
- =================================================== */
+	 Series Details and Detail Table
+==================================================== */
+
+/* series-detail-img */
+.series-detail-img {
+	float: left;
+	padding: 5px;
+	border: 1px solid #7f7f7f;
+	margin-right: 20px;
+}
+
+/* detail panel */
+.detail-panel {
+	float: left;
+	padding: 10px 20px;
+}
+
+/* detail table */
+table.detail-tbl th, table.detail-tbl td {
+	border-bottom: 1px dotted #ccc;
+	padding: 3px 2px;
+}
+
+
+/* ===================================================
+	 CAD result page
+==================================================== */
+
+.headerArea {
+	clear: both;
+	width: 100%;
+	float: left;
+	margin-bottom: 5px;
+	font-size: 110%;
+}
 
 .result-record-2cols { /* Deprecated */
 	width:388px;

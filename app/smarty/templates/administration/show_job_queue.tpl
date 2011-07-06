@@ -78,10 +78,7 @@ $(function () {
 </style>
 {/literal}
 {/capture}
-{capture name="require"}
-css/popup.css
-{/capture}
-{include file="header.tpl" require=$smarty.capture.require
+{include file="header.tpl"
 	head_extra=$smarty.capture.extra body_class="spot"}
 
 </head>
