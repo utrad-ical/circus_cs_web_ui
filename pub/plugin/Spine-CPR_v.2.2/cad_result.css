@@ -5,5 +5,6 @@
 .spine-caption { font-weight: bold; text-align: center; }
 .spine-caption-sub { text-align: center; }
 
+.spine-table img { width: 150px; height: auto; }
 .spine-table td { padding: 0 10px; }
 .spine-table { margin-bottom: 15px; }
