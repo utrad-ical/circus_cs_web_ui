@@ -354,7 +354,7 @@ $.extend($.ui.imageviewer, {
 		width: 'auto',
 		useLocationText: true,
 		useSlider: true,
-		sliderHotTrack: false,
+		sliderHotTrack: true,
 		loadingIndicateDelay: 300,
 		locationLabel: 'Image Number: ',
 		grayscalePresets: [],

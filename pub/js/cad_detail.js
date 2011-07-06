@@ -28,7 +28,6 @@ $(function() {
 		source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 		min: minImg,
 		max: circus.cadresult.seriesNumImages,
-		sliderHotTrack: true,
 		markers: markers,
 		grayscalePresets: presets,
 		maxWidth: 512,
