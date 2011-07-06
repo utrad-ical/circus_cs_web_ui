@@ -125,30 +125,28 @@ p.add-favorite {
 	background-image:url(../img_common/btn/user/radio-to-button_white2.jpg);
 }
 /* Radio button (large size) */
-.radio-to-button-l {
+.radio-to-button.radio-to-button-l {
 	background-image:url(../img_common/btn/user/radio-to-button-l_white2.jpg);
 }
 
-.radio-to-button-normal, .radio-to-button-l-normal {
+.radio-to-button-normal {
 	color: #333 !important;
 	border: 1px solid #333 !important;
 }
-.radio-to-button-hover, .radio-to-button-l-hover {
+.radio-to-button-hover {
 	color: #69f !important;
 	border: 1px solid #69f !important;
 }
-.radio-to-button-checked, .radio-to-button-l-checked {
+.radio-to-button-checked {
 	color: #fff !important;
 	border: 1px solid #0041ff !important;
 }
-.radio-to-button-disabled, .radio-to-button-l-disabled {
+.radio-to-button-disabled {
 	color: #aaa !important;
 	border: 1px solid #808080 !important;
 }
 
-input.form-btn {
-	display:inline-block;
-	cursor:pointer;
+.form-btn {
 	border: 1px solid #0041ff;
 }
 

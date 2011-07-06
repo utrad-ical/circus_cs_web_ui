@@ -1,5 +1,7 @@
 /**
  * circus-common.js - contains codes widely used throughout the CIRCUS system.
+ *
+ * Currently this file contains scripts for dynamic layout elements.
  */
 
 
@@ -20,12 +22,6 @@ $.fn.autoStylize = function() {
 			hover: 'radio-to-button-hover',
 			checked: 'radio-to-button-checked',
 			disabled: 'radio-to-button-disabled'
-		});
-		_this.find('.radio-to-button-l').andSelf().filter('.radio-to-button-l').radioToButton({
-			normal: 'radio-to-button-l-normal',
-			hover: 'radio-to-button-l-hover',
-			checked: 'radio-to-button-l-checked',
-			disabled: 'radio-to-button-l-disabled'
 		});
 		_this.find('.form-btn').andSelf().filter('.form-btn').hoverStyle({
 			normal: 'form-btn-normal',
