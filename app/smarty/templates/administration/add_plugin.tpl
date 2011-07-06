@@ -11,9 +11,8 @@
 
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/jq-btn.js"></script>
+<script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jquery.upload-1.0.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="../js/hover.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 <link rel="shortcut icon" href="../favicon.ico" />
 
