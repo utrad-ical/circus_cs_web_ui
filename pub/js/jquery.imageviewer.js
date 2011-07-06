@@ -48,13 +48,7 @@ $.widget('ui.imageviewer', {
 
 		var img = $('<img>').appendTo(imgdiv);
 		if ('_imageWidth' in this)
-		{
-			this._scale = this.options.width / this._imageWidth;
-			img.css({
-				width: this._imageWidth * this._scale,
-				height: this._imageHeight * this._scale
-			});
-		}
+			this._adjustImageSize(img);
 
 		if (this._error)
 		{
@@ -136,6 +130,19 @@ $.widget('ui.imageviewer', {
 			this._cursor = 'crosshair';
 		}
 		img.css('cursor', this._cursor);
+	},
+
+	_adjustImageSize: function(img)
+	{
+		var max = this.options.maxWidth;
+		var w = this.options.width;
+		if (parseFloat(w) > 0)
+			w = max < w ? max : w;
+		else
+			w = max < this._imageWidth ? max : this._imageWidth;
+		this._scale = w / this._imageWidth;
+		img.width(this._imageWidth * this._scale);
+		img.height(this._imageHeight * this._scale);
 	},
 
 	_locate: function(x, y)
@@ -230,16 +237,7 @@ $.widget('ui.imageviewer', {
 			{
 				this._imageWidth = image.width;
 				this._imageHeight = image.height;
-				if (parseFloat(this.options.width) > 0)
-				{
-					this._scale = this.options.width / this._imageWidth;
-					img.width(this._imageWidth * this._scale);
-					img.height(this._imageHeight * this._scale);
-				}
-				else
-				{
-					this._scale = 1;
-				}
+				this._adjustImageSize(img);
 			}
 			this._clearTimeout();
 			img.css('cursor', this._cursor);
@@ -332,6 +330,7 @@ $.widget('ui.imageviewer', {
 				break;
 			case 'role':
 			case 'width':
+			case 'maxWidth':
 			case 'useSlider':
 			case 'useLocationText':
 			case 'grayscalePresets':
