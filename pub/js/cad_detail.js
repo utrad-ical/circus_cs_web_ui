@@ -31,6 +31,7 @@ $(function() {
 		sliderHotTrack: true,
 		markers: markers,
 		grayscalePresets: presets,
+		maxWidth: 512,
 		wl: wl,
 		ww: ww
 	})

@@ -27,7 +27,8 @@ $(function() {
 	});
 
 	var viewer_params = {
-		source: new DicomDynamicImageSource(seriesInstanceUID, '')
+		source: new DicomDynamicImageSource(seriesInstanceUID, ''),
+		maxWidth: 500
 	};
 	$.extend(viewer_params, viewer);
 	var v = $('#series-detail-viewer').imageviewer(viewer_params);

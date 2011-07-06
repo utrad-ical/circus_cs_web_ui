@@ -57,9 +57,6 @@ try
 	// Viewer initialization
 	$data['viewer'] = array(
 		'max' => $series->image_number,
-		'imageWidth' => $series->image_width,
-		'imageHeight' => $series->image_height,
-		'width' => 320,
 		'wl' => 0,
 		'ww' => 0,
 		'index' => $req['pos'] ?: 1

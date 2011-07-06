@@ -35,6 +35,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 				source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 				role: (canEdit ? 'locator' : 'viewer'),
 				grayscalePresets: presets,
+				maxWidth: 512,
 				wl: wl,
 				ww: ww
 			})
