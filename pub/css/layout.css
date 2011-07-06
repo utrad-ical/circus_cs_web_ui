@@ -507,6 +507,10 @@ input.registration {
 	margin-right: 20px;
 }
 
+#cad-detail-table {
+	float: left;
+}
+
 #cad-detail-table tr.emphasis td {
 	background-color: gray;
 	font-weight: bold;
