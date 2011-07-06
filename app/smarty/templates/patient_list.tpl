@@ -46,7 +46,7 @@ js/edit_tags.js
 			</th>
 
 			<th>
-				{if $params.orderCol == 'BirthDate'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('BirthDate', '{if $params.orderCol == "BirthDate" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Name</a></span>
+				{if $params.orderCol == 'BirthDate'}<span style="color:#fff; font-size:10px">{if $params.orderMode == "ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfPatientList('BirthDate', '{if $params.orderCol == "BirthDate" && $params.orderMode == "ASC"}DESC{else}ASC{/if}');">Birth date</a></span>
 			</th>
 
 			<th style="width:3.5em;">Detail</th>
