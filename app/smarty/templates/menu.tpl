@@ -1,4 +1,4 @@
-<h1><a id="linkAbout" href="{$params.toTopDir}about.php"><img src="{$params.toTopDir}img_common/share/logo.jpg" width="208" height="63" alt="CIRCUS" /></a></h1>
+<h1><a id="linkAbout" href="{$params.toTopDir}about.php"><img src="{$params.toTopDir}img_common/share/logo.jpg" width="206" height="61" alt="CIRCUS" id="about-circus-btn"/></a></h1>
 {if $currentUser->hasPrivilege('menuShow')}
 <script language="javascript" type="text/javascript" src="{$params.toTopDir}js/swfobject.js"></script>
 <script type="text/javascript">
