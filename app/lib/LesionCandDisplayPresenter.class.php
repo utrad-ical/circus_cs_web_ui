@@ -57,6 +57,15 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		$result = array();
 		$count = 0;
 		$pref = $this->owner->Plugin->userPreference();
+		usort(
+			$input,
+			function($a, $b) {
+				$aa = (float)$a['confidence'];
+				$bb = (float)$b['confidence'];
+				if ($aa == $bb) return 0;
+				if ($aa < $bb) return 1; else return -1;
+			}
+		);
 		foreach ($input as $rec)
 		{
 			// Remember the size of the image
