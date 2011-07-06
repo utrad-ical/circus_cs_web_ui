@@ -74,7 +74,7 @@ circus.evalListener = (function() {
 		enable: function (target)
 		{
 			$('.feedback-pane input[type=radio]', target)
-				.attr('disabled', '')
+				.removeAttr('disabled')
 				.trigger('flush');
 		}
 	};

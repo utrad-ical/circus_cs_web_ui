@@ -95,7 +95,7 @@ circus.feedback = function() {
 			circus.feedback.modified = true;
 			var ok = circus.feedback.register_ok();
 			if (ok.register_ok === true) {
-				$('#register').attr('disabled', '').trigger('flush');
+				$('#register').removeAttr('disabled').trigger('flush');
 				var data = circus.feedback.collect();
 				$('#result').val(JSON.stringify(data));
 			} else {

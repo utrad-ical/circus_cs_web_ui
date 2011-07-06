@@ -63,7 +63,7 @@ $.fn.hoverStyle = function(styles) {
 		var setStyle = function(hover)
 		{
 			$.each(styles, function(k, v) { _this.removeClass(v); });
-			if (_this.attr('disabled')) {
+			if (_this.is(':disabled')) {
 				_this.addClass(styles['disabled']);
 			} else if (hover) {
 				_this.addClass(styles['hover']);
@@ -95,7 +95,7 @@ $.fn.radioToButton = function(styles) {
 			if (_radio.attr('checked'))
 			{
 				btn.addClass(styles['checked']);
-			} else if (_radio.attr('disabled')) {
+			} else if (_radio.is(':disabled')) {
 				btn.addClass(styles['disabled']);
 			} else if (hover) {
 				btn.addClass(styles['hover']);
@@ -105,9 +105,9 @@ $.fn.radioToButton = function(styles) {
 		};
 		var flush = function() { setStyle(false); };
 		var btn = $('<a>')
-			.addClass(_radio.attr('className'))
+			.addClass(_radio.attr('class'))
 			.text(_radio.attr('label'))
-			.attr('title', _radio.attr('title'))
+			.attr('title', _radio.attr('title') ? _radio.attr('title') : '')
 			.hover(
 				function() { setStyle(true); },
 				function() { setStyle(false); }

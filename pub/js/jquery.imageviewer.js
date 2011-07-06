@@ -259,7 +259,7 @@ $.widget('ui.imageviewer', {
 			this._drawMarkers();
 			this.element.trigger('imagechange');
 			img.css('cursor', this._cursor);
-			$('.ui-imageviewer-loading', this.element).hide(0);
+			$('.ui-imageviewer-loading', this.element).hide();
 		}
 	},
 
