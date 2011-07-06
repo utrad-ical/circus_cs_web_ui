@@ -170,22 +170,31 @@ function CheckSeries()
 
 function RegistrationCADJob()
 {
-	$.post("cad_job_registration.php",
+	$.post("../api/api.php",
 		{
-			cadName: $("#cadName").val(),
-			version: $("#version").val(),
-			studyUIDStr: $("#studyUIDStr").val(),
-			seriesUIDStr: $("#seriesUIDStr").val()
+			"request":
+			'{'
+			+ '"auth":{'
+			+ '  "type":"session",'
+			+ '  "user":"'+$("#userID").val()+'"'
+			+ '},'
+			+ '"action":"executePlugin",'
+			+ '"params":{'
+			+ '  "pluginName":"'+$("#cadName").val()+'",'
+			+ '  "pluginVersion":"'+$("#version").val()+'",'
+			+ '  "seriesUID":["'+$("#seriesUIDStr").val()+'"]'
+			+ '}'
+			+ '}'
 		},
 		function(data){
 			var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
-			if(data.executedAt != "")
+			if(data.result[0].executedAt != "")
 			{
-				htmlStr += 'Executed at</span></th><td>' + data.executedAt + '</td>';
+				htmlStr += 'Executed at</span></th><td>' + data.result[0].executedAt + '</td>';
 			}
 			else
 			{
-				htmlStr += 'Registered at</span></th><td>' + data.registeredAt + '</td>';
+				htmlStr += 'Registered at</span></th><td>' + data.result[0].registeredAt + '</td>';
 			}
 			$("#registMessage").html(data.message);
 			$("#success .detail-tbl").prepend(htmlStr);
@@ -246,6 +255,7 @@ function RegistrationCADJob()
 
 			<div class="tab-content">
 				<form id="form1" name="form1" onsubmit="return false;">
+				<input type="hidden" id="userID"               name="userID"               value="{$smarty.session.userID}" />
 				<input type="hidden" id="cadName"              name="cadName"              value="{$params.cadName}" />
 				<input type="hidden" id="version"              name="version"              value="{$params.version}" />
 				<input type="hidden" id="studyUIDStr"          name="studyUIDStr"          value="{$studyUIDStr}" />
