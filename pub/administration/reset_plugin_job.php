@@ -11,7 +11,7 @@ $svStat = WinServiceControl::getStatus($PLUGIN_JOB_MANAGER_SERVICE, $hostName);
 
 if($svStat['str'] != 'Stopped')
 {
-	$dstData['message'] = "[ERROR] Fail to reset plug-in job queue (" . $PLUGIN_JOB_MANAGER_SERVICE . 'is not stopped)';
+	$dstData['message'] = "[ERROR] Fail to reset plug-in job queue (" . $PLUGIN_JOB_MANAGER_SERVICE . ' is not stopped)';
 }
 
 if($dstData['message'] == "")
@@ -24,7 +24,6 @@ if($dstData['message'] == "")
 		$pdo = DBConnector::getConnection();
 
 		// Begin transaction
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$pdo->beginTransaction();	// Begin transaction
 
 		$sqlStr = "UPDATE job_queue SET status=1,"
@@ -52,7 +51,6 @@ if($dstData['message'] == "")
 		$dstData['message'] = '[ERROR] Fail to reset plug-in job queue';
 		//$dstData['message'] = $e->getMessage();
 	}
-	$pdo = null;
 }
 
 echo json_encode($dstData);
