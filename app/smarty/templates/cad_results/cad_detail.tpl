@@ -4,7 +4,7 @@
   v.{$cadResult->Plugin->version|escape} ID:{$cadResult->job_id}]</h2>
 <div class="headerArea">
 	{$series->Study->Patient->patient_name|escape} ({$series->Study->Patient->patient_id})
-	{$series->Study->Patient->age()}{$series->Study->Patient->sex} /
+	{$series->Study->age}{$series->Study->Patient->sex} /
 	{$series->Study->study_date} ({$series->Study->study_id}) /
 	{$series->Study->modality|escape}, {$series->series_description|escape} ({$series->series_number})
 </div>

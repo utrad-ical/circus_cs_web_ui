@@ -157,6 +157,9 @@ function show_cad_results($jobID, $feedbackMode) {
 	}
 	$requiringFiles = array_unique($requiringFiles); // keys preserved
 
+	if ($user->anonymize || !$user->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
+		Patient::$anonymizeMode = true;
+
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
