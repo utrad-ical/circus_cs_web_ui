@@ -187,13 +187,13 @@ function RegistrationCADJob()
 		},
 		function(data){
 			var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
-			if(data.result[0].executedAt != "")
+			if(data.result.executedAt != "")
 			{
-				htmlStr += 'Executed at</span></th><td>' + data.result[0].executedAt + '</td>';
+				htmlStr += 'Executed at</span></th><td>' + data.result.executedAt + '</td>';
 			}
 			else
 			{
-				htmlStr += 'Registered at</span></th><td>' + data.result[0].registeredAt + '</td>';
+				htmlStr += 'Registered at</span></th><td>' + data.result.registeredAt + '</td>';
 			}
 			$("#registMessage").html(data.message);
 			$("#success .detail-tbl").prepend(htmlStr);

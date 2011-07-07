@@ -199,6 +199,9 @@ class QueryJobAction extends ApiAction
 			}
 
 			if($result) {
+				if(count($jobIDArr) == 1) {
+					return $result;
+				}
 				array_push($ret, $result);
 			}
 		}
