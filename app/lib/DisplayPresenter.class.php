@@ -32,7 +32,10 @@ class DisplayPresenter extends CadBlockElement
 
 	protected function defaultParams()
 	{
-		return array('caption' => 'Block Feedback');
+		return array(
+			'caption' => 'Block Feedback',
+			'displayExtractType' => 'row'
+		);
 	}
 
 	/**
@@ -49,17 +52,39 @@ class DisplayPresenter extends CadBlockElement
 	 * @param array $input The array of each table records.
 	 * @return array The list of displays, each key holds a display id.
 	 */
-	public function extractDisplays($input)
+	public function extractDisplays(array $input)
 	{
-		$result = array();
-		foreach ($input as $rec)
+		switch ($this->params['displayExtractType'])
 		{
-			$item = $rec;
-			$disp_id = $item['display_id'] ?: $item['sub_id'] ?: $item['id'];
-			$item['display_id'] = $disp_id;
-			$result[$disp_id] = $item;
+			case 'all':
+				$result = array(1 => $input);
+				break;
+			case 'row':
+				$result = array();
+				if (count($input) == 0) return $result;
+
+				// auto-detect key used as display ID
+				$head = $input[0];
+				$key = null;
+				if (isset($head['display_id']))
+					$key = 'display_id';
+				else if (isset($head['sub_id']))
+					$key = 'sub_id';
+				else if (isset($head['id']))
+					$key = 'id';
+				$index = 1;
+
+				foreach ($input as $item)
+				{
+					$disp_id = $key ? $item[$key] : $index++;
+					$item['display_id'] = $disp_id;
+					$result[$disp_id] = $item;
+				}
+				ksort($result, SORT_NUMERIC);
+				break;
+			default:
+				throw new Exception('displayExtractType is invalid.');
 		}
-		ksort($result, SORT_NUMERIC);
 		return $result;
 	}
 }

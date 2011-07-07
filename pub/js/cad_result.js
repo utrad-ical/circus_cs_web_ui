@@ -92,6 +92,7 @@ circus.feedback = function() {
 			return { register_ok: register_ok, messages: messages };
 		},
 		change: function() {
+			circus.feedback.modified = true;
 			var ok = circus.feedback.register_ok();
 			if (ok.register_ok === true) {
 				$('#register').attr('disabled', '').trigger('flush');
@@ -188,6 +189,7 @@ $(function(){
 	{
 		circus.feedback.disable();
 	}
+	circus.feedback.modified = false;
 
 	$('#register').click(function() {
 		circus.feedback.register(false);
@@ -211,6 +213,8 @@ $(function(){
 	if (circus.feedback.feedbackStatus == 'normal')
 	{
 		$('#menu .jq-btn').click(function(event) {
+			if (!circus.feedback.modified)
+				return;
 			var save = confirm('Do you want to temporarily save changes ' +
 				'before leaving this page?');
 			if (save)
