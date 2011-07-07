@@ -2,6 +2,7 @@
 jq/ui/jquery-ui-1.7.3.min.js
 js/search_panel.js
 jq/ui/css/jquery-ui-1.7.3.custom.css
+js/viewControl.js
 {/capture}
 
 {capture name="extra"}
