@@ -90,10 +90,10 @@ $(function () {
 	<tr>
 		<th rowspan="2">Policy</th>
 		<th colspan="3">Allow</th>
-		<th rowspan="2">PFB Freeze</th>
+		{* <th rowspan="2">PFB Freeze</th> *}
 		<th rowspan="2">Max PFBs</th>
 		<th rowspan="2">Min PFB to CFB</th>
-		<th rowspan="2">Auto CFB</th>
+		{* <th rowspan="2">Auto CFB</th> *}
 		<th rowspan="2">Operation</th>
 	</tr>
 	<tr>
@@ -109,10 +109,10 @@ $(function () {
 		<td class="allow-reference allow"><div class="al">{$pol.allow_result_reference|escape}</div></td>
 		<td class="allow-personal allow"><div class="al">{$pol.allow_personal_fb|escape}</div></td>
 		<td class="allow-consensual allow"><div class="al">{$pol.allow_consensual_fb|escape}</div></td>
-		<td class="num">{$pol.time_to_freeze_personal_fb|escape}</td>
+		{* <td class="num">{$pol.time_to_freeze_personal_fb|escape}</td> *}
 		<td class="num">{$pol.max_personal_fb|escape}</td>
 		<td class="num">{$pol.min_personal_fb_to_make_consensus|escape}</td>
-		<td>{$pol.automatic_consensus|OorMinus}</td>
+		{* <td>{$pol.automatic_consensus|OorMinus}</td> *}
 		<td class="operation"><input type="button" class="edit-button form-btn" value="Edit" /></td>
 	</tr>
 	{/foreach}
@@ -136,33 +136,33 @@ $(function () {
 		<tr>
 			<th>Allow result reference</th>
 			<td><input type="text" name="allow_result_reference" id="allow-reference" />
-			<input type="button" class="select-user form-btn" value="Select" /></td>
+			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
 		</tr>
 		<tr>
 			<th>Allow personal feedback</th>
 			<td><input type="text" name="allow_personal_fb" id="allow-personal" />
-			<input type="button" class="select-user form-btn" value="Select" /></td>
+			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
 		</tr>
 		<tr>
 			<th>Allow consensual feedback</th>
 			<td><input type="text" name="allow_consensual_fb" id="allow-consensual" />
-			<input type="button" class="select-user form-btn" value="Select" /></td>
+			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
 		</tr>
-		<tr>
+		<tr style="display: none">
 			<th>Time to freeze personal feedback (min.)</th>
-			<td><input type="text" name="time_to_freeze_personal_fb" id="freeze-time" class="num"/> (0: freeze at once)</td>
+			<td><input type="text" name="time_to_freeze_personal_fb" id="freeze-time" class="num" /> (0: freeze at once)</td>
 		</tr>
 		<tr>
 			<th>Max personal feedback</th>
-			<td><input type="text" name="max_personal_fb" id="max-pfb" class="num"/> (0: unlimited)</td>
+			<td><input type="text" name="max_personal_fb" id="max-pfb" class="num" /> (0: unlimited)</td>
 		</tr>
 		<tr>
 			<th>Min personal feedback to make consensus</th>
-			<td><input type="text" name="min_personal_fb_to_make_consensus" id="min-cons" class="num"/> (0: unlimited)</td>
+			<td><input type="text" name="min_personal_fb_to_make_consensus" id="min-cons" class="num" /> (0: unlimited)</td>
 		</tr>
-		<tr>
+		<tr style="display none">
 			<th>Automatic consensus</th>
-			<td><input type="checkbox" name="automatic_consensus" id="auto-cons" value="1"/><label for="auto-cons">Enabled</label></td>
+			<td><input type="checkbox" name="automatic_consensus" id="auto-cons" value="1" /><label for="auto-cons">Enabled</label></td>
 		</tr>
 	</table>
 	<div id="editor-commit">
