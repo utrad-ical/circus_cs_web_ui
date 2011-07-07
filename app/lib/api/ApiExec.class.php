@@ -12,7 +12,7 @@ class ApiExec
 	const QUERY_JOB      = "queryJob";
 	const EXECUTE_PLUGIN = "executePlugin";
 	const QUERY_FEEDBACK = "queryFeedback";
-	const REGISTER_JOB   = "registerJob";
+	const INTERNAL_EXECUTE_PLUGIN = "InternalExecutePlugin";
 
 	static $action_list = array(
 		self::LOGIN          => "LoginAction",
@@ -20,7 +20,7 @@ class ApiExec
 		self::QUERY_JOB      => "QueryJobAction",
 		self::EXECUTE_PLUGIN => "ExecutePluginAction",
 		self::QUERY_FEEDBACK => "QueryFeedbackAction",
-		self::REGISTER_JOB   => "RegisterJobAction"
+		self::INTERNAL_EXECUTE_PLUGIN => "InternalExecutePluginAction"
 	);
 
 	protected static $currentUser;
