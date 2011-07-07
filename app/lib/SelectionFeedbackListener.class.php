@@ -34,11 +34,14 @@ class SelectionFeedbackListener extends FeedbackListener
 	 */
 	protected function defaultParams()
 	{
-		return array(
-			'personal' => array(
-				array('value' => 'TP', 'label' => 1),
-				array('value' => 'FP', 'label' => -1),
-				array('value' => 'pending', 'label' => 0)
+		return array_merge(
+			parent::defaultParams(),
+			array(
+				'personal' => array(
+					array('value' => 'TP', 'label' => 1),
+					array('value' => 'FP', 'label' => -1),
+					array('value' => 'pending', 'label' => 0)
+				)
 			)
 		);
 	}

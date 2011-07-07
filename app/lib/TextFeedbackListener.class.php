@@ -26,7 +26,10 @@ class TextFeedbackListener extends FeedbackListener
 	 */
 	public function defaultParams()
 	{
-		return array('required' => true);
+		return array_merge(
+			parent::defaultParams(),
+			array('required' => true)
+		);
 	}
 
 	/**
