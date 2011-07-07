@@ -1,6 +1,3 @@
-{capture name="require"}
-css/popup.css
-{/capture}
 {capture name="extra"}
 <script type="text/javascript">
 <!--
@@ -108,8 +105,7 @@ $(function () {
 
 {/literal}
 {/capture}
-{include file="header.tpl" body_class="spot" head_extra=$smarty.capture.extra
-	require=$smarty.capture.require}
+{include file="header.tpl" body_class="spot" head_extra=$smarty.capture.extra}
 
 <h2>User configuration</h2>
 

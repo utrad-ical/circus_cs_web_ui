@@ -5,19 +5,19 @@
 	</tr>
 	<tr>
 		<td>
-			<img src="{$cadResult->webPathOfCADResult()}/result001_thumb.png" />
+			<img src="{$cadResult->webPathOfCADResult()}/result001.png" />
 		</td>
 		<td>
-			<img src="{$cadResult->webPathOfCADResult()}/result002_thumb.png" />
+			<img src="{$cadResult->webPathOfCADResult()}/result002.png" />
 		</td>
 		<td>
-			<img src="{$cadResult->webPathOfCADResult()}/result003_thumb.png" />
+			<img src="{$cadResult->webPathOfCADResult()}/result003.png" />
 		</td>
 		<td>
-			<img src="{$cadResult->webPathOfCADResult()}/result004_thumb.png" />
+			<img src="{$cadResult->webPathOfCADResult()}/result004.png" />
 		</td>
 		<td>
-			<img src="{$cadResult->webPathOfCADResult()}/result005_thumb.png" />
+			<img src="{$cadResult->webPathOfCADResult()}/result005.png" />
 		</td>
 	</tr>
 

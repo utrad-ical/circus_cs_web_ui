@@ -30,6 +30,7 @@ $(function() {
 		max: circus.cadresult.seriesNumImages,
 		markers: markers,
 		grayscalePresets: presets,
+		maxWidth: 512,
 		wl: wl,
 		ww: ww
 	})

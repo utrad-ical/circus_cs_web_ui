@@ -15,40 +15,33 @@ input[type=button] {
 	font-family: verdana,"ＭＳ Ｐゴシック",sans-serif;
 	padding: 0;
 }
+
 input.s-btn {
 	font-size: 80%;
 }
 
-
 /* ===================================================
-	Layout
+	CIRCUS Common Page Layout
 
 	#page
 		#container
 			#leftside
+				h1 (logo)
+				#menu
+					#calendar
 			#content
-
  =================================================== */
 
-/*
- 	#page
----------------------------------------------------- */
 #page {
 	width: 1232px;
 	margin: 0 auto;
 }
 
-/*
-	#container
----------------------------------------------------- */
 #container {
 	width: 1232px;
 	float: left;
 }
 
-/*
-	#leftside
----------------------------------------------------- */
 #leftside {
 	width: 210px;
 	float: left;
@@ -56,19 +49,12 @@ input.s-btn {
 	display:inline;
 }
 
-/*
-	#content
----------------------------------------------------- */
 #content {
 	width: 1000px;
 	float: left;
 }
 
-/* =================================================
-	#leftside
-		#menu
-			calendar
-==================================================== */
+/* <h1> element is reserved for CIRCUS CS logo on the topleft */
 h1 {
 	background-color:#fff;
 	height: 70px;
@@ -77,12 +63,14 @@ h1 img {
 	border: 2px solid #000;
 }
 
+/*
+	#menu
+---------------------------------------------------- */
 #menu {
 	width: 210px;
 	text-align: center;
 	padding: 7px 0;
 }
-
 #menu ul {
 	padding:0;
 	margin-bottom: 5px;
@@ -109,43 +97,14 @@ div.calendar {
 	margin-top:8px;
 }
 
-/*
-	menu buttons (rollover effect enabled by jQuery pluguin)
----------------------------------------------------- */
-
-.jq-btn {
-	display:block;
-	cursor:pointer;
-	border:0px none;
-	background-color:transparent;
-	background-repeat:repeat;
-	padding:0;
-	margin:0;
-	outline:0;
-	overflow:hidden;
-}
-
-.jq-btn-home,
-.jq-btn-today,
-.jq-btn-search,
-.jq-btn-statistics,
-.jq-btn-research,
-.jq-btn-preference,
-.jq-btn-favorites,
-.jq-btn-administration,
-.jq-btn-logout {
-	width: 197px;
-	height:49px;
-}
-
 /* =================================================
-	Layout #content
-		tabArea
-		tab-content
-		search-panel
-			search-tbl
-			serp
+	CIRCUS Common Content Styles, and Tab Interface
+
+	#content
+		.tabArea
+		.tab-content
 ==================================================== */
+
 #content h2 {
 	clear: both;
 	padding: 0 0 0 6px;
@@ -174,7 +133,6 @@ body.spot #content h2 {
 h3.ptn02 span {
 	font-weight: normal;
 }
-
 
 /*
 	tabArea
@@ -220,12 +178,22 @@ a:hover.btn-tab {
 * html .tab-content {
 	width: 1000px;
 }
-/* Add favorite BUTTON */
+
 p.add-favorite {
 	float: right;
 	border-width: 1px;
 	border-style: solid;
 }
+
+
+/* =================================================
+	Search Panels
+
+	#content
+		search-panel
+			search-tbl
+			serp
+==================================================== */
 
 /*
 	SEARCH PANEL
@@ -242,7 +210,7 @@ table.search-tbl th, table.search-tbl td {
 /*
 	SERP Search Engine Results Page
 ---------------------------------------------------- */
-.serp,#serp-paging {
+.serp, #serp-paging {
 	border: 1px solid #CCC;
 	height: 24px;
 	background: url(../img_common/share/btn-bk1.jpg) repeat-x;
@@ -263,10 +231,29 @@ table.search-tbl th, table.search-tbl td {
 	text-decoration: underline;
 }
 
+
 /* =================================================
-	 Buttons for CAD Result Page
+	Dynamic Widgets (defined by circus-common.js)
+	Colores are defined separately in mode.*.css
 ==================================================== */
-/* Radio button (normal size) */
+
+/* menu buttons (rollover by jQuery.fn.rolloverBtn plugin) */
+.jq-btn {
+	display:block;
+	cursor:pointer;
+	border:0px none;
+	background-color:transparent;
+	background-repeat:repeat;
+	padding:0;
+	margin:0;
+	outline:0;
+	overflow:hidden;
+	width: 197px;
+	height: 49px;
+}
+
+
+/* radio button */
 .radio-to-button {
 	display:inline-block;
 	cursor:pointer;
@@ -281,83 +268,28 @@ table.search-tbl th, table.search-tbl td {
 	text-align: center;
 	line-height: 1.8;
 	font-size: 12px;
-	font-family:Arial, Helvetica, sans-serif;
 	height: 23px;
 }
-.radio-to-button-normal {
-	background-position: 0 0;
-}
-.radio-to-button-hover {
-	background-position: 0 -23px;
-}
-.radio-to-button-checked {
-	background-position: 0 -46px;
-}
-.radio-to-button-disabled {
-	background-position: 0 -69px;
-}
-
-/* Radio button (large size) */
-.radio-to-button-l {
-	display:block;
-	cursor:pointer;
-	border:0px none;
-	background-color:transparent;
-	background-repeat:repeat;
-	padding:0;
-	margin:0;
-	outline:0;
-	overflow:hidden;
-	float: left;
-	margin-right: 3px;
-	text-decoration: none;
-	text-align: center;
-	line-height: 2;
-	font-size: 12px;
-	font-family:Arial, Helvetica, sans-serif;
+.radio-to-button.radio-to-button-l {
 	height: 25px;
-	width: 130px;
-	background-image:url(../img_common/btn/admin/radio-to-button-l_white2.jpg);
+	width: 150px;
+	line-height: 2;
 }
-.radio-to-button-l-normal {
-	background-position: 0 0;
-}
-.radio-to-button-l-hover {
-	background-position: 0 -25px;
-}
-.radio-to-button-l-checked {
-	background-position: 0 -50px;
-}
-.radio-to-button-l-disabled {
-	background-position: 0 -75px;
-}
+.radio-to-button-normal { background-position: 0 0; }
+.radio-to-button-hover { background-position: 0 -23px; }
+.radio-to-button-checked { background-position: 0 -46px; }
+.radio-to-button-disabled { background-position: 0 -69px; }
+.radio-to-button-normal.radio-to-button-l { background-position: 0 0; }
+.radio-to-button-hover.radio-to-button-l { background-position: 0 -25px; }
+.radio-to-button-checked.radio-to-button-l { background-position: 0 -50px; }
+.radio-to-button-disabled.radio-to-button-l { background-position: 0 -75px; }
 
-/* consensual extention */
-.consensual .radio-to-button-normal{
-	font-weight: bold;
-}
-.consensual .radio-to-button-hover{
-	font-weight: bold;
-}
-.consensual .radio-to-button-checked{
-	font-weight: bold;
-}
-.consensual .hide-on-consensual {
-	display:none;
-}
-.personal .hide-on-personal {
-	display:none;
-}
 
-/* "Registration of feedback" button */
-input.registration {
+/* simple form button */
+.form-btn {
 	display:inline-block;
 	cursor:pointer;
-	padding: 5px 0;
-	width: 200px;
 }
-
-
 
 /* =================================================
 	PAGE TOP
@@ -437,8 +369,6 @@ div.setting input {
 	float: right;
 }
 
-
-
 /* ===================================================
 	 for Search.html
  =================================================== */
@@ -461,9 +391,43 @@ ul.inline li {
 	line-height: 2;
 }
 
+
 /* ===================================================
-	 for CAD result
- =================================================== */
+	 Series Details and Detail Table
+==================================================== */
+
+/* series-detail-img */
+.series-detail-img {
+	float: left;
+	padding: 5px;
+	border: 1px solid #7f7f7f;
+	margin-right: 20px;
+}
+
+/* detail panel */
+.detail-panel {
+	float: left;
+	padding: 10px 20px;
+}
+
+/* detail table */
+table.detail-tbl th, table.detail-tbl td {
+	border-bottom: 1px dotted #ccc;
+	padding: 3px 2px;
+}
+
+
+/* ===================================================
+	 CAD result page
+==================================================== */
+
+.headerArea {
+	clear: both;
+	width: 100%;
+	float: left;
+	margin-bottom: 5px;
+	font-size: 110%;
+}
 
 .result-record-2cols { /* Deprecated */
 	width:388px;
@@ -531,11 +495,20 @@ ul.inline li {
 	text-align: right;
 }
 
+input.registration {
+	padding: 5px 0;
+	width: 200px;
+}
+
 #cad-detail-viewer-container, #fn-input-viewer-container {
 	border: 1px solid #7f7f7f;
 	padding: 7px;
 	float: left;
 	margin-right: 20px;
+}
+
+#cad-detail-table {
+	float: left;
 }
 
 #cad-detail-table tr.emphasis td {
@@ -672,12 +645,12 @@ div.imgnum {
 /* ===================================================
 	SMOKE
  =================================================== */
- div #smoke {
- 	position:absolute;
- 	top: 0; left: 0; right: 0; bottom: 0;
- 	background-color: black;
- 	opacity: 0.5;
- 	-moz-opacity: 0.5;
- 	filter: alpha(opacity=50);
- 	-ms-filter: alpha(opacity=50);
- }
+div #smoke {
+	position:absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background-color: black;
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter: alpha(opacity=50);
+	-ms-filter: alpha(opacity=50);
+}

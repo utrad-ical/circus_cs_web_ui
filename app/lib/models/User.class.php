@@ -94,4 +94,18 @@ class User extends Model
 		}
 		$this->_data['Group'] = null;
 	}
+
+	/**
+	 * Checks if this user
+	 * @return bool True if the user needs anonymization by user preference
+	 * of by group privilege.
+	 */
+	public function needsAnonymization()
+	{
+		if ($this->anonymized)
+			return true;
+		if ($this->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
+			return false;
+		return true;
+	}
 }

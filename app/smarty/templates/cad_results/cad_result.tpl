@@ -2,7 +2,6 @@
 Smarty Template for General CAD Result.
 *}
 {capture name="require"}
-js/radio-to-button.js
 js/cad_result.js
 css/darkroom.css
 js/edit_tags.js
@@ -46,7 +45,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
   v.{$cadResult->Plugin->version|escape} ID:{$cadResult->job_id}]</h2>
   <div class="headerArea">
     {$series->Study->Patient->patient_name|escape} ({$series->Study->Patient->patient_id})
-    {$series->Study->Patient->age()}{$series->Study->Patient->sex} /
+    {$series->Study->age}{$series->Study->Patient->sex} /
     {$series->Study->study_date} ({$series->Study->study_id}) /
     {$series->Study->modality|escape}, {$series->series_description|escape} ({$series->series_number})
   </div>
@@ -54,9 +53,9 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
   <form id="mode-form" method="get" action="cad_result.php">
   <div>
     <input type="hidden" name="jobID" value="{$cadResult->job_id|escape}" />
-    <input type="radio" class="radio-to-button-l" name="feedbackMode" value="personal"
+    <input type="radio" class="radio-to-button radio-to-button-l" name="feedbackMode" value="personal"
       label="Personal Mode" title="{$avail_pfb_reason|escape}" />
-    <input type="radio" class="radio-to-button-l" name="feedbackMode" value="consensual"
+    <input type="radio" class="radio-to-button radio-to-button-l" name="feedbackMode" value="consensual"
       label="Consensual Mode" disabled="disabled" id="consensual-mode"
       title="{$avail_cfb_reason|escape}" />
   </div>
@@ -76,7 +75,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {/foreach}
 
 <div id="register-pane">
-<input id="register" type="button" value="Register Feedback" class="registration" disabled="disabled" /><br />
+<input id="register" type="button" value="Register Feedback" class="form-btn registration" disabled="disabled" /><br />
 <ul id="register-error"></ul>
 <ul id="register-message"></ul>
 {if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}

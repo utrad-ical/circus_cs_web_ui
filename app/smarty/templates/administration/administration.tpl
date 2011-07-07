@@ -60,6 +60,7 @@ $(function() {
 #content table td { padding: 0.5em; }
 #content h3 { margin-top: 1em; }
 .serviceStatus { font-weight: bold; width: 150px; }
+.form-btn { width: 100px; }
 </style>
 
 {/literal}
@@ -145,17 +146,15 @@ $(function() {
 </table>
 
 <h3>Plug-in jobs</h3>
-<div>
-	<table>
-		<tr>
-			<td>Show plug-in job queue</td>
-			<td>
-				<input type="button" value="show" class="form-btn"
-					onclick="location.href='show_job_queue.php';" />
-			</td>
-		</tr>
-	</table>
-</div>
+<table>
+	<tr>
+		<td>Show plug-in job queue</td>
+		<td>
+			<input type="button" value="show" class="form-btn"
+				onclick="location.href='show_job_queue.php';" />
+		</td>
+	</tr>
+</table>
 
 <h3>Server status</h3>
 <table>

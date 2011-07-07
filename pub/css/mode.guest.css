@@ -131,12 +131,7 @@ p.add-favorite {
 }
 
 
-/* ----------------------------------
-	FORM BUTTON
------------------------------------- */
-input.form-btn {
-	display:inline-block;
-	cursor:pointer;
+.form-btn {
 	border: 1px solid #06694c;
 }
 

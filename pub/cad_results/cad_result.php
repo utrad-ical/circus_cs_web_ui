@@ -145,16 +145,20 @@ function show_cad_results($jobID, $feedbackMode) {
 		'extensions' => $extParameters
 	);
 
-	$pop = $cadResult->webPathOfPluginPub() . '/';
-	if (file_exists($pop . 'cad_result.css'))
+	$url_pub  = $cadResult->webPathOfPluginPub() . '/';
+	$path_pub = $cadResult->pathOfPluginPub() . '/';
+	if (file_exists($path_pub . 'cad_result.css'))
 	{
-		$requiringFiles[] = $pop . 'cad_result.css';
+		$requiringFiles[] = $url_pub . 'cad_result.css';
 	}
-	if (file_exists($pop . 'cad_result.js'))
+	if (file_exists($path_pub . 'cad_result.js'))
 	{
-		$requiringFiles[] = $pop . 'cad_result.js';
+		$requiringFiles[] = $url_pub . 'cad_result.js';
 	}
 	$requiringFiles = array_unique($requiringFiles); // keys preserved
+
+	if ($user->anonymize || !$user->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
+		Patient::$anonymizeMode = true;
 
 	$smarty->assign(array(
 		'feedbackMode' => $feedbackMode,

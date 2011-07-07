@@ -67,7 +67,7 @@ circus.edittag = (function() {
 			var tr = $('<tr>');
 			$('<td>').text(tag.tag).appendTo(tr);
 			$('<td>').text(tag.entered_by).appendTo(tr);
-			var btn = $('<input type="button" value="Delete">');
+			var btn = $('<input type="button" value="Delete" class="form-btn">');
 			btn.click(function(event) {
 				var tagname = $(event.currentTarget).closest('tr').find('td:eq(0)').text();
 				del(tagname);
@@ -75,6 +75,7 @@ circus.edittag = (function() {
 			$('<td>').append(btn).appendTo(tr);
 			tbody.append(tr);
 		}
+		tbody.autoStylize();
 		$('#edit-tags-loading').hide(0);
 		$('#tags-list').show(0);
 		$('#edit-tags-add').removeAttr('disabled');
@@ -111,7 +112,8 @@ circus.edittag = (function() {
 				$('#new-tag-name').keydown(function(event) {
 					if (event.keyCode == 13)
 						$('#edit-tags-add').click();
-				})
+				});
+				$('#edit-tags-add, #edit-tags-close').autoStylize();
 				editorLoad();
 			});
 			$.blockUI({
