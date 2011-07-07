@@ -122,12 +122,12 @@ circus.feedback.additional = circus.feedback.additional || [];
 		_resetMarkers: function()
 		{
 			var markers = [];
-			if (initData instanceof Array) markers = data;
+			if (initData instanceof Array)
+				markers = $.extend(true, [], initData); // create deep copy
 			if (initData instanceof Object && initData.to_integrate)
 				markers = f._integrateConsensual(initData.to_integrate);
 			f._viewer.imageviewer('option', 'markers', markers);
-			if (markers.length > 0)
-				f._updateTable();
+			f._updateTable();
 		},
 		_marker_process: function(action)
 		{
