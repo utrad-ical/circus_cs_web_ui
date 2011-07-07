@@ -12,13 +12,15 @@ class ApiExec
 	const QUERY_JOB      = "queryJob";
 	const EXECUTE_PLUGIN = "executePlugin";
 	const QUERY_FEEDBACK = "queryFeedback";
+	const REGISTER_JOB   = "registerJob";
 
 	static $action_list = array(
 		self::LOGIN          => "LoginAction",
 		self::COUNT_IMAGES   => "CountImagesAction",
 		self::QUERY_JOB      => "QueryJobAction",
 		self::EXECUTE_PLUGIN => "ExecutePluginAction",
-		self::QUERY_FEEDBACK => "QueryFeedbackAction"
+		self::QUERY_FEEDBACK => "QueryFeedbackAction",
+		self::REGISTER_JOB   => "RegisterJobAction"
 	);
 
 	protected static $currentUser;

@@ -177,7 +177,7 @@ function RegistrationCADJob()
 			+ '  "type":"session",'
 			+ '  "user":"'+$("#userID").val()+'"'
 			+ '},'
-			+ '"action":"executePlugin",'
+			+ '"action":"registerJob",'
 			+ '"params":{'
 			+ '  "pluginName":"'+$("#cadName").val()+'",'
 			+ '  "pluginVersion":"'+$("#version").val()+'",'
