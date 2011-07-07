@@ -544,9 +544,12 @@ span.register-not-ok {
 	jQuery IMAGE VIEWER PLUGIN
  =================================================== */
 
-.ui-imageviewer-image {
+.ui-imageviewer-stage {
 	position: relative;
+	overflow: hidden;
 }
+
+.ui-imageviewer-image {}
 
 .ui-imageviewer-slider {
 	margin: 10px 7px 5px 7px;

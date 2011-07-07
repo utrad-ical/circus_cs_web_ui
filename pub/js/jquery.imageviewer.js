@@ -43,10 +43,10 @@ $.widget('ui.imageviewer', {
 		var self = this;
 		root.addClass('ui-imageviewer');
 
-		var imgdiv = $('<div class="ui-imageviewer-image">')
+		var stage = $('<div class="ui-imageviewer-stage">')
 			.appendTo(root);
 
-		var img = $('<img>').appendTo(imgdiv);
+		var img = $('<img class="ui-imageviewer-image">').appendTo(stage);
 		if ('_imageWidth' in this)
 			this._adjustImageSize(img);
 
@@ -54,16 +54,16 @@ $.widget('ui.imageviewer', {
 		{
 			var errdiv = $('<div class="ui-imageviewer-error">')
 				.append('Error while loading images.')
-				.appendTo(imgdiv);
+				.appendTo(stage);
 			if (this._error)
 				errdiv.append('<br>').append(this._error);
 		}
 
-		$('<div class="ui-imageviewer-loading">').appendTo(imgdiv).hide(0);
+		$('<div class="ui-imageviewer-loading">').appendTo(stage).hide(0);
 		img.mousedown(function(){return false;}); // prevent selection/drag
 		if (this.options.useWheel && img.mousewheel)
 		{
-			imgdiv.mousewheel(function (event, delta) {
+			stage.mousewheel(function (event, delta) {
 				self.step(delta > 0 ? -1 : 1);
 				return false; // supress browser scroll
 			})
@@ -169,9 +169,9 @@ $.widget('ui.imageviewer', {
 	{
 		if (!(this.options.markers instanceof Array))
 			return;
-		var imgdiv = $('div.ui-imageviewer-image', this.element);
+		var stage = $('div.ui-imageviewer-stage', this.element);
 		var index = this.options.index;
-		imgdiv.find('div.ui-imageviewer-dot, div.ui-imageviewer-dotlabel').remove();
+		stage.find('div.ui-imageviewer-dot, div.ui-imageviewer-dotlabel').remove();
 		if (!this.options.showMarkers)
 			return;
 		var max = this.options.markers.length;
@@ -190,11 +190,11 @@ $.widget('ui.imageviewer', {
 				default:
 					$('<div class="ui-imageviewer-dot" />')
 						.css({left: x - 1, top:  y - 1})
-						.appendTo(imgdiv);
+						.appendTo(stage);
 					$('<div class="ui-imageviewer-dotlabel" />')
 						.text(mark.display_id || i+1)
 						.css({left: x + 3, top: y - 1})
-						.appendTo(imgdiv);
+						.appendTo(stage);
 			}
 		}
 	},
@@ -228,7 +228,7 @@ $.widget('ui.imageviewer', {
 			this.options.sliceLocation = data.sliceLocation,
 			this._label(data.sliceNumber);
 			this._waiting = null;
-			var img = $('.ui-imageviewer-image img', this.element);
+			var img = $('.ui-imageviewer-image', this.element);
 			img.attr('src', image.src);
 			if (!('_imageWidth' in this))
 			{
@@ -302,7 +302,7 @@ $.widget('ui.imageviewer', {
 	{
 		if (this._waiting != null)
 		{
-			$('.ui-imageviewer-image img', this.element).css('cursor', 'wait');
+			$('.ui-imageviewer-image', this.element).css('cursor', 'wait');
 			$('.ui-imageviewer-loading', this.element).show(0);
 		}
 	},
