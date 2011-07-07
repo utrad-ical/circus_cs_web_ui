@@ -230,9 +230,6 @@ $.widget('ui.imageviewer', {
 			this._waiting = null;
 			var img = $('.ui-imageviewer-image img', this.element);
 			img.attr('src', image.src);
-			this._drawMarkers();
-			this.element.trigger('imagechange');
-
 			if (!('_imageWidth' in this))
 			{
 				this._imageWidth = image.width;
@@ -240,6 +237,8 @@ $.widget('ui.imageviewer', {
 				this._adjustImageSize(img);
 			}
 			this._clearTimeout();
+			this._drawMarkers();
+			this.element.trigger('imagechange');
 			img.css('cursor', this._cursor);
 			$('.ui-imageviewer-loading', this.element).hide(0);
 		}
