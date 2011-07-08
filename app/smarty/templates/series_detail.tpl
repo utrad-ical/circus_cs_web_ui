@@ -133,7 +133,7 @@ $(function() {
 				<div id="download-panel">
 					<input id="download" value="Download volume data" type="button" class="form-btn"/>
 				</div>
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$data.seriesInstanceUID|escape}" />
+				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$series->series_instance_uid|escape}" />
 			</form>
 			{/if}
 		</div><!-- / .detail-panel END -->
@@ -146,7 +146,7 @@ $(function() {
 		{if $smarty.session.personalFBFlg==1}<a href="#" id="edit-tag">(Edit)</a>{/if}
 	</div>
 
-	<div class="al-r ">
+	<div class="al-r">
 		<p class="pagetop"><a href="#page">page top</a></p>
 	</div>
 {/if}
