@@ -32,15 +32,16 @@ class DcmExport
 	{
 		global $cmdForProcess, $cmdCreateThumbnail;	// refer common.php
 
-		//$cmdStr = sprintf('%s "%s %s %s %d %d %d %d %d %s"', $cmdForProcess, $cmdCreateThumbnail, $srcFname, $dstFname,
-		//												 $quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
-		//												 $dumpFname);
+		if (!is_file($srcFname))
+			return false;
 
-		$cmdStr = sprintf('%s %s %s %d %d %d %d %d %s', $cmdCreateThumbnail, $srcFname, $dstFname,
-														$quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
-														$dumpFname);
+		$cmdStr = sprintf(
+			'%s %s %s %d %d %d %d %d %s',
+			$cmdCreateThumbnail, $srcFname, $dstFname,
+			$quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
+			$dumpFname
+		);
 
-		//throw new Exception($cmdStr);
 		shell_exec($cmdStr);
 
 		for($i=0; $i<5; $i++)

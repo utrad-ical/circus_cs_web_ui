@@ -39,9 +39,9 @@ $validator->addRules(array(
 	'imgHeight' => array(
 		'type' => 'int',
 		'min' => '0',
-		'default' => '0')
+		'default' => '0'
 	)
-);
+));
 
 $dstData = array(
 	'status'   => 'OK',
@@ -113,7 +113,9 @@ try
 			$srcFname, $dstFname, $dumpFname, 100,
 			$req['windowLevel'], $req['windowWidth'],
 			$req['imgWidth'], $req['imgHeight']
-			);
+		);
+		if (!$dcmResult)
+			throw new Exception('Image convertion failed.');
 	}
 	else
 	{
@@ -121,9 +123,9 @@ try
 	}
 	$dstData['windowLevel'] = $req['windowLevel'];
 	$dstData['windowWidth'] = $req['windowWidth'];
-		
+
 	// Get slice number and slice location from dump data
-	$fp = fopen($dumpFname, "r");
+	$fp = @fopen($dumpFname, "r");
 	if($fp == null)
 		throw new Exception('Could not open dump file.');
 	while($str = fgets($fp))
