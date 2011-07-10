@@ -197,7 +197,7 @@ $.widget('ui.imageviewer', {
 			{
 				case 'circle':
 					$('<div class="ui-imageviewer-circle" />')
-						.css({left: x - 13, top: y - 13})
+						.css({left: x - 12, top: y - 12})
 						.appendTo(container);
 					labelx = 6;
 					labely = 6;
