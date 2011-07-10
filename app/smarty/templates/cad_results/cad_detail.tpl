@@ -10,7 +10,14 @@
 </div>
 
 <div id="cad-detail-viewer-container">
-  <div id="cad-detail-viewer"></div>
+	Marker type:&nbsp;
+	<select id="cad-detail-marker-type">
+		<option value="circle">Circle</option>
+		<option value="dot" selected="selected">Dot</option>
+	</select>
+	<input type="checkbox" id="cad-detail-show-markers" checked="checked" accesskey="h"/>
+	<label for="cad-detail-show-markers">Show markers</label>
+	<div id="cad-detail-viewer"></div>
 </div>
 <div id="cad-detail-table">
 	{* <p style="margin:0px 0px 3px 10px;">{$detailParams.sortStr}</p> *}

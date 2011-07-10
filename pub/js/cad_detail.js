@@ -24,7 +24,7 @@ $(function() {
 	if (circus.cadresult.attributes.start_img_num)
 		minImg = Number(circus.cadresult.attributes.start_img_num);
 
-	$('#cad-detail-viewer').imageviewer({
+	var viewer = $('#cad-detail-viewer').imageviewer({
 		source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 		min: minImg,
 		max: circus.cadresult.seriesNumImages,
@@ -33,7 +33,17 @@ $(function() {
 		maxWidth: 512,
 		wl: wl,
 		ww: ww
-	})
+	});
+
+	$('#cad-detail-marker-type').change(function () {
+		var val = $('#cad-detail-marker-type').val();
+		viewer.imageviewer('option', 'markerStyle', val);
+	});
+
+	$('#cad-detail-show-markers').change(function() {
+		var checked = $('#cad-detail-show-markers').is(':checked');
+		viewer.imageviewer('option', 'showMarkers', checked);
+	});
 
 	// Emphasize the rows of detail result table
 	$('#cad-detail-viewer').bind('imagechange', function (event) {
