@@ -48,7 +48,7 @@ $.widget('ui.imageviewer', {
 
 		var img = $('<img class="ui-imageviewer-image">').appendTo(stage);
 		if ('_imageWidth' in this)
-			this._adjustImageSize(img);
+			this._adjustImageSize();
 
 		if (this._error)
 		{
@@ -132,17 +132,27 @@ $.widget('ui.imageviewer', {
 		img.css('cursor', this._cursor);
 	},
 
-	_adjustImageSize: function(img)
+	_adjustImageSize: function()
 	{
+		var img = $('.ui-imageviewer-image', this.element);
+		var stage = $('.ui-imageviewer-stage', this.element);
+		var crop = this.options.cropRect;
+		if (!(crop instanceof Object))
+			crop = { x: 0, y: 0, width: this._imageWidth, height: this._imageHeight };
+		this._cropRect = crop; // save
+
 		var max = this.options.maxWidth;
 		var w = this.options.width;
 		if (parseFloat(w) > 0)
 			w = max < w ? max : w;
 		else
-			w = max < this._imageWidth ? max : this._imageWidth;
-		this._scale = w / this._imageWidth;
-		img.width(this._imageWidth * this._scale);
-		img.height(this._imageHeight * this._scale);
+			w = max < crop.width ? max : crop.width;
+		this._scale = w / crop.width;
+
+		stage.width(w).height(crop.height * this._scale);
+		img.css('left', -crop.x * this._scale).css('top', -crop.y * this._scale)
+			.width(this._imageWidth * this._scale)
+			.height(this._imageHeight * this._scale);
 	},
 
 	_locate: function(x, y)
@@ -172,14 +182,14 @@ $.widget('ui.imageviewer', {
 		var stage = $('div.ui-imageviewer-stage', this.element);
 		var index = this.options.index;
 		stage.find('div.ui-imageviewer-dot, div.ui-imageviewer-dotlabel').remove();
-		if (!this.options.showMarkers)
+		if (!this.options.showMarkers || !this._cropRect)
 			return;
 		var max = this.options.markers.length;
 		for (var i = 0; i < max; i++)
 		{
 			var mark = this.options.markers[i];
-			var x = mark.location_x * this._scale;
-			var y = mark.location_y * this._scale;
+			var x = (mark.location_x - this._cropRect.x) * this._scale;
+			var y = (mark.location_y - this._cropRect.y) * this._scale;
 			if (mark.location_z != index)
 				continue;
 			switch (this.options.markerStyle)
@@ -229,13 +239,15 @@ $.widget('ui.imageviewer', {
 			this._label(data.sliceNumber);
 			this._waiting = null;
 			var img = $('.ui-imageviewer-image', this.element);
-			img.attr('src', image.src);
 			if (!('_imageWidth' in this))
 			{
 				this._imageWidth = image.width;
 				this._imageHeight = image.height;
-				this._adjustImageSize(img);
+				this._adjustImageSize();
 			}
+
+			img.attr('src', image.src);
+
 			this._clearTimeout();
 			this._drawMarkers();
 			this.element.trigger('imagechange');
@@ -327,9 +339,13 @@ $.widget('ui.imageviewer', {
 			case 'markerStyle':
 				this._drawMarkers();
 				break;
-			case 'role':
 			case 'width':
 			case 'maxWidth':
+			case 'cropRect':
+				this._adjustImageSize();
+				this._drawMarkers();
+				break;
+			case 'role':
 			case 'useSlider':
 			case 'useLocationText':
 			case 'grayscalePresets':
@@ -362,6 +378,7 @@ $.extend($.ui.imageviewer, {
 		showMarkers: true,
 		markerStyle: 'dot',
 		useWheel: true,
+		cropRect: null,
 		markers: []
 	}
 });

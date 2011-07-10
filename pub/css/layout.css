@@ -547,9 +547,12 @@ span.register-not-ok {
 .ui-imageviewer-stage {
 	position: relative;
 	overflow: hidden;
+	background-color: black;
 }
 
-.ui-imageviewer-image {}
+.ui-imageviewer-image {
+	position: absolute;
+}
 
 .ui-imageviewer-slider {
 	margin: 10px 7px 5px 7px;
