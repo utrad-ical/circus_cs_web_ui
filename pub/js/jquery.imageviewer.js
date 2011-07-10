@@ -43,8 +43,8 @@ $.widget('ui.imageviewer', {
 		var self = this;
 		root.addClass('ui-imageviewer');
 
-		var stage = $('<div class="ui-imageviewer-stage">')
-			.appendTo(root);
+		var stage = $('<div class="ui-imageviewer-stage">').appendTo(root);
+		$('<div class="ui-imageviewer-markers">').appendTo(stage);
 
 		var img = $('<img class="ui-imageviewer-image">').appendTo(stage);
 		if ('_imageWidth' in this)
@@ -179,9 +179,8 @@ $.widget('ui.imageviewer', {
 	{
 		if (!(this.options.markers instanceof Array))
 			return;
-		var stage = $('div.ui-imageviewer-stage', this.element);
+		var container = $('div.ui-imageviewer-markers', this.element).empty();
 		var index = this.options.index;
-		stage.find('div.ui-imageviewer-dot, div.ui-imageviewer-dotlabel').remove();
 		if (!this.options.showMarkers || !this._cropRect)
 			return;
 		var max = this.options.markers.length;
@@ -192,20 +191,27 @@ $.widget('ui.imageviewer', {
 			var y = (mark.location_y - this._cropRect.y) * this._scale;
 			if (mark.location_z != index)
 				continue;
+			var labelx = 3;
+			var labely = -1;
 			switch (this.options.markerStyle)
 			{
 				case 'circle':
+					$('<div class="ui-imageviewer-circle" />')
+						.css({left: x - 13, top: y - 13})
+						.appendTo(container);
+					labelx = 6;
+					labely = 6;
 					break;
 				case 'dot':
 				default:
 					$('<div class="ui-imageviewer-dot" />')
 						.css({left: x - 1, top:  y - 1})
-						.appendTo(stage);
-					$('<div class="ui-imageviewer-dotlabel" />')
-						.text(mark.display_id || i+1)
-						.css({left: x + 3, top: y - 1})
-						.appendTo(stage);
+						.appendTo(container);
 			}
+			$('<div class="ui-imageviewer-markerlabel" />')
+				.text(mark.display_id || i+1)
+				.css({left: x + labelx, top: y + labely})
+				.appendTo(container);
 		}
 	},
 

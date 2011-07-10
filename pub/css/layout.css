@@ -550,6 +550,12 @@ span.register-not-ok {
 	background-color: black;
 }
 
+.ui-imageviewer-markers {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
 .ui-imageviewer-image {
 	position: absolute;
 }
@@ -590,7 +596,15 @@ span.register-not-ok {
 	z-index: 10;
 }
 
-.ui-imageviewer div.ui-imageviewer-dotlabel {
+.ui-imageviewer div.ui-imageviewer-circle {
+	position: absolute;
+	width: 25px;
+	height: 25px;
+	background-image: url('../cad_results/images/magenta_circle.png');
+	z-index: 10;
+}
+
+.ui-imageviewer div.ui-imageviewer-markerlabel {
 	position: absolute;
 	color: magenta;
 	z-index: 8;
