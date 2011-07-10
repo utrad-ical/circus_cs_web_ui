@@ -275,7 +275,7 @@ $.widget('ui.imageviewer', {
 	{
 		for (var i = this.options.min; i <= this.options.max; i++)
 		{
-			this._query(i);
+			this.options.source.query(i, this.options.wl, this.options.ww);
 		}
 	},
 
