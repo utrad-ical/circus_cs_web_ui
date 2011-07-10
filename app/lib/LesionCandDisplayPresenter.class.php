@@ -7,21 +7,9 @@
  */
 class LesionCandDisplayPresenter extends DisplayPresenter
 {
-	public $imageWidth;
-	public $imageHeight;
-
-	protected function getImageSize($display_id)
+	public function requiringFiles()
 	{
-		global $DIR_SEPARATOR;
-		$imgfile = $this->owner->pathOfCadResult() . $DIR_SEPARATOR .
-			sprintf($this->params['resultImage'], $display_id);
-		$img = @imagecreatefrompng($imgfile);
-	    if($img)
-		{
-			$this->imageWidth  = imagesx($img);
-			$this->imageHeight = imagesy($img);
-			imagedestroy($img);
-		}
+		return 'js/lesion_cand_display_presenter.js';
 	}
 
 	protected function defaultParams()
@@ -29,22 +17,9 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		return array_merge(
 			parent::defaultParams(),
 			array(
-				'resultImage' => 'result%03d.png',
 				'caption' => 'Lesion Classification'
 			)
 		);
-	}
-
-	/**
-	 * This function will be called by template file.
-	 * @param unknown_type $display_id
-	 */
-	public function resultImage($display_id)
-	{
-		global $DIR_SEPARATOR_WEB;
-		return
-			$this->owner->webPathOfCadResult() . $DIR_SEPARATOR_WEB .
-			sprintf($this->params['resultImage'], $display_id);
 	}
 
 	public function show()
@@ -68,9 +43,6 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		);
 		foreach ($input as $rec)
 		{
-			// Remember the size of the image
-			if (!$this->imageWidth)
-				$this->getImageSize($rec['sub_id']);
 			$item = array(
 				'display_id' => $rec['sub_id'],
 				'location_x' => $rec['location_x'],
