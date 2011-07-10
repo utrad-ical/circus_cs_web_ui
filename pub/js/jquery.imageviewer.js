@@ -208,10 +208,11 @@ $.widget('ui.imageviewer', {
 						.css({left: x - 1, top:  y - 1})
 						.appendTo(container);
 			}
-			$('<div class="ui-imageviewer-markerlabel" />')
-				.text(mark.display_id || i+1)
-				.css({left: x + labelx, top: y + labely})
-				.appendTo(container);
+			if (this.options.useMarkerLabel)
+				$('<div class="ui-imageviewer-markerlabel" />')
+					.text(mark.display_id || i+1)
+					.css({left: x + labelx, top: y + labely})
+					.appendTo(container);
 		}
 	},
 
@@ -343,6 +344,7 @@ $.widget('ui.imageviewer', {
 			case 'markers':
 			case 'showMarkers':
 			case 'markerStyle':
+			case 'useMarkerLabel':
 				this._drawMarkers();
 				break;
 			case 'width':
@@ -383,6 +385,7 @@ $.extend($.ui.imageviewer, {
 		role: 'viewer',
 		showMarkers: true,
 		markerStyle: 'dot',
+		useMarkerLabel: true,
 		useWheel: true,
 		cropRect: null,
 		markers: []
