@@ -11,7 +11,8 @@ $(function(){
 	$('.jq-btn').rolloverBtn();
 	// Process elements with 'form-btn' and 'radio-to-button' classes
 	$('body').autoStylize();
-
+	// Adjust container height
+	$('#container').height($(document).height() - 10);
 });
 
 $.fn.autoStylize = function() {

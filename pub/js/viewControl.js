@@ -2,8 +2,6 @@
 // Initialization
 //************************************************//
 $(function(){
-	$('#container').height( $(document).height() - 10 );
-	
 	$('#agresearch,#aresearch,#acad,#aseries,#astudy,#apatient').tabSwitch(
 		'#agresearch,#aresearch,#acad,#aseries,#astudy,#apatient',
 		'#groupResearchSearch,#researchSearch,#cadSearch,#seriesSearch,#studySearch,#patientSearch',
