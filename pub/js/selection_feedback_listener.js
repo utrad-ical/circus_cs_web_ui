@@ -8,7 +8,14 @@ circus.evalListener = (function() {
 	var global = {
 		setup: function ()
 		{
-			$('.feedback-pane a.radio-to-button').click(function () {
+			$('.feedback-pane a.radio-to-button').click(function (event) {
+				var btn = $(event.currentTarget);
+				var display_id = btn.closest('.result-block').data('displayid');
+				var label = $.trim(btn.clone().find('*').remove().end().text());
+				$(window).trigger('actionlog', {
+					action: 'classify',
+					options: 'Candidate ' + display_id + ':' + label
+				});
 				circus.feedback.change();
 			});
 			if (circus.feedback.feedbackMode == 'consensual')
