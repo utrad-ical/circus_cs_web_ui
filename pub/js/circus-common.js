@@ -12,7 +12,11 @@ $(function(){
 	// Process elements with 'form-btn' and 'radio-to-button' classes
 	$('body').autoStylize();
 	// Adjust container height
-	$('#container').height($(document).height() - 10);
+	var resized = function() {
+		$('#container').height($(document).height() - 10);
+	};
+	$(window).bind('resize', resized);
+	resized();
 });
 
 $.fn.autoStylize = function() {
