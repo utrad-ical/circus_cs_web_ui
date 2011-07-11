@@ -672,3 +672,16 @@ div #smoke {
 	filter: alpha(opacity=50);
 	-ms-filter: alpha(opacity=50);
 }
+
+/* ===================================================
+	Selection Feedback Listener
+ =================================================== */
+
+ span.opinions-count {
+ 	background-color: white;
+ 	border: 1px solid gray;
+ 	color: black;
+ 	font-size: 80%;
+ 	padding: 0 3px;
+ 	border-radius: 5px;
+ }

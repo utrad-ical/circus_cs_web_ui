@@ -25,7 +25,7 @@ circus.evalListener = (function() {
 						var opinions = initData[display_id].opinions[val];
 						if (opinions instanceof Object)
 						{
-							a.text(a.text() + ' ' + opinions.length);
+							$('<span class="opinions-count">').text(opinions.length).appendTo(a);
 							a.attr('title', opinions.join(', '));
 						}
 					}
