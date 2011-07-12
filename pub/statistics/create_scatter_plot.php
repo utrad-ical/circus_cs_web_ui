@@ -1,7 +1,7 @@
 <?php
 
 	function CreateScatterPlot($plotData, $section, $ofname,
-	                           $knownTpFlg, $missedTpFlg, $fpFlg, $pendingFlg)
+	                           $knownTpFlg, $missedTpFlg, $subTpFlg, $fpFlg, $pendingFlg)
 	{
 		//---------------------------------------------------------------------------------------------
 		// Set parameters
@@ -18,6 +18,7 @@
 		$minY = 0.0;	$maxY = 1.0;	$stepY = 0.2;
 	
 		$CROSS_SIZE     = 3;
+		$PLUS_SIZE      = 3;
 		$CIRCLE_SIZE    = 6;
 		$RECTANGLE_SIZE = 2;
 		$TRIANGLE_SIZE  = 3;
@@ -56,6 +57,7 @@
 		// Set colors
 		$knownTpColor  = imagecolorallocate($img, 255,   0, 255);  // fuchsia
 		$missedTpColor = imagecolorallocate($img,   0,   0, 128);  // navy
+		$subTpColor    = imagecolorallocate($img,   0,   0,   0);  // black
 		$fpColor       = imagecolorallocate($img,   0, 100,   0);  // darkgreen
 		$pendingColor  = imagecolorallocate($img, 255, 165,   0);  // orange	
 
@@ -106,18 +108,34 @@
 						$count++;
 					}
 					break;
+
+				case 3: // sub TP
+					if($subTpFlg == 1)
+					{
+						imageline ($img,
+								   $posX - $PLUS_SIZE, $posY,
+								   $posX + $PLUS_SIZE, $posY,
+								   $subTpColor);
+
+						imageline ($img,
+								   $posX, $posY - $PLUS_SIZE,
+								   $posX, $posY + $PLUS_SIZE,
+								   $subTpColor);
+						$count++;
+					}
+					break;
 			
 				case 0: // pending
 					if($pendingFlg == 1)
 					{
 						imageline ($img,
-								   $posX - $CROSS_SIZE,  $posY + $CROSS_SIZE,
-								   $posX + $CROSS_SIZE,  $posY - $CROSS_SIZE,
+								   $posX - $CROSS_SIZE, $posY + $CROSS_SIZE,
+								   $posX + $CROSS_SIZE, $posY - $CROSS_SIZE,
 								   $pendingColor);
 
 						imageline ($img,
-								   $posX-$CROSS_SIZE,  $posY-$CROSS_SIZE,
-								   $posX+$CROSS_SIZE,  $posY+$CROSS_SIZE,
+								   $posX - $CROSS_SIZE, $posY - $CROSS_SIZE,
+								   $posX + $CROSS_SIZE, $posY + $CROSS_SIZE,
 								   $pendingColor);
 						$count++;
 					}

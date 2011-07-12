@@ -46,7 +46,8 @@ function ShowPersonalStatResult()
 
 							if(data.errorMessage == "&nbsp;")
 							{
-								$("#statRes .col-tbl tbody").html(data.tblHtml);
+								$("#statRes .col-tbl thead").html(data.theadHtml);
+								$("#statRes .col-tbl tbody").html(data.tbodyHtml);
 								$("#scatterPlotAx").attr("src", data.XY);
 								$("#scatterPlotCoro").attr("src", data.XZ);
 								$("#sactterPlotSagi").attr("src", data.YZ);
@@ -60,6 +61,12 @@ function ShowPersonalStatResult()
 								{
 									$("#scatterPlot").show();
 									$("#scatterPlot [name^=check]").attr("checked", "checked");
+								}
+
+								$("#plotLegend td").hide();
+								for(var i = 0; i < data.plotLegend.length; i++)
+								{
+									$("#plotLegend [name=" + data.plotLegend[i] + "]").show();
 								}
 
 								$("#container").height( $(document).height() - 10 );
@@ -95,12 +102,18 @@ function RedrawScatterPlot()
 					  dataStr:     $("#dataStr").val(),
 					  knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
 					  missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
+					  subTpFlg:    ((document.form1.checkSubTP.checked == true) ? 1 : 0),
        			      fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
 					  pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},
 			dataType: "json",
 
 			success: function(data){
 						$.unblockUI();
+						$("#plotLegend td").hide();
+						for(var i = 0; i < data.plotLegend.length; i++)
+						{
+							$("#plotLegend [name=" + data.plotLegend[i] + "]").show();
+						}
 						$("#scatterPlotAx").attr("src", data.XY);
 						$("#scatterPlotCoro").attr("src", data.XZ);
 						$("#sactterPlotSagi").attr("src", data.YZ);
@@ -334,43 +347,32 @@ $(function() {
 		<h3>Results of personal statistics</h3>
 		<table class="col-tbl mt20 mb20" style="width: 100%;">
 			<thead>
-				<tr>
-					<th rowspan="2">User</th>
-					<th rowspan="2">Case</th>
-					<th rowspan="2">known TP</th>
-					<th rowspan="2">missed TP</th>
-					<th rowspan="2">FP</th>
-					<th rowspan="2">pending</th>
-					<th rowspan="2">FN</th>
-					<th rowspan="2">Total</th>
-					<th colspan="3">Detail of missed TP</th>
-				</tr>
-				<tr>
-					<th>TP</th>
-					<th>FP</th>
-					<th>Pending</th>
-				</tr>
 			</thead>
 			<tbody>
 			</tbody>
 		</table>
 
 		<div id="scatterPlot" style="width: 950px;" style="display:none;">
-			<table class="block-al-r mb10">
+			<table id="plotLegend" class="block-al-r mb10">
 				<tr>
-					<td>
+					<td name="known TP">
 						<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
 					</td>
-					<td>
+					<td name="missed TP">
 						<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/statistics/missedTP.png" />
 					</td>
-					<td>
+					<td name="sub TP">
+						<input name="checkSubTP" type="checkbox" checked="checked" /><img src="images/statistics/subTP.png" />
+					</td>
+					<td name="FP">
 						<input name="checkFP" type="checkbox" checked="checked" /><img src="images/statistics/FP.png" />
 					</td>
-					<td>
+					<td name="pending">
 						<input name="checkPending" type="checkbox" checked="checked" /><img src="images/statistics/pending.png" />
 					</td>
-					<td><input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" /></td>
+					<td name="redrawBtn">
+						<input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" />
+					</td>
 				</tr>
 			</table>
 
