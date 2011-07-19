@@ -6,8 +6,8 @@ js/cad_result.js
 css/darkroom.css
 js/edit_tags.js
 jq/jquery.blockUI.js
-jq/ui/jquery-ui-1.7.3.min.js
-jq/ui/css/jquery-ui-1.7.3.custom.css
+jq/ui/jquery-ui.min.js
+jq/ui/theme/jquery-ui.custom.css
 jq/jquery.mousewheel.min.js
 js/jquery.imageviewer.js
 {$requiringFiles}

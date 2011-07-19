@@ -4,13 +4,36 @@
  * Author:
  *   Soichiro Miki
  * Depends:
- *   jquery-ui-1.7.x.js with Slider widget (or newer)
+ *   jquery-ui-1.8.x.js with Slider widget (or newer)
  *   jquery.mousewheel.(min).js (optional)
  *   layout.css
  */
 
 $.widget('ui.imageviewer', {
-	_init: function()
+	options: {
+		min: 1,
+		max: 100,
+		index: 1,
+		ww: 0,
+		wl: 0,
+		width: 'auto',
+		useLocationText: true,
+		useSlider: true,
+		sliderHotTrack: true,
+		loadingIndicateDelay: 300,
+		locationLabel: 'Image Number: ',
+		grayscalePresets: [],
+		grayscaleLabel: 'Grayscale Preset: ',
+		role: 'viewer',
+		showMarkers: true,
+		markerStyle: 'dot',
+		useMarkerLabel: true,
+		useWheel: true,
+		cropRect: null,
+		markers: []
+	},
+
+	_create: function()
 	{
 		var self = this;
 		if (this.options.source instanceof Object)
@@ -87,7 +110,8 @@ $.widget('ui.imageviewer', {
 							self.changeImage(ui.value);
 					},
 					change: function(event, ui) {
-						self.changeImage(ui.value);
+						if (!self._imageChanging)
+							self.changeImage(ui.value);
 					}
 				});
 			table.find('td').eq(1).append(sliderdiv);
@@ -291,6 +315,7 @@ $.widget('ui.imageviewer', {
 
 	_internalChangeImage: function(index, wl, ww)
 	{
+		this._imageChanging = true;
 		if (this._error) return;
 		var oldIndex = this.options.index;
 		var oldWL = this.options.wl;
@@ -309,6 +334,7 @@ $.widget('ui.imageviewer', {
 		}, this.options.loadingIndicateDelay);
 		this.options.source.query(index, wl, ww);
 		this.element.trigger('imagechanging');
+		this._imageChanging = false;
 	},
 
 	_clearTimeout: function()
@@ -326,7 +352,7 @@ $.widget('ui.imageviewer', {
 		}
 	},
 
-	_setData: function(key, value, animated)
+	_setOption: function(key, value, animated)
 	{
 		switch (key) {
 			case 'index':
@@ -339,7 +365,7 @@ $.widget('ui.imageviewer', {
 				this.changeWindow(value, this.options.ww);
 				return;
 		}
-		$.widget.prototype._setData.apply(this, arguments);
+		$.Widget.prototype._setOption.apply(this, arguments);
 		switch (key) {
 			case 'markers':
 			case 'showMarkers':
@@ -362,33 +388,8 @@ $.widget('ui.imageviewer', {
 				break;
 			case 'source':
 				this._initialized = false;
-				this._init();
+				this._create();
 		}
-	}
-});
-
-$.extend($.ui.imageviewer, {
-	defaults: {
-		min: 1,
-		max: 100,
-		index: 1,
-		ww: 0,
-		wl: 0,
-		width: 'auto',
-		useLocationText: true,
-		useSlider: true,
-		sliderHotTrack: true,
-		loadingIndicateDelay: 300,
-		locationLabel: 'Image Number: ',
-		grayscalePresets: [],
-		grayscaleLabel: 'Grayscale Preset: ',
-		role: 'viewer',
-		showMarkers: true,
-		markerStyle: 'dot',
-		useMarkerLabel: true,
-		useWheel: true,
-		cropRect: null,
-		markers: []
 	}
 });
 
