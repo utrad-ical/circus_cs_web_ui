@@ -140,6 +140,7 @@ $.fn.radioToButton = function(styles) {
 				$(':radio[name='+_radio.attr('name')+']', container).trigger('flush');
 				return false;
 			})
+			.mousedown(function() { return false; })
 			.insertAfter(_radio);
 		_radio
 			.bind('flush', function() { flush(); })
