@@ -27,8 +27,6 @@
 
 	$smarty->assign('params', $params);
 	$smarty->assign('adminModeFlg', $_SESSION['adminModeFlg'] ? 1 : 0);
-	$smarty->assign('storageServerName', $DICOM_STORAGE_SERVICE);
-	$smarty->assign('managerServerName', $PLUGIN_JOB_MANAGER_SERVICE);
 
 	$smarty->display('administration/administration.tpl');
 	//--------------------------------------------------------------------------

@@ -3,36 +3,6 @@
 var adminModeFlg = {$adminModeFlg};
 {literal}
 $(function() {
-	$('#storagePanel, #managerPanel').each(function () {
-		var serviceName = $('input[name=serviceName]', this).val();
-		var panel = this;
-		$('input[type=button]', this).each(function () {
-			$(this).click(function(event) {
-				var mode = $(event.target).attr('value');
-				$('.serviceStatus', panel).empty().append($('.loading').clone().show(0));
-				$('input[type=button]', panel).attr('disabled', 'disabled').trigger('flush');
-				$.post(
-					"change_server_status.php",
-					{ serviceName: serviceName, mode: mode, ticket: $("#ticket").val() },
-					function (data) {
-						$('.serviceStatus', panel).empty().text(data.str);
-						var started = data.val == 1;
-						$('input[type=button][value=start]', panel)
-							.attr('disabled', started ? 'disabled': '');
-						$('input[type=button][value=stop]', panel)
-							.attr('disabled', started ? '' : 'disabled');
-						$('input[type=button][value=status]', panel)
-							.attr('disabled', '');
-						$('input[type=button]', panel).trigger('flush');
-					},
-					"json"
-				);
-			});
-		});
-
-		$('input[type=button][value=status]', this).click(); // query status
-	});
-
 	if (adminModeFlg) {
 		$('#administration').show();
 		$('#smoke').hide();
@@ -59,7 +29,6 @@ $(function() {
 <style type="text/css">
 #content table td { padding: 0.5em; }
 #content h3 { margin-top: 1em; }
-.serviceStatus { font-weight: bold; width: 150px; }
 .form-btn { width: 100px; }
 </style>
 
@@ -137,6 +106,14 @@ $(function() {
 	{/if}
 
 	<tr>
+		<td>Server service</td>
+		<td>
+			<input type="button" value="config" class="form-btn"
+				onclick="location.href='server_service_config.php';" />
+		</td>
+	</tr>
+
+	<tr>
 		<td>Server logs</td>
 		<td>
 			<input type="button" value="show" class="form-btn"
@@ -156,31 +133,6 @@ $(function() {
 	</tr>
 </table>
 
-<h3>Server status</h3>
-<table>
-	<tbody>
-		<tr id="storagePanel" class="panel">
-			<td>DICOM Storage Server</td>
-			<td class="serviceStatus themeColor" id="storageStatusStr"></td>
-			<td>
-				<input type="hidden" name="serviceName" value="{$storageServerName|escape}" />
-				<input type="button" value="start" class="form-btn" disabled="disabled" />
-				<input type="button" value="stop"  class="form-btn" disabled="disabled" />
-				<input type="button" value="status" class="form-btn" />
-			</td>
-		</tr>
-		<tr id="managerPanel" class="panel">
-			<td>Plug-in Job Manager</td>
-			<td class="serviceStatus themeColor" id="managerStatusStr"></td>
-			<td>
-				<input type="hidden" name="serviceName" value="{$managerServerName|escape}" />
-				<input type="button" value="start" class="form-btn" disabled="disabled" />
-				<input type="button" value="stop"  class="form-btn" disabled="disabled" />
-				<input type="button" value="status" class="form-btn" />
-			</td>
-		</tr>
-	</tbody>
-</table>
 </div>
 </form>
 <img class="loading" width="15" height="15" src="../images/busy.gif" style="display: none" />
