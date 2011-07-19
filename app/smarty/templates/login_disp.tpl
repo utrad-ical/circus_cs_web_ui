@@ -9,14 +9,14 @@
 <link rel="shortcut icon" href="favicon.ico" />
 
 {literal}
-<script language="javascript">
-<!-- 
+<script type="text/javascript" language="javascript">
+<!--
 $(function()
 {
 	// Detecting IE6 or below
 	if ($.browser.msie && $.browser.version < 7)
 	{
-		$("#messageArea").html("Your browser is not supported.");
+		$("#messageArea").text("Your browser is not supported.");
 		$("#mode").attr("disabled", "disabled");
 	}
 });
@@ -34,15 +34,14 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 100px;
-	text-align: center;
 	width: 407px;
 	height: 270px;
 	background: #396 url(images/login_bk.png) no-repeat;
 }
 .longin-pnl-innner {
-	width: 295px; 
-	margin: 0 auto; 
-	padding-top: 70px; 
+	width: 295px;
+	margin: 0 auto;
+	padding-top: 70px;
 	text-align: center;
 }
 table.login-tbl {
@@ -52,7 +51,6 @@ table.login-tbl {
 table.login-tbl th,
 table.login-tbl td {
 	background-color: #e0e0e0;
-	text-align: center;
 	color: #404040;
 	padding: 5px;
 	border-bottom: 5px solid #fff;
@@ -62,9 +60,12 @@ table.login-tbl td {
 }
 .error-blk {
 	height: 30px;
-	text-align: center;
 	font-weight: bold;
 	color: red;
+}
+input.field {
+	ime-mode: disabled;
+	width: 190px;
 }
 input.login-btn {
 	background:url(images/login_btn_bk_new2.jpg) repeat-x;
@@ -94,17 +95,17 @@ p.version {
 		<table class="login-tbl">
 			<tr>
 				<th style="width: 80px;">User ID</th>
-				<td><input type="text" name="userID" value="" style="ime-mode: disabled; width: 190px;" /></td>
+				<td><input type="text" name="userID" value="" class="field" /></td>
 			</tr>
 			<tr>
 				<th>Password</th>
-				<td><input type="password" name="pswd" value="" style="ime-mode: disabled; width: 190px" /></td>
+				<td><input type="password" name="pswd" value="" class="field" /></td>
 			</tr>
 		</table>
 	</div>
 	<div id="messageArea" class="error-blk">
 		{$message}
-	</div>	
+	</div>
 	<input type="submit" id="mode" name="mode" value="Login" class="login-btn" />
 </form>
 </div>
