@@ -52,9 +52,11 @@ function show_cad_results($jobID, $feedbackMode) {
 	// Retrieve the CAD Result
 	$cadResult = new CadResult($jobID);
 	if (!isset($cadResult->job_id))
-	{
 		critical_error('The CAD result for this ID was not found.', 'Not Found');
-	}
+	if ($cadResult->status == -1)
+		critical_error('This CAD job did not finish correctly.', 'Execution Error');
+	if ($cadResult->status != 4)
+		critical_error('This CAD job has not finished yet.', 'Not Finished');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->pathOfPluginWeb());
 
 	// Assigning the result to Smarty
