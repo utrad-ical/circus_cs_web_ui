@@ -627,6 +627,20 @@ span.register-not-ok {
 	margin: 3px;
 }
 
+.ui-imageviewer .ui-slider {
+	border-radius: 4px;
+	height: 4px;
+}
+
+.ui-imageviewer .ui-slider .ui-slider-handle {
+	width: 10px;
+	height: 16px;
+	top: -7px;
+	margin-left: -5px;
+	border-radius: 4px;
+	background: #adadad;
+}
+
 
 /* ===================================================
 	TABLE
