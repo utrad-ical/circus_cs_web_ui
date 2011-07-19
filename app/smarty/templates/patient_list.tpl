@@ -1,5 +1,4 @@
 {capture name="require"}
-jq/ui/jquery-ui-1.7.3.min.js
 jq/jquery.blockUI.js
 js/search_panel.js
 js/list_tab.js

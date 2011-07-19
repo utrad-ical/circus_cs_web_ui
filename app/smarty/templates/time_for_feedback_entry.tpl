@@ -1,6 +1,6 @@
 {capture name="require"}
-jq/ui/jquery-ui-1.7.3.min.js
-jq/ui/css/jquery-ui-1.7.3.custom.css
+jq/ui/jquery-ui.min.js
+jq/ui/theme/jquery-ui.custom.css
 jq/jquery.blockUI.js
 {/capture}
 {capture name="extra"}

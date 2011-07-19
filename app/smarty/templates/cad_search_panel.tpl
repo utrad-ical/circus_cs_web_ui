@@ -59,7 +59,7 @@
 	            <th><span class="trim01">Entered by</span></th>
     			<td><input name="filterFBUser" type="text" style="width: 200px;" value="{$params.filterFBUser|escape}" /></td>
 			</tr>
-			
+
 			<tr>
      			<th><span class="trim01">Patient Name</span></th>
      			<td>
@@ -74,7 +74,7 @@
 					</select>
 				</td>
 		        <th><span class="trim01">TP</span></th>
-    			<td> 
+    			<td>
 					<label><input name="filterTP" type="radio" value="with" {if $params.filterTP=="with"}checked="checked" {/if}/>with</label>
 					<label><input name="filterTP" type="radio" value="without" {if $params.filterTP=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterTP" type="radio" value="all" {if $params.filterTP=="all"}checked="checked" {/if}/>all</label>
@@ -126,7 +126,7 @@
 {if $params.mode!='today'}
 {literal}
 <script language="javascript">
-<!-- 
+<!--
 $(function() {
 
 	$("#cadSearch input[name^='srDate'], #cadSearch input[name^='cadDate']").datepicker({
@@ -138,7 +138,8 @@ $(function() {
 			changeMonth: true,
 			changeYear: true,
 			dateFormat: 'yy-mm-dd',
-			maxDate: 0});
+			maxDate: 0
+	});
 
 	$("#cadSearch input[name='srDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
 					var date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,

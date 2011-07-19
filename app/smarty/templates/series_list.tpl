@@ -1,8 +1,8 @@
 {capture name="require"}
-jq/ui/jquery-ui-1.7.3.min.js
+jq/ui/jquery-ui.min.js
 js/search_panel.js
 js/list_tab.js
-jq/ui/css/jquery-ui-1.7.3.custom.css
+jq/ui/theme/jquery-ui.custom.css
 {/capture}
 
 {include file="header.tpl" body_class="series-list" require=$smarty.capture.require}

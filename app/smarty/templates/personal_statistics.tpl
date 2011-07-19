@@ -1,7 +1,7 @@
 {capture name="require"}
-jq/ui/jquery-ui-1.7.3.min.js
+jq/ui/jquery-ui.min.js
 jq/jquery.blockUI.js
-jq/ui/css/jquery-ui-1.7.3.custom.css
+jq/ui/theme/jquery-ui.custom.css
 {/capture}
 {capture name="extra"}
 <script language="javascript">

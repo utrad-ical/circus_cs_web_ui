@@ -8,7 +8,7 @@
 
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 
@@ -229,7 +229,7 @@ $(function() {
 </script>
 
 <link rel="shortcut icon" href="favicon.ico" />
-<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
+<link href="../jq/ui/theme/jquery-ui.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
