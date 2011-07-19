@@ -325,13 +325,13 @@ var rowClickHandler = function(event) {
 	{
 		$('#checkVisibleFN').attr('checked', 'checked');
 		// for jQuery 1.3.2
-		var imgNum = $(event.target).parents('tr').children('td.z').html();
-		$("#slider").slider("value", imgNum);
+		// var imgNum = $(event.target).parents('tr').children('td.z').html();
+		// $("#slider").slider("value", imgNum);
 
 		// for jQuery 1.4.3
-		//var idx = $(event.target).parents('tr').index();
-		//var item = fnData[idx];
-		//$("#slider").slider("value", item.z);
+		var idx = $(event.target).parents('tr').index();
+		var item = fnData[idx];
+		$("#slider").slider("value", item.z);
 	}
 }
 
