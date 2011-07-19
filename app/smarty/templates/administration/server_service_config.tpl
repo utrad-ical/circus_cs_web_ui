@@ -2,7 +2,7 @@
 <script type="text/javascript">;
 {literal}
 $(function() {
-	$('[id^=storagePanel], [id^=managerPanel]').each(function () {
+	$('.storagePanel, .managerPanel').each(function () {
 		var serviceName = $('input[name=serviceName]', this).val();
 		var ipAddress = $('input[name=ipAddress]', this).val();
 		var panel = this;
@@ -45,7 +45,7 @@ $(function() {
 {include file="header.tpl"
 	head_extra=$smarty.capture.extra body_class="spot"}
 
-<div id="machinelist">
+<div id="machineList">
 <form onsubmit="return false;">
 <input type="hidden" id="ticket" value="{$ticket|escape}" />
 
@@ -57,7 +57,7 @@ $(function() {
 <table>
 	<tbody>
 		{if $item.dicom_storage_server}
-		<tr id="storagePanel{$item.id}" class="panel">
+		<tr class="panel storagePanel">
 			<td>DICOM Storage Server</td>
 			<td class="serviceStatus themeColor" name="storageStatusStr"></td>
 			<td>
@@ -70,7 +70,7 @@ $(function() {
 		</tr>
 		{/if}
 		{if $item.plugin_job_manager>0}
-		<tr id="managerPanel{$item.id}" class="panel">
+		<tr class="panel managerPanel">
 			<td>
 				Plug-in Job Manager
 				{if $item.plugin_job_manager==1}(controller)
