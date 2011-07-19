@@ -210,19 +210,46 @@ $(function(){
 			$('#mode-form').submit();
 	});
 
+	var dialog = $('#temporary-confirm');
+	var postLocation = null;
+
+	$('#temporary-confirm').dialog({
+		autoOpen: false,
+		draggable: false,
+		resizable: false,
+		modal: true,
+		buttons: [
+			{
+				text: 'Save',
+				click: function() {
+					dialog.dialog('close');
+					circus.feedback.register(true, postLocation);
+				}
+			},
+			{
+				text: "Don't Save",
+				click: function() {
+					dialog.dialog('close');
+					location.replace(postLocation);
+				}
+			},
+			{
+				text: 'Cancel',
+				click: function() {
+					dialog.dialog('close');
+				}
+			}
+		]
+	});
+
 	if (circus.feedback.feedbackStatus == 'normal')
 	{
 		$('#menu .jq-btn').click(function(event) {
 			if (!circus.feedback.modified)
 				return;
-			var save = confirm('Do you want to temporarily save changes ' +
-				'before leaving this page?');
-			if (save)
-			{
-				var postLocation = $(event.currentTarget).attr('href');
-				circus.feedback.register(true, postLocation);
-				return false;
-			}
+			postLocation = $(event.currentTarget).attr('href');
+			dialog.dialog('open');
+			return false;
 		});
 	}
 
