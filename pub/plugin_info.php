@@ -7,7 +7,7 @@
 
 <link rel="stylesheet" type="text/css" href="css/base_style.css">
 
-<script type="text/javascript" src="jq/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="jq/jquery.min.js"></script>
 <script type="text/javascript" src="js/search_condition.js"></script>
 
 <script language="Javascript">;

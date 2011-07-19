@@ -7,7 +7,7 @@
 
 <title>Download volume data</title>
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="../jq/jquery-1.3.2.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 
 

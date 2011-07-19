@@ -6,7 +6,7 @@
 <title>Compress DICOM files</title>
 <link rel="stylesheet" type="text/css" href="../css/base_style.css">
 
-<script type="text/javascript" src="../js/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery/jquery.min.js"></script>
 
 <script language="Javascript">;
 <!--
