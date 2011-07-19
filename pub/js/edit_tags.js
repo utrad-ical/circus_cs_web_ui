@@ -78,7 +78,7 @@ circus.edittag = (function() {
 		tbody.autoStylize();
 		$('#edit-tags-loading').hide(0);
 		$('#tags-list').show(0);
-		$('#edit-tags-add').removeAttr('disabled');
+		$('#edit-tags-add').enable();
 		$('#new-tag-name').val('');
 	}
 

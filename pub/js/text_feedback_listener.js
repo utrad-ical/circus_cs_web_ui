@@ -38,11 +38,11 @@ circus.evalListener = (function() {
 		},
 		disable: function (target)
 		{
-			$('.evaluation-text', target).attr('disabled', 'disabled');
+			$('.evaluation-text', target).disable();
 		},
 		enable: function (target)
 		{
-			$('.evaluation-text', target).removeAttr('disabled');
+			$('.evaluation-text', target).enable();
 		}
 	};
 	return global;

@@ -10,20 +10,16 @@ $(function() {
 			$(this).click(function(event) {
 				var mode = $(event.target).attr('value');
 				$('.serviceStatus', panel).empty().append($('.loading').clone().show(0));
-				$('input[type=button]', panel).attr('disabled', 'disabled').trigger('flush');
+				$('input[type=button]', panel).disable();
 				$.post(
 					"change_server_status.php",
 					{ serviceName: serviceName, mode: mode, ipAddress: ipAddress, ticket: $("#ticket").val() },
 					function (data) {
 						$('.serviceStatus', panel).empty().text(data.str);
 						var started = data.val == 1;
-						$('input[type=button][value=start]', panel)
-							.attr('disabled', started ? 'disabled': '');
-						$('input[type=button][value=stop]', panel)
-							.attr('disabled', started ? '' : 'disabled');
-						$('input[type=button][value=status]', panel)
-							.attr('disabled', '');
-						$('input[type=button]', panel).trigger('flush');
+						$('input[type=button][value=start]', panel).enable(!started);
+						$('input[type=button][value=stop]', panel).enable(started);
+						$('input[type=button][value=status]', panel).enable();
 					},
 					"json"
 				);

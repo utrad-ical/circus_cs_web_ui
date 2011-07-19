@@ -95,11 +95,11 @@ circus.feedback = function() {
 			circus.feedback.modified = true;
 			var ok = circus.feedback.register_ok();
 			if (ok.register_ok === true) {
-				$('#register').removeAttr('disabled').trigger('flush');
+				$('#register').enable();
 				var data = circus.feedback.collect();
 				$('#result').val(JSON.stringify(data));
 			} else {
-				$('#register').attr('disabled', 'disabled').trigger('flush');
+				$('#register').disable();
 			}
 			$('#register-error').empty();
 			$.each(ok.messages, function (index, msg) {
@@ -228,7 +228,7 @@ $(function(){
 
 	if (circus.feedback.consensualFeedbackAvail != 'locked')
 	{
-		$('#consensual-mode').removeAttr('disabled').trigger('flush');
+		$('#consensual-mode').enable();
 	}
 
 	$(window).trigger('actionlog', { action: "open", options: "CAD result" });

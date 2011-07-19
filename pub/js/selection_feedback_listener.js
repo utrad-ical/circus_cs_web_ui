@@ -67,15 +67,11 @@ circus.evalListener = (function() {
 		},
 		disable: function (target)
 		{
-			$('.feedback-pane input[type=radio]', target)
-				.attr('disabled', 'disabled')
-				.trigger('flush');
+			$('.feedback-pane input[type=radio]', target).disable();
 		},
 		enable: function (target)
 		{
-			$('.feedback-pane input[type=radio]', target)
-				.removeAttr('disabled')
-				.trigger('flush');
+			$('.feedback-pane input[type=radio]', target).enable();
 		}
 	};
 	return global;

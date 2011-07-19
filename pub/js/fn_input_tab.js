@@ -59,9 +59,8 @@ circus.feedback.additional = circus.feedback.additional || [];
 			}
 
 			if (!canEdit) {
-				$('input:checkbox', tbl).attr('disabled', 'disabled');
-				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input')
-					.attr('disabled', 'disabled').trigger('flush');
+				$('input:checkbox', tbl).disable();
+				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input').disable();
 			}
 
 			$('#fn-found, #fn-not-found').click(function () {
@@ -88,8 +87,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			if (circus.feedback.feedbackStatus == 'disabled')
 			{
 				var cnt = $('#fn-found-container');
-				$('input[type=radio], input[type=button]', cnt)
-					.attr('disabled', 'disabled')
+				$('input[type=radio], input[type=button]', cnt).disable();
 			}
 		},
 		validate: function()
@@ -207,19 +205,19 @@ circus.feedback.additional = circus.feedback.additional || [];
 			$('#fn-count').text(markers.length);
 			if (markerCount > 0)
 			{
-				$('#fn-not-found').attr('disabled', 'disabled').removeAttr('checked');
-				$('#fn-found').removeAttr('disabled').attr('checked', 'checked');
+				$('#fn-not-found').disable().removeAttr('checked');
+				$('#fn-found').enable().attr('checked', 'checked');
 			}
 			else
 			{
-				$('#fn-not-found, #fn-found').removeAttr('disabled');
+				$('#fn-not-found, #fn-found').enable();
 			}
 		},
 		_updateCheckState: function()
 		{
 			var cnt = $('#fn-input-table input:checked').length;
-			$('#fn-delete').attr('disabled', cnt > 0 ? '' : 'disabled').trigger('flush');
-			$('#fn-integrate').attr('disabled', cnt > 1 ? '' : 'disabled').trigger('flush');
+			$('#fn-delete').enable(cnt > 0);
+			$('#fn-integrate').enable(cnt > 1);
 		},
 		_assignLoc: function(target, from)
 		{

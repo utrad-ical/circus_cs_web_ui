@@ -34,8 +34,29 @@ $.fn.autoStylize = function() {
 			disabled: 'form-btn-disabled'
 		});
 	});
-}
+};
 
+// 'enable' method enables given input element by removing 'disabled' attribute.
+// It additionally triggers 'flush' event for custom UI buttons.
+// If boolean value is passed as the first argument, it can disable/enable
+// elements according to that value.
+$.fn.enable = function() {
+	var flag = true;
+	if (arguments.length >= 1)
+		flag = arguments[0];
+	if (flag)
+		return $(this).filter(':disabled')
+			.removeAttr('disabled').trigger('flush').end();
+	else
+		return $(this).disable();
+};
+
+// 'disable' method disables given input elements by adding 'disabled' attribute.
+// It also triggers 'flush' event.
+$.fn.disable = function() {
+	return $(this).filter(':not(:disabled)')
+		.attr('disabled', 'disabled').trigger('flush').end();
+};
 
 // 'rollOverBtn' applies mouseover/mouseout handlers to highlight the target
 // element by moving the background position.
