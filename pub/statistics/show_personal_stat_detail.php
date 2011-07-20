@@ -259,7 +259,7 @@ if($params['errorMessage'] == "&nbsp;")
 			if($params['version'] != "all")
 			{
 			  	$sqlStrCntEval .= " AND cad.job_id=el.job_id"
-							   .  " AND (cad.sub_id =cc.candidate_id OR cc.candidate_id=0)"
+							   .  " AND (cad.sub_id=cc.candidate_id)"
 							   .  " AND cad.volume_size>=? AND cad.volume_size<=?";
 
 				$sqlParamCntEval[] = $minVolume;
@@ -270,12 +270,12 @@ if($params['errorMessage'] == "&nbsp;")
 					. " AND fl.is_consensual='f'"
 					. " AND fl.status=1";
 
-			$sqlStrCntEval.= $tmpStr;
-			$sqlStrCntFN  .= $tmpStr;
+			$sqlStrCntEval .= $tmpStr . " ORDER BY el.job_id ASC";
+			$sqlStrCntFN   .= $tmpStr;
 
 			$sqlParamCntEval[] = $userList[$k];
 			$sqlParamCntFN[]   = $userList[$k];
-
+			
 			$fnNum = DBConnector::query($sqlStrCntFN, $sqlParamCntFN, 'SCALAR');
 			if($fnNum == "" || $fnNum < 0)  $fnNum = 0;
 			$totalNum += $fnNum;
@@ -290,78 +290,54 @@ if($params['errorMessage'] == "&nbsp;")
 			{
 				$sqlParams = array();
 				$sqlStr = "SELECT cc.evaluation, COUNT(*)"
-						. " FROM executed_plugin_list el, executed_series_list es,"
-						. " plugin_master pm, feedback_list fl, candidate_classification cc,"
-						. " series_list sr";
+						. " FROM executed_plugin_list el, feedback_list fl,"
+						. " candidate_classification cc";
 
 				if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
 
 				$sqlStr .= " WHERE el.job_id =?"
 						.  " AND fl.job_id=el.job_id"
-						.  " AND cc.fb_id=fl.fb_id"
-						.  " AND es.job_id=el.job_id"
-						.  " AND es.volume_id=0"
-						.  " AND sr.sid = es.series_sid"
-						.  " AND pm.plugin_id=el.plugin_id"
-						.  " AND pm.plugin_name=?";
-
+						.  " AND cc.fb_id=fl.fb_id";
 				$sqlParams[] = $jobID;
-				$sqlParams[] = $params['cadName'];
-
-				if($params['version'] != "all")
-				{
-					$sqlStr.= " AND pm.version=?";
-					$sqlParams[] = $params['version'];
-				}
-
-				if($params['dateFrom'] != "")
-				{
-					$sqlStr .= " AND sr.series_date>=?";
-					$sqlParams[] = $params['dateFrom'];
-				}
-
-				if($params['dateTo'] != "")
-				{
-					$sqlStr .= " AND sr.series_date<=?";
-					$sqlParams[] = $params['dateTo'];
-				}
 
 				if($params['version'] != "all")
 				{
 					$sqlStr .= " AND cad.job_id=el.job_id"
-							.  " AND cad.sub_id =cc.candidate_id"
-						    .  " AND cad.volume_size>=?"
-						    .  " AND cad.volume_size<=?";
+							.  " AND cad.sub_id=cc.candidate_id"
+							.  " AND cad.volume_size>=?"
+							.  " AND cad.volume_size<=?";
 					$sqlParams[] = $minVolume;
 					$sqlParams[] = $maxVolume;
 				}
 
 				$sqlStr .= " AND fl.entered_by=?"
-				        .  " AND fl.is_consensual='f'"
-				        .  " AND fl.status=1"
-				        .  " GROUP BY cc.evaluation;";
+						.  " AND fl.is_consensual='f'"
+						.  " AND fl.status=1"
+						.  " GROUP BY cc.evaluation"
+						.  " ORDER BY cc.evaluation";
 				$sqlParams[] = $userList[$k];
 
 				$stmtDetail = $pdo->prepare($sqlStr);
 				$stmtDetail->execute($sqlParams);
+				$evalResult = $stmtDetail->fetchAll(PDO::FETCH_NUM);
 
-				while($result = $stmtDetail->fetch(PDO::FETCH_NUM))
+				foreach($evalResult as $result)
 				{
 					$personalEvalArr[$result[0]][0] += $result[1];
 					$totalNum += $result[1];
-				
+					
 					if($personalEvalArr[$result[0]][1] == "missed TP" && $result[1] > 0)
 					{
 						$sqlParams = array();
-			
+						
 						$sqlStr = "SELECT cc.candidate_id"
 								. " FROM feedback_list fl, candidate_classification cc";
-
+						
 						if($params['version'] != "all")  $sqlStr .= ', "' . $resultTableName . '" cad';
 
 						$sqlStr .= " WHERE fl.job_id=?"
 								.  " AND fl.entered_by=?"
-								.  " AND fl.is_consensual ='f'"
+								.  " AND fl.is_consensual='f'"
 								.  " AND fl.status=1"
 								.  " AND cc.fb_id=fl.fb_id"
 						        .  " AND cc.evaluation=?";
@@ -372,7 +348,7 @@ if($params['errorMessage'] == "&nbsp;")
 						if($params['version'] != "all")
 						{
 							$sqlStr .= " AND cad.job_id=fl.job_id"
-									.  " AND cad.sub_id =cc.candidate_id"
+									.  " AND cad.sub_id=cc.candidate_id"
 								    .  " AND cad.volume_size>=?"
 								    .  " AND cad.volume_size<=?";
 							$sqlParams[] = $minVolume;
@@ -404,7 +380,7 @@ if($params['errorMessage'] == "&nbsp;")
 							else  $consensualEvalArr["0"][0]++; // pending
 						}
 					}
-				}
+				} // end foreach
 			} // end foreach
 
 			// html of thead
