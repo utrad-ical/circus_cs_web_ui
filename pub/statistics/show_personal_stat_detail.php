@@ -490,7 +490,7 @@ if($params['errorMessage'] == "&nbsp;")
 					. "MAX(case when key='crop_width' then value else null end),"
 					. "MAX(case when key='crop_height' then value else null end),"
 					. "MAX(case when key='crop_depth' then value else null end),"
-					. "MAX(case when key='slice_offset' then value else null end)"
+					. "MAX(case when key='start_img_num' then value else '1' end)"
 					. " FROM executed_plugin_attributes WHERE job_id=? GROUP BY job_id";
 					
 			$stmtAttr = $pdo->prepare($sqlStr);
@@ -504,7 +504,7 @@ if($params['errorMessage'] == "&nbsp;")
 				$tmpDataArr[] = $result['evaluation'];
 				$tmpDataArr[] = (real)($result['location_x'] - $attrArr[0]) / (real)$attrArr[3];
 				$tmpDataArr[] = (real)($result['location_y'] - $attrArr[1]) / (real)$attrArr[4];
-				$tmpDataArr[] = (real)(($result['location_z'] - $attrArr[6]) - $attrArr[2]) / (real)$attrArr[5];
+				$tmpDataArr[] = (real)(($result['location_z'] - ($attrArr[6]-1)) - $attrArr[2]) / (real)$attrArr[5];
 			}
 		
 			$params['dataStr'] = implode('^', $tmpDataArr);

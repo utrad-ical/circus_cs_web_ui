@@ -66,7 +66,7 @@ function ShowPersonalStatResult()
 								$("#plotLegend td").hide();
 								for(var i = 0; i < data.plotLegend.length; i++)
 								{
-									$("#plotLegend [name=" + data.plotLegend[i] + "]").show();
+									$('#plotLegend [name="' + data.plotLegend[i] + '"]').show();
 								}
 
 								$("#container").height( $(document).height() - 10 );
@@ -112,7 +112,7 @@ function RedrawScatterPlot()
 						$("#plotLegend td").hide();
 						for(var i = 0; i < data.plotLegend.length; i++)
 						{
-							$("#plotLegend [name=" + data.plotLegend[i] + "]").show();
+							$('#plotLegend [name="' + data.plotLegend[i] + '"]').show();
 						}
 						$("#scatterPlotAx").attr("src", data.XY);
 						$("#scatterPlotCoro").attr("src", data.XZ);
@@ -124,54 +124,6 @@ function RedrawScatterPlot()
 						alert("Fail to redraw scatter plots.");
 					}
 		});
-}
-
-function SetDate(mode)
-{
-	date = new Date();
-	dd = date.getDate();
-
-	switch(mode)
-	{
-		case "today":
-			$("#dateFrom, #dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			break;
-
-		case "yesterday":
-			dd -=  1;
-			date.setDate(dd);
-			$("#dateFrom, #dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			break;
-
-		case "7days":
-		    dd -=  7;
-			$("#dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			date.setDate(dd);
-			$("#dateFrom").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			break;
-
-		case "30days":
-		    dd -= 30;
-			$("#dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			date.setDate(dd);
-			$("#dateFrom").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			break;
-
-		case "thisMonth":
-		    month = (date.getMonth()+1);
-			$("#dateFrom").val(date.getFullYear() + '-' + month + '-01');
-			date.setMonth(month, 01);
-			date.setDate(date.getDate() -1);
-			$("#dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			break;
-
-		case "lastMonth":
-			date.setMonth(date.getMonth(), 01);
-			date.setDate(date.getDate() -1);
-			$("#dateTo").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate());
-			$("#dateFrom").val(date.getFullYear() + '-' + (date.getMonth()+1) + '-01');
-			break;
-	}
 }
 
 function ChangeUserList(mode, allStatFlg)
@@ -248,9 +200,9 @@ $(function() {
 
 	// Parameters of UI blocking for ajax requests (using jquery blockUI)
 	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
-							   + ' Under processing, just moment...</span>';
+							   + ' Processing, just a moment...</span>';
 	$.blockUI.defaults.fadeOut = 200;			// set fadeOut effect shorter
-	$.blockUI.defaults.css.width   = '320px';
+	$.blockUI.defaults.css.width   = '280px';
 	$.blockUI.defaults.css.padding = '5px';
 
 });
@@ -290,10 +242,6 @@ $(function() {
 							<input id="dateTo" type="text" style="width:72px;" />
 
 						</td>
-						{*<td colspan="2" style="width:200px;">
-							<input name="" type="button" class="form-btn" value="this month" onclick="SetDate('thisMonth');" />
-							<input name="" type="button" class="form-btn" value="last month" onclick="SetDate('lastMonth');" />
-						</td>*}
 						<th style="width: 8em;"><span class="trim01">CAD name</span></th>
 						<td>
 							<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
