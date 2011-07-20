@@ -135,7 +135,7 @@ function ChangeUserList(mode, allStatFlg)
 	if(mode == 'cadMenu')
 	{
 		var versionStr = $("#cadMenu option:selected").val().split("^");
-		var optionStr = '<option value="all" selected="selected">all</option>';
+		var optionStr = '<option value="" selected="selected">(Select)</option>';
 
 		if(versionStr != "")
 		{
@@ -147,7 +147,7 @@ function ChangeUserList(mode, allStatFlg)
 				}
 			}
 		}
-		version = 'all';
+		//version = 'all';
 		$("#versionMenu").html(optionStr);
 	}
 
@@ -169,8 +169,6 @@ function ResetCondition()
 {
 	$("#dateFrom, #dateTo, #minSize, #maxSize").removeAttr("value");
 	$("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
-
-	ChangeCadMenu();
 }
 
 $(function() {
@@ -266,7 +264,7 @@ $(function() {
 						<th style="width: 5.5em;"><span class="trim01">CAD version</span></th>
 						<td>
 							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
-								<option value="all">all</option>
+								<option value="" selected="selected">(Select)</option>
 								{foreach from=$versionDetail item=item}
 									<option value="{$item|escape}">{$item|escape}</option>
 								{/foreach}
