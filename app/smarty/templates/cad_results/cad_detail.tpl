@@ -12,8 +12,8 @@
 <div id="cad-detail-viewer-container">
 	Marker type:&nbsp;
 	<select id="cad-detail-marker-type">
-		<option value="circle">Circle</option>
-		<option value="dot" selected="selected">Dot</option>
+		<option value="circle" selected="selected">Circle</option>
+		<option value="dot">Dot</option>
 	</select>
 	<input type="checkbox" id="cad-detail-show-markers" checked="checked" accesskey="h"/>
 	<label for="cad-detail-show-markers">Show markers</label>

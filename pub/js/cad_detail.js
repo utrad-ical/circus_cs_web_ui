@@ -29,6 +29,7 @@ $(function() {
 		min: minImg,
 		max: circus.cadresult.seriesNumImages,
 		markers: markers,
+		markerStyle: 'circle',
 		grayscalePresets: presets,
 		maxWidth: 512,
 		wl: wl,
