@@ -19,14 +19,14 @@ $(function() {
 						var started = data.val == 1;
 						$('input[type=button][value=start]', panel).enable(!started);
 						$('input[type=button][value=stop]', panel).enable(started);
-						$('input[type=button][value=status]', panel).enable();
+						$('input[type=button][value=refresh]', panel).enable();
 					},
 					"json"
 				);
 			});
 		});
 
-		$('input[type=button][value=status]', this).click(); // query status
+		$('input[type=button][value=refresh]', this).click(); // query status
 	});
 })
 -->
@@ -52,11 +52,14 @@ $(function() {
 <h2>Server service</h2>
 
 {foreach from=$machineList item=item}
+{if $item.process_enabled}
 <div id="{$item.ip_address|escape}" class="machineDetail">
-<h3>{$item.host_name|escape} ({$item.ip_address|escape})</h3>
+<h3>{$item.host_name|escape}
+	(IP:{$item.ip_address|escape}{if $item.controller_mode}, controller{/if}{if $item.process_mode}, process machine{/if})
+</h3>
 <table>
 	<tbody>
-		{if $item.dicom_storage_server}
+		{if $item.controller_mode}
 		<tr class="panel storagePanel">
 			<td>DICOM Storage Server</td>
 			<td class="serviceStatus themeColor" name="storageStatusStr"></td>
@@ -65,18 +68,13 @@ $(function() {
 				<input type="hidden" name="ipAddress" value="{$item.ip_address|escape}" />
 				<input type="button" value="start" class="form-btn" disabled="disabled" />
 				<input type="button" value="stop"  class="form-btn" disabled="disabled" />
-				<input type="button" value="status" class="form-btn" />
+				<input type="button" value="refresh" class="form-btn" />
 			</td>
 		</tr>
 		{/if}
-		{if $item.plugin_job_manager>0}
 		<tr class="panel managerPanel">
 			<td>
 				Plug-in Job Manager
-				{if $item.plugin_job_manager==1}(controller)
-				{elseif $item.plugin_job_manager==2}(process machine)
-				{elseif $item.plugin_job_manager==3}(all)
-				{/if}
 			</td>
 			<td class="serviceStatus themeColor" name="managerStatusStr"></td>
 			<td>
@@ -84,13 +82,13 @@ $(function() {
 				<input type="hidden" name="ipAddress" value="{$item.ip_address|escape}" />
 				<input type="button" value="start" class="form-btn" disabled="disabled" />
 				<input type="button" value="stop"  class="form-btn" disabled="disabled" />
-				<input type="button" value="status" class="form-btn" />
+				<input type="button" value="refresh" class="form-btn" />
 			</td>
 		</tr>
-		{/if}
 	</tbody>
 </table>
 </div>
+{/if}
 {/foreach}
 
 </div>

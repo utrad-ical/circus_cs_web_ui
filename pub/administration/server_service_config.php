@@ -24,8 +24,9 @@ foreach ($machines as $machine)
 		'id' => $machine->pm_id,
 		'host_name' => $machine->host_name,
 		'ip_address' => $machine->ip_address,
-		'dicom_storage_server' => $machine->dicom_storage_server,
-		'plugin_job_manager' => $machine->plugin_job_manager
+		'controller_mode' => $machine->controller_mode,
+		'process_mode' => $machine->process_mode,
+		'process_enabled' => $machine->process_enabled
 	);
 }
 
