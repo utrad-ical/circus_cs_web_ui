@@ -38,6 +38,10 @@ class DisplayPresenter extends CadBlockElement
 		);
 	}
 
+	/**
+	 * Find the name of the key which can be used as display ID.
+	 * @param $item array The input array.
+	 */
 	protected function findDisplayIdField(array $item)
 	{
 		if (isset($item['display_id']))

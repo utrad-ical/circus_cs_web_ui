@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Exports HTML for lesion CAD display.
- *
+ * LesionCandDisplayPresenter provides functionality which are
+ * special for lesion detectors.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 class LesionCandDisplayPresenter extends DisplayPresenter
@@ -27,6 +27,13 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		return $this->executeTemplate('lesion_cand_display_presenter.tpl');
 	}
 
+	/**
+	 * Overrides DisplayPresenter::extractDisplays() and extracts
+	 * displays for lesion detector more gracefully.
+	 * The CAD plugin using this presenter must provide diplays
+	 * with location_x/y/z and confidence properties.
+	 * @see DisplayPresenter::extractDisplays()
+	 */
 	public function extractDisplays($input)
 	{
 		$result = array();
