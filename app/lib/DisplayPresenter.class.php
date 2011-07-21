@@ -38,6 +38,17 @@ class DisplayPresenter extends CadBlockElement
 		);
 	}
 
+	protected function findDisplayIdField(array $item)
+	{
+		if (isset($item['display_id']))
+			return 'display_id';
+		if (isset($item['sub_id']))
+			return 'sub_id';
+		if (isset($item['id']))
+			return 'id';
+		return null;
+	}
+
 	/**
 	 * Returns the HTML that describes one given CAD display.
 	 * @param Smarty the Smarty instance
@@ -65,15 +76,11 @@ class DisplayPresenter extends CadBlockElement
 
 				// auto-detect key used as display ID
 				$head = $input[0];
-				$key = null;
-				if (isset($head['display_id']))
-					$key = 'display_id';
-				else if (isset($head['sub_id']))
-					$key = 'sub_id';
-				else if (isset($head['id']))
-					$key = 'id';
-				$index = 1;
+				$key = $this->findDisplayIdField($head);
 
+				if (count($input) > 1 && !$key)
+					throw new Exception('Rows must be discriminated by display ID.');
+				$index = 1;
 				foreach ($input as $item)
 				{
 					$disp_id = $key ? $item[$key] : $index++;

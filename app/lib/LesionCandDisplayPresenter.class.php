@@ -41,23 +41,27 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 				if ($aa < $bb) return 1; else return -1;
 			}
 		);
+		$required_fields = array('location_x', 'location_y', 'location_z',
+			'confidence');
 		foreach ($input as $rec)
 		{
-			$item = array(
-				'display_id' => $rec['sub_id'],
-				'location_x' => $rec['location_x'],
-				'location_y' => $rec['location_y'],
-				'location_z' => $rec['location_z'],
-				'slice_location' => $rec['slice_location'],
-				'volume_size' => $rec['volume_size'],
-				'confidence' => $rec['confidence']
-			);
-
+			if (!$key)
+			{
+				$key = $this->findDisplayIdField($rec);
+				if (!$key)
+					throw new Exception('Rows must be discriminated by display ID.');
+			}
+			foreach ($required_fields as $req)
+				if (!isset($rec[$req]))
+					throw new Exception("Required field ($req) not defined");
+			$key = $this->findDisplayIdField($rec);
+			$display_id = $rec[$key];
+			$rec['display_id'] = $display_id;
 			if ($pref['maxDispNum'] && ++$count > $pref['maxDispNum'])
 			{
-				$item['_hidden'] = true;
+				$rec['_hidden'] = true;
 			}
-			$result[$rec['sub_id']] = $item;
+			$result[$display_id] = $rec;
 		}
 		return $result;
 	}
