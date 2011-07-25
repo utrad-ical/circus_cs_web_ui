@@ -36,7 +36,9 @@ $(function() {
 			v.imageviewer('option', 'wl', attr.window_level);
 		if (attr.window_width !== undefined)
 			v.imageviewer('option', 'ww', attr.window_width);
-		v.imageviewer('preload');
 	});
 });
 
+$(window).load(function() {
+	$('.result-block .viewer').imageviewer('preload');
+});
