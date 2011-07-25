@@ -15,7 +15,7 @@ $(function() {
 				height: attr.crop_height
 			};
 		}
-		var v = $('.viewer', block).imageviewer({
+		var options = {
 			source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 			index: display.location_z,
 			min: Math.max(0, display.location_z - 5),
@@ -31,11 +31,12 @@ $(function() {
 			useSlider: false,
 			useLocationText: false,
 			useMarkerLabel: false
-		});
+		};
 		if (attr.window_level !== undefined)
-			v.imageviewer('option', 'wl', attr.window_level);
+			options.wl = attr.window_level;
 		if (attr.window_width !== undefined)
-			v.imageviewer('option', 'ww', attr.window_width);
+			options.ww = attr.window_width;
+		$('.viewer', block).imageviewer(options);
 	});
 });
 
