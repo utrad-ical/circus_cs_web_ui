@@ -35,9 +35,9 @@ try {
 			'regex' => '/^[_A-Za-z][_A-Za-z0-9]*$/',
 			'errorMes' => 'Invalid policy name. Use only alphabets and numerals.'
 		),
-		'allow_result_reference' => array('type' => 'string'),
-		'allow_personal_fb' => array('type' => 'string'),
-		'allow_consensual_fb' => array('type' => 'string'),
+		'allow_result_reference' => array('type' => 'array'),
+		'allow_personal_fb' => array('type' => 'array'),
+		'allow_consensual_fb' => array('type' => 'array'),
 		'time_to_freeze_personal_fb' => array('type' => 'int', 'min' => 0),
 		'max_personal_fb' => array('type' => 'int', 'min' => 0),
 		'min_personal_fb_to_make_consensus' => array('type' => 'int', 'min' => 0),
@@ -50,7 +50,12 @@ try {
 	));
 
 	if ($validator->validate($_POST))
+	{
 		$req = $validator->output;
+		$req['allow_result_reference'] = implode(',', $req['allow_result_reference']);
+		$req['allow_personal_fb'] = implode(',', $req['allow_personal_fb']);
+		$req['allow_consensual_fb'] = implode(',', $req['allow_consensual_fb']);
+	}
 	else
 		throw new Exception(implode(' ', $validator->errors));
 
@@ -101,11 +106,18 @@ foreach ($pols as $pol)
 	$policyList[$pol_id] = $item;
 }
 
+$dum = new Group();
+$gps = $dum->find(array(), array('order' => array('group_id')));
+$groups = array();
+foreach ($gps as $grp)
+	$groups[] = $grp->group_id;
+
 $smarty = new SmartyEx();
 $smarty->assign(array(
 	'message' => $message,
 	'params' => $params,
 	'ticket' => $_SESSION['ticket'],
+	'groups' => $groups,
 	'policyList' => $policyList
 ));
 $smarty->display('administration/result_policy_config.tpl');

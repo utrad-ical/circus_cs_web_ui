@@ -1,3 +1,9 @@
+{capture name="require"}
+jq/ui/jquery-ui.min.js
+jq/jquery.multiselect.min.js
+jq/ui/theme/jquery-ui.custom.css
+css/jquery.multiselect.css
+{/capture}
 {capture name="extra"}
 <script type="text/javascript">
 var data = {$policyList|@json_encode};
@@ -21,6 +27,20 @@ $(function () {
 		for (var key in pol_data)
 		{
 			$('input[name=' + key + ']', editor).val(pol_data[key]);
+			$('select[name=' + key + '\\[\\]]', editor).each(function() {
+				var items = pol_data[key].split(',');
+				var hash = {};
+				for (var i = 0; i < items.length; i++) {
+					hash[items[i]] = true;
+				}
+				$('option', this).each(function() {
+					if (hash[$(this).attr('value')])
+						$(this).attr('selected', 'selected');
+					else
+						$(this).removeAttr('selected');
+				});
+			})
+			.multiselect('refresh');
 			$('#auto-cons').val(1)
 				.attr('checked', pol_data.automatic_consensus ? 'checked' : '');
 		}
@@ -28,11 +48,19 @@ $(function () {
 		editor.show(300);
 	});
 
+	$('#allow-reference, #allow-personal, #allow-consensual').multiselect({
+		header: false,
+		noneSelectedText: '(all)',
+		selectedList: 10
+	});
+
 	$('#add-policy-button').click(function () {
 		cancel();
 		$('#editor-header', editor).text('Add New CAD Result Policy');
 		$('#target-policy', editor).val('');
 		$('input[type=text]', editor).val('').removeAttr('disabled');
+		$('select option', editor).removeAttr('selected');
+		$('select', editor).multiselect('refresh');
 		$('input.num', editor).val('0');
 		var editor = $('#editor');
 		editor.show(300);
@@ -80,7 +108,8 @@ $(function () {
 </style>
 {/literal}
 {/capture}
-{include file="header.tpl" body_class="spot" head_extra=$smarty.capture.extra}
+{include file="header.tpl" body_class="spot"
+	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
 <h2>CAD Result Policy Configuration</h2>
 
@@ -135,18 +164,33 @@ $(function () {
 		</tr>
 		<tr>
 			<th>Allow result reference</th>
-			<td><input type="text" name="allow_result_reference" id="allow-reference" />
-			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
+			<td>
+				<select name="allow_result_reference[]" id="allow-reference" multiple="multiple">
+				{foreach from=$groups item=group}
+					<option value="{$group|escape}">{$group|escape}</option>
+				{/foreach}
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<th>Allow personal feedback</th>
-			<td><input type="text" name="allow_personal_fb" id="allow-personal" />
-			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
+			<td>
+				<select name="allow_personal_fb[]" id="allow-personal" multiple="multiple">
+				{foreach from=$groups item=group}
+					<option value="{$group|escape}">{$group|escape}</option>
+				{/foreach}
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<th>Allow consensual feedback</th>
-			<td><input type="text" name="allow_consensual_fb" id="allow-consensual" />
-			<input type="button" class="select-user form-btn" value="Select" disabled="disabled" /></td>
+			<td>
+				<select name="allow_consensual_fb[]" id="allow-consensual"  multiple="multiple">
+				{foreach from=$groups item=group}
+					<option value="{$group|escape}">{$group|escape}</option>
+				{/foreach}
+				</select>
+			</td>
 		</tr>
 		<tr style="display: none">
 			<th>Time to freeze personal feedback (min.)</th>
