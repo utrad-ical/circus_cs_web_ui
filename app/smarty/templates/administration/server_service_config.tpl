@@ -35,6 +35,7 @@ $(function() {
 <style type="text/css">
 .machineDetail table td { padding: 0.5em; }
 .machineDetail { margin: 1em 0 1.5em; }
+.serviceName { width: 150px; }
 .serviceStatus { font-weight: bold; width: 150px; }
 .form-btn { width: 75px; }
 </style>
@@ -59,9 +60,9 @@ $(function() {
 </h3>
 <table>
 	<tbody>
-		{if $item.controller_mode}
+		{if $item.dicom_storage_server}
 		<tr class="panel storagePanel">
-			<td>DICOM Storage Server</td>
+			<td class="serviceName">DICOM Storage Server</td>
 			<td class="serviceStatus themeColor" name="storageStatusStr"></td>
 			<td>
 				<input type="hidden" name="serviceName" value="{$storageServerName|escape}" />
@@ -72,9 +73,13 @@ $(function() {
 			</td>
 		</tr>
 		{/if}
+		{if $item.plugin_job_manager>0}
 		<tr class="panel managerPanel">
-			<td>
-				Plug-in Job Manager
+			<td class="serviceName">
+				Plug-in Job Manager</br>
+				{if $item.plugin_job_manager==1}(controller mode)
+				{elseif $item.plugin_job_manager==2}(process mode)
+				{elseif $item.plugin_job_manager==3}(hybrid mode){/if}
 			</td>
 			<td class="serviceStatus themeColor" name="managerStatusStr"></td>
 			<td>
@@ -85,6 +90,7 @@ $(function() {
 				<input type="button" value="refresh" class="form-btn" />
 			</td>
 		</tr>
+		{/if}
 	</tbody>
 </table>
 </div>
