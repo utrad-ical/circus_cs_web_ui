@@ -20,6 +20,14 @@ abstract class CadResultElement
 	 */
 	protected $smarty;
 
+	/**
+	 * @var CadResult
+	 */
+	protected $cadResult;
+
+	/**
+	 * @var Plugin
+	 */
 	protected $owner;
 
 	public function __construct($owner)
@@ -68,6 +76,15 @@ abstract class CadResultElement
 	public function getParameter()
 	{
 		return $this->params;
+	}
+
+	/**
+	 * Provides a CadResult instance.
+	 * @param CadResult $cadResult
+	 */
+	public function setCadResult(CadResult $cadResult)
+	{
+		$this->cadResult = $cadResult;
 	}
 
 	/**

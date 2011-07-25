@@ -11,6 +11,8 @@ class Plugin extends Model
 
 	protected $userPreference = array();
 
+	protected $presentation = null;
+
 	/**
 	 * Returns the plugin long name, such as 'MRA-CAD_v2' etc.
 	 */
@@ -68,6 +70,26 @@ class Plugin extends Model
 		$sql = '';
 		$pdo->commit();
 		// TODO: implement save user preference
+	}
+
+	public function configurationPath()
+	{
+		global $WEB_UI_ROOT;
+		$plugin_name = $this->fullName();
+		return "$WEB_UI_ROOT/plugin/$plugin_name";
+	}
+
+	/**
+	 * @return CadPresentation The instanciated presentation instance.
+	 */
+	public function presentation()
+	{
+		global $DIR_SEPARATOR;
+		if ($this->presentation instanceof CadPresentation)
+			return $this->presentation;
+		$fileName = $this->configurationPath() . $DIR_SEPARATOR . 'presentation.json';
+		$this->presentation = new CadPresentation($fileName, $this);
+		return $this->presentation;
 	}
 }
 

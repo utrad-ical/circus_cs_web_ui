@@ -39,7 +39,10 @@ try
 }
 catch (Exception $e)
 {
-	critical_error($e->getMessage(), 'Error');
+	critical_error(
+		$e->getMessage(),
+		is_a($e, 'CadPresentationException') ? 'Configuration Error' : 'Error'
+	);
 }
 
 
@@ -57,7 +60,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		critical_error('This CAD job did not finish correctly.', 'Execution Error');
 	if ($cadResult->status != 4)
 		critical_error('This CAD job has not finished yet.', 'Not Finished');
-	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->pathOfPluginWeb());
+	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->Plugin->configurationPath());
 
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
@@ -76,13 +79,19 @@ function show_cad_results($jobID, $feedbackMode) {
 		$td
 	);
 
-	$displayPresenter = $cadResult->displayPresenter();
+	$displayPresenter = $cadResult->Plugin->presentation()->displayPresenter();
 	$displayPresenter->setSmarty($smarty);
+	$displayPresenter->setCadResult($cadResult);
 	$displayPresenter->prepare();
-	$feedbackListener = $cadResult->feedbackListener();
+
+	$feedbackListener = $cadResult->Plugin->presentation()->feedbackListener();
 	$feedbackListener->setSmarty($smarty);
+	$feedbackListener->setCadResult($cadResult);
 	$feedbackListener->prepare();
-	$extensions = $cadResult->buildExtensions();
+
+	$extensions = $cadResult->Plugin->presentation()->extensions();
+	foreach ($extensions as $ext)
+		$ext->setCadResult($cadResult);
 
 	if ($feedbackMode == 'personal')
 	{

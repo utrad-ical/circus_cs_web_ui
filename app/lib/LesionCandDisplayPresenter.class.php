@@ -38,7 +38,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	{
 		$result = array();
 		$count = 0;
-		$pref = $this->owner->Plugin->userPreference();
+		$pref = $this->owner->userPreference();
 		usort(
 			$input,
 			function($a, $b) {

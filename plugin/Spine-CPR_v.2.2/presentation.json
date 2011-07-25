@@ -1,21 +1,18 @@
 {
-	"feedbackListener": {
-		"type": "SelectionFeedbackListener",
-		"params": {
-			"personal": [
-				{ "value": 5, "label": "Excellent" },
-				{ "value": 4, "label": "Good" },
-				{ "value": 3, "label": "Fair" },
-				{ "value": 2, "label": "Unsatisfactory" },
-				{ "value": 1, "label": "Bad" }
-			],
-			"consensual": [
-				{ "value": 5, "label": "Excellent" },
-				{ "value": 4, "label": "Good" },
-				{ "value": 3, "label": "Fair" },
-				{ "value": 2, "label": "Unsatisfactory" },
-				{ "value": 1, "label": "Bad" }
-			]
-		}
+	"SelectionFeedbackListener": {
+		"personal": [
+			{ "value": 5, "label": "Excellent" },
+			{ "value": 4, "label": "Good" },
+			{ "value": 3, "label": "Fair" },
+			{ "value": 2, "label": "Unsatisfactory" },
+			{ "value": 1, "label": "Bad" }
+		],
+		"consensual": [
+			{ "value": 5, "label": "Excellent" },
+			{ "value": 4, "label": "Good" },
+			{ "value": 3, "label": "Fair" },
+			{ "value": 2, "label": "Unsatisfactory" },
+			{ "value": 1, "label": "Bad" }
+		]
 	}
 }

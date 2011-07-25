@@ -39,7 +39,7 @@
 	{
 		if (!class_exists($class))
 		{
-			require_once($class . ".class.php");
+			include_once($class . ".class.php");
 		}
 	}
 	//-------------------------------------------------------------------------------------------------------

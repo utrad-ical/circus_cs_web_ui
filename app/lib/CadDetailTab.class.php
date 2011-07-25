@@ -17,8 +17,7 @@ class CadDetailTab extends CadResultExtension
 
 	public function head()
 	{
-		$cadResult = $this->owner;
-		$series = $cadResult->Series[0];
+		$series = $this->cadResult->Series[0];
 		$modality = $series->modality;
 		$presets = GrayscalePreset::findPresetsAssoc($modality);
 		$result = '<script type="text/javascript">'

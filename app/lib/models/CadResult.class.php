@@ -205,7 +205,8 @@ class CadResult extends Model
 	 */
 	public function getDisplays()
 	{
-		return $this->displayPresenter()->extractDisplays($this->rawResult);
+		$presenter = $this->Plugin->presentation()->displayPresenter();
+		return $presenter->extractDisplays($this->rawResult);
 	}
 
 	/**
@@ -267,107 +268,6 @@ class CadResult extends Model
 		$sqlStr = "SELECT * FROM \"$result_table\" WHERE job_id=?";
 		$this->rawResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
 	}
-
-	protected function defaultPresentation()
-	{
-		return array(
-			'displayPresenter' => array(
-				'type' => 'DisplayPresenter'
-			),
-			'feedbackListener' => array(
-				'type' => 'NullFeedbackListener'
-			)
-		);
-	}
-
-	protected function loadPresentationConfiguration()
-	{
-		if (is_array($this->presentation))
-			return;
-		$result = $this->defaultPresentation();
-		$str = @file_get_contents(
-			$this->pathOfPluginWeb() . '/presentation.json');
-		if ($str !== false && strlen($str) > 0)
-		{
-			$tmp = json_decode($str, true);
-			if (is_null($tmp))
-				throw new Exception("Syntax error found in presentation.json file.\n".
-					"Consult the administrator.");
-			$result = array_merge($result, $tmp);
-		}
-		$this->presentation = $result;
-	}
-
-	/**
-	 * Returns DisplayPresenter associated with this cad result.
-	 * @return DisplayPresenter The DisplayPresenter instance
-	 */
-	public function displayPresenter()
-	{
-		return $this->blockElement('displayPresenter');
-	}
-
-	/**
-	 * Returns FeedbackListener associated with this cad result.
-	 * @return FeedbackListener The FeedbackListener instance
-	 */
-	public function feedbackListener()
-	{
-		return $this->blockElement('feedbackListener');
-	}
-
-	/**
-	 * Singleton builder function to build FeedbackListener and
-	 * DisplayPresenter.
-	 * @param unknown_type $type
-	 */
-	protected function blockElement($type)
-	{
-		if ($this->$type)
-			return $this->$type;
-		$this->loadPresentationConfiguration();
-		$element = new $this->presentation[$type]['type']($this);
-		$element->setParameter($this->presentation[$type]['params']);
-		$this->$type = $element;
-		return $element;
-	}
-
-	/**
-	 * Builds extensions.
-	 */
-	public function buildExtensions()
-	{
-		if ($this->extensions)
-			return $this->extensions;
-		$this->loadPresentationConfiguration();
-		$pr = $this->presentation;
-		$result = array();
-		if (!is_array($pr['extensions']))
-			return $result;
-		foreach ($pr['extensions'] as $ext)
-		{
-			$type = $ext['type'];
-			$item = new $type($this);
-			$item->setParameter($ext['params']);
-			$result[] = $item;
-		}
-		$this->extensions = $result;
-		return $result;
-	}
-
-	/**
-	 * Returns the plugin web configuration diretory.
-	 * This directory contains presentation.json configuration file,
-	 * plugin-specific templates, etc.
-	 * @return string Plugin web configuration directory.
-	 */
-	public function pathOfPluginWeb()
-	{
-		global $WEB_UI_ROOT;
-		$plugin_name = $this->Plugin->fullName();
-		return "$WEB_UI_ROOT/plugin/$plugin_name";
-	}
-
 
 	/**
 	 * Returns the URL of plugin-specific public directory.

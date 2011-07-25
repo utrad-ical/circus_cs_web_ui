@@ -51,7 +51,7 @@ class Feedback extends Model
 	{
 		$job_id = $data['Feedback']['job_id'];
 		$cadResult = new CadResult($job_id);
-		$listener = $cadResult->feedbackListener();
+		$listener = $cadResult->Plugin->presentation()->feedbackListener();
 		$pdo = DBConnector::getConnection();
 
 		$pdo->beginTransaction();
@@ -61,7 +61,7 @@ class Feedback extends Model
 		$listener->saveFeedback($this, $data['blockFeedback']);
 
 		// insert additional feedback
-		$extensions = $cadResult->buildExtensions(null);
+		$extensions = $cadResult->Plugin->presentation()->extensions();
 		foreach ($extensions as $ext)
 		{
 			if (!($ext instanceof IFeedbackListener))
@@ -81,10 +81,10 @@ class Feedback extends Model
 	public function loadFeedback()
 	{
 		$cadResult = $this->CadResult;
-		$listener = $cadResult->feedbackListener();
+		$listener = $cadResult->Plugin->presentation()->feedbackListener();
 		$this->blockFeedback = $listener->loadFeedback($this);
 
-		$extensions = $cadResult->buildExtensions(null);
+		$extensions = $cadResult->Plugin->presentation()->extensions();
 		$this->additionalFeedback = array();
 		foreach ($extensions as $ext)
 		{

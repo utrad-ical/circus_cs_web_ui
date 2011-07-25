@@ -1,11 +1,5 @@
 {
-	"feedbackListener": {
-		"type": "NullFeedbackListener"
-	},
-	"displayPresenter": {
-		"type": "DisplayPresenter",
-		"params": {
-			"displayExtractType": "all"
-		}
+	"DisplayPresenter": {
+		"displayExtractType": "all"
 	}
 }

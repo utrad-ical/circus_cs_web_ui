@@ -121,7 +121,7 @@ circus.feedback = function() {
 			);
 		},
 		register_success: function(result) {
-			var obj = JSON.parse(result)
+			var obj = JSON.parse(result);
 			if (obj)
 			{
 				if (obj.status == 'OK')

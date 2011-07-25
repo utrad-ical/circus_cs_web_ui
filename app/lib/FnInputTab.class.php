@@ -18,8 +18,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 
 	public function head()
 	{
-		$cadResult = $this->owner;
-		$series = $cadResult->Series[0];
+		$series = $this->cadResult->Series[0];
 		$modality = $series->modality;
 		$presets = GrayscalePreset::findPresetsAssoc($modality);
 		$result = '<script type="text/javascript">'
@@ -107,7 +106,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		// Actual integration will be done by browser-side.
 		// So we will just create the list of FN location input as
 		// personal feedback.
-		$displays = $this->owner->getDisplays();
+		$displays = $this->cadResult->getDisplays();
 		$result = array();
 		foreach ($personal_fb_list as $pfb)
 		{
