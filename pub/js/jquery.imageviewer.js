@@ -409,7 +409,7 @@ var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
 		var body = $('body');
 		var cacheRoot = body.data('imageviewerCache') || {};
 		body.data('imageviewerCache', cacheRoot);
-		cache = cacheRoot[self.series__uid] || {};
+		cache = cacheRoot[series_uid] || {};
 		cacheRoot[series_uid] = cache;
 		body.bind('imageviewerImageload', function (event, data) {
 			loadedHandler(data);
