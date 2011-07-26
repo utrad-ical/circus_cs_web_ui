@@ -237,7 +237,7 @@ function ChangeCadMenu()
 			</td>
 		</tr>
 		<tr>
-			<th><span class="trim01">Darkroom mode</span></th>
+			<th><span class="trim01">Darkroom mode default</span></th>
 			<td>
 				<input name="newDarkroom" type="radio" value="t"{if $oldDarkroom=="t"} checked="checked"{/if} />ON&nbsp;
 				<input name="newDarkroom" type="radio" value="f"{if $oldDarkroom=="f"} checked="checked"{/if} />OFF
