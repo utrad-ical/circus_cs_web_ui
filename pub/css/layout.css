@@ -91,10 +91,31 @@ h1 img {
 	line-height: 2;
 }
 
-div.calendar {
-	text-align:left;
-	margin-left:18px;
-	margin-top:8px;
+#menu .jq-btn-today {
+	position: relative;
+	text-decoration: none;
+	text-align: center;
+	font-family: Arial, Verdana, sans-serif;
+	font-weight: bold;
+}
+
+#menu .jq-btn-today .month {
+	position: absolute;
+	left: 18px;
+	top: 9px;
+	width: 32px;
+	font-size: 12px;
+	line-height: 12px;
+}
+
+#menu .jq-btn-today .day {
+	position: absolute;
+	left: 18px;
+	top: 22px;
+	width: 32px;
+	font-size: 16px;
+	line-height: 16px;
+	color: white;
 }
 
 /* =================================================

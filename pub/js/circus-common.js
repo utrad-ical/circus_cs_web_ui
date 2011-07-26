@@ -17,6 +17,12 @@ $(function(){
 	};
 	$(window).bind('resize', resized);
 	resized();
+
+	// Calendar in the menu
+	var month = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+		'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+	$('#menu .month').text(month[(new Date()).getMonth()]);
+	$('#menu .day').text((new Date()).getDate());
 });
 
 $.fn.autoStylize = function() {

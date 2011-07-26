@@ -26,7 +26,10 @@ CSS information
 }
 
 .jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }
-.jq-btn-today { background-image: url(../img_common/btn/user/jq-btn-today.gif) ; }
+#menu .jq-btn-today {
+	background-image: url(../img_common/btn/user/jq-btn-today.gif) ;
+	color: #66ccff;
+}
 .jq-btn-search { background-image: url(../img_common/btn/user/jq-btn-search.gif) ; }
 .jq-btn-statistics { background-image: url(../img_common/btn/user/jq-btn-statistics.gif) ; }
 .jq-btn-research { background-image: url(../img_common/btn/user/jq-btn-research.gif) ; }
