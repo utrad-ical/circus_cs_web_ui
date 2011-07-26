@@ -102,8 +102,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 
 </div><!-- /tab-content -->
 
-<div id="temporary-confirm" title="CIRCUS CS">
-<div class="ui-icon ui-icon-alert"></div>
+<div id="temporary-confirm" title="CIRCUS CS" style="display: none;">
 <p>Do you want to temporarily save changes before leaving this page?</p>
 </div>
 
