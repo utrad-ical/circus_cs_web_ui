@@ -28,7 +28,9 @@ $(function () {
 		{
 			$('input[name=' + key + ']', editor).val(pol_data[key]);
 			$('select[name=' + key + '\\[\\]]', editor).each(function() {
-				var items = pol_data[key].split(',');
+				var items =
+					typeof(pol_data[key]) == "string" ?
+					pol_data[key].split(',') : [];
 				var hash = {};
 				for (var i = 0; i < items.length; i++) {
 					hash[items[i]] = true;
