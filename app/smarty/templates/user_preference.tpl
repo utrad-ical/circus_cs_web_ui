@@ -239,15 +239,15 @@ function ChangeCadMenu()
 		<tr>
 			<th><span class="trim01">Darkroom mode</span></th>
 			<td>
-				<input name="newDarkroom" type="radio" value="f"{if $oldDarkroom=="f"} checked="checked"{/if} />white&nbsp;
-				<input name="newDarkroom" type="radio" value="t"{if $oldDarkroom=="t"} checked="checked"{/if} />black
+				<input name="newDarkroom" type="radio" value="t"{if $oldDarkroom=="t"} checked="checked"{/if} />ON&nbsp;
+				<input name="newDarkroom" type="radio" value="f"{if $oldDarkroom=="f"} checked="checked"{/if} />OFF
 			</td>
 		</tr>
 		<tr>
 			<th><span class="trim01">Anonymization</span></th>
 			<td>
-				<input name="newAnonymized" type="radio" value="t"{if $oldAnonymized=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />TRUE&nbsp;
-				<input name="newAnonymized" type="radio" value="f"{if $oldAnonymized=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />FALSE
+				<input name="newAnonymized" type="radio" value="t"{if $oldAnonymized=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />ON&nbsp;
+				<input name="newAnonymized" type="radio" value="f"{if $oldAnonymized=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />OFF
 			</td>
 		</tr>
 		<tr>
