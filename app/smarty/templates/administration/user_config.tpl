@@ -1,3 +1,9 @@
+{capture name="require"}
+jq/ui/jquery-ui.min.js
+jq/jquery.multiselect.min.js
+jq/ui/theme/jquery-ui.custom.css
+css/jquery.multiselect.css
+{/capture}
 {capture name="extra"}
 <script type="text/javascript">
 <!--
@@ -9,7 +15,13 @@ $(function () {
 	var cancel = function (time) {
 		$('#editor').hide(time);
 		$('#users tr').removeClass('editing');
-	}
+	};
+
+	$('#groupList').multiselect({
+		selectedList: 10,
+		noneSelectedText: 'Select Group',
+		header: false
+	});
 
 	$('.edit-button').click(function (event) {
 		cancel();
@@ -19,7 +31,8 @@ $(function () {
 		var user_data = data[user_id];
 		$('#editor-header', editor).text('Editing: ' + user_data.user_id);
 		$('#target-user', editor).val(user_id);
-		$('#user-id, #enabled-true').enable(current_user != user_id);
+		if (current_user == user_id)
+			$('#user-id').attr('readonly', 'readonly');
 		$.each(
 			['user_id', 'user_name', 'enabled', 'today_disp', 'darkroom', 'show_missed', 'anonymized'],
 			function (dum, key) {
@@ -31,7 +44,7 @@ $(function () {
 				$('input[type=text][name=' + key + ']', editor).val(dat);
 			}
 		);
-		$('#groupList').val(user_data.groups);
+		$('#groupList').val(user_data.groups).multiselect('refresh');
 		tr.addClass('editing');
 		editor.show(300);
 	});
@@ -53,11 +66,11 @@ $(function () {
 		var editor = $('#editor');
 		$('#editor-header', editor).text('Add New User');
 		$('#target-user', editor).val('');
-		$('#user-id, #enabled-true').enable();
+		$('#user-id').removeAttr('readonly');
 		$('input[type=radio]', editor).val([]);
 		$('input[type=text]', editor).val('');
 		$('input[name=enabled]', editor).val(['true']);
-		$('#groupList').val([]);
+		$('#groupList').val([]).multiselect('refresh');
 		editor.show(300);
 	});
 
@@ -103,7 +116,8 @@ $(function () {
 
 {/literal}
 {/capture}
-{include file="header.tpl" body_class="spot" head_extra=$smarty.capture.extra}
+{include file="header.tpl" body_class="spot"
+head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
 <h2>User configuration</h2>
 
