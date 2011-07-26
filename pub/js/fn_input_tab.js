@@ -18,12 +18,16 @@ circus.feedback.additional = circus.feedback.additional || [];
 			var presets = [];
 			var wl = 0;
 			var ww = 0;
-			if (circus.cadresult.fnInputGrayscalePresets.length > 0)
-			{
-				presets = circus.cadresult.fnInputGrayscalePresets;
-				wl = presets[0].wl;
-				ww = presets[0].ww;
-			}
+			if (circus.cadresult.attributes.window_level !== undefined)
+				wl = circus.cadresult.attributes.window_level;
+			if (circus.cadresult.attributes.window_width !== undefined)
+				ww = circus.cadresult.attributes.window_width;
+			//if (circus.cadresult.fnInputGrayscalePresets.length > 0)
+			//{
+			//	presets = circus.cadresult.fnInputGrayscalePresets;
+			//	wl = presets[0].wl;
+			//	ww = presets[0].ww;
+			//}
 			var minImg = 1;
 			if (circus.cadresult.attributes.start_img_num)
 				minImg = Number(circus.cadresult.attributes.start_img_num);
@@ -34,7 +38,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 				max: circus.cadresult.seriesNumImages,
 				source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 				role: (canEdit ? 'locator' : 'viewer'),
-				grayscalePresets: presets,
+				//grayscalePresets: presets,
 				maxWidth: 512,
 				wl: wl,
 				ww: ww

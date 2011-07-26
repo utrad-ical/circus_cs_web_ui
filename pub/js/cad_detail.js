@@ -13,12 +13,17 @@ $(function() {
 	var presets = [];
 	var wl = 0;
 	var ww = 0;
-	if (circus.cadresult.cadDetailGrayscalePresets.length > 0)
-	{
-		presets = circus.cadresult.cadDetailGrayscalePresets;
-		wl = presets[0].wl;
-		ww = presets[0].ww;
-	}
+
+	if (circus.cadresult.attributes.window_level !== undefined)
+		wl = circus.cadresult.attributes.window_level;
+	if (circus.cadresult.attributes.window_width !== undefined)
+		ww = circus.cadresult.attributes.window_width;
+	//if (circus.cadresult.cadDetailGrayscalePresets.length > 0)
+	//{
+	//	presets = circus.cadresult.cadDetailGrayscalePresets;
+	//	wl = presets[0].wl;
+	//	ww = presets[0].ww;
+	//}
 
 	var minImg = 1;
 	if (circus.cadresult.attributes.start_img_num)
@@ -30,7 +35,7 @@ $(function() {
 		max: circus.cadresult.seriesNumImages,
 		markers: markers,
 		markerStyle: 'circle',
-		grayscalePresets: presets,
+		//grayscalePresets: presets,
 		maxWidth: 512,
 		wl: wl,
 		ww: ww
