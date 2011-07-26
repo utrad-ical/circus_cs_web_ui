@@ -184,7 +184,7 @@ $.widget('ui.imageviewer', {
 		var newitem = {
 			location_x: parseInt(x / this._scale + 0.5),
 			location_y: parseInt(y / this._scale + 0.5),
-			location_z: this.options.index,
+			location_z: this.options.index
 		};
 		// The handler for 'locating' event can modify the new item.
 		var event = $.Event('locating');
@@ -517,7 +517,7 @@ var StaticImageSource = function(source)
 				sliceNumber: index,
 				sliceLocation: 0,
 				windowLevel: wl,
-				windowWidth: ww,
+				windowWidth: ww
 			};
 			this.onLoad(ev);
 		}
