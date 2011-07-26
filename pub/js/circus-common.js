@@ -140,6 +140,7 @@ $.fn.radioToButton = function(styles) {
 				function() { setStyle(false); }
 			)
 			.click(function(){
+				if (_radio.is(':disabled')) return;
 				_radio.click();
 				var container = $(_radio).closest('form');
 				if (container.length == 0) container = $('body');
