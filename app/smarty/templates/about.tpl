@@ -14,6 +14,10 @@
   margin-left: 10px;
 }
 
+.machine-list {
+  margin: 0 0 20px 10px;
+}
+
 h3 {
 	margin: 2em 0 0.5em 0;
 }
@@ -48,9 +52,9 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 
 <p>CIRCUS CS is based on the following technologies:</p>
 <ul>
-	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI, Flash
-	<li>DICOM storage server: DCMTK 3.5.4, PostgreSQL
-	<li>External application for research function: R 2.10.2, gnuplot 4.4
+	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI
+	<li>DICOM storage server: DCMTK 3.6.0, PostgreSQL
+	<li>External application for research function: R 2.13.1, gnuplot 4.4
 </ul>
 
 <p>Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
@@ -73,6 +77,11 @@ A plug-in development kit will be released in the winter 2011.</p>
 		<td>clinical supervision</td>
 	</tr>
 	<tr>
+		<td>- Soichiro MIKI, MD</td>
+		<td>clinical advice, and coding</td>
+	</tr>
+
+	<tr>
 		<td>- Takeharu YOSHIKAWA, MD PhD</td>
 		<td>clinical advice</td>
 	</tr>
@@ -84,10 +93,7 @@ A plug-in development kit will be released in the winter 2011.</p>
 		<td>- Shouhei HANAOKA, MD PhD</td>
 		<td>plugin development, and clinical advice</td>
 	</tr>
-	<tr>
-		<td>- Soichiro MIKI, MD</td>
-		<td>clinical advice, and coding</td>
-	</tr>
+
 </table>
 
 <h3>References:</h3>
@@ -114,4 +120,32 @@ A plug-in development kit will be released in the winter 2011.</p>
 	</ul>
 </div>
 
+<h2>Machine list</h2>
+<div class="machine-list">
+	<table class="col-tbl">
+		<thead>
+			<tr>
+				<th>Host name</th>
+				<th>IP address</th>
+				<th>OS</th>
+				<th>Architecture</th>
+				<th>DICOM storage server</th>
+				<th>Plug-in job manager</th>
+		</thead>
+		<tbody>
+		{foreach from=$machineList item=item}
+			<tr>
+				<td>{$item.host_name|escape}</td>
+				<td>{$item.ip_address|escape}</td>
+				<td>{$item.os|escape}</td>
+				<td>{$item.architecture|escape}</td>
+				<td>{if $item.dicom_storage_server}O{else}-{/if}</td>
+				<td>{if $item.plugin_job_manager==1}controller mode
+				{elseif $item.plugin_job_manager==2}process mode
+				{elseif $item.plugin_job_manager==3}hybrid mode{/if}</td>
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+</div>
 {include file="footer.tpl"}
