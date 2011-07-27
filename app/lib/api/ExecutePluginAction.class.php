@@ -93,8 +93,8 @@ class ExecutePluginAction extends ApiAction
 
 		for ($vid = 0; $vid < count($seriesUIDArr); $vid++)
 		{
-			// Get Series data
-			$s = new Series();
+			// Get joined series data
+			$s = new SeriesJoin();
 			$sdata = $s->find(array("series_instance_uid" => $seriesUIDArr[$vid]));
 			if (count($sdata) != 1) {
 				throw new ApiException("Series not found.", ApiResponse::STATUS_ERR_OPE);

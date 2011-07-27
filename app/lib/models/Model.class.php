@@ -16,6 +16,7 @@ abstract class Model implements Iterator
 	protected static $_hasAndBelongsToMany;
 	protected static $_primaryKey;
 	protected static $_sequence;
+	protected static $_tableAsSqlView;
 
 	public function __construct($id = null)
 	{
@@ -148,6 +149,10 @@ abstract class Model implements Iterator
 		$table = $class::$_table;
 		$pkey = $class::$_primaryKey;
 		$obj = $data[$class];
+		$tableAsSqlView = $class::$_tableAsSqlView;
+
+		if($tableAsSqlView)
+    		throw new BadMethodCallException('You can not save to SQL view');
 
 		if ($this->_data[$pkey])
 		{
