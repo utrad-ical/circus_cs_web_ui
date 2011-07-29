@@ -135,14 +135,12 @@ A plug-in development kit will be released in the winter 2011.</p>
 		<tbody>
 		{foreach from=$machineList item=item}
 			<tr>
-				<td>{$item.host_name|escape}</td>
-				<td>{$item.ip_address|escape}</td>
-				<td>{$item.os|escape}</td>
+				<td class="al-l">{$item.host_name|escape}</td>
+				<td class="al-l">{$item.ip_address|escape}</td>
+				<td class="al-l">{$item.os|escape}</td>
 				<td>{$item.architecture|escape}</td>
-				<td>{if $item.dicom_storage_server}O{else}-{/if}</td>
-				<td>{if $item.plugin_job_manager==1}controller mode
-				{elseif $item.plugin_job_manager==2}process mode
-				{elseif $item.plugin_job_manager==3}hybrid mode{/if}</td>
+				<td>{$item.dicom_storage_server|OorMinus}</td>
+				<td>{if $item.plugin_job_manager==1}controller mode{elseif $item.plugin_job_manager==2}process mode{elseif $item.plugin_job_manager==3}hybrid mode{else}-{/if}</td>
 			</tr>
 		{/foreach}
 		</tbody>
