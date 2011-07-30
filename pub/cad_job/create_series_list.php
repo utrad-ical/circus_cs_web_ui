@@ -1,48 +1,44 @@
 <?php
-	$params = array('toTopDir' => "../");
-	include_once("../common.php");
-	Auth::checkSession();
+$params = array('toTopDir' => "../");
+include_once("../common.php");
+Auth::checkSession();
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables
-	//------------------------------------------------------------------------------------------------------------------
-	$studyUIDArr = array();
-	$seriesUIDArr = array();
+//------------------------------------------------------------------------------------------------------------------
+// Import $_POST variables
+//------------------------------------------------------------------------------------------------------------------
+$seriesUIDArr = array();
+$seriesUIDArr = explode('^', $_POST['seriesUIDStr']);
+$seriesNum = count($seriesUIDArr);
+//------------------------------------------------------------------------------------------------------------------
 
-	$studyUIDArr  = explode('^', $_POST['studyUIDStr']);
-	$seriesUIDArr = explode('^', $_POST['seriesUIDStr']);
+try
+{
+	$pdo = DBConnector::getConnection();
 
-	$seriesNum = count($studyUIDArr);
-	//------------------------------------------------------------------------------------------------------------------
+	$seriesList = array();
 
-	try
+	for($j=0; $j<$seriesNum; $j++)
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
-
-		$seriesList = array();
-
-		for($j=0; $j<$seriesNum; $j++)
-		{
-			$sqlStr = "SELECT st.study_id, sr.series_number, sr.series_date, sr.series_time, sr.modality,"
-					. " sr.image_number, sr.series_description"
-					. " FROM patient_list pt, study_list st, series_list sr"
-					. " WHERE sr.series_instance_uid=? AND st.study_instance_uid=?"
-					. " AND st.study_instance_uid=sr.study_instance_uid"
-					. " AND pt.patient_id=st.patient_id;";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($seriesUIDArr[$j], $studyUIDArr[$j]));
-
-			$seriesList[] = $stmt->fetch(PDO::FETCH_ASSOC);
-		}
-
-		echo json_encode($seriesList);
-	}
-	catch (PDOException $e)
-	{
-		var_dump($e->getMessage());
+		// Get joined series data
+		$s = new SeriesJoin();
+		$sdata = $s->find(array("series_instance_uid" => $seriesUIDArr[$j]));
+		$seriesData = $sdata[0]->getData();
+		
+		$seriesList[] = array('study_id' => $seriesData['study_id'],
+							  'series_number' => $seriesData['series_number'],
+							  'series_date' => $seriesData['series_date'],
+							  'series_time' => $seriesData['series_time'],
+							  'modality' => $seriesData['modality'],
+							  'image_number' => $seriesData['image_number'],
+							  'series_description' => $seriesData['series_description']);
 	}
 
-	$pdo = null;
+	echo json_encode($seriesList);
+}
+catch (PDOException $e)
+{
+	var_dump($e->getMessage());
+}
+$pdo = null;
+
 ?>
