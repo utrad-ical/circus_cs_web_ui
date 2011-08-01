@@ -437,7 +437,7 @@ $(function(){
 								<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$j+1}</td>
 								<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$modalityArr[$j]}</td>
 							{/if}
-							<td>{$seriesFilterArr[$j][$i]}</td>
+							<td class="al-l">{$seriesFilterArr[$j][$i]}</td>
 						</tr>
 					{/section}
 				{/section}

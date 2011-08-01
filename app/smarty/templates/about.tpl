@@ -115,7 +115,7 @@ A plug-in development kit will be released in the winter 2011.</p>
 	<ul>
 		{foreach from=$pluginData item=item}
 			<li>{$item.plugin_name|escape} v.{$item.version|escape} (installed in {$item.install_dt})
-			<a href="plugin_info.php?pluginName='{$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
+			<a href="plugin_info.php?pluginName={$item.plugin_name|escape}&version={$item.version|escape}">detail</a>
 		{/foreach}
 	</ul>
 </div>

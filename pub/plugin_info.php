@@ -1,317 +1,228 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<title>Plug-in information</title>
-
-<link rel="stylesheet" type="text/css" href="css/base_style.css">
-
-<script type="text/javascript" src="jq/jquery.min.js"></script>
-<script type="text/javascript" src="js/search_condition.js"></script>
-
-<script language="Javascript">;
-<!--
-$(function(){
-
-	$("#cadMenu").change(function(){
-
-		var tmp = jQuery("#cadMenu").val().split('^');
-		var address = 'plugin_info.php?cadName=' + tmp[0] + '&version=' + tmp[1];
-
-		location.href = address;
-
-	});
-});
-
--->
-</script>
-</head>
-
-<body bgcolor=#ffffff>
-<form id="form1" name="form1">
-
-<div class="listTitle">Plug-in information</div>
-<div style="font-size:5px;">&nbsp;</div>
-<!-- <div style="font-size:16px;">Plug-in name:&nbsp; -->
-
 <?php
+require_once('common.php');
+Auth::checkSession();
 
-	include ('common.php');
-	Auth::checkSession();
+$smarty = new SmartyEx();
 
-	//--------------------------------------------------------------------------------------------------------
-	// Import $_REQUEST variables
-	//--------------------------------------------------------------------------------------------------------
-	$pluginName = (isset($_REQUEST['pluginName'])) ? $_REQUEST['pluginName'] : "";
-	$version = (isset($_REQUEST['version'])) ? $_REQUEST['version'] : "";
-	//--------------------------------------------------------------------------------------------------------
+try
+{
+	//------------------------------------------------------------------------------------------------------------------
+	// Import $_GET variables and validation
+	//------------------------------------------------------------------------------------------------------------------
+	$params = array(); 
+	$validator = new FormValidator();
 
-	$userID = $_SESSION['userID'];
+	$validator->addRules(array(
+		"pluginName" => array(
+			"label" => 'Plug-in name',
+			"type" => "cadname",
+			"required" => true),
+		"version" => array(
+			"label" => 'version',	
+			"type" => "version",
+			"required" => true)
+		));
 
-	try
+	if($validator->validate($_GET))
 	{
-		// Connect to SQL Server
-		$pdo = DBConnector::getConnection();
+		$params += $validator->output;
+	}
+	else
+	{
+		throw new Exception (implode('<br/>', $validator->errors));
+	}
 
-		//$stmt = $pdo->prepare("SELECT plugin_name, version FROM cad_master ORDER BY exec_flg DESC, plugin_name ASC, version ASC");
-		//$stmt->execute();
+	$user = Auth::currentUser();
+	$params['userID'] = $user->user_id;
+	//------------------------------------------------------------------------------------------------------------------
 
-		//$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$pdo = DBConnector::getConnection();
 
-		// pull-down menu
-		//echo '<select id="cadMenu" name="cadMenu">';
+	// Description, input type
+	$sqlStr = "SELECT pm.plugin_id, pm.type, cm.input_type, pm.description"
+			. " FROM plugin_master pm, plugin_cad_master cm"
+			. " WHERE cm.plugin_id=pm.plugin_id"
+			. " AND pm.plugin_name=?"
+			. " AND pm.version=?";
+	$condArr = array($params['pluginName'], $params['version']);
 
-		//echo '<option value="^" selected></option>';
+	$result = DBConnector::query($sqlStr, $condArr, 'ARRAY_ASSOC');
+	
+	$params['pluginID']    = $result['plugin_id'];
+	$params['pluginType']  = $result['type'];
+	$params['inputType']   = $result['input_type'];
+	$params['description'] = $result['description'];
+	
+	// Get required CAD series infomation from ruleset
+	$sqlStr = "SELECT volume_id, ruleset FROM plugin_cad_series"
+			. " WHERE plugin_id=?"
+			. " ORDER BY volume_id ASC";
+	$ruleList = DBConnector::query($sqlStr, array($params['pluginID']), 'ALL_ASSOC');
+	$seriesNum = (count($ruleList) > 0) ? count($ruleList) : 0;
+	
+	$modalityArr       = array();
+	$seriesFilterArr  = array();
+	$selectedSrNumArr = array();
 
-		//foreach($result as $item)
-		//{
-		//	echo '<option value="' . $item['plugin_name'] . '^' . $item['version'] . '"';
-		//	if($item['plugin_name'] == $cadName && $item['version'] == $version)  echo ' selected';
-		//	echo '>';
-		//	echo $item['plugin_name'] . ' v.' . $item['version'];
-		//	echo '</option>';
-		//}
-		//echo '</select>';
-
-		//echo '</div>';
-		//echo '</form>';
-		//echo '<div style="font-size:5px;">&nbsp;</div>';
-		//echo '<hr>';
-
-		$seriesList = array();
-		$descriptionNumArr = array();
-
-		if($cadName != "" && $version != "")
+	for($k = 0; $k < $seriesNum; $k++)
+	{
+		$ruleSet = json_decode($ruleList[$k]['ruleset'], true);
+		$seriesFilterNumArr[$k] = 0;
+					
+		foreach($ruleSet as $rules)
 		{
-			$condArr = array($cadName, $version);
+			$ruleFilterGroup = $rules['filter']['group'];
+			$ruleFilterMembers = $rules['filter']['members'];
 
-			// Description, input type
-			$stmt = $pdo->prepare("SELECT * FROM plugin_cad_master WHERE plugin_name=? AND version=?");
-			$stmt->execute($condArr);
+			$parsedRules = array();
 
-			$result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-			$inputType   = $result['input_type'];
-			$resultType  = $result['result_type'];
-			$description = $result['description'];
-
-			// Series info
-			$sqlStr = "SELECT DISTINCT volume_id, modality FROM plugin_cad_series"
-					. " WHERE plugin_name=? AND version=?"
-					. " ORDER BY volume_id ASC;";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute($condArr);
-
-			$cnt = 0;
-
-			while($result = $stmt->fetch(PDO::FETCH_NUM))
+			foreach($ruleFilterMembers as $ruleFilter)
 			{
-				$volumeID = $result[0];
-				$modality = $result[1];
-
-				$sqlStr = "SELECT series_description, min_slice, max_slice FROM plugin_cad_series"
-						. " WHERE plugin_name=? AND version=?"
-						. " AND volume_id=? ORDER BY series_description DESC;";
-
-				$stmtDescription = $pdo->prepare($sqlStr);
-				$stmtDescription->execute(array($cadName, $version, $volumeID));
-
-
-				while($resultDescription = $stmtDescription->fetch(PDO::FETCH_NUM))
+				if($ruleFilter['key'] == 'modality')
 				{
-					if(!($resultDescription[0] == '(default)'
-					      && $resultDescription[1] == 0 && $resultDescription[2] == 0))
-					{
-						array_push($seriesList, array( 'volumeID'    => $volumeID,
-						                               'modality'    => $modality,
-				                                       'description' => $resultDescription[0],
-													   'minSlice'    => $resultDescription[1],
-													   'maxSlice'    => $resultDescription[2]));
-						$cnt++;
-					}
+					$modalityArr[$k] = $ruleFilter['value'];
 				}
-				array_push($descriptionNumArr, $cnt);
-			}
-			$seriesNum = count($descriptionNumArr);
-
-			// Executed cases
-			$stmt = $pdo->prepare("SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list WHERE plugin_name=? AND version=?");
-			$stmt->execute($condArr);
-			$result = $stmt->fetch(PDO::FETCH_NUM);
-			$caseNum = $result[0];
-			$oldestDate = substr($result[1], 0, 10);
-
-			// Evaluation
-			$evalNumConsensual = $tpNumConsensual = $fnNumConsensual = 0;
-			$missedTPNum = $knownTPNum = $fnNumPersonal = 0;
-
-			if($caseNum > 0 && $resultType == 1)
-			{
-				// Consensual based
-				$sqlStr = "SELECT COUNT(*)"
-					    . " FROM executed_plugin_list el, lesion_classification lf"
-					    . " WHERE el.plugin_name=? AND el.version=?"
-					    . " AND lf.job_id=el.job_id"
-					    . " AND lf.is_consensual ='t'"
-					    . " AND lf.interrupted ='f'";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($condArr);
-
-				$evalNumConsensual = $stmt->fetchColumn();
-				if($evalNumConsensual == "")  $evalNumConsensual = 0;
-
-				$sqlStr = "SELECT COUNT(*)"
-				        . " FROM executed_plugin_list el, lesion_classification lf"
-						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND lf.job_id=el.job_id"
-						. " AND lf.is_consensual ='t'"
-						. " AND lf.evaluation>=1"
-						. " AND lf.interrupted ='f'";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($condArr);
-
-				$tpNumConsensual = $stmt->fetchColumn();
-				if($tpNumConsensual == "")  $tpNumConsensual = 0;
-
-				$sqlStr = "SELECT SUM(fn.false_negative_num)"
-						. " FROM executed_plugin_list el, fn_count fn"
-						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND fn.job_id=el.job_id"
-						. " AND fn.is_consensual ='t'"
-						. " AND fn.status>=1";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($condArr);
-
-				$fnNumConsensual = $stmt->fetchColumn();
-				if($fnNumConsensual == "")  $fnNumConsensual = 0;
-
-				array_push($condArr, $userID);
-
-				// Personal based
-				$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el, lesion_classification lf"
-						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND lf.job_id=el.job_id"
-						. " AND lf.entered_by=?"
-						.  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
-						.  " GROUP BY lf.evaluation;";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($condArr);
-
-				while($result = $stmt->fetch(PDO::FETCH_NUM))
+				else
 				{
-					if($result[0] == 1)       $knownTPNum  += $result[1];
-					else if($result[0] == 2)  $missedTPNum += $result[1];
-				}
-
-				$sqlStr = "SELECT SUM(fn.false_negative_num)"
-						. " FROM executed_plugin_list el, fn_count fn"
-						. " WHERE el.plugin_name=? AND el.version=?"
-						. " AND fn.job_id=el.job_id"
-						. " AND fn.entered_by=?"
-						. " AND fn.is_consensual ='f'"
-						. " AND fn.status>=1";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($condArr);
-
-				$fnNumPersonal = $stmt->fetchColumn();
-				if($fnNumConsensual == "")  $fnNumPersonal = 0;
-			}
-
-			//---------------------------------------------------------------------------------------------------
-			// Show plug-in information
-			//---------------------------------------------------------------------------------------------------
-			echo '<div style="font-size:7px;">&nbsp;</div>';
-			echo '<div style="font-size:16px; margin:5px;">';
-			echo '<b>Plug-in name: </b>' . $cadName . '<br>';
-			echo '<b>Version: </b>' . $version . '<br>';
-			echo '<b>Description: </b>' . $description . '<br>';
-
-			echo '<b>No. of executed cases: </b>' . $caseNum;
-			if($caseNum > 0)  echo ' (since ' . $oldestDate . ')';
-			echo '</div>';
-
-			echo '<div style="font-size:7px;">&nbsp;</div>';
-			echo '<div style="font-size:16px; margin-left:5px;"><b>Required DICOM series</b></div>';
-
-			echo '<div style="font-size:14px; margin-left:15px;">';
-			echo '<table border="1">';
-			echo '<tr>';
-			echo '<th>Series</th><th>Modality</th><th>Condition</th>';
-			echo '</tr>';
-
-			$cnt = 0;
-
-			for($j=0; $j<$seriesNum; $j++)
-			{
-				for($i=$cnt; $i<$cnt + $descriptionNumArr[$j]; $i++)
-				{
-					echo '<tr>';
-
-					if($i==$cnt)
-					{
-						echo '<td';
-						if($descriptionNumArr[$j]>1) echo ' rowspan=' . $descriptionNumArr[$j];
-						echo ' align=center>' . $j . '</td>';
-						echo '<td';
-						if($descriptionNumArr[$j]>1) echo ' rowspan=' . $descriptionNumArr[$j];
-						echo ' align=center>' . $seriesList[$i]['modality'] . '</td>';
-					}
-
-					if($seriesList[$i]['description'] == '(default)')
-					{
-						echo '<td>#image: ' .  $seriesList[$i]['minSlice'] . '-' . $seriesList[$i]['maxSlice'] . '</td>';
-					}
-					else
-					{
-						echo '<td>series description: ' . $seriesList[$i]['description'] . '</td>';
-					}
-					echo '</tr>';
-				}
-				$cnt += $descriptionNumArr[$j];
-			}
-
-			echo '</table>';
-			echo '</div>';
-
-			if($caseNum > 0 && $resultType == 1)
-			{
-				echo '<div style="font-size:7px;">&nbsp;</div>';
-
-				if($evalNumConsensual > 0)
-				{
-					echo '<div style="font-size:16px; margin-left:5px;"><b>Evaluation</b> (Consensual feedback)</div>';
-					echo '<div style="font-size:15px; margin-left:15px; margin-bottom:5px;">';
-					echo '<b>No. of TP: </b>' . $tpNumConsensual . '<br>';
-					echo '<b>No. of FN: </b>' . $fnNumConsensual . '<br>';
-					echo '</div>';
-				}
-
-				if($missedTPNum > 0 || $knownTPNum > 0 || $fnNumPersonal > 0)
-				{
-					echo '<div style="font-size:16px; margin:5px;"><b>Evaluation</b> (by ' . $userID . ')</div>';
-					echo '<div style="font-size:15px; margin-left:15px; margin-bottom:5px;">';
-					echo '<b>No. of known TP: </b>' . $knownTPNum . '<br>';
-					echo '<b>No. of missed TP: </b>' . $missedTPNum . '<br>';
-					echo '<b>No. of FN: </b>' . $fnNumPersonal . '<br>';
-					echo '</div>';
+					$parsedRules[] = $ruleFilter['key']
+									. $ruleFilter['condition']
+									. $ruleFilter['value'];
 				}
 			}
-			//---------------------------------------------------------------------------------------------------
+			$seriesFilterArr[$k][$seriesFilterNumArr[$k]++] = implode(', ', $parsedRules)
+															. ' (' . $ruleFilterGroup . ')';
 		}
 	}
-	catch (PDOException $e)
-	{
-    	var_dump($e->getMessage());
-	}
-	$pdo = null;
-?>
 
-</body>
-</html>
+	// Executed cases
+	$sqlStr = "SELECT MIN(executed_at)"
+			. " FROM executed_plugin_list"
+			. " WHERE plugin_id=?";
+	$params['oldestDate'] = substr(DBConnector::query($sqlStr, array($params['pluginID']), 'SCALAR'), 0, 10);
+
+	$sqlStr = "SELECT status, COUNT(*)"
+			. " FROM executed_plugin_list"
+			. " WHERE plugin_id=?"
+			. " GROUP BY status";
+	$result = DBConnector::query($sqlStr, array($params['pluginID']), 'ALL_NUM');
+
+	$caseNum = array_fill(0, 3, 0);
+
+	foreach($result as $r)
+	{
+		switch($r[0])
+		{
+			case -1:  $caseNum[1]  = $r[1];	break;
+			case  1:  $caseNum[2] += $r[1];	break;
+			case  2:  $caseNum[2] += $r[1];	break;
+			case  3:  $caseNum[2] += $r[1];	break;
+			case  4:  $caseNum[0]  = $r[1];	break;
+		}
+	}
+
+	// TODO: Rewrote summary of feedback evaluation
+	//$evalNumConsensual = $tpNumConsensual = $fnNumConsensual = 0;
+	//$missedTPNum = $knownTPNum = $fnNumPersonal = 0;
+
+	//if($caseNum > 0 && $resultType == 1)
+	//{
+	//	// Consensual based
+	//	$sqlStr = "SELECT COUNT(*)"
+	//		    . " FROM executed_plugin_list el, lesion_classification lf"
+	//		    . " WHERE el.plugin_name=? AND el.version=?"
+	//		    . " AND lf.job_id=el.job_id"
+	//		    . " AND lf.is_consensual ='t'"
+	//		    . " AND lf.interrupted ='f'";
+
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->execute($condArr);
+
+	//	$evalNumConsensual = $stmt->fetchColumn();
+	//	if($evalNumConsensual == "")  $evalNumConsensual = 0;
+
+	//	$sqlStr = "SELECT COUNT(*)"
+	//	        . " FROM executed_plugin_list el, lesion_classification lf"
+	//			. " WHERE el.plugin_name=? AND el.version=?"
+	//			. " AND lf.job_id=el.job_id"
+	//			. " AND lf.is_consensual ='t'"
+	//			. " AND lf.evaluation>=1"
+	//			. " AND lf.interrupted ='f'";
+
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->execute($condArr);
+
+	//	$tpNumConsensual = $stmt->fetchColumn();
+	//	if($tpNumConsensual == "")  $tpNumConsensual = 0;
+
+	//	$sqlStr = "SELECT SUM(fn.false_negative_num)"
+	//			. " FROM executed_plugin_list el, fn_count fn"
+	//			. " WHERE el.plugin_name=? AND el.version=?"
+	//			. " AND fn.job_id=el.job_id"
+	//			. " AND fn.is_consensual ='t'"
+	//			. " AND fn.status>=1";
+
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->execute($condArr);
+
+	//	$fnNumConsensual = $stmt->fetchColumn();
+	//	if($fnNumConsensual == "")  $fnNumConsensual = 0;
+
+	//	array_push($condArr, $userID);
+
+	//	// Personal based
+	//	$sqlStr = "SELECT lf.evaluation, COUNT(*) FROM executed_plugin_list el, lesion_classification lf"
+	//			. " WHERE el.plugin_name=? AND el.version=?"
+	//			. " AND lf.job_id=el.job_id"
+	//			. " AND lf.entered_by=?"
+	//			.  " AND lf.is_consensual ='f' AND lf.interrupted='f'"
+	//			.  " GROUP BY lf.evaluation;";
+
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->execute($condArr);
+
+	//	while($result = $stmt->fetch(PDO::FETCH_NUM))
+	//	{
+	//		if($result[0] == 1)       $knownTPNum  += $result[1];
+	//		else if($result[0] == 2)  $missedTPNum += $result[1];
+	//	}
+
+	//	$sqlStr = "SELECT SUM(fn.false_negative_num)"
+	//			. " FROM executed_plugin_list el, fn_count fn"
+	//			. " WHERE el.plugin_name=? AND el.version=?"
+	//			. " AND fn.job_id=el.job_id"
+	//			. " AND fn.entered_by=?"
+	//			. " AND fn.is_consensual ='f'"
+	//			. " AND fn.status>=1";
+
+	//	$stmt = $pdo->prepare($sqlStr);
+	//	$stmt->execute($condArr);
+
+	//	$fnNumPersonal = $stmt->fetchColumn();
+	//	if($fnNumConsensual == "")  $fnNumPersonal = 0;
+	//}
+		
+	//--------------------------------------------------------------------------------------------------------------
+	// Settings for Smarty
+	//--------------------------------------------------------------------------------------------------------------
+	$smarty->assign('caseNum',             $caseNum);
+	
+	$smarty->assign('seriesNum',           $seriesNum);
+	$smarty->assign('modalityArr',         $modalityArr);
+	$smarty->assign('seriesFilterArr',     $seriesFilterArr);
+	$smarty->assign('seriesFilterNumArr',  $seriesFilterNumArr);
+	//--------------------------------------------------------------------------------------------------------------
+}
+catch(PDOException $e)
+{
+	$params['errorMessage'] = $e->getMessage();
+}
+catch(Exception $e)
+{
+	$params['errorMessage'] = $e->getMessage();
+}
+$pdo = null;
+
+$smarty->assign('params', $params);
+$smarty->display('plugin_info.tpl');
+
+?>
