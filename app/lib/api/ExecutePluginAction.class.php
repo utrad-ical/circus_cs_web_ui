@@ -35,7 +35,7 @@ class ExecutePluginAction extends ApiAction
 
 		// Get rule
 		$this->rule = self::check_register($params);
-		if (!$this->rule) {
+		if (count($this->rule) != count($params['seriesUID'])) {
 			throw new ApiException("ruleset matching error.", ApiResponse::STATUS_ERR_SYS);
 		}
 
@@ -89,7 +89,7 @@ class ExecutePluginAction extends ApiAction
 
 		// Check ruleset
 		$filter = new SeriesFilter();
-		$retrule = false;
+		$retrule = array();
 
 		for ($vid = 0; $vid < count($seriesUIDArr); $vid++)
 		{
@@ -119,9 +119,10 @@ class ExecutePluginAction extends ApiAction
 				$ret = $filter->processRuleSets($series_data, $rulearr);
 
 				if ($ret) {
-					$retrule = $ret;
+					$retrule[] = $ret;
 				} else {
-					$retrule = false;
+					break;
+					//$retrule = false;
 				}
 			}
 		}
@@ -262,9 +263,9 @@ class ExecutePluginAction extends ApiAction
 							. " VALUES (?, ?, ?, ?, ?, ?)";
 
 					$sqlParams = array($jobID, $i, $sidArr[$i][0]);
-					$sqlParams[] = $this->rule['start_img_num'];
-					$sqlParams[] = $this->rule['end_img_num'];
-					$sqlParams[] = $this->rule['required_private_tags'];
+					$sqlParams[] = $this->rule[$i]['start_img_num'];
+					$sqlParams[] = $this->rule[$i]['end_img_num'];
+					$sqlParams[] = $this->rule[$i]['required_private_tags'];
 
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
