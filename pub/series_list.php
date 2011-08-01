@@ -21,18 +21,18 @@
 			$validator->addRules(array(
 				"studyInstanceUID" => array(
 					"type" => "uid",
-					"required" => true,
-					"errorMes" => "URL is incorrect.")));
+					"required" => true)
+				));
 		}
 		else
 		{
 			$validator->addRules(array(
 				"filterPtID" => array(
 					"type" => "pgregex",
-					"errorMes" => "'Patient ID' is invalid."),
+					"label" => 'Patient ID'),
 				"filterPtName" => array(
 					"type" => "pgregex",
-					"errorMes" => "'Patient name' is invalid."),
+					"label" => 'Patient name'),
 				"filterSex" => array(
 					"type" => "select",
 					"options" => array('M', 'F', 'all'),
@@ -41,11 +41,11 @@
 				"filterAgeMin" => array(
 					'type' => 'int',
 					'min' => '0',
-					'errorMes' => "'Age' is invalid."),
+					'label' => 'Age (min)'),
 				"filterAgeMax" => array(
 					'type' => 'int',
 					'min' => '0',
-					'errorMes' => "'Age' is invalid.")
+					'label' => 'Age (max)')
 				));
 		}
 
@@ -54,13 +54,13 @@
 			$validator->addRules(array(
 				"srDateFrom" => array(
 					"type" => "date",
-					"errorMes" => "'Series date' is invalid."),
+					"label" => 'Series date'),
 				"srDateTo" => array(
 					"type" => "date",
-					"errorMes" => "'Series date' is invalid."),
+					"label" => 'Series date'),
 				"srTimeTo" => array(
 					"type" => "time",
-					"errorMes" => "'Series time' is invalid.")
+					"label" => 'Series time')
 				));
 		}
 
@@ -72,10 +72,10 @@
 				"otherwise" => "all"),
 			"filterSrDescription"=> array(
 				"type" => "pgregex",
-				"errorMes" => "'Series description' is invalid."),
+				"label" => 'Series description'),
 			"filterTag"=> array(
 				"type" => "pgregex",
-				"errorMes" => "'Tag' is invalid."),
+				"label" => 'Tag'),
 			"orderCol" => array(
 				"type" => "select",
 				"options" => array('PatientID','Name','Age','Sex','SeriesID',
@@ -154,11 +154,7 @@
 						. " FROM patient_list pt, study_list st"
 						. " WHERE st.study_instance_uid=? AND pt.patient_id=st.patient_id";
 
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $params['studyInstanceUID']);
-				$stmt->execute();
-
-				$result = $stmt->fetch(PDO::FETCH_ASSOC);
+				$result = DBConnector::query($sqlStr, array($params['studyInstanceUID']), 'ARRAY_ASSOC');
 
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
@@ -178,7 +174,7 @@
 
 				if($params['filterSex'] != "M" && $params['filterSex'] != "F")  $params['filterSex'] = "all";
 
-				$sqlCondArray[] = "sr.study_instance_uid=?";
+				$sqlCondArray[] = "study_instance_uid=?";
 				$sqlParams[] = $params['studyInstanceUID'];
 				$addressParams['mode'] = 'study';
 				$addressParams['studyInstanceUID'] = $params['studyInstanceUID'];
@@ -194,7 +190,7 @@
 					}
 
 					// Search by regular expression
-					$sqlCondArray[] = "pt.patient_id~*?";
+					$sqlCondArray[] = "patient_id~*?";
 					$sqlParams[] = $patientID;
 					$addressParams['filterPtID'] = $params['filterPtID'];
 				}
@@ -202,14 +198,14 @@
 				if($params['filterPtName'] != "")
 				{
 					// Search by regular expression
-					$sqlCondArray[] = "pt.patient_name~*?";
+					$sqlCondArray[] = "patient_name~*?";
 					$sqlParams[] = $params['filterPtName'];
 					$addressParams['filterPtName'] = $params['filterPtName'];
 				}
 
 				if($params['filterSex'] == "M" || $params['filterSex'] == "F")
 				{
-					$sqlCondArray[] = "pt.sex=?";
+					$sqlCondArray[] = "sex=?";
 					$sqlParams[] = $params['filterSex'];
 					$addressParams['filterSex'] = $params['filterSex'];
 				}
@@ -217,7 +213,7 @@
 				if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != ""
 				   && $params['filterAgeMin'] == $params['filterAgeMax'])
 				{
-					$sqlCondArray[] = "st.age=?";
+					$sqlCondArray[] = "age=?";
 					$sqlParams[] = $params['filterAgeMin'];
 					$addressParams['filterAgeMin'] = $params['filterAgeMin'];
 					$addressParams['filterAgeMax'] = $params['filterAgeMax'];
@@ -226,14 +222,14 @@
 				{
 					if($params['filterAgeMin'] != "")
 					{
-						$sqlCondArray[] = "?<=st.age";
+						$sqlCondArray[] = "?<=age";
 						$sqlParams[] = $params['filterAgeMin'];
 						$addressParams['filterAgeMin'] = $params['filterAgeMin'];
 					}
 
 					if($params['filterAgeMax'] != "")
 					{
-						$sqlCondArray[] = "st.age<=?";
+						$sqlCondArray[] = "age<=?";
 						$sqlParams[] = $params['filterAgeMax'];
 						$addressParams['filterAgeMax'] = $params['filterAgeMax'];
 					}
@@ -245,7 +241,7 @@
 				if($params['srDateFrom'] != "" && $params['srDateTo'] != ""
 				   && $params['srDateFrom'] == $params['srDateTo'])
 				{
-					$sqlCondArray[] = "sr.series_date=?";
+					$sqlCondArray[] = "series_date=?";
 					$sqlParams[] = $params['srDateFrom'];
 					$addressParams['srDateFrom'] = $params['srDateFrom'];
 					$addressParams['srDateTo'] = $params['srDateTo'];
@@ -254,7 +250,7 @@
 				{
 					if($params['srDateFrom'] != "")
 					{
-						$sqlCondArray[] = "?<=sr.series_date";
+						$sqlCondArray[] = "?<=series_date";
 						$sqlParams[] = $params['srDateFrom'];
 						$addressParams['srDateFrom'] = $params['srDateFrom'];
 					}
@@ -266,14 +262,14 @@
 
 						if($params['srTimeTo'] != "")
 						{
-							$sqlCondArray[] = "(sr.series_date<? OR (sr.series_date=? AND sr.series_time<=?))";
+							$sqlCondArray[] = "(series_date<? OR (series_date=? AND series_time<=?))";
 							$sqlParams[] = $params['srDateTo'];
 							$sqlParams[] = $params['srTimeTo'];
 							$addressParams['srTimeTo'] = $params['srTimeTo'];
 						}
 						else
 						{
-							$sqlCondArray[] = "sr.series_date<=?";
+							$sqlCondArray[] = "series_date<=?";
 						}
 					}
 				}
@@ -281,7 +277,7 @@
 
 			if($params['filterModality'] != "" && $params['filterModality'] != "all")
 			{
-				$sqlCondArray[] = "sr.modality=?";
+				$sqlCondArray[] = "modality=?";
 				$sqlParams[] = $params['filterModality'];
 				$addressParams['filterModality'] = $params['filterModality'];
 			}
@@ -289,21 +285,19 @@
 			if($params['filterSrDescription'] != "")
 			{
 				// Search by regular expression
-				$sqlCondArray[] = "sr.series_description~*?";
+				$sqlCondArray[] = "series_description~*?";
 				$sqlParams[] = $params['filterSrDescription'];
 				$addressParams['filterSrDescription'] = $params['filterSrDescription'];
 			}
 
 			if($params['filterTag'] != "")
 			{
-			 	$sqlCondArray[] = "sr.sid IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=3 AND tag~*?)";
+			 	$sqlCondArray[] = "series_sid IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=3 AND tag~*?)";
 				$sqlParams[] = $params['filterTag'];
 				$addressParams['filterTag'] = $params['filterTag'];
 			}
 
-			$sqlCondArray[] = "st.study_instance_uid=sr.study_instance_uid";
-			$sqlCondArray[] = "pt.patient_id=st.patient_id";
-			$sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
+			$sqlCond = (count($sqlCondArray) > 0) ? sprintf(" WHERE %s", implode(' AND ', $sqlCondArray)) : "";
 			//----------------------------------------------------------------------------------------------------------
 
 			//----------------------------------------------------------------------------------------------------------
@@ -313,16 +307,16 @@
 
 			switch($params['orderCol'])
 			{
-				case "PatientID":	$orderColStr = 'pt.patient_id '         . $params['orderMode'];  break;
-				case "Name":		$orderColStr = 'pt.patient_name '       . $params['orderMode'];  break;
-				case "Age":			$orderColStr = 'st.age '                . $params['orderMode'];  break;
-				case "Sex":			$orderColStr = 'pt.sex '                . $params['orderMode'];  break;
-				case "SeriesID":	$orderColStr = 'sr.series_number '      . $params['orderMode'];  break;
-				case "Modality":	$orderColStr = 'sr.modality '           . $params['orderMode'];  break;
-				case "ImgNum":		$orderColStr = 'sr.image_number '       . $params['orderMode'];  break;
-				case "SeriesDesc":	$orderColStr = 'sr.series_description ' . $params['orderMode'];  break;
+				case "PatientID":	$orderColStr = 'patient_id '         . $params['orderMode'];  break;
+				case "Name":		$orderColStr = 'patient_name '       . $params['orderMode'];  break;
+				case "Age":			$orderColStr = 'age '                . $params['orderMode'];  break;
+				case "Sex":			$orderColStr = 'sex '                . $params['orderMode'];  break;
+				case "SeriesID":	$orderColStr = 'series_number '      . $params['orderMode'];  break;
+				case "Modality":	$orderColStr = 'modality '           . $params['orderMode'];  break;
+				case "ImgNum":		$orderColStr = 'image_number '       . $params['orderMode'];  break;
+				case "SeriesDesc":	$orderColStr = 'series_description ' . $params['orderMode'];  break;
 				default: // Date
-					$orderColStr = 'sr.series_date ' . $params['orderMode'] . ', sr.series_time ' . $params['orderMode'];
+					$orderColStr = 'series_date ' . $params['orderMode'] . ', series_time ' . $params['orderMode'];
 					$params['orderCol'] = ($params['mode'] == 'today') ? 'Time' : 'Date';
 					break;
 			}
@@ -339,7 +333,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			// count total number
 			//----------------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT COUNT(*) FROM patient_list pt, study_list st, series_list sr " . $sqlCond;
+			$sqlStr = "SELECT COUNT(*) FROM series_join_list" . $sqlCond;
 			$params['totalNum']     = DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 			$params['maxPageNum'] = ($params['showing'] == "all") ? 1 : ceil($params['totalNum'] / $params['showing']);
 			$params['startPageNum'] = max($params['pageNum'] - $PAGER_DELTA, 1);
@@ -349,10 +343,7 @@
 			//----------------------------------------------------------------------------------------------------------
 			// Set $data array
 			//----------------------------------------------------------------------------------------------------------
-			$sqlStr = 'SELECT sr.sid, st.study_instance_uid, sr.series_instance_uid, sr.series_number,'
-					. ' pt.patient_id, pt.patient_name, pt.sex, st.age, sr.series_date, sr.series_time,'
-					. ' sr.modality, sr.image_number, sr.series_description'
-					. ' FROM patient_list pt, study_list st, series_list sr '
+			$sqlStr = 'SELECT series_sid FROM series_join_list'
 					. $sqlCond . " ORDER BY " . $orderColStr;
 
 			if($params['showing'] != "all")
@@ -361,30 +352,22 @@
 				$sqlParams[] = $params['showing'];
 				$sqlParams[] = $params['showing'] * ($params['pageNum']-1);
 			}
+			$sidList = DBConnector::query($sqlStr, $sqlParams, 'ALL_COLUMN');
 
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute($sqlParams);
-
-			//var_dump($stmt);
-			//var_dump($sqlParams);
-
-			$rowNum = $stmt->rowCount();
+			$rowNum = count($sidList);
 			$params['startNum'] = ($rowNum == 0) ? 0 : $params['showing'] * ($params['pageNum']-1) + 1;
 			$params['endNum']   = ($rowNum == 0) ? 0 : $params['startNum'] + $rowNum - 1;
 
-			// Search executable or executed CAD software
-			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled, max(cs.series_description)"
+			// Get rulesets
+			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled, cs.ruleset"
 					. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
-					. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id=cm.plugin_id"
+					. " WHERE cm.plugin_id=pm.plugin_id"
+					. " AND cs.plugin_id=cm.plugin_id"
 					. " AND cs.volume_id=0"
-					. " AND cs.modality=?"
-					. " AND ((cs.series_description=?)"
-					. " OR (cs.series_description='(default)' AND cs.min_slice<=? AND cs.max_slice>=?))"
-					. " GROUP BY pm.plugin_name, pm.version, pm.exec_enabled, cm.label_order"
 					. " ORDER BY cm.label_order ASC";
+			$ruleList = DBConnector::query($sqlStr, NULL, 'ALL_ASSOC');
 
-			$stmtCADMaster = $pdo->prepare($sqlStr);
-
+			// SQL statement to search executed CAD software
 			$sqlStr = "SELECT el.job_id, el.status, el.executed_at"
 					. " FROM executed_plugin_list el, executed_series_list es, plugin_master pm"
 					. " WHERE pm.plugin_name=? AND pm.version=?"
@@ -393,94 +376,106 @@
 					. " AND es.volume_id=0"
 					. " AND es.series_sid=?"
 					. " ORDER BY el.job_id DESC";
-
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
-			while ($result = $stmt->fetch(PDO::FETCH_ASSOC))
+			$seriesFilter = new SeriesFilter();
+			
+			foreach($sidList as $sid)
 			{
-
-				$imgNum = $result['image_number'];
-
-				//------------------------------------------------------------------------------------------------------
-				// Setting of "CAD" column (pull-downmenu, [Exec] button, and [Result] button)
-				//------------------------------------------------------------------------------------------------------
-				$stmtCADMaster->execute(array($result['modality'], $result['series_description'], $imgNum, $imgNum));
-				//var_dump($stmt->errorInfo());
+				$s = new SeriesJoin();
+				$sdata = $s->find(array("series_sid" => $sid));
+				$seriesData = $sdata[0]->getData();
 
 				$cadNum = 0;
 				$cadColSettings = array();
-
-				while($resultCADMaster = $stmtCADMaster->fetch(PDO::FETCH_NUM))
+				
+				foreach($ruleList as $result)
 				{
-					$cadCondArr = array($resultCADMaster[0], $resultCADMaster[1], $result['sid']);
+					$ruleSet = json_decode($result['ruleset'], true);
 
-					$cadColSettings[$cadNum][0] = $resultCADMaster[0];
-					$cadColSettings[$cadNum][1] = $resultCADMaster[1];
-					$cadColSettings[$cadNum][2] = ($resultCADMaster[2]=='t') ? 1 : 0;
-					$cadColSettings[$cadNum][3] = 0;					// status of plugin-job job
-					$cadColSettings[$cadNum][4] = '';
-					$cadColSettings[$cadNum][5] = 0;
-					$cadColSettings[$cadNum][6] = $resultCADMaster[3];
-
-					$stmtCADExec->execute($cadCondArr);
-
-					if($stmtCADExec->rowCount() >= 1)
+					foreach($ruleSet as $rules)
 					{
-						$cadColSettings[$cadNum][3] = 1;
+						$matchFlg = 1;
+						
+						$ruleFilterGroup = $rules['filter']['group'];
+						$ruleFilterMembers = $rules['filter']['members'];
 
-						$execResult = $stmtCADExec->fetch(PDO::FETCH_NUM);
-
-						$cadColSettings[$cadNum][5] = $execResult[0];  // jobID
-						$cadColSettings[$cadNum][3] = $execResult[1];  // status
-						$tmpDate = $execResult[2];
-
-						// Set executed date or time (if successed)
-						if($cadColSettings[$cadNum][3] == $PLUGIN_SUCESSED)
+						foreach($ruleFilterMembers as $ruleFilter)
 						{
-							if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
+							if($ruleFilter['key'] == 'modality'
+								&& $ruleFilter['value'] != $seriesData['modality'])
 							{
-								$cadColSettings[$cadNum][4] = substr($tmpDate, 11);
-							}
-							else
-							{
-								$cadColSettings[$cadNum][4] = substr($tmpDate, 0, 10);
+								$matchFlg = 0;
 							}
 						}
-
 					}
+					
+					if($matchFlg == 1
+						&& $ret = $seriesFilter->processRuleSets($seriesData, $ruleSet))
+					{
+						$cadColSettings[$cadNum][0] = $result['plugin_name'];
+						$cadColSettings[$cadNum][1] = $result['version'];
+						$cadColSettings[$cadNum][2] = ($result['exec_enabled']=='t') ? 1 : 0;
+						$cadColSettings[$cadNum][3] = 0;					// status of plugin-job job
+						$cadColSettings[$cadNum][4] = '';
+						$cadColSettings[$cadNum][5] = 0;
 
-					$cadNum++;
+						$cadCondArr = array($result['plugin_name'], $result['version'], $sid);
+						$stmtCADExec->execute($cadCondArr);
 
-				} // end while
+						if($stmtCADExec->rowCount() >= 1)
+						{
+							$execResult = $stmtCADExec->fetch(PDO::FETCH_NUM);
+
+							$cadColSettings[$cadNum][5] = $execResult[0];  // jobID
+							$cadColSettings[$cadNum][3] = $execResult[1];  // status
+							$tmpDate = $execResult[2];
+
+							// Set executed date or time (if successed)
+							if($cadColSettings[$cadNum][3] == $PLUGIN_SUCESSED)
+							{
+								if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
+								{
+									$cadColSettings[$cadNum][4] = substr($tmpDate, 11);
+								}
+								else
+								{
+									$cadColSettings[$cadNum][4] = substr($tmpDate, 0, 10);
+								}
+							}
+						}
+						$cadNum++;
+					}
+				}
 				
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
-					$ptID   = PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']);
+					$ptID   = PinfoScramble::encrypt($seriesData['patient_id'], $_SESSION['key']);
 					$ptName = PinfoScramble::scramblePtName();
 				}
 				else
 				{
-					$ptID   = $result['patient_id'];
-					$ptName = $result['patient_name'];
+					$ptID   = $seriesData['patient_id'];
+					$ptName = $seriesData['patient_name'];
 				}
 
-				array_push($data, array($result['sid'],
-										$result['study_instance_uid'],
-										$result['series_instance_uid'],
+				array_push($data, array($seriesData['series_sid'],
+										$seriesData['study_instance_uid'],
+										$seriesData['series_instance_uid'],
 										$ptID,
 										$ptName,
-										$result['age'],
-										$result['sex'],
-										$result['series_date'],
-										$result['series_time'],
-										$result['series_number'],
-										$result['modality'],
-										$result['image_number'],
-										$result['series_description'],
+										$seriesData['age'],
+										$seriesData['sex'],
+										$seriesData['series_date'],
+										$seriesData['series_time'],
+										$seriesData['series_number'],
+										$seriesData['modality'],
+										$seriesData['image_number'],
+										$seriesData['series_description'],
 										$cadNum,
 										$cadColSettings,
-										PinfoScramble::encrypt($result['patient_id'], $_SESSION['key']),
-										PinfoScramble::encrypt($result['patient_name'], $_SESSION['key'])));
+										PinfoScramble::encrypt($seriesData['patient_id'], $_SESSION['key']),
+										PinfoScramble::encrypt($seriesData['patient_name'], $_SESSION['key'])));
 			}
 			//var_dump($data);
 			//----------------------------------------------------------------------------------------------------------

@@ -140,10 +140,10 @@ jq/ui/theme/jquery-ui.custom.css
 
 											<option value="{$item[14][$i][0]}^{$item[14][$i][1]}^{$item[14][$i][3]}^{$item[14][$i][4]}^{$item[14][$i][5]}"
 
-											{if $item[14][$i][2] && $optionFlg == 0 && $item[14][$i][6] == $item[11]}
+											{*{if $item[14][$i][2] && $optionFlg == 0 && $item[14][$i][6] == $item[11]}
 										 		selected="selected"
 								 				{assign var="optionFlg" value=1}
-											{/if}
+											{/if}*}
 											>
 											{$item[14][$i][0]} v.{$item[14][$i][1]}</option>
 										{/if}
