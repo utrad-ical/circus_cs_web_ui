@@ -152,7 +152,7 @@ abstract class Model implements Iterator
 		$tableAsSqlView = $class::$_tableAsSqlView;
 
 		if($tableAsSqlView)
-    		throw new BadMethodCallException('You can not save to SQL view');
+			throw new BadMethodCallException('You can not save to SQL view');
 
 		if ($this->_data[$pkey])
 		{
