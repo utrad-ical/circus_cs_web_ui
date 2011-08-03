@@ -143,7 +143,7 @@
 				$params['srDateFrom'] = $today;
 				$params['srDateTo']   = $today;
 
-				$sqlCondArray[] = "sr.series_date=?";
+				$sqlCondArray[] = "series_date=?";
 				$sqlParams[] = $params['srDateFrom'];
 				$addressParams['mode'] = 'today';
 			}
