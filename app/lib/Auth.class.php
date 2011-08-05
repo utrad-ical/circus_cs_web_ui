@@ -205,6 +205,7 @@ class Auth
 	 */
 	public static function createSession($user)
 	{
+		global $CIRCUS_CS_VERSION;
 		global $LOGIN_LOG;
 		global $SESSION_TIME_LIMIT;
 
