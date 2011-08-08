@@ -233,12 +233,17 @@ class ExecutePluginAction extends ApiAction
 				$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
 				$jobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
 
+				// Get policy ID
+				$sqlStr = "SELECT policy_id FROM plugin_result_policy"
+						. " WHERE policy_name = ?";
+				$policyID = DBConnector::query($sqlStr, array($resultPolicy), 'SCALAR');
+
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
-						. " (job_id, plugin_id, storage_id, status, exec_user, executed_at)"
-						. " VALUES (?, ?, ?, 1, ?, ?)";
+						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user, executed_at)"
+						. " VALUES (?, ?, ?, ?, 1, ?, ?)";
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($jobID, $pluginID, $storageID, $userID, $dstData['registeredAt']));
+				$stmt->execute(array($jobID, $pluginID, $storageID, $policyID, $userID, $dstData['registeredAt']));
 
 				// Register into "job_queue"
 				$sqlStr = "INSERT INTO job_queue"
