@@ -30,7 +30,7 @@ class PluginResultPolicy extends Model
 				$group_id = $group->group_id;
 			else
 				$group_id = $group;
-			if (array_search($group_id, $allow_groups))
+			if (array_search($group_id, $allow_groups) !== FALSE)
 				return true;
 		}
 		return false;
