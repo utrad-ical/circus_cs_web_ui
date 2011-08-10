@@ -56,7 +56,7 @@ $(function() {
 		</td>
 	</tr>
 	<tr>
-		<td>Data storages</td>
+		<td>Data storage</td>
 		<td>
 			<input type="button" value="config" class="form-btn"
 				onclick="location.href='data_storage_config.php';"/>
