@@ -30,7 +30,7 @@ try
 			'user_id' => array(
 				'label' => 'user ID',
 				'type' => 'string',
-				'regex' => '/^[_A-Za-z][_A-Za-z0-9]*$/',
+				'regex' => '/^[_A-Za-z][\-_A-Za-z0-9]*$/',
 				'errorMes' => 'Invalid user ID. Use only alphabets and numerals.'
 			),
 			'user_name' => array(
@@ -88,7 +88,7 @@ try
 			'user_id' => array(
 				'label' => 'user ID',
 				'type' => 'string',
-				'regex' => '/^[_A-Za-z][_A-Za-z0-9]*$/',
+				'regex' => '/^[_A-Za-z][\-_A-Za-z0-9]*$/',
 				'errorMes' => 'Invalid user ID. Use only alphabets and numerals.'
 			),
 			'ticket' => array('required' => true, 'type' => 'string')
@@ -191,7 +191,7 @@ try
 		$user->updateGroups($group_ids);
 		$pdo->commit();
 
-		$message = "User '$req[user_name]' was successfully updated.";
+		$message = "User '$req[user_id]' was successfully updated.";
 	}
 	else if ($req['mode'] == 'delete')
 	{
