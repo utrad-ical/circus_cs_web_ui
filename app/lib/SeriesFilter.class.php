@@ -112,7 +112,6 @@ class SeriesFilter {
 				return $cmp_target >= $value;
 			case '<=':
 				return $cmp_target <= $value;
-			case '<>':
 			case '!=':
 				return $cmp_target != $value;
 			case '*=': // contains

@@ -85,6 +85,16 @@ $(function() {
 				onclick="location.href='result_policy_config.php';">
 		</td>
 	</tr>
+
+	<tr>
+		<td>Series ruleset configuration</td>
+		<td>
+			<input type="button" value="config" class="form-btn"
+				onclick="location.href='series_ruleset_config.php';">
+		</td>
+	</tr>
+
+
 	{/if}
 
 	<tr>
