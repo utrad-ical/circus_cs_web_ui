@@ -17,6 +17,10 @@ $keys = array(
 		'value' => 'modality'
 	),
 	array(
+		'label' => 'series description',
+		'value' => 'series_description'
+	),
+	array(
 		'label' => 'number of images',
 		'value' => 'image_number'
 	)

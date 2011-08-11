@@ -118,22 +118,34 @@ $(function() {
 
 		function stringifyGroupNode(node)
 		{
-			var result = '';
+			var result = $('<span>').addClass('group-text');
 			for (var i = 0; i < node.members.length; i++)
 			{
 				if (i > 0)
-					result += ' ' + node.group + ' ';
-				result += stringifyNode(node.members[i], depth + 1);
+					result.append(
+						' ',
+						$('<span>').addClass('group-type-text').text(node.group),
+						' '
+					);
+				result.append(stringifyNode(node.members[i], depth + 1));
 			}
 			if (depth)
-				return '(' + result + ')';
-			else
-				return result;
+			{
+				result.prepend($('<span class="paren">(</span>'));
+				result.append($('<span class="paren">)</span>'));
+			}
+			return result;
 		}
 
 		function stringifyComparisonNode(node)
 		{
-			return node.key + ' ' + oph[node.condition].label + ' ' + node.value;
+			return $('<span>').addClass('comparison-text').append(
+				$('<span>').addClass('key-text').text(node.key),
+				' ',
+				$('<span>').addClass('condition-text').text(oph[node.condition].label),
+				' ',
+				$('<span>').addClass('value-text').text(node.value)
+			);
 		}
 
 		if (node.members instanceof Array)
@@ -168,12 +180,13 @@ $(function() {
 			$('#condition').append(createElementFromNode(currentRuleSet.filter));
 			$('#condition').change(function() {
 				currentRuleSet.filter = createNodeFromElement($('#condition > div'));
-				$('#rule').text(stringifyNode(currentRuleSet.filter));
+				$('#rule').empty().append(stringifyNode(currentRuleSet.filter));
 			}).change();
 		}
 		else
 		{
 			$('#condition').text('Select plugin and volume ID');
+			$('#rule').text('');
 		}
 	}
 
@@ -186,7 +199,7 @@ $(function() {
 		$.each(currentRuleSets, function(index, item) {
 			var li = $('<li>');
 			$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
-			$('<div>').addClass('rule-filter').text(stringifyNode(item.filter)).appendTo(li);
+			$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
 			li.appendTo('#rulesets');
 		});
 		refreshRuleSet();
@@ -243,48 +256,71 @@ $(function() {
 </script>
 
 <style type="text/css">
-#condition { border: 1px solid red; margin: 1em;}
+#selector-pane {
+	width: 300px;
+	background-color: silver;
+	float: left;
+	padding: 5px;
+}
 
-#rule { border: 1px solid green; margin: 1em; padding: 1em; }
+#editor-pane {
+	margin-left: 320px;
+}
+
+#condition {  }
+
+#rule {
+	font-size: 80%; color: gray;
+	margin: 10px 0 30px 10px;
+}
 
 .group-type { font-weight: bold; }
 
 .group-node {
 	border: 1px solid silver;
+	margin-top: 3px;
 }
 
 .group-node .group-node {
-	margin-left: 15px;
+	margin: 3px 0 3px 15px;
 }
 
 .comparison-node {
-	margin-left: 15px;
-	border: 1px solid silver;
+	padding-left: 15px;
+}
+.comparison-node:hover {
+	background-color: #eee;
+}
+
+.comparison-node .value {
+	width: 250px;
 }
 
 #rulesets li {
 	border: 1px solid gray;
-	border-radius: 5px;
+	border-radius: 0 5px 5px 5px;
 	background-color: #eee;
 	margin: 3px;
 }
 
 #rulesets li div.rule-no {
 	font-weight: bold;
-	width: 100px;
 	float: left;
 	background-color: gray;
 	color: white;
-	border-radius: 5px 0 0 5px;
-}
-#rulesets li div.rule-filter {
-	color: navy;
-	padding-left: 110px;
+	margin-right: 2em;
 }
 
 #rulesets li.active {
 	background-color: yellow;
 }
+
+.group-text { color: green; }
+.group-text .group-text { color: brown; }
+.group-text .group-text .group-text { color: orange; }
+.key-text { color: blue; }
+.value-text { color: black; font-weight: bold; }
+.condition-text { color: purple; }
 
 </style>
 
@@ -298,27 +334,35 @@ var keys = {$keys|@json_encode};
 {include file="header.tpl" head_extra=$smarty.capture.extra
 require=$smarty.capture.require body_class="spot"}
 
-<h2>Series Ruleset Config</h2>
+<h2>Series Ruleset Configuration</h2>
 
-Plugin:
-<select id="plugin-select">
-{foreach from=$plugins item=item}
-  <option value="{$item.id|escape}">{$item.name|escape}</option>
-{/foreach}
-</select>
-&gt;
-Volume ID:
-<select id="volume-id-select">
-</select>
+<div id="selector-pane">
+	<div>
+		Plugin:<br />
+		<select id="plugin-select">
+		{foreach from=$plugins item=item}
+		  <option value="{$item.id|escape}">{$item.name|escape}</option>
+		{/foreach}
+		</select>
+	</div>
 
-<ul id="rulesets">
-</ul>
+	<div>
+		Volume ID:<br />
+		<select id="volume-id-select">
+		</select>
+	</div>
 
-<input type="button" class="form-btn" value="Add" id="add-ruleset" />
-<input type="button" class="form-btn" value="Delete" id="delete-ruleset" />
+	<ul id="rulesets">
+	</ul>
+	<input type="button" class="form-btn" value="Add" id="add-ruleset" />
+	<input type="button" class="form-btn" value="Delete" id="delete-ruleset" />
+</div>
+<div id="editor-pane">
+	<h3>Condition</h3>
+	<div id="condition"></div>
+	<div id="rule"></div>
 
-<div id="condition">a</div>
-
-<div id="rule"></div>
+	<h3>Rule</h3>
+</div>
 
 {include file="footer.tpl"}
