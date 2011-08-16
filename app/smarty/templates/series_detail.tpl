@@ -1,9 +1,9 @@
 {capture name="require"}
-jq/ui/jquery-ui-1.7.3.min.js
+jq/ui/jquery-ui.min.js
 jq/jquery.blockUI.js
 js/search_panel.js
 js/edit_tags.js
-jq/ui/css/jquery-ui-1.7.3.custom.css
+jq/ui/theme/jquery-ui.custom.css
 jq/jquery.mousewheel.min.js
 js/jquery.imageviewer.js
 css/darkroom.css
@@ -11,7 +11,7 @@ css/darkroom.css
 
 {capture name="extra"}
 
-<script language="Javascript">
+<script type="text/javascript" language="Javascript">
 
 var sid = "{$series->sid|escape:javascript}";
 var seriesInstanceUID = "{$series->series_instance_uid|escape:javascript}";
@@ -133,7 +133,7 @@ $(function() {
 				<div id="download-panel">
 					<input id="download" value="Download volume data" type="button" class="form-btn"/>
 				</div>
-				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID"  value="{$series->series_instance_uid|escape}" />
+				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$series->series_instance_uid|escape}" />
 			</form>
 			{/if}
 		</div><!-- / .detail-panel END -->
