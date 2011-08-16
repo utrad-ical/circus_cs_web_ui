@@ -123,8 +123,9 @@ try
 	}
 	$dstData['windowLevel'] = $req['windowLevel'];
 	$dstData['windowWidth'] = $req['windowWidth'];
+	$dstData['sliceNumber'] = $req['imgNum'];
 
-	// Get slice number and slice location from dump data
+	// Get and slice location from dump data
 	$fp = @fopen($dumpFname, "r");
 	if($fp == null)
 		throw new Exception('Could not open dump file.');
@@ -134,18 +135,12 @@ try
 		$dumpContent = strtok("\r\n");
 		switch($dumpTitle)
 		{
-			case 'Img. No.':
-			case 'Image No.':
-				$dstData['sliceNumber'] = $dumpContent;
-				break;
 			case 'Slice location':
 				$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
 				break;
 		}
 	}
 	fclose($fp);
-	if (!isset($dstData['sliceNumber']))
-		throw new Exception('Could not determine slice number from dump file.');
 	if (!isset($dstData['sliceLocation']))
 		throw new Exception('Could not determine slice location from dump file.');
 
