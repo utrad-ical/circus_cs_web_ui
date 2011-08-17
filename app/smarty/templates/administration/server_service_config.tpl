@@ -60,19 +60,19 @@ $(function() {
 </h3>
 <table>
 	<tbody>
-		{if $item.dicom_storage_server}
+		{section name=cnt loop=$item.dicom_storage_server}
 		<tr class="panel storagePanel">
-			<td class="serviceName">DICOM Storage Server</td>
+			<td class="serviceName">DICOM Storage Server{if $smarty.section.cnt.index>0}{$smarty.section.cnt.iteration}{/if}</td>
 			<td class="serviceStatus themeColor" name="storageStatusStr"></td>
 			<td>
-				<input type="hidden" name="serviceName" value="{$storageServerName|escape}" />
+				<input type="hidden" name="serviceName" value="{$storageServerName|escape}{if $smarty.section.cnt.index>0}{$smarty.section.cnt.iteration}{/if}" />
 				<input type="hidden" name="ipAddress" value="{$item.ip_address|escape}" />
 				<input type="button" value="start" class="form-btn" disabled="disabled" />
 				<input type="button" value="stop"  class="form-btn" disabled="disabled" />
 				<input type="button" value="refresh" class="form-btn" />
 			</td>
 		</tr>
-		{/if}
+		{/section}
 		{if $item.plugin_job_manager>0}
 		<tr class="panel managerPanel">
 			<td class="serviceName">
