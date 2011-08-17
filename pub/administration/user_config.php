@@ -244,7 +244,7 @@ $dum = new User();
 $userList = array();
 $users = $dum->find(array(), array('order' => array('enabled DESC', 'user_id ASC')));
 foreach ($users as $user) {
-	if ($user->user_id == $DEFAULT_CAD_PREF_USER)
+	if ($user->user_name == $RESERVED_USER_NAME)
 		continue;
 	$item = $user->getData() ?: array();
 	$item['groups'] = array();
