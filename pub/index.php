@@ -36,6 +36,7 @@
 					header('location: home.php');
 					exit;
 				} else {
+					Auth::log_failure($_POST['userID'], md5($_POST['pswd']));
 					$message = 'Authentication credentials not accepted!!';
 					displayLoginPage($message);
 				}
