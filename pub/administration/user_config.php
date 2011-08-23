@@ -110,6 +110,8 @@ try
 		{
 			throw new Exception('Invalid page transition detected. Try again.');
 		}
+		if ($req['target'] == $DEFAULT_CAD_PREF_USER)
+			throw new Exception('This user ID is reserved for CIRCUS CS system.');
 	}
 
 	$currentUser = Auth::currentUser();
