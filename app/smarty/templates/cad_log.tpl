@@ -2,7 +2,6 @@
 jq/ui/jquery-ui.min.js
 js/search_panel.js
 js/list_tab.js
-js/radio-to-button.js
 jq/ui/theme/jquery-ui.custom.css
 {/capture}
 
