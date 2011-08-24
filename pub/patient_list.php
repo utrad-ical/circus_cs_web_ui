@@ -1,6 +1,7 @@
 <?php
 	include_once("common.php");
 	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::LIST_SEARCH);
 
 	try
 	{

@@ -35,6 +35,12 @@ class Auth
 	const CONSENSUAL_FEEDBACK_MODIFY = 'consensualFeedbackModify';
 
 	/**
+	 * Name of 'listSearch' privilege.
+	 * @var string
+	 */
+	const LIST_SEARCH = 'listSearch';
+
+	/**
 	 * Name of 'allStatisticsView' privilege.
 	 * @var string
 	 */
@@ -115,6 +121,10 @@ class Auth
 		array (
 			self::CONSENSUAL_FEEDBACK_MODIFY,
 			'(Not implemented) Unregister the consensual feedback.'
+		),
+		array (
+			self::LIST_SEARCH,
+			'Can search patient/study/series/CAD list.'
 		),
 		array (
 			self::ALL_STATISTICS_VIEW,

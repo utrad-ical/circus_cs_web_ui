@@ -1,7 +1,7 @@
 <?php
-
 	include_once('common.php');
 	Auth::checkSession();
+	Auth::purgeUnlessGranted(Auth::LIST_SEARCH);
 
 	try
 	{
@@ -379,7 +379,7 @@
 			$stmtCADExec = $pdo->prepare($sqlStr);
 
 			$seriesFilter = new SeriesFilter();
-			
+
 			foreach($sidList as $sid)
 			{
 				$s = new SeriesJoin();
@@ -388,7 +388,7 @@
 
 				$cadNum = 0;
 				$cadColSettings = array();
-				
+
 				foreach($ruleList as $result)
 				{
 					$ruleSet = json_decode($result['ruleset'], true);
@@ -396,7 +396,7 @@
 					foreach($ruleSet as $rules)
 					{
 						$matchFlg = 1;
-						
+
 						$ruleFilterGroup = $rules['filter']['group'];
 						$ruleFilterMembers = $rules['filter']['members'];
 
@@ -409,7 +409,7 @@
 							}
 						}
 					}
-					
+
 					if($matchFlg == 1
 						&& $ret = $seriesFilter->processRuleSets($seriesData, $ruleSet))
 					{
@@ -447,7 +447,7 @@
 						$cadNum++;
 					}
 				}
-				
+
 				if($_SESSION['anonymizeFlg'] == 1)
 				{
 					$ptID   = PinfoScramble::encrypt($seriesData['patient_id'], $_SESSION['key']);
