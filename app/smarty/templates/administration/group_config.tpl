@@ -22,7 +22,10 @@ $(function () {
 		$('input.privCheck', editor).each(function () {
 			var targetPriv = $(this).val();
 			var checked = group_data.privs.indexOf(targetPriv) >= 0;
-			$(this).attr('checked', checked ? 'checked' : '');
+			if (checked)
+				$(this).attr('checked', 'checked');
+			else
+				$(this).removeAttr('checked');
 		});
 		editingTarget = group_id;
 		$('#editor-header').text('Editing Gruop: ' + group_id);
