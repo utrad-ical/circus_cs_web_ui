@@ -2,6 +2,7 @@
 
 require_once("../common.php");
 Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
 $keys = array(
 	array(

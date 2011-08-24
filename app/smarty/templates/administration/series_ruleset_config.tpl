@@ -13,6 +13,8 @@ $(function() {
 	var currentRuleSets = null;
 	var currentRuleSet = null;
 
+	var hoveringElement = null;
+
 	var op = [
 		{op: '=', label: 'is'},
 		{op: '>', label: '>'},
@@ -35,17 +37,11 @@ $(function() {
 	{
 		function createElementFromGroupNode(node)
 		{
-			var elem = $('<div>').addClass('group-node');
+			var elem = $('<div>').addClass('group-node node');
 			var max = node.members.length;
+			groupSelect.clone().val(node.group).appendTo(elem);
 			for (var i = 0; i < max; i++)
 			{
-				if (i > 1)
-					$('<div>').addClass('group-type').text(node.group).appendTo(elem);
-				else if (i > 0)
-					groupSelect.clone().val(node.group).change(function (event) {
-						var me = $(event.target);
-						me.siblings('.group-type').text(me.val());
-					}).appendTo(elem);
 				var child = createElementFromNode(node.members[i]);
 				child.appendTo(elem);
 			}
@@ -54,7 +50,7 @@ $(function() {
 
 		function createElementFromComparisonNode(node)
 		{
-			var elem = $('<div>').addClass('comparison-node');
+			var elem = $('<div>').addClass('comparison-node node');
 			var value = $('<input type="text" class="value">').val(node.value);
 			var tmpKey = keySelect.clone().val([node.key]);
 			var tmpOp = opSelect.clone().val([node.condition]);
@@ -79,15 +75,14 @@ $(function() {
 		function createNodeFromGroupElement(element)
 		{
 			var members = [];
-			element.children('.group-node, .comparison-node').each(function() {
+			element.children('.node').each(function() {
 				var item = createNodeFromElement($(this));
-				members.push(item);
+				if (item != null)
+					members.push(item);
 			});
 			var groupType = $('.group-select', element).val();
-			if (members.length > 1)
+			if (members.length > 0)
 				return { group: groupType, members: members };
-			else if (members.length > 0)
-				return members[0];
 			else
 				return null;
 		}
@@ -172,16 +167,46 @@ $(function() {
 
 	var groupSelect = $('<select class="group-select"><option>and</option><option>or</option></select>');
 
+	function ruleSetChanged() {
+		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
+		$('#rule').empty().append(stringifyNode(currentRuleSet.filter));
+		$('#condition-tools').hide();
+	}
+
 	function refreshRuleSet()
 	{
 		$('#condition').empty();
+
 		if (currentRuleSet)
 		{
-			$('#condition').append(createElementFromNode(currentRuleSet.filter));
-			$('#condition').change(function() {
-				currentRuleSet.filter = createNodeFromElement($('#condition > div'));
-				$('#rule').empty().append(stringifyNode(currentRuleSet.filter));
-			}).change();
+			var node = createElementFromNode(currentRuleSet.filter);
+			node.mousemove(function(event) {
+				var element = $(event.target);
+				if (element != hoveringElement && element.is('.node'))
+				{
+					if (hoveringElement) hoveringElement.removeClass('hover-node');
+					if (element.parents('.node').length == 0)
+					{
+						// top level group cannot be changed
+						$('#condition-tools').hide();
+						hoveringElement = null;
+					}
+					else
+					{
+						$('#condition-tools').appendTo(element).show().position({
+							of: element, at: 'right top', my: 'right top', offset: '0 3'
+						});
+						hoveringElement = element;
+						hoveringElement.addClass('hover-node');
+					}
+				}
+			})
+			.mouseleave(function() {
+				$('#condition-tools').hide();
+			})
+			.change(ruleSetChanged)
+			.keyup(ruleSetChanged)
+			.appendTo('#condition');
 		}
 		else
 		{
@@ -205,6 +230,7 @@ $(function() {
 		refreshRuleSet();
 	}
 
+	// Change active ruleset
 	$('#rulesets').click(function(event) {
 		var li = $(event.target).closest('li');
 		var index = $('#rulesets li').index(li);
@@ -214,6 +240,7 @@ $(function() {
 		refreshRuleSet();
 	});
 
+	// Create new ruleset
 	$('#add-ruleset').click(function() {
 		rulesets.push({
 			filter: {},
@@ -251,6 +278,65 @@ $(function() {
 		refreshRuleSets();
 	});
 
+	$('#enable-clip').change(function() {
+		var enabled = $('#enable-clip').is(':checked');
+		$('#start-image-num, #end-image-num').enable(enabled);
+	});
+
+	// Set up condition tools
+	(function() {
+		var newCondition = { key: 'modality', condition: '>', value: 'CT'};
+
+		$('#move-up').button({icons: { primary: 'ui-icon-carat-1-n' }}).click(function(event) {
+			if (!hoveringElement)
+				return;
+			var prev = hoveringElement.prev('.node');
+			if (prev)
+			{
+				hoveringElement.insertBefore(prev);
+				ruleSetChanged();
+			}
+		});
+		$('#move-down').button({icons: { primary: 'ui-icon-carat-1-s' }}).click(function() {
+			if (!hoveringElement)
+				return;
+			var next = hoveringElement.next('.node');
+			if (next)
+			{
+				hoveringElement.insertAfter(next);
+				ruleSetChanged();
+			}
+		});
+		$('#condition-add').button({icons: { primary: 'ui-icon-plusthick' }}).click(function() {
+			if (!hoveringElement)
+				return;
+			var newElement = createElementFromNode(newCondition);
+			if (hoveringElement.is('.group-node'))
+				newElement.appendTo(hoveringElement);
+			else
+				newElement.insertAfter(hoveringElement);
+			ruleSetChanged();
+		});
+		$('#condition-addgroup').button({icons: { primary: 'ui-icon-folder-open' }}).click(function() {
+			if (!hoveringElement)
+				return;
+			var newElement = createElementFromNode({ group: 'and', members: [newCondition]});
+			if (hoveringElement.is('.group-node'))
+				newElement.appendTo(hoveringElement);
+			else
+				newElement.insertAfter(hoveringElement);
+			ruleSetChanged();
+		});
+		$('#condition-delete').button({icons: { primary: 'ui-icon-minusthick' }}).click(function() {
+			if (!hoveringElement)
+				return;
+			$('#condition-tools').hide().appendTo('body');
+			hoveringElement.remove();
+			ruleSetChanged();
+		});
+	})();
+
+	// Initialize
 	$('#plugin-select').change();
 });
 </script>
@@ -274,22 +360,26 @@ $(function() {
 	margin: 10px 0 30px 10px;
 }
 
-.group-type { font-weight: bold; }
+.group-select { font-weight: bold; margin-left: 3px; }
 
 .group-node {
 	border: 1px solid silver;
-	margin-top: 3px;
 }
 
 .group-node .group-node {
-	margin: 3px 0 3px 15px;
+	margin-left: 15px;
+	border-top: none;
+	border-bottom: none;
+	border-right: none;
+	border-left: 1px solid silver;
 }
 
 .comparison-node {
-	padding-left: 15px;
+	padding: 2px 2px 2px 15px;
 }
-.comparison-node:hover {
-	background-color: #eee;
+
+.hover-node {
+	background-color: #ffc;
 }
 
 .comparison-node .value {
@@ -321,6 +411,10 @@ $(function() {
 .key-text { color: blue; }
 .value-text { color: black; font-weight: bold; }
 .condition-text { color: purple; }
+
+#condition-tools { width: 115px; height: 18px; position: absolute; }
+.condition-toolbutton { width: 18px; height: 18px; margin: 0; }
+.condition-toolbutton span.ui-button-icon-primary { left: 0; }
 
 </style>
 
@@ -363,6 +457,21 @@ require=$smarty.capture.require body_class="spot"}
 	<div id="rule"></div>
 
 	<h3>Rule</h3>
+
+	<div class="rule-box">
+		<input type="checkbox" id="enable-clip" />
+		Clip images<br />
+		Start: <input type="text" id="start-image-num" disabled="disabled" />
+		End: <input type="text" id="end-image-num" disabled="disabled" />
+	</div>
+</div>
+
+<div id="condition-tools" style="display: none">
+	<button id="move-up" class="condition-toolbutton"></button>
+	<button id="move-down" class="condition-toolbutton"></button>
+	<button id="condition-add" class="condition-toolbutton"></button>
+	<button id="condition-addgroup" class="condition-toolbutton"></button>
+	<button id="condition-delete" class="condition-toolbutton"></button>
 </div>
 
 {include file="footer.tpl"}
