@@ -280,7 +280,7 @@ function ChangeOrderOfCADList(orderCol, orderMode)
                    filterFN:       $("#hiddenFilterFN").val(),
 	               showing:        $("#hiddenShowing").val() };
 
-	if(mode == 'today')
+	if($("#mode").val() == 'today')
 	{
 		params.mode = 'today';
 	}
@@ -291,6 +291,6 @@ function ChangeOrderOfCADList(orderCol, orderMode)
 		params.cadTimeTo   = $("#hiddenCadTimeTo").val();
 	}
 
-	location.href = 'cad_log.php?' + + $.param(params);
+	location.href = 'cad_log.php?' + $.param(params);
 }
 //--------------------------------------------------------------------------------------------------

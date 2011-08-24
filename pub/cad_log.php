@@ -514,7 +514,7 @@
 					break;
 
 			case "CAD":
-					$orderColStr = 'el.plugin_name '.$params['orderMode'].', el.version '.$params['orderMode'];
+					$orderColStr = 'pm.plugin_name '.$params['orderMode'].', pm.version '.$params['orderMode'];
 					break;
 
 			default:
