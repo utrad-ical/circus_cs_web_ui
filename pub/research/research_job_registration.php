@@ -1,218 +1,189 @@
 <?php
-	$params = array('toTopDir' => "../");
-	include_once("../common.php");
-	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
+$params = array('toTopDir' => "../");
+include_once("../common.php");
+Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
 
-	//-----------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables and validation
-	//-----------------------------------------------------------------------------------------------------------------
-	$params = array();
-	$validator = new FormValidator();
+//-----------------------------------------------------------------------------------------------------------------
+// Import $_POST variables and validation
+//-----------------------------------------------------------------------------------------------------------------
+$params = array();
+$validator = new FormValidator();
 
-	$validator->addRules(array(
-		"pluginName" => array(
-			"type" => "string",
-			"regex" => "/^[\w\s-_\.]+$/",
-			"errorMes" => "'Plugin name' is invalid."),
-		"checkedCadIdStr" => array(
-			"type" => "string",
-			"regex" => "/^[\d\^]+$/",
-			"errorMes" => "'Plugin name' is invalid."),
-		));
+$validator->addRules(array(
+	"pluginName" => array(
+		"type" => "string",
+		"regex" => "/^[\w\s-_\.]+$/",
+		"errorMes" => "'Plugin name' is invalid."),
+	"checkedCadIdStr" => array(
+		"type" => "string",
+		"regex" => "/^[\d\^]+$/",
+		"errorMes" => "'Plugin name' is invalid."),
+	));
 
+if($validator->validate($_POST))
+{
+	$params = $validator->output;
+	$params['errorMessage'] = "";
+}
+else
+{
+	$params = $validator->output;
+	$params['errorMessage'] = implode('<br/>', $validator->errors);
+}
+//------------------------------------------------------------------------------------------------------------------
 
-	if($validator->validate($_POST))
+$dstData = array('message'      => $params['errorMessage'],
+		         'registeredAt' => "",
+				 'executedAt'   => "");
+
+try
+{
+	if($dstData['errorMessage'] == "")
 	{
-		$params = $validator->output;
-		$params['errorMessage'] = "";
-	}
-	else
-	{
-		$params = $validator->output;
-		$params['errorMessage'] = implode('<br/>', $validator->errors);
-	}
-	//------------------------------------------------------------------------------------------------------------------
+		$dstData['registeredAt'] = date("Y-m-d H:i:s");
 
-	$dstData = array('message'      => $params['errorMessage'],
-			         'registeredAt' => "",
-					 'executedAt'   => "");
+		$studyUIDArr = array();
+		$seriesUIDArr = array();
 
-	try
-	{
-		if($params['errorMessage'] == "")
+		$pluginNameTmp = $params['pluginName'];
+		$pluginName    = substr($pluginNameTmp, 0, strpos($pluginNameTmp, " v."));
+		$version       = substr($pluginNameTmp, strrpos($pluginNameTmp, " v.")+3);
+
+		$cadIdArr = explode('^', $params['checkedCadIdStr']);
+		$cadNum   = count($cadIdArr);
+
+		sort($cadIdArr, SORT_NUMERIC);
+
+		$userID = $_SESSION['userID'];
+
+		$pdo = DBConnector::getConnection();
+		
+		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
+		$pluginID = DBConnector::query($sqlStr, array($pluginName, $version), 'SCALAR');
+		
+		$sqlStr = "SELECT job_id FROM executed_plugin_list"
+				. " WHERE plugin_id=? AND status>?";
+		$jobIdArr = DBConnector::query($sqlStr, array($pluginID, $PLUGIN_FAILED), 'ALL_COLUMN');
+
+		foreach($jobIdArr as $jobID)
 		{
-			$dstData['registeredAt'] = date("Y-m-d H:i:s");
+			$sqlStr = "SELECT target_job_id FROM executed_research_targets"
+					. " WHERE research_job_id=?"
+					. " ORDER BY target_job_id ASC";
+			$targetIdArr = DBConnector::query($sqlStr, array($jobID), 'ALL_COLUMN');
 
-			$studyUIDArr = array();
-			$seriesUIDArr = array();
-
-			$pluginNameTmp = $params['pluginName'];
-			$pluginName    = substr($pluginNameTmp, 0, strpos($pluginNameTmp, " v."));
-			$version       = substr($pluginNameTmp, strrpos($pluginNameTmp, " v.")+3);
-
-			$cadIDArr = explode('^', $params['checkedCadIdStr']);
-			$cadNum   = count($cadIDArr);
-
-			$userID = $_SESSION['userID'];
-
-			// Connect to SQL Server
-			$pdo = DBConnector::getConnection();
-
-			$sqlStr = "SELECT sub.id FROM"
-					. " (SELECT pj.job_id as id, count(jcad.cad_job_id) as cad_num"
-					. " FROM plugin_job_list pj, job_cad_list jcad"
-					. " WHERE pj.job_id=jcad.job_id AND pj.plugin_name=? AND pj.version=? GROUP BY id) as sub"
-					. " WHERE sub.cad_num=? ORDER BY sub.id";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute(array($pluginName, $version, $cadNum));
-
-			if($stmt->rowCount() > 0)
+			if(count($targetIdArr) == $cadNum)
 			{
-				while($result = $stmt->fetchColumn())
+				$cnt = 0;
+				
+				for($i=0; $i<$cadNum; $i++)
 				{
-					$colArr =array();
-
-					$sqlStr = "SELECT * FROM plugin_job_list pjob, job_cad_list jcad"
-							. " WHERE pjob.job_id=? AND pjob.job_id=jcad.job_id"
-							. " AND (";
-
-					$colArr[] = $result;
-
-					for($i=0; $i<$cadNum; $i++)
-					{
-						if($i > 0)  $sqlStr .= " OR ";
-
-						$sqlStr .= "(jcad.cad_job_id=?)";
-						$colArr[] = $cadIDArr[$i];
-					}
-					$sqlStr .= ")";
-
-					$stmtSub = $pdo->prepare($sqlStr);
-					$stmtSub->execute($colArr);
-
-					if($stmtSub->rowCount() == $cadNum)
-					{
-						$resultSub = $stmtSub->fetch(PDO::FETCH_ASSOC);
-
-						$dstData['message'] = '<b>Already registerd by ' . $resultSub['exec_user'] . ' !!</b>';
-					    $dstData['registeredAt'] = $resultSub['registered_at'];
-						break;
-					}
+					if($targetIdArr[$i] == $cadIdArr[$i]) $cnt++;
 				}
-			}
-
-			if($dstData['message'] == "")
-			{
-				$sqlStr = "SELECT sub.id FROM"
-						. " (SELECT el.job_id as id, count(ec.cad_job_id) as cad_num"
-						. " FROM executed_plugin_list el, executed_cad_list ec"
-						. " WHERE el.job_id=ec.job_id AND el.plugin_name=? AND el.version=? GROUP BY id) as sub"
-						. " WHERE sub.cad_num=? ORDER BY sub.id";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($pluginName, $version, $cadNum));
-
-				if($stmt->rowCount() > 0)
+			
+				if($cnt == $cadNum)
 				{
-					while($result = $stmt->fetchColumn())
+					$sqlStr = "SELECT status, executed_at, exec_user FROM executed_plugin_list WHERE job_id=?";
+					$result = DBConnector::query($sqlStr, array($jobID), 'ARRAY_NUM');
+
+					if($result[0] == $PLUGIN_SUCESSED)
 					{
-						$colArr =array();
-
-						$sqlStr = "SELECT * FROM executed_plugin_list el, executed_cad_list ecad"
-								. " WHERE el.job_id=? AND el.job_id=ecad.job_id"
-								. " AND (";
-
-						$colArr[] = $result;
-
-						for($i=0; $i<$cadNum; $i++)
-						{
-							if($i > 0)  $sqlStr .= " OR ";
-
-							$sqlStr .= "(ecad.cad_job_id=?)";
-							$colArr[] = $cadIDArr[$i];
-						}
-						$sqlStr .= ");";
-
-						$stmtSub = $pdo->prepare($sqlStr);
-						$stmtSub->execute($colArr);
-
-						//echo $sqlStr;
-
-						if($stmtSub->rowCount() == $cadNum)
-						{
-							$resultSub = $stmt->fetch(PDO::FETCH_ASSOC);
-
-							$dstData['message']    = '<b>Already executed by ' . $resultSub['exec_user'] . $tmp . '!!</b>';
-							$dsaData['executedAt'] = $resultSub['executed_at'];
-							break;
-						}
-					}
-				}
-			}
-
-
-			if($dstData['message'] == "")
-			{
-				$sqlStr = 'INSERT INTO plugin_job_list (exec_user, plugin_name, version, status, registered_at)'
-				        . ' VALUES (?,?,?,2,?)';
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($userID, $pluginName, $version, $dstData['registeredAt']));
-
-				if($stmt->rowCount() == 1)
-				{
-					$sqlStr = "SELECT job_id FROM plugin_job_list WHERE plugin_name=? AND version=? AND registered_at=?";
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute(array($pluginName, $version, $dstData['registeredAt']));
-					$jobID = $stmt->fetchColumn();
-
-					$colArr = array();
-					$sqlStr = "INSERT INTO job_cad_list (job_id, cad_job_id) VALUES ";
-
-					for($i=0; $i<$cadNum; $i++)
-					{
-						if($i > 0) $sqlStr .= ",";
-						$sqlStr .= "(?,?)";
-						$colArr[] = $jobID;
-						$colArr[] = $cadIDArr[$i];
-					}
-
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($colArr);
-
-					if($stmt->rowCount() != $cadNum)
-					{
-						$dstData['message'] = '<b>Fail to register in plug-in job list!!</b>';
-						$dstData['registeredAt'] = "";
-
-						$sqlStr = "DELETE FROM job_cad_list WHERE job_id=?; DELETE FROM plugin_job_list WHERE job_id=?;";
-						$stmt = $pdo->prepare($sqlStr);
-						$stmt->execute(array($jobID, $jobID));
+						$dstData['message'] = '<b>Already executed by ' . $result[2] . ' !!</b>';
+					    $dstData['executeddAt'] = $result[1];
 					}
 					else
 					{
-						$dstData['message'] = '<b>Successfully registered in plug-in job list!!</b>';
+						$dstData['message'] = '<b>Already registered by ' . $result[2] . ' !!</b>';
+					    $dstData['registeredAt'] = $result[1];
 					}
-				}
-				else
-				{
-					//$tmp = $stmt->errorInfo();
-					//$dstData['message'] = $tmp[2];
-					$dstData['message'] = '<b>Fail to register in plug-in job list!!</b>';
-					$dstData['registeredAt'] = "";
+				    break;
 				}
 			}
 		}
+		
+		if($dstData['message'] == "")
+		{
+			try
+			{
+				//---------------------------------------------------------------------------------------------------------
+				// Begin transaction
+				//---------------------------------------------------------------------------------------------------------
+				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$pdo->beginTransaction();
+				//---------------------------------------------------------------------------------------------------------
 
-		echo json_encode($dstData);
-	}
-	catch (PDOException $e)
-	{
-		var_dump($e->getMessage());
-	}
+				// Get current storage ID for plugin result
+				$sqlStr = "SELECT storage_id FROM storage_master WHERE type=2 AND current_use='t'";
+				$storageID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
 
-	$pdo = null;
+				// Get new job ID
+				$sqlStr= "SELECT nextval('executed_plugin_list_job_id_seq')";
+				$newJobID =  DBConnector::query($sqlStr, NULL, 'SCALAR');
+
+				// Get policy ID
+				//$sqlStr = "SELECT policy_id FROM plugin_result_policy"
+				//		. " WHERE policy_name = ?";
+				//$policyID = DBConnector::query($sqlStr, array($resultPolicy), 'SCALAR');
+				$policyID = 1;
+				$priority = 1;
+		
+				// Register into "execxuted_plugin_list"
+				$sqlStr = "INSERT INTO executed_plugin_list"
+						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user, executed_at)"
+						. " VALUES (?, ?, ?, ?, 1, ?, ?)";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute(array($newJobID, $pluginID, $storageID, $policyID, $userID, $dstData['registeredAt']));
+
+				// Register into "job_queue"
+				$sqlStr = "INSERT INTO job_queue"
+						. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
+						. " VALUES (?, ?, ?, 1, ?, ?, ?)";
+				$stmt = $pdo->prepare($sqlStr);
+				$stmt->execute(array($newJobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
+
+				// Register into executed_research_targets and job_queue_research_targets
+				for($i=0; $i<$cadNum; $i++)
+				{
+					$sqlParams = array($newJobID, $cadIdArr[$i]);
+
+					$sqlStr = "INSERT INTO executed_research_targets (research_job_id, target_job_id)"
+							. " VALUES (?, ?)";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+
+					// Match plug-in cad series
+					$sqlStr = "INSERT INTO job_queue_research_targets (research_job_id, target_job_id)"
+							. " VALUES (?, ?)";
+					$stmt = $pdo->prepare($sqlStr);
+					$stmt->execute($sqlParams);
+				}
+				//---------------------------------------------------------------------------------------------------------
+				// Commit transaction
+				//---------------------------------------------------------------------------------------------------------
+				$pdo->commit();
+				//---------------------------------------------------------------------------------------------------------
+
+				$dstData['message'] = 'Successfully registered plug-in job';
+			}
+			catch (PDOException $e)
+			{
+				$pdo->rollBack();
+
+				$dstData['message'] = '<b>Fail to register plug-in job!!</b>';
+				$dstData['message'] = var_dump($e->getMessage());
+				$dstData['registeredAt'] = "";
+			}
+		}
+	}
+	echo json_encode($dstData);
+}
+catch (PDOException $e)
+{
+	var_dump($e->getMessage());
+}
+
+$pdo = null;
+
 
 ?>
