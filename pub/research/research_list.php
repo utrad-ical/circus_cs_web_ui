@@ -92,7 +92,8 @@
 			$sqlStr = "SELECT el.job_id, pm.plugin_name, pm.version, el.executed_at, el.exec_user"
 					. " FROM executed_plugin_list el, plugin_master pm";
 
-			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND pm.type=2";
+			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND pm.type=2 AND el.status=?";
+			$condArr[] = $PLUGIN_SUCESSED;
 
 			if($params['resDateFrom'] != "" && $params['resDateTo'] != ""
 			   && $params['resDateFrom'] == $params['resDateTo'])
