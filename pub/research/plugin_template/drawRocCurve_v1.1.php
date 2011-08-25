@@ -53,11 +53,11 @@ function CreateRocCurve($curveType, $inputPath, $dstFname)
 	fclose($pipes[0]);
 
 	// エラー出力
-	if (!empty($pipes[2]))
-	{
-		error_log($pipes[2], 0);
-	}
-	fclose($pipes[2]);
+	//if (!empty($pipes[2]))
+	//{
+	//	error_log($pipes[2], 0);
+	//}
+	//fclose($pipes[2]);
 
 	// 終わり
 	proc_close($gnuplot);
