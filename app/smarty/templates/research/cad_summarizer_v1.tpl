@@ -11,10 +11,10 @@
 
 <link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui-1.7.3.min.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
-<script language="javascript" type="text/javascript" src="../js/edit_tag.js"></script>
+<script language="javascript" type="text/javascript" src="../js/edit_tags.js"></script>
 
 {literal}
 <script language="Javascript">
@@ -24,8 +24,7 @@
 		$.post("plugin_template/redraw_roc_curve.php",
 			 	{ jobID: jobID,
 			 	  curveType: $(".tab-content input[name='curveType']:checked").val(),
-			      pendigType: $(".tab-content input[name='pendigType']:checked").val(),
-			      inputPath:  inputPath},
+			      pendigType: $(".tab-content input[name='pendigType']:checked").val()},
 			   	function(data){
 			 		$("#rocGraph").attr("src", data.imgFname);
 			 		$("#dispTpNum").html(data.dispTpNum);
@@ -51,9 +50,8 @@
 {/literal}
 
 <link rel="shortcut icon" href="../favicon.ico" />
-<link href="../jq/ui/css/jquery-ui-1.7.3.custom.css" rel="stylesheet" type="text/css" media="all" />
+<link href="../jq/ui/theme/jquery-ui.custom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-<link href="../css/darkroom.css" rel="stylesheet" type="text/css" media="all" />
 <link href="../css/darkroom.css" rel="stylesheet" type="text/css" media="all" />
 
 {literal}
@@ -67,7 +65,6 @@ div.imgArea {
 {/literal}
 </style>
 
-<script language="javascript" type="text/javascript" src="../js/radio-to-button.js"></script>
 </head>
 
 <body class="lesion_cad_display">

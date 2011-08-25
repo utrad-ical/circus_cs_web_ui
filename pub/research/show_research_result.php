@@ -49,16 +49,20 @@ try
 				.  " AND el.storage_id = sm.storage_id";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, $params['jobID']);
-		$stmt->execute();
-
-		$result = $stmt->fetch(PDO::FETCH_NUM);
+		$result =  DBConnector::query($sqlStr, array($params['jobID']), 'ARRAY_NUM');
 
 		$params['pluginName'] = $result[0];
 		$params['version']    = $result[1];
 		$params['executedAt'] = $result[2];
 		$params['resPath']    = $result[4] . $DIR_SEPARATOR . $params['jobID'] . $DIR_SEPARATOR;
 		$params['resPathWeb'] = "../storage/" . $result[3] . '/' . $params['jobID'] . $DIR_SEPARATOR_WEB;
+
+		// Get path of web cache 
+		$sqlStr = "SELECT storage_id, path FROM storage_master WHERE type=3 AND current_use='t'";
+		$result =  DBConnector::query($sqlStr, NULL, 'ARRAY_NUM');
+
+		$params['cachePath']    = $result[1] . $DIR_SEPARATOR;
+		$params['cachePathWeb'] = "../storage/" . $result[0] . '/';
 
 		//----------------------------------------------------------------------------------------------------------
 		// Retrieve tag data

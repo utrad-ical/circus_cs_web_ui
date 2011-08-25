@@ -1,40 +1,45 @@
 <?php
-	include('../../common.php');
-	include('drawRocCurve_v1.1.php');
+include('../../common.php');
+include('drawRocCurve_v1.1.php');
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Import $_POST variables 
-	//------------------------------------------------------------------------------------------------------------------
-	$jobID     = $_POST['jobID'];
-	$curveType = $_POST['curveType'];
-	$inputPath = $_POST['inputPath'];
-	//------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------
+// Import $_POST variables 
+//------------------------------------------------------------------------------------------------------------------
+$jobID     = $_POST['jobID'];
+$curveType = $_POST['curveType'];
+//------------------------------------------------------------------------------------------------------------------
 
-	$dstData = array();
+$dstData = array();
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Road parameter file
-	//------------------------------------------------------------------------------------------------------------------
-	//$fp = fopen($inputPath."CAD-SummarizerResult_base.txt", "r"); 
-	//
-	//$dstData['caseNum']      = rtrim(fgets($fp));
-	//$dstData['totalTpNum']   = rtrim(fgets($fp));
-	//$dstData['totalFpNum']   = rtrim(fgets($fp));
-	//$dstData['fnNum']        = rtrim(fgets($fp));
-	//$dstData['underRocArea'] = sprintf("%.3f",rtrim(fgets($fp)));
-	//
-	//fclose($fp);
-	//------------------------------------------------------------------------------------------------------------------
+try
+{
+	$pdo = DBConnector::getConnection();
+
+	// Get path of job
+	$sqlStr = "SELECT sm.path FROM executed_plugin_list el, storage_master sm"
+			. " WHERE el.job_id=? AND el.storage_id=sm.storage_id";
+	$inputPath = DBConnector::query($sqlStr, array($jobID), 'SCALAR')
+				. $DIR_SEPARATOR . $jobID . $DIR_SEPARATOR;
+
+	// Get path of web cache 
+	$sqlStr = "SELECT storage_id, path FROM storage_master WHERE type=3 AND current_use='t'";
+	$result =  DBConnector::query($sqlStr, NULL, 'ARRAY_NUM');
+
+	$cachePath = $result[1] . $DIR_SEPARATOR;
+	$cachePathWeb = "../storage/" . $result[0] . '/';
 
 	$tmpFname = 'ROC' . $jobID . '_' . microtime(true) . '.png';
 
-	$curveFname = $WEB_UI_ROOT . $DIR_SEPARATOR . 'pub' . $DIR_SEPARATOR . 'tmp'
-	            . $DIR_SEPARATOR . $tmpFname;
+	$curveFname = $cachePath . $tmpFname;
+	$dstData['imgFname'] = $cachePathWeb . $tmpFname;
 
 	CreateRocCurve($curveType, $inputPath, $curveFname);
+}
+catch (PDOException $e)
+{
+	var_dump($e->getMessage());
+}
 
-	$dstData['imgFname'] = '../tmp/' . $tmpFname;
-
-	echo json_encode($dstData);
+echo json_encode($dstData);
 
 ?>

@@ -178,13 +178,13 @@ if($params['errorMessage'] == "&nbsp;")
 		// Create html of result table
 		//--------------------------------------------------------------------------------------------------------------
 		$dstData['plotLegend'] = array();
-
+		
 		for($k=0; $k<$userNum; $k++)
 		{
 			$personalEvalArr   = array();
 			$consensualEvalArr = array();
 
-			foreach($jsonData['feedbackListener']['params']['personal'] as $item)
+			foreach($jsonData['SelectionFeedbackListener']['personal'] as $item)
 			{
 				$personalEvalArr += array("{$item['value']}"
 											=> array(0, str_replace('&nbsp;', NULL, $item['label'])));
@@ -192,7 +192,7 @@ if($params['errorMessage'] == "&nbsp;")
 			}
 			$dstData['plotLegend'][] = 'redrawBtn';
 
-			foreach($jsonData['feedbackListener']['params']['consensual'] as $item)
+			foreach($jsonData['SelectionFeedbackListener']['consensual'] as $item)
 			{
 				$consensualEvalArr += array("{$item['value']}"
 											=> array(0, str_replace('&nbsp;', NULL, $item['label'])));
