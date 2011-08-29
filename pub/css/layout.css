@@ -672,6 +672,24 @@ span.register-not-ok {
 	background: #adadad;
 }
 
+/* ===================================================
+	jQuery DATA RANGE PLUGIN
+ =================================================== */
+
+.ui-daterange {
+	vertical-align: bottom;
+}
+
+.ui-daterange .ui-daterange-kind {
+	width: 100px;
+	margin-right: 10px;
+}
+
+.ui-daterange .ui-daterange-from, .ui-daterange .ui-daterange-to {
+	width: 80px;
+}
+
+.ui-daterange option.ui-daterange-stripe { background-color: #eee; }
 
 /* ===================================================
 	TABLE
