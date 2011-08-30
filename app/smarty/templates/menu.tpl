@@ -1,5 +1,4 @@
 <h1><a id="linkAbout" href="{$params.toTopDir}about.php"><img src="{$params.toTopDir}img_common/share/logo.jpg" width="206" height="61" alt="CIRCUS" id="about-circus-btn"/></a></h1>
-{if $currentUser->hasPrivilege('menuShow')}
 <div id="menu">
 	<ul>
 		<li><a href="{$params.toTopDir}home.php" class="jq-btn jq-btn-home" title="home"></a></li>
@@ -26,4 +25,3 @@
 	</ul>
 </div>
 <!-- / #menu END -->
-{/if}

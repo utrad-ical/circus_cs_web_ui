@@ -37,9 +37,20 @@ input.s-btn {
 	margin: 0 auto;
 }
 
+body.nomenu #page {
+	width: 1000px;
+}
+
 #container {
 	width: 1232px;
 	float: left;
+}
+
+body.nomenu #container {
+	width: 1000px;
+	background-image: url('../img_common/share/logo.jpg');
+	background-position: top right;
+	background-repeat: no-repeat;
 }
 
 #leftside {

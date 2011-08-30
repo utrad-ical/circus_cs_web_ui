@@ -2,6 +2,7 @@
 {literal}
 <style type="text/css" media="all,screen">
 #content h1 {
+	background-color: transparent;
 	font-size: 20px;
 	margin-top: 25px;
 	margin-bottom: -44px;

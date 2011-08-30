@@ -40,13 +40,15 @@ Parameters:
 <!-- / tempalte specific inclusions END -->
 </head>
 
-<body class="{$body_class}">
+<body class="{$body_class}{if !$currentUser->hasPrivilege('menuShow')} nomenu{/if}">
 <div id="page">
 <div id="container" class="menu-back">
 
+{if $currentUser->hasPrivilege('menuShow')}
 <!-- ***** #leftside ***** -->
 <div id="leftside">
 	{include file='menu.tpl'}
 </div>
 <!-- / #leftside END -->
+{/if}
 <div id="content">
