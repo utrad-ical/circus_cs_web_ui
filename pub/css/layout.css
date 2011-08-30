@@ -48,8 +48,8 @@ body.nomenu #page {
 
 body.nomenu #container {
 	width: 1000px;
-	background-image: url('../img_common/share/logo.jpg');
-	background-position: top right;
+	background-image: url('../img_common/share/logo-small.jpg');
+	background-position: right 20px;
 	background-repeat: no-repeat;
 }
 
