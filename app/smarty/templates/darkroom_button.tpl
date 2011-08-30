@@ -1,23 +1,33 @@
-<div style="position:absolute; top: 0; right:0;">
-	<input type="button" id="darkroom" name="darkroom" value="darkroom" onclick="ToggleDarkroomBtn();" />
+<div style="position:absolute; top: 2px; right:2px;">
+	<button id="darkroom">darkroom</button>
 </div>
 
-<script language="javascript">
+<script type="text/javascript" language="javascript">
 <!--
+
+var toTopDir = "{$params.toTopDir|escape:javascript}";
+
 {literal}
-function ToggleDarkroomBtn()
-{
-	$('body').toggleClass('darkroom');
-}
+$(function() {
+	$('#darkroom').click(function() {
+		var body = $('body');
+		$('body').toggleClass('darkroom');
+		$.post(
+			toTopDir + 'preference/change_darkroom.php',
+			{ darkroom: body.hasClass('darkroom') ? 't' : 'f' },
+			$.noop,
+			'text'
+		);
+	});
+});
 {/literal}
 
-{if $smarty.session.darkroomFlg==1}
+{if $currentUser->darkroom}
 {literal}
 $(function(){
-	 ToggleDarkroomBtn();
- });
+	$('body').addClass('darkroom');
+});
 {/literal}
 {/if}
-
 -->
 </script>
