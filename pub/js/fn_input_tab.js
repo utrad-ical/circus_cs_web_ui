@@ -213,7 +213,6 @@ circus.feedback.additional = circus.feedback.additional || [];
 				tbl.append(tr);
 			}
 			f._updateCheckState();
-			circus.feedback.change();
 			$('#fn-count').text(markers.length);
 			if (markerCount > 0)
 			{
@@ -224,6 +223,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			{
 				$('#fn-not-found, #fn-found').enable();
 			}
+			circus.feedback.change();
 		},
 		_updateCheckState: function()
 		{
