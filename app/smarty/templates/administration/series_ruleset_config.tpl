@@ -10,7 +10,6 @@ $(function() {
 	var targetPlugin = null;
 
 	var pluginRuleSetsData = null;
-	var currentRuleSets = null;
 	var currentRuleSet = null;
 
 	var hoveringElement = null;
@@ -169,12 +168,14 @@ $(function() {
 
 	function ruleSetChanged() {
 		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
-		$('#rule').empty().append(stringifyNode(currentRuleSet.filter));
+		// $('#rule').empty().append(stringifyNode(currentRuleSet.filter));
+		$('#rulesets-list li.active .rule-filter').empty().append(stringifyNode(currentRuleSet.filter));
 		$('#condition-tools').hide();
 	}
 
 	function refreshRuleSet()
 	{
+		$('#condition-tools').appendTo($('body'));
 		$('#condition').empty();
 
 		if (currentRuleSet)
@@ -207,36 +208,43 @@ $(function() {
 			.change(ruleSetChanged)
 			.keyup(ruleSetChanged)
 			.appendTo('#condition');
+			$('#select-help').hide();
+			$('#editor-contents').show();
+			$('#editor-pane').addClass('active');
 		}
 		else
 		{
-			$('#condition').text('Select plugin and volume ID');
+			$('#select-help').show();
+			$('#editor-contents').hide();
+			$('#editor-pane').removeClass('active');
 			$('#rule').text('');
+			hoveringElement = null;
 		}
 	}
 
 	function refreshRuleSets()
 	{
-		$('#rulesets').empty();
-		if (!(currentRuleSets instanceof Array))
-			return;
-		currentRuleSet = null;
-		$.each(currentRuleSets, function(index, item) {
-			var li = $('<li>');
-			$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
-			$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
-			li.appendTo('#rulesets');
+		var stage = $('#rulesets-list').empty();
+		$.each(pluginRuleSetsData, function(volume_id, rulesets) {
+			var h = $('<div class="vol-id">').text('Volume ID: ' + volume_id).appendTo(stage);
+			var ul = $('<ul class="rulesets">').appendTo(stage);
+			$.each(rulesets, function(index, item) {
+				var li = $('<li>').data('item', item);
+				$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
+				$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
+				li.appendTo(ul);
+			});
 		});
+		currentRuleSet = null;
 		refreshRuleSet();
 	}
 
 	// Change active ruleset
-	$('#rulesets').click(function(event) {
+	$('#rulesets-list').click(function(event) {
 		var li = $(event.target).closest('li');
-		var index = $('#rulesets li').index(li);
-		$('#rulesets li').removeClass('active');
+		$('#rulesets-list li').removeClass('active');
 		li.addClass('active');
-		currentRuleSet = currentRuleSets[index];
+		currentRuleSet = li.data('item');
 		refreshRuleSet();
 	});
 
@@ -258,29 +266,19 @@ $(function() {
 			function(data) {
 				var obj = JSON.parse(data);
 				pluginRuleSetsData = obj.result;
-				console.log(pluginRuleSetsData);
-				var v = $('#volume-id-select');
-				v.children().remove();
-				$.each(pluginRuleSetsData, function(volume_id) {
-					$('<option>').text(volume_id).appendTo(v);
-				});
-				v.change();
+				refreshRuleSets();
 			},
 			'text'
 		);
 	});
 
-	$('#volume-id-select').change(function() {
-		if (!pluginRuleSetsData)
-			return;
-		var index = $('#volume-id-select').val();
-		currentRuleSets = pluginRuleSetsData[index];
-		refreshRuleSets();
-	});
-
 	$('#enable-clip').change(function() {
 		var enabled = $('#enable-clip').is(':checked');
 		$('#start-image-num, #end-image-num').enable(enabled);
+	});
+	$('#enable-private-tags').change(function() {
+		var enabled = $('#enable-private-tags').is(':checked');
+		$('#required-private-tags').enable(enabled);
 	});
 
 	// Set up condition tools
@@ -342,22 +340,45 @@ $(function() {
 </script>
 
 <style type="text/css">
+
+h3 { margin-bottom: 15px; }
+
+#content div.vol-id {
+	border-top: 1px solid gray;
+	font-weight: bold;
+	margin: 0 5px 3px 0;
+}
+
+#plugin-selector-pane {
+	margin: 0 0 15px; 0;
+}
+
 #selector-pane {
 	width: 300px;
-	background-color: silver;
+	background-color: white;
 	float: left;
-	padding: 5px;
+	min-height: 510px;
 }
 
 #editor-pane {
-	margin-left: 320px;
+	margin-left: 300px;
+	border: 5px solid #eee;
+	padding: 5px;
+	min-height: 500px;
 }
 
-#condition {  }
+#editor-pane.active {
+	border-color: #ebbe8c;
+}
 
 #rule {
 	font-size: 80%; color: gray;
 	margin: 10px 0 30px 10px;
+}
+
+#select-help {
+	margin: 50px;
+	text-align: center;
 }
 
 .group-select { font-weight: bold; margin-left: 3px; }
@@ -371,7 +392,7 @@ $(function() {
 	border-top: none;
 	border-bottom: none;
 	border-right: none;
-	border-left: 1px solid silver;
+	border-left: 3px solid silver;
 }
 
 .comparison-node {
@@ -386,28 +407,38 @@ $(function() {
 	width: 250px;
 }
 
-#rulesets li {
-	border: 1px solid gray;
-	border-radius: 0 5px 5px 5px;
-	background-color: #eee;
-	margin: 3px;
+.rulesets {
+	margin-bottom: 15px;
 }
 
-#rulesets li div.rule-no {
+.rulesets li {
+	margin: 5px 0 5px 0;
+	background-color: #eee;
+}
+
+.rulesets li div.rule-no {
 	font-weight: bold;
 	float: left;
 	background-color: gray;
 	color: white;
-	margin-right: 2em;
+	margin-right: 1em;
 }
 
-#rulesets li.active {
-	background-color: yellow;
+.rulesets li:hover {
+	background-color: #ffddae;
+}
+
+.rulesets li.active {
+	background-color: #ebbe8c;
+}
+
+.rulesets li.active div.rule-no {
+	background-color: #8a3b2b;
 }
 
 .group-text { color: green; }
 .group-text .group-text { color: brown; }
-.group-text .group-text .group-text { color: orange; }
+.group-text .group-text .group-text { color: magenta; }
 .key-text { color: blue; }
 .value-text { color: black; font-weight: bold; }
 .condition-text { color: purple; }
@@ -415,6 +446,10 @@ $(function() {
 #condition-tools { width: 115px; height: 18px; position: absolute; }
 .condition-toolbutton { width: 18px; height: 18px; margin: 0; }
 .condition-toolbutton span.ui-button-icon-primary { left: 0; }
+
+.rule-box { margin-top: 10px; }
+
+#down { font-size: 20px; text-align: center; }
 
 </style>
 
@@ -430,39 +465,48 @@ require=$smarty.capture.require body_class="spot"}
 
 <h2>Series Ruleset Configuration</h2>
 
+<div id="plugin-selector-pane">
+	<b>Plugin:</b>&nbsp;
+	<select id="plugin-select">
+	{foreach from=$plugins item=item}
+	  <option value="{$item.id|escape}">{$item.name|escape}</option>
+	{/foreach}
+	</select>
+	<input class="form-btn" id="save" type="button" value="Save" />
+</div>
+
 <div id="selector-pane">
-	<div>
-		Plugin:<br />
-		<select id="plugin-select">
-		{foreach from=$plugins item=item}
-		  <option value="{$item.id|escape}">{$item.name|escape}</option>
-		{/foreach}
-		</select>
-	</div>
-
-	<div>
-		Volume ID:<br />
-		<select id="volume-id-select">
-		</select>
-	</div>
-
-	<ul id="rulesets">
-	</ul>
+	<div id="rulesets-list"></div>
 	<input type="button" class="form-btn" value="Add" id="add-ruleset" />
 	<input type="button" class="form-btn" value="Delete" id="delete-ruleset" />
+	<div>
+		<input type="button" class="form-btn" value="Save settings for this plugin" />
+	</div>
 </div>
 <div id="editor-pane">
-	<h3>Condition</h3>
-	<div id="condition"></div>
-	<div id="rule"></div>
+	<div id="select-help">Select Ruleset</div>
 
-	<h3>Rule</h3>
+	<div id="editor-contents">
+		<h3>Condition</h3>
+		<div id="condition"></div>
+		<div id="rule"></div>
 
-	<div class="rule-box">
-		<input type="checkbox" id="enable-clip" />
-		Clip images<br />
-		Start: <input type="text" id="start-image-num" disabled="disabled" />
-		End: <input type="text" id="end-image-num" disabled="disabled" />
+		<div id="down">&downarrow;</div>
+
+		<h3>Rule</h3>
+
+		<div class="rule-box">
+			<input type="checkbox" id="enable-clip" />
+			<label for="enable-clip">Clip images</label><br />
+			Start: <input type="text" id="start-image-num" disabled="disabled" />
+			End: <input type="text" id="end-image-num" disabled="disabled" />
+		</div>
+
+		<div class="rule-box">
+			<input type="checkbox" id="enable-private-tags" />
+			<label for="enable-private-tags">Use private DICOM tags</label><br />
+			Tags: <input type="text" id="required-private-tags" disabled="disabled" />
+		</div>
 	</div>
 </div>
 
