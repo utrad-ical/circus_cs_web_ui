@@ -88,7 +88,7 @@
 	// Reserved user ID / name by CIRCUS CS
 	//-------------------------------------------------------------------------------------------------------
 	$DEFAULT_CAD_PREF_USER = 'preference_default';
-	$RESERVED_USER_NAME = 'reserved by CIRCUS CS';
+	$RESERVED_USER_LIST = array($DEFAULT_CAD_PREF_USER, 'server_service');
 	//-------------------------------------------------------------------------------------------------------
 
 	/**

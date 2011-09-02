@@ -30,7 +30,7 @@ try
 			'user_id' => array(
 				'label' => 'user ID',
 				'type' => 'string',
-				'regex' => '/^[_A-Za-z][\-_A-Za-z0-9]*$/',
+				'regex' => '/^[_A-Za-z0-9][\-_A-Za-z0-9]*$/',
 				'errorMes' => 'Invalid user ID. Use only alphabets and numerals.'
 			),
 			'user_name' => array(
@@ -110,7 +110,7 @@ try
 		{
 			throw new Exception('Invalid page transition detected. Try again.');
 		}
-		if ($req['target'] == $DEFAULT_CAD_PREF_USER)
+		if(array_search($req['target'], $RESERVED_USER_LIST) !== FALSE)
 			throw new Exception('This user ID is reserved for CIRCUS CS system.');
 	}
 
@@ -138,6 +138,8 @@ try
 			// create new user
 			$user = new User();
 			$tmp = new User($req['user_id']);
+			if(array_search($req['user_id'], $RESERVED_USER_LIST) !== FALSE)
+				throw new Exception("The user with ID '{$req['user_id']}' is reserved for CIRCUS CS system.");
 			if ($tmp->user_id)
 				throw new Exception("The user with ID '{$req['user_id']}' already exists.");
 			if (!$req['passcode'])
@@ -246,7 +248,7 @@ $dum = new User();
 $userList = array();
 $users = $dum->find(array(), array('order' => array('enabled DESC', 'user_id ASC')));
 foreach ($users as $user) {
-	if ($user->user_name == $RESERVED_USER_NAME)
+	if (array_search($user->user_id, $RESERVED_USER_LIST) !== FALSE)
 		continue;
 	$item = $user->getData() ?: array();
 	$item['groups'] = array();

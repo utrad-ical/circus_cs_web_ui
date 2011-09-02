@@ -19,7 +19,7 @@ try
 		'target' => array( 'type' => 'string' ),
 		'newname' => array(
 			'type' => 'string',
-			'regex' => '/^[_A-Za-z][\-_A-Za-z0-9]*$/',
+			'regex' => '/^[_A-Za-z0-9][\-_A-Za-z0-9]*$/',
 			'errorMes' => 'Invalid group ID. Use only alphabets and numerals.'
 		),
 		'priv' => array(

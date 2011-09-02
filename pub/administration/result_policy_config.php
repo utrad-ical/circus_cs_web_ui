@@ -32,7 +32,7 @@ try {
 		'target' => array('type' => 'int'),
 		'policy_name' => array(
 			'type' => 'string',
-			'regex' => '/^[_A-Za-z][\-_A-Za-z0-9]*$/',
+			'regex' => '/^[_A-Za-z0-9][\-_A-Za-z0-9]*$/',
 			'errorMes' => 'Invalid policy name. Use only alphabets and numerals.'
 		),
 		'allow_result_reference' => array('type' => 'array'),
