@@ -240,7 +240,7 @@
 		if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 		{
 			$sqlCondArray[] = "sr.series_date=?";
-
+			$sqlParams[] = $params['srDateFrom'];
 			$addressParams['srDateFrom'] = $params['srDateFrom'];
 			$addressParams['srDateTo'] = $params['srDateTo'];
 		}
