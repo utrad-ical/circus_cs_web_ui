@@ -44,6 +44,10 @@ $(function() {
 				var child = createElementFromNode(node.members[i]);
 				child.appendTo(elem);
 			}
+			elem.sortable({
+				axis: 'y',
+				update: ruleSetChanged
+			});
 			return elem;
 		}
 
@@ -168,9 +172,22 @@ $(function() {
 
 	function ruleSetChanged() {
 		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
-		// $('#rule').empty().append(stringifyNode(currentRuleSet.filter));
 		$('#rulesets-list li.active .rule-filter').empty().append(stringifyNode(currentRuleSet.filter));
 		$('#condition-tools').hide();
+	}
+
+	function ruleSetListChanged() {
+		var stage = $('#rulesets-list');
+		var result = [];
+		$('#rulesets-list div.volume-group').each(function() {
+			var grp = $(this);
+			var rulesets = [];
+			$('ul.rulesets li', grp).each(function() {
+				rulesets.push($(this).data('item'));
+			});
+			result.push(rulesets);
+		});
+		pluginRuleSetsData = result;
 	}
 
 	function refreshRuleSet()
@@ -222,17 +239,50 @@ $(function() {
 		}
 	}
 
+	function addRuleSetClicked(event)
+	{
+		var grp = $(event.target).closest('.volume-group');
+		if (grp.length == 0)
+			return;
+		var dum = {
+			filter: { group: 'and', members: [$.extend({}, dummyCondition)] },
+			rule: {}
+		};
+		var volume_id = grp.data('volume-id');
+		pluginRuleSetsData[grp.data('volume-id')].push(dum);
+		refreshRuleSets();
+	}
+
 	function refreshRuleSets()
 	{
+		function newRuleSetListItem(item, index)
+		{
+			var li = $('<li>').data('item', item);
+			$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
+			$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
+			return li;
+		}
+
 		var stage = $('#rulesets-list').empty();
 		$.each(pluginRuleSetsData, function(volume_id, rulesets) {
-			var h = $('<div class="vol-id">').text('Volume ID: ' + volume_id).appendTo(stage);
-			var ul = $('<ul class="rulesets">').appendTo(stage);
+			var grp = $('<div class="volume-group">')
+				.data('volume-id', volume_id)
+				.appendTo(stage);
+			var h = $('<div class="vol-id">')
+				.text('Volume ID: ' + volume_id)
+				.appendTo(grp);
+			var ul = $('<ul class="rulesets">').appendTo(grp);
 			$.each(rulesets, function(index, item) {
-				var li = $('<li>').data('item', item);
-				$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
-				$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
-				li.appendTo(ul);
+				newRuleSetListItem(item, index).appendTo(ul);
+			});
+			var tools = $('<div class="ruleset-tools">').appendTo(grp);
+			$('<button class="ruleset-toolbutton">').button({icons: { primary: 'ui-icon-plusthick' }})
+				.click(addRuleSetClicked).appendTo(tools);
+
+			ul.sortable({
+				axis: 'y',
+				cursor: 'n-resize',
+				update: function() { ruleSetListChanged(); refreshRuleSets(); }
 			});
 		});
 		currentRuleSet = null;
@@ -246,15 +296,6 @@ $(function() {
 		li.addClass('active');
 		currentRuleSet = li.data('item');
 		refreshRuleSet();
-	});
-
-	// Create new ruleset
-	$('#add-ruleset').click(function() {
-		rulesets.push({
-			filter: {},
-			rule: []
-		});
-		refreshRuleSets();
 	});
 
 	$('#plugin-select').change(function() {
@@ -281,10 +322,10 @@ $(function() {
 		$('#required-private-tags').enable(enabled);
 	});
 
+	var dummyCondition = { key: 'modality', condition: '=', value: 'CT'};
+
 	// Set up condition tools
 	(function() {
-		var newCondition = { key: 'modality', condition: '>', value: 'CT'};
-
 		$('#move-up').button({icons: { primary: 'ui-icon-carat-1-n' }}).click(function(event) {
 			if (!hoveringElement)
 				return;
@@ -308,7 +349,7 @@ $(function() {
 		$('#condition-add').button({icons: { primary: 'ui-icon-plusthick' }}).click(function() {
 			if (!hoveringElement)
 				return;
-			var newElement = createElementFromNode(newCondition);
+			var newElement = createElementFromNode(dummyCondition);
 			if (hoveringElement.is('.group-node'))
 				newElement.appendTo(hoveringElement);
 			else
@@ -318,7 +359,7 @@ $(function() {
 		$('#condition-addgroup').button({icons: { primary: 'ui-icon-folder-open' }}).click(function() {
 			if (!hoveringElement)
 				return;
-			var newElement = createElementFromNode({ group: 'and', members: [newCondition]});
+			var newElement = createElementFromNode({ group: 'and', members: [dummyCondition]});
 			if (hoveringElement.is('.group-node'))
 				newElement.appendTo(hoveringElement);
 			else
@@ -333,6 +374,7 @@ $(function() {
 			ruleSetChanged();
 		});
 	})();
+
 
 	// Initialize
 	$('#plugin-select').change();
@@ -408,12 +450,13 @@ h3 { margin-bottom: 15px; }
 }
 
 .rulesets {
-	margin-bottom: 15px;
+	margin-bottom: 2px;
 }
 
 .rulesets li {
 	margin: 5px 0 5px 0;
 	background-color: #eee;
+	cursor: pointer;
 }
 
 .rulesets li div.rule-no {
@@ -435,6 +478,10 @@ h3 { margin-bottom: 15px; }
 .rulesets li.active div.rule-no {
 	background-color: #8a3b2b;
 }
+
+.ruleset-tools { text-align: right; margin: 0 5px 15px 0; }
+.ruleset-toolbutton { width: 18px; height: 18px; margin: 0; }
+.ruleset-toolbutton span.ui-button-icon-primary { left: 0; }
 
 .group-text { color: green; }
 .group-text .group-text { color: brown; }
@@ -516,6 +563,10 @@ require=$smarty.capture.require body_class="spot"}
 	<button id="condition-add" class="condition-toolbutton"></button>
 	<button id="condition-addgroup" class="condition-toolbutton"></button>
 	<button id="condition-delete" class="condition-toolbutton"></button>
+</div>
+
+<div class="ruleset-tools ruleset-tools-proto" style="display: none">
+	<button class="ruleset-add ruleset-toolbutton"></button>
 </div>
 
 {include file="footer.tpl"}
