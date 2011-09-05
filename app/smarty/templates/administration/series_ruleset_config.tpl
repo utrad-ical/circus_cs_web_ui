@@ -46,6 +46,7 @@ $(function() {
 			}
 			elem.sortable({
 				axis: 'y',
+				containment: 'parent',
 				update: ruleSetChanged
 			});
 			return elem;
@@ -253,6 +254,25 @@ $(function() {
 		refreshRuleSets();
 	}
 
+	function removeRuleSetClicked(event)
+	{
+		var grp = $(event.target).closest('.volume-group');
+		var removed = false;
+		$('#rulesets-list ul.rulesets li').each(function() {
+			var item = $(this).data('item');
+			if (item != null && item == currentRuleSet)
+			{
+				$(this).remove();
+				removed = true;
+			}
+		})
+		if (removed)
+		{
+			ruleSetListChanged();
+			refreshRuleSets();
+		}
+	}
+
 	function refreshRuleSets()
 	{
 		function newRuleSetListItem(item, index)
@@ -271,19 +291,30 @@ $(function() {
 			var h = $('<div class="vol-id">')
 				.text('Volume ID: ' + volume_id)
 				.appendTo(grp);
-			var ul = $('<ul class="rulesets">').appendTo(grp);
-			$.each(rulesets, function(index, item) {
-				newRuleSetListItem(item, index).appendTo(ul);
-			});
+			if (rulesets.length > 0)
+			{
+				var ul = $('<ul class="rulesets">').appendTo(grp);
+				$.each(rulesets, function(index, item) {
+					newRuleSetListItem(item, index).appendTo(ul);
+				});
+				ul.sortable({
+					axis: 'y',
+					containment: 'parent',
+					update: function() { ruleSetListChanged(); refreshRuleSets(); }
+				});
+			}
+			else
+			{
+				$('<p>').text('No rule set (any series will match)').appendTo(grp);
+			}
 			var tools = $('<div class="ruleset-tools">').appendTo(grp);
-			$('<button class="ruleset-toolbutton">').button({icons: { primary: 'ui-icon-plusthick' }})
+			$('<button class="ruleset-toolbutton">')
+			.button({icons: { primary: 'ui-icon-minusthick' }})
+			.click(removeRuleSetClicked).appendTo(tools);
+			$('<button class="ruleset-toolbutton">')
+				.button({icons: { primary: 'ui-icon-plusthick' }})
 				.click(addRuleSetClicked).appendTo(tools);
 
-			ul.sortable({
-				axis: 'y',
-				cursor: 'n-resize',
-				update: function() { ruleSetListChanged(); refreshRuleSets(); }
-			});
 		});
 		currentRuleSet = null;
 		refreshRuleSet();
@@ -480,7 +511,7 @@ h3 { margin-bottom: 15px; }
 }
 
 .ruleset-tools { text-align: right; margin: 0 5px 15px 0; }
-.ruleset-toolbutton { width: 18px; height: 18px; margin: 0; }
+.ruleset-toolbutton { width: 18px; height: 18px; margin: 0 3px; }
 .ruleset-toolbutton span.ui-button-icon-primary { left: 0; }
 
 .group-text { color: green; }
@@ -524,8 +555,6 @@ require=$smarty.capture.require body_class="spot"}
 
 <div id="selector-pane">
 	<div id="rulesets-list"></div>
-	<input type="button" class="form-btn" value="Add" id="add-ruleset" />
-	<input type="button" class="form-btn" value="Delete" id="delete-ruleset" />
 	<div>
 		<input type="button" class="form-btn" value="Save settings for this plugin" />
 	</div>
@@ -563,10 +592,6 @@ require=$smarty.capture.require body_class="spot"}
 	<button id="condition-add" class="condition-toolbutton"></button>
 	<button id="condition-addgroup" class="condition-toolbutton"></button>
 	<button id="condition-delete" class="condition-toolbutton"></button>
-</div>
-
-<div class="ruleset-tools ruleset-tools-proto" style="display: none">
-	<button class="ruleset-add ruleset-toolbutton"></button>
 </div>
 
 {include file="footer.tpl"}
