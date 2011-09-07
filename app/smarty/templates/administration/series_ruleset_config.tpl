@@ -30,6 +30,22 @@ $(function() {
 	var oph = {};
 	for (var i = 0; i < op.length; i++) oph[op[i].op] = op[i];
 
+	function exitEdit()
+	{
+		$('#selector-pane, #editor-pane').hide();
+		$('#plugin-selector-pane').show();
+		modified = false;
+	}
+
+	function enterEdit()
+	{
+		$('#selector-pane, #editor-pane').show();
+		$('#plugin-selector-pane').hide();
+		$('#plugin-select').val(['']);
+		modified = false;
+		$('#save-button').disable();
+	}
+
 	/**
 	 * Creates a new HTML div element (as a jQuery object) representing the
 	 * given filter node.
@@ -211,9 +227,16 @@ $(function() {
 		return div;
 	}
 
+	function modify()
+	{
+		modified = true;
+		$('#save-button').enable();
+	}
+
 	function ruleSetChanged() {
 		if (!currentRuleSet)
 			return;
+		modify();
 		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
 		currentRuleSet.rule = createRuleFromElement();
 		$('#rulesets-list li.active .content').replaceWith(
@@ -234,6 +257,7 @@ $(function() {
 			result.push(rulesets);
 		});
 		pluginRuleSetsData = result;
+		modify();
 	}
 
 	function refreshRuleSet()
@@ -373,21 +397,22 @@ $(function() {
 
 	$('#plugin-select').change(function() {
 		var targetPlugin = $('#plugin-select').val();
-		$.get(
-			'series_ruleset_config.php',
-			{ plugin_id: targetPlugin, mode: 'get_rulesets' },
-			function(data) {
-				var obj = JSON.parse(data);
-				pluginRuleSetsData = obj.result;
-				refreshRuleSets();
-			},
-			'text'
-		);
-	});
-
-	$('#enable-clip').change(function() {
-		var enabled = $('#enable-clip').is(':checked');
-		$('#start-img-num, #end-img-num').enable(enabled);
+		if (targetPlugin)
+		{
+			$.get(
+				'series_ruleset_config.php',
+				{ plugin_id: targetPlugin, mode: 'get_rulesets' },
+				function(data) {
+					var obj = JSON.parse(data);
+					pluginRuleSetsData = obj.result;
+					enterEdit();
+					refreshRuleSets();
+				},
+				'text'
+			);
+		}
+		else
+			exitEdit();
 	});
 
 	var dummyCondition = { key: 'modality', condition: '=', value: 'CT'};
@@ -443,10 +468,28 @@ $(function() {
 		});
 	})();
 
+
+	$('#cancel-button').click(function() {
+		if (modified)
+		{
+			if (confirm('Exit without saving?'))
+			{
+				exitEdit();
+			}
+		}
+		else
+		{
+			exitEdit();
+		}
+	});
+
+	$('#save-button').click(function() {
+	});
+
 	$('#editor-pane').change(ruleSetChanged).keyup(ruleSetChanged);
 
-	// Initialize
 	$('#plugin-select').change();
+
 });
 </script>
 
@@ -594,8 +637,9 @@ require=$smarty.capture.require body_class="spot"}
 <div id="plugin-selector-pane">
 	<b>Plugin:</b>&nbsp;
 	<select id="plugin-select">
+		<option value="">Select Plugin</option>
 	{foreach from=$plugins item=item}
-	  <option value="{$item.id|escape}">{$item.name|escape}</option>
+		<option value="{$item.id|escape}">{$item.name|escape}</option>
 	{/foreach}
 	</select>
 </div>
@@ -603,12 +647,13 @@ require=$smarty.capture.require body_class="spot"}
 <div id="selector-pane">
 	<div id="rulesets-list"></div>
 	<div id="save-pane">
+		<a href="#" id="cancel-button">Cancel</a>&nbsp;
 		<input type="button" class="form-btn" id="save-button"
-		value="Save settings for this plugin" />
+		value="Save settings" />
 	</div>
 </div>
 <div id="editor-pane">
-	<div id="select-help">Select Ruleset</div>
+	<div id="select-help">Select Rule Set</div>
 
 	<div id="editor-contents">
 		<h3>Condition</h3>
