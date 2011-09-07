@@ -14,6 +14,8 @@ $(function() {
 
 	var hoveringElement = null;
 
+	var modified = false;
+
 	var op = [
 		{op: '=', label: 'is'},
 		{op: '>', label: '>'},
@@ -108,6 +110,17 @@ $(function() {
 			throw "exception";
 	}
 
+	function createRuleFromElement()
+	{
+		var rule = {};
+		rule.start_img_num = $('#start-img-num').val();
+		rule.end_img_num = $('#end-img-num').val();
+		var rp = $('#required-private-tags').val();
+		if (rp.length > 0)
+			rule.required_private_tags = rp;
+		return rule;
+	}
+
 	/**
 	 * Converts the given filter node into human-readable format.
 	 */
@@ -155,6 +168,20 @@ $(function() {
 			throw "exception";
 	}
 
+	function stringifyRule(rule)
+	{
+		var results = [];
+		if ('start_img_num' in rule && 'end_img_num' in rule)
+		{
+			results.push('Clip(' + rule.start_img_num + ' - ' + rule.end_img_num + ')');
+		}
+		if ('required_private_tags' in rule && rule.required_private_tags.length > 0)
+		{
+			results.push('Require private tags(' + rule.required_private_tags + ')');
+		}
+		return results.join(', ');
+	}
+
 	var keySelect = $('<select>').addClass('key-select');
 	for (var i = 0; i < keys.length; i++)
 	{
@@ -171,9 +198,27 @@ $(function() {
 
 	var groupSelect = $('<select class="group-select"><option>and</option><option>or</option></select>');
 
+	function newRuleSetListContent(item)
+	{
+		var div = $('<div>').addClass('content');
+		$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(div);
+		var rule = stringifyRule(item.rule);
+		if (rule)
+		{
+			var icon = $('<div class="rule-rule ui-icon ui-icon-circle-arrow-e">');
+			$('<div>').text(rule).prepend(icon).appendTo(div);
+		}
+		return div;
+	}
+
 	function ruleSetChanged() {
+		if (!currentRuleSet)
+			return;
 		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
-		$('#rulesets-list li.active .rule-filter').empty().append(stringifyNode(currentRuleSet.filter));
+		currentRuleSet.rule = createRuleFromElement();
+		$('#rulesets-list li.active .content').replaceWith(
+			newRuleSetListContent(currentRuleSet)
+		);
 		$('#condition-tools').hide();
 	}
 
@@ -223,9 +268,12 @@ $(function() {
 			.mouseleave(function() {
 				$('#condition-tools').hide();
 			})
-			.change(ruleSetChanged)
-			.keyup(ruleSetChanged)
 			.appendTo('#condition');
+
+			$('#start-img-num').val(currentRuleSet.rule.start_img_num);
+			$('#end-img-num').val(currentRuleSet.rule.end_img_num);
+			$('#required-private-tags').val(currentRuleSet.rule.required_private_tags);
+
 			$('#select-help').hide();
 			$('#editor-contents').show();
 			$('#editor-pane').addClass('active');
@@ -275,14 +323,6 @@ $(function() {
 
 	function refreshRuleSets()
 	{
-		function newRuleSetListItem(item, index)
-		{
-			var li = $('<li>').data('item', item);
-			$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
-			$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(li);
-			return li;
-		}
-
 		var stage = $('#rulesets-list').empty();
 		$.each(pluginRuleSetsData, function(volume_id, rulesets) {
 			var grp = $('<div class="volume-group">')
@@ -295,7 +335,9 @@ $(function() {
 			{
 				var ul = $('<ul class="rulesets">').appendTo(grp);
 				$.each(rulesets, function(index, item) {
-					newRuleSetListItem(item, index).appendTo(ul);
+					var li = $('<li>').appendTo(ul).data('item', item);
+					$('<div>').addClass('rule-no').text('Rule Set: #' + (index + 1)).appendTo(li);
+					newRuleSetListContent(item).appendTo(li);
 				});
 				ul.sortable({
 					axis: 'y',
@@ -330,7 +372,6 @@ $(function() {
 	});
 
 	$('#plugin-select').change(function() {
-		// TODO: save dialog
 		var targetPlugin = $('#plugin-select').val();
 		$.get(
 			'series_ruleset_config.php',
@@ -346,11 +387,7 @@ $(function() {
 
 	$('#enable-clip').change(function() {
 		var enabled = $('#enable-clip').is(':checked');
-		$('#start-image-num, #end-image-num').enable(enabled);
-	});
-	$('#enable-private-tags').change(function() {
-		var enabled = $('#enable-private-tags').is(':checked');
-		$('#required-private-tags').enable(enabled);
+		$('#start-img-num, #end-img-num').enable(enabled);
 	});
 
 	var dummyCondition = { key: 'modality', condition: '=', value: 'CT'};
@@ -406,6 +443,7 @@ $(function() {
 		});
 	})();
 
+	$('#editor-pane').change(ruleSetChanged).keyup(ruleSetChanged);
 
 	// Initialize
 	$('#plugin-select').change();
@@ -485,9 +523,10 @@ h3 { margin-bottom: 15px; }
 }
 
 .rulesets li {
-	margin: 5px 0 5px 0;
+	margin: 5px 0;
 	background-color: #eee;
 	cursor: pointer;
+	border-right: 5px solid white;
 }
 
 .rulesets li div.rule-no {
@@ -498,12 +537,17 @@ h3 { margin-bottom: 15px; }
 	margin-right: 1em;
 }
 
+.rulesets li .rule-rule {
+	float: left;
+}
+
 .rulesets li:hover {
 	background-color: #ffddae;
 }
 
 .rulesets li.active {
 	background-color: #ebbe8c;
+	border-color: #ebbe8c;
 }
 
 .rulesets li.active div.rule-no {
@@ -526,8 +570,12 @@ h3 { margin-bottom: 15px; }
 .condition-toolbutton span.ui-button-icon-primary { left: 0; }
 
 .rule-box { margin-top: 10px; }
+.rule-box th { font-weight: bold; padding: 5px 15px; }
 
 #down { font-size: 20px; text-align: center; }
+
+#save-pane { text-align: right; margin: 30px 5px 0 0; border-top: 1px solid gray; padding: 10px; }
+#save-button { padding: 0.5em 2em; }
 
 </style>
 
@@ -550,13 +598,13 @@ require=$smarty.capture.require body_class="spot"}
 	  <option value="{$item.id|escape}">{$item.name|escape}</option>
 	{/foreach}
 	</select>
-	<input class="form-btn" id="save" type="button" value="Save" />
 </div>
 
 <div id="selector-pane">
 	<div id="rulesets-list"></div>
-	<div>
-		<input type="button" class="form-btn" value="Save settings for this plugin" />
+	<div id="save-pane">
+		<input type="button" class="form-btn" id="save-button"
+		value="Save settings for this plugin" />
 	</div>
 </div>
 <div id="editor-pane">
@@ -571,18 +619,22 @@ require=$smarty.capture.require body_class="spot"}
 
 		<h3>Rule</h3>
 
-		<div class="rule-box">
-			<input type="checkbox" id="enable-clip" />
-			<label for="enable-clip">Clip images</label><br />
-			Start: <input type="text" id="start-image-num" disabled="disabled" />
-			End: <input type="text" id="end-image-num" disabled="disabled" />
-		</div>
-
-		<div class="rule-box">
-			<input type="checkbox" id="enable-private-tags" />
-			<label for="enable-private-tags">Use private DICOM tags</label><br />
-			Tags: <input type="text" id="required-private-tags" disabled="disabled" />
-		</div>
+		<table class="rule-box">
+			<tbody>
+				<tr>
+					<th>Start image number</th>
+					<td><input type="text" id="start-img-num" /></td>
+				</tr>
+				<tr>
+					<th>End image number</th>
+					<td><input type="text" id="end-img-num" /></td>
+				</tr>
+				<tr>
+					<th>Required private DICOM tags</th>
+					<td><input type="text" id="required-private-tags" size="30" /></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
 
