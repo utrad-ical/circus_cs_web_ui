@@ -201,8 +201,10 @@ $(function() {
 	var keySelect = $('<select>').addClass('key-select');
 	for (var i = 0; i < keys.length; i++)
 	{
+		var label = keys[i].value.replace('_', ' ');
+		if ('label' in keys[i]) label = keys[i].label;
 		$('<option>').attr('value', keys[i].value)
-			.text(keys[i].label).appendTo(keySelect);
+			.text(label).appendTo(keySelect);
 	};
 
 	var opSelect = $('<select>').addClass('operation-select');

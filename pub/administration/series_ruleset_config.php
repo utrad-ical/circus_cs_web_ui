@@ -5,26 +5,20 @@ Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
 $keys = array(
-	array(
-		'label' => 'manufacturer',
-		'value' => 'manufacturer'
-	),
-	array(
-		'label' => 'study instance UID',
-		'value' => 'study_uid'
-	),
-	array(
-		'label' => 'modality',
-		'value' => 'modality'
-	),
-	array(
-		'label' => 'series description',
-		'value' => 'series_description'
-	),
-	array(
-		'label' => 'number of images',
-		'value' => 'image_number'
-	)
+	array('value' => 'modality'),
+	array('value' => 'manufacturer'),
+	array('value' => 'model_name'),
+	array('value' => 'station_name'),
+	array('value' => 'sex'),
+	array('value' => 'age'),
+	array('value' => 'study_date'),
+	array('value' => 'series_date'),
+	array('value' => 'body_part'),
+	array('value' => 'image_width'),
+	array('value' => 'image_height'),
+	array('value' => 'study_uid', 'label' => 'study instance UID'),
+	array('value' => 'series_description'),
+	array('value' => 'image_number', 'label' => 'number of images')
 );
 
 $req = $_REQUEST;
