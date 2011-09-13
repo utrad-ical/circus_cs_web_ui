@@ -2,30 +2,29 @@
 function DoSearch(list, mode)
 {
 	var address = "";
-	var conditionNum = 0;
+	var params = {};
 
 	switch(list)
 	{
-		case 'patient': address = 'patient_list.php'; break;
-		case 'study':   address = 'study_list.php';   break;
-		case 'series':  address = 'series_list.php';  break;
-		case 'cad':     address = 'cad_log.php';      break;
+		case 'patient': address = 'patient_list.php?'; break;
+		case 'study':   address = 'study_list.php?';   break;
+		case 'series':  address = 'series_list.php?';  break;
+		case 'cad':     address = 'cad_log.php?';      break;
 	}
 
 	if(list == 'study' && mode == 'patient')  
 	{
-		address += '?mode=patient&encryptedPtID=' + encodeURIComponent($("#encryptedPtID").val());
-		conditionNum++;
+		params.mode = 'patient';
+		params.encryptedPtID = $("#encryptedPtID").val();
 	}
 	else if(list == 'series' && mode == 'study')
 	{
-		address += '?mode=study&studyInstanceUID=' + encodeURIComponent($("#studyInstanceUID").val());
-		conditionNum++;
+		params.mode = 'study';
+		params.studyInstanceUID = $("#studyInstanceUID").val();
 	}
 	else if(mode == 'today')
 	{
-		address = '?mode=today';
-		conditionNum++;
+		params.mode = 'today';
 	}
 
 	if(mode != 'patient' && mode != 'study')
@@ -34,23 +33,9 @@ function DoSearch(list, mode)
 		var ptName = $("#" + list + "Search input[name='filterPtName']").val();
 		var sex    = $("#" + list + "Search input[name='filterSex']:checked").val();
 
-		if(ptID != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtID=' + encodeURIComponent(ptID);
-			conditionNum++;
-		}
-	
-		if(ptName != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterPtName=' + encodeURIComponent(ptName);
-			conditionNum++;
-		}
-
-		if(sex == "M" || sex == "F")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterSex=' + encodeURIComponent(sex);
-			conditionNum++;
-		}
+		if(ptID != "")                params.filterPtID   = ptID;
+		if(ptName != "")              params.filterPtName = ptName;
+		if(sex == "M" || sex == "F")  params.filterSex    = sex;
 	}
 
 	if(list != "patient")
@@ -61,23 +46,13 @@ function DoSearch(list, mode)
 
 		if(mode != 'study')
 		{
-			if(ageMin != "")
-			{
-				address += ((conditionNum ==0) ? '?' : '&') + 'filterAgeMin=' + encodeURIComponent(ageMin);
-				conditionNum++;
-			}
-
-			if(ageMax != "")
-			{
-				address += ((conditionNum == 0) ? '?' : '&') + 'filterAgeMax=' + encodeURIComponent(ageMax);
-				conditionNum++;
-			}
+			if(ageMin != "")  params.filterAgeMin= ageMin;
+			if(ageMax != "")  params.filterAgeMax= ageMax;
 		}
 
 		if(modality != "all")
 		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterModality=' + encodeURIComponent(modality);
-			conditionNum++;
+			params.filterModality = modality;
 		}
 	}
 
@@ -86,57 +61,30 @@ function DoSearch(list, mode)
 		var stDateFrom = $("#studySearch input[name='stDateFrom']").val();
 		var stDateTo   = $("#studySearch input[name='stDateTo']").val();
 
-		if(stDateFrom != "")
-		{
-			address += ((conditionNum ==0) ? '?' : '&') + 'stDateFrom=' + encodeURIComponent(stDateFrom);
-			conditionNum++;
-		}
-
-		if(stDateTo != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'stDateTo=' + encodeURIComponent(stDateTo);
-			conditionNum++;
-		}
+		if(stDateFrom != "")  params.stDateFrom = stDateFrom;
+		if(stDateTo != "")    params.stDateTo   = stDateTo;
 	}
 
 	if(list == "series" || list == "cad")
 	{
 		var filterTag = $("#" + list + "Search input[name='filterTag']").val();
 
-		if(filterTag != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterTag=' + encodeURIComponent(filterTag);
-			conditionNum++;
-		}
+		if(filterTag != "")  params.filterTag = filterTag;
 
 		if(mode != 'today')
 		{
 			var srDateFrom = $("#" + list + "Search input[name='srDateFrom']").val();
 			var srDateTo   = $("#" + list + "Search input[name='srDateTo']").val();
 
-			if(srDateFrom != "")
-			{
-				address += ((conditionNum ==0) ? '?' : '&') + 'srDateFrom=' + encodeURIComponent(srDateFrom);
-				conditionNum++;
-			}
-
-			if(srDateTo != "")
-			{
-				address += ((conditionNum == 0) ? '?' : '&') + 'srDateTo=' + srDateTo;
-				conditionNum++;
-			}
+			if(srDateFrom != "")  params.srDateFrom = srDateFrom;
+			if(srDateTo != "")    params.srDateTo   = srDateTo;
 		}
 	}
 
 	if(list == "series")
 	{
 		var description = $("#seriesSearch input[name='filterSrDescription']").val();
-
-		if(description != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterSrDescription=' + encodeURIComponent(description);
-			conditionNum++;
-		}
+		if(description != "")  params.filterSrDescription = description;
 	}
 
 	if(list == "cad")
@@ -154,74 +102,23 @@ function DoSearch(list, mode)
 
 		if(mode != 'today')
 		{
-			if(cadDateFrom != "")
-			{
-				address += ((conditionNum == 0) ? '?' : '&') + 'cadDateFrom=' + encodeURIComponent(cadDateFrom);
-				conditionNum++;
-			}
-
-			if(cadDateTo != "")
-			{
-				address += ((conditionNum == 0) ? '?' : '&') + 'cadDateTo=' + encodeURIComponent(cadDateTo);
-				conditionNum++;
-			}
+			if(cadDateFrom != "")  params.cadDateFrom = cadDateFrom;
+			if(cadDateTo != "")    params.cadDateTo   = cadDateTo;
 		}
 
-		if(filterCadID != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterCadID=' + encodeURIComponent(filterCadID);
-			conditionNum++;
-		}
-
-		if(filterCAD != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterCAD=' + encodeURIComponent(filterCAD);
-			conditionNum++;
-		}
-
-		if(filterVersion != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterVersion=' + encodeURIComponent(filterVersion);
-			conditionNum++;
-		}
-
-		if(personalFB != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'personalFB=' + encodeURIComponent(personalFB);
-			conditionNum++;
-		}
-
-		if(consensualFB != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'consensualFB=' + encodeURIComponent(consensualFB);
-			conditionNum++;
-		}
-
-
-		if(filterTP != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterTP=' + encodeURIComponent(filterTP);
-			conditionNum++;
-		}
-
-		if(filterFBUser != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterFBUser=' + encodeURIComponent(filterFBUser);
-			conditionNum++;
-		}
-
-		if(filterFN != "")
-		{
-			address += ((conditionNum == 0) ? '?' : '&') + 'filterFN=' + encodeURIComponent(filterFN);
-			conditionNum++;
-		}
-
+		if(filterCadID != "")    params.filterCadID   = filterCadID;
+		if(filterCAD != "")      params.filterCAD     = filterCAD;
+		if(filterVersion != "")  params.filterVersion = filterVersion;
+		if(personalFB != "")     params.personalFB    = personalFB;
+		if(consensualFB != "")   params.consensualFB  = consensualFB;
+		if(filterTP != "")       params.filterTP      = filterTP;
+		if(filterFBUser != "")   params.filterFBUser  = filterFBUser;
+		if(filterFN != "")       params.filterFN      = filterFN;
 	}
 
-	address += ((conditionNum == 0) ? '?' : '&') 
-            +  'showing=' + encodeURIComponent($("#" + list + "Search select[name='showing']").val());
+	params.showing = $("#" + list + "Search select[name='showing']").val();
 
-	location.href = address;
+	location.href = address + $.param(params);
 }
 
 
