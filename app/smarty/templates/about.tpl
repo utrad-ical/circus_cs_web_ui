@@ -26,8 +26,18 @@ p {
 	margin: 5px 0;
 }
 
-table.developers td {
+dl.developers dt {
 	padding: 0 1em;
+	display: block;
+	float: left;
+	width: 220px;
+	height: 20px;
+	overflow: hidden;
+}
+
+dl.developers dd {
+	margin-left: 230px;
+	min-height: 20px;
 }
 
 ol li {
@@ -63,38 +73,22 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 A plug-in development kit will be released in the winter 2011.</p>
 
 <h3>Developer team:</h3>
-<table class="developers">
-	<tr style="padding-bottom: 15px">
-		<td>- Yukihiro NOMURA, PhD</td>
-		<td>overall coding, plugin development, and project management</td>
-	</tr>
-	<tr>
-		<td>- Yoshitaka MASUTANI, PhD</td>
-		<td>concept design, engineering supervision, and project direction</td>
-	</tr>
-	<tr>
-		<td>- Naoto HAYASHI, MD PhD</td>
-		<td>clinical supervision</td>
-	</tr>
-	<tr>
-		<td>- Soichiro MIKI, MD</td>
-		<td>clinical advice, and coding</td>
-	</tr>
-
-	<tr>
-		<td>- Takeharu YOSHIKAWA, MD PhD</td>
-		<td>clinical advice</td>
-	</tr>
-	<tr>
-		<td>- Mitsutaka NEMOTO, PhD</td>
-		<td>plugin development, and coding advice</td>
-	</tr>
-	<tr>
-		<td>- Shouhei HANAOKA, MD PhD</td>
-		<td>plugin development, and clinical advice</td>
-	</tr>
-
-</table>
+<dl class="developers">
+	<dt>Yukihiro NOMURA, PhD</dt>
+	<dd>overall coding, plugin development, and project management</dd>
+	<dt>Yoshitaka MASUTANI, PhD</dt>
+	<dd>concept design, engineering supervision, and project direction</dd>
+	<dt>Naoto HAYASHI, MD PhD</dt>
+	<dd>clinical supervision</dd>
+	<dt>Soichiro MIKI, MD</dt>
+	<dd>clinical advice, and coding</dd>
+	<dt>Takeharu YOSHIKAWA, MD PhD</dt>
+	<dd>clinical advice</dd>
+	<dt>Mitsutaka NEMOTO, PhD</dt>
+	<dd>plugin development, and coding advice</dd>
+	<dt>Shouhei HANAOKA, MD PhD</dt>
+	<dd>plugin development, and clinical advice</dd>
+</dl>
 
 <h3>References:</h3>
 <ol>
