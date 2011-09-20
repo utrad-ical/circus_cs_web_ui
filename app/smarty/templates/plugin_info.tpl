@@ -1,15 +1,11 @@
-{capture name="require"}
-js/search_condition.js
-{/capture}
-
-{include file="header.tpl" body_class="spot" head_extra=$smarty.capture.extra}
+{include file="header.tpl" body_class="spot" require=$smarty.capture.require}
 
 <h2>Plug-in information</h2>
 
 <div class="mb20">
 	<table class="detail-tbl">
 		<tr>
-			<th "width:10em;"><span class="trim01">Plug-in name</span></th>
+			<th><span class="trim01">Plug-in name</span></th>
 			<td>{$params.pluginName} v.{$params.version}</td>
 		</tr>
 		<tr>
@@ -58,7 +54,7 @@ js/search_condition.js
 	<table class="col-tbl mb10">
 		<thead>
 			<tr>
-				<th style="width:8em;">Successed</th>
+				<th style="width:8em;">Success</th>
 				<th style="width:8em;">Failed</th>
 				<th style="width:8em;">Processing</th>
 			</tr>
@@ -72,27 +68,5 @@ js/search_condition.js
 		</tbody>
 	</table>
 </div>
-
-{*	{if $caseNum > 0 && $resultType == 1}
-		<div style="font-size:7px;">&nbsp;</div>
-
-		{if $evalNumConsensual > 0}
-			<div style="font-size:16px; margin-left:5px;"><b>Evaluation</b> (Consensual feedback)</div>
-			<div style="font-size:15px; margin-left:15px; margin-bottom:5px;">
-				<b>No. of TP: </b>{$tpNumConsensual}<br>
-				<b>No. of FN: </b>{$fnNumConsensual}<br>
-			</div>
-		{/if}
-
-		{if $missedTPNum > 0 || $knownTPNum > 0 || $fnNumPersonal > 0}
-			<div style="font-size:16px; margin:5px;"><b>Evaluation</b> (by {$userID})</div>
-			<div style="font-size:15px; margin-left:15px; margin-bottom:5px;">
-				<b>No. of known TP: </b>{$knownTPNum}<br>
-				<b>No. of missed TP: </b>{$missedTPNum}<br>
-				<b>No. of FN: </b>{$fnNumPersonal}<br>
-			</div>
-		{/if}
-	{/if}
-*}
 
 {include file="footer.tpl"}
