@@ -65,12 +65,11 @@ if($mode == 'update' || $mode == 'delete')
 {
 	try
 	{
-		// Connect to SQL Server
 		$pdo = DBConnector::getConnection();
 
 		// Begin transaction
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$pdo->beginTransaction();	// Begin transaction
+		$pdo->beginTransaction();
 
 		// Get plugin ID
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
@@ -88,7 +87,7 @@ if($mode == 'update' || $mode == 'delete')
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
 
-		if($mode == 'update')	// restore default settings
+		if($mode == 'update')
 		{
 			$keyStr = array('sortKey', 'sortOrder', 'maxDispNum', 'confidenceTh', 'dispCandidateTagFlg');
 
@@ -112,7 +111,6 @@ if($mode == 'update' || $mode == 'delete')
 			$stmt->execute($sqlParams);
 		}
 		
-		// Commit transaction
 		$pdo->commit();
 		
 		$dstData['message'] = 'Succeeded!';
@@ -123,7 +121,7 @@ if($mode == 'update' || $mode == 'delete')
 	{
 		$pdo->rollBack();
 		$dstData['message'] = 'Fail to ' . $mode . ' the preference.'
-							. '(' . $e->getMessage() . ')';
+							. ' (' . $e->getMessage() . ')';
 	}
 	$pdo = null;
 }
