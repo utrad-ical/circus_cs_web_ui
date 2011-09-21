@@ -158,6 +158,8 @@
 	 */
 	function DeleteDirRecursively($dir)
 	{
+		global $DIR_SEPARATOR;
+		
 		if(is_dir($dir))
 		{
 			$objects = scandir($dir);
@@ -166,13 +168,45 @@
 			{
 				if($object != "." && $object != "..")
 				{
-					$fname = $dir . "/" . $object;
+					$fname = $dir . $DIR_SEPARATOR . $object;
 					if(filetype($fname) == "dir")		DeleteDirRecursively($fname);
 					else								unlink($fname);
 				}
 			}
 			reset($objects);
 			rmdir($dir);
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Recursively copy a directory that is not empty.
+	 * @param string $srcDir The path of source directory.
+	 * @param string $dstDir The path of destination directory
+	 */
+	function CopyDirRecursively($srcDir, $dstDir)
+	{
+		global $DIR_SEPARATOR;
+		
+		if(is_dir($srcDir))
+		{
+			if(!is_dir($dstDir))  mkdir($dstDir);
+
+			$objects = scandir($srcDir);
+			
+			foreach( $objects as $file )
+			{
+				if( $file == "." || $file == ".." )  continue;
+				
+				if( is_dir($srcDir.$DIR_SEPARATOR.$file) )
+				{
+					CopyDirRecursively($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
+				}
+                else
+                {
+					copy($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
+				}
+			}
 		}
 		return TRUE;
 	}
