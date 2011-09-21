@@ -65,7 +65,6 @@ function ShowCadPreferenceDetail()
 			$("#defaultSortOrder").val(data.sortOrder[0]);
 			$("#defaultMaxDispNum").val(data.maxDispNum[0]);
 			$("#defaultConfidenceTh").val(data.confidenceTh[0]);
-			$("#defaultDispConfidence").val(data.dispConfidence[0]);
 			$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
 			$("#message").html(data.message);
 			$("#maxDispNum").val(data.maxDispNum[1]);
@@ -73,9 +72,6 @@ function ShowCadPreferenceDetail()
 			$("#sortKey").val(data.sortKey[1]);
 			$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 				return ($(this).val() == data.sortOrder[1])
-			}).attr("checked", true);
-			$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-				return ($(this).val() == data.dispConfidence[1])
 			}).attr("checked", true);
 			$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
 				return ($(this).val() == data.dispCandidateTag[1])
@@ -109,7 +105,6 @@ function RegisterCadPreference(mode)
 					maxDispNum: $("#maxDispNum").val(),
 					confidenceTh: $("#confidenceTh").val(),
 					preferenceFlg: $("#preferenceFlg").val(),
-					dispConfidenceFlg: $('#detailCadPrefrence input[name="dispConfidence"]:checked').val(),
 					dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()
 				},
 				function(data){
@@ -127,9 +122,6 @@ function RegisterCadPreference(mode)
 								$("#sortKey").val($("#defaultSortKey").val());
 								$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 									return ($(this).val() == $("#defaultSortOrder").val())
-								}).attr("checked", true);
-								$("#detailCadPrefrence input[name='dispConfidence']").filter(function(){
-									return ($(this).val() == $("#defaultDispConfidence").val())
 								}).attr("checked", true);
 								$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
 									return ($(this).val() == $("#defaultDispCandidateTag").val())
@@ -191,7 +183,6 @@ function ChangeCadMenu()
 <input type="hidden" id="defaultSortOrder"        value="">
 <input type="hidden" id="defaultMaxDispNum"       value="">
 <input type="hidden" id="defaultConfidenceTh"     value="">
-<input type="hidden" id="defaultDispConfidence"   value="">
 <input type="hidden" id="defaultDispCandidateTag" value="">
 <input type="hidden" name="ticket" value="{$ticket|escape}">
 
@@ -326,13 +317,6 @@ function ChangeCadMenu()
 					<th><span class="trim01">Threshold of confidence</span></th>
 					<td>
 						<input id="confidenceTh" type="text" class="al-r" style="width: 100px;" />
-					</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Disp confidence</span></th>
-					<td>
-						<input type="radio" name="dispConfidence" value="1" />True
-						<input type="radio" name="dispConfidence" value="0" />False
 					</td>
 				</tr>
 				<tr>

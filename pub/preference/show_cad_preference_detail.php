@@ -38,7 +38,6 @@
 	$params['confidenceTh']     = array("", "");
 	$params['yellowCircleTh']   = array("", "");
 	$params['doubleCircleTh']   = array("", "");
-	$params['dispConfidence']   = array("", "");
 	$params['dispCandidateTag'] = array("", "");
 	//--------------------------------------------------------------------------------------------------------
 
