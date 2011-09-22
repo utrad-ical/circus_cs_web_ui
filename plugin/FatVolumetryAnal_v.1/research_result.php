@@ -116,6 +116,6 @@ $smarty = new SmartyEx();
 $smarty->assign('params',  $params);
 $smarty->assign('dstHtml', $dstHtml);
 
-$smarty->display('research/fat_volumetry_anal_v1.tpl');
+$smarty->display($WEB_UI_ROOT.'/plugin/'.$params['pluginName'].'_v.'.$params['version'].'/research_result.tpl');
 //------------------------------------------------------------------------------------------------------------------
 ?>

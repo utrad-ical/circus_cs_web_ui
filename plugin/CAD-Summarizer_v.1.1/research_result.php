@@ -1,7 +1,7 @@
 <?php
 
-include('drawRocCurve_v1.1.php');
-include("../cad_results/lesion_candidate_display_private.php");
+include('../../pub/plugin/CAD-Summarizer_v.1.1/drawRocCurve_v1.1.php');
+include("../../pub/cad_results/lesion_candidate_display_private.php");
 
 $data = array();
 
@@ -215,7 +215,7 @@ $smarty->assign('fpListHtml',      $listHtml[1]);
 $smarty->assign('pendingListHtml', $listHtml[2]);
 $smarty->assign('fnListHtml',      $listHtml[3]);
 
-$smarty->display('research/cad_summarizer_v1.1.tpl');
+$smarty->display($WEB_UI_ROOT.'/plugin/'.$params['pluginName'].'_v.'.$params['version'].'/research_result.tpl');
 //------------------------------------------------------------------------------------------------------------------
 
 ?>

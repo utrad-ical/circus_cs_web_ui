@@ -71,7 +71,7 @@ try
 		$params['tagArray'] = DBConnector::query($sqlStr, $params['jobID'], 'ALL_NUM');
 		//----------------------------------------------------------------------------------------------------------
 
-		$templateName = 'plugin_template/show_' . $params['pluginName'] . '_v.' . $params['version'] . '.php';
+		$templateName = '../../plugin/'.$params['pluginName'].'_v.'.$params['version'].'/research_result.php';
 		include($templateName);
 	}
 }

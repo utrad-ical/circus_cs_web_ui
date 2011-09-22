@@ -21,7 +21,7 @@
 <!--
 	function RedrawRocCurve(jobID, inputPath)
 	{
-		$.post("plugin_template/redraw_roc_curve.php",
+		$.post("../plugin/CAD-Summarizer_v.1/redraw_roc_curve.php",
 			 	{ jobID: jobID,
 			 	  curveType: $(".tab-content input[name='curveType']:checked").val(),
 			      pendigType: $(".tab-content input[name='pendigType']:checked").val()},
