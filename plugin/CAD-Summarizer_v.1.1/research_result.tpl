@@ -12,12 +12,18 @@
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
-<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="../js/edit_tags.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/jquery.blockUI.js"></script>
+<script language="javascript" type="text/javascript" src="../js/research_result.js"></script>
+<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 
-{literal}
 <script language="Javascript">
 <!--
+circus.jobID = {$params.jobID};
+circus.userID = "{$smarty.session.userID|escape:javascript}";
+
+{literal}
+
 	function RedrawRocCurve(jobID, inputPath)
 	{
 		$.post("../plugin/CAD-Summarizer_v.1.1/redraw_roc_curve_v1.1.php",
@@ -173,7 +179,7 @@ div.imgArea {
 				{$fnListHtml}
 
 				<!-- Tag area -->
-				{include file='cad_results/plugin_tag_area.tpl'}
+				<p id="tagArea">Tags: <span id="research-tags">Loading Tags...</span> <a id="edit-research-tags">(Edit)</a></p>
 
 				<div class="al-r">
 					<p class="pagetop"><a href="#page">page top</a></p>

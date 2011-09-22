@@ -13,37 +13,42 @@
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/ui/jquery-ui.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
-<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 <script language="javascript" type="text/javascript" src="../js/edit_tags.js"></script>
+<script language="javascript" type="text/javascript" src="../jq/jquery.blockUI.js"></script>
+<script language="javascript" type="text/javascript" src="../js/research_result.js"></script>
+<script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
 
-{literal}
 <script language="Javascript">
 <!--
-	function RedrawRocCurve(jobID, inputPath)
-	{
-		$.post("../plugin/CAD-Summarizer_v.1/redraw_roc_curve.php",
-			 	{ jobID: jobID,
-			 	  curveType: $(".tab-content input[name='curveType']:checked").val(),
-			      pendigType: $(".tab-content input[name='pendigType']:checked").val()},
-			   	function(data){
-			 		$("#rocGraph").attr("src", data.imgFname);
-			 		$("#dispTpNum").html(data.dispTpNum);
-			 		$("#undispTpNum").html(data.undispTpNum);
-			 		$("#dispFpNum").html(data.dispFpNum);
-			 		$("#undispFpNum").html(data.undispFpNum);
-			 		$("#fnNum").html(data.fnNum);
-			 		$("#underRocArea").html(data.underRocArea);
-					
-			 		$("#dispTpMenu").html(data.dispTpOptionHtml);
-			 		$("#dispSensitivity").html(data.dispSensitivity + '&nbsp;%');
+circus.jobID = {$params.jobID};
+circus.userID = "{$smarty.session.userID|escape:javascript}";
 
-				}, "json");
-	}
+{literal}
 
-	function ChangeDispTpNum()
-	{
-		$("#dispSensitivity").html($("#dispTpMenu").val() + '&nbsp;%');
-	}
+function RedrawRocCurve(jobID, inputPath)
+{
+	$.post("../plugin/CAD-Summarizer_v.1/redraw_roc_curve.php",
+		{ jobID: jobID,
+		  curveType: $(".tab-content input[name='curveType']:checked").val(),
+		  pendigType: $(".tab-content input[name='pendigType']:checked").val()},
+		  function(data){
+		 	$("#rocGraph").attr("src", data.imgFname);
+			$("#dispTpNum").html(data.dispTpNum);
+			$("#undispTpNum").html(data.undispTpNum);
+			$("#dispFpNum").html(data.dispFpNum);
+			$("#undispFpNum").html(data.undispFpNum);
+			$("#fnNum").html(data.fnNum);
+			$("#underRocArea").html(data.underRocArea);
+			
+	 		$("#dispTpMenu").html(data.dispTpOptionHtml);
+	 		$("#dispSensitivity").html(data.dispSensitivity + '&nbsp;%');
+		}, "json");
+}
+
+function ChangeDispTpNum()
+{
+	$("#dispSensitivity").html($("#dispTpMenu").val() + '&nbsp;%');
+}
 
 -->
 </script>
@@ -206,7 +211,7 @@ div.imgArea {
 				{$fnListHtml}
 
 				<!-- Tag area -->
-				{include file='cad_results/plugin_tag_area.tpl'}
+				<p id="tagArea">Tags: <span id="research-tags">Loading Tags...</span> <a id="edit-research-tags">(Edit)</a></p>
 
 				<div class="al-r">
 					<p class="pagetop"><a href="#page">page top</a></p>
