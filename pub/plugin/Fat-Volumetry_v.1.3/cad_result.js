@@ -34,13 +34,15 @@ $(function() {
 	vOrig.imageviewer({
 		source: new StaticImageSource(result_dir + '/ct%03d.png'),
 		useSlider: false,
-		useLocationText: false
+		useLocationText: false,
+		max: circus.cadresult.displays[1].length
 	})
 	vOrig.bind('imagechanging', function() { sync(vOrig, vMeasure); });
 
 	vMeasure.imageviewer({
 		source: new StaticImageSource(result_dir + '/result%03d.png'),
-		useLocationText: false
+		useLocationText: false,
+		max: circus.cadresult.displays[1].length
 	})
 	vMeasure.bind('imagechanging', function() { sync(vMeasure, vOrig); });
 
