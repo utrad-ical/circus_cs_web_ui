@@ -15,11 +15,20 @@ $(function() {
 				height: attr.crop_height
 			};
 		}
+
+		var minImg = 1;
+		if (circus.cadresult.attributes.start_img_num)
+			minImg = Number(circus.cadresult.attributes.start_img_num);
+
+		var maxImg = circus.cadresult.seriesNumImages;
+		if (circus.cadresult.attributes.end_img_num)
+			maxImg = Number(circus.cadresult.attributes.end_img_num);
+
 		var options = {
 			source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 			index: display.location_z,
-			min: Math.max(0, display.location_z - 5),
-			max: Math.min(circus.cadresult.seriesNumImages, display.location_z + 5),
+			min: Math.max(minImg, display.location_z - 5),
+			max: Math.min(maxImg, display.location_z + 5),
 			width: circus.cadresult.presentation.displayPresenter.dispWidth,
 			markers: [{
 				location_x: display.location_x,
