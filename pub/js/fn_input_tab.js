@@ -40,10 +40,14 @@ circus.feedback.additional = circus.feedback.additional || [];
 			if (circus.cadresult.attributes.start_img_num)
 				minImg = Number(circus.cadresult.attributes.start_img_num);
 
+			var maxImg = circus.cadresult.seriesNumImages;
+			if (circus.cadresult.attributes.end_img_num)
+				maxImg = Number(circus.cadresult.attributes.end_img_num);
+
 			// Prepares an image viewer widget for FN locating
 			f._viewer = $('#fn-input-viewer').imageviewer({
 				min: minImg,
-				max: circus.cadresult.seriesNumImages,
+				max: maxImg,
 				source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 				role: (canEdit ? 'locator' : 'viewer'),
 				grayscalePresets: presets.length >= 2 ? presets : false,

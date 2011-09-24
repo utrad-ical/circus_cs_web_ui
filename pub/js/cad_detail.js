@@ -36,10 +36,14 @@ $(function() {
 	if (circus.cadresult.attributes.start_img_num)
 		minImg = Number(circus.cadresult.attributes.start_img_num);
 
+	var maxImg = circus.cadresult.seriesNumImages;
+	if (circus.cadresult.attributes.end_img_num)
+		maxImg = Number(circus.cadresult.attributes.end_img_num);
+
 	var viewer = $('#cad-detail-viewer').imageviewer({
 		source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 		min: minImg,
-		max: circus.cadresult.seriesNumImages,
+		max: maxImg,
 		markers: markers,
 		markerStyle: 'circle',
 		grayscalePresets: presets.length >= 2 ? presets : false,
