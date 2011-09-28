@@ -130,6 +130,7 @@ $.widget('ui.daterange', {
 	{
 		this.kindSelect.val(this.options.kind);
 		this.options.kind = this.kindSelect.val(); // invalid assignment does not take effect
+		this.kindSelect.change();
 	},
 
 	_createDateInput: function(className, name)
