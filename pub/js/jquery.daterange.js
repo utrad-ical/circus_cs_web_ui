@@ -12,7 +12,10 @@ $.widget('ui.daterange', {
 	options: {
 		dash: ' &mdash; ',
 		icon: 'images/calendar_view_month.png',
-		dateFormat: 'yy-mm-dd'
+		dateFormat: 'yy-mm-dd',
+		fromDate: null,
+		toDate: null,
+		kind: null
 	},
 
 	_types: [
@@ -31,17 +34,6 @@ $.widget('ui.daterange', {
 	{
 		var self = this;
 		var root = this.element.empty().addClass('ui-daterange')
-
-		var datePickerOpts = {
-			buttonText: 'select',
-			buttonImage: self.options.icon,
-			buttonImageOnly: true,
-			showOn: 'button',
-			constrainInput: false,
-			dateFormat: this.options.dateFormat,
-			changeMonth: true,
-			changeYear: true
-		};
 
 		var refresh = function()
 		{
@@ -69,6 +61,7 @@ $.widget('ui.daterange', {
 					target.attr('disabled', 'disabled').datepicker('disable');
 				});
 			}
+			self._updateInternalValue();
 		};
 
 		var kindSelect = $('<select>')
@@ -86,37 +79,82 @@ $.widget('ui.daterange', {
 			if (item.stripe)
 				opt.addClass('ui-daterange-stripe')
 		}
+		self.kindSelect = kindSelect;
 
 		var customField = $('<span>')
 		.addClass('ui-daterange-custom')
 		.appendTo(root);
 
 		// 'FROM' field
-		var from = $('<input type="text">')
-		.addClass('ui-daterange-from')
-		.appendTo(customField)
-		.datepicker(datePickerOpts)
-		.datepicker('option', 'onSelect', function(text, inst) {
+		var from = self._createDateInput('ui-daterange-from').appendTo(customField);
+		from.datepicker('option', 'onSelect', function(text, inst) {
 			to.datepicker('option', 'minDate', from.val());
+			self._updateInternalValue();
 		});
-		if (this.options.fromName)
-			from.attr('name', this.options.fromName);
+		self.from = from;
 
 		// ' - '
 		customField.append(self.options.dash);
 
 		// 'TO' field
-		var to = $('<input type="text">')
-		.addClass('ui-daterange-to')
-		.appendTo(customField)
-		.datepicker(datePickerOpts)
-		.datepicker('option', 'onSelect', function(text, inst) {
+		var to = self._createDateInput('ui-daterange-to').appendTo(customField);
+		to.datepicker('option', 'onSelect', function(text, inst) {
 			from.datepicker('option', 'maxDate', to.val());
+			self._updateInternalValue();
 		});
-		if (this.options.toName)
-			to.attr('name', this.options.toName);
+		self.to = to;
 
 		refresh();
+	},
+
+	_updateInternalValue: function()
+	{
+		var self = this;
+		self.options.fromDate = self.from.val();
+		self.options.toDate = self.to.val();
+		self.options.kind = self.kindSelect.val();
+		// console.log('value updated', self.options.fromDate, self.options.toDate, self.options.kind);
+	},
+
+	_commitFromDate: function()
+	{
+		this.from.val(this.options.fromDate);
+	},
+
+	_commitToDate: function()
+	{
+		this.to.val(this.options.toDate);
+	},
+
+	_commitKind: function()
+	{
+		this.kindSelect.val(this.options.kind);
+		this.options.kind = this.kindSelect.val(); // invalid assignment does not take effect
+	},
+
+	_createDateInput: function(className, name)
+	{
+		var self = this;
+		var datePickerOpts = {
+			buttonText: 'select',
+			buttonImage: this.options.icon,
+			buttonImageOnly: true,
+			showOn: 'button',
+			constrainInput: false,
+			dateFormat: this.options.dateFormat,
+			changeMonth: true,
+			changeYear: true
+		};
+
+		var result = $('<input type="text">');
+		result
+			.addClass(className)
+			.datepicker(datePickerOpts)
+			.change(function() { self._updateInternalValue(); })
+			.keyup(function() { self._updateInternalValue(); });
+		if (name)
+			result.attr('name', name);
+		return result;
 	},
 
 	_calcDateDiff: function(diff, from)
@@ -153,8 +191,20 @@ $.widget('ui.daterange', {
 		return $.datepicker.formatDate(this.options.dateFormat, date);
 	},
 
-	_setOptions: function(key, value, animated)
+	_setOption: function(key, value)
 	{
 		$.Widget.prototype._setOption.apply(this, arguments);
+		switch (key)
+		{
+			case 'fromDate':
+				this._commitFromDate();
+				break;
+			case 'toDate':
+				this._commitToDate();
+				break;
+			case 'kind':
+				this._commitKind();
+				break;
+		}
 	}
 });
