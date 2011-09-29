@@ -1,5 +1,6 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
 js/search_panel.js
 js/list_tab.js
 jq/ui/theme/jquery-ui.custom.css
@@ -39,6 +40,7 @@ jq/ui/theme/jquery-ui.custom.css
 			<input type="hidden" id="hiddenFilterAgeMax"        value="{$params.filterAgeMax|escape}" />
 			<input type="hidden" id="hiddenFilterModality"      value="{$params.filterModality|escape}" />
 			<input type="hidden" id="hiddenFilterSrDescription" value="{$params.filterSrDescription|escape}" />
+			<input type="hidden" id="hiddenSrDateKind"          value="{$params.srDateKind|escape}" />
 			<input type="hidden" id="hiddenSrDateFrom"          value="{$params.srDateFrom|escape}" />
 			<input type="hidden" id="hiddenSrDateTo"            value="{$params.srDateTo|escape}" />
 			<input type="hidden" id="hiddenSrTimeTo"            value="{$params.srTimeTo|escape}" />

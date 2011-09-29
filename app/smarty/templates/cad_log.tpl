@@ -1,5 +1,6 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
 js/search_panel.js
 js/list_tab.js
 jq/ui/theme/jquery-ui.custom.css
@@ -46,9 +47,11 @@ jq/ui/theme/jquery-ui.custom.css
 				<input type="hidden" id="hiddenFilterFN"           value="{$params.filterFN|escape}" />
 				<input type="hidden" id="hiddenFilterPersonalFB"   value="{$params.personalFB|escape}" />
 				<input type="hidden" id="hiddenFilterConsensualFB" value="{$params.consensualFB|escape}" />
+				<input type="hidden" id="hiddenSrDateKind"         value="{$params.srDateKind|escape}" />
 				<input type="hidden" id="hiddenSrDateFrom"         value="{$params.srDateFrom|escape}" />
 				<input type="hidden" id="hiddenSrDateTo"           value="{$params.srDateTo|escape}" />
 				<input type="hidden" id="hiddenSrTimeTo"           value="{$params.srTimeTo|escape}" />
+				<input type="hidden" id="hiddenCadDateKind"        value="{$params.cadDateKind|escape}" />
 				<input type="hidden" id="hiddenCadDateFrom"        value="{$params.cadDateFrom|escape}" />
 				<input type="hidden" id="hiddenCadDateTo"          value="{$params.cadDateTo|escape}" />
 				<input type="hidden" id="hiddenCadTimeTo"          value="{$params.cadTimeTo|escape}" />

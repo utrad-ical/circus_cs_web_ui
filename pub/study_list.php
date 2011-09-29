@@ -55,7 +55,7 @@
 				"options" => $modalityList,
 				"default" => "all",
 				"otherwise" => "all"),
-			"stDateRangeKind" => array(
+			"stDateKind" => array(
 				"type" => "str",
 				"label" => 'Study date',
 				"default" => 'all'),
@@ -175,6 +175,8 @@
 					$addressParams['filterSex'] = $params['filterSex'];
 				}
 			}
+			
+			if($params['stDateKind'] != 'all')  $addressParams['stDateKind'] = $params['stDateKind'];
 
 			if($params['stDateFrom'] != "" && $params['stDateTo'] != "" && $params['stDateFrom'] == $params['stDateTo'])
 			{

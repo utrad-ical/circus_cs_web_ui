@@ -86,6 +86,7 @@ function ChangeOrderOfStudyList(orderCol, orderMode)
                    filterModality: $("#hiddenFilterModality").val(),
 				   filterAgeMin: $("#hiddenFilterAgeMin").val(),
 	               filterAgeMax: $("#hiddenFilterAgeMax").val(),
+	               stDateKind: $("#hiddenStDateKind").val(),
 	               stDateFrom: $("#hiddenStDateFrom").val(),
 	               stDateTo: $("#hiddenStDateTo").val(),
 	               stTimeTo: $("#hiddenStTimeTo").val(),
@@ -134,6 +135,7 @@ function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 		}
 		else
 		{
+			params.srDateKind = $("#hiddenSrDateKind").val();
 			params.srDateFrom = $("#hiddenSrDateFrom").val();
 			params.srDateTo   = $("#hiddenSrDateTo").val();
 			params.srTimeTo   = $("#hiddenSrTimeTo").val();
@@ -268,6 +270,7 @@ function ChangeOrderOfCADList(orderCol, orderMode)
                    filterModality: $("#hiddenFilterModality").val(),
 				   filterAgeMin:   $("#hiddenFilterAgeMin").val(),
 	               filterAgeMax:   $("#hiddenFilterAgeMax").val(),
+	               srDateKind:     $("#hiddenSrDateKind").val(),
 	               srDateFrom:     $("#hiddenSrDateFrom").val(),
 	               srDateTo:       $("#hiddenSrDateTo").val(),
 	               srTimeTo:       $("#hiddenSrTimeTo").val(),
@@ -286,10 +289,13 @@ function ChangeOrderOfCADList(orderCol, orderMode)
 	}
 	else
 	{
+		params.cadDateKind = $("#hiddenCadDateKind").val();
 		params.cadDateFrom = $("#hiddenCadDateFrom").val();
 		params.cadDateTo   = $("#hiddenCadDateTo").val();
 		params.cadTimeTo   = $("#hiddenCadTimeTo").val();
 	}
+
+	alert($.param(params));
 
 	location.href = 'cad_log.php?' + $.param(params);
 }

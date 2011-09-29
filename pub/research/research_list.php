@@ -85,12 +85,12 @@
 
 		if($params['errorMessage'] == "&nbsp;")
 		{
-			$pluginList = array();
+			$pluginList    = array();
+			$addressParams = array();
 
 			//----------------------------------------------------------------------------------------------------------
 			// Create SQL queries
 			//----------------------------------------------------------------------------------------------------------
-			$optionNum = 0;
 			$condArr = array();
 
 			$sqlStr = "SELECT el.job_id, pm.plugin_name, pm.version, el.executed_at, el.exec_user"
@@ -99,6 +99,8 @@
 			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND pm.type=2 AND el.status=?";
 			$condArr[] = $PLUGIN_SUCESSED;
 
+			if($params['resDateKind'] != 'all')  $addressParams['resDateKind'] = $params['resDateKind'];
+
 			if($params['resDateFrom'] != "" && $params['resDateTo'] != ""
 			   && $params['resDateFrom'] == $params['resDateTo'])
 			{
@@ -106,8 +108,8 @@
 				array_push($condArr, $params['resDateFrom'] . ' 00:00:00');
 				array_push($condArr, $params['resDateFrom'] . ' 23:59:59');
 
-				$params['pageAddress'] .= 'resDateFrom=' . $params['resDateFrom'] . '&resDateTo=' . $params['resDateTo'];
-				$optionNum++;
+				$addressParams['resDateFrom'] = $params['resDateFrom'];
+				$addressParams['resDateTo']   = $params['resDateTo'];
 			}
 			else
 			{
@@ -116,27 +118,24 @@
 					$sqlCond .= " AND ?<=el.executed_at";
 					$condArr[] = $params['resDateFrom'] . ' 00:00:00';
 
-					$params['pageAddress'] .= 'resDateFrom=' . $params['resDateFrom'];
-					$optionNum++;
+					$addressParams['resDateFrom'] = $params['resDateFrom'];
 				}
 
 				if($params['resDateTo'] != "")
 				{
 					$sqlCond .= " AND el.executed_at<=?";
 
-					if(0<$optionNum)  $params['pageAddress'] .= "&";
-					$params['pageAddress'] .= 'resDateTo=' . $params['resDateTo'];
+					$addressParams['resDateTo'] = $params['resDateTo'];
 
 					if($params['resTimeTo'] != "")
 					{
 						$condArr[] = $params['resDateTo'] . ' ' . $params['resTimeTo'];
-						$params['pageAddress'] .= '&resTimeTo=' . $params['resTimeTo'];
+						$addressParams['resTimeTo'] = $params['resTimeTo'];
 					}
 					else
 					{
 						array_push($condArr, $params['resDateTo'] . ' 23:59:59');
 					}
-					$optionNum++;
 				}
 			}
 
@@ -146,9 +145,7 @@
 				$condArr[] = $params['pluginName'];
 				$condArr[] = $params['version'];
 
-				if(0<$optionNum)  $params['pageAddress'] .= "&";
-				$params['pageAddress'] .= 'pluginName=' . $pluginNameTmp;
-				$optionNum++;
+				$addressParams['pluginName'] = $pluginNameTmp;
 			}
 
 			if($params['filterTag'] != "")
@@ -156,10 +153,7 @@
 			 	$sqlCond .= " AND el.job_id IN (SELECT DISTINCT reference_id FROM tag_list WHERE category=6 AND tag~*?)";
 				$condArr[] = $params['filterTag'];
 
-				if(0<$optionNum)  $params['pageAddress'] .= "&";
-				$params['pageAddress'] .= 'filterTag=' . $params['filterTag'];
-
-				$optionNum++;
+				$addressParams['filterTag'] = $params['filterTag'];
 			}
 
 			//----------------------------------------------------------------------------------------------------------
@@ -190,9 +184,11 @@
 						break;
 			}
 
-			if(0<$optionNum)  $params['pageAddress'] .= "&";
-			$params['pageAddress'] .= 'orderCol=' . $params['orderCol'] . '&orderMode=' .  $params['orderMode']
-			                       .  '&showing=' . $params['showing'];
+			$addressParams['orderCol']  = $paramss['orderCol'];
+			$addressParams['orderMode'] = $paramss['orderMode'];
+			$addressParams['showing']   = $paramss['showing'];
+
+			$params['pageAddress'] .= implode('&', array_map('UrlKeyValPair', array_keys($addressParams), array_values($addressParams)));
 
 			$_SESSION['listAddress'] = $params['pageAddress'];
 

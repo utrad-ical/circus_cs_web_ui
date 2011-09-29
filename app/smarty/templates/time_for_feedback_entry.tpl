@@ -104,7 +104,7 @@ function ChangeUserList(mode, allStatFlg)
 
 function ResetCondition()
 {
-	$("#dateFrom, #dateTo").removeAttr("value");
+	$("#srDateRange").daterange('option', 'kind', 'all');
 	$("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
 
 	ChangeCadMenu();

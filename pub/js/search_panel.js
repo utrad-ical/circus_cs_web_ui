@@ -58,35 +58,38 @@ function DoSearch(list, mode)
 
 	if(list == "study")
 	{
-		var stDateRangeKind = $("#studySearch .stDateRange").daterange('option', 'kind');
-		var stDateFrom      = $("#studySearch .stDateRange").daterange('option', 'fromDate');
-		var stDateTo        = $("#studySearch .stDateRange").daterange('option', 'toDate');
+		var stDateKind = $("#studySearch .stDateRange").daterange('option', 'kind');
+		var stDateFrom = $("#studySearch .stDateRange").daterange('option', 'fromDate');
+		var stDateTo   = $("#studySearch .stDateRange").daterange('option', 'toDate');
 
-		if(stDateRangeKind && stDateRangeKind != "all")
+		if(stDateKind && stDateKind != "all")
 		{
-			params.stDateRangeKind = stDateRangeKind;
+			params.stDateKind = stDateKind;
 
-			//if(stDateRangeKind == "custom...")
-			//{
-				if(stDateFrom)   params.stDateFrom = stDateFrom;
-				if(stDateTo)     params.stDateTo   = stDateTo;
-			//}
+			if(stDateFrom)   params.stDateFrom = stDateFrom;
+			if(stDateTo)     params.stDateTo   = stDateTo;
 		}
 	}
 
 	if(list == "series" || list == "cad")
 	{
-		var filterTag = $("#" + list + "Search input[name='filterTag']").val();
+		var filterTag = $("#" + list + "Search .input[name='filterTag']").val();
 
-		if(filterTag != "")  params.filterTag = filterTag;
+		if(filterTag)  params.filterTag = filterTag;
 
 		if(mode != 'today')
 		{
-			var srDateFrom = $("#" + list + "Search input[name='srDateFrom']").val();
-			var srDateTo   = $("#" + list + "Search input[name='srDateTo']").val();
+			var srDateKind = $("#" + list + "Search .srDateRange").daterange('option', 'kind');
+			var srDateFrom = $("#" + list + "Search .srDateRange").daterange('option', 'fromDate');
+			var srDateTo   = $("#" + list + "Search .srDateRange").daterange('option', 'toDate');
 
-			if(srDateFrom != "")  params.srDateFrom = srDateFrom;
-			if(srDateTo != "")    params.srDateTo   = srDateTo;
+			if(srDateKind && srDateKind != "all")
+			{
+				params.srDateKind = srDateKind;
+
+				if(srDateFrom)   params.srDateFrom = srDateFrom;
+				if(srDateTo)     params.srDateTo   = srDateTo;
+			}
 		}
 	}
 
@@ -98,8 +101,6 @@ function DoSearch(list, mode)
 
 	if(list == "cad")
 	{
-		var cadDateFrom   = $("#cadSearch input[name='cadDateFrom']").val();
-		var cadDateTo     = $("#cadSearch input[name='cadDateTo']").val();
 		var filterCadID   = $("#cadSearch input[name='filterCadID']").val();
 		var filterCAD     = $("#cadSearch select[name='filterCAD'] option:selected").text();
 		var filterVersion = $("#cadSearch select[name='filterVersion']").val();
@@ -111,8 +112,17 @@ function DoSearch(list, mode)
 
 		if(mode != 'today')
 		{
-			if(cadDateFrom != "")  params.cadDateFrom = cadDateFrom;
-			if(cadDateTo != "")    params.cadDateTo   = cadDateTo;
+			var cadDateKind = $("#cadSearch .cadDateRange").daterange('option', 'kind');
+			var cadDateFrom = $("#cadSearch .cadDateRange").daterange('option', 'fromDate');
+			var cadDateTo   = $("#cadSearch .cadDateRange").daterange('option', 'toDate');
+
+			if(cadDateKind && cadDateKind != "all")
+			{
+				params.cadDateKind = cadDateKind;
+
+				if(cadDateFrom)   params.cadDateFrom = cadDateFrom;
+				if(cadDateTo)     params.cadDateTo   = cadDateTo;
+			}
 		}
 
 		if(filterCadID != "")    params.filterCadID   = filterCadID;
@@ -148,21 +158,49 @@ function ResetSearchBlock(list, mode)
 												.filter(function(){ return ($(this).val() == "all") })
 												.attr("checked", true);
 	// text
-	if(mode == "today")
+	$("#" + list + "Search input[type='text']").removeAttr("disabled").removeAttr("value");
+
+	if(list == "cad" && mode == "today")
 	{
-		if(list == "series")
-		{
-			$("#seriesSearch input[type='text'][name!='srDateFrom'][name!='srDateTo']").removeAttr("value").removeAttr("disabled");
-		}
-		else if(list == "cad")
-		{
-			$("#cadSearch input[type='text'][name!='cadDateFrom'][name!='cadDateTo']").removeAttr("value").removeAttr("disabled");
-		}
+		$("#cadSearch input[type='text'][name!='cadDateFrom'][name!='cadDateTo']").removeAttr("value").removeAttr("disabled");
 	}
 	else
 	{
-		$("#" + list + "Search input[type='text']").removeAttr("disabled").removeAttr("value");
+		
 	}
+
+	// date range
+	if(list == "study")
+	{
+		$("#studySearch .stDateRange").daterange('option', 'kind', 'all');
+	}
+	else if(list == "series")
+	{
+		if(mode == "today")
+		{
+			$("#seriesSearch .srDateRange").daterange('option', 'kind', 'today');
+			$("#seriesSearch .stDateRange select").attr('disabled', 'disabled');
+		}
+		else
+		{
+			$("#seriesSearch .srDateRange").daterange('option', 'kind', 'all');
+		}
+	}
+	else if(list == "cad")
+	{
+		$("#cadSearch .srDateRange").daterange('option', 'kind', 'all');
+
+		if(mode == "today")
+		{
+			$("#cadSearch .cadDateRange").daterange('option', 'kind', 'today');
+			$("#cadSearch .cadDateRange select").attr('disabled', 'disabled');
+		}
+		else
+		{
+			$("#cadSearch .cadDateRange").daterange('option', 'kind', 'all');
+		}
+	}
+
 
 	// others (CAD only)
 	if(list == "cad")

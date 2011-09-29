@@ -22,7 +22,7 @@ jq/ui/theme/jquery-ui.custom.css
 	<input type="hidden" id="hiddenFilterAgeMin"    value="{$params.filterAgeMin|escape}" />
 	<input type="hidden" id="hiddenFilterAgeMax"    value="{$params.filterAgeMax|escape}" />
 	<input type="hidden" id="hiddenFilterModality"  value="{$params.filterModality|escape}" />
-	<input type="hidden" id="hiddenStDateRangeKind" value="{$params.stDateRangeKind|escape}" />
+	<input type="hidden" id="hiddenStDateKind"      value="{$params.stDateKind|escape}" />
 	<input type="hidden" id="hiddenStDateFrom"      value="{$params.stDateFrom|escape}" />
 	<input type="hidden" id="hiddenStDateTo"        value="{$params.stDateTo|escape}" />
 	<input type="hidden" id="hiddenStTimeTo"        value="{$params.stTimeTo|escape}" />

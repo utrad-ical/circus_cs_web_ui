@@ -168,7 +168,8 @@ function ChangeUserList(mode, allStatFlg)
 
 function ResetCondition()
 {
-	$("#dateFrom, #dateTo, #minSize, #maxSize").removeAttr("value");
+	$("#srDateRange").daterange('option', 'kind', 'all');
+	$("#minSize, #maxSize").removeAttr("value");
 	$("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
 }
 

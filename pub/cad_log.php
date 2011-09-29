@@ -47,15 +47,19 @@
 		if($mode != "today")
 		{
 			$validator->addRules(array(
+				"cadDateKind" => array(
+					"type" => "str",
+					"label" => 'CAD date',
+					"default" => 'all'),
 				"cadDateFrom" => array(
 					"type" => "date",
-					"errorMes" => "'CAD date' is invalid."),
+					"label" => "CAD date"),
 				"cadDateTo" => array(
 					"type" => "date",
-					"errorMes" => "'CAD date' is invalid."),
+					"label" => "CAD date"),
 				"cadTimeTo" => array(
 					"type" => "time",
-					"errorMes" => "'CAD time' is invalid.")
+					"label" => "CAD time")
 				));
 		}
 
@@ -63,23 +67,23 @@
 			"filterCadID" => array(
 				"type" => "int",
 				"min" => '0',
-				"errorMes" => "'CAD ID' is invalid."),
+				"label" => "CAD ID"),
 			"filterCAD" => array(
 				"type" => "cadname",
 				"default" => "all",
 				"otherwise"=> "all",
-				"errorMes" => "'CAD' is invalid."),
+				"label" => "CAD Name"),
 			"filterVersion" => array(
 				"type" => "version",
 				"default" => "all",
 				"otherwise" => "all",
-				"errorMes" => "'Version' is invalid."),
+				"label" => "Version"),
 			"filterPtID" => array(
 				"type" => "pgregex",
-				"errorMes" => "'Patient ID' is invalid."),
+				"label" => "Patient ID"),
 			"filterPtName" => array(
 				"type" => "pgregex",
-				"errorMes" => "'Patient name' is invalid."),
+				"label" => "Patient name"),
 			"filterSex" => array(
 				"type" => "select",
 				"options" => array('M', 'F', 'all'),
@@ -88,31 +92,35 @@
 			"filterAgeMin" => array(
 				"type" => "int",
 				"min" => "0",
-				"errorMes" => "'Age' is invalid."),
+				"label" => "Age"),
 			"filterAgeMax" => array(
 				"type" => "int",
 				"min" => "0",
-				"errorMes" => "'Age' is invalid."),
+				"label" => "Age"),
 			"filterModality" => array(
 				"type" => "select",
 				"options" => $modalityList,
 				"default" => "all",
 				"otherwise" => "all"),
+			"srDateKind" => array(
+				"type" => "str",
+				"label" => 'Series date',
+				"default" => 'all'),
 			"srDateFrom" => array(
 				"type" => "date",
-				"errorMes" => "'Series date' is invalid."),
+				"label" => "Series date"),
 			"srDateTo" => array(
 				"type" => "date",
-				"errorMes" => "'Series date' is invalid."),
+				"label" => "Series date"),
 			"srTimeTo" => array(
 				"type" => "time",
-				"errorMes" => "'Series time' is invalid."),
+				"label" => "Series time"),
 			"filterTag"=> array(
 				"type" => "pgregex",
-				"errorMes" => "'Tag' is invalid."),
+				"label" => "Tag"),
 			//"filterFBUser"=> array(
 			//	"type" => "pgregex",
-			//	"errorMes" => "'Series description' is invalid."),
+			//	"label" => "Entered by"),
 			"personalFB" => array(
 				"type" => "select",
 				"options" => array("entered", "notEntered", "all"),
@@ -194,6 +202,8 @@
 			$today = date("Y-m-d");
 			$params['cadDateFrom'] = $today;
 			$params['cadDateTo']   = $today;
+			$params['cadDateKind'] = 'today';
+			
 
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
@@ -204,6 +214,7 @@
 		}
 		else if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
+			if($params['cadDateKind'] != 'all')  $addressParams['cadDateKind'] = $params['cadDateKind'];
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
 			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
@@ -212,6 +223,8 @@
 		}
 		else
 		{
+			if($params['cadDateKind'] != 'all')  $addressParams['cadDateKind'] = $params['cadDateKind'];
+
 			if($params['cadDateFrom'] != "")
 			{
 				$sqlCondArray[] = "?<=el.executed_at";
@@ -236,6 +249,7 @@
 			}
 		}
 
+		if($params['srDateKind'] != 'all')  $addressParams['srDateKind'] = $params['srDateKind'];
 
 		if($params['srDateFrom'] != "" && $params['srDateTo'] != "" && $params['srDateFrom'] == $params['srDateTo'])
 		{

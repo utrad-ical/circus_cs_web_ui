@@ -65,15 +65,15 @@
 
 <script language="javascript">
 <!-- 
-var stDateRangeKind = {if $params.stDateRangeKind != ""}"{$params.stDateRangeKind}"{else}null{/if};
+var stDateKind = {if $params.stDateKind != ""}"{$params.stDateKind}"{else}null{/if};
 var stFromDate = {if $params.stDateFrom != ""}"{$params.stDateFrom}"{else}null{/if};
-var stToDate = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};
+var stToDate   = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};
 
 {literal}
 $(function() {
-	$("#studySearch .stDateRange").daterange({ kind: stDateRangeKind});
+	$("#studySearch .stDateRange").daterange({ kind: stDateKind});
 
-	if(stDateRangeKind == "custom...")
+	if(stDateKind == "custom...")
 	{
 	 	$("#studySearch .stDateRange")
 			.daterange('option', 'fromDate', stFromDate)

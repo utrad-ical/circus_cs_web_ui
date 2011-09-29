@@ -52,6 +52,10 @@
 		if($mode != 'today')
 		{
 			$validator->addRules(array(
+				"srDateKind" => array(
+					"type" => "str",
+					"label" => 'Series date',
+					"default" => 'all'),
 				"srDateFrom" => array(
 					"type" => "date",
 					"label" => 'Series date'),
@@ -142,6 +146,7 @@
 				$today = date("Y-m-d");
 				$params['srDateFrom'] = $today;
 				$params['srDateTo']   = $today;
+				$params['srDateKind'] = 'today';
 
 				$sqlCondArray[] = "series_date=?";
 				$sqlParams[] = $params['srDateFrom'];
@@ -238,6 +243,8 @@
 
 			if($params['mode'] != 'today')
 			{
+				if($params['srDateKind'] != 'all')  $addressParams['srDateKind'] = $params['srDateKind'];
+				
 				if($params['srDateFrom'] != "" && $params['srDateTo'] != ""
 				   && $params['srDateFrom'] == $params['srDateTo'])
 				{

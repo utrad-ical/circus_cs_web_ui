@@ -3,17 +3,23 @@
 	<div style="padding:20px 20px 0px;">
 		<table class="search-tbl">
 			<tr>
-				<th style="width: 8.5em;"><span class="trim01">Series date</span></th>
-				<td style="width: 220px;">
-					<input name="srDateFrom" type="text" style="width:72px;" value="{$params.srDateFrom|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
-					-&nbsp;
-					<input name="srDateTo" type="text" style="width:72px;" value="{$params.srDateTo|escape}" {if $params.mode=='today'}disabled="disabled"{/if} />
+				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
+				<td style="width: 130px;">
+					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
-				<th style="width: 11em;"><span class="trim01">Series description</span></th>
-				<td style="width: 200px;">
-					<input name="filterSrDescription" type="text" style="width: 180px;" value="{$params.filterSrDescription|escape}" />
+				<th style="width: 9em;"><span class="trim01">Patient Name</span></th>
+				<td style="width: 180px;">
+					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='study' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
-				<th style="width: 6em;"><span class="trim01">Modality</span></th>
+				<th style="width: 4em;"><span class="trim01">Sex</span></th>
+				<td style="width: 180px;">
+					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />male</label>
+					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />female</label>
+					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />all</label>
+				</td>
+			</tr>
+			<tr>
+				<th><span class="trim01">Modality</span></th>
 				<td>
 					<select name="filterModality">
 						{foreach from=$modalityList item=item}
@@ -21,37 +27,27 @@
 						{/foreach}
 					</select>
 				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">Patient ID</span></th>
-				<td>
-					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
-				</td>
-				<th><span class="trim01">Sex</span></th>
-				<td>
-					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />male</label>
-					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />female</label>
-					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />all</label>
-				</td>
 				<th><span class="trim01">Age</span></th>
 			  	<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
-				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">Patient Name</span></th>
-				<td>
-					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='study' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />					
 				</td>
 	            <th><span class="trim01">Tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 180px;" value="{$params.filterTag|escape}" /></td>
-				<td colspan="2"></td>
+    			<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
+			</tr>
+			<tr>
+				<th><span class="trim01">Series date</span></th>
+				<td colspan="5"><span class="srDateRange"></span></td>
+			</tr>
+			<tr>
+				<th style="width: 11em;"><span class="trim01">Series description</span></th>
+				<td colspan="5">
+					<input name="filterSrDescription" type="text" style="width: 240px;" value="{$params.filterSrDescription|escape}" />
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
-				<td>
+				<td colspan="5">
 					<select name="showing">
 						<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
 						<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
@@ -59,10 +55,6 @@
 						<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
 					</select>
 				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
 			</tr>
 		</table>
 		<div class="al-l mt10 ml20" style="width: 100%;">
@@ -76,35 +68,29 @@
 
 <script language="javascript">
 <!-- 
-{if $params.mode!='today'}
+var srDateKind = {if $params.srDateKind != ""}"{$params.srDateKind}"{else}null{/if};
+var srFromDate = {if $params.srDateFrom != ""}"{$params.srDateFrom}"{else}null{/if};
+var srToDate   = {if $params.srDateTo != ""}"{$params.srDateTo}"{else}null{/if};
+var mode       = {if $params.mode != ""}"{$params.mode}"{else}null{/if};
+
+if(mode == "today")	srDateKind = 'today';
+
+
 {literal}
 $(function() {
-	$("#seriesSearch input[name^='srDate']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			constrainInput: false,
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0});
+	$("#seriesSearch .srDateRange").daterange({ kind: srDateKind});
 
+	if(srDateKind == "custom...")
+	{
+	 	$("#seriesSearch .srDateRange")
+			.daterange('option', 'fromDate', srFromDate)
+			.daterange('option', 'toDate', srToDate);
+	}
 
-	$("#seriesSearch input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#seriesSearch input[name='srDateTo']").datepicker("option", "minDate", date);
-				}});
+	if(mode == 'today')  $("#seriesSearch .srDateRange select").attr('disabled', 'disabled');
 
-	$("#seriesSearch input[name='srDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#seriesSearch input[name='srDateFrom']").datepicker("option", "maxDate", date);
-				}});
 });
 {/literal}
-{/if}
 
 -->
 </script>
