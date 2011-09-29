@@ -66,11 +66,11 @@ function DoSearch(list, mode)
 		{
 			params.stDateRangeKind = stDateRangeKind;
 
-			if(stDateRangeKind == "custom...")
-			{
+			//if(stDateRangeKind == "custom...")
+			//{
 				if(stDateFrom)   params.stDateFrom = stDateFrom;
 				if(stDateTo)     params.stDateTo   = stDateTo;
-			}
+			//}
 		}
 	}
 

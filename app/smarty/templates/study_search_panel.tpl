@@ -65,25 +65,19 @@
 
 <script language="javascript">
 <!-- 
-var stDateRangeKind = {if $params.stDateRangeKind != ""}"{$params.stDateRangeKind}"{else}""{/if};
-var stFromDate = {if $params.stFromDate != ""}"{$params.stFromDate}"{else}""{/if};
-var stToDate = {if $params.stToDate != ""}"{$params.stToDate}"{else}""{/if};
+var stDateRangeKind = {if $params.stDateRangeKind != ""}"{$params.stDateRangeKind}"{else}null{/if};
+var stFromDate = {if $params.stDateFrom != ""}"{$params.stDateFrom}"{else}null{/if};
+var stToDate = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};
 
 {literal}
 $(function() {
-	$("#studySearch .stDateRange").daterange();
-	if(stDateRangeKind)
+	$("#studySearch .stDateRange").daterange({ kind: stDateRangeKind});
+
+	if(stDateRangeKind == "custom...")
 	{
-	 	$("#studySearch .stDateRange").daterange('option', 'kind', stDateRangeKind);
-
-		if(stDateRangeKind != "custom...")
-		{
-		 	$("#studySearch .stDateRange")
-				.daterange('option', 'fromDate', stFromDate)
-				.daterange('option', 'toDate', stToDate);
-		}
-
-	 	$("#studySearch .stDateRange").refresh();
+	 	$("#studySearch .stDateRange")
+			.daterange('option', 'fromDate', stFromDate)
+			.daterange('option', 'toDate', stToDate);
 	}
 });
 {/literal}

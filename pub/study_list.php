@@ -55,9 +55,6 @@
 				"options" => $modalityList,
 				"default" => "all",
 				"otherwise" => "all"),
-			"stDateFrom" => array(
-				"type" => "date",
-				"label" => 'Study date'),
 			"stDateRangeKind" => array(
 				"type" => "str",
 				"label" => 'Study date',

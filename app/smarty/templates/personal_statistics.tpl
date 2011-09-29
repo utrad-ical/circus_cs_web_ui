@@ -18,7 +18,7 @@ function ShowPersonalStatResult()
 	{
 		$("#errorMessage").html('"CAD" is not selected."');
 	}
-	else if(evalUser == "")
+	else if(!evalUser)
 	{
 		$("#errorMessage").html('"User" is not selected');
 	}
@@ -138,7 +138,7 @@ function ChangeUserList(mode, allStatFlg)
 		var versionStr = $("#cadMenu option:selected").val().split("^");
 		var optionStr = '<option value="" selected="selected">(Select)</option>';
 
-		if(versionStr != "")
+		if(versionStr)
 		{
 			for(var i=0; i<versionStr.length; i++)
 			{
@@ -217,8 +217,7 @@ $(function() {
 						<td colspan="3"><span id="srDateRange"></span></td>
 					</tr>
 					<tr>
-						</td>
-						<th style="width: 8em;"><span class="trim01">CAD name</span></th>
+						<th><span class="trim01">CAD name</span></th>
 						<td style="width: 150px;">
 							<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
 								<option value="" selected="selected">(Select)</option>
