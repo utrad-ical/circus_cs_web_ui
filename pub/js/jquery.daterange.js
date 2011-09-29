@@ -35,7 +35,7 @@ $.widget('ui.daterange', {
 		var self = this;
 		var root = this.element.empty().addClass('ui-daterange')
 
-		var refresh = function()
+		var kindChanged = function()
 		{
 			var selected = $('option:selected', kindSelect);
 			var info = selected.data('info');
@@ -61,13 +61,15 @@ $.widget('ui.daterange', {
 					target.attr('disabled', 'disabled').datepicker('disable');
 				});
 			}
-			self._updateInternalValue();
 		};
 
 		var kindSelect = $('<select>')
 		.addClass('ui-daterange-kind')
 		.appendTo(root);
-		kindSelect.change(refresh);
+		kindSelect.change(function() {
+			kindChanged();
+			self._updateInternalValue();
+		});
 		for (var i = 0; i < self._types.length; i++)
 		{
 			var item = self._types[i];
@@ -86,25 +88,29 @@ $.widget('ui.daterange', {
 		.appendTo(root);
 
 		// 'FROM' field
-		var from = self._createDateInput('ui-daterange-from').appendTo(customField);
+		var from = self._createDateInput('ui-daterange-from', this.options.fromName);
+		from.appendTo(customField);
 		from.datepicker('option', 'onSelect', function(text, inst) {
 			to.datepicker('option', 'minDate', from.val());
 			self._updateInternalValue();
-		});
+		}).val(this.options.fromDate);
 		self.from = from;
 
 		// ' - '
 		customField.append(self.options.dash);
 
 		// 'TO' field
-		var to = self._createDateInput('ui-daterange-to').appendTo(customField);
+		var to = self._createDateInput('ui-daterange-to', this.options.toName);
+		to.appendTo(customField);
 		to.datepicker('option', 'onSelect', function(text, inst) {
 			from.datepicker('option', 'maxDate', to.val());
 			self._updateInternalValue();
-		});
+		}).val(this.options.toDate);
 		self.to = to;
 
-		refresh();
+		kindSelect.val(this.options.kind);
+		kindChanged();
+		self._updateInternalValue();
 	},
 
 	_updateInternalValue: function()
@@ -205,6 +211,11 @@ $.widget('ui.daterange', {
 				break;
 			case 'kind':
 				this._commitKind();
+				break;
+			case 'icon':
+			case 'dash':
+			case 'dateFormat':
+				this._create();
 				break;
 		}
 	}
