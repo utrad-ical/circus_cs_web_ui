@@ -1,5 +1,6 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
 jq/jquery.blockUI.js
 jq/ui/theme/jquery-ui.custom.css
 {/capture}
@@ -29,8 +30,8 @@ function ShowPersonalStatResult()
 		$.ajax({
 				type:   "POST",
 				url:    "statistics/show_personal_stat_detail.php",
-				data:   { dateFrom: $("#dateFrom").val(),
-						  dateTo:   $("#dateTo").val(),
+				data:   { dateFrom: $('#srDateRange').daterange('option', 'fromDate'),
+				 		  dateTo:   $('#srDateRange').daterange('option', 'toDate'),
 						  cadName:  $("#cadMenu option:selected").text(),
 						  version:  $("#versionMenu").val(),
 	       				  evalUser: $("#userMenu").val(),
@@ -92,8 +93,8 @@ function RedrawScatterPlot()
 	$.ajax({
 			type:   "POST",
 			url:    "statistics/show_personal_stat_detail.php",
-			data:   { dateFrom:    $("#dateFrom").val(),
-			 		  dateTo:      $("#dateTo").val(),
+			data:   { dateFrom:    $('#srDateRange').daterange('option', 'fromDate'),
+			 		  dateTo:      $('#srDateRange').daterange('option', 'toDate'),
 					  cadName:     $("#cadMenu option:selected").text(),
 					  version:     $("#versionMenu").val(),
             		  evalUser:    $("#userMenu").val(),
@@ -172,29 +173,8 @@ function ResetCondition()
 }
 
 $(function() {
-	$("#dateFrom, #dateTo").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			constrainInput: false,
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0}
-		);
 
-	$("#dateFrom").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#dateTo").datepicker("option", "minDate", date);
-				}});
-
-	$("#dateTo").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#dateFrom").datepicker("option", "maxDate", date);
-				}});
+	$('#srDateRange').daterange();
 
 	// Parameters of UI blocking for ajax requests (using jquery blockUI)
 	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
@@ -234,18 +214,25 @@ $(function() {
 				<table class="search-tbl">
 					<tr>
 						<th style="width: 8em;"><span class="trim01">Series date</span></th>
-						<td style="width: 220px;">
-							<input id="dateFrom" type="text" style="width:72px;" />
-							-
-							<input id="dateTo" type="text" style="width:72px;" />
-
+						<td colspan="3"><span id="srDateRange"></span></td>
+					</tr>
+					<tr>
 						</td>
 						<th style="width: 8em;"><span class="trim01">CAD name</span></th>
-						<td>
+						<td style="width: 150px;">
 							<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
 								<option value="" selected="selected">(Select)</option>
 								{foreach from=$cadList item=item}
 									<option value="{$item[1]|escape}">{$item[0]|escape}</option>
+								{/foreach}
+							</select>
+						</td>
+						<th style="width: 9.5em;"><span class="trim01">CAD version</span></th>
+						<td>
+							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
+								<option value="" selected="selected">(Select)</option>
+								{foreach from=$versionDetail item=item}
+									<option value="{$item|escape}">{$item|escape}</option>
 								{/foreach}
 							</select>
 						</td>
@@ -261,19 +248,8 @@ $(function() {
 								{/if}
 							</select>
 						</td>
-						<th style="width: 5.5em;"><span class="trim01">CAD version</span></th>
+						<th><span class="trim01">Size(diameter)</span></th>
 						<td>
-							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
-								<option value="" selected="selected">(Select)</option>
-								{foreach from=$versionDetail item=item}
-									<option value="{$item|escape}">{$item|escape}</option>
-								{/foreach}
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th style="width: 9.5em;"><span class="trim01">Size(diameter)</span></th>
-						<td colspan="2">
 							<input id="minSize" type="text" class="al-r" style="width: 36px">&nbsp;-&nbsp;<input id="maxSize" type="text" class="al-r" style="width: 36px">&nbsp;[mm]
 						</td>
 						<td></td><td></td>
