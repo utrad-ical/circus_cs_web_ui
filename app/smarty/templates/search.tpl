@@ -1,6 +1,7 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
 js/search_panel.js
+js/jquery.daterange.js
 jq/ui/theme/jquery-ui.custom.css
 js/viewControl.js
 {/capture}

@@ -1,5 +1,6 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
 jq/jquery.blockUI.js
 js/search_panel.js
 js/list_tab.js
@@ -13,18 +14,19 @@ jq/ui/theme/jquery-ui.custom.css
 
 <!-- ***** Search ***** -->
 <form name="" onsubmit="return false;">
-	<input type="hidden" id="mode"                 value="{$params.mode|escape}" />
-	<input type="hidden" id="encryptedPtID"        value="{$params.encryptedPtID|escape}" />
-	<input type="hidden" id="hiddenFilterPtID"     value="{$params.filterPtID|escape}" />
-	<input type="hidden" id="hiddenFilterPtName"   value="{$params.filterPtName|escape}" />
-	<input type="hidden" id="hiddenFilterSex"      value="{$params.filterSex|escape}" />
-	<input type="hidden" id="hiddenFilterAgeMin"   value="{$params.filterAgeMin|escape}" />
-	<input type="hidden" id="hiddenFilterAgeMax"   value="{$params.filterAgeMax|escape}" />
-	<input type="hidden" id="hiddenFilterModality" value="{$params.filterModality|escape}" />
-	<input type="hidden" id="hiddenStDateFrom"     value="{$params.stDateFrom|escape}" />
-	<input type="hidden" id="hiddenStDateTo"       value="{$params.stDateTo|escape}" />
-	<input type="hidden" id="hiddenStTimeTo"       value="{$params.stTimeTo|escape}" />
-	<input type="hidden" id="hiddenShowing"        value="{$params.showing|escape}" />
+	<input type="hidden" id="mode"                  value="{$params.mode|escape}" />
+	<input type="hidden" id="encryptedPtID"         value="{$params.encryptedPtID|escape}" />
+	<input type="hidden" id="hiddenFilterPtID"      value="{$params.filterPtID|escape}" />
+	<input type="hidden" id="hiddenFilterPtName"    value="{$params.filterPtName|escape}" />
+	<input type="hidden" id="hiddenFilterSex"       value="{$params.filterSex|escape}" />
+	<input type="hidden" id="hiddenFilterAgeMin"    value="{$params.filterAgeMin|escape}" />
+	<input type="hidden" id="hiddenFilterAgeMax"    value="{$params.filterAgeMax|escape}" />
+	<input type="hidden" id="hiddenFilterModality"  value="{$params.filterModality|escape}" />
+	<input type="hidden" id="hiddenStDateRangeKind" value="{$params.stDateRangeKind|escape}" />
+	<input type="hidden" id="hiddenStDateFrom"      value="{$params.stDateFrom|escape}" />
+	<input type="hidden" id="hiddenStDateTo"        value="{$params.stDateTo|escape}" />
+	<input type="hidden" id="hiddenStTimeTo"        value="{$params.stTimeTo|escape}" />
+	<input type="hidden" id="hiddenShowing"         value="{$params.showing|escape}" />
 	{* {if $smarty.session.dataDeleteFlg}<input type="hidden" id="ticket" value="{$params.ticket|escape}" />{/if}*}
 
 	{include file='study_search_panel.tpl'}

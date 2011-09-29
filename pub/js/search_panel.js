@@ -58,11 +58,20 @@ function DoSearch(list, mode)
 
 	if(list == "study")
 	{
-		var stDateFrom = $("#studySearch input[name='stDateFrom']").val();
-		var stDateTo   = $("#studySearch input[name='stDateTo']").val();
+		var stDateRangeKind = $("#studySearch .stDateRange").daterange('option', 'kind');
+		var stDateFrom      = $("#studySearch .stDateRange").daterange('option', 'fromDate');
+		var stDateTo        = $("#studySearch .stDateRange").daterange('option', 'toDate');
 
-		if(stDateFrom != "")  params.stDateFrom = stDateFrom;
-		if(stDateTo != "")    params.stDateTo   = stDateTo;
+		if(stDateRangeKind && stDateRangeKind != "all")
+		{
+			params.stDateRangeKind = stDateRangeKind;
+
+			if(stDateRangeKind == "custom...")
+			{
+				if(stDateFrom)   params.stDateFrom = stDateFrom;
+				if(stDateTo)     params.stDateTo   = stDateTo;
+			}
+		}
 	}
 
 	if(list == "series" || list == "cad")

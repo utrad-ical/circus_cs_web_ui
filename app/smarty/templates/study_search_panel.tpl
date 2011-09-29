@@ -3,17 +3,23 @@
 	<div style="padding:20px 20px 0px;">
 		<table class="search-tbl">
 			<tr>
-				<th style="width: 8.5em;"><span class="trim01">Study date</span></th>
-				<td style="width: 220px;">
-					<input name="stDateFrom" type="text" style="width:72px;" value="{$params.stDateFrom|escape}" />
-					-&nbsp;
-					<input name="stDateTo" type="text" style="width:72px;" value="{$params.stDateTo|escape}" />
-				</td>
 				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
-				<td style="width: 180px;">
+				<td style="width: 150px;">
 					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" {if $params.mode=='patient'}disabled="disabled"{/if} />
 				</td>
-				<th style="width: 6em;"><span class="trim01">Modality</span></th>
+				<th style="width: 9em;"><span class="trim01">Patient Name</span></th>
+				<td style="width: 200px;">
+					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='patient' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
+				</td>
+				<th style="width: 4em;"><span class="trim01">Sex</span></th>
+				<td style="width: 180px;">
+					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />male</label>
+					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />female</label>
+					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />all</label>
+				</td>
+			</tr>
+			<tr>
+				<th><span class="trim01">Modality</span></th>
 				<td>
 					<select name="filterModality">
 						{foreach from=$modalityList item=item}
@@ -21,24 +27,17 @@
 						{/foreach}
 					</select>
 				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">Patient Name</span></th>
-				<td>
-					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='patient' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
-				</td>
-				<th><span class="trim01">Sex</span></th>
-				<td>
-					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />male</label>
-					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />female</label>
-					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked"{/if} {if $params.mode=='patient'}disabled="disabled"{/if} />all</label>
-				</td>
 				<th><span class="trim01">Age</span></th>
 			  	<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
+				<td colspan="2"></td>
+			</tr>
+			<tr>
+				<th><span class="trim01">Study date</span></th>
+				<td colspan="5"><span class="stDateRange"></span></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
@@ -64,37 +63,30 @@
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
-{literal}
 <script language="javascript">
 <!-- 
+var stDateRangeKind = {if $params.stDateRangeKind != ""}"{$params.stDateRangeKind}"{else}""{/if};
+var stFromDate = {if $params.stFromDate != ""}"{$params.stFromDate}"{else}""{/if};
+var stToDate = {if $params.stToDate != ""}"{$params.stToDate}"{else}""{/if};
 
+{literal}
 $(function() {
-	$("#studySearch input[name^='stDate']").datepicker({
-			showOn: "button",
-			buttonImage: "images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			constrainInput: false,
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0}
-		);
+	$("#studySearch .stDateRange").daterange();
+	if(stDateRangeKind)
+	{
+	 	$("#studySearch .stDateRange").daterange('option', 'kind', stDateRangeKind);
 
-	$("#studySearch input[name='stDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#studySearch input[name='stDateTo']").datepicker("option", "minDate", date);
-				}});
+		if(stDateRangeKind != "custom...")
+		{
+		 	$("#studySearch .stDateRange")
+				.daterange('option', 'fromDate', stFromDate)
+				.daterange('option', 'toDate', stToDate);
+		}
 
-	$("#studySearch input[name='stDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#studySearch input[name='stDateFrom']").datepicker("option", "maxDate", date);
-				}});
+	 	$("#studySearch .stDateRange").refresh();
+	}
 });
-
+{/literal}
 
 -->
 </script>
-{/literal}
