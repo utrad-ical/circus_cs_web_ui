@@ -1,45 +1,37 @@
+{capture name="require"}
+jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
+jq/ui/theme/jquery-ui.custom.css
+{/capture}
 {capture name="extra"}
 <script type="text/javascript">;
 <!--
+var resDateKind = {if $params.resDateKind != ""}"{$params.resDateKind}"{else}null{/if};
+var resFromDate = {if $params.resDateFrom != ""}"{$params.resDateFrom}"{else}null{/if};
+var resToDate   = {if $params.resDateTo != ""}"{$params.resDateTo}"{else}null{/if};
+
 {literal}
 
 function SearchResearchList()
 {
-	var address = "research_list.php";
-	var conditionNum = 0;
+	var address = "research_list.php?";
+	var params = {};
 
 	var pluginName  = $(".search-panel select[name='researchMenu'] option:selected").text();
-	var resDateFrom = $(".search-panel input[name='resDateFrom']").val();
-	var resDateTo   = $(".search-panel input[name='resDateTo']").val();
+	var resDateKind = $("#resDateRange").daterange('option', 'kind');
+	var resDateFrom = $("#resDateRange").daterange('option', 'fromDate');
+	var resDateTo   = $("#resDateRange").daterange('option', 'toDate');
 	var filterTag   = $(".search-panel input[name='filterTag']").val();
 
-	if(pluginName != "")
-	{
-		address += ((conditionNum == 0) ? '?' : '&') + 'pluginName=' + pluginName;
-		conditionNum++;
-	}
+	if(pluginName)   params.pluginName  = pluginName;
+	if(resDateKind)  params.resDateKind = resDateKind;
+	if(resDateFrom)  params.resDateFrom = resDateFrom;
+	if(resDateTo)    params.resDateTo   = resDateTo;
+	if(filterTag)    params.filterTag   = filterTag;
 
-	if(resDateFrom != "")
-	{
-		address += ((conditionNum == 0) ? '?' : '&') + 'resDateFrom=' + resDateFrom;
-		conditionNum++;
-	}
+	params.showing = $(".search-panel select[name='showing']").val();
 
-	if(resDateTo != "")
-	{
-		address += ((conditionNum == 0) ? '?' : '&') + 'resDateTo=' + resDateTo;
-		conditionNum++;
-	}
-
-	if(filterTag != "")
-	{
-		address += ((conditionNum == 0) ? '?' : '&') + 'filterTag=' + filterTag;
-		conditionNum++;
-	}
-
-	address += ((conditionNum ==0) ? '?' : '&') + 'showing=' + $(".search-panel select[name='showing']").val();
-
-	location.href=address;
+	location.href = address + $.param(params);
 }
 
 function ShowResearchResult(jobID)
@@ -49,42 +41,26 @@ function ShowResearchResult(jobID)
 
 function ResetSearchBlock()
 {
-	$(".search-panel input[name*='resDate'], .search-panel input[name='filterTag']").removeAttr("value");
+	$("#resDateRange").daterange('option', 'kind', 'all');
 	$(".search-panel select[name='researchMenu'], .search-panel select[name='showing']").children().removeAttr("selected");
 }
 
 $(function() {
-	$("#resSearch input[name^='resDate']").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0}
-		);
+	$("#resDateRange").daterange({ icon: "../images/calendar_view_month.png",
+								   kind: resDateKind});
 
-	$("#resSearch input[name='resDateFrom']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#resSearch input[name='resDateTo']").datepicker("option", "minDate", date);
-				}});
+	if(resDateKind == "custom...")
+	{
+	 	$("#resDateRange")
+			.daterange('option', 'fromDate', resFromDate)
+			.daterange('option', 'toDate', resToDate);
+	}
 
-	$("#resSearch input[name='resDateTo']").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#resSearch input[name='resDateFrom']").datepicker("option", "maxDate", date);
-				}});
 });
 
 {/literal}
 -->
 </script>
-{/capture}
-{capture name="require"}
-jq/ui/jquery-ui.min.js
-jq/ui/theme/jquery-ui.custom.css
 {/capture}
 {include file="header.tpl" body_class="research"
 	head_extra=$smarty.capture.extra require=$smarty.capture.require}
@@ -108,7 +84,7 @@ jq/ui/theme/jquery-ui.custom.css
 			<table class="search-tbl">
 				<tr>
 					<th style="width: 10em;"><span class="trim01">Research</span></th>
-					<td style="width: 220px;">
+					<td style="width: 360px;">
 						<select id="researchMenu" name="researchMenu" style="width: 150px;">
 								<option value="all">all</option>
 							{foreach from=$pluginList item=item}
@@ -119,11 +95,7 @@ jq/ui/theme/jquery-ui.custom.css
 				</tr>
 				<tr>
 	    	        <th><span class="trim01">Research date</span></th>
-					<td>
-						<input name="resDateFrom" type="text" style="width:72px;" value="{$params.resDateFrom|escape}" />
-						-&nbsp;
-						<input name="resDateTo" type="text" style="width:72px;" value="{$params.resDateTo|escape}" />
-					</td>
+					<td><span id="resDateRange"></span></td>
 				</tr>
 				<tr>
    					<th><span class="trim01">Tag</span></th>

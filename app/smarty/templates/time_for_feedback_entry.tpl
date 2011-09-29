@@ -1,5 +1,6 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
+js/jquery.daterange.js
 jq/ui/theme/jquery-ui.custom.css
 jq/jquery.blockUI.js
 {/capture}
@@ -17,7 +18,7 @@ function ShowPersonalStatResult()
 	{
 		$("#errorMessage").html('"CAD" is not selected."');
 	}
-	else if(evalUser == "")
+	else if(!evalUser)
 	{
 		$("#errorMessage").html('"User" is not selected');
 	}
@@ -29,8 +30,8 @@ function ShowPersonalStatResult()
 		$.ajax({
 				type:   "POST",
 				url:    "show_feedback_time_list.php",
-				data:   { dateFrom: $("#dateFrom").val(),
-						  dateTo:   $("#dateTo").val(),
+				data:   { dateFrom: $('#srDateRange').daterange('option', 'fromDate'),
+						  dateTo:   $('#srDateRange').daterange('option', 'toDate'),
 						  cadName:  $("#cadMenu option:selected").text(),
 						  version:  $("#versionMenu").val(),
 	       				  evalUser: $("#userMenu").val()},
@@ -72,7 +73,7 @@ function ChangeUserList(mode, allStatFlg)
 		var versionStr = $("#cadMenu option:selected").val().split("^");
 		var optionStr = '<option value="all" selected="selected">all</option>';
 
-		if(versionStr != "")
+		if(versionStr)
 		{
 			for(var i=0; i<versionStr.length; i++)
 			{
@@ -110,32 +111,11 @@ function ResetCondition()
 }
 
 $(function() {
-	$("#dateFrom, #dateTo").datepicker({
-			showOn: "button",
-			buttonImage: "../images/calendar_view_month.png",
-			buttonImageOnly: true,
-			buttonText:'',
-			constrainInput: false,
-			changeMonth: true,
-			changeYear: true,
-			dateFormat: 'yy-mm-dd',
-			maxDate: 0}
-		);
 
-	$("#dateFrom").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#dateTo").datepicker("option", "minDate", date);
-				}});
-
-	$("#dateTo").datepicker('option', {onSelect: function(selectedDate, instance){
-					date = $.datepicker.parseDate(instance.settings.dateFormat || $.datepicker._defaults.dateFormat,
-						                          selectedDate, instance.settings );
-					$("#dateFrom").datepicker("option", "maxDate", date);
-				}});
+	$('#srDateRange').daterange({ icon: '../images/calendar_view_month.png' });
 
 	// Parameters of UI blocking for ajax requests (using jquery blockUI)
-	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
+	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="../images/busy.gif" />'
 							   + ' Under processing, just moment...</span>';
 	$.blockUI.defaults.fadeOut = 200;			// set fadeOut effect shorter
 	$.blockUI.defaults.css.width   = '320px';
@@ -169,19 +149,26 @@ $(function() {
 			<div class="p20">
 				<table class="search-tbl">
 					<tr>
-						<th style="width: 7.5em;"><span class="trim01">Series date</span></th>
-						<td style="width: 220px;">
-							<input id="dateFrom" type="text" style="width:72px;" />
-							-
-							<input id="dateTo" type="text" style="width:72px;" />
-
-						</td>
-						<th style="width: 8em;"><span class="trim01">CAD name</span></th>
-						<td>
+					<tr>
+						<th style="width: 8em;"><span class="trim01">Series date</span></th>
+						<td colspan="3"><span id="srDateRange"></span></td>
+					</tr>
+					<tr>
+						<th><span class="trim01">CAD name</span></th>
+						<td style="width: 150px;">
 							<select id="cadMenu" name="cadMenu" style="width: 120px;" onchange="ChangeUserList('cadMenu', {$smarty.session.allStatFlg});">
 								<option value="" selected="selected">(Select)</option>
 								{foreach from=$cadList item=item}
 									<option value="{$item[1]|escape}">{$item[0]|escape}</option>
+								{/foreach}
+							</select>
+						</td>
+						<th style="width: 9.5em;"><span class="trim01">CAD version</span></th>
+						<td>
+							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
+								<option value="" selected="selected">(Select)</option>
+								{foreach from=$versionDetail item=item}
+									<option value="{$item|escape}">{$item|escape}</option>
 								{/foreach}
 							</select>
 						</td>
@@ -195,15 +182,6 @@ $(function() {
 								{else}
 									<option value="{$smarty.session.userID|escape}">{$smarty.session.userID|escape}</option>
 								{/if}
-							</select>
-						</td>
-						<th><span class="trim01">CAD version</span></th>
-						<td>
-							<select id="versionMenu" name="versionMenu" style="width: 70px;" onchange="ChangeUserList('versionMenu', {$smarty.session.allStatFlg});">
-								<option value="all">all</option>
-								{foreach from=$versionDetail item=item}
-									<option value="{$item|escape}">{$item|escape}</option>
-								{/foreach}
 							</select>
 						</td>
 					</tr>
