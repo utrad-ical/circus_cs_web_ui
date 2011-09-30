@@ -202,15 +202,20 @@
 			$today = date("Y-m-d");
 			$params['cadDateFrom'] = $today;
 			$params['cadDateTo']   = $today;
-			$params['cadDateKind'] = 'today';
-			
+			$params['srDateFrom'] = $today;		// for HIMEDIC
+			$params['srDateTo']   = $today;		// for HIMEDIC
 
+			$params['cadDateKind'] = 'today';
+			$params['srDateKind'] = 'today';	// for HIMEDIC
+			
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
 			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
 			$addressParams['mode'] .= 'today';
 			$addressParams['cadDateFrom'] = $params['cadDateFrom'];
-			$addressParams['cadDateTo'] = $params['cadDateTo'];
+			$addressParams['cadDateTo']   = $params['cadDateTo'];
+			$addressParams['srDateFrom']  = $params['srDateFrom'];
+			$addressParams['srDateTo']    = $params['srDateTo'];
 		}
 		else if($params['cadDateFrom'] != "" && $params['cadDateTo'] != "" && $params['cadDateFrom'] == $params['cadDateTo'])
 		{
