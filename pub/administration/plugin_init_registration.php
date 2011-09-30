@@ -373,8 +373,8 @@ if(!$errorFlg)
 				
 				if(!($item['ip_address'] == '127.0.0.1' || $item['ip_address'] == 'localhost'))
 				{
-					$dstPath = '\\\\' . $item['ip_address'] . 'CIRCUS-CS' . $DIR_SEPARATOR
-							. 'plugins' . $DIR_SEPARATOR;
+					$dstPath = '\\\\' . $item['ip_address'] . $DIR_SEPARATOR . 'CIRCUS-CS'
+							 . $DIR_SEPARATOR . 'plugins' . $DIR_SEPARATOR;
 				}
 
 				if($item['architecture'] == 'x64' && is_dir($binDir.'x64'))
