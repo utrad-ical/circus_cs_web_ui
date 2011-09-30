@@ -371,9 +371,9 @@ if(!$errorFlg)
 				
 				$dstPath = $pluginPath;
 				
-				if(!($item['host_name'] == '127.0.0.1' || $item['host_name'] == 'localhost'))
+				if(!($item['ip_address'] == '127.0.0.1' || $item['ip_address'] == 'localhost'))
 				{
-					$dstPath = '\\\\' . $item['host_name'] . 'CIRCUS-CS' . $DIR_SEPARATOR
+					$dstPath = '\\\\' . $item['ip_address'] . 'CIRCUS-CS' . $DIR_SEPARATOR
 							. 'plugins' . $DIR_SEPARATOR;
 				}
 
