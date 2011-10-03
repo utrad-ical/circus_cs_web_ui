@@ -56,8 +56,6 @@ try
 	if (!$validator->validate($_REQUEST))
 		throw new Exception(implode("\n", $validator->errors));
 	$req = $validator->output;
-	$dstData['request'] = $req;
-
 
 	$pdo = DBConnector::getConnection();
 
@@ -109,13 +107,16 @@ try
 
 		$srcFname = sprintf("%s%s%08d.dcm", $seriesDir, $DIR_SEPARATOR, $req['imgNum']);
 
+		if (!is_file($srcFname))
+			throw new Exception('Image file not found.');
+
 		$dcmResult = DcmExport::createThumbnailJpg(
 			$srcFname, $dstFname, $dumpFname, 100,
 			$req['windowLevel'], $req['windowWidth'],
 			$req['imgWidth'], $req['imgHeight']
 		);
 		if (!$dcmResult)
-			throw new Exception('Image convertion failed.');
+			throw new Exception('Image conversion failed.');
 	}
 	else
 	{
@@ -155,7 +156,9 @@ catch (Exception $e)
 	}
 	echo json_encode(array(
 		'status' => 'OperationError',
-		'error' => array('message' => $message)
+		'error' => array(
+			'message' => $message,
+		)
 	));
 }
 

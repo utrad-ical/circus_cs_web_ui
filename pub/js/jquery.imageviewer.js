@@ -42,12 +42,12 @@ $.widget('ui.imageviewer', {
 				self._imageDeterminedHandler(data);
 			}
 			this.options.source.onError = function(message) {
-				self._errorMode(message);
+				self._criticalErrorMode(message);
 			}
 		}
 		else
 		{
-			self._errorMode('Image source not set correctly.');
+			self._criticalErrorMode('Image source not set correctly.');
 		}
 		this._initialized = false;
 		delete this._imageWidth;
@@ -55,7 +55,7 @@ $.widget('ui.imageviewer', {
 		delete this._scale;
 		delete this._cache;
 		delete this._waiting;
-		delete this._error;
+		delete this._criticalError;
 		this._draw();
 		this._initialized = true;
 	},
@@ -73,13 +73,11 @@ $.widget('ui.imageviewer', {
 		if ('_imageWidth' in this)
 			this._adjustImageSize();
 
-		if (this._error)
+		$('<div class="ui-imageviewer-error">').appendTo(stage).hide();
+
+		if (this._criticalError)
 		{
-			var errdiv = $('<div class="ui-imageviewer-error">')
-				.append('Error while loading images.')
-				.appendTo(stage);
-			if (this._error)
-				errdiv.append('<br>').append(this._error);
+			this._drawError(this._criticalError);
 		}
 
 		$('<div class="ui-imageviewer-loading">').appendTo(stage).hide(0);
@@ -254,11 +252,10 @@ $.widget('ui.imageviewer', {
 		$('.ui-imageviewer-location', this.element).text(this.options.locationLabel + index);
 	},
 
-	_errorMode: function(message)
+	_criticalErrorMode: function(message)
 	{
-		this._waiting = null;
-		this._error = message;
-		this._draw();
+		this._criticalError = message;
+		this._drawError(message);
 	},
 
 	_imageLoadHandler: function(data, image)
@@ -266,33 +263,57 @@ $.widget('ui.imageviewer', {
 		var w = this._waiting;
 		if (w && w.index == data.sliceNumber && w.wl == data.windowLevel && w.ww == data.windowWidth)
 		{
-			this.options.sliceLocation = data.sliceLocation,
+			this.options.sliceLocation = data.sliceLocation;
 			this._label(data.sliceNumber);
 			this._waiting = null;
-			var img = $('.ui-imageviewer-image', this.element);
-			if (!('_imageWidth' in this))
-			{
-				this._imageWidth = image.width;
-				this._imageHeight = image.height;
-				this._adjustImageSize();
-			}
 
-			img.attr('src', image.src);
+			var img = $('.ui-imageviewer-image', this.element);
+			var errdiv = $('.ui-imageviewer-error', this.element);
+			if (image)
+			{
+				if (!('_imageWidth' in this))
+				{
+					this._imageWidth = image.width;
+					this._imageHeight = image.height;
+					this._adjustImageSize();
+				}
+				img.css('cursor', this._cursor).attr('src', image.src).show();
+				errdiv.hide();
+			}
+			else
+			{
+				this._drawError(data.error);
+			}
 
 			this._clearTimeout();
 			this._drawMarkers();
 			this.element.trigger('imagechange');
-			img.css('cursor', this._cursor);
 			$('.ui-imageviewer-loading', this.element).hide();
 		}
 	},
 
+	_drawError: function(errorMessage)
+	{
+		$('.ui-imageviewer-image, .ui-imageviewer-loading', this.element).hide();
+		var errdiv = $('.ui-imageviewer-error', this.element).show();
+		errdiv.empty().append('Error while loading the image.');
+		if (errorMessage)
+			errdiv.append('<br>').append(errorMessage);
+	},
+
 	_imageDeterminedHandler: function(data)
 	{
-		var img = new Image(); // just starts preloading the image
-		var self = this;
-		img.onload = function (event) { self._imageLoadHandler(data, img); };
-		img.src = data.fileName;
+		if (data.fileName)
+		{
+			var img = new Image(); // just starts preloading the image
+			var self = this;
+			img.onload = function (event) { self._imageLoadHandler(data, img); };
+			img.src = data.fileName;
+		}
+		else
+		{
+			this._imageLoadHandler(data, null);
+		}
 	},
 
 	preload: function()
@@ -316,7 +337,7 @@ $.widget('ui.imageviewer', {
 	_internalChangeImage: function(index, wl, ww)
 	{
 		this._imageChanging = true;
-		if (this._error) return;
+		if (this._criticalError) return;
 		var oldIndex = this.options.index;
 		var oldWL = this.options.wl;
 		var oldWW = this.options.ww;
@@ -340,7 +361,10 @@ $.widget('ui.imageviewer', {
 	_clearTimeout: function()
 	{
 		if (this._timerID)
+		{
 			clearTimeout(this._timerID);
+			this._timerID = null;
+		}
 	},
 
 	_loadingIndicate: function()
@@ -423,32 +447,35 @@ var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
 
 	function loadedHandler(data)
 	{
-		if (data.status != 'OK')
+		var result = data.result;
+		var req = data.request;
+		if (req.seriesInstanceUID != series_uid)
+			return;
+		var key = cacheKey(req.imgNum, req.windowLevel, req.windowWidth);
+		var cacheval = {
+			sliceNumber: req.imgNum,
+			windowLevel: req.windowLevel,
+			windowWidth: req.windowWidth
+		};
+		if (result.status != 'OK')
 		{
-			console && console.log(data.error.message);
-			self.error = true;
-			if (self.onError instanceof Function)
-				self.onError(data.error.message);
+			cacheval.error = result.error.message;
+			console && console.log(result.error.message, req);
 		}
-		else if (data.imgFname && data.sliceNumber)
+		if (result.imgFname && result.sliceNumber)
 		{
-			var key = cacheKey(data.sliceNumber, data.windowLevel, data.windowWidth);
-			cache[key] = {
-				fileName: top + data.imgFname,
-				sliceNumber: data.sliceNumber,
-				sliceLocation: data.sliceLocation,
-				windowLevel: data.windowLevel,
-				windowWidth: data.windowWidth
-			};
-			if (self.onLoad instanceof Function)
-				self.onLoad(cache[key]);
+			cacheval.fileName = top + result.imgFname;
+			cacheval.sliceLocation = result.sliceLocation;
 		}
+		cache[key] = cacheval;
+		if (self.onLoad instanceof Function)
+			self.onLoad(cacheval);
 	}
 
 	this.query = function(index, wl, ww)
 	{
 		var key = cacheKey(index, wl, ww);
-		if (cache[key] && cache[key].fileName)
+		if (cache[key] && cache[key].sliceNumber)
 		{
 			if (this.onLoad instanceof Function)
 				this.onLoad(cache[key]);
@@ -465,8 +492,11 @@ var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
 			$.get(
 				top + 'jump_image.php',
 				param,
-				function (data) {
-					$('body').trigger('imageviewerImageload', data); // broadcast
+				function (result) {
+					$('body').trigger(
+						'imageviewerImageload',
+						{request: param, result: result}
+					); // broadcast
 				},
 				'json'
 			);
