@@ -3,12 +3,12 @@
 	<div style="padding:20px 20px 0px;">
 		<table class="search-tbl">
 			<tr>
-     			<th style="width: 7em"><span class="trim01">Patient ID</span></th>
-	            <td style="width: 180px;">
+     			<th style="width: 8em"><span class="trim01">Patient ID</span></th>
+	            <td style="width: 210px;">
 					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" />
 				</td>
-     			<th style="width: 8em"><span class="trim01">Patient Name</span></th>
-     			<td style="width: 180px;">
+     			<th style="width: 9em"><span class="trim01">Patient Name</span></th>
+     			<td style="width: 210px;">
 					<input name="filterPtName" type="text" style="width: 160px;" value="{$params.filterPtName|escape}" {if $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
      			<th style="width: 8em"><span class="trim01">Sex</span></th>
@@ -36,6 +36,15 @@
 	            <th><span class="trim01">Tag</span></th>
     			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
+			<tr>
+				<th><span class="trim01">Series date</span></th>
+				<td colspan="5"><span class="srDateRange"></span></td>
+			</tr>
+			<tr>
+				<th><span class="trim01">CAD date</span></th>
+				<td colspan="5"><span class="cadDateRange"></span></td>
+			</tr>
+			<tr>
 				<th><span class="trim01">CAD</span></th>
 				<td>
 					<select name="filterCAD" onchange="ChangefilterCad();" style="width: 160px;">
@@ -59,24 +68,20 @@
 				</td>
 			</tr>
 			<tr>
-				<th><span class="trim01">Series date</span></th>
-				<td colspan="3"><span class="srDateRange"></span></td>
-				<th  style="width: 9em"><span class="trim01">Personal FB</span></th>
+				<th><span class="trim01">Personal FB</span></th>
 				<td>
 					<label><input name="personalFB" type="radio" value="entered" {if $params.personalFB=="entered"}checked="checked" {/if}/>entered</label>
 					<label><input name="personalFB" type="radio" value="notEntered" {if $params.personalFB=="notEntered"}checked="checked" {/if}/>not entered</label>
 					<label><input name="personalFB" type="radio" value="all" {if $params.personalFB=="all"}checked="checked" {/if}/>all</label>
 				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">CAD date</span></th>
-				<td colspan="3"><span class="cadDateRange"></span></td>
 				<th><span class="trim01">Consensual FB</span></th>
 				<td>
 					<label><input name="consensualFB" type="radio" value="entered" {if $params.consensualFB=="entered"}checked="checked" {/if}/>entered</label>
 					<label><input name="consensualFB" type="radio" value="notEntered" {if $params.consensualFB=="notEntered"}checked="checked" {/if}/>not entered</label>
 					<label><input name="consensualFB" type="radio" value="all" {if $params.consensualFB=="all"}checked="checked" {/if}/>all</label>
 				</td>
+	            <th><span class="trim01">Entered by</span></th>
+    			<td><input name="filterFBUser" type="text" style="width: 150px;" value="{$params.filterFBUser|escape}" /></td>
 			</tr>
 			<tr>
 		        <th><span class="trim01">TP</span></th>
@@ -91,8 +96,7 @@
 					<label><input name="filterFN" type="radio" value="without" {if $params.filterFN=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterFN" type="radio" value="all" {if $params.filterFN=="all"}checked="checked" {/if}/>all</label>
 				</td>
-	            <th><span class="trim01">Entered by</span></th>
-    			<td><input name="filterFBUser" type="text" style="width: 150px;" value="{$params.filterFBUser|escape}" /></td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
