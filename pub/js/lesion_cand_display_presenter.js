@@ -24,11 +24,13 @@ $(function() {
 		if (circus.cadresult.attributes.end_img_num)
 			maxImg = Number(circus.cadresult.attributes.end_img_num);
 
+		var range = circus.cadresult.presentation.displayPresenter.scrollRange;
+
 		var options = {
 			source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
 			index: display.location_z,
-			min: Math.max(minImg, display.location_z - 5),
-			max: Math.min(maxImg, display.location_z + 5),
+			min: Math.max(minImg, display.location_z - range),
+			max: Math.min(maxImg, display.location_z + range),
 			width: circus.cadresult.presentation.displayPresenter.dispWidth,
 			markers: [{
 				location_x: display.location_x,

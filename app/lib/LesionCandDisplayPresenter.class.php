@@ -17,7 +17,8 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		return array_merge(
 			parent::defaultParams(),
 			array(
-				'caption' => 'Lesion Classification'
+				'caption' => 'Lesion Classification',
+				'scrollRange' => 5
 			)
 		);
 	}
