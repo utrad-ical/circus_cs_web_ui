@@ -28,13 +28,13 @@
 					</select>
 				</td>
 				<th><span class="trim01">Age</span></th>
-			  	<td>
+				<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />					
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
-	            <th><span class="trim01">Tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
+				<th><span class="trim01">Tag</span></th>
+				<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>
@@ -66,14 +66,14 @@
 </div><!-- / .search-panel END -->
 
 
-<script language="javascript">
-<!-- 
+<script type="text/javascript">
+<!--
 var srDateKind = {if $params.srDateKind != ""}"{$params.srDateKind}"{else}null{/if};
 var srFromDate = {if $params.srDateFrom != ""}"{$params.srDateFrom}"{else}null{/if};
 var srToDate   = {if $params.srDateTo != ""}"{$params.srDateTo}"{else}null{/if};
 var mode       = {if $params.mode != ""}"{$params.mode}"{else}null{/if};
 
-if(mode == "today")	srDateKind = 'today';
+if(mode == "today") srDateKind = 'today';
 
 
 {literal}

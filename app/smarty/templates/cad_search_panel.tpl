@@ -1,18 +1,18 @@
 <div id="cadSearch" class="search-panel">
 	<h3>Search</h3>
-	<div style="padding:20px 20px 0px;">
+	<div style="padding: 20px 20px 0px;">
 		<table class="search-tbl">
 			<tr>
-     			<th style="width: 8em"><span class="trim01">Patient ID</span></th>
-	            <td style="width: 210px;">
+				<th style="width: 8em"><span class="trim01">Patient ID</span></th>
+				<td style="width: 210px;">
 					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" />
 				</td>
-     			<th style="width: 9em"><span class="trim01">Patient Name</span></th>
-     			<td style="width: 210px;">
+				<th style="width: 9em"><span class="trim01">Patient Name</span></th>
+				<td style="width: 210px;">
 					<input name="filterPtName" type="text" style="width: 160px;" value="{$params.filterPtName|escape}" {if $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
-     			<th style="width: 8em"><span class="trim01">Sex</span></th>
-    			 <td>
+				<th style="width: 8em"><span class="trim01">Sex</span></th>
+				<td>
 					<label><input name="filterSex" type="radio" value="M" {if $params.filterSex=="M"}checked="checked" {/if}/>male</label>
 					<label><input name="filterSex" type="radio" value="F" {if $params.filterSex=="F"}checked="checked" {/if}/>female</label>
 					<label><input name="filterSex" type="radio" value="all" {if $params.filterSex=="all"}checked="checked" {/if}/>all</label>
@@ -28,13 +28,13 @@
 					</select>
 				</td>
 				<th><span class="trim01">Age</span></th>
-			  	<td>
+				<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
-	            <th><span class="trim01">Tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
+				<th><span class="trim01">Tag</span></th>
+				<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>
@@ -80,18 +80,18 @@
 					<label><input name="consensualFB" type="radio" value="notEntered" {if $params.consensualFB=="notEntered"}checked="checked" {/if}/>not entered</label>
 					<label><input name="consensualFB" type="radio" value="all" {if $params.consensualFB=="all"}checked="checked" {/if}/>all</label>
 				</td>
-	            <th><span class="trim01">Entered by</span></th>
-    			<td><input name="filterFBUser" type="text" style="width: 160px;" value="{$params.filterFBUser|escape}" /></td>
+				<th><span class="trim01">Entered by</span></th>
+				<td><input name="filterFBUser" type="text" style="width: 160px;" value="{$params.filterFBUser|escape}" /></td>
 			</tr>
 			<tr>
-		        <th><span class="trim01">TP</span></th>
-    			<td>
+				<th><span class="trim01">TP</span></th>
+				<td>
 					<label><input name="filterTP" type="radio" value="with" {if $params.filterTP=="with"}checked="checked" {/if}/>with</label>
 					<label><input name="filterTP" type="radio" value="without" {if $params.filterTP=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterTP" type="radio" value="all" {if $params.filterTP=="all"}checked="checked" {/if}/>all</label>
 				</td>
-	            <th><span class="trim01">FN</span></th>
-	            <td>
+				<th><span class="trim01">FN</span></th>
+				<td>
 					<label><input name="filterFN" type="radio" value="with" {if $params.filterFN=="with"}checked="checked" {/if}/>with</label>
 					<label><input name="filterFN" type="radio" value="without" {if $params.filterFN=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterFN" type="radio" value="all" {if $params.filterFN=="all"}checked="checked" {/if}/>all</label>
@@ -118,7 +118,7 @@
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
-<script language="javascript">
+<script type="text/javascript">
 <!--
 var srDateKind  = {if $params.srDateKind != ""}"{$params.srDateKind}"{else}null{/if};
 var srFromDate  = {if $params.srDateFrom != ""}"{$params.srDateFrom}"{else}null{/if};
@@ -137,14 +137,14 @@ $(function() {
 
 	if(srDateKind == "custom...")
 	{
-	 	$("#cadSearch .srDateRange")
+		$("#cadSearch .srDateRange")
 			.daterange('option', 'fromDate', srFromDate)
 			.daterange('option', 'toDate', srToDate);
 	}
 
 	if(cadDateKind == "custom...")
 	{
-	 	$("#cadSearch .cadDateRange")
+		$("#cadSearch .cadDateRange")
 			.daterange('option', 'fromDate', cadFromDate)
 			.daterange('option', 'toDate', cadToDate);
 	}

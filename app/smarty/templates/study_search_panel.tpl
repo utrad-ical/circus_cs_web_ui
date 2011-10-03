@@ -28,7 +28,7 @@
 					</select>
 				</td>
 				<th><span class="trim01">Age</span></th>
-			  	<td>
+				<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
@@ -63,8 +63,8 @@
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
-<script language="javascript">
-<!-- 
+<script type="text/javascript">
+<!--
 var stDateKind = {if $params.stDateKind != ""}"{$params.stDateKind}"{else}null{/if};
 var stFromDate = {if $params.stDateFrom != ""}"{$params.stDateFrom}"{else}null{/if};
 var stToDate   = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};
