@@ -156,3 +156,47 @@ $.fn.radioToButton = function(styles) {
 		flush();
 	});
 };
+
+// webapi method calls CIRCUS CS Web API.
+$.extend({
+	'webapi': function(options) {
+		function defaultFailedHandler(errorMessage, data)
+		{
+			console && console.log(errorMessage, data);
+			alert("API Error:\n" + errorMessage)
+		}
+
+		var defaults = {
+			api: 'api/api.php',
+			action: null,
+			params: {},
+			onSuccess: $.noop,
+			onFail: defaultFailedHandler
+		};
+		var settings = $.extend({}, defaults, options);
+		var request = { action: settings.action, auth: { type: 'session' }};
+		request.params = settings.params;
+
+		$.post(
+			settings.api,
+			{ request: JSON.stringify(request) },
+			function (data) {
+				try {
+					var obj = JSON.parse(data);
+					if (obj.status == 'OK')
+					{
+						if (settings.onSuccess instanceof Function)
+							settings.onSuccess(obj.result);
+					}
+					else
+					{
+						settings.onFail(obj.error.message, JSON.parse(data));
+					}
+				} catch (e) {
+					settings.onFail(data, data);
+				}
+			},
+			'text'
+		);
+	}
+});
