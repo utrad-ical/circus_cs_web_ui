@@ -236,11 +236,14 @@ $(function() {
 		$('#save-button').enable();
 	}
 
-	function ruleSetChanged() {
+	function ruleSetChanged(event) {
 		if (!currentRuleSet)
 			return;
 		modify();
-		currentRuleSet.filter = createNodeFromElement($('#condition > div'));
+		var conditiondiv = $('#condition > div');
+		if (conditiondiv.data('targetRuleSet') != currentRuleSet)
+			return;
+		currentRuleSet.filter = createNodeFromElement(conditiondiv);
 		currentRuleSet.rule = createRuleFromElement();
 		$('#rulesets-list li.active .content').replaceWith(
 			newRuleSetListContent(currentRuleSet)
@@ -271,6 +274,7 @@ $(function() {
 		if (currentRuleSet)
 		{
 			var node = createElementFromNode(currentRuleSet.filter);
+			node.data('targetRuleSet', currentRuleSet);
 			node.mousemove(function(event) {
 				var element = $(event.target);
 				if (element != hoveringElement && element.is('.node'))
