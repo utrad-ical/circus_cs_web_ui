@@ -81,7 +81,7 @@
 					<label><input name="consensualFB" type="radio" value="all" {if $params.consensualFB=="all"}checked="checked" {/if}/>all</label>
 				</td>
 	            <th><span class="trim01">Entered by</span></th>
-    			<td><input name="filterFBUser" type="text" style="width: 150px;" value="{$params.filterFBUser|escape}" /></td>
+    			<td><input name="filterFBUser" type="text" style="width: 160px;" value="{$params.filterFBUser|escape}" /></td>
 			</tr>
 			<tr>
 		        <th><span class="trim01">TP</span></th>
