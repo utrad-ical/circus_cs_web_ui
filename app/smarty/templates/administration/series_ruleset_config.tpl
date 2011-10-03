@@ -34,6 +34,7 @@ $(function() {
 	{
 		$('#selector-pane, #editor-pane').hide();
 		$('#plugin-selector-pane').show();
+		targetPlugin = null;
 		modified = false;
 	}
 
@@ -398,20 +399,22 @@ $(function() {
 	});
 
 	$('#plugin-select').change(function() {
-		var targetPlugin = $('#plugin-select').val();
+		targetPlugin = $('#plugin-select').val();
 		if (targetPlugin)
 		{
-			$.get(
-				'series_ruleset_config.php',
-				{ plugin_id: targetPlugin, mode: 'get_rulesets' },
-				function(data) {
-					var obj = JSON.parse(data);
-					pluginRuleSetsData = obj.result;
+			$.webapi({
+				api: '../api/api.php',
+				action: 'seriesRuleset',
+				params: {
+					plugin_id: targetPlugin,
+					mode: 'get'
+				},
+				onSuccess: function(result) {
+					pluginRuleSetsData = result;
 					enterEdit();
 					refreshRuleSets();
-				},
-				'text'
-			);
+				}
+			});
 		}
 		else
 			exitEdit();
@@ -474,10 +477,17 @@ $(function() {
 	$('#cancel-button').click(function() {
 		if (modified)
 		{
-			if (confirm('Exit without saving?'))
-			{
-				exitEdit();
-			}
+			$('#cancel-confirm').dialog({
+				autoOpen: true,
+				modal: true,
+				buttons: {
+					"Don't Save": function() {
+						$(this).dialog('close');
+						exitEdit();
+					},
+					"Cancel": function() { $(this).dialog('close'); }
+				}
+			});
 		}
 		else
 		{
@@ -486,6 +496,23 @@ $(function() {
 	});
 
 	$('#save-button').click(function() {
+		$('#save-button').disable();
+		if (targetPlugin)
+		{
+			$.webapi({
+				api: '../api/api.php',
+				action: 'seriesRuleset',
+				params: {
+					plugin_id: targetPlugin,
+					mode: 'set',
+					pluginRuleSetsData: JSON.stringify(pluginRuleSetsData)
+				},
+				onSuccess: function(data) {
+					alert('Saved');
+					exitEdit();
+				}
+			});
+		}
 	});
 
 	$('#editor-pane').change(ruleSetChanged).keyup(ruleSetChanged);
@@ -692,5 +719,7 @@ require=$smarty.capture.require body_class="spot"}
 	<button id="condition-addgroup" class="condition-toolbutton"></button>
 	<button id="condition-delete" class="condition-toolbutton"></button>
 </div>
+
+<div id="cancel-confirm" title="Confirm" style="display: none">Exit without saving?</div>
 
 {include file="footer.tpl"}

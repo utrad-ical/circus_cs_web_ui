@@ -21,43 +21,10 @@ $keys = array(
 	array('value' => 'image_number', 'label' => 'number of images')
 );
 
-$req = $_REQUEST;
+// Getting/setting the rulesets is done by Web API.
+// See SeriesRulesetAction class.
 
-switch($req['mode'])
-{
-	case 'get_rulesets':
-		get_rulesets($req['plugin_id']);
-		break;
-	case 'set_rulesets':
-		break;
-	default:
-		display();
-}
-
-function get_rulesets($plugin_id)
-{
-	$dum = new PluginCadSeries();
-	$entries = $dum->find(
-		array('plugin_id' => $plugin_id),
-		array('order' => array('volume_id'))
-	);
-	global $req;
-	$items = array();
-	foreach ($entries as $item)
-		$items[$item->volume_id] = json_decode($item->ruleset);
-	json_result($items);
-}
-
-function json_result($result, $status = 'OK')
-{
-	global $req;
-	$out = array(
-		'action' => $req['mode'],
-		'status' => $status == 'OK' ? 'OK' : 'Error',
-		'result' => $result
-	);
-	print json_encode($out);
-}
+display();
 
 function display()
 {
