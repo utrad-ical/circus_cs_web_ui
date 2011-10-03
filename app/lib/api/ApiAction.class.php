@@ -9,8 +9,8 @@ abstract class ApiAction
 {
 	protected static $required_privileges;
 
-	abstract protected function requiredPrivileges();
-	abstract protected function execute($api_request);
+	abstract public function requiredPrivileges();
+	abstract public function execute($api_request);
 }
 
 ?>
