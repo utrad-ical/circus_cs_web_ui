@@ -22,7 +22,7 @@
 				<th><span class="trim01">Age</span></th>
 			  	<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
-					-&nbsp;
+					&mdash;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
 				<th><span class="trim01">Modality</span></th>
@@ -95,24 +95,22 @@
 					<label><input name="filterFN" type="radio" value="without" {if $params.filterFN=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterFN" type="radio" value="all" {if $params.filterFN=="all"}checked="checked" {/if}/>all</label>
 				</td>
-	            <th><span class="trim01">CAD tag</span></th>
+				<th><span class="trim01">CAD tag</span></th>
     			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
-			<tr>
-				<th><span class="trim01">Showing</span></th>
-				<td colspan="5">
-					<select name="showing">
-						<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
-						<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
-						<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
-						<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
-					</select>
-				</td>
-			</tr>
 		</table>
-		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
+		<div class="search-bar">
+			<span class="showing">
+				Showing:
+				<select name="showing">
+					<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
+					<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
+					<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
+					<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
+				</select>
+			</span>
+			<input type="button" value="Search" class="form-btn" onclick="DoSearch('cad', '{$params.mode|escape}');" />
+			<input type="button" value="Reset" class="form-btn" onclick="ResetSearchBlock('cad', '{$params.mode|escape}');" />
 			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->
@@ -145,7 +143,7 @@ function ChangefilterModality()
 				optionStr += '<option value="' + data + '">' + data + '</option>';
 			});
 	}
-	
+
 	$("#cadSearch select[name='filterCAD']").html(optionStr);
 	$("#cadSearch select[name='filterVersion']").html('<option value="all">all</option>');
 

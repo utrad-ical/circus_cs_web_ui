@@ -22,7 +22,7 @@
 				<th><span class="trim01">Age</span></th>
 			  	<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
-					-&nbsp;
+					&mdash;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
 				<th><span class="trim01">Modality</span></th>
@@ -39,32 +39,26 @@
 				<th><span class="trim01">Study date</span></th>
 				<td colspan="5"><span class="stDateRange"></span></td>
 			</tr>
-			<tr>
-				<th><span class="trim01">Showing</span></th>
-				<td>
-					<select name="showing">
-						<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
-						<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
-						<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
-						<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
-					</select>
-				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
 		</table>
-		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('study', '{$params.mode|escape}');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('study', '{$params.mode|escape}');" />
+		<div class="search-bar">
+			<span class="showing">
+				Showing:
+				<select name="showing">
+					<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
+					<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
+					<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
+					<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
+				</select>
+			</span>
+			<input type="button" value="Search" class="form-btn" onclick="DoSearch('study', '{$params.mode|escape}');" />
+			<input type="button" value="Reset" class="form-btn" onclick="ResetSearchBlock('study', '{$params.mode|escape}');" />
 			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
 <script language="javascript">
-<!-- 
+<!--
 var stDateKind = {if $params.stDateKind != ""}"{$params.stDateKind}"{else}null{/if};
 var stFromDate = {if $params.stDateFrom != ""}"{$params.stDateFrom}"{else}null{/if};
 var stToDate   = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};

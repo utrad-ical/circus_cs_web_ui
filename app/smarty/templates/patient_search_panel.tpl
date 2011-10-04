@@ -22,30 +22,24 @@
 				<th><span class="trim01">Age</span></th>
 			  	<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
-					-&nbsp;
+					&mdash;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
 				<td colspan="4">&nbsp;</td>
 			</tr>
-			<tr>
-				<th><span class="trim01">Showing</span></th>
-				<td>
-					<select name="showing">
-						<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
-						<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
-						<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
-						<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
-					</select>
-				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
 		</table>
-		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('patient', '');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn"  onclick="ResetSearchBlock('patient', '');" />
+		<div class="search-bar">
+			<span class="showing">
+				Showing:
+				<select name="showing">
+					<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
+					<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
+					<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
+					<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
+				</select>
+			</span>
+			<input type="button" value="Search" class="form-btn" onclick="DoSearch('patient', '');" />
+			<input type="button" value="Reset" class="form-btn"  onclick="ResetSearchBlock('patient', '');" />
 			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .p20 END -->

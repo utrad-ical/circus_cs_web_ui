@@ -22,7 +22,7 @@
 				<th><span class="trim01">Age</span></th>
 				<td>
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
-					-&nbsp;
+					&mdash;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
 				<th><span class="trim01">Modality</span></th>
@@ -46,21 +46,20 @@
 	            <th><span class="trim01">Series tag</span></th>
     			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
-			<tr>
-				<th><span class="trim01">Showing</span></th>
-				<td colspan="5">
-					<select name="showing">
-						<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
-						<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
-						<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
-						<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
-					</select>
-				</td>
-			</tr>
+
 		</table>
-		<div class="al-l mt10 ml20" style="width: 100%;">
-			<input name="" type="button" value="Search" class="w100 form-btn" onclick="DoSearch('series', '{$params.mode|escape}');" />
-			<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetSearchBlock('series', '{$params.mode|escape}');" />
+		<div class="search-bar">
+			<span class="showing">
+				Showing:
+				<select name="showing">
+					<option value="10"  {if $params.showing=="10"}selected="selected"{/if}>10</option>
+					<option value="25"  {if $params.showing=="25"}selected="selected"{/if}>25</option>
+					<option value="50"  {if $params.showing=="50"}selected="selected"{/if}>50</option>
+					<option value="all" {if $params.showing=="all"}selected="selected"{/if}>all</option>
+				</select>
+			</span>
+			<input type="button" value="Search" class="form-btn" onclick="DoSearch('series', '{$params.mode|escape}');" />
+			<input type="button" value="Reset" class="form-btn" onclick="ResetSearchBlock('series', '{$params.mode|escape}');" />
 			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
 	</div><!-- / .m20 END -->

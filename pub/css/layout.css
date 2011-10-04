@@ -235,6 +235,18 @@ p.add-favorite {
 	margin-bottom: 20px;
 }
 
+.search-bar {
+	margin-top: 15px;
+}
+
+.search-bar span.showing {
+	margin-right: 30px;
+}
+
+.search-bar .form-btn {
+	width: 100px;
+}
+
 table.search-tbl th, table.search-tbl td {
 	border-bottom: 1px dotted #ccc;
 }
