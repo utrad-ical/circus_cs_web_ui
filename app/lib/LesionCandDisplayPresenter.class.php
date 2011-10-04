@@ -40,25 +40,27 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		$result = array();
 		$count = 0;
 		$pref = $this->owner->userPreference();
+
+		if (count($input) < 1)
+			return $result;
+
+		$key = $this->findDisplayIdField($input[0]);
+		if (!$key)
+			throw new Exception('Rows must be discriminated by display ID.');
+
 		usort(
 			$input,
-			function($a, $b) {
+			function($a, $b) use ($key) {
 				$aa = (float)$a['confidence'];
 				$bb = (float)$b['confidence'];
-				if ($aa == $bb) return 0;
-				if ($aa < $bb) return 1; else return -1;
+				if ($aa == $bb) return (int)$a[$key] - (int)$b[$key]; // display_id ASC
+				if ($aa < $bb) return 1; else return -1; // confidence DESC
 			}
 		);
 		$required_fields = array('location_x', 'location_y', 'location_z',
 			'confidence');
 		foreach ($input as $rec)
 		{
-			if (!$key)
-			{
-				$key = $this->findDisplayIdField($rec);
-				if (!$key)
-					throw new Exception('Rows must be discriminated by display ID.');
-			}
 			foreach ($required_fields as $req)
 				if (!isset($rec[$req]))
 					throw new Exception("Required field ($req) not defined");
