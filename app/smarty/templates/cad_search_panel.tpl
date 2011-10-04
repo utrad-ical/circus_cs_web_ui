@@ -157,13 +157,16 @@ function ChangefilterCad()
 
 	var optionStr = '<option value="all" selected="selected">all</option>';
 
-	if(modalityCadList[modality][cadName].length > 0);
+	if(cadName != "all")
 	{
-		var versionArr = modalityCadList[modality][cadName];
-
-		for(var i=0; i<versionArr.length; i++)
+		if(modalityCadList[modality][cadName].length > 0);
 		{
-			optionStr += '<option value="' + versionArr[i] + '">' + versionArr[i] + '</option>';
+			var versionArr = modalityCadList[modality][cadName];
+
+			for(var i=0; i<versionArr.length; i++)
+			{
+				optionStr += '<option value="' + versionArr[i] + '">' + versionArr[i] + '</option>';
+			}
 		}
 	}
 
