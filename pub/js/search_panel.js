@@ -12,7 +12,7 @@ function DoSearch(list, mode)
 		case 'cad':     address = 'cad_log.php?';      break;
 	}
 
-	if(list == 'study' && mode == 'patient')  
+	if(list == 'study' && mode == 'patient')
 	{
 		params.mode = 'patient';
 		params.encryptedPtID = $("#encryptedPtID").val();
@@ -144,63 +144,28 @@ function DoSearch(list, mode)
 
 function ResetSearchBlock(list, mode)
 {
+	var targetPanel = $('#' + list + 'Search');
 
 	// select
-	$("#" + list + "Search select[name='showing']").children("[value='10']").attr("selected", true);
-
-	if(list != "patient")
-	{
-		$("#" + list + "Search select[name!='showing']").children().removeAttr("selected");
-	}
+	$("select[name='showing']", targetPanel).val("10");
+	$("select[name!='showing']", targetPanel).children().removeAttr("selected");
 
 	// radio
-	$("#" + list + "Search input[type='radio']").removeAttr("disabled")
-												.filter(function(){ return ($(this).val() == "all") })
-												.attr("checked", true);
-	// text
-	$("#" + list + "Search input[type='text']").removeAttr("disabled").removeAttr("value");
+	$("input[type='radio']", targetPanel).enable();
+	$("input[type='radio'][value='all']", targetPanel).attr('checked', 'checked');
 
-	if(list == "cad" && mode == "today")
-	{
-		$("#cadSearch input[type='text'][name!='cadDateFrom'][name!='cadDateTo']").removeAttr("value").removeAttr("disabled");
-	}
-	else
-	{
-		
-	}
+	// text
+	$("input[type='text']", targetPanel).enable().val('');
 
 	// date range
-	if(list == "study")
-	{
-		$("#studySearch .stDateRange").daterange('option', 'kind', 'all');
-	}
-	else if(list == "series")
-	{
-		if(mode == "today")
-		{
-			$("#seriesSearch .srDateRange").daterange('option', 'kind', 'today');
-			$("#seriesSearch .stDateRange select").attr('disabled', 'disabled');
-		}
-		else
-		{
-			$("#seriesSearch .srDateRange").daterange('option', 'kind', 'all');
-		}
-	}
-	else if(list == "cad")
-	{
-		$("#cadSearch .srDateRange").daterange('option', 'kind', 'all');
+	$('.ui-daterange', targetPanel).daterange('option', 'kind', 'all').find('input').disable();
 
-		if(mode == "today")
-		{
-			$("#cadSearch .cadDateRange").daterange('option', 'kind', 'today');
-			$("#cadSearch .cadDateRange select").attr('disabled', 'disabled');
-		}
-		else
-		{
-			$("#cadSearch .cadDateRange").daterange('option', 'kind', 'all');
-		}
+	if (mode == "today")
+	{
+		$('.srDateRange, .cadDateRange', targetPanel)
+			.daterange('option', 'kind', 'today')
+			.find('select').disable();
 	}
-
 
 	// others (CAD only)
 	if(list == "cad")
