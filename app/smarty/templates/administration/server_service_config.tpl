@@ -9,7 +9,7 @@ $(function() {
 		$('input[type=button]', this).each(function () {
 			$(this).click(function(event) {
 				var mode = $(event.target).attr('value');
-				$('.serviceStatus', panel).empty().append($('.loading').clone().show(0));
+				$('.serviceStatus', panel).empty().append($('#prototype .loading').clone());
 				$('input[type=button]', panel).disable();
 				$.post(
 					"change_server_status.php",
@@ -99,5 +99,7 @@ $(function() {
 
 </div>
 </form>
-<img class="loading" width="15" height="15" src="../images/busy.gif" style="display: none" />
+<div id="prototype" style="display: none">
+	<img class="loading" width="15" height="15" src="../images/busy.gif" />
+</div>
 {include file="footer.tpl"}
