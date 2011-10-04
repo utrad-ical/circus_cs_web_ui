@@ -147,8 +147,7 @@ function ResetSearchBlock(list, mode)
 	var targetPanel = $('#' + list + 'Search');
 
 	// select
-	$("select[name='showing']", targetPanel).val("10");
-	$("select[name!='showing']", targetPanel).children().removeAttr("selected");
+	$("select option", targetPanel).removeAttr('selected').eq(0).attr('selected', 'selected');
 
 	// radio
 	$("input[type='radio']", targetPanel).enable();
@@ -158,7 +157,7 @@ function ResetSearchBlock(list, mode)
 	$("input[type='text']", targetPanel).enable().val('');
 
 	// date range
-	$('.ui-daterange', targetPanel).daterange('option', 'kind', 'all').find('input').disable();
+	$('.ui-daterange', targetPanel).daterange('option', 'kind', 'all');
 
 	if (mode == "today")
 	{
