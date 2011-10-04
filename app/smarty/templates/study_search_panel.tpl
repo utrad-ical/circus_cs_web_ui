@@ -4,8 +4,8 @@
 		<table class="search-tbl">
 			<tr>
 				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
-				<td style="width: 150px;">
-					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" {if $params.mode=='patient'}disabled="disabled"{/if} />
+				<td style="width: 180px;">
+					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" {if $params.mode=='patient'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 9em;"><span class="trim01">Patient Name</span></th>
 				<td style="width: 200px;">
@@ -19,6 +19,12 @@
 				</td>
 			</tr>
 			<tr>
+				<th><span class="trim01">Age</span></th>
+			  	<td>
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
+					-&nbsp;
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
+				</td>
 				<th><span class="trim01">Modality</span></th>
 				<td>
 					<select name="filterModality">
@@ -27,13 +33,7 @@
 						{/foreach}
 					</select>
 				</td>
-				<th><span class="trim01">Age</span></th>
-				<td>
-					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
-					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
-				</td>
-				<td colspan="2"></td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Study date</span></th>
@@ -63,8 +63,8 @@
 	</div><!-- / .p20 END -->
 </div><!-- / .search-panel END -->
 
-<script type="text/javascript">
-<!--
+<script language="javascript">
+<!-- 
 var stDateKind = {if $params.stDateKind != ""}"{$params.stDateKind}"{else}null{/if};
 var stFromDate = {if $params.stDateFrom != ""}"{$params.stDateFrom}"{else}null{/if};
 var stToDate   = {if $params.stDateTo != ""}"{$params.stDateTo}"{else}null{/if};

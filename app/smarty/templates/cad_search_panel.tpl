@@ -11,7 +11,7 @@
 				<td style="width: 210px;">
 					<input name="filterPtName" type="text" style="width: 160px;" value="{$params.filterPtName|escape}" {if $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
-				<th style="width: 8em"><span class="trim01">Sex</span></th>
+				<th style="width: 7em"><span class="trim01">Sex</span></th>
 				<td>
 					<label><input name="filterSex" type="radio" value="M" {if $params.filterSex=="M"}checked="checked" {/if}/>male</label>
 					<label><input name="filterSex" type="radio" value="F" {if $params.filterSex=="F"}checked="checked" {/if}/>female</label>
@@ -19,20 +19,21 @@
 				</td>
 			</tr>
 			<tr>
+				<th><span class="trim01">Age</span></th>
+			  	<td>
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
+					-&nbsp;
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
+				</td>
 				<th><span class="trim01">Modality</span></th>
 				<td>
-					<select name="filterModality" onchange="ChangefilterModality()" style="width: 60px;">
+					<select name="filterModality" onchange="ChangefilterModality()">
 						{foreach from=$modalityList item=item name=modality}
 							<option value="{$item|escape}" {if $params.filterModality==$item}selected="selected"{/if}>{$item|escape}</option>
 						{/foreach}
 					</select>
 				</td>
-				<th><span class="trim01">Age</span></th>
-			  	<td colspan="3">
-					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
-					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
-				</td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>

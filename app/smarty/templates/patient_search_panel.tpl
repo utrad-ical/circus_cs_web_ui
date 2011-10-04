@@ -4,8 +4,8 @@
 		<table class="search-tbl">
 			<tr>
 				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
-				<td style="width: 150px;">
-					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" />
+				<td style="width: 180px;">
+					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" />
 				</td>
 				<th style="width: 9em;"><span class="trim01">Patient Name</span></th>
 				<td style="width: 200px;">

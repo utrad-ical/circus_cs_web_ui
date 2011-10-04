@@ -4,8 +4,8 @@
 		<table class="search-tbl">
 			<tr>
 				<th style="width: 7em;"><span class="trim01">Patient ID</span></th>
-				<td style="width: 130px;">
-					<input name="filterPtID" type="text" value="{$params.filterPtID|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
+				<td style="width: 180px;">
+					<input name="filterPtID" type="text" style="width: 160px;" value="{$params.filterPtID|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
 				<th style="width: 9em;"><span class="trim01">Patient Name</span></th>
 				<td style="width: 180px;">
@@ -19,6 +19,12 @@
 				</td>
 			</tr>
 			<tr>
+				<th><span class="trim01">Age</span></th>
+				<td>
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
+					-&nbsp;
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
+				</td>
 				<th><span class="trim01">Modality</span></th>
 				<td>
 					<select name="filterModality">
@@ -27,12 +33,7 @@
 						{/foreach}
 					</select>
 				</td>
-				<th><span class="trim01">Age</span></th>
-			  	<td colspan="3"> 
-					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
-					-&nbsp;
-					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
-				</td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>
@@ -40,10 +41,10 @@
 			</tr>
 			<tr>
 				<th style="width: 11em;"><span class="trim01">Series description</span></th>
-				<td colspan="3">
-					<input name="filterSrDescription" type="text" style="width: 240px;" value="{$params.filterSrDescription|escape}" />
+				<td>
+					<input name="filterSrDescription" type="text" style="width: 160px;" value="{$params.filterSrDescription|escape}" />
 	            <th><span class="trim01">Series tag</span></th>
-    			<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
+    			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
