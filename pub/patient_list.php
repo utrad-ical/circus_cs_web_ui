@@ -27,6 +27,14 @@
 				"options" => array('M', 'F', 'all'),
 				"default" => "all",
 				"oterwise" => "all"),
+			"filterAgeMin" => array(
+				'type' => 'int',
+				'min' => '0',
+				'label' => 'Age'),
+			"filterAgeMax" => array(
+				'type' => 'int',
+				'min' => '0',
+				'label' => 'Age'),
 			"orderCol" => array(
 				"type" => "select",
 				"options" => array('Name', 'Sex', 'BirthDate', 'PatientID'),
@@ -97,7 +105,34 @@
 				$addressParams['filterSex'] = $params['filterSex'];
 			}
 
+			if($params['filterAgeMin'] != "" && $params['filterAgeMax'] != "" && $params['filterAgeMin'] == $params['filterAgeMax'])
+			{
+				$sqlCondArray[] = "extract(year from age(birth_date))=?";
+				$sqlParams[] = $params['filterAgeMin'];
+				$addressParams['filterAgeMin'] = $params['filterAgeMin'];
+				$addressParams['filterAgeMax'] = $params['filterAgeMax'];
+			}
+			else
+			{
+				if($params['filterAgeMin'] != "")
+				{
+					$sqlCondArray[] .= " ?<=extract(year from age(birth_date))";
+					$sqlParams[] = $params['filterAgeMin'];
+					$addressParams['filterAgeMin'] = $params['filterAgeMin'];
+				}
+
+				if($params['filterAgeMax'] != "")
+				{
+					$sqlCondArray[] = "extract(year from age(birth_date))<=?";
+					$sqlParams[] = $params['filterAgeMax'];
+					$addressParams['filterAgeMax'] = $params['filterAgeMax'];
+				}
+			}
+
 			if(count($sqlParams) > 0)  $sqlCond = sprintf(" WHERE %s", implode(' AND ', $sqlCondArray));
+			
+			
+			
 			//----------------------------------------------------------------------------------------------------------
 
 			//----------------------------------------------------------------------------------------------------------

@@ -19,6 +19,15 @@
 				</td>
 			</tr>
 			<tr>
+				<th><span class="trim01">Age</span></th>
+			  	<td>
+					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
+					-&nbsp;
+					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
+				</td>
+				<td colspan="4">&nbsp;</td>
+			</tr>
+			<tr>
 				<th><span class="trim01">Showing</span></th>
 				<td>
 					<select name="showing">

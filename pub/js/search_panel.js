@@ -38,18 +38,18 @@ function DoSearch(list, mode)
 		if(sex == "M" || sex == "F")  params.filterSex    = sex;
 	}
 
+	var ageMin     = $("#" + list + "Search input[name='filterAgeMin']").val();
+	var ageMax     = $("#" + list + "Search input[name='filterAgeMax']").val();
+	var modality   = $("#" + list + "Search select[name='filterModality'] option:selected").text();
+
+	if(mode != 'patient' && mode != 'study')
+	{
+		if(ageMin != "")  params.filterAgeMin= ageMin;
+		if(ageMax != "")  params.filterAgeMax= ageMax;
+	}
+
 	if(list != "patient")
 	{
-		var ageMin     = $("#" + list + "Search input[name='filterAgeMin']").val();
-		var ageMax     = $("#" + list + "Search input[name='filterAgeMax']").val();
-		var modality   = $("#" + list + "Search select[name='filterModality'] option:selected").text();
-
-		if(mode != 'study')
-		{
-			if(ageMin != "")  params.filterAgeMin= ageMin;
-			if(ageMax != "")  params.filterAgeMax= ageMax;
-		}
-
 		if(modality != "all")
 		{
 			params.filterModality = modality;
