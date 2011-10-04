@@ -28,13 +28,11 @@
 					</select>
 				</td>
 				<th><span class="trim01">Age</span></th>
-				<td>
+			  	<td colspan="3">
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" />
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" />
 				</td>
-				<th><span class="trim01">Tag</span></th>
-				<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>
@@ -96,7 +94,8 @@
 					<label><input name="filterFN" type="radio" value="without" {if $params.filterFN=="without"}checked="checked" {/if}/>without</label>
 					<label><input name="filterFN" type="radio" value="all" {if $params.filterFN=="all"}checked="checked" {/if}/>all</label>
 				</td>
-				<td colspan="2">&nbsp;</td>
+	            <th><span class="trim01">CAD tag</span></th>
+    			<td><input name="filterTag" type="text" style="width: 160px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>

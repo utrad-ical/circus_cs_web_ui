@@ -11,7 +11,7 @@
 				<td style="width: 180px;">
 					<input name="filterPtName" type="text" style="width: 160px;" {if !$smarty.session.anonymizeFlg}value="{$params.filterPtName|escape}"{/if} {if $params.mode=='study' || $smarty.session.anonymizeFlg}disabled="disabled"{/if} />
 				</td>
-				<th style="width: 4em;"><span class="trim01">Sex</span></th>
+				<th style="width: 7em;"><span class="trim01">Sex</span></th>
 				<td style="width: 180px;">
 					<label><input name="filterSex" type="radio" value="M"   {if $params.filterSex=="M"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />male</label>
 					<label><input name="filterSex" type="radio" value="F"   {if $params.filterSex=="F"}checked="checked"{/if} {if $params.mode=='study'}disabled="disabled"{/if} />female</label>
@@ -28,13 +28,11 @@
 					</select>
 				</td>
 				<th><span class="trim01">Age</span></th>
-				<td>
+			  	<td colspan="3"> 
 					<input name="filterAgeMin" type="text" size="4" value="{$params.filterAgeMin|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 					-&nbsp;
 					<input name="filterAgeMax" type="text" size="4" value="{$params.filterAgeMax|escape}" {if $params.mode=='study'}disabled="disabled"{/if} />
 				</td>
-				<th><span class="trim01">Tag</span></th>
-				<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Series date</span></th>
@@ -42,8 +40,10 @@
 			</tr>
 			<tr>
 				<th style="width: 11em;"><span class="trim01">Series description</span></th>
-				<td colspan="5">
+				<td colspan="3">
 					<input name="filterSrDescription" type="text" style="width: 240px;" value="{$params.filterSrDescription|escape}" />
+	            <th><span class="trim01">Series tag</span></th>
+    			<td><input name="filterTag" type="text" style="width: 150px;" value="{$params.filterTag|escape}" /></td>
 			</tr>
 			<tr>
 				<th><span class="trim01">Showing</span></th>
