@@ -767,21 +767,11 @@
 		include('set_cad_panel_params.php');
 		$versionList = array("all");
 
-		if($params['filterCAD'] != 'all' && $params['filterVersion'] != 'all')
+		if($params['filterCAD'] != 'all')
 		{
-
-			for($i=0; $i<$cadNum; $i++)
+			foreach($modalityCadList['all'][$params['filterCAD']] as $item)
 			{
-				if($params['filterCAD'] == $cadList[$i][0])
-				{
-					$tmpArr = explode('^', $cadList[$i][1]);
-
-					foreach($tmpArr as $item)
-					{
-						$versionList[] = $item;
-					}
-					break;
-				}
+				$versionList[] = $item;
 			}
 		}
 
@@ -796,7 +786,8 @@
 		$smarty->assign('params',          $params);
 		$smarty->assign('data',            $data);
 		$smarty->assign('modalityList',    $modalityList);
-		$smarty->assign('modalityMenuVal', $modalityMenuVal);
+
+		$smarty->assign('modalityCadList', $modalityCadList);
 		$smarty->assign('cadList',         $cadList);
 		$smarty->assign('versionList',     $versionList);
 

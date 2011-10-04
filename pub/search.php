@@ -28,9 +28,13 @@
 		$smarty->assign('params', $params);
 
 		$smarty->assign('modalityList',    $modalityList);
-		$smarty->assign('modalityMenuVal', $modalityMenuVal);
+		//$smarty->assign('modalityMenuVal', $modalityMenuVal);
+
+		$smarty->assign('modalityCadList', $modalityCadList);
 		$smarty->assign('cadList',         $cadList);
 		$smarty->assign('versionList',     $versionList);
+
+		$smarty->assign('modalityCadList', $modalityCadList);
 
 		$smarty->display('search.tpl');
 		//----------------------------------------------------------------------------------------------------

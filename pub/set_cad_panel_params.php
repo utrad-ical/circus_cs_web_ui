@@ -3,6 +3,7 @@
 	$modalityMenuVal = array();
 	$cadList = array();	
 	$modalityNum = count($modalityList);
+	$modalityCadList = array();
 
 	for($i=0; $i<$modalityNum; $i++)
 	{
@@ -10,12 +11,14 @@
 		$prevCadName = "";
 
 		$sqlStr = "SELECT DISTINCT pm.plugin_name, pm.version"
-				. " FROM executed_plugin_list el, plugin_master pm, plugin_cad_series cs"
+				. " FROM executed_plugin_list el, executed_series_list es,"
+				. " series_list sr, plugin_master pm"
 				. " WHERE el.status=?"
-				. " AND pm.plugin_id=el.plugin_id AND cs.plugin_id=el.plugin_id"
-				. " AND cs.volume_id=0";
+				. " AND es.job_id=el.job_id"
+				. " AND sr.sid=es.series_sid"
+				. " AND pm.plugin_id=el.plugin_id";
 
-		if($modalityList[$i] != 'all')  $sqlStr .= " AND cs.modality=?";
+		if($modalityList[$i] != 'all')  $sqlStr .= " AND sr.modality=?";
 		$sqlStr .= " ORDER BY pm.plugin_name ASC, pm.version DESC";
 		
 		$stmt = $pdo->prepare($sqlStr);
@@ -25,6 +28,8 @@
 	
 		while($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
+			$modalityCadList[$modalityList[$i]][$result[0]][] = $result[1];
+
 			if($result[0] != $prevCadName)
 			{
 				if($prevCadName != "")  $tmpStr .= '/';
@@ -47,4 +52,5 @@
 		$cadList[$i][0] =  $tmpStr[0];                                     // plug-in (CAD) name
 		$cadList[$i][1] =  substr($cadMenuStr[$i], strlen($tmpStr[0])+1);  // version str
 	}
+
 ?>

@@ -23,7 +23,7 @@
 				<td>
 					<select name="filterModality" onchange="ChangefilterModality()" style="width: 60px;">
 						{foreach from=$modalityList item=item name=modality}
-							<option value="{$modalityMenuVal[$smarty.foreach.modality.index]|escape}" {if $params.filterModality==$item}selected="selected"{/if}>{$item|escape}</option>
+							<option value="{$item|escape}" {if $params.filterModality==$item}selected="selected"{/if}>{$item|escape}</option>
 						{/foreach}
 					</select>
 				</td>
@@ -50,7 +50,7 @@
 					<select name="filterCAD" onchange="ChangefilterCad();" style="width: 160px;">
 						<option value="">all</option>
 						{foreach from=$cadList item=item}
-							<option value="{$item[1]|escape}"{if $params.filterCAD==$item[0]} selected="selected"{/if}>{$item[0]|escape}</option>
+							<option value="{$item[0]|escape}"{if $params.filterCAD==$item[0]} selected="selected"{/if}>{$item[0]|escape}</option>
 						{/foreach}
 					</select>
 				</td>
@@ -128,9 +128,51 @@ var cadFromDate = {if $params.cadDateFrom != ""}"{$params.cadDateFrom}"{else}nul
 var cadToDate   = {if $params.cadDateTo != ""}"{$params.cadDateTo}"{else}null{/if};
 var mode        = {if $params.mode != ""}"{$params.mode}"{else}null{/if};
 
+var modalityCadList = {$modalityCadList|@json_encode};
+
 if(mode == "today")	cadDateKind = 'today';
 
 {literal}
+function ChangefilterModality()
+{
+	var modality = $("#cadSearch select[name='filterModality']").val();
+
+	var optionStr = '<option value="all" selected="selected">all</option>';
+
+	if(modality in modalityCadList)
+	{
+		$.each(modalityCadList[modality], function(data){
+				optionStr += '<option value="' + data + '">' + data + '</option>';
+			});
+	}
+	
+	$("#cadSearch select[name='filterCAD']").html(optionStr);
+	$("#cadSearch select[name='filterVersion']").html('<option value="all">all</option>');
+
+}
+
+
+function ChangefilterCad()
+{
+	var modality = $("#cadSearch select[name='filterModality']").val();
+	var cadName = $("#cadSearch select[name='filterCAD']").val();
+
+	var optionStr = '<option value="all" selected="selected">all</option>';
+
+	if(modalityCadList[modality][cadName].length > 0);
+	{
+		var versionArr = modalityCadList[modality][cadName];
+
+		for(var i=0; i<versionArr.length; i++)
+		{
+			optionStr += '<option value="' + versionArr[i] + '">' + versionArr[i] + '</option>';
+		}
+	}
+
+	$("#cadSearch select[name='filterVersion']").html(optionStr);
+}
+
+
 $(function() {
 	$("#cadSearch .srDateRange").daterange({ kind: srDateKind});
 	$("#cadSearch .cadDateRange").daterange({ kind: cadDateKind});
@@ -156,6 +198,7 @@ $(function() {
 	}
 
 });
+
 {/literal}
 -->
 </script>
