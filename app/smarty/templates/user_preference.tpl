@@ -22,30 +22,28 @@ function ChangePassword()
 function ChangePagePreference()
 {
 	$.post(
-		"./preference/change_page_preference.php",
+		"preference/change_page_preference.php",
 		{
-			oldTodayDisp:  $("#oldTodayDisp").val(),
 			newTodayDisp:  $('input[name="newTodayDisp"]:checked').val(),
-			oldDarkroom:   $("#oldDarkroom").val(),
 			newDarkroom:   $('input[name="newDarkroom"]:checked').val(),
-			oldAnonymized: $("#oldAnonymized").val(),
 			newAnonymized: $('input[name="newAnonymized"]:checked').val(),
-			oldShowMissed: $("#oldShowMissed").val(),
 			newShowMissed: $('input[name="newShowMissed"]:checked').val()
 		},
-		function(data){
-			if(data.message == "Success")
+		function(data) {
+			if (data instanceof Object)
 			{
-				alert('Page preference was successfully changed.');
-				$("#oldTodayDisp").val($('input[name="newTodayDisp"]:checked').val());
-				$("#oldDarkroom").val($('input[name="newDarkroom"]:checked').val());
-				$("#oldAnonymized").val($('input[name="newAnonymized"]:checked').val());
-				$("#oldShowMissed").val($('input[name="newShowMissed"]:checked').val());
-				$("#linkTodayDisp").attr("href", data.todayList + ".php?mode=today");
+				if (data.status == 'OK')
+				{
+					alert('Page preference was successfully changed.');
+					location.reload();
+				}
+				else
+					alert(data.error.message);
 			}
-			else  alert(data.message);
+			else
+				alert(data);
 		},
-		"json"
+		'json'
 	);
 }
 
@@ -172,10 +170,6 @@ function ChangeCadMenu()
 	head_extra=$smarty.capture.extra}
 
 <form id="form1" name="form1" onsubmit="return false;">
-<input type="hidden" id="oldTodayDisp"            value="{$oldTodayDisp|escape}">
-<input type="hidden" id="oldDarkroom"             value="{$oldDarkroom|escape}">
-<input type="hidden" id="oldAnonymized"           value="{$oldAnonymized|escape}">
-<input type="hidden" id="oldShowMissed"           value="{$oldShowMissed|escape}">
 <input type="hidden" id="cadName"                 value="">
 <input type="hidden" id="version"                 value="">
 <input type="hidden" id="preferenceFlg"           value="">
@@ -237,8 +231,8 @@ function ChangeCadMenu()
 		<tr>
 			<th><span class="trim01">Anonymization</span></th>
 			<td>
-				<input name="newAnonymized" type="radio" value="t"{if $oldAnonymized=="t"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />ON&nbsp;
-				<input name="newAnonymized" type="radio" value="f"{if $oldAnonymized=="f"} checked="checked"{/if}{if $smarty.session.anonymizeGroupFlg == 1} disabled="disabled"{/if} />OFF
+				<input name="newAnonymized" type="radio" value="t"{if $oldAnonymized=="t"} checked="checked"{/if}{if !$currentUser->hasPrivilege("personalInfoView")} disabled="disabled"{/if} />ON&nbsp;
+				<input name="newAnonymized" type="radio" value="f"{if $oldAnonymized=="f"} checked="checked"{/if}{if !$currentUser->hasPrivilege("personalInfoView")} disabled="disabled"{/if} />OFF
 			</td>
 		</tr>
 		<tr>

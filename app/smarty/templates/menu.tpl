@@ -3,7 +3,7 @@
 	<ul>
 		<li><a href="{$params.toTopDir}home.php" class="jq-btn jq-btn-home" title="home"></a></li>
 		<li>
-			<a href="{$params.toTopDir}{if $smarty.session.todayDisp=='series'}series_list{else}cad_log{/if}.php?mode=today"
+			<a href="{$params.toTopDir}{if $currentUser->today_disp == 'series'}series_list{else}cad_log{/if}.php?mode=today"
 			class="jq-btn jq-btn-today" title="today">
 			<div class="month"></div>
 			<div class="day"></div>
