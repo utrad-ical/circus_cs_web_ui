@@ -41,8 +41,6 @@ try
 
 	if($_SESSION['personalFBFlg']==1 && $_SESSION['showMissed']!='none')
 	{
-		include('cad_results/lesion_candidate_display_private.php');
-
 		$sqlStr = "SELECT el.job_id, el.plugin_id, cc.candidate_id "
 				. " FROM executed_plugin_list el, feedback_list fl, candidate_classification cc"
 				. " WHERE el.job_id=fl.job_id AND fl.fb_id = cc.fb_id";
@@ -106,10 +104,10 @@ try
 									$attributes['window_width']);
 
 				$dumpFname = sprintf("%s_%d.txt", $seriesParams['series_instance_uid'], $candPos['z']);
-		
-				// Get path of cache 
+
+				// Get path of cache
 				$sqlStr = "SELECT storage_id, path FROM storage_master WHERE type=3 AND current_use='t'";
-				$result =  DBConnector::query($sqlStr, NULL, 'ARRAY_NUM');		
+				$result =  DBConnector::query($sqlStr, NULL, 'ARRAY_NUM');
 
 				$pathOfCache = $result[1] . $DIR_SEPARATOR;
 				$webPathOfCache = 'storage/' . $result[0] . '/';
@@ -131,10 +129,10 @@ try
 									$attributes['window_width'],
 									0, 0);
 				}
-				
+
 				$dispWidth = 256;
 				$dispHeight = (int)((real)$attributes['crop_height'] * ($dispWidth / (real)$attributes['crop_width']) + 0.5);
-				$scale = $dispWidth/(real)$attributes['crop_width'];				
+				$scale = $dispWidth/(real)$attributes['crop_width'];
 
 				$img = @imagecreatefromjpeg($dstFname);
 
