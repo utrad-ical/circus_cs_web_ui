@@ -258,6 +258,19 @@ try
 		$params['patientName'] = PinfoScramble::scramblePtName();
 	}
 
+	// Get CAD result policy
+	$dummy = new PluginResultPolicy();
+	$policies = $dummy->find();
+	$policyArr = array();
+
+	foreach ($policies as $policy)
+	{
+		$policyArr[] = array(
+			'id' => $policy->policy_id,
+			'name' => $policy->policy_name
+		);
+	}
+
 	//--------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//--------------------------------------------------------------------------------------------------------------
@@ -272,8 +285,11 @@ try
 	$smarty->assign('defaultSelectedSrUID', $defaultSelectedSrUID);
 	
 	$smarty->assign('modalityArr',          $modalityArr);
+	
 	$smarty->assign('seriesFilterArr',      $seriesFilterArr);
 	$smarty->assign('seriesFilterNumArr',   $seriesFilterNumArr);
+
+	$smarty->assign('policyArr',            $policyArr);
 	//--------------------------------------------------------------------------------------------------------------
 
 }

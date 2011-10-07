@@ -155,24 +155,37 @@ function RegistrationCADJob()
 			+ '"params":{'
 			+ '  "pluginName":"'+$("#cadName").val()+'",'
 			+ '  "pluginVersion":"'+$("#version").val()+'",'
-			+ '  "seriesUID":'+JSON.stringify($("#seriesUIDStr").val().split('^'))+''
+			+ '  "seriesUID":'+JSON.stringify($("#seriesUIDStr").val().split('^'))+','
+			+ '  "resultPolicy":"'+$("#cadResultPolicy").val()+'"'
 			+ '}'
 			+ '}'
 		},
 		function(data){
-			var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
-			if(data.result.executedAt != "")
+
+			$("#confirmation").attr("style", "display:none;");
+			$("#success .policyField").html($("#cadResultPolicy").val());
+
+			if(data.status == "OK")
 			{
-				htmlStr += 'Executed at</span></th><td>' + data.result.executedAt + '</td>';
+				var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
+				if(data.result.executedAt != "")
+				{
+					htmlStr += 'Executed at</span></th><td>' + data.result.executedAt + '</td>';
+				}
+				else
+				{
+					htmlStr += 'Registered at</span></th><td>' + data.result.registeredAt + '</td>';
+				}
+				$("#registMessage").html(data.message);
+				$("#success .detail-tbl").prepend(htmlStr);
+				$("#success").removeAttr("style", "display:none;");
 			}
 			else
 			{
-				htmlStr += 'Registered at</span></th><td>' + data.result.registeredAt + '</td>';
+				$("#errorMessage").html(data.error.message);
+				$("#errorDetail").html($("#successDetail").html());
+				$("#error").removeAttr("style", "display:none;");
 			}
-			$("#registMessage").html(data.message);
-			$("#success .detail-tbl").prepend(htmlStr);
-			$("#confirmation").attr("style", "display:none;");
-			$("#success").removeAttr("style", "display:none;");
 		},
 		"json"
 	);
@@ -334,6 +347,16 @@ $(function(){
 					<th><span class="trim01">Pateint name</span></th>
 					<td>{$params.patientName}</td>
 				</tr>
+				<tr>
+					<th><span class="trim01">Policy</span></th>
+					<td>
+						<select id="cadResultPolicy">
+							{foreach from=$policyArr item=item}
+							<option value="{$item.name}"{if $item.name=="default"} selected="selected"{/if}>{$item.name}</option>
+							{/foreach}
+						</select>
+					</td>
+				</tr>
 			</table>
 		</div>
 
@@ -363,48 +386,54 @@ $(function(){
 		<p id="registMessage" class="clr-orange mb10">Successfully registered in CAD job list!</p>
 		<p class="mb10"><input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
 
-		<div class="detail-panel mb20">
-			<table class="detail-tbl">
-		<!--		<tr>
-					<th style="width: 110px;"><span class="trim01">Registered at</span></th>
-					<td><span id="registeredAt"></span></td>
-				</tr> -->
-				<tr>
-					<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
-					<td>{$params.userID}</td>
-				</tr>
-				<tr>
-					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$params.cadName} v.{$params.version}</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Patient ID</span></th>
-					<td>{$params.patientID}</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Pateint name</span></th>
-					<td>{$params.patientName}</td>
-				</tr>
+		<div id="successDetail">
+			<div class="detail-panel mb20">
+				<table class="detail-tbl">
+			<!--		<tr>
+						<th style="width: 110px;"><span class="trim01">Registered at</span></th>
+						<td><span id="registeredAt"></span></td>
+					</tr> -->
+					<tr>
+						<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
+						<td>{$params.userID}</td>
+					</tr>
+					<tr>
+						<th style="width: 9em;"><span class="trim01">CAD name</span></th>
+						<td>{$params.cadName} v.{$params.version}</td>
+					</tr>
+					<tr>
+						<th><span class="trim01">Patient ID</span></th>
+						<td>{$params.patientID}</td>
+					</tr>
+					<tr>
+						<th><span class="trim01">Pateint name</span></th>
+						<td>{$params.patientName}</td>
+					</tr>
+					<tr>
+						<th><span class="trim01">Policy</span></th>
+						<td class="policyField"></td>
+					</tr>
+				</table>
+			</div>
+
+			<h3 class="ptn02">Series list</h3>
+			<table class="col-tbl mb30" style="width: 100%;">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Study ID</th>
+						<th>Series ID</th>
+						<th>Series date</th>
+						<th>Series time</th>
+						<th>Modality</th>
+						<th>Img.</th>
+						<th>Series description</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
 			</table>
 		</div>
-
-		<h3 class="ptn02">Series list</h3>
-		<table class="col-tbl mb30" style="width: 100%;">
-			<thead>
-				<tr>
-					<th></th>
-					<th>Study ID</th>
-					<th>Series ID</th>
-					<th>Series date</th>
-					<th>Series time</th>
-					<th>Modality</th>
-					<th>Img.</th>
-					<th>Series description</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
 	</div>
 	<!-- / Seccessfully END -->
 
@@ -412,38 +441,42 @@ $(function(){
 	<div id="error" style="display:none;">
 		<h2>Error</h2>
 
-		<div style="color:#f00; font-weight:bold; margin-bottom:10px;">
+		<div id="errorMessage" style="color:#f00; font-weight:bold; margin-bottom:10px;">
 			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!{/if}&nbsp;&nbsp;
 			<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" />
 		</div>
 
-		{if $params.errorMessage == ""}
-			<table class="col-tbl mb30">
-				<thead>
-					<tr>
-						<th>Series</th>
-						<th>Modality</th>
-						<th>Condition</th>
-					</tr>
-				</thead>
-				<tbody>
-				{section name=j start=0 loop=$seriesNum}
-					{assign var="j" value=$smarty.section.j.index}
-
-					{section name=i start=0 loop=$seriesFilterNumArr[$j]}
-						{assign var="i" value=$smarty.section.i.index}
+		<div id="errorDetail">
+			<div class="detail-panel mb20">
+			{if $params.errorMessage == ""}
+				<table class="col-tbl mb30">
+					<thead>
 						<tr>
-							{if $i==0}
-								<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$j+1}</td>
-								<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$modalityArr[$j]}</td>
-							{/if}
-							<td class="al-l">{$seriesFilterArr[$j][$i]}</td>
+							<th>Series</th>
+							<th>Modality</th>
+							<th>Condition</th>
 						</tr>
+					</thead>
+					<tbody>
+					{section name=j start=0 loop=$seriesNum}
+						{assign var="j" value=$smarty.section.j.index}
+
+						{section name=i start=0 loop=$seriesFilterNumArr[$j]}
+							{assign var="i" value=$smarty.section.i.index}
+							<tr>
+								{if $i==0}
+									<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$j+1}</td>
+									<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$modalityArr[$j]}</td>
+								{/if}
+								<td class="al-l">{$seriesFilterArr[$j][$i]}</td>
+							</tr>
+						{/section}
 					{/section}
-				{/section}
-				</tbody>
-			</table>
-		{/if}
+					</tbody>
+				</table>
+			{/if}
+			</div>
+		</div>
 	</div>
 	<!-- / Error END -->
 
