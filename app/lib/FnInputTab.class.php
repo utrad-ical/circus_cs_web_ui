@@ -64,6 +64,11 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		{
 			if (!is_array($fn))
 				throw new LogicException('Invalid FN data.');
+			if (!isset($fn['location_x']) || !isset($fn['location_y']) ||
+				!isset($fn['location_z']))
+			{
+				continue;
+			}
 			$sth->execute(array(
 				$fb->fb_id,
 				$fn['location_x'],

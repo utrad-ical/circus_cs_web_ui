@@ -97,6 +97,7 @@ class CadResult extends Model
 			if (!($ext instanceof IFeedbackListener))
 				continue;
 			$type = $ext->additionalFeedbackID();
+			$ext->setCadResult($this);
 			$additionalFeedback[$type] = $ext->integrateConsensualFeedback($pfbs);
 		}
 		$feedback = array(

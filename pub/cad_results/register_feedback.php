@@ -54,7 +54,7 @@ try {
 	if ($av != 'normal')
 		throw new Exception($reason);
 
-	if (registerFeedback($job_id, $params['feedback'], $params['temporary'], $is_consensual) === true)
+	if (registerFeedback($cadResult, $params['feedback'], $params['temporary'], $is_consensual) === true)
 		echo json_encode(array('status' => 'OK'));
 	else
 		throw new Exception('Failed!');
@@ -72,8 +72,9 @@ exit;
 
 //------------------------------------------------------------------------------
 
-function registerFeedback($job_id, $feedback, $temporary, $is_consensual)
+function registerFeedback(CadResult $cadResult, $feedback, $temporary, $is_consensual)
 {
+	$job_id = $cadResult->job_id;
 	$pdo = DBConnector::getConnection();
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
@@ -112,6 +113,22 @@ function registerFeedback($job_id, $feedback, $temporary, $is_consensual)
 		'blockFeedback' => $feedback['blockFeedback'],
 		'additionalFeedback' => $feedback['additionalFeedback']
 	));
+
+	// Automatic consensus: If 'Automatic consensual' is enabled
+	// by plugin result policy settings, save the same data
+	// as consensual feedback.
+	$policy = $cadResult->PluginResultPolicy;
+	if (!$is_consensual && $policy->automatic_consensus)
+	{
+		// Use another instance of CadResult to avoid cacheing
+		$cadResult2 = new CadResult($job_id);
+		// Actually not the exact copy, since use of buildInitilalConsensualFeedback
+		// may modify the feedback content (like 'missed TP' => 'TP')
+		$cfb = $cadResult2->buildInitialConsensualFeedback();
+		if (!registerFeedback($cadResult2, $cfb, false, true))
+			return false;
+	}
+
 	return true;
 }
 
