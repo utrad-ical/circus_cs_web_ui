@@ -111,19 +111,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		$feedback = null;
 		if ($feedbackMode == 'consensual')
 		{
-			$pfbs = $cadResult->queryFeedback('personal');
-			foreach ($pfbs as $pfb) $pfb->loadFeedback();
-			foreach ($extensions as $ext)
-			{
-				if (!($ext instanceof IFeedbackListener))
-					continue;
-				$type = $ext->additionalFeedbackID();
-				$additionalFeedback[$type] = $ext->integrateConsensualFeedback($pfbs);
-			}
-			$feedback = array(
-				'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs),
-				'additionalFeedback' => $additionalFeedback ?: array()
-			);
+			$feedback = $cadResult->buildInitialConsensualFeedback();
 		}
 	}
 

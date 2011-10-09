@@ -79,6 +79,34 @@ class CadResult extends Model
 	}
 
 	/**
+	 * Build initial state for the consensual feedback.
+	 * This fetches all personal feedback data associated with this CAD result,
+	 * and integrates them as the initial state for the consensual feedback.
+	 * @return array The array containing the feedback data
+	 * (both block and additional)
+	 */
+	public function buildInitialConsensualFeedback()
+	{
+		$pr = $this->Plugin->presentation();
+		$extensions = $pr->extensions();
+		$feedbackListener = $pr->feedbackListener();
+		$pfbs = $this->queryFeedback('personal');
+		foreach ($pfbs as $pfb) $pfb->loadFeedback();
+		foreach ($extensions as $ext)
+		{
+			if (!($ext instanceof IFeedbackListener))
+				continue;
+			$type = $ext->additionalFeedbackID();
+			$additionalFeedback[$type] = $ext->integrateConsensualFeedback($pfbs);
+		}
+		$feedback = array(
+			'blockFeedback' => $feedbackListener->integrateConsensualFeedback($pfbs),
+			'additionalFeedback' => $additionalFeedback ?: array()
+		);
+		return $feedback;
+	}
+
+	/**
 	 * Returns the feedback visiblity/availability
 	 * associated with this CAD Result.
 	 * This is based on the user group settings and the feedback policy.
