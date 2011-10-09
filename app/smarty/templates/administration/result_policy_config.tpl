@@ -44,7 +44,7 @@ $(function () {
 			})
 			.multiselect('refresh');
 			$('#auto-cons').val(1)
-				.attr('checked', pol_data.automatic_consensus ? 'checked' : '');
+				.prop('checked', pol_data.automatic_consensus);
 		}
 		tr.addClass('editing');
 		editor.show(300);
@@ -124,7 +124,7 @@ $(function () {
 		{* <th rowspan="2">PFB Freeze</th> *}
 		<th rowspan="2">Max PFBs</th>
 		<th rowspan="2">Min PFB to CFB</th>
-		{* <th rowspan="2">Auto CFB</th> *}
+		<th rowspan="2">Auto CFB</th>
 		<th rowspan="2">Operation</th>
 	</tr>
 	<tr>
@@ -143,7 +143,7 @@ $(function () {
 		{* <td class="num">{$pol.time_to_freeze_personal_fb|escape}</td> *}
 		<td class="num">{$pol.max_personal_fb|escape}</td>
 		<td class="num">{$pol.min_personal_fb_to_make_consensus|escape}</td>
-		{* <td>{$pol.automatic_consensus|OorMinus}</td> *}
+		<td>{$pol.automatic_consensus|OorMinus}</td>
 		<td class="operation"><input type="button" class="edit-button form-btn" value="Edit" /></td>
 	</tr>
 	{/foreach}
