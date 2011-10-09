@@ -28,7 +28,10 @@ class TextFeedbackListener extends FeedbackListener
 	{
 		return array_merge(
 			parent::defaultParams(),
-			array('required' => true)
+			array(
+				'required' => true,
+				'opinionSeparator' => ',',
+			)
 		);
 	}
 
@@ -94,7 +97,7 @@ class TextFeedbackListener extends FeedbackListener
 		$result = array();
 		foreach ($personal_fb_list as $pfb)
 		{
-			foreach ($pfb->block_feedback as $display_id => $block)
+			foreach ($pfb->blockFeedback as $display_id => $block)
 			{
 				$text = $block['text'];
 				if (!is_array($buf[$display_id]))
@@ -102,9 +105,15 @@ class TextFeedbackListener extends FeedbackListener
 				$buf[$display_id][$text] = true;
 			}
 		}
-		foreach ($buf as $display_id)
+		foreach ($buf as $display_id => $bfb)
 		{
-			$result[$display_id] = implode(',', array_keys($buf[$display_id]));
+			$result[$display_id] = array(
+				'text' =>
+					implode(
+						$this->params['opinionSeparator'],
+						array_keys($bfb)
+					)
+			);
 		}
 		return $result;
 	}

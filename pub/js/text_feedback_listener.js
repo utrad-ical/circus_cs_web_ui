@@ -17,7 +17,8 @@ circus.evalListener = (function() {
 		},
 		set: function (target, value)
 		{
-			$('.evaluation-text', target).val(value.text);
+			var txt = value && value instanceof Object ? value.text : '';
+			$('.evaluation-text', target).val(txt);
 		},
 		get: function (target)
 		{
