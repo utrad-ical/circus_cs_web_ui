@@ -138,8 +138,6 @@ circus.feedback.additional = circus.feedback.additional || [];
 			var markers = [];
 			if (initData instanceof Array)
 				markers = $.extend(true, [], initData); // create deep copy
-			if (initData instanceof Object && initData.to_integrate)
-				markers = f._integrateConsensual(initData.to_integrate);
 			f._viewer.imageviewer('option', 'markers', markers);
 			f._updateTable();
 		},
@@ -293,23 +291,6 @@ circus.feedback.additional = circus.feedback.additional || [];
 				f._assignLoc(fn, item);
 				fn.nearest_lesion_id = nearest;
 			}
-		},
-		_integrateConsensual: function(fn_list)
-		{
-			var max = fn_list.length;
-			var result = [];
-			for (var i = 0; i < max; i++)
-			{
-				var fn = fn_list[i];
-				var item = {
-					entered_by: fn.entered_by
-				};
-				f._assignLoc(item, fn);
-				f._snapToNearestHiddenCand(item);
-				result.push(item);
-			}
-			result = f._makeUnique(result);
-			return result;
 		},
 		_makeUnique: function(fn_list)
 		{

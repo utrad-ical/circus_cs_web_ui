@@ -106,11 +106,18 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		return $result;
 	}
 
+	/**
+	 * Integrates the personal FN list and make FN list for consensual FB.
+	 * While integrating, all personal FN's are snapped to their nearest
+	 * lesion candidates (within the distance of specified threshold).
+	 * Note that this method is run once to create 'initial' state of the
+	 * consensual FN locations. After the 'FN Input' tab is displayed,
+	 * location processing is done in JavaScript. So fn_input_tab.js file has
+	 * similar methods.
+	 * @see IFeedbackListener::integrateConsensualFeedback()
+	 */
 	public function integrateConsensualFeedback(array $personal_fb_list)
 	{
-		// Actual integration will be done by browser-side.
-		// So we will just create the list of FN location input as
-		// personal feedback.
 		$displays = $this->cadResult->getDisplays();
 		$result = array();
 		foreach ($personal_fb_list as $pfb)
@@ -118,15 +125,88 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			$fns = $pfb->additionalFeedback['fn_input'];
 			foreach ($fns as $fn)
 			{
-				$result[] = array(
+				$item = array(
 					'location_x' => $fn['location_x'],
 					'location_y' => $fn['location_y'],
 					'location_z' => $fn['location_z'],
 					'entered_by' => $pfb->entered_by
 				);
+				$item = $this->snapToNearestHiddenCand($displays, $item);
+				$result[] = $item;
 			}
 		}
-		return array('to_integrate' => $result);
+		return $this->makeUnique($result);
+	}
+
+	protected function distance2($a, $b)
+	{
+		$dx = $a['location_x'] - $b['location_x'];
+		$dy = $a['location_y'] - $b['location_y'];
+		$dz = $a['location_z'] - $b['location_z'];
+		return $dx * $dx + $dy * $dy + $dz * $dz;
+	}
+
+	protected function findNearestHiddenCand(array $displays, $item)
+	{
+		$distTh = $this->params['distThreshold'];
+		$distTh = $distTh * $distTh;
+		$distMin = 1000000;
+		$ret = null;
+		foreach ($displays as $id => $display)
+		{
+			$dist = $this->distance2($display, $item);
+			if($dist < $distMin)
+			{
+				$distMin = $dist;
+				if($distMin < $distTh)
+					$ret = $id;
+			}
+		}
+		return $ret;
+	}
+
+	protected function snapToNearestHiddenCand(array $displays, $fn)
+	{
+		$nearest = $this->findNearestHiddenCand($displays, $fn);
+		if ($nearest != null)
+		{
+			$item = $displays[$nearest];
+			$fn['location_x'] = $item['location_x'];
+			$fn['location_y'] = $item['location_y'];
+			$fn['location_z'] = $item['location_z'];
+			$fn['nearest_lesion_id'] = $nearest;
+		}
+		return $fn;
+	}
+
+	protected function makeUnique(array $fn_list)
+	{
+		$buf = array();
+		$result = array();
+		foreach ($fn_list as $fn)
+		{
+			$key = "$fn[location_x],$fn[location_y],$fn[location_z]";
+			$buf[$key] = $buf[$key] ?: array(
+				'nearest_lesion_id' => $fn['nearest_lesion_id'],
+				'entered_by' => array(),
+				'location_x' => $fn['location_x'],
+				'location_y' => $fn['location_y'],
+				'location_z' => $fn['location_z']
+			);
+			$buf[$key]['entered_by'][$fn['entered_by']] = 1;
+		}
+		foreach ($buf as $key => $item)
+		{
+			$joined = implode(',', array_keys($item['entered_by']));
+			$result[] = array(
+				'location_x' => $item['location_x'],
+				'location_y' => $item['location_y'],
+				'location_z' => $item['location_z'],
+				'nearest_lesion_id' => $item['nearest_lesion_id'],
+				'entered_by' => $joined
+			);
+		}
+		return $result;
 	}
 
 	public function additionalFeedbackID()
