@@ -3,3 +3,5 @@ app/smarty/cache/*
 config/db.ini
 /config/storage.json
 Thumbs.db
+/plugin/*
+/pub/plugin/*
