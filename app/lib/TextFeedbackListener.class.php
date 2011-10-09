@@ -29,7 +29,8 @@ class TextFeedbackListener extends FeedbackListener
 		return array_merge(
 			parent::defaultParams(),
 			array(
-				'required' => true,
+				'minLength' => 1,
+				'maxLength' => 0,
 				'opinionSeparator' => ',',
 			)
 		);

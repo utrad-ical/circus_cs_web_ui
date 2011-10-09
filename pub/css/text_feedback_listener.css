@@ -3,6 +3,7 @@
 	margin: 0;
 	padding: 0;
 	border: none;
+	font-size: x-large;
 }
 
 .feedback-pane div.evaluation-text-container {
@@ -11,7 +12,16 @@
 	margin: 5px 2px;
 }
 
-body.darkroom input.evaluation-text {
+.feedback-pane input.evaluation-error {
+	color: red;
+	background-color: #fdd;
+}
+
+body.darkroom .feedback-pane input.evaluation-text {
 	background-color: black;
 	color: white;
+}
+
+body.darkroom .feedback-pane input.evaluation-error {
+	background-color: #500;
 }

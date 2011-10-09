@@ -26,15 +26,25 @@ circus.evalListener = (function() {
 		},
 		validate: function (target)
 		{
-			if (!circus.cadresult.presentation.feedbackListener.required)
-				return { register_ok: true };
-			if ($('.evaluation-text', target).val().length > 0)
+			var params = circus.cadresult.presentation.feedbackListener;
+			var ok = true;
+			var input = $('.evaluation-text', target);
+			var val = input.val();
+			if (params.regex && !val.match(params.regex))
+				ok = false;
+			if (params.minLength > 0 && val.length < params.minLength)
+				ok = false;
+			if (params.maxLength > 0 && val.length > params.maxLength)
+				ok = false;
+			if (!ok)
 			{
-				return { register_ok: true };
+				input.addClass('evaluation-error');
+				return { register_ok: false, message: 'Incomplete' };
 			}
 			else
 			{
-				return { register_ok: false, message: 'Incomplete' };
+				input.removeClass('evaluation-error');
+				return { register_ok: true };
 			}
 		},
 		disable: function (target)
