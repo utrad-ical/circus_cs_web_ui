@@ -159,7 +159,7 @@ function ChangefilterCad()
 
 	if(cadName != "all")
 	{
-		if(modalityCadList[modality][cadName].length > 0);
+		if(cadName in modalityCadList[modality])
 		{
 			var versionArr = modalityCadList[modality][cadName];
 
