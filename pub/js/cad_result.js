@@ -182,8 +182,8 @@ circus.cadresult = function() {
 
 $(function(){
 	// Initialize the evaluator status.
-	circus.feedback.initialize();
 	circus.evalListener.setup();
+	circus.feedback.initialize();
 	circus.feedback.change();
 	if (circus.feedback.feedbackStatus == 'disabled')
 	{
