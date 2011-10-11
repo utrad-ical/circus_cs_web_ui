@@ -16,6 +16,7 @@ class SliderFeedbackListener extends FeedbackListener
 	{
 		return array(
 			'js/slider_feedback_listener.js',
+			'js/sprintf-0.7-beta1.js',
 			'css/slider_feedback_listener.css'
 		);
 	}
@@ -33,6 +34,7 @@ class SliderFeedbackListener extends FeedbackListener
 				'max' => 100,
 				'initial' => 50,
 				'step' => 1,
+				'format' => '%f',
 				'showValue' => 'never' // one of 'never', 'always', 'active'
 			)
 		);

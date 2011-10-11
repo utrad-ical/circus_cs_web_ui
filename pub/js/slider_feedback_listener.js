@@ -50,7 +50,8 @@ circus.evalListener = (function() {
 		},
 		_showValue: function(hint, slider, value)
 		{
-			hint.show().text(value).position({
+			var text = sprintf(params.format, value);
+			hint.show().text(text).position({
 				my: 'center top',
 				at: 'center bottom',
 				of: slider,
