@@ -11,7 +11,6 @@ class DisplayPresenter extends CadBlockElement
 	 * Protected method to execute Smarty.
 	 * When there is 'display_presenter.tpl' template in the plugin's web
 	 * configuration directory, always use it instead of built-in templates.
-	 * @param Smarty $smarty
 	 * @param string $template The name of the template file.
 	 */
 	protected function executeTemplate($template)
@@ -30,6 +29,10 @@ class DisplayPresenter extends CadBlockElement
 		}
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see CadResultElement::defaultParams()
+	 */
 	protected function defaultParams()
 	{
 		return array(
@@ -55,7 +58,12 @@ class DisplayPresenter extends CadBlockElement
 
 	/**
 	 * Returns the HTML that describes one given CAD display.
-	 * @param Smarty the Smarty instance
+	 * This is a good point for subclasses to override.
+	 * This method is called multiple times by the framework.
+	 * In each call, the current display is assigned to the
+	 * Smarty instance stored in $this->smarty.
+	 * Call $this->smarty->get_template_vars('display') to get it.
+	 * @return string The rendered HTML that describes the given CAD display.
 	 */
 	public function show()
 	{
@@ -64,8 +72,11 @@ class DisplayPresenter extends CadBlockElement
 
 	/**
 	 * Extract the displays from the input table.
+	 * This is a good point for subclasses to override.
+	 * You can add extra information to the extracted displays,
+	 * or even create complete new display data sets.
 	 * @param array $input The array of each table records.
-	 * @return array The list of displays, each key holds a display id.
+	 * @return array The list of displays. Each key must hold a display id.
 	 */
 	public function extractDisplays(array $input)
 	{

@@ -20,7 +20,6 @@ abstract class CadBlockElement extends CadResultElement
 
 	/**
 	 * Called just after setting up this block element.
-	 * @param Smarty $smarty The Smarty instance
 	 */
 	public function prepare()
 	{
