@@ -183,80 +183,78 @@ if($params['errorMessage'] == "&nbsp;")
 				if($results[$i][6] == 'register')
 				{
 					$totalEndTime = $results[$i][8];
-				}
-
-				if($i == count($results)-1)
-				{
-					if($totalStartTime != "" && $totalEndTime != "")
-					{
-						//------------------------------------------------------------------------------------
-						// For TP and FN column
-						//------------------------------------------------------------------------------------
-						$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
-								. " WHERE fl.job_id=? AND fl.entered_by=? AND cc.fb_id=fl.fb_id"
-								. " AND fl.is_consensual='f' AND fl.status=1 AND cc.candidate_id>0";
-						$dispCandNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
-
-						$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
-								. " WHERE fl.job_id=? AND fl.entered_by=? AND fn.fb_id=fl.fb_id"
-								. " AND fl.is_consensual='f' AND fl.status=1";
-						$enterFnNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
-
-						$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
-								. " WHERE fl.job_id=? AND cc.fb_id=fl.fb_id"
-								. " AND fl.is_consensual=? AND status=1 AND evaluation>=1";
-						$stmtTP = $pdo->prepare($sqlStr);
-
-						// SQL statement for count No. of FN
-						$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
-								. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
-								. " AND fl.is_consensual=? AND fl.status=1 AND fn.fn_num>0";
-						$stmtFN = $pdo->prepare($sqlStr);
-
-						$tpColStr = "-";
-						$fnColStr = "-";
-
-						$stmtTP->bindValue(1, $jobIDList[$j]);
-						$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
-						$stmtTP->execute();
-
-						if($stmtTP->fetchColumn() > 0)	$tpColStr = '<span style="font-weight:bold;">+</span>';
-						else
-						{
-							$stmtTP->bindValue(2, 'f', PDO::PARAM_BOOL);
-							$stmtTP->execute();
-							if($stmtTP->fetchColumn() > 0) $tpColStr = '<span style="font-weight:bold;">!</span>';
-						}
-
-						$stmtFN->bindValue(1, $jobIDList[$j]);
-						$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);
-						$stmtFN->execute();
-
-						if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">+</span>';
-						else
-						{
-							$stmtFN->bindValue(2, 'f', PDO::PARAM_BOOL);
-							$stmtFN->execute();
-							if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">!</span>';
-						}
-						//------------------------------------------------------------------------------------
-
-						$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime-$transTime) . '</td>'
-								.  '<td>' . $fnTime . '</td>'
-								.  '<td>' . $dispCandNum . '</td>'
-								.  '<td>' . $enterFnNum . '</td>'
-							//	.  '<td>' . $tpColStr . '</td>'
-							//	.  '<td>' . $fnColStr . '</td>'
-								.  '</tr>';
-
-						//$tmpStr .= '<td>' . $totalStartTime  . ' - ' . $totalEndTime . '='
-						//        . (strtotime($totalEndTime)-strtotime($totalStartTime)) . '</td></tr>';
-					}
-					else $tmpStr = "";
-
-					$dstData['tblHtml'] .= $tmpStr;
+					break;
 				}
 			} // end for: $i
+			
+			if($totalStartTime != "" && $totalEndTime != "")
+			{
+				//------------------------------------------------------------------------------------
+				// For TP and FN column
+				//------------------------------------------------------------------------------------
+				$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+						. " WHERE fl.job_id=? AND fl.entered_by=? AND cc.fb_id=fl.fb_id"
+						. " AND fl.is_consensual='f' AND fl.status=1 AND cc.candidate_id>0";
+				$dispCandNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
+
+				$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
+						. " WHERE fl.job_id=? AND fl.entered_by=? AND fn.fb_id=fl.fb_id"
+						. " AND fl.is_consensual='f' AND fl.status=1";
+				$enterFnNum = DBConnector::query($sqlStr, array($jobIDList[$j], $userID), 'SCALAR');
+
+				$sqlStr = "SELECT COUNT(*) FROM feedback_list fl, candidate_classification cc"
+						. " WHERE fl.job_id=? AND cc.fb_id=fl.fb_id"
+						. " AND fl.is_consensual=? AND status=1 AND evaluation>=1";
+				$stmtTP = $pdo->prepare($sqlStr);
+
+				// SQL statement for count No. of FN
+				$sqlStr = "SELECT fn_num FROM feedback_list fl, fn_count fn"
+						. " WHERE fl.job_id=? AND fn.fb_id=fl.fb_id"
+						. " AND fl.is_consensual=? AND fl.status=1 AND fn.fn_num>0";
+				$stmtFN = $pdo->prepare($sqlStr);
+
+				$tpColStr = "-";
+				$fnColStr = "-";
+
+				$stmtTP->bindValue(1, $jobIDList[$j]);
+				$stmtTP->bindValue(2, 't', PDO::PARAM_BOOL);
+				$stmtTP->execute();
+
+				if($stmtTP->fetchColumn() > 0)	$tpColStr = '<span style="font-weight:bold;">+</span>';
+				else
+				{
+					$stmtTP->bindValue(2, 'f', PDO::PARAM_BOOL);
+					$stmtTP->execute();
+					if($stmtTP->fetchColumn() > 0) $tpColStr = '<span style="font-weight:bold;">!</span>';
+				}
+
+				$stmtFN->bindValue(1, $jobIDList[$j]);
+				$stmtFN->bindValue(2, 't', PDO::PARAM_BOOL);
+				$stmtFN->execute();
+
+				if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">+</span>';
+				else
+				{
+					$stmtFN->bindValue(2, 'f', PDO::PARAM_BOOL);
+					$stmtFN->execute();
+					if($stmtFN->fetchColumn() > 0)  $fnColStr = '<span style="font-weight:bold;">!</span>';
+				}
+				//------------------------------------------------------------------------------------
+
+				$tmpStr .= '<td>' . (strtotime($totalEndTime)-strtotime($totalStartTime)-$fnTime-$transTime) . '</td>'
+						.  '<td>' . $fnTime . '</td>'
+						.  '<td>' . $dispCandNum . '</td>'
+						.  '<td>' . $enterFnNum . '</td>'
+					//	.  '<td>' . $tpColStr . '</td>'
+					//	.  '<td>' . $fnColStr . '</td>'
+						.  '</tr>';
+
+				//$tmpStr .= '<td>' . $totalStartTime  . ' - ' . $totalEndTime . '='
+				//        . (strtotime($totalEndTime)-strtotime($totalStartTime)) . '</td></tr>';
+			}
+			else $tmpStr = "";
+
+			$dstData['tblHtml'] .= $tmpStr;
 		} // end for: $j
 		//----------------------------------------------------------------------------------------------------
 	}
