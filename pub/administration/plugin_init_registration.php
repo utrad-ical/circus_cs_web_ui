@@ -375,7 +375,6 @@ if(!$errorFlg)
 				{
 					$dstPath = '\\\\' . $item['ip_address'] . $DIR_SEPARATOR . 'CIRCUS-CS'
 							 . $DIR_SEPARATOR . 'plugins' . $DIR_SEPARATOR . $baseName;
-							 . $DIR_SEPARATOR . 'bin';
 				}
 
 				if($item['architecture'] == 'x64' && is_dir($binDir.'x64'))
@@ -396,14 +395,14 @@ if(!$errorFlg)
 		$webConfigDir = $pluginPath . $DIR_SEPARATOR . 'webconfig';
 		$webPubDir    = $pluginPath . $DIR_SEPARATOR . 'webpub';
 		
-		if(is_dir($presentationDir))
+		if(is_dir($webConfigDir))
 		{
 			$message .= 'Copy presentation files<br/>';
 			$dstDir = $WEB_UI_ROOT . $DIR_SEPARATOR . 'plugin' . $DIR_SEPARATOR . $baseName;
 			CopyDirRecursively($webConfigDir, $dstDir);
 		}
 		
-		if(is_dir($resourceDir))
+		if(is_dir($webPubDir))
 		{
 			$message .= 'Copy resource files<br/>';
 			$dstDir = $WEB_UI_ROOT . $DIR_SEPARATOR . 'pub' . $DIR_SEPARATOR
