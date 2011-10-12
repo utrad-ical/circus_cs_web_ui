@@ -166,7 +166,8 @@ circus.cadresult = function() {
 			$('.tab-content > div').hide();
 			$('.tab-content > div:nth-child(' + (index+1) + ')').show();
 			$('.tabArea a').removeClass('btn-tab-active');
-			$('.tabArea ul li:nth-child(' + (index+1) + ') a').addClass('btn-tab-active');
+			var text = $('.tabArea ul li:nth-child(' + (index+1) + ') a').addClass('btn-tab-active').text();
+			$(window).trigger('actionlog', { action: 'switchtab', options: text });
 		},
 		showTabLabel: function(label) {
 			$('.tabArea a').each(function () {
