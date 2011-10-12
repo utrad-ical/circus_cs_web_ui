@@ -258,7 +258,7 @@ $(function(){
 		$('#consensual-mode').enable();
 	}
 
-	$(window).trigger('actionlog', { action: "open", options: "CAD result" });
+	$(window).trigger('actionlog', { action: "open", options: "CAD result, " + circus.feedback.feedbackMode });
 
 	// tags
 	var refresh = function(tags) {
