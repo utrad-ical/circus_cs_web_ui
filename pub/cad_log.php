@@ -436,9 +436,9 @@
 //					$params['filterFBUser'] = htmlspecialchars($params['filterFBUser']);
 //					$addressParams['filterFBUser'] = $params['filterFBUser'];
 //				}
-//				else	//　if entered in "entered by" fieldも入力されていない場合
+//				else
 //				{
-//					if($_SESSION['colorSet'] == 'admin')	// 管理者は全ユーザのpersonal feedbackをcheck
+//					if($_SESSION['colorSet'] == 'admin')	// admin users check all personal feedback
 //					{
 //						$tmpCond .= ')';
 //					}

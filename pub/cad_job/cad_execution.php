@@ -139,7 +139,7 @@ try
 			{
 				throw new Exception("Ruleset for series " . $k+1 . " is not found.");
 			}
-			else // TODO: シリーズ選択時 or 失敗時用のSeriesのrule set表示用変数作成(jsonのパース＆整形）
+			else // TODO: show ruleset from JSON
 			{
 				foreach($ruleList as $r)
 				{

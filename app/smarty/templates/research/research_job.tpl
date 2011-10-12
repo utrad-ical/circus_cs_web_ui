@@ -209,7 +209,7 @@ $(function() {
 
 		<form name="form1" onsubmit="return false;">
 
-<!-- ***** 条件設定 ***** -->
+<!-- ***** Research Conditions ***** -->
 
 		<div id="researchCondition" class="search-panel">
 			<h3>Step 1: Set condition</h3>
@@ -279,7 +279,7 @@ $(function() {
 				</div>
 			</div><!-- / .m20 END -->
 		</div><!-- / .search-panel END -->
-		<!-- / 条件設定　ここまで -->
+		<!-- / Research Conditions -->
 
 		<div id="cadList" style="display:none;">
 
