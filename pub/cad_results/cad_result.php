@@ -89,9 +89,14 @@ function show_cad_results($jobID, $feedbackMode) {
 	$feedbackListener->setCadResult($cadResult);
 	$feedbackListener->prepare();
 
+	$noFeedback = $feedbackListener instanceof NullFeedbackListener;
+
 	$extensions = $cadResult->Plugin->presentation()->extensions();
 	foreach ($extensions as $ext)
+	{
 		$ext->setCadResult($cadResult);
+		$noFeedback = $noFeedback && !($ext instanceof IFeedbackListener);
+	}
 
 	if ($feedbackMode == 'personal')
 	{
@@ -160,6 +165,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		Patient::$anonymizeMode = true;
 
 	$smarty->assign(array(
+		'noFeedback' => $noFeedback,
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
 		'avail_cfb' => $avail_cfb,

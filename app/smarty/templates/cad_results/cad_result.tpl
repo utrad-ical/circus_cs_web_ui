@@ -54,6 +54,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
     {$series->Study->modality|escape}, {$series->series_description|escape} ({$series->series_number})
   </div>
 
+  {if !$noFeedback}
   <form id="mode-form" method="get" action="cad_result.php">
   <div>
     <input type="hidden" name="jobID" value="{$cadResult->job_id|escape}" />
@@ -64,6 +65,8 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
       title="{$avail_cfb_reason|escape}" />
   </div>
   </form>
+  {/if}
+
   <div style="clear: both"></div>
 
 {foreach from=$extensions item=ext}
@@ -78,6 +81,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {$ext->afterBlocks()}
 {/foreach}
 
+{if !$noFeedback}
 <div id="register-pane">
 <input id="register" type="button" value="Register Feedback" class="form-btn registration" disabled="disabled" /><br />
 <ul id="register-error"></ul>
@@ -85,6 +89,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}
   {if $feedbacks->is_consensual}(by {$feedbacks->entered_by|escape}){/if}</p>{/if}
 </div>
+{/if}
 
 <p id="tagArea">Tags: <span id="cad-tags">Loading Tags...</span> <a id="edit-cad-tags">(Edit)</a></p>
 
