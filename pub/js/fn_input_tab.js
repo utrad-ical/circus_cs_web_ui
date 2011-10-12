@@ -63,14 +63,17 @@ circus.feedback.additional = circus.feedback.additional || [];
 			if (canEdit) {
 				$('#fn-delete').click(function() {
 					if (confirm('Do you delete the selected location(s)?'))
-						f._marker_process(f._fn_delete);
+						f._marker_process(f._fn_delete, 'Delete');
 				});
 				$('#fn-integrate').click(function() {
-					f._marker_process(f._fn_integrate);
+					f._marker_process(f._fn_integrate, 'Integrate');
 				});
 				$('#fn-reset').click(function() {
 					if (confirm('Discard changes?'))
+					{
+						f._actionlog('Reset');
 						f._resetMarkers();
+					}
 				})
 			}
 
@@ -79,7 +82,12 @@ circus.feedback.additional = circus.feedback.additional || [];
 				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input').disable();
 			}
 
-			$('#fn-found, #fn-not-found').click(function () {
+			$('#fn-found').click(function() {
+				f._actionlog('Select "FN Found"');
+				circus.feedback.change();
+			});
+			$('#fn-not-found').click(function() {
+				f._actionlog('Select "FN Not Found"');
 				circus.feedback.change();
 			});
 
@@ -141,7 +149,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			f._viewer.imageviewer('option', 'markers', markers);
 			f._updateTable();
 		},
-		_marker_process: function(action)
+		_marker_process: function(action, actionName)
 		{
 			var tbl = $('#fn-input-table tbody');
 			var indexes = [];
@@ -149,6 +157,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			$('tr:has(input:checked)', tbl).each(
 				function () { indexes.push(tbl.find('tr').index(this)); } );
 			action(indexes, markers);
+			f._actionlog(actionName + ' ' + indexes.join(', '));
 			$('input:checked', tbl).removeAttr('checked');
 			f._viewer.imageviewer('option', 'markers', markers); // commit and redraw
 			f._updateTable();
@@ -252,9 +261,16 @@ circus.feedback.additional = circus.feedback.additional || [];
 		_locate: function(event)
 		{
 			var markers = f._viewer.imageviewer('option', 'markers');
+			var newItem = event.newItem;
 			markers = f._makeUnique(markers);
 			f._viewer.imageviewer('option', 'markers', markers);
+			f._actionlog("Locate (" + newItem.location_x + ',' +
+				newItem.location_y + ',' + newItem.location_z + ')');
 			f._updateTable();
+		},
+		_actionlog: function(log)
+		{
+			$(window).trigger('actionlog', {action: 'fn_input', options: log});
 		},
 		_distance2: function(a, b)
 		{
