@@ -1,6 +1,7 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
 jq/ui/theme/jquery-ui.custom.css
+js/series_ruleset.js
 {/capture}
 {capture name="extra"}
 {literal}
@@ -16,17 +17,7 @@ $(function() {
 
 	var modified = false;
 
-	var op = [
-		{op: '=', label: 'is'},
-		{op: '>', label: '>'},
-		{op: '<', label: '<'},
-		{op: '>=', label: '>='},
-		{op: '<=', label: '<='},
-		{op: '!=', label: 'is not'},
-		{op: '*=', label: 'contains'},
-		{op: '^=', label: 'begins with'},
-		{op: '$=', label: 'ends with'}
-	];
+	var op = circus.ruleset.op;
 	var oph = {};
 	for (var i = 0; i < op.length; i++) oph[op[i].op] = op[i];
 
@@ -138,67 +129,6 @@ $(function() {
 		return rule;
 	}
 
-	/**
-	 * Converts the given filter node into human-readable format.
-	 */
-	function stringifyNode(node)
-	{
-		var depth = arguments[1] ? arguments[1] : 0;
-
-		function stringifyGroupNode(node)
-		{
-			var result = $('<span>').addClass('group-text');
-			for (var i = 0; i < node.members.length; i++)
-			{
-				if (i > 0)
-					result.append(
-						' ',
-						$('<span>').addClass('group-type-text').text(node.group),
-						' '
-					);
-				result.append(stringifyNode(node.members[i], depth + 1));
-			}
-			if (depth)
-			{
-				result.prepend($('<span class="paren">(</span>'));
-				result.append($('<span class="paren">)</span>'));
-			}
-			return result;
-		}
-
-		function stringifyComparisonNode(node)
-		{
-			return $('<span>').addClass('comparison-text').append(
-				$('<span>').addClass('key-text').text(node.key),
-				' ',
-				$('<span>').addClass('condition-text').text(oph[node.condition].label),
-				' ',
-				$('<span>').addClass('value-text').text(node.value)
-			);
-		}
-
-		if (node.members instanceof Array)
-			return stringifyGroupNode(node);
-		else if (node.key !== undefined)
-			return stringifyComparisonNode(node);
-		else
-			throw "exception";
-	}
-
-	function stringifyRule(rule)
-	{
-		var results = [];
-		if ('start_img_num' in rule && 'end_img_num' in rule)
-		{
-			results.push('Clip(' + rule.start_img_num + ' - ' + rule.end_img_num + ')');
-		}
-		if ('required_private_tags' in rule && rule.required_private_tags.length > 0)
-		{
-			results.push('Require private tags(' + rule.required_private_tags + ')');
-		}
-		return results.join(', ');
-	}
-
 	var keySelect = $('<select>').addClass('key-select');
 	for (var i = 0; i < keys.length; i++)
 	{
@@ -220,8 +150,9 @@ $(function() {
 	function newRuleSetListContent(item)
 	{
 		var div = $('<div>').addClass('content');
-		$('<div>').addClass('rule-filter').append(stringifyNode(item.filter)).appendTo(div);
-		var rule = stringifyRule(item.rule);
+		$('<div>').addClass('rule-filter')
+			.append(circus.ruleset.stringifyNode(item.filter)).appendTo(div);
+		var rule = circus.ruleset.stringifyRule(item.rule);
 		if (rule)
 		{
 			var icon = $('<div class="rule-rule ui-icon ui-icon-circle-arrow-e">');
