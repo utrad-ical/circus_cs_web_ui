@@ -183,17 +183,18 @@ $.extend({
 			function (data) {
 				try {
 					var obj = JSON.parse(data);
-					if (obj.status == 'OK')
-					{
-						if (settings.onSuccess instanceof Function)
-							settings.onSuccess(obj.result);
-					}
-					else
-					{
-						settings.onFail(obj.error.message, JSON.parse(data));
-					}
 				} catch (e) {
 					settings.onFail(data, data);
+					return;
+				}
+				if (obj.status == 'OK')
+				{
+					if (settings.onSuccess instanceof Function)
+						settings.onSuccess(obj.result);
+				}
+				else
+				{
+					settings.onFail(obj.error.message, JSON.parse(data));
 				}
 			},
 			'text'
