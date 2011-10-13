@@ -10,14 +10,25 @@ circus.feedback = function() {
 
 	var global = {
 		initialize: function() {
+			// setup blocks
 			var idata = circus.feedback.initdata;
 			$('.result-block').each(function() {
 				var block = this;
 				var id = $("input.display-id", block).val();
 				$(block).data('displayid', id);
-				if (idata && idata.blockFeedback instanceof Object)
-					circus.evalListener.set(block, idata.blockFeedback[id]);
 			});
+			circus.evalListener.setup();
+
+			// assign initial data
+			if (idata && idata.blockFeedback instanceof Object)
+			{
+				$('.result-block').each(function() {
+					var block = this;
+					var id = $("input.display-id", block).val();
+						circus.evalListener.set(this, idata.blockFeedback[id]);
+				});
+			}
+
 			if (circus.feedback.additional instanceof Array)
 			{
 				$.each(circus.feedback.additional, function(key, additional) {
@@ -183,7 +194,6 @@ circus.cadresult = function() {
 
 $(function(){
 	// Initialize the evaluator status.
-	circus.evalListener.setup();
 	circus.feedback.initialize();
 	circus.feedback.change();
 	if (circus.feedback.feedbackStatus == 'disabled')
