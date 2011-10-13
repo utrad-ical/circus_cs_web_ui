@@ -409,10 +409,10 @@ $(function() {
 	})();
 
 
-	$('#cancel-button').click(function() {
+	$('#close-button').click(function() {
 		if (modified)
 		{
-			$('#cancel-confirm').dialog({
+			$('#close-confirm').dialog({
 				autoOpen: true,
 				modal: true,
 				buttons: {
@@ -611,7 +611,7 @@ require=$smarty.capture.require body_class="spot"}
 <div id="selector-pane">
 	<div id="rulesets-list"></div>
 	<div id="save-pane">
-		<a href="#" id="cancel-button">Cancel</a>&nbsp;
+		<a href="#" id="close-button">Close</a>&nbsp;
 		<input type="button" class="form-btn" id="save-button"
 		value="Save settings" />
 	</div>
@@ -655,6 +655,6 @@ require=$smarty.capture.require body_class="spot"}
 	<button id="condition-delete" class="condition-toolbutton"></button>
 </div>
 
-<div id="cancel-confirm" title="Confirm" style="display: none">Exit without saving?</div>
+<div id="close-confirm" title="Confirm" style="display: none">Exit without saving?</div>
 
 {include file="footer.tpl"}
