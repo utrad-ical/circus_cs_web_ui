@@ -13,8 +13,8 @@
 <!--
 $(function()
 {
-	// Detecting IE6 or below
-	if ($.browser.msie && $.browser.version < 7)
+	// Detecting IE7 or below
+	if ($.browser.msie && $.browser.version < 8)
 	{
 		$("#messageArea").text("Your browser is not supported.");
 		$("#mode").attr("disabled", "disabled");
