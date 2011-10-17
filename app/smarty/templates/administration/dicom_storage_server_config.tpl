@@ -1,5 +1,5 @@
 {capture name="extra"}
-<script language="Javascript" type="text/javascript">
+<script type="text/javascript">
 <!--
 
 var data = {$configData|@json_encode};
@@ -8,16 +8,17 @@ var data = {$configData|@json_encode};
 
 function UpdateConfig()
 {
-	if(confirm('Do you want to update configuration file?'))	
+	if(confirm('Do you want to update configuration file?'))
 	{
-		var params = { 	mode:            'update',
-				       	newAeTitle:       $("#newAETitle").val(),
-						newPort:          $("#newPort").val(),
-						newThumbnailFlg:  $('input[name="newThumbnailFlg"]:checked').val(),
-						newCompressFlg:   $('input[name="newCompressFlg"]:checked').val(),
-						newThumbnailSize: $("#newThumbnailSize").val(),
-						ticket:           data.ticket };
-
+		var params = {
+			mode:            'update',
+			newAeTitle:       $("#newAETitle").val(),
+			newPort:          $("#newPort").val(),
+			newThumbnailFlg:  $('input[name="newThumbnailFlg"]:checked').val(),
+			newCompressFlg:   $('input[name="newCompressFlg"]:checked').val(),
+			newThumbnailSize: $("#newThumbnailSize").val(),
+			ticket:           data.ticket
+		};
 		var address = 'dicom_storage_server_config.php?' + $.param(params);
 		location.replace(address);
 	}
@@ -75,52 +76,22 @@ function RestartStorageSv()
 		<tr>
 			<th><span class="trim01">Create thumbnail images</th>
 			<td>
-				<input name="newThumbnailFlg" type="radio" value="1"{if $configData.thumbnailFlg} checked="checked"{/if} />TRUE
-				<input name="newThumbnailFlg" type="radio" value="0"{if !$configData.thumbnailFlg} checked="checked"{/if} />FALSE
+				<label><input name="newThumbnailFlg" type="radio" value="1"{if $configData.thumbnailFlg} checked="checked"{/if} />TRUE</label>
+				<label><input name="newThumbnailFlg" type="radio" value="0"{if !$configData.thumbnailFlg} checked="checked"{/if} />FALSE</label>
 			</td>
 		</tr>
 
 		<tr>
 			<th><span class="trim01">Compress DICOM image with lossless JPEG</th>
 			<td>
-				<input name="newCompressFlg" type="radio" value="1"{if $configData.compressFlg} checked="checked"{/if} />TRUE
-				<input name="newCompressFlg" type="radio" value="0"{if !$configData.compressFlg} checked="checked"{/if} />FALSE
+				<label><input name="newCompressFlg" type="radio" value="1"{if $configData.compressFlg} checked="checked"{/if} />TRUE</label>
+				<label><input name="newCompressFlg" type="radio" value="0"{if !$configData.compressFlg} checked="checked"{/if} />FALSE</label>
 			</td>
 		</tr>
 
 		<tr>
 			<th><span class="trim01">Default thumbnail size</th>
 			<td><input id="newThumbnailSize" size="20" type="text" value="{$configData.defaultThumbnailSize|escape}" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">Path for log files</th>
-			<td><input id="newlogPath" size="60" type="text" value="{$configData.logPath|escape}" disabled="disabled" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">IP address of DB server</th>
-			<td><input id="newDbHost" size="20" type="text" value="{$configData.dbHost|escape}" disabled="disabled" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">Port number of DB server</th>
-			<td><input id="newDbPort" size="20" type="text" value="{$configData.dbPort|escape}" disabled="disabled" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">Database name of DB server</th>
-			<td><input id="newDbName" size="20" type="text" value="{$configData.dbName|escape}" disabled="disabled" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">User name to connect DB server</th>
-			<td><input id="newDbUser" size="20" type="text" value="{$configData.dbUser|escape}" disabled="disabled" /></td>
-		</tr>
-
-		<tr>
-			<th><span class="trim01">Password to connect DB server</th>
-			<td><input id="newDbPassword" size="20" type="text" value="{$configData.dbPassword|escape}" disabled="disabled" /></td>
 		</tr>
 	</table>
 
