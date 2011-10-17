@@ -123,9 +123,7 @@ $(function() {
 		var rule = {};
 		rule.start_img_num = $('#start-img-num').val();
 		rule.end_img_num = $('#end-img-num').val();
-		var rp = $('#required-private-tags').val();
-		if (rp.length > 0)
-			rule.required_private_tags = rp;
+		rule.required_private_tags = $('#required-private-tags').val();
 		return rule;
 	}
 
