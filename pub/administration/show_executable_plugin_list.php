@@ -10,11 +10,11 @@
 
 
 	$validator->addRules(array(
-		"modality" => array(
+		"type" => array(
 			"type" => "select",
-			"options" => $modalityList,
-			"default" => "CT",
-			"otherwise" => "CT"),
+			"options" => array("1", "2"),
+			"default" => "1",
+			"otherwise" => "1"),
 		));
 
 	if($validator->validate($_POST))
@@ -37,13 +37,22 @@
 		$dstData['executableList'] = array();
 		$dstData['hiddenList']      = array();
 
-		$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled"
-				. " FROM plugin_master pm, plugin_cad_master cm, plugin_cad_series cs"
-				. " WHERE cm.plugin_id=pm.plugin_id AND cs.plugin_id = cm.plugin_id"
-				. " AND cs.volume_id=0 AND cs.modality=? ORDER BY cm.label_order ASC";
+		if($dstData['type'] == 2)
+		{
+			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled"
+					. " FROM plugin_master pm, plugin_research_master pr"
+					. " WHERE pr.plugin_id=pm.plugin_id"
+					. " AND pm.type=2 ORDER BY pr.label_order ASC";
+		}
+		else
+		{
+			$sqlStr = "SELECT pm.plugin_name, pm.version, pm.exec_enabled"
+					. " FROM plugin_master pm, plugin_cad_master cm"
+					. " WHERE cm.plugin_id=pm.plugin_id"
+					. " AND pm.type=1 ORDER BY cm.label_order ASC";
+		}
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindValue(1, $dstData['modality']);
 		$stmt->execute();
 
 		while($result = $stmt->fetch(PDO::FETCH_NUM))

@@ -1,28 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-
-<title>CIRCUS CS {$smarty.session.circusVersion}</title>
-
-<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
+{capture name="require"}
+jq/ui/jquery-ui.min.js
+jq/ui/theme/jquery-ui.custom.css
+{/capture}
+{capture name="extra"}
+{*<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
-<link rel="shortcut icon" href="../favicon.ico" />
-
-<script language="Javascript">;
+<link rel="shortcut icon" href="../favicon.ico" />*}
+<script language="Javascript">
 <!--
 {literal}
 
 function ShowPluginConfDetail(){
 
-	$.post("show_executable_cad_list.php",
-			{ modality:  $("#modalityList").val()},
+	$.post("show_executable_plugin_list.php",
+			{ type:  $("#typeList").val()},
 			  function(data){
 
 				var executableHtml = "";
@@ -37,6 +30,8 @@ function ShowPluginConfDetail(){
 				{
 					hiddenHtml += "<option>" + data.hiddenList[i] + "</option>";
 				}
+
+				$("#typeTmp").val($("#typeList").val());
 
 				$("#executableList").html(executableHtml);
 				$("#hiddenList").html(hiddenHtml);
@@ -176,8 +171,9 @@ function SaveSettings()
 			hiddenStr += rightBox.options[i].text;
 		}
 
-		$.post("save_plugin_configuration.php",
-			{ executableStr:  executableStr,
+		$.post("save_plugin_display_order.php",
+			{ type:  $("#typeTmp").val(),
+              executableStr:  executableStr,
 			  hiddenStr: hiddenStr},
 			  function(data){
 
@@ -218,13 +214,7 @@ function ResetSettings()
 
 
 -->
-{/literal}
-
 </script>
-
-<link href="../css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
-
-{literal}
 <style type="text/css">
 
 div.line{
@@ -244,82 +234,71 @@ div.line{
 
 </style>
 {/literal}
-</head>
+{/capture}
+{include file="header.tpl" body_class="spot"
+head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<body class="spot">
-<div id="page">
-	<div id="container" class="menu-back">
-		<!-- ***** #leftside ***** -->
-		<div id="leftside">
-			{include file='menu.tpl'}
-		</div>
-		<!-- / #leftside END -->
+<h2>Plug-in display order</h2>
 
-		<div id="content">
-			<h2>Basic configuration for plug-ins</h2>
+<form id="form1" name="form1">
+	<input type="hidden" id="ticket" name="ticket" value="{$params.ticket|escape}" />
+	<div id="field">
+		<span style="font-weight:bold;">Main modality:</span>
+		<select id="typeList">
+			<option value="1">CAD</option>
+			<option value="2">Research</option>
+		</select>&nbsp;
+		<input type="button" id="applyBtn" class="form-btn" value="apply" onclick="ShowPluginConfDetail();">
+	</div>
 
-			<form id="form1" name="form1">
-				<input type="hidden" id="ticket" name="ticket" value="{$params.ticket|escape}" />
-				<div id="field">
-					<span style="font-weight:bold;">Main modality:</span>
-					<select id="modalityList">
-						{foreach from=$params.modalityList item=item}
-							<option value="{$item}">{$item}</option>
-						{/foreach}
-					</select>&nbsp;
-					<input type="button" id="applyBtn" class="form-btn" value="apply" onclick="ShowPluginConfDetail();">
-				</div>
+	<div class="line"></div>
 
-				<div class="line"></div>
+	<div id="pluginConfDetail" style="display:none;">	
 
-				<div id="pluginConfDetail" style="display:none;">	
+		<input type="hidden" id="typeTmp"       name="typeTmp"       value="">
+		<input type="hidden" id="executableStr" name="executableStr" value="">
+		<input type="hidden" id="hiddenStr"     name="hiddenStr"     value="">
 
-					<input type="hidden" id="executableStr" name="executableStr" value="">
-					<input type="hidden" id="hiddenStr"     name="hiddenStr"     value="">
+		<div id="messageArea">&nbsp;</div>
 
-					<div id="messageArea">&nbsp;</div>
+		<table id="execControlArea">
+			<tr>
+				<th style="font-size:14px;">Executable</td>
+				<th></th>
+				<th style="font-size:14px;">Hidden</td>
+			</tr>
 
-					<table id="execControlArea">
-						<tr>
-							<th style="font-size:14px;">Executable</td>
-							<th></th>
-							<th style="font-size:14px;">Hidden</td>
-						</tr>
+			<tr>
+				<td valign=top>
+					<select id="executableList" size="10" onchange="buttonStyle(1)" style="width:200px;"></select>
+				</td>
+		
+				<td valign=middle>
+					<input type="button" value="&rarr;" id="rightButton" disabled onclick="itemMove(1)" style="width:24px;height:24px;font-weight:bold;"><br/><br/>
+					<input type="button" value="&larr;" id="leftButton" disabled onclick="itemMove(-1)" style="width:24px;height:24px;font-weight:bold;">
+				</td>
 
-						<tr>
-							<td valign=top>
-								<select id="executableList" size="10" onchange="buttonStyle(1)" style="width:200px;"></select>
-							</td>
-					
-							<td valign=middle>
-								<input type="button" value="&rarr;" id="rightButton" disabled onclick="itemMove(1)" style="width:24px;height:24px;font-weight:bold;"><br/><br/>
-								<input type="button" value="&larr;" id="leftButton" disabled onclick="itemMove(-1)" style="width:24px;height:24px;font-weight:bold;">
-							</td>
+				<td valign=top>
+					<select id="hiddenList" size="10"  onchange="buttonStyle(2)" style="width:200px;"></select>
+				</td>
+			</tr>
 
-							<td valign=top>
-								<select id="hiddenList" size="10"  onchange="buttonStyle(2)" style="width:200px;"></select>
-							</td>
-						</tr>
+			<tr>
+				<td align=center>
+					<input type="button" value="&uarr;" id="upButton" disabled onclick="optionMove(-1)" style="width:24px;height:24px;font-weight:bold;">&nbsp;&nbsp;
+				<input type="button" value="&darr;" id="downButton" disabled onclick="optionMove(1)" style="width:24px;height:24px;font-weight:bold;">
+				</td>
+				<td colspan=2></td>
+			</tr>
 
-						<tr>
-							<td align=center>
-								<input type="button" value="&uarr;" id="upButton" disabled onclick="optionMove(-1)" style="width:24px;height:24px;font-weight:bold;">&nbsp;&nbsp;
-							<input type="button" value="&darr;" id="downButton" disabled onclick="optionMove(1)" style="width:24px;height:24px;font-weight:bold;">
-							</td>
-							<td colspan=2></td>
-						</tr>
+			<tr>
+				<td colspan="3" align="center">
+					<input type="button" id="saveBtn" class="form-btn form-btn-disabled" value="save" disabled="disabled" onclick="SaveSettings()" />&nbsp;
+					<input type="button" id="resetBtn" class="form-btn form-btn-disabled" value="reset" disabled="disabled" onclick="ResetSettings()" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</form>
 
-						<tr>
-							<td colspan="3" align="center">
-								<input type="button" id="saveBtn" class="form-btn form-btn-disabled" value="save" disabled="disabled" onclick="SaveSettings()" />&nbsp;
-								<input type="button" id="resetBtn" class="form-btn form-btn-disabled" value="reset" disabled="disabled" onclick="ResetSettings()" />
-							</td>
-						</tr>
-					</table>
-				</div>
-			</form>
-		</div><!-- / #content END -->
-	</div><!-- / #container END -->
-</div><!-- / #page END -->
-</body>
-</html>
+{include file="footer.tpl"}

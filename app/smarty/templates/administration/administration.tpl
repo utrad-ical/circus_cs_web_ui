@@ -106,7 +106,7 @@ fieldset li:hover { background-color: #ffddae; }
 		<li>
 			<em>Plug-in display order</em>
 			<input type="button" value="config" class="form-btn"
-				onclick="location.href='plugin_basic_configuration.php';">
+				onclick="location.href='plugin_display_order.php';">
 		</li>
 		<li>
 			<em>CAD result policies</em>
