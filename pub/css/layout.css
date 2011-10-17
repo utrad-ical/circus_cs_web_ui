@@ -21,7 +21,7 @@ input.s-btn {
 }
 
 fieldset { border: 1px solid black; padding: 10px; }
-fieldset legend { display: block; font-weight: bold; padding: 0 10px; }
+fieldset legend { display: block; font-weight: bold; padding: 0 10px; color: black; }
 
 
 /* ===================================================
