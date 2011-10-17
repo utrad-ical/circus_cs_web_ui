@@ -7,7 +7,6 @@ js/list_tab.js
 js/edit_tags.js
 jq/ui/theme/jquery-ui.custom.css
 {/capture}
-
 {include file="header.tpl" body_class="study-list spot" require=$smarty.capture.require}
 
 <h2>Study list</h2>

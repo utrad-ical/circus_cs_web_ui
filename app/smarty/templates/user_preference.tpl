@@ -165,7 +165,6 @@ function ChangeCadMenu()
 {/literal}
 </script>
 {/capture}
-
 {include file="header.tpl" body_class="spot"
 	head_extra=$smarty.capture.extra}
 

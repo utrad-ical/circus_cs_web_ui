@@ -5,7 +5,6 @@ js/jquery.daterange.js
 jq/ui/theme/jquery-ui.custom.css
 js/viewControl.js
 {/capture}
-
 {capture name="extra"}
 <!-- Search div display control script-->
 {literal}
@@ -16,7 +15,6 @@ js/viewControl.js
 </script>
 {/literal}
 {/capture}
-
 {include file="header.tpl" body_class="search spot"
 	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 

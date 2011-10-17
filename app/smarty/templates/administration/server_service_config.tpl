@@ -42,7 +42,6 @@ $(function() {
 
 {/literal}
 {/capture}
-
 {include file="header.tpl"
 	head_extra=$smarty.capture.extra body_class="spot"}
 

@@ -5,7 +5,6 @@ js/search_panel.js
 js/list_tab.js
 jq/ui/theme/jquery-ui.custom.css
 {/capture}
-
 {include file="header.tpl" body_class="series-list" require=$smarty.capture.require}
 
 <!-- ***** TAB ***** -->

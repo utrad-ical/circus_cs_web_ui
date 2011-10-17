@@ -30,7 +30,6 @@ $(function () {
 
 {/literal}
 {/capture}
-
 {include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 <form id="form1" name="form1" onsubmit="return false;">
 <input type="hidden" id="ticket" value="{$params.ticket}" />

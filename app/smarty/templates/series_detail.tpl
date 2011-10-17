@@ -8,9 +8,7 @@ jq/jquery.mousewheel.min.js
 js/jquery.imageviewer.js
 css/darkroom.css
 {/capture}
-
 {capture name="extra"}
-
 <script type="text/javascript" language="Javascript">
 
 var sid = "{$series->sid|escape:javascript}";
@@ -54,7 +52,6 @@ $(function() {
 </style>
 {/literal}
 {/capture}
-
 {include file="header.tpl" require=$smarty.capture.require
 	head_extra=$smarty.capture.extra}
 

@@ -37,7 +37,6 @@ fieldset li:hover { background-color: #ffddae; }
 
 {/literal}
 {/capture}
-
 {include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 
 <div id="smoke"></div>
