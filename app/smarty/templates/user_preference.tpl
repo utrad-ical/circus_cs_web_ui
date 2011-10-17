@@ -62,18 +62,18 @@ function ShowCadPreferenceDetail()
 			$("#defaultSortKey").val(data.sortKey[0]);
 			$("#defaultSortOrder").val(data.sortOrder[0]);
 			$("#defaultMaxDispNum").val(data.maxDispNum[0]);
-			$("#defaultConfidenceTh").val(data.confidenceTh[0]);
-			$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
+			//$("#defaultConfidenceTh").val(data.confidenceTh[0]);
+			//$("#defaultDispCandidateTag").val(data.dispCandidateTag[0]);
 			$("#message").html(data.message);
 			$("#maxDispNum").val(data.maxDispNum[1]);
-			$("#confidenceTh").val(data.confidenceTh[1]);
+			//$("#confidenceTh").val(data.confidenceTh[1]);
 			$("#sortKey").val(data.sortKey[1]);
 			$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 				return ($(this).val() == data.sortOrder[1])
 			}).attr("checked", true);
-			$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-				return ($(this).val() == data.dispCandidateTag[1])
-			}).attr("checked", true);
+			//$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+			//	return ($(this).val() == data.dispCandidateTag[1])
+			//}).attr("checked", true);
 			$("#preferenceFlg").val(data.preferenceFlg);
 			$("#detailCadPrefrence").show();
 			$("#updateCADPrefBtn").show();
@@ -101,9 +101,9 @@ function RegisterCadPreference(mode)
 					sortKey: $("#sortKey").val(),
 					sortOrder: $('#detailCadPrefrence input[name="sortOrder"]:checked').val(),
 					maxDispNum: $("#maxDispNum").val(),
-					confidenceTh: $("#confidenceTh").val(),
+					//confidenceTh: $("#confidenceTh").val(),
 					preferenceFlg: $("#preferenceFlg").val(),
-					dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()
+					//dispCandidateTagFlg: $('#detailCadPrefrence input[name="dispCandidateTag"]:checked').val()
 				},
 				function(data){
 					if(data.message != null)
@@ -116,14 +116,14 @@ function RegisterCadPreference(mode)
 							{
 								$("#message").html('Default settings');
 								$("#maxDispNum").val($("#defaultMaxDispNum").val());
-								$("#confidenceTh").val($("#defaultConfidenceTh").val());
+								//$("#confidenceTh").val($("#defaultConfidenceTh").val());
 								$("#sortKey").val($("#defaultSortKey").val());
 								$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 									return ($(this).val() == $("#defaultSortOrder").val())
 								}).attr("checked", true);
-								$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
-									return ($(this).val() == $("#defaultDispCandidateTag").val())
-								}).attr("checked", true);
+								//$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
+								//	return ($(this).val() == $("#defaultDispCandidateTag").val())
+								//}).attr("checked", true);
 								$("#deleteCADPrefBtn").hide();
 							}
 							else
@@ -175,8 +175,8 @@ function ChangeCadMenu()
 <input type="hidden" id="defaultSortKey"          value="">
 <input type="hidden" id="defaultSortOrder"        value="">
 <input type="hidden" id="defaultMaxDispNum"       value="">
-<input type="hidden" id="defaultConfidenceTh"     value="">
-<input type="hidden" id="defaultDispCandidateTag" value="">
+{*<input type="hidden" id="defaultConfidenceTh"     value="">*}
+{*<input type="hidden" id="defaultDispCandidateTag" value="">*}
 <input type="hidden" name="ticket" value="{$ticket|escape}">
 
 <h2>User preference</h2>
@@ -306,19 +306,19 @@ function ChangeCadMenu()
 						<input id="maxDispNum" type="text" class="al-r" style="width: 100px;" />
 					</td>
 				</tr>
-				<tr>
+				{*<tr>
 					<th><span class="trim01">Threshold of confidence</span></th>
 					<td>
 						<input id="confidenceTh" type="text" class="al-r" style="width: 100px;" />
 					</td>
-				</tr>
-				<tr>
+				</tr>*}
+				{*<tr>
 					<th><span class="trim01">Disp tags for lesion candidate</span></th>
 					<td>
 						<input type="radio" name="dispCandidateTag" value="1" />True
 						<input type="radio" name="dispCandidateTag" value="0" />False
 					</td>
-				</tr>
+				</tr>*}
 			</table>
 
 			<div class="pl20 mb20 mt10">

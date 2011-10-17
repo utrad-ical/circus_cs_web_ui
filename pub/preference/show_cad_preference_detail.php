@@ -35,10 +35,8 @@
 	$params['sortKey']          = array("", "");
 	$params['sortOrder']        = array("", "");
 	$params['maxDispNum']       = array("", "");
-	$params['confidenceTh']     = array("", "");
-	$params['yellowCircleTh']   = array("", "");
-	$params['doubleCircleTh']   = array("", "");
-	$params['dispCandidateTag'] = array("", "");
+	//$params['confidenceTh']     = array("", "");
+	//$params['dispCandidateTag'] = array("", "");
 	//--------------------------------------------------------------------------------------------------------
 
 	try

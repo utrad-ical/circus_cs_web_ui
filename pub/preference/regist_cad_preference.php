@@ -29,13 +29,13 @@ $validator->addRules(array(
 	"maxDispNum" => array(
 		"type" => "string",
 		"regex" => "/^(all|[\d]+)$/i"),
-	"confidenceTh" => array(
-		"type" => "numeric",
-		"min" => 0),
-	"dispCandidateTagFlg" => array(
-		"type" => "select",
-		"options" => array("1", "0"),
-		'oterwise' => "0"),
+	//"confidenceTh" => array(
+	//	"type" => "numeric",
+	//	"min" => 0),
+	//"dispCandidateTagFlg" => array(
+	//	"type" => "select",
+	//	"options" => array("1", "0"),
+	//	'oterwise' => "0"),
 	"preferenceFlg" => array(
 		"type" => "select",
 		"options" => array("1", "0"),
@@ -89,7 +89,8 @@ if($mode == 'update' || $mode == 'delete')
 
 		if($mode == 'update')
 		{
-			$keyStr = array('sortKey', 'sortOrder', 'maxDispNum', 'confidenceTh', 'dispCandidateTagFlg');
+			//$keyStr = array('sortKey', 'sortOrder', 'maxDispNum', 'confidenceTh', 'dispCandidateTagFlg');
+			$keyStr = array('sortKey', 'sortOrder', 'maxDispNum');
 
 			$sqlStr = "INSERT INTO plugin_user_preference(user_id, plugin_id, key, value)"
 					. " VALUES (?,?,?,?)";
