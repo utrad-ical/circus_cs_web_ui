@@ -244,7 +244,7 @@
 			if($params['mode'] != 'today')
 			{
 				if($params['srDateKind'] != 'all')  $addressParams['srDateKind'] = $params['srDateKind'];
-				
+
 				if($params['srDateFrom'] != "" && $params['srDateTo'] != ""
 				   && $params['srDateFrom'] == $params['srDateTo'])
 				{
@@ -400,30 +400,12 @@
 				{
 					$ruleSet = json_decode($result['ruleset'], true);
 
-					foreach($ruleSet as $rules)
-					{
-						$matchFlg = 1;
-
-						$ruleFilterGroup = $rules['filter']['group'];
-						$ruleFilterMembers = $rules['filter']['members'];
-
-						foreach($ruleFilterMembers as $ruleFilter)
-						{
-							if($ruleFilter['key'] == 'modality'
-								&& $ruleFilter['value'] != $seriesData['modality'])
-							{
-								$matchFlg = 0;
-							}
-						}
-					}
-
-					if($matchFlg == 1
-						&& $ret = $seriesFilter->processRuleSets($seriesData, $ruleSet))
+					if($ret = $seriesFilter->processRuleSets($seriesData, $ruleSet))
 					{
 						$cadColSettings[$cadNum][0] = $result['plugin_name'];
 						$cadColSettings[$cadNum][1] = $result['version'];
 						$cadColSettings[$cadNum][2] = ($result['exec_enabled']=='t') ? 1 : 0;
-						$cadColSettings[$cadNum][3] = 0;					// status of plugin-job job
+						$cadColSettings[$cadNum][3] = 0; // status of plugin-job job
 						$cadColSettings[$cadNum][4] = '';
 						$cadColSettings[$cadNum][5] = 0;
 
