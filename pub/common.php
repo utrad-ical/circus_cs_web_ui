@@ -1,6 +1,6 @@
 <?php
 
-	$CIRCUS_CS_VERSION = "2.0 beta";
+	$CIRCUS_CS_VERSION = "2.1";
 
 	//-------------------------------------------------------------------------------------------------------
 	// Define directories, commands, etc.
@@ -159,7 +159,7 @@
 	function DeleteDirRecursively($dir)
 	{
 		global $DIR_SEPARATOR;
-		
+
 		if(is_dir($dir))
 		{
 			$objects = scandir($dir);
@@ -187,23 +187,23 @@
 	function CopyDirRecursively($srcDir, $dstDir)
 	{
 		global $DIR_SEPARATOR;
-		
+
 		if(is_dir($srcDir))
 		{
 			if(!is_dir($dstDir))  mkdir($dstDir);
 
 			$objects = scandir($srcDir);
-			
+
 			foreach( $objects as $file )
 			{
 				if( $file == "." || $file == ".." )  continue;
-				
+
 				if( is_dir($srcDir.$DIR_SEPARATOR.$file) )
 				{
 					CopyDirRecursively($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
 				}
-                else
-                {
+				else
+				{
 					copy($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
 				}
 			}
