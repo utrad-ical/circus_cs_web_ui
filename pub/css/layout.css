@@ -346,7 +346,7 @@ table.search-tbl th, table.search-tbl td {
 #content p.pagetop a:link,
 #content p.pagetop a:visited,
 #content p.pagetop a:active {
-	background: url(../img_common/item/ico_arrow.gif) left 70% no-repeat;
+	background: url(../img_common/share/ico_arrow.gif) left 70% no-repeat;
 	font-size: 90%;
 	color: #0066cc;
 	padding-left: 10px;
@@ -354,7 +354,7 @@ table.search-tbl th, table.search-tbl td {
 }
 
 #content p.pagetop a:hover {
-	background: url(../img_common/item/ico_arrow.gif) left 50% no-repeat;
+	background: url(../img_common/share/ico_arrow.gif) left 50% no-repeat;
 	font-size: 90%;
 	color: #0066cc;
 	padding-left: 10px;

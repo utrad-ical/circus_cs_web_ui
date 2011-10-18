@@ -22,7 +22,7 @@ CSS information
 }
 
 #container {
-	background: url(../img_common/item/menu_bk.user.gif) left repeat-y;
+	background: url(../img_common/btn/user/menu_bk.gif) left repeat-y;
 }
 
 .jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }

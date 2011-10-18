@@ -29,7 +29,7 @@ CSS information
 }
 
 .darkroom #container {
-	background: url(../img_common/item/menu_bk.black.gif) left repeat-y;
+	background: black;
 }
 
 .darkroom #container h1 {
