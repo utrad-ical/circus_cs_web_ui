@@ -162,7 +162,7 @@ class Auth
 		),
 		array (
 			self::MENU_SHOW,
-			'(Not implemented) Can show navigation menu.'
+			'Can show navigation menu.'
 		),
 		array (
 			self::API_EXEC,
