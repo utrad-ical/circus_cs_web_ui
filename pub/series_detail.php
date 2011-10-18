@@ -1,7 +1,7 @@
 <?php
 include_once('common.php');
 Auth::checkSession();
-Auth::purgeUnlessGranted(Auth::CAD_EXEC);
+Auth::purgeUnlessGranted(Auth::LIST_SEARCH);
 
 //------------------------------------------------------------------------------
 // Import $_GET variables and validation
