@@ -35,8 +35,8 @@ CSS information
 .jq-btn-research { background-image: url(../img_common/btn/user/jq-btn-research.gif) ; }
 .jq-btn-preference { background-image: url(../img_common/btn/user/jq-btn-preference.gif) ; }
 .jq-btn-favorites { background-image: url(../img_common/btn/user/jq-btn-favorites.gif) ; }
+.jq-btn-administration { background-image: url(../img_common/btn/user/jq-btn-administration.gif) ; }
 .jq-btn-logout { background-image: url(../img_common/btn/user/jq-btn-logout.gif) ; }
-
 
 
 /* ===================================================
@@ -172,12 +172,4 @@ p.add-favorite {
  ===================================================*/
 .themeColor {
 	color: #09F;
-}
-
-/* ===================================================
-   User hidden
- =================================================== */
-
-#admin-only {
-	display: none;
 }

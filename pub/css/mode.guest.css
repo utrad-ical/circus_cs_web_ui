@@ -8,7 +8,7 @@ CSS information
 
 =================================================================== */
 
-/* ===================================================
+/* ==================================================
 	#leftside
 		LOGO Border color
 		#menu
@@ -35,9 +35,8 @@ CSS information
 .jq-btn-research { background-image: url(../img_common/btn/guest/jq-btn-research.gif) ; }
 .jq-btn-preference { background-image: url(../img_common/btn/guest/jq-btn-preference.gif) ; }
 .jq-btn-favorites { background-image: url(../img_common/btn/guest/jq-btn-favorites.gif) ; }
+.jq-btn-administration { background-image: url(../img_common/btn/guest/jq-btn-administration.gif) ; }
 .jq-btn-logout { background-image: url(../img_common/btn/guest/jq-btn-logout.gif) ; }
-
-
 
 
 /* ===================================================
@@ -122,18 +121,33 @@ p.add-favorite {
 
 
 /* ===================================================
-   Only Guest
-			Radio Button hidden
-			DIV.sort-by
+	 Buttons for CAD Result Page
  =================================================== */
-.hide-on-guest,
-#admin-only {
-	display: none;
+/* Radio button (normal size) */
+.radio-to-button {
+	background-image:url(../img_common/btn/guest/radio-to-button_white2.jpg);
 }
-#menu ul li.hide-on-guest {
-	display: none;
+/* Radio button (large size) */
+.radio-to-button.radio-to-button-l {
+	background-image:url(../img_common/btn/guest/radio-to-button-l_white2.jpg);
 }
 
+.radio-to-button-normal {
+	color: #333 !important;
+	border: 1px solid #333 !important;
+}
+.radio-to-button-hover {
+	color: #396 !important;
+	border: 1px solid #396 !important;
+}
+.radio-to-button-checked {
+	color: #fff !important;
+	border: 1px solid #06694c !important;
+}
+.radio-to-button-disabled {
+	color: #aaa !important;
+	border: 1px solid #808080 !important;
+}
 
 .form-btn {
 	border: 1px solid #06694c;
