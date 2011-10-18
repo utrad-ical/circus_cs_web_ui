@@ -15,9 +15,6 @@ jq/ui/theme/jquery-ui.custom.css
 		{/if}
 		<li><a href="" class="btn-tab" title="{if $params.mode=='today'}Today's CAD{else}CAD log{/if}" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">{if $params.mode=='today'}Today's CAD{else}CAD log{/if}</a></li>
 	</ul>
-	{if $params.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
-	</ul>
-
 </div>
 <!-- / .tabArea END -->
 

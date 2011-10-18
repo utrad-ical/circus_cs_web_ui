@@ -15,7 +15,6 @@ jq/ui/theme/jquery-ui.custom.css
 			<li><a href="cad_log.php?mode=today" class="btn-tab" title="Today's CAD">Today's CAD</a></li>
 		{/if}
 	</ul>
-	{if $params.mode!='today'}<p class="add-favorite"><a href="" title="favorite"><img src="img_common/btn/favorite.jpg" width="100" height="22" alt="favorite"></a></p>{/if}
 </div><!-- / .tabArea END -->
 
 <div class="tab-content">
