@@ -121,8 +121,8 @@ $(function() {
 	function createRuleFromElement()
 	{
 		var rule = {};
-		rule.start_img_num = $('#start-img-num').val();
-		rule.end_img_num = $('#end-img-num').val();
+		rule.start_img_num = Math.max(parseInt($('#start-img-num').val()) || 0, 0);
+		rule.end_img_num = Math.max(parseInt($('#end-img-num').val()) || 0, 0);
 		rule.required_private_tags = $('#required-private-tags').val();
 		return rule;
 	}

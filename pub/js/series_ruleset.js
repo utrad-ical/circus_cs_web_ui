@@ -70,11 +70,12 @@ circus.ruleset = (function() {
 	function stringifyRule(rule)
 	{
 		var results = [];
-		if ('start_img_num' in rule && 'end_img_num' in rule)
-		{
-			results.push('Clip(' + rule.start_img_num + ' - ' + rule.end_img_num + ')');
-		}
-		if ('required_private_tags' in rule && rule.required_private_tags.length > 0)
+		var st = parseInt(rule.start_img_num) || 0;
+		var ed = parseInt(rule.end_img_num) || 0;
+		if (st > 0 || ed > 0)
+			results.push('Clip(' + st + ' - ' + ed + ')');
+		if (typeof(rule.required_private_tags) == 'string'
+			&& rule.required_private_tags.length > 0)
 		{
 			results.push('Require private tags(' + rule.required_private_tags + ')');
 		}
