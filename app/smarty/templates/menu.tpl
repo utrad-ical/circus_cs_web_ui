@@ -2,6 +2,7 @@
 <div id="menu">
 	<ul>
 		<li><a href="{$params.toTopDir}home.php" class="jq-btn jq-btn-home" title="home"></a></li>
+		{if $currentUser->hasPrivilege('listSearch')}
 		<li>
 			<a href="{$params.toTopDir}{if $currentUser->today_disp == 'series'}series_list{else}cad_log{/if}.php?mode=today"
 			class="jq-btn jq-btn-today" title="today">
@@ -10,6 +11,7 @@
 			</a>
 		</li>
 		<li><a href="{$params.toTopDir}search.php" class="jq-btn jq-btn-search" title="search"></a></li>
+		{/if}
 		<li><a id="linkStatistics" href="{$params.toTopDir}personal_statistics.php" class="jq-btn jq-btn-statistics" title="statistics"></a></li>
 		{if $currentUser->hasPrivilege('researchShow')}
 		<li><a href="{$params.toTopDir}research/research_list.php" class="jq-btn jq-btn-research" title="research"></a></li>
