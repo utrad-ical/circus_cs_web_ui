@@ -17,7 +17,8 @@ class CadResult extends Model
 	);
 	protected static $_hasMany = array(
 		'Feedback' => array('key' => 'job_id'),
-		'PluginAttribute' => array('key' => 'job_id')
+		'PluginAttribute' => array('key' => 'job_id'),
+		'ExecutedSeries' => array('key' => 'job_id')
 	);
 	protected static $_hasAndBelongsToMany = array(
 		'Series' => array(
