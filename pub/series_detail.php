@@ -31,12 +31,11 @@ try
 		throw new Exception(implode("\n", $validator->errors));
 	$req = $validator->output;
 
-	$dum = new Series();
-	$ss = $dum->find(array('sid' => $req['sid']));
-	if (count($ss) != 1)
+	$series = new Series($req['sid']);
+	if (!$series->series_instance_uid)
 		throw new Exception('Specified series does not exist.');
 
-	$data['series'] = $series = $ss[0];
+	$data['series'] = $series;
 	$data['study'] = $study = $series->Study;
 	$data['patient'] = $patient = $study->Patient;
 

@@ -61,9 +61,13 @@ class CountImagesAction extends ApiAction
 	private function get_series_counts($UIDs)
 	{
 		$result = array();
+		$dum = new Series();
 		foreach ($UIDs as $id)
 		{
-			$series = new Series($id);
+			$series = $dum->find(array('series_instance_uid' => $id));
+			if (!isset($series[0]))
+				continue;
+			$series = $series[0];
 			if ($series->image_number)
 			{
 				array_push(
