@@ -41,7 +41,10 @@ class SeriesRulesetAction extends ApiAction
 	{
 		$items = array();
 		foreach ($this->_entries as $item)
-			$items[$item->volume_id] = json_decode($item->ruleset);
+			$items[$item->volume_id] = array(
+				'label' => $item->volume_label,
+				'ruleset' => json_decode($item->ruleset)
+			);
 
 		$res = new ApiResponse();
 		$res->setResult($action, $items);

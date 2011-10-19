@@ -11,6 +11,7 @@ $(function() {
 	var targetPlugin = null;
 
 	var pluginRuleSetsData = null;
+	var labels = null;
 	var currentRuleSet = null;
 
 	var hoveringElement = null;
@@ -285,12 +286,15 @@ $(function() {
 	{
 		var stage = $('#rulesets-list').empty();
 		$.each(pluginRuleSetsData, function(volume_id, rulesets) {
+			var label = labels[volume_id];
 			var grp = $('<div class="volume-group">')
 				.data('volume-id', volume_id)
 				.appendTo(stage);
-			var h = $('<div class="vol-id">')
-				.text('Volume ID: ' + volume_id)
-				.appendTo(grp);
+			var t = 'Volume ID: ' + volume_id;
+			var h = $('<div class="vol-id">').text(t).appendTo(grp);
+			if (typeof(label) == 'string')
+				h.append($('<span class="volume-label">').text(' (' + label + ')'));
+
 			if (rulesets.length > 0)
 			{
 				var ul = $('<ul class="rulesets">').appendTo(grp);
@@ -333,6 +337,8 @@ $(function() {
 
 	$('#plugin-select').change(function() {
 		targetPlugin = $('#plugin-select').val();
+		pluginRuleSetsData = [];
+		labels = [];
 		if (targetPlugin)
 		{
 			$.webapi({
@@ -343,7 +349,11 @@ $(function() {
 					mode: 'get'
 				},
 				onSuccess: function(result) {
-					pluginRuleSetsData = result;
+					for (var volume_id in result)
+					{
+						pluginRuleSetsData[volume_id] = result[volume_id].ruleset;
+						labels[volume_id] = result[volume_id].label;
+					}
 					enterEdit();
 					refreshRuleSets();
 				}
@@ -463,6 +473,10 @@ h3 { margin-bottom: 15px; }
 	border-top: 1px solid gray;
 	font-weight: bold;
 	margin: 0 5px 3px 0;
+}
+
+#content div.vol-id .volume-label {
+	color: #8a3b2b;
 }
 
 #plugin-selector-pane {
