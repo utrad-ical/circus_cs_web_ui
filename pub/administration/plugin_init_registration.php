@@ -154,56 +154,56 @@ if(!$errorFlg)
 		$sqlStr = 'INSERT INTO plugin_master(plugin_id, plugin_name, "version", "type",'
 				. 'description, install_dt) VALUES (?, ?, ?, ?, ?, ?)';
 		$sqlParams = array($pluginID, $pluginName, $version,
-							$data['PluginType'], $data['Description'],
+							$data['pluginType'], $data['description'],
 							date("Y-m-d H:i:s", time()));
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
 		
-		$resultTableName = (isset($data['ResultTable']['TableName'])) ? $data['ResultTable']['TableName'] : "";
-		$scoreTableName  = (isset($data['ScoreTable']['TableName'])) ? $data['ScoreTable']['TableName'] : "";
+		$resultTableName = (isset($data['resultTable']['tableName'])) ? $data['resultTable']['tableName'] : "";
+		$scoreTableName  = (isset($data['scoreTable']['tableName'])) ? $data['scoreTable']['tableName'] : "";
 
 		$sqlStr = "SELECT COUNT(*) FROM plugin_master WHERE type=? AND exec_enabled='t'";
-		$maxLabelOrder = DBConnector::query($sqlStr, array($data['PluginType']), 'SCALAR') + 1;
+		$maxLabelOrder = DBConnector::query($sqlStr, array($data['pluginType']), 'SCALAR') + 1;
 
-		if($data['PluginType'] == 1) // CAD plug-in
+		if($data['pluginType'] == 1) // CAD plug-in
 		{
 			// Set plugin_cad_master
 			$sqlStr = "INSERT INTO plugin_cad_master(plugin_id, label_order,"
 					. " input_type, result_type, time_limit, result_table, score_table)"
 					. " VALUES (?, ?, ?, ?, ?, ?, ?)";
 			$sqlParams = array($pluginID, $maxLabelOrder,
-								$data['CADDefinition']['InputType'],
-								$data['CADDefinition']['ResultType'],
-								$data['CADDefinition']['TimeLimit'],
+								$data['cadDefinition']['inputType'],
+								$data['cadDefinition']['resultType'],
+								$data['cadDefinition']['timeLimit'],
 								$resultTableName,
 								$scoreTableName);
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 			
 			// Set plugin_cad_series
-			if(isset($data['SeriesDefinition']))
+			if(isset($data['seriesDefinition']))
 			{
 				$sqlParams = array($pluginID);
 
-				foreach($data['SeriesDefinition'] as $item)
+				foreach($data['seriesDefinition'] as $item)
 				{
-					$sqlStr = "INSERT INTO plugin_cad_series(plugin_id, volume_id, ruleset, modality)"
+					$sqlStr = "INSERT INTO plugin_cad_series(plugin_id, volume_id, volume_label, ruleset)"
 							. " VALUES (?, ?, ?, ?)";
 					$sqlParams = array($pluginID, $DEFAULT_CAD_PREF_USER);
 					$sqlParams[1] = $item['volumeID'];
-					$sqlParams[2] = json_encode($item['ruleset']);
-					$sqlParams[3] = $item['modality'];
+					$sqlParams[2] = isset($item['label']) ? $item['label'] : "";
+					$sqlParams[3] = json_encode($item['ruleset']);
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
 				}
 			}
 
 			// Set plugin_user_preference
-			if(isset($data['DefalutUserPreference']))
+			if(isset($data['defalutUserPreference']))
 			{
 				$sqlParams = array($pluginID, $DEFAULT_CAD_PREF_USER);
 
-				foreach($data['DefalutUserPreference'] as $item)
+				foreach($data['defalutUserPreference'] as $item)
 				{
 					$sqlStr = 'INSERT INTO plugin_user_preference(plugin_id, user_id, "key", "value")'
 							. 'VALUES (?, ?, ?, ?)';
@@ -220,11 +220,11 @@ if(!$errorFlg)
 					. " research_type, target_plugin_name, target_version_min, target_version_max,"
 					. " time_limit, result_table) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 			$sqlParams = array($pluginID, $maxLabelOrder,
-								$data['ResearchDefinition']['ResearchType'],
-								$data['ResearchDefinition']['TargetPluginName'],
-								$data['ResearchDefinition']['TargetVersionMin'],
-								$data['ResearchDefinition']['TargetVersionMax'],
-								$data['ResearchDefinition']['TimeLimit'],
+								$data['researchDefinition']['researchType'],
+								$data['researchDefinition']['targetPluginName'],
+								$data['researchDefinition']['targetVersionMin'],
+								$data['researchDefinition']['targetVersionMax'],
+								$data['researchDefinition']['timeLimit'],
 								$resultTableName);
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
@@ -233,7 +233,7 @@ if(!$errorFlg)
 		//----------------------------------------------------------------------------------------------------
 		// Create result table
 		//----------------------------------------------------------------------------------------------------
-		if(isset($data['ResultTable']))
+		if(isset($data['resultTable']))
 		{
 			$message .= 'Create result table<br/>';
 			
@@ -243,7 +243,7 @@ if(!$errorFlg)
 					. 'job_id INT NOT NULL,'
 					. 'sub_id SMALLINT NOT NULL,';
 
-			foreach($data['ResultTable']['column'] as $item)
+			foreach($data['resultTable']['column'] as $item)
 			{
 				switch($item['type'])
 				{
@@ -292,7 +292,7 @@ if(!$errorFlg)
 		//----------------------------------------------------------------------------------------------------
 		// Create score table
 		//--------------------------------------------------------------------------------------------------
-		if(isset($data['ScoreTable']))
+		if(isset($data['scoreTable']))
 		{
 			$message .= 'Create score table<br/>';
 
@@ -302,7 +302,7 @@ if(!$errorFlg)
 					. 'fb_id  INT NULL,'
 					. 'sub_id SMALLINT NOT NULL,';
 
-			foreach($data['ScoreTable']['column'] as $item)
+			foreach($data['scoreTable']['column'] as $item)
 			{
 				switch($item['type'])
 				{
@@ -360,7 +360,7 @@ if(!$errorFlg)
 
 		foreach($processMachineList as $item)
 		{
-			if(!($item['architecture'] == 'x86' && $data['Architecture'] == 'x64'))
+			if(!($item['architecture'] == 'x86' && $data['architecture'] == 'x64'))
 			{
 				$sqlStr = "INSERT INTO process_machine_installed_plugins"
 						. "(pm_id, plugin_id, exec_enabled, priority)"
