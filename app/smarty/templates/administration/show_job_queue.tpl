@@ -116,7 +116,7 @@ $(function () {
 		<input type="button" id="refresh-button" class="form-btn" value="Refresh" />
 	</div>
 
-	<h3>Reset job queue</h3>
+	{*<h3>Reset job queue</h3>
 	<div id="resetQueue">
 		<table>
 			<tbody>
@@ -126,7 +126,7 @@ $(function () {
 				</tr>
 			</tbody>
 		</table>
-	</div>
+	</div>*}
 </form>
 
 {include file="footer.tpl"}
