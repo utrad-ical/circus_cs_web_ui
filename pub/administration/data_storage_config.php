@@ -141,25 +141,21 @@
 			{
 				$newPath = (realpath($newPath) == "") ? $newPath : realpath($newPath);
 
-				if(dirname($newPath) != "." && !is_dir($newPath))
+				if(is_dir($newPath))
 				{
-					if(mkdir($newPath) == FALSE)
-					{
-						$message = '<span style="color:#ff0000;"> Fail to create directory: ' . $newPath . '</span>';
-					}
-
 					if($newType == 1 && $message == "&nbsp;")
 					{
 						if(mkdir($newPath.$DIR_SEPARATOR."tmp") == FALSE)
 						{
-							rmdir($newPath);
-							$message = '<span style="color:#ff0000;"> Fail to create directory: ' . $newPath . $DIR_SEPARATOR . 'tmp</span>';
+							//rmdir($newPath);
+							$message = '<span style="color:#ff0000;"> Fail to create directory: '
+										. htmlspecialchars($newPath) . $DIR_SEPARATOR . 'tmp</span>';
 						}
 					}
 				}
 				else
 				{
-					$message = '<span style="color:#ff0000;"> Error: Illegal path (' . $newPath . ')</span>';
+					$message = '<span style="color:#ff0000;"> Error: ' . $newPath . ' does not exist</span>';
 				}
 			}
 
