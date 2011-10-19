@@ -240,17 +240,32 @@ class ExecutePluginAction extends ApiAction
 
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
-						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user, executed_at)"
-						. " VALUES (?, ?, ?, ?, 1, ?, ?)";
+						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user,"
+						. " ordered_at, started_at, executed_at)"
+						. " VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)";
+				$sqlParams = array($jobID,
+								$pluginID,
+								$storageID,
+								$policyID,
+								$userID,
+								$dstData['registeredAt'],
+								$dstData['registeredAt'],
+								$dstData['registeredAt']);
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($jobID, $pluginID, $storageID, $policyID, $userID, $dstData['registeredAt']));
+				$stmt->execute($sqlParams);
 
 				// Register into "job_queue"
 				$sqlStr = "INSERT INTO job_queue"
 						. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
 						. " VALUES (?, ?, ?, 1, ?, ?, ?)";
+				$sqlParams = array($jobID,
+								$pluginID,
+								$priority,
+								$userID,
+								$dstData['registeredAt'],
+								$dstData['registeredAt']);
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($jobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
+				$stmt->execute($sqlParams);
 
 				// Register into executed_series_list and job_queue_series
 				for($i=0; $i<$seriesNum; $i++)
