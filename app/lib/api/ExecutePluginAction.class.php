@@ -241,7 +241,7 @@ class ExecutePluginAction extends ApiAction
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
 						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user,"
-						. " ordered_at, started_at, executed_at)"
+						. " registered_at, started_at, executed_at)"
 						. " VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)";
 				$sqlParams = array($jobID,
 								$pluginID,
