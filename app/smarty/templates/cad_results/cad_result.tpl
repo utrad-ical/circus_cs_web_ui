@@ -17,9 +17,7 @@ js/jquery.imageviewer.js
 circus.jobID = {$cadResult->job_id};
 circus.userID = "{$smarty.session.userID|escape:javascript}";
 circus.cadresult.displays = {$displays|@json_encode};
-circus.cadresult.studyUID = "{$series->Study->study_instance_uid|escape:javascript}";
-circus.cadresult.seriesUID = "{$series->series_instance_uid|escape:javascript}";
-circus.cadresult.seriesNumImages = {$series->image_number|escape:javascript};
+circus.cadresult.seriesList = {$seriesList|@json_encode};
 circus.cadresult.presentation = {$presentationParams|@json_encode};
 circus.cadresult.attributes = {$attr|@json_encode};
 circus.feedback.initdata = {$feedbacks|@json_encode};

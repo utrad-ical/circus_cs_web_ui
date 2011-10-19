@@ -164,6 +164,21 @@ function show_cad_results($jobID, $feedbackMode) {
 	if ($user->anonymize || !$user->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
 		Patient::$anonymizeMode = true;
 
+	$seriesList = array();
+	foreach ($cadResult->ExecutedSeries as $es)
+	{
+		// var_dump($es);
+		$series = $es->Series;
+		$vid = (int)($es->volume_id);
+		$seriesList[$vid] = array(
+			'volumeID' => $vid,
+			'studyUID' => $series->Study->study_instance_uid,
+			'seriesUID' => $series->series_instance_uid,
+			'numImages' => $series->image_number
+		);
+	}
+	ksort($seriesList, SORT_NUMERIC);
+
 	$smarty->assign(array(
 		'noFeedback' => $noFeedback,
 		'feedbackMode' => $feedbackMode,
@@ -176,6 +191,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'displays' => $cadResult->getDisplays(),
 		'attr' => $cadResult->getAttributes(),
 		'series' => $cadResult->Series[0],
+		'seriesList' => $seriesList,
 		'displayPresenter' => $displayPresenter,
 		'feedbackListener' => $feedbackListener,
 		'presentationParams' => $presentationParams,

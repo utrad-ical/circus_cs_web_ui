@@ -16,18 +16,18 @@ $(function() {
 			};
 		}
 
+		var pSeries = circus.cadresult.seriesList[0]; // primary series
 		var minImg = 1;
-		if (circus.cadresult.attributes.start_img_num)
-			minImg = Number(circus.cadresult.attributes.start_img_num);
-
-		var maxImg = circus.cadresult.seriesNumImages;
-		if (circus.cadresult.attributes.end_img_num)
-			maxImg = Number(circus.cadresult.attributes.end_img_num);
+		if ('start_img_num' in circus.cadresult.attributes)
+			minImg = parseInt(circus.cadresult.attributes.start_img_num);
+		var maxImg = pSeries.numImages;
+		if ('end_img_num' in circus.cadresult.attributes)
+			maxImg = parseInt(circus.cadresult.attributes.end_img_num);
 
 		var range = circus.cadresult.presentation.displayPresenter.scrollRange;
 
 		var options = {
-			source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
+			source: new DicomDynamicImageSource(pSeries.seriesUID, '../'),
 			index: display.location_z,
 			min: Math.max(minImg, display.location_z - range),
 			max: Math.min(maxImg, display.location_z + range),

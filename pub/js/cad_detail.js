@@ -32,16 +32,17 @@ $(function() {
 		ww = presets[0].ww;
 	}
 
+	var pSeries = circus.cadresult.seriesList[0]; // primary series
 	var minImg = 1;
-	if (circus.cadresult.attributes.start_img_num)
-		minImg = Number(circus.cadresult.attributes.start_img_num);
+	if ('start_img_num' in circus.cadresult.attributes)
+		minImg = parseInt(circus.cadresult.attributes.start_img_num);
+	var maxImg = pSeries.numImages;
+	if ('end_img_num' in circus.cadresult.attributes)
+		maxImg = parseInt(circus.cadresult.attributes.end_img_num);
 
-	var maxImg = circus.cadresult.seriesNumImages;
-	if (circus.cadresult.attributes.end_img_num)
-		maxImg = Number(circus.cadresult.attributes.end_img_num);
 
 	var viewer = $('#cad-detail-viewer').imageviewer({
-		source: new DicomDynamicImageSource(circus.cadresult.seriesUID, '../'),
+		source: new DicomDynamicImageSource(pSeries.seriesUID, '../'),
 		min: minImg,
 		max: maxImg,
 		markers: markers,
