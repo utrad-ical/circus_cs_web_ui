@@ -1,18 +1,22 @@
 $(function () {
-	var sort = circus.cadresult.presentation.extensions.BlockSorter;
-	if (sort.defaultKey && (sort.defaultOrder == 'asc' || sort.order == 'desc'))
+	var sort = circus.cadresult.presentation.extensions.BlockSorter.initials;
+	circus.cadresult.sortBlocks(sort.key, sort.order);
+
+	var areas = $('.sorter-area');
+	updateElement(sort.key, sort.order);
+
+	$('input, select', areas).change(function() {
+		var target = $(event.target).closest('.sorter-area');
+		var key = $('select[name=sortKey]', target).val();
+		var order = $('input[name=sortOrder]:checked', target).val();
+		circus.cadresult.sortBlocks(key, order);
+		updateElement(key, order);
+	});
+
+	function updateElement(key, order)
 	{
-		circus.cadresult.sortBlocks(sort.defaultKey, sort.defaultOrder);
-	}
-	if ($('#sorterArea'))
-	{
-		$('#sorterArea select[name=sortKey]').val(sort.defaultKey);
-		$('#sorterArea input[name=sortOrder]').val([sort.defaultOrder]);
-		$('#sorterArea input, #sorterArea select').change(function() {
-			var key = $('#sorterArea select[name=sortKey]').val();
-			var order = $('#sorterArea input[name=sortOrder]:checked').val();
-			circus.cadresult.sortBlocks(key, order);
-		});
+		$('select[name=sortKey]', areas).val(key);
+		$('input[name=sortOrder]', areas).val([order]);
 	}
 });
 
