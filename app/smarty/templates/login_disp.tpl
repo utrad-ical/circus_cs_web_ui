@@ -14,7 +14,7 @@
 $(function()
 {
 	// Detecting IE7 or below
-	if ($.browser.msie && $.browser.version < 8)
+	if ($.browser.msie && $.browser.version < 8 || !JSON)
 	{
 		$("#messageArea").text("Your browser is not supported.");
 		$("#mode").attr("disabled", "disabled");

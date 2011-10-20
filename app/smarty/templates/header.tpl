@@ -29,7 +29,6 @@ Parameters:
 <link href="{$root}css/import.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="{$root}jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="{$root}js/circus-common.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}js/json2.min.js"></script>
 
 <link rel="shortcut icon" href="{$root}favicon.ico" />
 <link href="{$root}css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
