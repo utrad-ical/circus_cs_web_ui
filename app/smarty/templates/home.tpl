@@ -67,9 +67,4 @@
 	<div class="fl-r"></div>
 {/if}
 
-<h2>Help</h2>
-<div class="help mb20">
-	<a href="manual/CIRCUS-CS1.0RC2_SimpleManual.pdf">Simple manual (in Japanese)</a> is available (PDF format, 2.2 MByte).
-</div>
-
 {include file="footer.tpl"}
