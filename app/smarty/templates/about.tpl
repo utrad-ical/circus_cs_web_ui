@@ -64,13 +64,10 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 <ul>
 	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI
 	<li>DICOM storage server: DCMTK 3.6.0, PostgreSQL
-	<li>External application for research function: R 2.13.1, gnuplot 4.4
+	<li>External application for research function: R 2.13.2, gnuplot 4.4
 </ul>
 
-<p>Currently, Win32 version is released. Win64 version and UNIX version will be available in the near future. </p>
-
-<p>CIRCUS CS is a software free to download, free to use, and free to re-distribute (all for non-commercial use).
-A plug-in development kit will be released in the winter 2011.</p>
+<p>Currently, Win32 and Win64 versions are released. UNIX version will be available in the near future. </p>
 
 <h3>Developer team:</h3>
 <dl class="developers">
