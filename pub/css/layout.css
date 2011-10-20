@@ -121,6 +121,7 @@ h1 img {
 	width: 32px;
 	font-size: 12px;
 	line-height: 12px;
+	text-indent: 0;
 }
 
 #menu .jq-btn-today .day {
@@ -131,6 +132,7 @@ h1 img {
 	font-size: 16px;
 	line-height: 16px;
 	color: white;
+	text-indent: 0;
 }
 
 /* =================================================
@@ -296,6 +298,7 @@ table.search-tbl th, table.search-tbl td {
 	margin:0;
 	outline:0;
 	overflow:hidden;
+	text-indent: 200px;
 	width: 197px;
 	height: 49px;
 }
