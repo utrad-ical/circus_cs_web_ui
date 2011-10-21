@@ -130,17 +130,32 @@ try
 		
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
-						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user, executed_at)"
-						. " VALUES (?, ?, ?, ?, 1, ?, ?)";
+						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user,"
+						. " registered_at, started_at, executed_at)"
+						. " VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?)";
+				$sqlParams = array($newJobID,
+								$pluginID,
+								$storageID,
+								$policyID,
+								$userID,
+								$dstData['registeredAt'],
+								$dstData['registeredAt'],
+								$dstData['registeredAt']);
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($newJobID, $pluginID, $storageID, $policyID, $userID, $dstData['registeredAt']));
+				$stmt->execute($sqlParams);
 
 				// Register into "job_queue"
 				$sqlStr = "INSERT INTO job_queue"
 						. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
 						. " VALUES (?, ?, ?, 1, ?, ?, ?)";
+				$sqlParams = array($newJobID,
+								$pluginID,
+								$priority,
+								$userID,
+								$dstData['registeredAt'],
+								$dstData['registeredAt']);
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute(array($newJobID, $pluginID, $priority, $userID, $dstData['registeredAt'], $dstData['registeredAt']));
+				$stmt->execute($sqlParams);				
 
 				// Register into executed_research_targets and job_queue_research_targets
 				for($i=0; $i<$cadNum; $i++)
