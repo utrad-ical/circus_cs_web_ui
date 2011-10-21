@@ -1,6 +1,6 @@
 <?php
 
-	$CIRCUS_CS_VERSION = "2.1";
+	$CIRCUS_CS_VERSION = "2.1 beta";
 
 	//-------------------------------------------------------------------------------------------------------
 	// Define directories, commands, etc.
