@@ -400,7 +400,8 @@
 				{
 					$ruleSet = json_decode($result['ruleset'], true);
 
-					if($ret = $seriesFilter->processRuleSets($seriesData, $ruleSet))
+					if(is_array($ruleSet) &&
+						(count($ruleSet) == 0 || $seriesFilter->processRuleSets($seriesData, $ruleSet)))
 					{
 						$cadColSettings[$cadNum][0] = $result['plugin_name'];
 						$cadColSettings[$cadNum][1] = $result['version'];
