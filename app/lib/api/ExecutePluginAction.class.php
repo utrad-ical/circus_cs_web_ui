@@ -116,7 +116,15 @@ class ExecutePluginAction extends ApiAction
 				$ruleset = $r['ruleset'];
 				$rulearr = json_decode($ruleset, true);
 
-				$ret = $filter->processRuleSets($series_data, $rulearr);
+				if (is_array($rulearr))
+				{
+					if (count($rulearr) > 0)
+						$ret = $filter->processRuleSets($series_data, $rulearr);
+					else
+						$ret = array('start_img_num' => 0, 'end_img_num' => 0, 'required_private_tags' => '');
+				}
+				else
+					$ret = null;
 
 				if ($ret) {
 					$retrule[] = $ret;
