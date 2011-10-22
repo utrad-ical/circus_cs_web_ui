@@ -158,7 +158,7 @@ class Auth
 		),
 		array (
 			self::DATA_DELETE,
-			'(Not implemented) Can delete series/patient/study data.'
+			'Can delete series/patient/study data.'
 		),
 		array (
 			self::MENU_SHOW,
