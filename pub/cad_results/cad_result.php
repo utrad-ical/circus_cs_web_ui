@@ -161,7 +161,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	}
 	$requiringFiles = array_unique($requiringFiles); // keys preserved
 
-	if ($user->anonymize || !$user->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
+	if ($user->anonymized || !$user->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
 		Patient::$anonymizeMode = true;
 
 	$seriesList = array();

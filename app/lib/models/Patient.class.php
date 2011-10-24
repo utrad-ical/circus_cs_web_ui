@@ -24,7 +24,7 @@ class Patient extends Model
 	 */
 	public function age()
 	{
-		return CalcAge($this->birth_date, date('Ymd'));
+		return CalcAge($this->_data['birth_date'], date('Ymd'));
 	}
 
 	public function __get($key)

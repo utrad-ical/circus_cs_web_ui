@@ -53,6 +53,10 @@ try
 	if(!is_dir($seriesDir))
 		throw new Exception('Series directory does not exist.');
 
+	// Enter anonymization mode
+	if ($currentUser->anonymized || !$currentUser->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
+		Patient::$anonymizeMode = true;
+
 	// Viewer initialization
 	$data['viewer'] = array(
 		'min' => max(1, $series->min_image_number),
