@@ -90,7 +90,7 @@ $(function() {
 				</tr>
 				<tr>
 					<th><span class="trim01">Age</span></th>
-					<td>{$patient->age()|escape}</td>
+					<td>{$study->age|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Study ID</span></th>
