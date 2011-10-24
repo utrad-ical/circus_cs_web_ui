@@ -5,10 +5,10 @@
 		{if $currentUser->hasPrivilege('listSearch')}
 		<li>
 			<a href="{$params.toTopDir}{if $currentUser->today_disp == 'series'}series_list{else}cad_log{/if}.php?mode=today"
-			class="jq-btn jq-btn-today" title="today">today
+			class="jq-btn jq-btn-today" title="today">
 			<div class="month"></div>
 			<div class="day"></div>
-			</a>
+			today</a>
 		</li>
 		<li><a href="{$params.toTopDir}search.php" class="jq-btn jq-btn-search" title="search">search</a></li>
 		{/if}
