@@ -83,7 +83,7 @@ function CreateSeriesList()
 				tableHtml += '<tr';
 				if(i%2==1)  tableHtml += ' class="column"';
 				tableHtml += '><td>' + (i+1) + '</td>'
-					+  '<td>' + data[i].study_id + '</td>'
+					+  '<td>' + data[i].patient_id + 'A</td>'
 					+ '<td>' + data[i].series_number + '</td>'
 					+ '<td>' + data[i].series_date + '</td>'
 					+ '<td>' + data[i].series_time + '</td>'
