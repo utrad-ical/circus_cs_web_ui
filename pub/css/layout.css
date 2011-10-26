@@ -714,6 +714,10 @@ span.register-not-ok {
 
 .ui-daterange option.ui-daterange-stripe { background-color: #eee; }
 
+.ui-daterange.ui-state-disabled {
+	opacity: 1;
+}
+
 /* ===================================================
 	TABLE
  =================================================== */

@@ -217,6 +217,18 @@ $.widget('ui.daterange', {
 			case 'dateFormat':
 				this._create();
 				break;
+			case 'disabled':
+				if (value)
+				{
+					this.kindSelect.prop('disabled', true);
+					this.from.prop('disabled', true).datepicker('disable')
+					this.to.prop('disabled', true).datepicker('disable');
+				}
+				else
+				{
+					$(this.kindSelect).prop('disabled', false).change();
+				}
+				break;
 		}
 	}
 });
