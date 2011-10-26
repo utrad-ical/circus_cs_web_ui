@@ -183,6 +183,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'noFeedback' => $noFeedback,
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
+		'avail_pfb' => $avail_pfb,
 		'avail_cfb' => $avail_cfb,
 		'avail_cfb_reason' => $avail_cfb_reason,
 		'avail_pfb_reason' => $avail_pfb_reason,

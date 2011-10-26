@@ -23,6 +23,7 @@ circus.cadresult.attributes = {$attr|@json_encode};
 circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 circus.feedback.feedbackStatus = "{$feedbackStatus}";
+circus.feedback.personalFeedbackAvail = "{$avail_pfb}";
 circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 </script>
 
@@ -57,7 +58,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
   <div>
     <input type="hidden" name="jobID" value="{$cadResult->job_id|escape}" />
     <input type="radio" class="radio-to-button radio-to-button-l" name="feedbackMode" value="personal"
-      label="Personal Mode" title="{$avail_pfb_reason|escape}" />
+      label="Personal Mode" id="personal-mode" title="{$avail_pfb_reason|escape}" />
     <input type="radio" class="radio-to-button radio-to-button-l" name="feedbackMode" value="consensual"
       label="Consensual Mode" disabled="disabled" id="consensual-mode"
       title="{$avail_cfb_reason|escape}" />

@@ -117,15 +117,17 @@ class CadResult extends Model
 	 * @param User $user The user
 	 * @param string &$reason Outputs the reason why the specified feedback mode
 	 * is disabled or locked.
-	 * @return string 'normal', 'disabled', 'locked', or 'hidden'.
+	 * @return string 'normal', 'disabled', 'registered', or 'locked'.
 	 * The 'normal' status means the login user can input or see his feedback.
 	 * The 'disabled' status means the user can inspect the feedback
-	 * result, but you cannot enter or modify it. (But he may go back
-	 * to 'normal' status by unregistering)
+	 * result, but you cannot enter or modify it.
+	 * The 'registered' status means that feedback is already entered
+	 * (by himself for personal feedback or by anyone for consensual feedback).
 	 * The 'locked' status applies only for consensual feedback and
 	 * means that the user cannot enter the consensual mode.
 	 */
-	public function feedbackAvailability($feedbackMode = 'personal', User $user = null, &$reason)
+	public function feedbackAvailability($feedbackMode = 'personal',
+		User $user = null, &$reason)
 	{
 		$policy = $this->PluginResultPolicy;
 
@@ -145,7 +147,7 @@ class CadResult extends Model
 			$minfb = $policy->min_personal_fb_to_make_consensus;
 			if ($minfb > count($personal_feedback))
 			{
-				$reason = "You need at least $minfb feedback to enter consensual mode.";
+				$reason = "At least $minfb sets of feedback are needed to enter consensual mode.";
 				return 'locked';
 			}
 		}
@@ -157,6 +159,18 @@ class CadResult extends Model
 		// (4) Consensual feedback is already registered by someone.
 		$currentUser = Auth::currentUser();
 		$policy = $this->PluginResultPolicy;
+
+		if ($feedbackMode == 'personal' && count($my_personal_feedback))
+		{
+			$reason = 'Your personal feedback is already registered.';
+			return 'registered';
+		}
+		if (count($consensual_feedback))
+		{
+			$reason = 'The consensual feedback is already registered.';
+			return $feedbackMode == 'personal' ? 'disabled' : 'registered';
+		}
+
 		if ($feedbackMode == 'personal')
 		{
 			if (!$currentUser->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))
@@ -189,16 +203,6 @@ class CadResult extends Model
 				return 'disabled';
 			}
 		}
-		if ($feedbackMode == 'personal' && count($my_personal_feedback))
-		{
-			$reason = 'Your personal feedback is already registered.';
-			return 'disabled';
-		}
-		if (count($consensual_feedback))
-		{
-			$reason = 'The consensual feedback is already registered.';
-			return 'disabled';
-		}
 
 		return 'normal';
 	}
@@ -206,9 +210,9 @@ class CadResult extends Model
 	/**
 	 * Returns whether the user can unregister the feedback.
 	 * @param string $feedbackMode 'personal' or 'consensual'.
-	 * Please note there is no plant to unregister consensual feedback,
+	 * Please note there is no plan to unregister consensual feedback,
 	 * so this method always return false for consensual feedback.
-	 * @return bool $feedbackMode True if the user can unregister this
+	 * @return bool True if the user can unregister this
 	 * CAD result.
 	 */
 	public function feedbackUnregisterable($feedbackMode = 'personal')

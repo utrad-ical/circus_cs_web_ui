@@ -196,7 +196,7 @@ $(function(){
 	// Initialize the evaluator status.
 	circus.feedback.initialize();
 	circus.feedback.change();
-	if (circus.feedback.feedbackStatus == 'disabled')
+	if (circus.feedback.feedbackStatus != 'normal')
 	{
 		circus.feedback.disable();
 	}
@@ -263,6 +263,23 @@ $(function(){
 			return false;
 		});
 	}
+
+
+	function setModeIcon(status, target)
+	{
+		var className = '';
+		if (status == 'locked') className = 'ui-icon-locked';
+		if (status == 'registered') className = 'ui-icon-check';
+		if (status == 'disabled') className = 'ui-icon-close';
+		if (className)
+			$('<span>')
+				.addClass('ui-icon').addClass(className)
+				.css('display', 'inline-block')
+				.appendTo($(target).next('a'));
+	}
+	setModeIcon(circus.feedback.personalFeedbackAvail, '#personal-mode');
+	setModeIcon(circus.feedback.consensualFeedbackAvail, '#consensual-mode');
+
 
 	if (circus.feedback.consensualFeedbackAvail != 'locked')
 	{
