@@ -87,7 +87,7 @@ $(function() {
 			.daterange('option', 'toDate', srToDate);
 	}
 
-	if(mode == 'today')  $("#seriesSearch .srDateRange select").attr('disabled', 'disabled');
+	if(mode == 'today')  $("#seriesSearch .srDateRange").daterange('disable');
 
 });
 {/literal}

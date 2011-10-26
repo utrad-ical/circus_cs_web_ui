@@ -194,8 +194,7 @@ $(function() {
 
 	if(mode == 'today')
 	{
-		$("#cadSearch .cadDateRange select").attr('disabled', 'disabled');
-		$("#cadSearch .srDateRange select").attr('disabled', 'disabled');  // for HIMEDIC
+		$("#cadSearch .cadDateRange, #cadSearch .srDateRange").daterange('disable');
 	}
 
 });
