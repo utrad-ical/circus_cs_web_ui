@@ -180,7 +180,7 @@ class CadResult extends Model
 		{
 			if (!$currentUser->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_ENTER))
 			{
-				$reason = "You do not have privilege to give personal feedback.";
+				$reason = "You do not have privilege to give consensual feedback.";
 				return 'disabled';
 			}
 			if (!$policy->searchGroup($policy->allow_consensual_fb, $currentUser->Group))
