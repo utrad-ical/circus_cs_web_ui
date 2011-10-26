@@ -691,6 +691,10 @@ span.register-not-ok {
 	background: #adadad;
 }
 
+.ui-imageviewer.ui-state-disabled {
+	opacity: 1;
+}
+
 /* ===================================================
 	jQuery DATA RANGE PLUGIN
  =================================================== */

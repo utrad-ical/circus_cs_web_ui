@@ -85,6 +85,8 @@ $.widget('ui.imageviewer', {
 		if (this.options.useWheel && img.mousewheel)
 		{
 			stage.mousewheel(function (event, delta) {
+				if (self.options.disabled)
+					return;
 				self.step(delta > 0 ? -1 : 1);
 				return false; // supress browser scroll
 			})
@@ -413,6 +415,13 @@ $.widget('ui.imageviewer', {
 			case 'source':
 				this._initialized = false;
 				this._create();
+				break;
+			case 'disabled':
+				this.element.find('.ui-imageviewer-slider').slider('option', 'disabled', value);
+				this.element.find(
+					'.updown button, .ui-imageviewer-grayscale-preset select'
+				).prop('disabled', value);
+				break;
 		}
 	}
 });
