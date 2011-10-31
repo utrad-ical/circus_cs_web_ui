@@ -268,9 +268,9 @@ $(function(){
 	function setModeIcon(status, target)
 	{
 		var className = '';
-		if (status == 'locked') className = 'ui-icon-locked';
+		if (status == 'locked') className = 'ui-icon-circle-minus';
 		if (status == 'registered') className = 'ui-icon-check';
-		if (status == 'disabled') className = 'ui-icon-close';
+		if (status == 'disabled') className = 'ui-icon-locked';
 		if (className)
 			$('<span>')
 				.addClass('ui-icon').addClass(className)
