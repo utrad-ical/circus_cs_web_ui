@@ -76,9 +76,9 @@ try
 						. " AND sm.storage_id=sr.storage_id";
 				$seriesParams = DBConnector::query($sqlStr, $idSet['job_id'], 'ARRAY_ASSOC');
 
-				$sqlStr = "SELECT location_x as x, location_y as y, location_z as z"
-						. " FROM " . $pluginParams['result_table']
-						. " WHERE job_id=? AND sub_id=?";
+				$sqlStr = 'SELECT location_x as x, location_y as y, location_z as z'
+						. ' FROM "' . $pluginParams['result_table'] . '"'
+						. ' WHERE job_id=? AND sub_id=?';
 				$candPos = DBConnector::query($sqlStr, array($idSet['job_id'], $idSet['candidate_id']), 'ARRAY_ASSOC');
 
 				$sqlStr = "SELECT key, value FROM executed_plugin_attributes WHERE job_id=?";
