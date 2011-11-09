@@ -295,8 +295,6 @@ function ChangeOrderOfCADList(orderCol, orderMode)
 		params.cadTimeTo   = $("#hiddenCadTimeTo").val();
 	}
 
-	alert($.param(params));
-
 	location.href = 'cad_log.php?' + $.param(params);
 }
 //--------------------------------------------------------------------------------------------------
