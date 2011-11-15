@@ -495,7 +495,7 @@
 		{
 			$condition = ($params['filterFN'] == "with") ? '>=1' : '=0';
 
-			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM feedback_list fl, fn_location fn"
+			$tmpCond = "el.job_id IN (SELECT DISTINCT job_id FROM feedback_list fl, fn_count fn"
 					 . " WHERE fn.fb_id=fl.fb_id AND fl.status=1";
 
 			if($params['consensualFB'] == "entered")
@@ -506,7 +506,7 @@
 			{
 				$tmpCond .= " AND fl.is_consensual='f'";
 			}
-			$tmpCond .= " GROUP BY job_id HAVING MAX(false_negative_num)" .  $condition . ")";
+			$tmpCond .= " GROUP BY job_id HAVING MAX(fn_num)" .  $condition . ")";
 
 			$sqlCondArray[] = $tmpCond;
 			$addressParams['filterFN'] = $params['filterFN'];
