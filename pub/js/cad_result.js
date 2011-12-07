@@ -273,8 +273,7 @@ $(function(){
 		if (status == 'disabled') className = 'ui-icon-locked';
 		if (className)
 			$('<span>')
-				.addClass('ui-icon').addClass(className)
-				.css('display', 'inline-block')
+				.addClass('ui-icon mode-icon').addClass(className)
 				.appendTo($(target).next('a'));
 	}
 	setModeIcon(circus.feedback.personalFeedbackAvail, '#personal-mode');

@@ -480,6 +480,11 @@ table.detail-tbl th, table.detail-tbl td {
 	font-size: 110%;
 }
 
+.mode-icon {
+	display: inline-block !important;
+	vertical-align: text-bottom;
+}
+
 .result-record-2cols { /* Deprecated */
 	width:388px;
 	float:left;
