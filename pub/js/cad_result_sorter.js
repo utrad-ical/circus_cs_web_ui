@@ -5,7 +5,7 @@ $(function () {
 	var areas = $('.sorter-area');
 	updateElement(sort.key, sort.order);
 
-	$('input, select', areas).change(function() {
+	$('input, select', areas).change(function(event) {
 		var target = $(event.target).closest('.sorter-area');
 		var key = $('select[name=sortKey]', target).val();
 		var order = $('input[name=sortOrder]:checked', target).val();
