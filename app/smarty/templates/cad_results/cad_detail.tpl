@@ -43,6 +43,8 @@
 					<td class="volume">{$display.volume_size|string_format:"%.1f"|escape}</td>
 					<td class="confidence">{$display.confidence|string_format:"%.3f"|escape}</td>
 				</tr>
+				{foreachelse}
+				<tr><td colspan="6">{$presentationParams.displayPresenter.noResultMessage|escape}</td></tr>
 				{/foreach}
 			</tbody>
 		</table>

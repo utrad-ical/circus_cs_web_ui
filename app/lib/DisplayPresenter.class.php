@@ -37,7 +37,8 @@ class DisplayPresenter extends CadBlockElement
 	{
 		return array(
 			'caption' => 'Block Feedback',
-			'displayExtractType' => 'row'
+			'displayExtractType' => 'row',
+			'noResultMessage' => 'No Result.'
 		);
 	}
 
