@@ -57,8 +57,9 @@ class Feedback extends Model
 		$pdo->beginTransaction();
 		parent::save($data);
 
-		// insert block feedback
-		$listener->saveFeedback($this, $data['blockFeedback']);
+		// insert block feedback, unless using NullFeedbackListener
+		if (!($listener instanceof NullFeedbackListener))
+			$listener->saveFeedback($this, $data['blockFeedback']);
 
 		// insert additional feedback
 		$extensions = $cadResult->Plugin->presentation()->extensions();
@@ -82,7 +83,9 @@ class Feedback extends Model
 	{
 		$cadResult = $this->CadResult;
 		$listener = $cadResult->Plugin->presentation()->feedbackListener();
-		$this->blockFeedback = $listener->loadFeedback($this);
+
+		if (!($listener instanceof NullFeedbackListener))
+			$this->blockFeedback = $listener->loadFeedback($this);
 
 		$extensions = $cadResult->Plugin->presentation()->extensions();
 		$this->additionalFeedback = array();

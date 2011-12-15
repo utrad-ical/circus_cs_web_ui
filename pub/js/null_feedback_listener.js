@@ -15,11 +15,11 @@ circus.evalListener = (function() {
 		},
 		get: function (target)
 		{
-			// nothing to do
+			return null; // nothing to do
 		},
 		validate: function (target)
 		{
-			return true; // validation always succeeds
+			return { register_ok: true}; // validation always succeeds
 		},
 		disable: function (target)
 		{
