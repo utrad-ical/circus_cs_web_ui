@@ -80,30 +80,30 @@ try
 			. " WHERE cm.plugin_id=pm.plugin_id"
 			. " AND pm.plugin_name=? AND pm.version=?";
 	$plugin = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'ALL_ASSOC');
-	
+
 	if(count($plugin) != 1)
 	{
 		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not defined.');
 	}
-	else if($plugin[0]['type'] != 1)
+	if($plugin[0]['type'] != 1)
 	{
-		throw new Exception($params['cadName'].' ver.'.$params['version'].' is CAD plug-in.');
+		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not CAD plug-in.');
 	}
-	else if($plugin[0]['input_type'] < 0 || 2 < $plugin[0]['input_type'])
+	if($plugin[0]['input_type'] < 0 || 2 < $plugin[0]['input_type'])
 	{
 		throw new Exception('Input type is incorrect ('.$params['cadName'].' ver.'.$params['version'].')');
 	}
-	else if(!$plugin[0]['exec_enabled'])
+	if(!$plugin[0]['exec_enabled'])
 	{
 		throw new Exception($params['cadName'] . ' ver.' . $params['version'] . ' is not allowed to execute.');
 	}
-	
+
 	$params['pluginID']  = $plugin[0]['plugin_id'];
 	$params['inputType'] = $plugin[0]['input_type'];
 	$params['mode'] = 'confirm';
 
 	$seriesUIDStr = $seriesUIDArr[0];
-	
+
 	if($params['inputType'] != 0)
 	{
 		$defaultSelectedSrUID = array();
@@ -117,14 +117,14 @@ try
 		$seriesList[0][0][4] = $result['series_time'];
 		$seriesList[0][0][5] = $result['image_number'];
 		$seriesList[0][0][6] = $result['series_description'];
-		
+
 		// Get the number of required series
 		$sqlStr = "SELECT DISTINCT volume_id FROM plugin_cad_series WHERE plugin_id=? ORDER BY volume_id ASC";
 		$volumeIdList = DBConnector::query($sqlStr, array($params['pluginID']), 'ALL_COLUMN');
 
 		$seriesNum = count($volumeIdList);
 		$seriesFilter = new SeriesFilter();
-		
+
 		$selectedSrNumArr = array_fill(0, $seriesNum, 0);
 
 		for($k=0; $k<$seriesNum; $k++)
@@ -137,7 +137,7 @@ try
 
 			if(count($ruleList) <= 0)
 			{
-				throw new Exception("Ruleset for series " . $k+1 . " is not found.");
+				throw new Exception("Ruleset for volume " . ($k+1) . " is not found.");
 			}
 			else // TODO: show ruleset from JSON
 			{
@@ -145,7 +145,7 @@ try
 				{
 					$ruleSet = json_decode($r['ruleset'], true);
 					$seriesFilterNumArr[$k] = 0;
-					
+
 					foreach($ruleSet as $rules)
 					{
 						$ruleFilterGroup = $rules['filter']['group'];
@@ -155,7 +155,7 @@ try
 
 						foreach($ruleFilterMembers as $ruleFilter)
 						{
-							
+
 							if($ruleFilter['key'] == 'modality')
 							{
 								$modalityArr[$k] = $ruleFilter['value'];
@@ -177,7 +177,7 @@ try
 			{
 				// Get series join list
 				$s = new SeriesJoin();
-				
+
 				if($params['inputType'] == 1)
 				{
 					$sdata = $s->find(array("study_instance_uid" => $params['studyInstanceUID']));
@@ -186,7 +186,7 @@ try
 				{
 					$sdata = $s->find(array("patient_id" => $params['patientID']));
 				}
-				
+
 			    $matchedSrCnt = 0;
 
 				for($j = 0; $j < count($sdata); $j++)
@@ -212,7 +212,7 @@ try
 								if($matchedSrCnt == 0) $defaultSelectedSrUID[$k] = $seriesData['series_instance_uid'];
 								$matchedSrCnt++;
 							}
-						
+
 							if($seriesData['series_instance_uid'] != $defaultSelectedSrUID[0])
 							{
 								$seriesList[$k][$selectedSrNumArr[$k]][0] = $seriesData['series_instance_uid'];
@@ -235,7 +235,7 @@ try
 				}
 			}
 		} // end for: $k
-		
+
 		if($params['mode'] != 'error')
 		{
 			for($k=1; $k<$seriesNum; $k++)
@@ -251,8 +251,8 @@ try
 			$numSelectedSrStr = implode('^', $selectedSrNumArr);
 		}
 	}
-	
-	if($_SESSION['anonymizeFlg'] == 1)
+
+	if(!Auth::currentUser()->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
 	{
 		$params['patientID']   = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
 		$params['patientName'] = PinfoScramble::scramblePtName();
@@ -276,19 +276,14 @@ try
 	//--------------------------------------------------------------------------------------------------------------
 	$smarty->assign('seriesList', $seriesList);
 	$smarty->assign('seriesNum',  $seriesNum);
-
 	$smarty->assign('seriesUIDStr',         $seriesUIDStr);
 	$smarty->assign('selectedSrNumArr',     $selectedSrNumArr);
 	$smarty->assign('numSelectedSrStr',     $numSelectedSrStr);
-	
 	$smarty->assign('selectedSrStr',        $selectedSrStr);
 	$smarty->assign('defaultSelectedSrUID', $defaultSelectedSrUID);
-	
 	$smarty->assign('modalityArr',          $modalityArr);
-	
 	$smarty->assign('seriesFilterArr',      $seriesFilterArr);
 	$smarty->assign('seriesFilterNumArr',   $seriesFilterNumArr);
-
 	$smarty->assign('policyArr',            $policyArr);
 	//--------------------------------------------------------------------------------------------------------------
 
