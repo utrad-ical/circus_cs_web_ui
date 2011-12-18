@@ -118,7 +118,7 @@ function CheckSeries()
 			for(var j=1; j<=numSelectedSeries[k-1]; j++)
 			{
 				$('#checkbox' + k + '_' + j + ":checked").each(function()
-					{ 
+					{
 						selectFlg = 1;
 						seriesUID += '^' + this.value;
 					});
@@ -143,25 +143,19 @@ function CheckSeries()
 
 function RegistrationCADJob()
 {
+	var requestObj = {
+		auth: { type: "session", user: $('#userID').val() },
+		action: "InternalExecutePlugin",
+		params: {
+			pluginName: $('#cadName').val(),
+			pluginVersion: $('#version').val(),
+			seriesUID: $("#seriesUIDStr").val().split('^'),
+			resultPolicy: $('#cadResultPolicy').val()
+		}
+	};
 	$.post("../api/api.php",
-		{
-			"request":
-			'{'
-			+ '"auth":{'
-			+ '  "type":"session",'
-			+ '  "user":"'+$("#userID").val()+'"'
-			+ '},'
-			+ '"action":"InternalExecutePlugin",'
-			+ '"params":{'
-			+ '  "pluginName":"'+$("#cadName").val()+'",'
-			+ '  "pluginVersion":"'+$("#version").val()+'",'
-			+ '  "seriesUID":'+JSON.stringify($("#seriesUIDStr").val().split('^'))+','
-			+ '  "resultPolicy":"'+$("#cadResultPolicy").val()+'"'
-			+ '}'
-			+ '}'
-		},
+		{ request: JSON.stringify(requestObj) },
 		function(data){
-
 			$("#confirmation").attr("style", "display:none;");
 			$("#success .policyField").html($("#cadResultPolicy").val());
 
@@ -178,13 +172,13 @@ function RegistrationCADJob()
 				}
 				$("#registMessage").html(data.message);
 				$("#success .detail-tbl").prepend(htmlStr);
-				$("#success").removeAttr("style", "display:none;");
+				$("#success").show();
 			}
 			else
 			{
 				$("#errorMessage").html(data.error.message);
 				$("#errorDetail").html($("#successDetail").html());
-				$("#error").removeAttr("style", "display:none;");
+				$("#error").show();
 			}
 		},
 		"json"
@@ -231,9 +225,9 @@ $(function(){
 
 <div class="tab-content">
 	<form id="form1" name="form1" onsubmit="return false;">
-	<input type="hidden" id="userID"       value="{$params.userID}" />
-	<input type="hidden" id="cadName"      value="{$params.cadName}" />
-	<input type="hidden" id="version"      value="{$params.version}" />
+	<input type="hidden" id="userID"       value="{$params.userID|escape}" />
+	<input type="hidden" id="cadName"      value="{$params.cadName|escape}" />
+	<input type="hidden" id="version"      value="{$params.version|escape}" />
 	<input type="hidden" id="seriesUIDStr" value="{$seriesUIDStr|escape}" />
 
 	<div id="seriesSelect" style="display:none;">
@@ -250,15 +244,15 @@ $(function(){
 			<table class="detail-tbl">
 				<tr>
 					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$params.cadName} v.{$params.version}</td>
+					<td>{$params.cadName|escape} v.{$params.version|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Patient ID</span></th>
-					<td>{$params.patientID}</td>
+					<td>{$params.patientID|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Pateint name</span></th>
-					<td>{$params.patientName}</td>
+					<td>{$params.patientName|escape}</td>
 				</tr>
 			</table>
 		</div><!-- / .detail-panel END -->
@@ -287,11 +281,11 @@ $(function(){
 					{* ----- 1st series ----- *}
 					{if $k==0}
 						<tr>
-							<td>{$seriesList[0][0][1]}</td>
-							<td>{$seriesList[0][0][2]}</td>
-							<td>{$seriesList[0][0][3]}</td>
-							<td>{$seriesList[0][0][4]}</td>
-							<td>{$seriesList[0][0][5]}</td>
+							<td>{$seriesList[0][0][1]|escape}</td>
+							<td>{$seriesList[0][0][2]|escape}</td>
+							<td>{$seriesList[0][0][3]|escape}</td>
+							<td>{$seriesList[0][0][4]|escape}</td>
+							<td>{$seriesList[0][0][5]|escape}</td>
 							<td class="al-l">{$seriesList[0][0][6]}</td>
 						</tr>
 					{else}
@@ -303,11 +297,11 @@ $(function(){
 									<td align=center>
 										<input type="checkbox" id="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onclick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if $seriesList[$k][$j][0] == $defaultSelectedSrUID[$k]}checked="checked" {/if}/>
 									</td>
-									<td>{$seriesList[$k][$j][1]}</td>
-									<td>{$seriesList[$k][$j][2]}</td>
-									<td>{$seriesList[$k][$j][3]}</td>
-									<td>{$seriesList[$k][$j][4]}</td>
-									<td>{$seriesList[$k][$j][5]}</td>
+									<td>{$seriesList[$k][$j][1]|escape}</td>
+									<td>{$seriesList[$k][$j][2]|escape}</td>
+									<td>{$seriesList[$k][$j][3]|escape}</td>
+									<td>{$seriesList[$k][$j][4]|escape}</td>
+									<td>{$seriesList[$k][$j][5]|escape}</td>
 									<td class="al-l">{$seriesList[$k][$j][6]}</td>
 								</tr>
 							{/section}
@@ -337,22 +331,22 @@ $(function(){
 			<table class="detail-tbl">
 				<tr>
 					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$params.cadName} v.{$params.version}</td>
+					<td>{$params.cadName|escape} v.{$params.version|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Patient ID</span></th>
-					<td>{$params.patientID}</td>
+					<td>{$params.patientID|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Pateint name</span></th>
-					<td>{$params.patientName}</td>
+					<td>{$params.patientName|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Policy</span></th>
 					<td>
 						<select id="cadResultPolicy">
 							{foreach from=$policyArr item=item}
-							<option value="{$item.name}"{if $item.name=="default"} selected="selected"{/if}>{$item.name}</option>
+							<option value="{$item.name|escape}"{if $item.name=="default"} selected="selected"{/if}>{$item.name|escape}</option>
 							{/foreach}
 						</select>
 					</td>
@@ -395,19 +389,19 @@ $(function(){
 					</tr> -->
 					<tr>
 						<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
-						<td>{$params.userID}</td>
+						<td>{$params.userID|escape}</td>
 					</tr>
 					<tr>
 						<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-						<td>{$params.cadName} v.{$params.version}</td>
+						<td>{$params.cadName|escape} v.{$params.version|escape}</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Patient ID</span></th>
-						<td>{$params.patientID}</td>
+						<td>{$params.patientID|escape}</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Pateint name</span></th>
-						<td>{$params.patientName}</td>
+						<td>{$params.patientName|escape}</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Policy</span></th>
@@ -442,7 +436,7 @@ $(function(){
 		<h2>Error</h2>
 
 		<div id="errorMessage" style="color:#f00; font-weight:bold; margin-bottom:10px;">
-			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$params.cadName} v.{$params.version} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!{/if}&nbsp;&nbsp;
+			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$params.cadName|escape} v.{$params.version|escape} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!{/if}&nbsp;&nbsp;
 			<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" />
 		</div>
 
