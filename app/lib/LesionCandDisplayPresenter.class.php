@@ -18,7 +18,8 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			parent::defaultParams(),
 			array(
 				'caption' => 'Lesion Classification',
-				'scrollRange' => 5
+				'scrollRange' => 5,
+				'noResultMessage' => 'No lesion candidates found.'
 			)
 		);
 	}
