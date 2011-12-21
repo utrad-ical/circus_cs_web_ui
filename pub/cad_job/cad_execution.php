@@ -73,36 +73,31 @@ try
 	$params['patientName'] = $result['patient_name'];
 
 	// Check plugin
-	$sqlStr = "SELECT pm.plugin_id, pm.type, pm.exec_enabled, cm.input_type"
-			. " FROM plugin_master pm, plugin_cad_master cm"
-			. " WHERE cm.plugin_id=pm.plugin_id"
-			. " AND pm.plugin_name=? AND pm.version=?";
-	$plugin = DBConnector::query($sqlStr, array($params['cadName'], $params['version']), 'ALL_ASSOC');
+	$dum = new Plugin();
+	$plugin = $dum->find(array('plugin_name' => $params['cadName'], 'version' => $params['version']));
+	if (count($plugin) != 1)
+		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not installed.');
+	$plugin = $plugin[0];
+	if ($plugin->type != 1)
+		throw new Exception($plugin->fullName() . ' is not CAD plug-in.');
+	if(!$plugin->exec_enabled)
+		throw new Exception($plugin->fullName() . ' is not allowed to execute.');
 
-	if(count($plugin) != 1)
-	{
-		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not defined.');
-	}
-	if($plugin[0]['type'] != 1)
-	{
-		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not CAD plug-in.');
-	}
-	if($plugin[0]['input_type'] < 0 || 2 < $plugin[0]['input_type'])
-	{
-		throw new Exception('Input type is incorrect ('.$params['cadName'].' ver.'.$params['version'].')');
-	}
-	if(!$plugin[0]['exec_enabled'])
-	{
-		throw new Exception($params['cadName'] . ' ver.' . $params['version'] . ' is not allowed to execute.');
-	}
+	// Check CAD series input type
+	$input_type = DBConnector::query(
+		'SELECT input_type FROM plugin_cad_master WHERE plugin_id=?',
+		$plugin->plugin_id,
+		'SCALAR'
+	);
+	if (!is_int($input_type) || $input_type < 0 || 2 < $input_type)
+		throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
 
-	$params['pluginID']  = $plugin[0]['plugin_id'];
-	$params['inputType'] = $plugin[0]['input_type'];
+	$params['inputType'] = $input_type;
 	$params['mode'] = 'confirm';
 
 	$seriesUIDStr = $seriesUIDArr[0];
 
-	if($params['inputType'] != 0)
+	if($input_type != 0)
 	{
 		$defaultSelectedSrUID = array();
 		$defaultSelectedSrUID[0] = $seriesUIDArr[0];
@@ -118,7 +113,7 @@ try
 
 		// Get the number of required series
 		$sqlStr = "SELECT DISTINCT volume_id FROM plugin_cad_series WHERE plugin_id=? ORDER BY volume_id ASC";
-		$volumeIdList = DBConnector::query($sqlStr, array($params['pluginID']), 'ALL_COLUMN');
+		$volumeIdList = DBConnector::query($sqlStr, array($plugin->plugin_id), 'ALL_COLUMN');
 
 		$seriesNum = count($volumeIdList);
 		$seriesFilter = new SeriesFilter();
@@ -131,7 +126,7 @@ try
 			$sqlStr = "SELECT ruleset, volume_label FROM plugin_cad_series"
 					. " WHERE plugin_id=?"
 					. " AND volume_id=?";
-			$ruleList = DBConnector::query($sqlStr, array($params['pluginID'], $k), 'ALL_ASSOC');
+			$ruleList = DBConnector::query($sqlStr, array($plugin->plugin_id, $k), 'ALL_ASSOC');
 
 			if(count($ruleList) <= 0)
 				throw new Exception("Ruleset for volume ID $k is not found.");
@@ -244,6 +239,7 @@ try
 	//--------------------------------------------------------------------------------------------------------------
 	// Settings for Smarty
 	//--------------------------------------------------------------------------------------------------------------
+	$smarty->assign('plugin', $plugin);
 	$smarty->assign('seriesList', $seriesList);
 	$smarty->assign('seriesNum',  $seriesNum);
 	$smarty->assign('seriesUIDStr',         $seriesUIDStr);

@@ -237,8 +237,8 @@ ul.filters li { list-style-type: disc; }
 <div class="tab-content">
 	<form id="form1" name="form1" onsubmit="return false;">
 	<input type="hidden" id="userID"       value="{$params.userID|escape}" />
-	<input type="hidden" id="cadName"      value="{$params.cadName|escape}" />
-	<input type="hidden" id="version"      value="{$params.version|escape}" />
+	<input type="hidden" id="cadName"      value="{$plugin->plugin_name|escape}" />
+	<input type="hidden" id="version"      value="{$plugin->version|escape}" />
 	<input type="hidden" id="seriesUIDStr" value="{$seriesUIDStr|escape}" />
 
 	<div id="seriesSelect" style="display:none;">
@@ -255,7 +255,7 @@ ul.filters li { list-style-type: disc; }
 			<table class="detail-tbl">
 				<tr>
 					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$params.cadName|escape} v.{$params.version|escape}</td>
+					<td>{$plugin->fullName()|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Patient ID</span></th>
@@ -278,7 +278,7 @@ ul.filters li { list-style-type: disc; }
 				<li class="filter">{$ruleSet.filter|@json_encode|escape}</li>
 				{/foreach}
 			</ul>
-			<table id="selectTbl{$k+1}" class="col-tbl mb30" style="width: 100%;">
+			<table id="selectTbl{$k+1}" class="series-list col-tbl mb30" style="width: 100%;">
 				<thead>
 					<tr>
 						{if $k != 0}<th>&nbsp;</th>{/if}
@@ -344,7 +344,7 @@ ul.filters li { list-style-type: disc; }
 			<table class="detail-tbl">
 				<tr>
 					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$params.cadName|escape} v.{$params.version|escape}</td>
+					<td>{$plugin->fullName()|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Patient ID</span></th>
@@ -406,7 +406,7 @@ ul.filters li { list-style-type: disc; }
 					</tr>
 					<tr>
 						<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-						<td>{$params.cadName|escape} v.{$params.version|escape}</td>
+						<td>{$plugin->fullName()|escape}</td>
 					</tr>
 					<tr>
 						<th><span class="trim01">Patient ID</span></th>
@@ -449,7 +449,7 @@ ul.filters li { list-style-type: disc; }
 		<h2>Error</h2>
 
 		<div id="errorMessage" style="color:#f00; font-weight:bold; margin-bottom:10px;">
-			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$params.cadName|escape} v.{$params.version|escape} requires following series in the same {if $params.inputType == 1}series{else}patient{/if}!!{/if}&nbsp;&nbsp;
+			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$plugin->fullName()|escape} requires following series in the same {if $params.inputType == 1}study{else}patient{/if}!!{/if}&nbsp;&nbsp;
 			<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" />
 		</div>
 
