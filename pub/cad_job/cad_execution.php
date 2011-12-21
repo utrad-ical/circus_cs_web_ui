@@ -4,9 +4,7 @@ include_once("../common.php");
 Auth::checkSession();
 
 $seriesUIDArr = array();
-$modalityArr = array();
-$seriesFilterNumArr = array();
-$seriesFilterArr = array();
+$volumeInfo = array(); // keys: volume ID
 
 $smarty = new SmartyEx();
 
@@ -39,7 +37,7 @@ try
 			"options" => array("todaysSeries", "series"),
 			'default'  => "series",
 			'oterwise' => "series")
-		));
+	));
 
 	if($validator->validate($_GET))
 	{
@@ -49,7 +47,7 @@ try
 	}
 	else
 	{
-		throw new Exception (implode('<br/>', $validator->errors));
+		throw new Exception (implode("\n", $validator->errors));
 	}
 
 	$params['mode'] = '';
@@ -127,51 +125,23 @@ try
 
 		$selectedSrNumArr = array_fill(0, $seriesNum, 0);
 
-		for($k=0; $k<$seriesNum; $k++)
+		for($k=0; $k < $seriesNum; $k++)
 		{
 			// Get ruleset
-			$sqlStr = "SELECT ruleset FROM plugin_cad_series"
+			$sqlStr = "SELECT ruleset, volume_label FROM plugin_cad_series"
 					. " WHERE plugin_id=?"
 					. " AND volume_id=?";
 			$ruleList = DBConnector::query($sqlStr, array($params['pluginID'], $k), 'ALL_ASSOC');
 
 			if(count($ruleList) <= 0)
-			{
-				throw new Exception("Ruleset for volume " . ($k+1) . " is not found.");
-			}
-			else // TODO: show ruleset from JSON
-			{
-				foreach($ruleList as $r)
-				{
-					$ruleSet = json_decode($r['ruleset'], true);
-					$seriesFilterNumArr[$k] = 0;
+				throw new Exception("Ruleset for volume ID $k is not found.");
+			$r = $ruleList[0];
 
-					foreach($ruleSet as $rules)
-					{
-						$ruleFilterGroup = $rules['filter']['group'];
-						$ruleFilterMembers = $rules['filter']['members'];
-
-						$parsedRules = array();
-
-						foreach($ruleFilterMembers as $ruleFilter)
-						{
-
-							if($ruleFilter['key'] == 'modality')
-							{
-								$modalityArr[$k] = $ruleFilter['value'];
-							}
-							else
-							{
-								$parsedRules[] = $ruleFilter['key']
-												. $ruleFilter['condition']
-												. $ruleFilter['value'];
-							}
-						}
-						$seriesFilterArr[$k][$seriesFilterNumArr[$k]++] = implode(', ', $parsedRules)
-																		. ' (' . $ruleFilterGroup . ')';
-					}
-				}
-			}
+			$volumeInfo[$k] = array(
+				'id' => $k,
+				'label' => $r['volume_label'],
+				'ruleSetList' => json_decode($r['ruleset'], true)
+			);
 
 			if($k > 0)
 			{
@@ -281,17 +251,10 @@ try
 	$smarty->assign('numSelectedSrStr',     $numSelectedSrStr);
 	$smarty->assign('selectedSrStr',        $selectedSrStr);
 	$smarty->assign('defaultSelectedSrUID', $defaultSelectedSrUID);
-	$smarty->assign('modalityArr',          $modalityArr);
-	$smarty->assign('seriesFilterArr',      $seriesFilterArr);
-	$smarty->assign('seriesFilterNumArr',   $seriesFilterNumArr);
+	$smarty->assign('volumeInfo',           $volumeInfo);
 	$smarty->assign('policyArr',            $policyArr);
 	//--------------------------------------------------------------------------------------------------------------
 
-}
-catch(PDOException $e)
-{
-	$params['mode'] = 'error';
-	$params['errorMessage'] = $e->getMessage();
 }
 catch(Exception $e)
 {

@@ -1,3 +1,6 @@
+{capture name="require"}
+../js/series_ruleset.js
+{/capture}
 {capture name="extra"}
 <script type="text/javascript">
 <!--
@@ -199,6 +202,12 @@ $(function(){
 	{
 		$("#error").show();
 	}
+
+	$('.filter').each(function() {
+		var f = $(this);
+		var data = JSON.parse(f.text());
+		f.empty().append(circus.ruleset.stringifyNode(data));
+	});
 });
 -->
 </script>
@@ -206,10 +215,12 @@ $(function(){
 <style type="text/css">
 #seriesSelect .rowDisp   { color:#000; }
 #seriesSelect .rowHidden { color:#ccc; }
+ul.filters { margin: 0.5em 0 0.5em 2em; }
+ul.filters li { list-style-type: disc; }
 </style>
 {/literal}
 {/capture}
-{include file="header.tpl"
+{include file="header.tpl" require=$smarty.capture.require
 	head_extra=$smarty.capture.extra body_class="cad_execution"}
 
 <div class="tabArea">
@@ -233,7 +244,7 @@ $(function(){
 	<div id="seriesSelect" style="display:none;">
 
 		<h2>Series selection</h2>
-		<p class="mb10">Select DICOM series, and press the <span class="clr-blue fw-bold">[OK]</span>button after selection.</p>
+		<p class="mb10">Select DICOM series, and press the <span class="clr-blue fw-bold">[OK]</span> button after selection.</p>
 
 		<p class="mb10">
 			<input name="" type="button" value="OK"     class="w100 form-btn" onclick="CheckSeries();" />
@@ -261,10 +272,12 @@ $(function(){
 		{section name=k start=0 loop=$seriesNum}
 			{assign var="k" value=$smarty.section.k.index}
 
-			<h3 class="ptn02">Series {$k+1}:
-				<span style="font-weight: normal">({$modalityArr[$k]}{section name=j start=0 loop=$seriesFilterNumArr[$k]}, [{$seriesFilterArr[$k][$smarty.section.j.index]}]{/section})</span>
-			</h3>
-
+			<h3 class="ptn02">Volume {$k} {if $k==0}(Primary Volume){/if}{if $volumeInfo[$k].label}: {$volumeInfo[$k].label|escape}{/if}</h3>
+			<ul class="filters">
+				{foreach from=$volumeInfo[$k].ruleSetList item=ruleSet}
+				<li class="filter">{$ruleSet.filter|@json_encode|escape}</li>
+				{/foreach}
+			</ul>
 			<table id="selectTbl{$k+1}" class="col-tbl mb30" style="width: 100%;">
 				<thead>
 					<tr>
@@ -443,29 +456,28 @@ $(function(){
 		<div id="errorDetail">
 			<div class="detail-panel mb20">
 			{if $params.errorMessage == ""}
-				<table class="col-tbl mb30">
+				<table class="col-tbl">
 					<thead>
 						<tr>
-							<th>Series</th>
-							<th>Modality</th>
-							<th>Condition</th>
+							<th>Volume ID</th>
+							<th>Label</th>
+							<th>Filter</th>
 						</tr>
 					</thead>
 					<tbody>
-					{section name=j start=0 loop=$seriesNum}
-						{assign var="j" value=$smarty.section.j.index}
-
-						{section name=i start=0 loop=$seriesFilterNumArr[$j]}
-							{assign var="i" value=$smarty.section.i.index}
-							<tr>
-								{if $i==0}
-									<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$j+1}</td>
-									<td{if $seriesFilterNumArr[$j]>1} rowspan={$seriesFilterNumArr[$j]}{/if}>{$modalityArr[$j]}</td>
-								{/if}
-								<td class="al-l">{$seriesFilterArr[$j][$i]}</td>
-							</tr>
-						{/section}
-					{/section}
+					{foreach from=$volumeInfo item=vol}
+						<tr>
+							<td>{$vol.id}</td>
+							<td>{$vol.label|escape}</td>
+							<td class="al-l">
+								<ul class="filters">
+									{foreach from=$vol.ruleSetList item=ruleSet}
+									<li class="filter">{$ruleSet.filter|@json_encode|escape}</li>
+									{/foreach}
+								</ul>
+							</td>
+						</tr>
+					{/foreach}
 					</tbody>
 				</table>
 			{/if}
