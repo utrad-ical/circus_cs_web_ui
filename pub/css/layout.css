@@ -159,17 +159,6 @@ body.spot #content h2 {
 	color: #fff;
 	letter-spacing: 2px;
 }
-#content h3.ptn02 { /* H3 pattern 2 */
-	clear: both;
-	background-color: #fff;
-	padding-left: 0;
-	color: #000;
-	letter-spacing: 0;
-	border-bottom:2px solid #c9c9d7;
-}
-h3.ptn02 span {
-	font-weight: normal;
-}
 
 /*
 	tabArea

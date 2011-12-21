@@ -8,6 +8,9 @@ class Plugin extends Model
 {
 	protected static $_table = 'plugin_master';
 	protected static $_primaryKey = 'plugin_id';
+	protected static $_hasMany = array(
+		'PluginCadSeries' => array('key' => 'plugin_id')
+	);
 
 	protected $userPreference = array();
 

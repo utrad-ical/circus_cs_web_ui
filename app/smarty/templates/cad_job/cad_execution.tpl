@@ -4,217 +4,137 @@
 {capture name="extra"}
 <script type="text/javascript">
 <!--
-var mode = "{$params.mode|escape}";
-
 {literal}
-function ChangeCheckbox(sid, val)
-{
-	var numSelectedSeries = jQuery("#numSelectedSrStr").val().split("^");
-	var selectedValue = jQuery('#series' + sid + 'Selected').val();
-
-	// Display series rows depending on checked state
-	for(var j=2; j<=numSelectedSeries.length; j++)
-	{
-		$('#series' + j + 'Selected').val("");
-
-		for(var i=1; i<=numSelectedSeries[j-1]; i++)
-		{
-			if(i%2==0)	$('#rowSeries' + j + '_' + i).attr("class", "column rowDisp");
-			else		$('#rowSeries' + j + '_' + i).attr("class", "rowDisp");
-
-			var tmpObj = $('#checkbox' + j + '_' + i);
-
-			if((j == sid) ^ (tmpObj.val() == val))  // XOR
-			{
-				tmpObj.removeAttr('checked');
-			}
-
-			if(tmpObj.attr("checked"))  $('#series' + j + 'Selected').val(tmpObj.val());
-		}
-	}
-
-	// Hide series rows depending on checked state
-	for(var k=2; k<=numSelectedSeries.length; k++)
-	{
-		selectedValue = $('#series' + k + 'Selected').val();
-
-		if(selectedValue != "")
-		{
-			for(var j=2; j<=numSelectedSeries.length; j++)
-			{
-				for(var i=1; i<=numSelectedSeries[j-1]; i++)
-				{
-					var tmpObj = $('#checkbox' + j + '_' + i);
-
-					if((j == k && selectedValue != "" && tmpObj.val() != selectedValue)
-						|| (j != k && tmpObj.val() == selectedValue && !tmpObj.attr(":checked")))
-					{
-						$('#rowSeries' + j + '_' + i).attr("class", "rowHidden");
-					}
-				}
-			}
-		}
-	}
-}
-
-function ResetSeries()
-{
-	var numSelectedSeries = $('#numSelectedSrStr').val().split("^");
-
-	for(var k=2; k<=numSelectedSeries.length; k++)
-	{
-		$('#series' + k + 'Selected').val("");
-
-		for(var j=1; j<=numSelectedSeries[k-1]; j++)
-		{
-			if(j%2==0)	$('#rowSeries' + k + '_' + j).attr("class", "column rowDisp");
-			else		$('#rowSeries' + k + '_' + j).attr("class", "rowDisp");
-			$('#checkbox' + k + '_' + j).removeAttr("checked");
-		}
-	}
-}
-
-function CreateSeriesList()
-{
-	$.post(
-		"create_series_list.php",
-		{ seriesUIDStr: $("#seriesUIDStr").val() },
-		function(data){
-			var tableHtml = "";
-			for(i=0; i<data.length; i++)
-			{
-				tableHtml += '<tr';
-				if(i%2==1)  tableHtml += ' class="column"';
-				tableHtml += '><td>' + (i+1) + '</td>'
-					+  '<td>' + data[i].study_id + '</td>'
-					+ '<td>' + data[i].series_number + '</td>'
-					+ '<td>' + data[i].series_date + '</td>'
-					+ '<td>' + data[i].series_time + '</td>'
-					+ '<td>' + data[i].modality + '</td>'
-					+ '<td>' + data[i].image_number + '</td>'
-					+ '<td class="al-l">' + data[i].series_description + '</td>'
-					+ '</tr>';
-			}
-			$("#confirmation .col-tbl tbody").append(tableHtml);
-			$("#success .col-tbl tbody").append(tableHtml);
-		},
-		"json"
-	);
-}
-
-
-function CheckSeries()
-{
-	var seriesUID    = $("#seriesUIDStr").val();
-	var numSelectedSeries = $('#numSelectedSrStr').val().split("^");
-
-	var errorFlg = 0;
-
-	if(confirm('Do you select required series?'))
-	{
-		var selectFlg = 0;
-
-		for(var k=2; k<=numSelectedSeries.length; k++)
-		{
-			selectFlg = 0;
-
-			for(var j=1; j<=numSelectedSeries[k-1]; j++)
-			{
-				$('#checkbox' + k + '_' + j + ":checked").each(function()
-					{
-						selectFlg = 1;
-						seriesUID += '^' + this.value;
-					});
-			}
-
-			if(selectFlg == 0)
-			{
-				alert ('Series ' + k + ' is not selected !!');
-				break;
-			}
-		}
-
-		if(selectFlg == 1)
-		{
-			$("#seriesUIDStr").val(seriesUID);
-			CreateSeriesList();
-			$("#seriesSelect").hide();
-			$("#confirmation").show();
-		}
-	}
-}
-
-function RegistrationCADJob()
-{
-	var requestObj = {
-		auth: { type: "session", user: $('#userID').val() },
-		action: "InternalExecutePlugin",
-		params: {
-			pluginName: $('#cadName').val(),
-			pluginVersion: $('#version').val(),
-			seriesUID: $("#seriesUIDStr").val().split('^'),
-			resultPolicy: $('#cadResultPolicy').val()
-		}
-	};
-	$.post("../api/api.php",
-		{ request: JSON.stringify(requestObj) },
-		function(data){
-			$("#confirmation").attr("style", "display:none;");
-			$("#success .policyField").html($("#cadResultPolicy").val());
-
-			if(data.status == "OK")
-			{
-				var htmlStr = '<tr><th style="width: 110px;"><span class="trim01">';
-				if(data.result.executedAt != "")
-				{
-					htmlStr += 'Executed at</span></th><td>' + data.result.executedAt + '</td>';
-				}
-				else
-				{
-					htmlStr += 'Registered at</span></th><td>' + data.result.registeredAt + '</td>';
-				}
-				$("#registMessage").html(data.message);
-				$("#success .detail-tbl").prepend(htmlStr);
-				$("#success").show();
-			}
-			else
-			{
-				$("#errorMessage").html(data.error.message);
-				$("#errorDetail").html($("#successDetail").html());
-				$("#error").show();
-			}
-		},
-		"json"
-	);
-}
-
 $(function(){
-	if(mode == "confirm")
-	{
-		CreateSeriesList();
-		$("#confirmation").show();
-	}
-	else if(mode == "select")
-	{
-		$("#seriesSelect").show();
-	}
-	else if(mode == "error")
-	{
-		$("#error").show();
-	}
+	var registered = false;
+
+	$('#messages p').hide();
 
 	$('.filter').each(function() {
 		var f = $(this);
 		var data = JSON.parse(f.text());
 		f.empty().append(circus.ruleset.stringifyNode(data));
 	});
+
+	$('.series-list').each(function() {
+		if ($('.r', this).length == 1)
+			$('.r', this).attr('checked', 'checked');
+		$('.r').each(function() {
+			$(this).data('series_uid', $(this).next('.series-uid').text());
+		});
+	});
+
+	$('.volume-area').click(function(event) {
+		if (registered) return;
+		// check radio button
+		var r = $(event.target).closest('.series-list tr').find('.r');
+		var series_uid = r.data('series_uid');
+		// uncheck duplicate
+		$('.r').each(function() {
+			if ($(this).data('series_uid') == series_uid)
+				$(this).removeAttr('checked');
+		});
+		r.attr('checked', 'checked');
+		updateStatus();
+	});
+
+	$('#register').click(function() {
+		var uids = [];
+
+		$('.volume-area').each(function() {
+			var vid = parseInt($('.volume-id', this).text());
+			var sid = $('.r:checked', this).data('series_uid');
+			uids[vid] = sid;
+		});
+
+		var params = {
+			pluginName: $('#cadName').val(),
+			pluginVersion: $('#version').val(),
+			seriesUID: uids,
+			resultPolicy: $('#cadResultPolicy').val()
+		};
+
+		$.webapi({
+			api: '../api/api.php',
+			action: 'InternalExecutePlugin',
+			params: params,
+			onSuccess: function(data) {
+				$('.job-id').text(data.jobID);
+				registered = true;
+				$('#buttons input, #buttons select, .r').disable();
+				message('#success');
+			},
+			onFail: function(data) {
+				message($('#error').text(data));
+			}
+		});
+	});
+
+	updateStatus();
+
+	function updateStatus()
+	{
+		if (registered) return;
+		var selectable = true;
+		var ready = true;
+		$('.volume-area').each(function() {
+			var t = $(this).removeClass('volume-ready').find('tbody');
+			t.find('tr').removeClass('row-selected');
+			if (t.find('tr').length == 0)
+				selectable = false;
+			var sel = t.find('tr:has(input:radio:checked)');
+			if (sel.length > 0)
+			{
+				sel.addClass('row-selected');
+				$(this).addClass('volume-ready');
+			}
+			else
+				ready = false;
+		});
+		$('#register').enable(ready);
+		if (selectable && ready)
+			message('#confirm');
+		else if (selectable)
+			message('#select');
+		else
+			message('#error2');
+	}
+
+	function message(selector)
+	{
+		$('div#messages p').hide();
+		$(selector).show();
+	}
+
 });
 -->
 </script>
 
 <style type="text/css">
-#seriesSelect .rowDisp   { color:#000; }
-#seriesSelect .rowHidden { color:#ccc; }
+#content h3 {
+	clear: both;
+	margin: 0 0 5px 0;
+	background-color: transparent;
+	color: black;
+	letter-spacing: 0;
+	border-bottom: 2px solid silver;
+	padding: 0;
+}
+.detail-panel { float: none !important; }
+#exec-header { position: relative; margin: 0 0 1em 0; }
+#buttons { position: absolute; right: 1em; bottom: 0px; }
+#buttons input { height: 2em; width: 130px; }
+#buttons p { margin: 5px; text-align: right; }
+#messages p { font-weight: bold; margin: 1em 0; padding: 0.5em; }
+#messages #select { color: red; }
+#messages .error { color: red; border: 1px solid salmon; }
+#success { color: orange; }
+.volume-area { clear: both; border: 1px solid red; padding: 3px; margin: 5px 0; }
+.volume-ready { border: 1px solid silver; }
+.series-list { width: 100%; cursor: pointer; color: #888 }
+.series-list tr:hover { background-color: #ffa; }
+.series-list tr.row-selected { color: black; background-color: #ff8; }
+.series-not-found { font-weight: bold; color: red; text-align: center; margin: 1em; }
 ul.filters { margin: 0.5em 0 0.5em 2em; }
 ul.filters li { list-style-type: disc; }
 </style>
@@ -236,257 +156,101 @@ ul.filters li { list-style-type: disc; }
 
 <div class="tab-content">
 	<form id="form1" name="form1" onsubmit="return false;">
-	<input type="hidden" id="userID"       value="{$params.userID|escape}" />
 	<input type="hidden" id="cadName"      value="{$plugin->plugin_name|escape}" />
 	<input type="hidden" id="version"      value="{$plugin->version|escape}" />
-	<input type="hidden" id="seriesUIDStr" value="{$seriesUIDStr|escape}" />
 
-	<div id="seriesSelect" style="display:none;">
+	<h2>Execute CAD Job</h2>
+	<div id="messages">
+		<p id="select">Multiple series matched. Select DICOM series, and press the
+		<span style="color: blue">[OK]</span> button after selection.</p>
+		<p id="confirm">Do you register the following CAD job?</p>
+		<p id="success">CAD job is successfully registered. (Job ID: <span class="job-id"></span>)</p>
+		<p id="error2" class="error">Required volume(s) does not match any of the series.</p>
+		<p id="error" class="error"></p>
+	</div>
 
-		<h2>Series selection</h2>
-		<p class="mb10">Select DICOM series, and press the <span class="clr-blue fw-bold">[OK]</span> button after selection.</p>
-
-		<p class="mb10">
-			<input name="" type="button" value="OK"     class="w100 form-btn" onclick="CheckSeries();" />
-			<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
-		</p>
-
-		<div class="detail-panel mb20">
+	<div id="exec-header">
+		<div class="detail-panel">
 			<table class="detail-tbl">
 				<tr>
-					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
+					<th style="width: 10em;"><span class="trim01">CAD name</span></th>
 					<td>{$plugin->fullName()|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Patient ID</span></th>
-					<td>{$params.patientID|escape}</td>
+					<td>{$patient->patient_id|escape}</td>
 				</tr>
 				<tr>
 					<th><span class="trim01">Pateint name</span></th>
-					<td>{$params.patientName|escape}</td>
+					<td>{$patient->patient_name|escape}</td>
 				</tr>
 			</table>
-		</div><!-- / .detail-panel END -->
+		</div>
+		<div id="buttons">
+			<p><label>Result policy: <select id="cadResultPolicy">
+				{foreach from=$policies item=item}
+				<option value="{$item->policy_name|escape}"{if $item->policy_name=="default"} selected="selected"{/if}>{$item->policy_name|escape}</option>
+				{/foreach}
+			</select></label></p>
+			<input name="" type="button" value="Cancel" id="cancel" class="form-btn" onclick="history.back(1);" />
+			<input name="" type="button" value="OK" id="register" class="form-btn" />
+		</div>
+	</div>
 
-		{assign var="cnt" value=0}
-		{section name=k start=0 loop=$seriesNum}
-			{assign var="k" value=$smarty.section.k.index}
+	<div id="volume-list">
+		{foreach from=$volumeInfo item=volume}
+		<div class="volume-area">
+			<h3>Volume <span class="volume-id">{$volume.id}</span>
+			{if $volume.id==0} (Primary Volume){/if}
+			{if $volume.label != ""}: {$volume.label|escape}{/if}</h3>
 
-			<h3 class="ptn02">Volume {$k} {if $k==0}(Primary Volume){/if}{if $volumeInfo[$k].label}: {$volumeInfo[$k].label|escape}{/if}</h3>
 			<ul class="filters">
-				{foreach from=$volumeInfo[$k].ruleSetList item=ruleSet}
+				{foreach from=$volume.ruleSetList item=ruleSet}
 				<li class="filter">{$ruleSet.filter|@json_encode|escape}</li>
 				{/foreach}
 			</ul>
-			<table id="selectTbl{$k+1}" class="series-list col-tbl mb30" style="width: 100%;">
+
+			{if count($volume.targetSeries) > 0}
+			<table class="series-list col-tbl">
 				<thead>
 					<tr>
-						{if $k != 0}<th>&nbsp;</th>{/if}
+						<th>&nbsp;</th>
 						<th>Study ID</th>
-						<th>Series ID</th>
-						<th>Series date</th>
-						<th>Series time</th>
-						<th>Img.</th>
-						<th>Series description</th>
-					</tr>
-				</thead>
-				<tbody>
-					{* ----- 1st series ----- *}
-					{if $k==0}
-						<tr>
-							<td>{$seriesList[0][0][1]|escape}</td>
-							<td>{$seriesList[0][0][2]|escape}</td>
-							<td>{$seriesList[0][0][3]|escape}</td>
-							<td>{$seriesList[0][0][4]|escape}</td>
-							<td>{$seriesList[0][0][5]|escape}</td>
-							<td class="al-l">{$seriesList[0][0][6]}</td>
-						</tr>
-					{else}
-						{section name=j start=0 loop=$selectedSrNumArr[$k]}
-
-							{assign var="j" value=$smarty.section.j.index}
-
-								<tr id="rowSeries{$k+1}_{$j+1}" class="{if $j%2==1}column {/if}rowDisp">
-									<td align=center>
-										<input type="checkbox" id="checkbox{$k+1}_{$j+1}" value="{$seriesList[$k][$j][0]}" onclick="ChangeCheckbox({$k+1},'{$seriesList[$k][$j][0]}');" {if $seriesList[$k][$j][0] == $defaultSelectedSrUID[$k]}checked="checked" {/if}/>
-									</td>
-									<td>{$seriesList[$k][$j][1]|escape}</td>
-									<td>{$seriesList[$k][$j][2]|escape}</td>
-									<td>{$seriesList[$k][$j][3]|escape}</td>
-									<td>{$seriesList[$k][$j][4]|escape}</td>
-									<td>{$seriesList[$k][$j][5]|escape}</td>
-									<td class="al-l">{$seriesList[$k][$j][6]}</td>
-								</tr>
-							{/section}
-						<input type="hidden" id="series{$k+1}Selected" value="">
-					{/if}
-				</tbody>
-			</table>
-		{/section}
-
-		<input name="" type="button" value="reset" class="s-btn mb30 form-btn" onclick="ResetSeries();" />
-		<input type="hidden" id="numSelectedSrStr" value="{$numSelectedSrStr}" />
-		</form>
-	</div>
-	<!-- / Detail END -->
-
-	<!-- Confirmation -->
-	<div id="confirmation" style="display:none;">
-		<h2>Confirmation</h2>
-		<p class="mb10">Do you register following CAD job?</p>
-
-		<p class="mb10">
-			<input name="" type="button" value="OK"     class="w100 form-btn" onclick="RegistrationCADJob();" />
-			<input name="" type="button" value="Cancel" class="w100 form-btn" onclick="history.back(1);" />
-		</p>
-
-		<div class="detail-panel mb20">
-			<table class="detail-tbl">
-				<tr>
-					<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-					<td>{$plugin->fullName()|escape}</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Patient ID</span></th>
-					<td>{$params.patientID|escape}</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Pateint name</span></th>
-					<td>{$params.patientName|escape}</td>
-				</tr>
-				<tr>
-					<th><span class="trim01">Policy</span></th>
-					<td>
-						<select id="cadResultPolicy">
-							{foreach from=$policyArr item=item}
-							<option value="{$item.name|escape}"{if $item.name=="default"} selected="selected"{/if}>{$item.name|escape}</option>
-							{/foreach}
-						</select>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<h3 class="ptn02">Series list</h3>
-
-		<table class="col-tbl mb30" style="width: 100%;">
-			<thead>
-				<tr>
-					<th></th>
-					<th>Study ID</th>
-					<th>Series ID</th>
-					<th>Series date</th>
-					<th>Series time</th>
-					<th>Modality</th>
-					<th>Img.</th>
-					<th>Series description</th>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-	</div>
-	<!-- / confirmation END -->
-
-	<!-- 17.Successfully-registered-in-cad-job-list.html -->
-	<div id="success" style="display:none;">
-		<p id="registMessage" class="clr-orange mb10">Successfully registered in CAD job list!</p>
-		<p class="mb10"><input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" /></p>
-
-		<div id="successDetail">
-			<div class="detail-panel mb20">
-				<table class="detail-tbl">
-			<!--		<tr>
-						<th style="width: 110px;"><span class="trim01">Registered at</span></th>
-						<td><span id="registeredAt"></span></td>
-					</tr> -->
-					<tr>
-						<th style="width: 10em;"><span class="trim01">Ordered by</span></th>
-						<td>{$params.userID|escape}</td>
-					</tr>
-					<tr>
-						<th style="width: 9em;"><span class="trim01">CAD name</span></th>
-						<td>{$plugin->fullName()|escape}</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Patient ID</span></th>
-						<td>{$params.patientID|escape}</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Pateint name</span></th>
-						<td>{$params.patientName|escape}</td>
-					</tr>
-					<tr>
-						<th><span class="trim01">Policy</span></th>
-						<td class="policyField"></td>
-					</tr>
-				</table>
-			</div>
-
-			<h3 class="ptn02">Series list</h3>
-			<table class="col-tbl mb30" style="width: 100%;">
-				<thead>
-					<tr>
-						<th></th>
-						<th>Study ID</th>
-						<th>Series ID</th>
-						<th>Series date</th>
-						<th>Series time</th>
 						<th>Modality</th>
+						<th>Series ID</th>
+						<th>Series date/time</th>
 						<th>Img.</th>
 						<th>Series description</th>
 					</tr>
 				</thead>
 				<tbody>
+				{foreach from=$volume.targetSeries item=series}
+					<tr>
+						<td>
+							<input type="radio" name="volume{$volume.id}" class="r"/>
+							<span style="display: none" class="series-uid">{$series->series_instance_uid|escape}</span>
+						</td>
+						<td>{$series->Study->sid|escape}</td>
+						<td>{$series->Study->modality|escape}</td>
+						<td>{$series->series_number|escape}</td>
+						<td>{$series->series_date|escape} {$series->series_time|escape}</td>
+						<td>{$series->image_number|escape}</td>
+						<td>{$series->series_description|escape}</td>
+					</tr>
+				{/foreach}
 				</tbody>
 			</table>
-		</div>
-	</div>
-	<!-- / Seccessfully END -->
-
-	<!-- Error display -->
-	<div id="error" style="display:none;">
-		<h2>Error</h2>
-
-		<div id="errorMessage" style="color:#f00; font-weight:bold; margin-bottom:10px;">
-			{if $params.errorMessage != ""}{$params.errorMessage|escape|nl2br}{else}{$plugin->fullName()|escape} requires following series in the same {if $params.inputType == 1}study{else}patient{/if}!!{/if}&nbsp;&nbsp;
-			<input name="" type="button" value="Close" class="w100 form-btn" onclick="location.replace('../{$smarty.session.listAddress}');" />
-		</div>
-
-		<div id="errorDetail">
-			<div class="detail-panel mb20">
-			{if $params.errorMessage == ""}
-				<table class="col-tbl">
-					<thead>
-						<tr>
-							<th>Volume ID</th>
-							<th>Label</th>
-							<th>Filter</th>
-						</tr>
-					</thead>
-					<tbody>
-					{foreach from=$volumeInfo item=vol}
-						<tr>
-							<td>{$vol.id}</td>
-							<td>{$vol.label|escape}</td>
-							<td class="al-l">
-								<ul class="filters">
-									{foreach from=$vol.ruleSetList item=ruleSet}
-									<li class="filter">{$ruleSet.filter|@json_encode|escape}</li>
-									{/foreach}
-								</ul>
-							</td>
-						</tr>
-					{/foreach}
-					</tbody>
-				</table>
+			{else}
+			<div class="series-not-found">[Error] There are no series that match the filter.</div>
 			{/if}
-			</div>
 		</div>
+		{/foreach}
 	</div>
-	<!-- / Error END -->
+	<!-- / volume-list -->
 
-	<div class="al-r fl-clr">
+	</form>
+
+	<div>
 		<p class="pagetop"><a href="#page">page top</a></p>
 	</div>
 </div><!-- / .tab-content END -->

@@ -3,16 +3,13 @@ $params = array('toTopDir' => "../");
 include_once("../common.php");
 Auth::checkSession();
 
-$seriesUIDArr = array();
-$volumeInfo = array(); // keys: volume ID
-
 $smarty = new SmartyEx();
 
 try
 {
-	//------------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	// Import $_GET variables and validation
-	//------------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	$validator = new FormValidator();
 
 	$validator->addRules(array(
@@ -39,38 +36,13 @@ try
 			'oterwise' => "series")
 	));
 
-	if($validator->validate($_GET))
-	{
-		$params += $validator->output;
-		$studyUIDArr[]  = $params['studyInstanceUID'];
-		$seriesUIDArr[] = $params['seriesInstanceUID'];
-	}
-	else
-	{
+	if (!$validator->validate($_GET))
 		throw new Exception (implode("\n", $validator->errors));
-	}
 
-	$params['mode'] = '';
-	$params['inputType'] = 0;
-	$params['errorMessage'] = "";
+	$params += $validator->output;
 
 	if($params['srcList'] == 'todaysSeries')	$params['listTabTitle'] = "Today's series";
 	else										$params['listTabTitle'] = "Series list";
-
-	$user = Auth::currentUser();
-	$params['userID'] = $user->user_id;
-	//------------------------------------------------------------------------------------------------------------------
-
-	$pdo = DBConnector::getConnection();
-
-	//----------------------------------------------------------------------------------------------------------
-	// Get initial value from database
-	//----------------------------------------------------------------------------------------------------------
-	$sqlStr = "SELECT * FROM series_join_list WHERE series_instance_uid=?";
-	$result = DBConnector::query($sqlStr, $seriesUIDArr[0], 'ARRAY_ASSOC');
-
-	$params['patientID']   = $result['patient_id'];
-	$params['patientName'] = $result['patient_name'];
 
 	// Check plugin
 	$dum = new Plugin();
@@ -92,174 +64,87 @@ try
 	if (!is_int($input_type) || $input_type < 0 || 2 < $input_type)
 		throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
 
-	$params['inputType'] = $input_type;
-	$params['mode'] = 'confirm';
+	$dum = new Series();
+	$primarySeries = $dum->find(array('series_instance_uid' => $params['seriesInstanceUID']));
+	$primarySeries = $primarySeries[0];
+	if (!($primarySeries instanceof Series))
+		throw new Exception('Target primary series does not exist.');
 
-	$seriesUIDStr = $seriesUIDArr[0];
+	// Set anonymization mode
+	Patient::$anonymizeMode = Auth::currentUser()->needsAnonymization();
+	$patient = $primarySeries->Study->Patient;
 
-	if($input_type != 0)
+	//--------------------------------------------------------------------------
+	//  Build volume information
+	//--------------------------------------------------------------------------
+	$vols = $plugin->PluginCadSeries;
+	$volumeInfo = array(); // keys: volume ID
+	foreach ($vols as $vol)
 	{
-		$defaultSelectedSrUID = array();
-		$defaultSelectedSrUID[0] = $seriesUIDArr[0];
+		$volumeInfo[$vol->volume_id] = array(
+			'id' => $vol->volume_id,
+			'label' => $vol->volume_label,
+			'ruleSetList' => json_decode($vol->ruleset, true),
+		);
+	}
 
-		$seriesList = array();
-		$seriesList[0][0][0] = $result['series_instance_uid'];
-		$seriesList[0][0][1] = $result['study_id'];
-		$seriesList[0][0][2] = $result['series_number'];
-		$seriesList[0][0][3] = $result['series_date'];
-		$seriesList[0][0][4] = $result['series_time'];
-		$seriesList[0][0][5] = $result['image_number'];
-		$seriesList[0][0][6] = $result['series_description'];
+	// (1) Primary volume, which is already specified
+	$volumeInfo[0]['targetSeries'] = array($primarySeries);
 
-		// Get the number of required series
-		$sqlStr = "SELECT DISTINCT volume_id FROM plugin_cad_series WHERE plugin_id=? ORDER BY volume_id ASC";
-		$volumeIdList = DBConnector::query($sqlStr, array($plugin->plugin_id), 'ALL_COLUMN');
-
-		$seriesNum = count($volumeIdList);
-		$seriesFilter = new SeriesFilter();
-
-		$selectedSrNumArr = array_fill(0, $seriesNum, 0);
-
-		for($k=0; $k < $seriesNum; $k++)
+	// (2) Complementary volume(s), which may need manual selection
+	if ($input_type > 0)
+	{
+		if ($input_type == 1) // within the same study
+			$where = array('study_id', $primarySeries->Study->study_id);
+		if ($input_type == 2) // within the same patient
+			$where = array('patient_id', $primarySeries->Study->Patient->patient_id);
+		$candidates = DBConnector::query(
+			"SELECT * FROM series_join_list WHERE {$where[0]}=? " .
+			"ORDER BY study_date DESC, series_number ASC",
+			$where[1],
+			'ALL_ASSOC'
+		);
+		$fp = new SeriesFilter();
+		foreach ($vols as $v)
 		{
-			// Get ruleset
-			$sqlStr = "SELECT ruleset, volume_label FROM plugin_cad_series"
-					. " WHERE plugin_id=?"
-					. " AND volume_id=?";
-			$ruleList = DBConnector::query($sqlStr, array($plugin->plugin_id, $k), 'ALL_ASSOC');
-
-			if(count($ruleList) <= 0)
-				throw new Exception("Ruleset for volume ID $k is not found.");
-			$r = $ruleList[0];
-
-			$volumeInfo[$k] = array(
-				'id' => $k,
-				'label' => $r['volume_label'],
-				'ruleSetList' => json_decode($r['ruleset'], true)
-			);
-
-			if($k > 0)
+			$vid = $v->volume_id;
+			if ($vid == 0)
+				continue; // skip primary series, which is manually specified
+			$targets = array();
+			foreach ($candidates as $s)
 			{
-				// Get series join list
-				$s = new SeriesJoin();
-
-				if($params['inputType'] == 1)
-				{
-					$sdata = $s->find(array("study_instance_uid" => $params['studyInstanceUID']));
-				}
-				else if($params['inputType'] == 2)
-				{
-					$sdata = $s->find(array("patient_id" => $params['patientID']));
-				}
-
-			    $matchedSrCnt = 0;
-
-				for($j = 0; $j < count($sdata); $j++)
-				{
-					$seriesData = $sdata[$j]->getData();
-
-					// rule maching
-					foreach($ruleList as $r)
-					{
-						$ruleSet = json_decode($r['ruleset'], true);
-
-						if($seriesFilter->processRuleSets($seriesData, $ruleSet))
-						{
-							$cnt = 0;
-
-							for($i = 0; $i < $k; $i++)
-							{
-								if($seriesData['series_instance_uid'] != $defaultSelectedSrUID[$i]) $cnt++;
-							}
-
-							if($cnt == $k)
-							{
-								if($matchedSrCnt == 0) $defaultSelectedSrUID[$k] = $seriesData['series_instance_uid'];
-								$matchedSrCnt++;
-							}
-
-							if($seriesData['series_instance_uid'] != $defaultSelectedSrUID[0])
-							{
-								$seriesList[$k][$selectedSrNumArr[$k]][0] = $seriesData['series_instance_uid'];
-								$seriesList[$k][$selectedSrNumArr[$k]][1] = $seriesData['study_id'];
-								$seriesList[$k][$selectedSrNumArr[$k]][2] = $seriesData['series_number'];
-								$seriesList[$k][$selectedSrNumArr[$k]][3] = $seriesData['series_date'];
-								$seriesList[$k][$selectedSrNumArr[$k]][4] = $seriesData['series_time'];
-								$seriesList[$k][$selectedSrNumArr[$k]][5] = $seriesData['image_number'];
-								$seriesList[$k][$selectedSrNumArr[$k]][6] = $seriesData['series_description'];
-								$selectedSrNumArr[$k]++;
-							}
-						}
-					} // end foreach: $ruleList
-				} // end for: $j
-
-				if($matchedSrCnt == 0)
-				{
-					$params['mode'] = 'error';
-					continue;
-				}
+				if ($s['series_instance_uid'] == $primarySeries->series_instance_uid)
+					continue; // exclude the primary series
+				if ($fp->processRuleSets($s, $volumeInfo[$vid]['ruleSetList']))
+					$targets[] = new Series($s['series_sid']);
 			}
-		} // end for: $k
-
-		if($params['mode'] != 'error')
-		{
-			for($k=1; $k<$seriesNum; $k++)
-			{
-				if($selectedSrNumArr[$k] != 1)
-				{
-					$params['mode'] = 'select';
-					$seriesUIDStr = $seriesUIDArr[0];
-					break;
-				}
-				$seriesUIDStr .= '^' . $defaultSelectedSrUID[$k];
-			}
-			$numSelectedSrStr = implode('^', $selectedSrNumArr);
+			$volumeInfo[$vid]['targetSeries'] = $targets;
 		}
 	}
-
-	if(!Auth::currentUser()->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
-	{
-		$params['patientID']   = PinfoScramble::encrypt($params['patientID'], $_SESSION['key']);
-		$params['patientName'] = PinfoScramble::scramblePtName();
-	}
+	ksort($volumeInfo, SORT_NUMERIC);
 
 	// Get CAD result policy
 	$dummy = new PluginResultPolicy();
 	$policies = $dummy->find();
-	$policyArr = array();
 
-	foreach ($policies as $policy)
-	{
-		$policyArr[] = array(
-			'id' => $policy->policy_id,
-			'name' => $policy->policy_name
-		);
-	}
-
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	// Settings for Smarty
-	//--------------------------------------------------------------------------------------------------------------
-	$smarty->assign('plugin', $plugin);
-	$smarty->assign('seriesList', $seriesList);
-	$smarty->assign('seriesNum',  $seriesNum);
-	$smarty->assign('seriesUIDStr',         $seriesUIDStr);
-	$smarty->assign('selectedSrNumArr',     $selectedSrNumArr);
-	$smarty->assign('numSelectedSrStr',     $numSelectedSrStr);
-	$smarty->assign('selectedSrStr',        $selectedSrStr);
-	$smarty->assign('defaultSelectedSrUID', $defaultSelectedSrUID);
-	$smarty->assign('volumeInfo',           $volumeInfo);
-	$smarty->assign('policyArr',            $policyArr);
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	$smarty->assign('volumeInfo', $volumeInfo);
+	$smarty->assign('patient', $patient);
+	$smarty->assign('policies', $policies);
+	//--------------------------------------------------------------------------
 
 }
 catch(Exception $e)
 {
-	$params['mode'] = 'error';
-	$params['errorMessage'] = $e->getMessage();
+	$smarty->assign('params', $params);
+	$smarty->assign('message', $e->getMessage());
+	$smarty->display('critical_error.tpl');
+	exit;
 }
 
-$pdo = null;
-
+if ($plugin) $smarty->assign('plugin', $plugin);
 $smarty->assign('params', $params);
 $smarty->display('cad_job/cad_execution.tpl');
 
