@@ -577,13 +577,6 @@ h3 { margin-bottom: 15px; }
 .ruleset-toolbutton { width: 18px; height: 18px; margin: 0 3px; }
 .ruleset-toolbutton span.ui-button-icon-primary { left: 0; }
 
-.group-text { color: green; }
-.group-text .group-text { color: brown; }
-.group-text .group-text .group-text { color: magenta; }
-.key-text { color: blue; }
-.value-text { color: black; font-weight: bold; }
-.condition-text { color: purple; }
-
 #condition-tools { width: 115px; height: 18px; position: absolute; }
 .condition-toolbutton { width: 18px; height: 18px; margin: 0; }
 .condition-toolbutton span.ui-button-icon-primary { left: 0; }

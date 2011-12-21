@@ -780,11 +780,22 @@ div #smoke {
 	Selection Feedback Listener
  =================================================== */
 
- span.opinions-count {
- 	background-color: white;
- 	border: 1px solid gray;
- 	color: black;
- 	font-size: 80%;
- 	padding: 0 3px;
- 	border-radius: 5px;
- }
+span.opinions-count {
+	background-color: white;
+	border: 1px solid gray;
+	color: black;
+	font-size: 80%;
+	padding: 0 3px;
+	border-radius: 5px;
+}
+
+ /* ==================================================
+	Ruleset Highlighting
+ =================================================== */
+
+.group-text { color: green; }
+.group-text .group-text { color: brown; }
+.group-text .group-text .group-text { color: magenta; }
+.key-text { color: blue; }
+.value-text { color: black; font-weight: bold; }
+.condition-text { color: purple; }
