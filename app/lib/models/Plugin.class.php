@@ -6,6 +6,16 @@
  */
 class Plugin extends Model
 {
+	/**
+	 * Indicates this plugin is a CAD plugin.
+	 */
+	const CAD_PLUGIN = 1;
+
+	/**
+	 * Indicates this plugin is a research plugin.
+	 */
+	const RESERACH_PLUGIN = 2;
+
 	protected static $_table = 'plugin_master';
 	protected static $_primaryKey = 'plugin_id';
 	protected static $_hasMany = array(
