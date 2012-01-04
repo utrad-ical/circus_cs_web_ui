@@ -52,14 +52,11 @@ try
 		throw new Exception($plugin->fullName() . ' is not CAD plug-in.');
 	if(!$plugin->exec_enabled)
 		throw new Exception($plugin->fullName() . ' is not allowed to execute.');
-
-	// Check CAD series input type
-	$input_type = DBConnector::query(
-		'SELECT input_type FROM plugin_cad_master WHERE plugin_id=?',
-		$plugin->plugin_id,
-		'SCALAR'
-	);
-	if (!is_int($input_type) || $input_type < 0 || 2 < $input_type)
+	$cad_master = $plugin->CadPlugin[0];
+	if (!($cad_master instanceof CadPlugin))
+		throw new Exception('Critical CAD master error. (Broken installation)');
+	$input_type = $cad_master->input_type;
+	if ($input_type < 0 || 2 < $input_type)
 		throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
 
 	$primarySeries = Series::selectOne(array('series_instance_uid' => $params['seriesInstanceUID']));
