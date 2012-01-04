@@ -104,9 +104,9 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 <h2>Installed plug-ins</h2>
 <div class="plug-in">
 	<ul>
-		{foreach from=$pluginData item=item}
-			<li><strong>{$item.plugin_name|escape}</strong> v.{$item.version|escape} (installed on {$item.install_dt})
-			<a href="plugin_info.php?pluginName={$item.plugin_name|escape:'url'}&version={$item.version|escape:'url'}">detail</a>
+		{foreach from=$plugins item=item}
+			<li><strong>{$item->plugin_name|escape}</strong> v.{$item->version|escape} (installed on {$item->install_dt})
+			<a href="plugin_info.php?id={$item->plugin_id|escape:url}">detail</a>
 		{/foreach}
 	</ul>
 </div>
@@ -124,14 +124,14 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 				<th>Plug-in job manager</th>
 		</thead>
 		<tbody>
-		{foreach from=$machineList item=item}
+		{foreach from=$machines item=item}
 			<tr>
-				<td class="al-l">{$item.host_name|escape}</td>
-				<td class="al-l">{$item.ip_address|escape}</td>
-				<td class="al-l">{$item.os|escape}</td>
-				<td>{$item.architecture|escape}</td>
-				<td>{$item.dicom_storage_server|OorMinus}</td>
-				<td>{if $item.plugin_job_manager==1}controller mode{elseif $item.plugin_job_manager==2}process mode{elseif $item.plugin_job_manager==3}hybrid mode{else}-{/if}</td>
+				<td class="al-l">{$item->host_name|escape}</td>
+				<td class="al-l">{$item->ip_address|escape}</td>
+				<td class="al-l">{$item->os|escape}</td>
+				<td>{$item->architecture|escape}</td>
+				<td>{$item->dicom_storage_server|OorMinus}</td>
+				<td>{if $item->plugin_job_manager==1}controller mode{elseif $item->plugin_job_manager==2}process mode{elseif $item->plugin_job_manager==3}hybrid mode{else}-{/if}</td>
 			</tr>
 		{/foreach}
 		</tbody>

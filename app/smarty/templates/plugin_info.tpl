@@ -29,31 +29,35 @@ $(function() {
 <table class="detail-tbl">
 	<tr>
 		<th><span class="trim01">Plug-in name</span></th>
-		<td>{$params.pluginName|escape} v.{$params.version|escape}</td>
+		<td>{$plugin->fullName()|escape}</td>
 	</tr>
 	<tr>
 		<th><span class="trim01">Type</span></th>
-		<td>{if $params.pluginType==1}CAD{else}Research{/if}</td>
+		<td>{$plugin->pluginType()|escape}</td>
 	</tr>
 	<tr>
 		<th><span class="trim01">Description</span></th>
-		<td>{$params.description}</td>
+		<td>{$plugin->description|escape}</td>
+	</tr>
+	<tr>
+		<th><span class="trim01">Installed date</span></th>
+		<td>{$plugin->install_dt|escape}</td>
 	</tr>
 </table>
 
-{if $params.pluginType==1}
+{if $plugin->type==1}
 <h3>Input volume information</h3>
 <table class="col-tbl">
 	<thead>
 		<tr>
-			<th>Volume ID</th>
+			<th>Volume</th>
 			<th>Condition</th>
 		</tr>
 	</thead>
 	<tbody>
 		{foreach from=$volumes item=volume}
 		<tr>
-			<td>{$volume.volume_id|escape}</td>
+			<td class="al-l">{$volume.volume_id|escape}{if $volume.label} ({$volume.label|escape}){/if}</td>
 			<td class="rulesets">
 				<ul>
 				{foreach from=$volume.filters item=filter}

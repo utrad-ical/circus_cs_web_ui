@@ -11,74 +11,54 @@ try
 	//--------------------------------------------------------------------------
 	$validator = new FormValidator();
 	$validator->addRules(array(
-		"pluginName" => array(
-			"label" => 'Plug-in name',
-			"type" => "cadname",
-			"required" => true
-		),
-		"version" => array(
-			"label" => 'version',
-			"type" => "version",
+		"id" => array(
+			"label" => 'Plug-in ID',
+			"type" => "int",
 			"required" => true
 		)
 	));
 
-	if($validator->validate($_GET))
-	{
-		$params = $validator->output;
-	}
-	else
-	{
+	if(!$validator->validate($_GET))
 		throw new Exception(implode("\n", $validator->errors));
-	}
+	$params = $validator->output;
 
-	//--------------------------------------------------------------------------
-
-	$pdo = DBConnector::getConnection();
-
-	// Description, input type
-	$sqlStr = "SELECT pm.plugin_id, pm.type, cm.input_type, pm.description"
-			. " FROM plugin_master pm, plugin_cad_master cm"
-			. " WHERE cm.plugin_id=pm.plugin_id"
-			. " AND pm.plugin_name=?"
-			. " AND pm.version=?";
-	$condArr = array($params['pluginName'], $params['version']);
-	$result = DBConnector::query($sqlStr, $condArr, 'ARRAY_ASSOC');
-
-	if (!isset($result['plugin_id']))
+	$plugin = new Plugin($params['id']);
+	if (!isset($plugin->plugin_id))
 		throw new Exception('Plugin not found');
+	$plugin_id = $plugin->plugin_id;
 
-	$params['pluginID']    = $result['plugin_id'];
-	$params['pluginType']  = $result['type'];
-	$params['inputType']   = $result['input_type'];
-	$params['description'] = $result['description'];
-
-	// Get required CAD series infomation from ruleset
-	$rulesetList = PluginCadSeries::select(array('plugin_id' => $params['pluginID']));
-	foreach ($rulesetList as $volume)
+	if ($plugin->type == Plugin::CAD_PLUGIN)
 	{
-		$item = array('volume_id' => $volume->volume_id, 'filters' => array());
-		$rulesets = json_decode($volume->ruleset, true);
-		foreach ($rulesets as $ruleset)
+		// Get required CAD series infomation from ruleset
+		$rulesetList = $plugin->PluginCadSeries;
+		foreach ($rulesetList as $volume)
 		{
-			$item['filters'][] = $ruleset['filter'];
+			$item = array(
+				'volume_id' => $volume->volume_id,
+				'label' => $volume->volume_label,
+				'filters' => array()
+			);
+			$rulesets = json_decode($volume->ruleset, true);
+			foreach ($rulesets as $ruleset)
+			{
+				$item['filters'][] = $ruleset['filter'];
+			}
+			$volumes[] = $item;
 		}
-		$volumes[] = $item;
 	}
+
 
 	// Executed cases
 	$sqlStr = "SELECT DATE(MIN(executed_at))"
 			. " FROM executed_plugin_list"
 			. " WHERE plugin_id=?";
-	$params['oldestDate'] = DBConnector::query($sqlStr, array($params['pluginID']));
+	$params['oldestDate'] = DBConnector::query($sqlStr, array($plugin_id));
 
 	$sqlStr = "SELECT status, COUNT(*)"
 			. " FROM executed_plugin_list"
 			. " WHERE plugin_id=?"
 			. " GROUP BY status";
-	$result = DBConnector::query($sqlStr, array($params['pluginID']), 'ALL_NUM');
-
-	$caseNum = array_fill(0, 3, 0);
+	$result = DBConnector::query($sqlStr, array($plugin_id), 'ALL_NUM');
 
 	foreach($result as $r)
 	{
@@ -101,11 +81,17 @@ try
 	//--------------------------------------------------------------------------
 	// Settings for Smarty
 	//--------------------------------------------------------------------------
+	$smarty->assign('plugin', $plugin);
 	$smarty->assign('caseNum', $caseNum);
 	$smarty->assign('volumes', $volumes);
 	$smarty->assign('params', $params);
 	$smarty->display('plugin_info.tpl');
 	//--------------------------------------------------------------------------
+}
+catch(PDOException $e)
+{
+	$smarty->assign('message', 'Database error.');
+	$smarty->display('critical_error.tpl');
 }
 catch(Exception $e)
 {

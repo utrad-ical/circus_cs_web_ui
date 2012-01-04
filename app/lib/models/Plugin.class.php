@@ -19,7 +19,8 @@ class Plugin extends Model
 	protected static $_table = 'plugin_master';
 	protected static $_primaryKey = 'plugin_id';
 	protected static $_hasMany = array(
-		'PluginCadSeries' => array('key' => 'plugin_id')
+		'PluginCadSeries' => array('key' => 'plugin_id'),
+		'CadPlugin' => array('key' => 'plugin_id')
 	);
 
 	protected $userPreference = array();
@@ -32,6 +33,22 @@ class Plugin extends Model
 	public function fullName()
 	{
 		return $this->plugin_name . '_v.' . $this->version;
+	}
+
+	/**
+	 * Returns the plugin type in string.
+	 */
+	public function pluginType()
+	{
+		switch ($this->type)
+		{
+			case self::CAD_PLUGIN:
+				return 'CAD';
+			case self::RESERACH_PLUGIN:
+				return 'Research';
+			default:
+				return 'Unknown';
+		}
 	}
 
 	/**
