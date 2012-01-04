@@ -35,11 +35,10 @@ abstract class Model implements Iterator
 		$this->_data = $row;
 	}
 
-	public function find($condition = array(), $options = array())
+	public static function select($condition = array(), $options = array())
 	{
-		$class = get_class($this);
-		$sql =
-			"SELECT * FROM {$class::$_table}";
+		$table = static::$_table;
+		$sql = "SELECT * FROM $table";
 		$conds = array();
 		$vals  = array();
 		foreach ($condition as $key => $value)
@@ -48,7 +47,7 @@ abstract class Model implements Iterator
 			$vals[] = $value;
 		}
 		if (count($condition))
-			$sql .= ' WHERE ' . implode(' AND ', $conds);
+		$sql .= ' WHERE ' . implode(' AND ', $conds);
 
 		if (is_array($options['order']))
 		{
@@ -61,15 +60,28 @@ abstract class Model implements Iterator
 
 		$rows = DBConnector::query($sql, $vals, 'ALL_ASSOC');
 		$results = array();
-		if (!is_array($rows))
-			return $results;
+		if (!is_array($rows)) return $results;
 		foreach ($rows as $row)
 		{
-			$item = new $class();
+			$item = new static();
 			$item->_data = $row;
 			$results[] = $item;
 		}
 		return $results;
+	}
+
+	public static function selectOne($condition = array(), $options = array())
+	{
+		$tmp = static::select($condition, $options);
+		if (count($tmp) > 0)
+			return $tmp[0];
+		else
+			return null;
+	}
+
+	public function find($condition = array(), $options = array())
+	{
+		return static::select($condition, $options);
 	}
 
 	protected function loadBelonging($key)
