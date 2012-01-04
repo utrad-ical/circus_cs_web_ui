@@ -15,11 +15,11 @@ try
 	$pdo = DBConnector::getConnection();
 	$sqlStr = "SELECT path FROM storage_master WHERE type=3";
 	$pathList = DBConnector::query($sqlStr, NULL, 'ALL_COLUMN');
-	
+
 	foreach($pathList as $path)
 	{
 		$objects = scandir($path);
-		
+
 		$fileDate = new DateTime();
 
 		foreach ($objects as $object)
@@ -29,7 +29,7 @@ try
 				$fileName = $path . $DIR_SEPARATOR . $object;
 
 				$fileDate->setTimestamp(filemtime($fileName));
-				
+
 				if($fileDate < $rmDate)  @unlink($fileName);
 			}
 		}
@@ -41,5 +41,3 @@ catch (PDOException $e)
 	var_dump($e->getMessage());
 }
 $pdo = null;
-
-?>

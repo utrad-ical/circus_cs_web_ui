@@ -115,4 +115,3 @@ $smarty->assign('restartFlg', $restartFlg);
 $smarty->display('administration/dicom_storage_server_config.tpl');
 //------------------------------------------------------------------------------
 
-?>

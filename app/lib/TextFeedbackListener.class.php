@@ -119,5 +119,3 @@ class TextFeedbackListener extends FeedbackListener
 		return $result;
 	}
 }
-
-?>

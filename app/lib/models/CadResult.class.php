@@ -347,5 +347,3 @@ class CadResult extends Model
 		return $result;
 	}
 }
-
-?>

@@ -140,4 +140,3 @@ if ($plugin) $smarty->assign('plugin', $plugin);
 $smarty->assign('params', $params);
 $smarty->display('cad_job/cad_execution.tpl');
 
-?>

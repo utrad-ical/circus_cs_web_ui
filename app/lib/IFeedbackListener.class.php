@@ -38,5 +38,3 @@ interface IFeedbackListener
 	 */
 	public function additionalFeedbackID();
 }
-
-?>

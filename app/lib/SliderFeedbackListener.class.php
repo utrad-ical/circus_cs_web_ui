@@ -113,5 +113,3 @@ class SliderFeedbackListener extends FeedbackListener
 		return $result;
 	}
 }
-
-?>

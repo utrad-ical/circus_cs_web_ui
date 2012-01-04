@@ -223,5 +223,3 @@ abstract class Model implements Iterator
 		return ($key !== null && $key !== false);
 	}
 }
-
-?>

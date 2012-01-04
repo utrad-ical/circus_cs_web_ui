@@ -163,5 +163,3 @@ class SeriesFilterTest extends PHPUnit_Framework_TestCase
 		$this->doTestRuleSets($rulelist, 50, 30, false);
 	}
 }
-
-?>

@@ -27,5 +27,3 @@ abstract class FeedbackListener extends CadBlockElement implements IFeedbackList
 		return null;
 	}
 }
-
-?>

@@ -9,5 +9,3 @@ function smarty_modifier_TorF($boolean)
 {
 	return $boolean ? 't' : 'f';
 }
-
-?>

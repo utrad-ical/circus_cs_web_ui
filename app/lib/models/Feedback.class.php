@@ -99,5 +99,3 @@ class Feedback extends Model
 		}
 	}
 }
-
-?>

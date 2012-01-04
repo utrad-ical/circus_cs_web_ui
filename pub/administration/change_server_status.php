@@ -16,6 +16,5 @@
 	}
 
 	$dstData = WinServiceControl::getStatus($serviceName, $ipAddress);
-	
+
 	echo json_encode($dstData);
-?>

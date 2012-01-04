@@ -138,4 +138,3 @@ function parseUserList($input)
 	return array ('users' => $users, 'groups' => $groups);
 }
 
-?>

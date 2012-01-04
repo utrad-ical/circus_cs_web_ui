@@ -205,7 +205,7 @@ class QueryJobAction extends ApiAction
 				array_push($ret, $result);
 			}
 		}
-		
+
 		return $ret;
 	}
 
@@ -263,7 +263,7 @@ class QueryJobAction extends ApiAction
 				$jobIDArr[] = $r['job_id'];
 			}
 		}
-		
+
 		return self::query_job($jobIDArr);
 	}
 
@@ -307,5 +307,3 @@ class QueryJobAction extends ApiAction
 		return ($waiting[0]['cnt'] - 1);
 	}
 }
-
-?>

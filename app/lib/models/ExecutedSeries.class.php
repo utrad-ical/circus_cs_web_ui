@@ -8,5 +8,3 @@ class ExecutedSeries extends Model
 		'Series' => array('key' => 'series_sid')
 	);
 }
-
-?>

@@ -59,11 +59,11 @@ if($params['message'] == "&nbsp;")
 
 			$sqlParams = array();
 			$order = 1;
-			
+
 			if($params['executableStr'] != "")
 			{
 				$executableList = explode("^", $params['executableStr']);
-				
+
 				for($i=0; $i < count($executableList); $i++)
 				{
 					$pos = strpos($executableList[$i], "_v.");
@@ -73,12 +73,12 @@ if($params['message'] == "&nbsp;")
 					// Get plugin ID
 					$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 					$pluginID = DBConnector::query($sqlStr, array($cadName, $version), 'SCALAR');
-					
+
 					$sqlStr = "UPDATE plugin_master SET exec_enabled='t' WHERE plugin_id=?";
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->bindValue(1, $pluginID);
 					$stmt->execute();
-					
+
 					if($params['type'] == 2)
 					{
 						$sqlStr = "UPDATE plugin_research_master SET label_order=? WHERE plugin_id=?";
@@ -92,7 +92,7 @@ if($params['message'] == "&nbsp;")
 					$order++;
 				}
 			}
-			
+
 			if($params['hiddenStr'] != "")
 			{
 				$hiddenList = explode("^", $params['hiddenStr']);
@@ -126,7 +126,7 @@ if($params['message'] == "&nbsp;")
 					$order++;
 				}
 			}
-			
+
 			$pdo->commit();
 			$dstData['message'] = '<span style="color:blue;">Setting was successfully saved.</span>';
 		}
@@ -144,4 +144,3 @@ else
 }
 echo json_encode($dstData);
 
-?>

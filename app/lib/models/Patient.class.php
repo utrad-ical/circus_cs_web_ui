@@ -48,5 +48,3 @@ class Patient extends Model
 		return sprintf("[Patient %d %s]", $this->patient_id, $this->patient_name);
 	}
 }
-
-?>

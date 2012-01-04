@@ -1,7 +1,7 @@
 <?php
 
 	$modalityMenuVal = array();
-	$cadList = array();	
+	$cadList = array();
 	$modalityNum = count($modalityList);
 	$modalityCadList = array();
 
@@ -20,12 +20,12 @@
 
 		if($modalityList[$i] != 'all')  $sqlStr .= " AND sr.modality=?";
 		$sqlStr .= " ORDER BY pm.plugin_name ASC, pm.version DESC";
-		
+
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->bindParam(1, $PLUGIN_SUCESSED);
 		if($modalityList[$i] != 'all')  $stmt->bindParam(2, $modalityList[$i]);
 		$stmt->execute();
-	
+
 		while($result = $stmt->fetch(PDO::FETCH_NUM))
 		{
 			$modalityCadList[$modalityList[$i]][$result[0]][] = $result[1];
@@ -40,11 +40,11 @@
 		}
 		$modalityMenuVal[] = $tmpStr;
 	}
-	
+
 	$cadMenuStr = explode('/', $modalityMenuVal[0]);
 
 	$cadNum = count($cadMenuStr);
-			
+
 	for($i=0; $i<$cadNum; $i++)
 	{
 		$tmpStr = explode('^', $cadMenuStr[$i]);
@@ -53,4 +53,3 @@
 		$cadList[$i][1] =  substr($cadMenuStr[$i], strlen($tmpStr[0])+1);  // version str
 	}
 
-?>

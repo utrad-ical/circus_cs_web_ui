@@ -111,9 +111,9 @@ if($mode == 'update' || $mode == 'delete')
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 		}
-		
+
 		$pdo->commit();
-		
+
 		$dstData['message'] = 'Succeeded!';
 		$dstData['preferenceFlg'] = ($mode=='delete') ? 0 : 1;
 
@@ -127,4 +127,4 @@ if($mode == 'update' || $mode == 'delete')
 	$pdo = null;
 }
 echo json_encode($dstData);
-?>
+

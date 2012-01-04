@@ -58,10 +58,10 @@ try
 		$userID = $_SESSION['userID'];
 
 		$pdo = DBConnector::getConnection();
-		
+
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 		$pluginID = DBConnector::query($sqlStr, array($pluginName, $version), 'SCALAR');
-		
+
 		$sqlStr = "SELECT job_id FROM executed_plugin_list"
 				. " WHERE plugin_id=? AND status>?";
 		$jobIdArr = DBConnector::query($sqlStr, array($pluginID, $PLUGIN_FAILED), 'ALL_COLUMN');
@@ -76,12 +76,12 @@ try
 			if(count($targetIdArr) == $cadNum)
 			{
 				$cnt = 0;
-				
+
 				for($i=0; $i<$cadNum; $i++)
 				{
 					if($targetIdArr[$i] == $cadIdArr[$i]) $cnt++;
 				}
-			
+
 				if($cnt == $cadNum)
 				{
 					$sqlStr = "SELECT status, executed_at, exec_user FROM executed_plugin_list WHERE job_id=?";
@@ -101,7 +101,7 @@ try
 				}
 			}
 		}
-		
+
 		if($dstData['message'] == "")
 		{
 			try
@@ -127,7 +127,7 @@ try
 				//$policyID = DBConnector::query($sqlStr, array($resultPolicy), 'SCALAR');
 				$policyID = 1;
 				$priority = 1;
-		
+
 				// Register into "execxuted_plugin_list"
 				$sqlStr = "INSERT INTO executed_plugin_list"
 						. " (job_id, plugin_id, storage_id, policy_id, status, exec_user,"
@@ -155,7 +155,7 @@ try
 								$dstData['registeredAt'],
 								$dstData['registeredAt']);
 				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParams);				
+				$stmt->execute($sqlParams);
 
 				// Register into executed_research_targets and job_queue_research_targets
 				for($i=0; $i<$cadNum; $i++)
@@ -201,4 +201,3 @@ catch (PDOException $e)
 $pdo = null;
 
 
-?>

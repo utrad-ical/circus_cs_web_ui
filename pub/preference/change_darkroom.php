@@ -49,4 +49,3 @@ catch (Exception $e)
 	));
 }
 
-?>

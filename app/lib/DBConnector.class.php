@@ -112,5 +112,3 @@ class DBConnector
 		throw new Exception('Do not instantiate this object');
 	}
 }
-
-?>

@@ -34,5 +34,3 @@ abstract class CadBlockElement extends CadResultElement
 
 
 }
-
-?>

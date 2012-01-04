@@ -45,7 +45,4 @@ $smarty->assign(array(
 ));
 
 $smarty->display('administration/server_service_config.tpl');
-//------------------------------------------------------------------------------
 
-
-?>

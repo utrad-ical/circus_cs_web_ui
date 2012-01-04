@@ -54,4 +54,3 @@ class DcmExport
 		return false;
 	}
 }
-?>

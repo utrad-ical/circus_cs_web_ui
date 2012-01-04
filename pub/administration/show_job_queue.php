@@ -15,4 +15,4 @@ $smarty->assign('params', $params);
 $smarty->display('administration/show_job_queue.tpl');
 //------------------------------------------------------------------------------
 
-?>
+

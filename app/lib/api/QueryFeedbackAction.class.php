@@ -78,5 +78,3 @@ class QueryFeedbackAction extends ApiAction
 	}
 
 }
-
-?>

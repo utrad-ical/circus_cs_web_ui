@@ -97,5 +97,3 @@ abstract class CadResultElement
 		$this->smarty = $smarty;
 	}
 }
-
-?>

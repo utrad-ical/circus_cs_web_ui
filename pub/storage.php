@@ -48,20 +48,20 @@
 			$pathInfo = pathinfo($fileName);			// get path info
 			$fileSize = filesize($fileName);
 
-			@apache_setenv('no-gzip', 1); 
+			@apache_setenv('no-gzip', 1);
 			@ini_set('zlib.output_compression', 0);
-			header("Content-type: application/force-download"); 
-			header('Content-Type: application/octet-stream'); 
+			header("Content-type: application/force-download");
+			header('Content-Type: application/octet-stream');
 			header('Content-Length: ' .  $fileSize);
-			
-			set_time_limit(300); 
 
-			$chunkSize = 1 * (1024 * 1024); // how many bytes per chunk 
+			set_time_limit(300);
+
+			$chunkSize = 1 * (1024 * 1024); // how many bytes per chunk
 
 			if ($fileSize > $chunkSize)
-			{ 
-				$fp = fopen($fileName, 'rb'); 
-				$buffer = ''; 
+			{
+				$fp = fopen($fileName, 'rb');
+				$buffer = '';
 				while (!feof($fp))
 				{
 					$buffer = fread($fp, $chunkSize);
@@ -72,9 +72,9 @@
 				fclose($fp);
 			}
 			else
-			{ 
+			{
 				readfile($fileName);
-			} 
+			}
 			break;
 
 		// forbidden
@@ -83,4 +83,4 @@
 			break;
 	}
 	finfo_close($finfo);
-?>
+

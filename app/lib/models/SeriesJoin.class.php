@@ -10,5 +10,3 @@ class SeriesJoin extends Model
 	protected static $_primaryKey = 'series_instance_uid';
 	protected static $_tableAsSqlView = TRUE;
 }
-
-?>

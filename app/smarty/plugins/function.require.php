@@ -27,5 +27,3 @@ function smarty_function_require ($param, $smarty)
 	}
 	return implode("\n", $results);
 }
-
-?>

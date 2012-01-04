@@ -42,5 +42,3 @@ class GrayscalePreset extends Model
 		return $result;
 	}
 }
-
-?>

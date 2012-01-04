@@ -80,6 +80,3 @@ class SeriesRulesetAction extends ApiAction
 	}
 
 }
-
-
-?>

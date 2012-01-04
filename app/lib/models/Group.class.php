@@ -92,5 +92,3 @@ class Group extends Model
 		$this->privileges = null;
 	}
 }
-
-?>

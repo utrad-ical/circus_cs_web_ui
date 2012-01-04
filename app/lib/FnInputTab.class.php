@@ -214,5 +214,3 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		return self::FEEDBACK_ID;
 	}
 }
-
-?>

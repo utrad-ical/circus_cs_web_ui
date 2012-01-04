@@ -62,4 +62,4 @@ if($params['message'] == "")
 
 	$pdo = null;
 }
-?>
+

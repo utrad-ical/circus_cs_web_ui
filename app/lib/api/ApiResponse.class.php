@@ -94,5 +94,3 @@ class ApiResponse
 		return json_encode($arr);
 	}
 }
-
-?>

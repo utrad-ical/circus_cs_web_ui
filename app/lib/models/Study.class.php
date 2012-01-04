@@ -15,5 +15,3 @@ class Study extends Model
 		'Series' => array('key' => 'study_instance_uid')
 	);
 }
-
-?>

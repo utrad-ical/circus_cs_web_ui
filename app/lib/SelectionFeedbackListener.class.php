@@ -131,5 +131,3 @@ class SelectionFeedbackListener extends FeedbackListener
 		return $result;
 	}
 }
-
-?>

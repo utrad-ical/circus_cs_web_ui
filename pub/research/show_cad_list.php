@@ -7,7 +7,7 @@ Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
 try
 {
 	$currentUser = Auth::currentUser();
-	
+
 	// Connect to SQL Server
 	$pdo = DBConnector::getConnection();
 
@@ -221,7 +221,7 @@ try
 		//echo $sqlStr;
 
 		$cadList =  DBConnector::query($sqlStr, $condArr, 'ALL_ASSOC');
-		
+
 		// Enter anonymization mode
 		if ($currentUser->anonymized || !$currentUser->hasPrivilege(Auth::PERSONAL_INFO_VIEW))
 		{
@@ -242,4 +242,4 @@ catch (PDOException $e)
 }
 
 $pdo = null;
-?>
+

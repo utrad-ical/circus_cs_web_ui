@@ -51,5 +51,3 @@ class ExecutePluginAction extends ApiAction
 		return $res;
 	}
 }
-
-?>

@@ -175,7 +175,7 @@
 					$addressParams['filterSex'] = $params['filterSex'];
 				}
 			}
-			
+
 			if($params['stDateKind'] != 'all')  $addressParams['stDateKind'] = $params['stDateKind'];
 
 			if($params['stDateFrom'] != "" && $params['stDateTo'] != "" && $params['stDateFrom'] == $params['stDateTo'])
@@ -355,4 +355,3 @@
 	}
 
 	$pdo = null;
-?>

@@ -829,4 +829,3 @@ class JsonValidator extends ValidatorBase
 	}
 }
 
-?>

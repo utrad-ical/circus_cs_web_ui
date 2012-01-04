@@ -49,6 +49,3 @@ function display()
 	));
 	$smarty->display('administration/series_ruleset_config.tpl');
 }
-
-
-?>

@@ -19,5 +19,3 @@ class CadResultExtension extends CadResultElement
 	public function afterBlocks() { return ''; }
 	public function tabs() { return array(); }
 }
-
-?>

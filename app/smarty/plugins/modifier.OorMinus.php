@@ -9,5 +9,3 @@ function smarty_modifier_OorMinus($boolean)
 {
 	return $boolean ? 'O' : '-';
 }
-
-?>

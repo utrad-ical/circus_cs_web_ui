@@ -85,5 +85,3 @@ class BlockSorter extends CadResultExtension
 			return '';
 	}
 }
-
-?>

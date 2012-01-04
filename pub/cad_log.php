@@ -207,7 +207,7 @@
 
 			$params['cadDateKind'] = 'today';
 			$params['srDateKind'] = 'today';	// for HIMEDIC
-			
+
 			$sqlCondArray[] = "el.executed_at>=? AND el.executed_at<=?";
 			$sqlParams[] = $params['cadDateFrom'] . ' 00:00:00';
 			$sqlParams[] = $params['cadDateFrom'] . ' 23:59:59';
@@ -800,4 +800,4 @@
 	}
 
 	$pdo = null;
-?>
+

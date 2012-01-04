@@ -30,4 +30,4 @@ else
 		echo $res->getJson();
 	}
 }
-?>
+

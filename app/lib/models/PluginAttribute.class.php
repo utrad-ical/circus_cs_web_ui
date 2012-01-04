@@ -8,5 +8,3 @@ class PluginAttribute extends Model
 		'CADResult' => array(key => 'job_id')
 	);
 }
-
-?>

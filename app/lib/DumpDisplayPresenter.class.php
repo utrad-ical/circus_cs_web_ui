@@ -22,5 +22,3 @@ class DumpDisplayPresenter extends DisplayPresenter
 		return $this->executeTemplate('dump_display_presenter.tpl');
 	}
 }
-
-?>

@@ -42,7 +42,7 @@ if($params['message'] == "")
 				. " series_date, series_time, modality, series_description"
 				. " FROM series_join_list"
 				. " WHERE series_instance_uid=?";
-					
+
 		$result = DBConnector::query($sqlStr, $params['seriesInstanceUID'], 'ARRAY_NUM');
 
 		if(!is_array($result))
@@ -80,4 +80,4 @@ if($params['message'] == "")
 
 	$pdo = null;
 }
-?>
+

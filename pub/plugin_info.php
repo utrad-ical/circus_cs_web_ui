@@ -99,4 +99,3 @@ catch(Exception $e)
 	$smarty->display('critical_error.tpl');
 }
 
-?>

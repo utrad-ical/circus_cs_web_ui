@@ -273,6 +273,3 @@ $smarty->assign(array(
 	'groupList' => $groupList
 ));
 $smarty->display('administration/user_config.tpl');
-
-
-?>

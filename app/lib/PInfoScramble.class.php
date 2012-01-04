@@ -3,11 +3,11 @@
 	{
 		private static $_baseStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
 		private static $_baseLength = 62;
-	
+
 		public static function encrypt($str, $key)
 		{
 			$ret = "";
-		
+
 			for($n = 0; $n < strlen($str); $n++)
 			{
 				$inChar  = $str[$n];
@@ -20,7 +20,7 @@
 					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
 					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
 				}
-				
+
 				if($inNum == -1 || $keyNum == -1)
 				{
 					$ret .= $str[$n];
@@ -31,14 +31,14 @@
 					$ret .= self::$_baseStr[$encodeNum];
 				}
 			}
-		
+
 			return $ret;
 		}
-	
+
 		public static function decrypt($str, $key)
 		{
 			$ret = "";
-		
+
 			for($n = 0; $n < strlen($str); $n++)
 			{
 				$inChar  = $str[$n];
@@ -51,7 +51,7 @@
 					if($inChar  === self::$_baseStr[$i])  $inNum  = $i;
 					if($keyChar === self::$_baseStr[$i])  $keyNum = $i;
 				}
-		
+
 				if($inNum == -1 || $keyNum == -1)
 				{
 					$ret .= $str[$n];
@@ -62,7 +62,7 @@
 					$ret .= self::$_baseStr[$encodeNum];
 				}
 			}
-			
+
 			return $ret;
 		}
 
@@ -76,4 +76,4 @@
 			return 'YYYY-MM-DD';
 		}
 	}
-?>
+

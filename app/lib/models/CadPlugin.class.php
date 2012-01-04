@@ -12,5 +12,3 @@ class CadPlugin extends Model
 		'Plugin' => array('key' => 'plugin_id')
 	);
 }
-
-?>

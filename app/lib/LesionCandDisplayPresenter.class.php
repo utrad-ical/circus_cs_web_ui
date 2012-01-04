@@ -77,5 +77,3 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		return $result;
 	}
 }
-
-?>

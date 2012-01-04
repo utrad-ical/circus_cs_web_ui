@@ -57,7 +57,7 @@ try
 		$params['resPath']    = $result[4] . $DIR_SEPARATOR . $params['jobID'] . $DIR_SEPARATOR;
 		$params['resPathWeb'] = "../storage/" . $result[3] . '/' . $params['jobID'] . $DIR_SEPARATOR_WEB;
 
-		// Get path of web cache 
+		// Get path of web cache
 		$sqlStr = "SELECT storage_id, path FROM storage_master WHERE type=3 AND current_use='t'";
 		$result =  DBConnector::query($sqlStr, NULL, 'ARRAY_NUM');
 
@@ -82,4 +82,3 @@ catch (PDOException $e)
 
 $pdo = null;
 
-?>

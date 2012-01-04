@@ -24,5 +24,3 @@ class ImageDisplayPresenter extends DisplayPresenter
 		return $this->executeTemplate('image_display_presenter.tpl');
 	}
 }
-
-?>

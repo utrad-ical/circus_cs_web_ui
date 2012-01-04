@@ -11,5 +11,3 @@ class InternalExecutePluginAction extends ExecutePluginAction
 		return self::$required_privileges;
 	}
 }
-
-?>

@@ -270,4 +270,3 @@
 
 	echo json_encode($dstData);
 
-?>

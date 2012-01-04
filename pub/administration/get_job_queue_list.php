@@ -10,7 +10,7 @@ $dstData = array('message' => "",
 try
 {
 	$jobList = array();
-	
+
 	$pdo = DBConnector::getConnection();
 
 	$sqlStr = "SELECT * FROM job_queue jq, plugin_master pm"
@@ -95,4 +95,4 @@ catch (PDOException $e)
 }
 $pdo = null;
 echo json_encode($dstData);
-?>
+

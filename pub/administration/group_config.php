@@ -155,5 +155,3 @@ $smarty->assign(array(
 $smarty->display('administration/group_config.tpl');
 //------------------------------------------------------------------------------
 
-
-?>

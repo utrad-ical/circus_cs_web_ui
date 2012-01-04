@@ -55,5 +55,3 @@ catch (Exception $e)
 		)
 	));
 }
-
-?>

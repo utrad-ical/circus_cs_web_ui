@@ -130,5 +130,3 @@ function registerFeedback(CadResult $cadResult, $feedback, $temporary, $is_conse
 
 	return true;
 }
-
-?>

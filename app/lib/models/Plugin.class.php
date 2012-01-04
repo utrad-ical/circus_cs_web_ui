@@ -122,5 +122,3 @@ class Plugin extends Model
 		return $this->presentation;
 	}
 }
-
-?>

@@ -28,4 +28,3 @@ class SmartyEx extends Smarty
 	}
 }
 
-?>

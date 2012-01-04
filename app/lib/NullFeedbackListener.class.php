@@ -38,5 +38,3 @@ class NullFeedbackListener extends FeedbackListener
 		throw new BadMethodCallException('NullFeedbackListener does not support integrating');
 	}
 }
-
-?>

@@ -36,5 +36,3 @@ class PluginResultPolicy extends Model
 		return false;
 	}
 }
-
-?>

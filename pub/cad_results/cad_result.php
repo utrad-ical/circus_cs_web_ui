@@ -217,5 +217,3 @@ function critical_error($message, $title = null)
 	$smarty->display('critical_error.tpl');
 	exit();
 }
-
-?>

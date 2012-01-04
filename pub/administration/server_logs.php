@@ -43,4 +43,4 @@
 	$smarty->assign('fileData', $fileData);
 	$smarty->display('administration/server_logs.tpl');
 	//--------------------------------------------------------------------------
-?>
+

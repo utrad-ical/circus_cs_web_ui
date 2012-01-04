@@ -111,5 +111,3 @@ class DisplayPresenter extends CadBlockElement
 		return $result;
 	}
 }
-
-?>

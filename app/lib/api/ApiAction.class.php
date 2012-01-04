@@ -12,5 +12,3 @@ abstract class ApiAction
 	abstract public function requiredPrivileges();
 	abstract public function execute($api_request);
 }
-
-?>

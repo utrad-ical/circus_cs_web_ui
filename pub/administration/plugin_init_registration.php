@@ -84,7 +84,7 @@ if(move_uploaded_file($_FILES['upfile']['tmp_name'], $pluginPath.$uploadFile))
 		$errorFlg = 1;
 	}
 	unlink($pluginPath.$uploadFile);
-	
+
 	$pluginPath .= $baseName;
 }
 //----------------------------------------------------------------------------------------------------
@@ -127,16 +127,16 @@ if(!$errorFlg)
 	try
 	{
 		$message .= 'Database registration<br/>';
-		
+
 		// Begin transaction
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$pdo->beginTransaction();	// Begin transaction
-		
+
 		// Get new plugin_id
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute(array($pluginName, $version));
-		
+
 		if($stmt->rowCount() == 1)
 		{
 			$pluginID = $stmt->fetchColumn();
@@ -158,7 +158,7 @@ if(!$errorFlg)
 							date("Y-m-d H:i:s", time()));
 		$stmt = $pdo->prepare($sqlStr);
 		$stmt->execute($sqlParams);
-		
+
 		$resultTableName = (isset($data['resultTable']['tableName'])) ? $data['resultTable']['tableName'] : "";
 		$scoreTableName  = (isset($data['scoreTable']['tableName'])) ? $data['scoreTable']['tableName'] : "";
 
@@ -179,7 +179,7 @@ if(!$errorFlg)
 								$scoreTableName);
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
-			
+
 			// Set plugin_cad_series
 			if(isset($data['seriesDefinition']))
 			{
@@ -229,14 +229,14 @@ if(!$errorFlg)
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 		}
-		
+
 		//----------------------------------------------------------------------------------------------------
 		// Create result table
 		//----------------------------------------------------------------------------------------------------
 		if(isset($data['resultTable']))
 		{
 			$message .= 'Create result table<br/>';
-			
+
 			DropTableIfExists($pdo, $resultTableName);
 
 			$sqlStr = 'CREATE TABLE "' . $resultTableName . '"('
@@ -288,7 +288,7 @@ if(!$errorFlg)
 			$stmt->execute();
 		}
 		//----------------------------------------------------------------------------------------------------
-		
+
 		//----------------------------------------------------------------------------------------------------
 		// Create score table
 		//--------------------------------------------------------------------------------------------------
@@ -356,7 +356,7 @@ if(!$errorFlg)
 		$binDir = $pluginPath . $DIR_SEPARATOR . 'bin' . $DIR_SEPARATOR;
 
 		$sqlStr = "SELECT * FROM process_machine_list WHERE plugin_job_manager>=2";
-		$processMachineList = DBConnector::query($sqlStr, NULL, 'ALL_ASSOC'); 
+		$processMachineList = DBConnector::query($sqlStr, NULL, 'ALL_ASSOC');
 
 		foreach($processMachineList as $item)
 		{
@@ -368,9 +368,9 @@ if(!$errorFlg)
 				$sqlParams = array($item['pm_id'], $pluginID);
 				$stmt =$pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
-				
+
 				$dstPath = $pluginPath;
-				
+
 				if(!($item['ip_address'] == '127.0.0.1' || $item['ip_address'] == 'localhost'))
 				{
 					$dstPath = '\\\\' . $item['ip_address'] . $DIR_SEPARATOR . 'CIRCUS-CS'
@@ -394,14 +394,14 @@ if(!$errorFlg)
 		//----------------------------------------------------------------------------------------------------
 		$webConfigDir = $pluginPath . $DIR_SEPARATOR . 'webconfig';
 		$webPubDir    = $pluginPath . $DIR_SEPARATOR . 'webpub';
-		
+
 		if(is_dir($webConfigDir))
 		{
 			$message .= 'Copy presentation files<br/>';
 			$dstDir = $WEB_UI_ROOT . $DIR_SEPARATOR . 'plugin' . $DIR_SEPARATOR . $baseName;
 			CopyDirRecursively($webConfigDir, $dstDir);
 		}
-		
+
 		if(is_dir($webPubDir))
 		{
 			$message .= 'Copy resource files<br/>';
@@ -425,7 +425,6 @@ if(!$errorFlg)
 	}
 }
 
-$pdo = null;	
+$pdo = null;
 echo $message;
 
-?>

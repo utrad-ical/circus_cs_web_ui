@@ -98,5 +98,3 @@ class CadPresentation
 }
 
 class CadPresentationException extends LogicException {}
-
-?>
