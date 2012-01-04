@@ -16,8 +16,7 @@ class SeriesRulesetAction extends ApiAction
 	public function execute($api_request)
 	{
 		$plugin_id = $api_request['params']['plugin_id'];
-		$dum = new PluginCadSeries();
-		$this->_entries = $dum->find(
+		$this->_entries = PluginCadSeries::select(
 			array('plugin_id' => $plugin_id),
 			array('order' => array('volume_id'))
 		);

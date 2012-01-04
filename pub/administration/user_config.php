@@ -244,9 +244,8 @@ $_SESSION['ticket'] = $ticket;
 //------------------------------------------------------------------------------
 // Retrieve user list and group list
 //------------------------------------------------------------------------------
-$dum = new User();
 $userList = array();
-$users = $dum->find(array(), array('order' => array('enabled DESC', 'user_id ASC')));
+$users = User::select(array(), array('order' => array('enabled DESC', 'user_id ASC')));
 foreach ($users as $user) {
 	if (array_search($user->user_id, $RESERVED_USER_LIST) !== FALSE)
 		continue;
@@ -259,9 +258,7 @@ foreach ($users as $user) {
 	$userList[$user->user_id] = $item;
 }
 
-$dum = new Group();
-$groupList = $dum->find(array());
-
+$groupList = Group::select();
 
 //------------------------------------------------------------------------------
 // Settings for Smarty

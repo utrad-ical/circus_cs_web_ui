@@ -61,20 +61,18 @@ class Job extends Model
 			throw new InvalidArgumentException('Plugin is not executable.');
 		if (!is_array($series) || count($series) < 1)
 			throw new InvalidArgumentException('Target series not defined.');
-		$dum = new PluginResultPolicy();
 		if (!$resultPolicy)
 			throw new InvalidArgumentException('Invalid result policy.');
-		$policy_id = $dum->find(array('policy_name' => $resultPolicy));
-		if (count($policy_id) != 1)
+		$policy = PluginResultPolicy::selectOne(array('policy_name' => $resultPolicy));
+		if (!$policy)
 			throw new InvalidArgumentException('Invalid result policy.');
-		$policy_id = $policy_id[0]->policy_id;
+		$policy_id = $policy->policy_id;
 		$priority = is_numeric($priority) ? (int)$priority : 1;
 
 		$volumes = $plugin->PluginCadSeries;
 
 		// Confirm all series match the defined series filters.
 		$filter = new SeriesFilter();
-		$dum = new SeriesJoin();
 
 		$series_queue = array();
 		foreach ($volumes as $vol)
@@ -85,13 +83,12 @@ class Job extends Model
 				$errors[] = "Target series for volume ID $vid is not specified.";
 				continue;
 			}
-			$s = $dum->find(array('series_instance_uid' => $series[$vid]));
-			if (count($s) != 1)
+			$s = SeriesJoin::selectOne(array('series_instance_uid' => $series[$vid]));
+			if (!$s)
 			{
 				$errors[] = "Target series for volume ID $vid is not found in series list.";
 				continue;
 			}
-			$s = $s[0];
 			$ruleSets = json_decode($vol->ruleset, true);
 			$data = $s->getData();
 			$matched = $filter->processRuleSets($data, $ruleSets);
@@ -135,11 +132,10 @@ class Job extends Model
 		$job_id =  DBConnector::query($sqlStr, null, 'SCALAR');
 
 		// Get current storage ID for CAD result storage
-		$dum = new Storage();
-		$store = $dum->find(array('type' => 2, 'current_use' => 't'));
-		if (count($store) != 1)
+		$store = Storage::selectOne(array('type' => 2, 'current_use' => 't'));
+		if (!$store)
 			throw new Exception('Storage ID invalid');
-		$storage_id = $store[0]->storage_id;
+		$storage_id = $store->storage_id;
 
 		$now = date("Y-m-d H:i:s");
 
@@ -197,9 +193,7 @@ class Job extends Model
 	protected static function detectDuplicatedJob(Plugin $plugin, array $series)
 	{
 		$ps = $series[0]; // series UID for the primary series
-		$dum = new Series();
-		$s = $dum->find(array('series_instance_uid' => $ps));
-		$s = $s[0];
+		$s = Series::selectOne(array('series_instance_uid' => $ps));
 
 		foreach($series as $vid => $series_uid)
 		{

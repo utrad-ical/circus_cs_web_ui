@@ -54,8 +54,7 @@ try
 	$params['description'] = $result['description'];
 
 	// Get required CAD series infomation from ruleset
-	$dum = new PluginCadSeries();
-	$rulesetList = $dum->find(array('plugin_id' => $params['pluginID']));
+	$rulesetList = PluginCadSeries::select(array('plugin_id' => $params['pluginID']));
 	foreach ($rulesetList as $volume)
 	{
 		$item = array('volume_id' => $volume->volume_id, 'filters' => array());

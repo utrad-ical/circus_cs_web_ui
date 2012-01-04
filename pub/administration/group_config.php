@@ -123,8 +123,7 @@ $_SESSION['ticket'] = md5(uniqid().mt_rand());
 //------------------------------------------------------------------------------
 // Retrieve group lists
 //------------------------------------------------------------------------------
-$dummy = new Group();
-$groups = $dummy->find();
+$groups = Group::find();
 $privs = Auth::getPrivilegeTypes();
 
 $groupList = array();

@@ -45,11 +45,9 @@ try
 	else										$params['listTabTitle'] = "Series list";
 
 	// Check plugin
-	$dum = new Plugin();
-	$plugin = $dum->find(array('plugin_name' => $params['cadName'], 'version' => $params['version']));
-	if (count($plugin) != 1)
+	$plugin = Plugin::selectOne(array('plugin_name' => $params['cadName'], 'version' => $params['version']));
+	if (!$plugin)
 		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not installed.');
-	$plugin = $plugin[0];
 	if ($plugin->type != 1)
 		throw new Exception($plugin->fullName() . ' is not CAD plug-in.');
 	if(!$plugin->exec_enabled)
@@ -64,9 +62,7 @@ try
 	if (!is_int($input_type) || $input_type < 0 || 2 < $input_type)
 		throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
 
-	$dum = new Series();
-	$primarySeries = $dum->find(array('series_instance_uid' => $params['seriesInstanceUID']));
-	$primarySeries = $primarySeries[0];
+	$primarySeries = Series::selectOne(array('series_instance_uid' => $params['seriesInstanceUID']));
 	if (!($primarySeries instanceof Series))
 		throw new Exception('Target primary series does not exist.');
 
@@ -124,8 +120,7 @@ try
 	ksort($volumeInfo, SORT_NUMERIC);
 
 	// Get CAD result policy
-	$dummy = new PluginResultPolicy();
-	$policies = $dummy->find();
+	$policies = PluginResultPolicy::select();
 
 	//--------------------------------------------------------------------------
 	// Settings for Smarty

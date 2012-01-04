@@ -15,8 +15,7 @@ class GrayscalePreset extends Model
 	 */
 	public static function findPresets($modality)
 	{
-		$dum = new GrayscalePreset();
-		return $dum->find(
+		return GrayscalePreset::select(
 			array('modality' => $modality),
 			array('order' => array('priority'))
 		);

@@ -25,14 +25,12 @@ class ExecutePluginAction extends ApiAction
 			$pdo = DBConnector::getConnection();
 			$pdo->beginTransaction();
 			$t = true;
-			$dum = new Plugin();
-			$plugin = $dum->find(array(
+			$plugin = Plugin::selectOne(array(
 				'plugin_name' => $params['pluginName'],
 				'version' => $params['pluginVersion']
 			));
-			if (count($plugin) != 1)
+			if (!$plugin)
 				throw new Exception('Plugin not found');
-			$plugin = $plugin[0];
 
 			$job_id = Job::registerNewJob(
 				$plugin,

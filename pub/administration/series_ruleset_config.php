@@ -32,8 +32,7 @@ function display()
 	$params = array('toTopDir' => "../");
 	$smarty = new SmartyEx();
 
-	$dum = new Plugin();
-	$plugin_list = $dum->find(array('type' => 1));
+	$plugin_list = Plugin::select(array('type' => 1));
 	$plugins = array();
 	foreach ($plugin_list as $item)
 	{

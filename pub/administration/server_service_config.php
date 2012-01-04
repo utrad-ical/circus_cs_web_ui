@@ -14,8 +14,7 @@ $_SESSION['ticket'] = md5(uniqid().mt_rand());
 //------------------------------------------------------------------------------
 // Retrieve machine list
 //------------------------------------------------------------------------------
-$dummy = new ProcessMachine();
-$machines = $dummy->find(array(), array('order'=>array('pm_id')));
+$machines = ProcessMachine::select(array(), array('order'=>array('pm_id')));
 
 $machineList = array();
 foreach ($machines as $machine)

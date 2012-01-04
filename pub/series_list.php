@@ -389,8 +389,7 @@
 
 			foreach($sidList as $sid)
 			{
-				$s = new SeriesJoin();
-				$sdata = $s->find(array("series_sid" => $sid));
+				$sdata = SeriesJoin::select(array("series_sid" => $sid));
 				$seriesData = $sdata[0]->getData();
 
 				$cadNum = 0;

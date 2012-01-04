@@ -43,7 +43,7 @@ try
 
 	if (($mode == 'add' || $mode == 'delete') && $req['tag'])
 	{
-		$targets = $dummy->find(array(
+		$targets = Tag::select(array(
 			'category' => $req['category'],
 			'reference_id' => $req['referenceID'],
 			'tag' => $req['tag']
@@ -65,7 +65,7 @@ try
 		}
 	}
 
-	$objs = $dummy->find(array(
+	$objs = Tag::select(array(
 		'category' => $req['category'],
 		'reference_id' => $req['referenceID']
 	));

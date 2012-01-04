@@ -64,10 +64,9 @@ class CountImagesAction extends ApiAction
 		$dum = new Series();
 		foreach ($UIDs as $id)
 		{
-			$series = $dum->find(array('series_instance_uid' => $id));
-			if (!isset($series[0]))
+			$series = Series::selectOne(array('series_instance_uid' => $id));
+			if (!$series)
 				continue;
-			$series = $series[0];
 			if ($series->image_number)
 			{
 				array_push(
@@ -89,8 +88,7 @@ class CountImagesAction extends ApiAction
 		$result = array();
 		foreach ($UIDs as $id)
 		{
-			$series = new Series();
-			$studies = $series->find(array('study_instance_uid' => $id));
+			$studies = Series::select(array('study_instance_uid' => $id));
 			foreach ($studies as $s)
 			{
 				if ($s->image_number)

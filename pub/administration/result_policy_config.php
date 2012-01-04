@@ -94,8 +94,7 @@ $_SESSION['ticket'] = md5(uniqid().mt_rand());
 //------------------------------------------------------------------------------
 // Retrieve policy lists
 //------------------------------------------------------------------------------
-$dum = new PluginResultPolicy();
-$pols = $dum->find(array()); // fetch all policies
+$pols = PluginResultPolicy::select(array()); // fetch all policies
 $policyList = array();
 foreach ($pols as $pol)
 {
@@ -106,8 +105,7 @@ foreach ($pols as $pol)
 	$policyList[$pol_id] = $item;
 }
 
-$dum = new Group();
-$gps = $dum->find(array(), array('order' => array('group_id')));
+$gps = Group::select(array(), array('order' => array('group_id')));
 $groups = array();
 foreach ($gps as $grp)
 	$groups[] = $grp->group_id;
