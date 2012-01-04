@@ -59,7 +59,8 @@ class DBConnector
 	 * Utility function to do one-liner database access.
 	 * This function prepares, executes and returns results in various styles.
 	 * @param string $sqlStr SQL statements with binnding placeholders ('?').
-	 * @param array $bindValues The list of binding parameters.
+	 * @param mixed $bindValues The list of binding parameters, given as an
+	 * array. If there is only one binding parameter, a scalar value accepted.
 	 * @param string $outputType Format of the return type.
 	 * @return Result of the query in the specified format.
 	 */
