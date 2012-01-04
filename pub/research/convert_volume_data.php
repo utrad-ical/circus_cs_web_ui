@@ -1,5 +1,4 @@
 <?php
-$params = array('toTopDir' => "../");
 include_once("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
@@ -28,7 +27,6 @@ else
 	$params['message'] = implode('<br/>', $validator->errors);
 }
 
-$params['toTopDir'] = "../";
 //-----------------------------------------------------------------------------------------------------------------
 
 if($params['message'] == "")

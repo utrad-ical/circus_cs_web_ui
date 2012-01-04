@@ -1,5 +1,4 @@
 <?php
-	$params = array('toTopDir' => "../");
 	include_once("../common.php");
 	Auth::checkSession();
 	Auth::purgeUnlessGranted(Auth::RESEARCH_EXEC);
@@ -97,7 +96,6 @@
 		//--------------------------------------------------------------------------------------------------------------
 		$smarty = new SmartyEx();
 
-		$smarty->assign('params',        $params);
 		$smarty->assign('pluginList',    $resultPlugin);
 		$smarty->assign('pluginMenuVal', $pluginMenuVal);
 		$smarty->assign('cadList',       $cadList);

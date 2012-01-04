@@ -1,5 +1,4 @@
 <?php
-$params = array('toTopDir' => "../");
 include_once("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::RESEARCH_SHOW);
@@ -31,7 +30,6 @@ else
 	$params['errorMessage'] = implode('<br/>', $validator->errors);
 }
 
-$params['toTopDir'] = '../';
 $params['pluginType'] = 2;
 //------------------------------------------------------------------------------------------------------------------
 

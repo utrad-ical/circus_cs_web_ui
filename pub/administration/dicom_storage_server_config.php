@@ -3,8 +3,7 @@ include("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(AUTH::SERVER_SETTINGS);
 
-$params = array('toTopDir' => "../",
-				'message'  => "&nbsp;");
+$params = array('message'  => "&nbsp;");
 $confFname = $APP_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
 
 //------------------------------------------------------------------------------

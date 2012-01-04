@@ -1,5 +1,4 @@
 <?php
-$params = array('toTopDir' => "../");
 include_once("../common.php");
 Auth::checkSession();
 
@@ -39,7 +38,7 @@ try
 	if (!$validator->validate($_GET))
 		throw new Exception (implode("\n", $validator->errors));
 
-	$params += $validator->output;
+	$params = $validator->output;
 
 	if($params['srcList'] == 'todaysSeries')	$params['listTabTitle'] = "Today's series";
 	else										$params['listTabTitle'] = "Series list";

@@ -3,8 +3,6 @@ require("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(AUTH::SERVER_SETTINGS);
 
-$params = array('toTopDir' => "../");
-
 try
 {
 	//--------------------------------------------------------------------------
@@ -147,7 +145,6 @@ $smarty = new SmartyEx();
 
 $smarty->assign(array(
 	'message' => $message,
-	'params' => $params,
 	'groupList' => $groupList,
 	'ticket' => $_SESSION['ticket'],
 	'privs' => $privs

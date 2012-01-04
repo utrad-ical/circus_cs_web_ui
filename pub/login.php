@@ -1,7 +1,5 @@
 <?php
-
 include("common.php");
-$toTopDir = './';
 
 try
 {
@@ -38,7 +36,7 @@ try
 	Auth::createSession($user);
 
 	// Redirect
-	header('location: ' . $toTopDir . $jump);
+	header('location: ' . $jump);
 }
 catch (Exception $e)
 {

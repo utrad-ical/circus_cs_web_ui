@@ -1,8 +1,5 @@
 <?php
-
 include("../common.php");
-
-$params['toTopDir'] = '../';
 Auth::checkSession(false);
 
 try

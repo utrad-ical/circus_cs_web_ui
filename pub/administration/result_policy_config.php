@@ -1,7 +1,6 @@
 <?php
 
 require_once('../common.php');
-$params['toTopDir'] = '../';
 Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
@@ -113,7 +112,6 @@ foreach ($gps as $grp)
 $smarty = new SmartyEx();
 $smarty->assign(array(
 	'message' => $message,
-	'params' => $params,
 	'ticket' => $_SESSION['ticket'],
 	'groups' => $groups,
 	'policyList' => $policyList

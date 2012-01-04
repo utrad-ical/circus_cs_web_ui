@@ -3,7 +3,6 @@ include("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
-$params = array('toTopDir' => "../");
 $message = '';
 
 
@@ -268,7 +267,6 @@ $smarty->assign(array(
 	'user' => Auth::currentUser(),
 	'message' => $message,
 	'ticket' => $ticket,
-	'params' => $params,
 	'userList' => $userList,
 	'groupList' => $groupList
 ));

@@ -1,6 +1,4 @@
 <?php
-
-$params['toTopDir'] = '../';
 include("../common.php");
 Auth::checkSession();
 
@@ -65,7 +63,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	// Assigning the result to Smarty
 	$smarty = new SmartyEx();
 
-	$params['toTopDir'] = '../';
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
 
@@ -197,7 +194,6 @@ function show_cad_results($jobID, $feedbackMode) {
 		'feedbackListener' => $feedbackListener,
 		'presentationParams' => $presentationParams,
 		'feedbacks' => $feedback,
-		'params' => $params,
 		'tabs' => $tabs,
 		'extensions' => $extensions,
 	));
@@ -210,7 +206,6 @@ function critical_error($message, $title = null)
 {
 	$smarty = new SmartyEx();
 	$smarty->assign(array(
-		'params' => array('toTopDir' => '../'),
 		'message' => $message,
 		'errorTitle' => $title
 	));

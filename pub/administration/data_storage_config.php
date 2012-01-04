@@ -3,8 +3,6 @@ include("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
-$params = array('toTopDir' => "../");
-
 $validator = new FormValidator();
 $validator->addRules(array(
 	'mode' => array('type' => 'select', 'options' => array('add', 'delete', 'setCurrent')),
@@ -88,7 +86,6 @@ try
 	//--------------------------------------------------------------------------
 	// Settings for Smarty
 	//--------------------------------------------------------------------------
-	$smarty->assign('params', $params);
 	$smarty->assign('storage', $storage);
 	$smarty->assign('ticket', $ticket);
 	$smarty->assign('message', $message);
@@ -97,7 +94,6 @@ try
 }
 catch (Exception $e)
 {
-	$smarty->assign('params', $params);
 	$smarty->assign('message', $e->getMessage());
 	$smarty->display('critical_error.tpl');
 }

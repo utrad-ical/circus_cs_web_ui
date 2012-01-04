@@ -1,6 +1,5 @@
 <?php
 	include("../common.php");
-	$params = array('toTopDir' => "../");
 	Auth::checkSession();
 	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
@@ -39,7 +38,6 @@
 	// Settings for Smarty
 	//--------------------------------------------------------------------------
 	$smarty = new SmartyEx();
-	$smarty->assign('params',   $params);
 	$smarty->assign('fileData', $fileData);
 	$smarty->display('administration/server_logs.tpl');
 	//--------------------------------------------------------------------------

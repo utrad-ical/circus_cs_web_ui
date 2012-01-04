@@ -3,8 +3,6 @@ require("../common.php");
 Auth::checkSession();
 Auth::purgeUnlessGranted(AUTH::SERVER_OPERATION);
 
-$params = array('toTopDir' => "../");
-
 //------------------------------------------------------------------------------
 // Make one-time ticket
 //------------------------------------------------------------------------------
@@ -37,7 +35,6 @@ foreach ($machines as $machine)
 $smarty = new SmartyEx();
 
 $smarty->assign(array(
-	'params' => $params,
 	'machineList' => $machineList,
 	'storageServerName' => $DICOM_STORAGE_SERVICE,
 	'managerServerName' => $PLUGIN_JOB_MANAGER_SERVICE,

@@ -4,7 +4,6 @@ Auth::checkSession();
 
 try
 {
-	$params = array('toTopDir' => "./");
 	$plugins = Plugin::select(array(), array('order' => array('install_dt DESC')));
 	$machines = ProcessMachine::select(array(), array('order'=>array('pm_id')));
 
@@ -13,7 +12,6 @@ try
 	//--------------------------------------------------------------------------
 	$smarty = new SmartyEx();
 
-	$smarty->assign('params', $params);
 	$smarty->assign('plugins', $plugins);
 	$smarty->assign('machines', $machines);
 

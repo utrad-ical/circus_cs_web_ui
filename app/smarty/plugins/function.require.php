@@ -11,7 +11,7 @@ function smarty_function_require ($param, $smarty)
 	foreach ($requires as $req)
 	{
 		$req = trim($req);
-		$root = $smarty->get_template_vars('root');
+		$root = $smarty->get_template_vars('totop');
 		if ($root)
 			$req = "$root$req";
 		if (preg_match("/\\.css$/i", $req))

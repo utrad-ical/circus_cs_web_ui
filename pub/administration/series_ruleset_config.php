@@ -29,7 +29,6 @@ display();
 function display()
 {
 	global $keys;
-	$params = array('toTopDir' => "../");
 	$smarty = new SmartyEx();
 
 	$plugin_list = Plugin::select(array('type' => 1));
@@ -44,7 +43,6 @@ function display()
 
 	$smarty->assign(array(
 		'plugins' => $plugins,
-		'params' => $params,
 		'keys' => $keys
 	));
 	$smarty->display('administration/series_ruleset_config.tpl');

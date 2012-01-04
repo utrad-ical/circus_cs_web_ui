@@ -15,7 +15,6 @@ Parameters:
     The class of the body tag.
 
 *}
-{assign var="root" value=$params.toTopDir}
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -26,12 +25,12 @@ Parameters:
 
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
-<link href="{$root}css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="{$root}jq/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="{$root}js/circus-common.js"></script>
+<link href="{$totop}css/import.css" rel="stylesheet" type="text/css" media="all" />
+<script language="javascript" type="text/javascript" src="{$totop}jq/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="{$totop}js/circus-common.js"></script>
 
-<link rel="shortcut icon" href="{$root}favicon.ico" />
-<link href="{$root}css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
+<link rel="shortcut icon" href="{$totop}favicon.ico" />
+<link href="{$totop}css/mode.{$smarty.session.colorSet}.css" rel="stylesheet" type="text/css" media="all" />
 
 <!-- template specific inclusions -->
 {require require=$require}

@@ -25,6 +25,9 @@ class SmartyEx extends Smarty
 		$this->plugins_dir[] = $rootPath . 'plugins/';
 
 		$this->assign('currentUser', Auth::currentUser());
+		$rp = relativePath(dirname($_SERVER['PHP_SELF']), $_SESSION['topdir']);
+
+		$this->assign('totop', $rp);
 	}
 }
 

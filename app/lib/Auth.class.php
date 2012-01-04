@@ -319,11 +319,10 @@ class Auth
 	 */
 	public static function purge($mode = null)
 	{
-		global $params;
-		$toTopDir = (isset($params['toTopDir'])) ? $params['toTopDir'] : '';
+		global $DIR_SEPARATOR_WEB;
 		Auth::logout();
 		$mode_str = $mode ? "?mode=$mode" : '';
-		header('location: ' . $toTopDir . 'index.php' . $mode_str);
+		header('location: ' . $_SESSION['topdir'] . $DIR_SEPARATOR_WEB . 'index.php' . $mode_str);
 		exit();
 	}
 

@@ -5,7 +5,7 @@
 <script type="text/javascript" language="javascript">
 <!--
 
-var toTopDir = "{$params.toTopDir|escape:javascript}";
+var root = "{$totop|escape:javascript}";
 
 {literal}
 $(function() {
@@ -13,7 +13,7 @@ $(function() {
 		var body = $('body');
 		$('body').toggleClass('darkroom');
 		$.post(
-			toTopDir + 'preference/change_darkroom.php',
+			root + 'preference/change_darkroom.php',
 			{ darkroom: body.hasClass('darkroom') ? 't' : 'f' },
 			$.noop,
 			'text'

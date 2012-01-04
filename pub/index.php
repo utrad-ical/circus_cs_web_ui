@@ -33,6 +33,7 @@
 				if($valid_user)
 				{
 					Auth::createSession($valid_user);
+					$_SESSION['topdir'] = dirname($_SERVER['PHP_SELF']);
 					header('location: home.php');
 					exit;
 				} else {

@@ -3,8 +3,6 @@
 	Auth::checkSession();
 	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
 
-	$params = array('toTopDir' => "../");
-
 	try
 	{
 		// Connect to SQL Server
