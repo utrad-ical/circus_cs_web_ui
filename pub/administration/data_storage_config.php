@@ -1,269 +1,177 @@
 <?php
-	include("../common.php");
-	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+include("../common.php");
+Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
-	if($_SESSION['serverSettingsFlg']==1)
+$params = array('toTopDir' => "../");
+
+$validator = new FormValidator();
+$validator->addRules(array(
+	'mode' => array('type' => 'select', 'options' => array('add', 'delete', 'setCurrent')),
+	'id' => array('type' => 'int'),
+	'type' => array(
+		'type' => 'select',
+		'options' => array(
+			Storage::DICOM_STORAGE,
+			Storage::PLUGIN_RESULT,
+			Storage::WEB_CACHE
+		)
+	),
+	'ticket' => array('type' => 'str'),
+	'path' => array('type' => 'str')
+));
+
+$smarty = new SmartyEx();
+
+try
+{
+	if (!$validator->validate($_REQUEST))
+		throw new Exception(implode("\n", $validator->errors));
+	$req = $validator->output;
+	$mode = $req['mode'];
+
+	if ($mode)
 	{
-		//--------------------------------------------------------------------------------------------------------------
-		// Import $_REQUEST variables
-		//--------------------------------------------------------------------------------------------------------------
-		$mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
-		$newStorageID  = (isset($_REQUEST['newStorageID'])) ? $_REQUEST['newStorageID'] : "";
-		$newPath       = (isset($_REQUEST['newPath']))      ? $_REQUEST['newPath']      : "";
-		$newType       = (isset($_REQUEST['newType']))      ? $_REQUEST['newType']      : "";
-
-		$oldDicomID  = (isset($_REQUEST['oldDicomID']) && is_numeric($_REQUEST['oldDicomID'])) ? $_REQUEST['oldDicomID'] : 0;
-		$oldResultID = (isset($_REQUEST['oldResultID']) && is_numeric($_REQUEST['oldResultID'])) ? $_REQUEST['oldResultID'] : 0;
-		$newDicomID  = (isset($_REQUEST['newDicomID']) && is_numeric($_REQUEST['newDicomID'])) ? $_REQUEST['newDicomID'] : 0;
-		$newResultID = (isset($_REQUEST['newResultID']) && is_numeric($_REQUEST['newResultID'])) ? $_REQUEST['newResultID'] : 0;
-		$oldCacheID = (isset($_REQUEST['oldCacheID']) && is_numeric($_REQUEST['oldCacheID'])) ? $_REQUEST['oldCacheID'] : 0;
-		$newCacheID = (isset($_REQUEST['newCacheID']) && is_numeric($_REQUEST['newCacheID'])) ? $_REQUEST['newCacheID'] : 0;
-		//--------------------------------------------------------------------------------------------------------------
-
-		$params = array('toTopDir' => "../");
-
 		try
 		{
-			// Connect to SQL Server
+			if ($_SESSION['ticket'] != $req['ticket'])
+				throw new Exception('Invalid operation. Try again.');
 			$pdo = DBConnector::getConnection();
-
-			//----------------------------------------------------------------------------------------------------------
-			// Registration of storage settings
-			//----------------------------------------------------------------------------------------------------------
-			$message = "&nbsp;";
-			$sqlStr = "";
-			$sqlParams = array();
-
-			if($mode == 'add')
+			$pdo->beginTransaction();
+			$t = true;
+			switch ($mode)
 			{
-				$sqlStr = "SELECT COUNT(*) FROM storage_master WHERE path=?";
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $newPath);
-				$stmt->execute();
-
-				if($stmt->fetchColumn()==1)
-				{
-					$message = '<span style="color:#ff0000;">[ERROR] Entered path (' . $newPath . ') was already exist.</span>';
-				}
-				else
-				{
-					// Set current_use
-					$stmt = $pdo->prepare("SELECT COUNT(*) FROM storage_master WHERE type=?");
-					$stmt->bindParam(1, $newType);
-					$stmt->execute();
-					$currentUse = ($stmt->fetchColumn() == 0) ? 't' : 'f';
-
-					// Get new storage ID
-					$stmt = $pdo->prepare("SELECT nextval('storage_master_storage_id_seq')");
-					$stmt->execute();
-					$newStorageID = $stmt->fetchColumn();
-
-					//echo $newStorageID;
-					$sqlStr = "INSERT INTO storage_master(storage_id, path, current_use, type)"
-							. " VALUES (currval('storage_master_storage_id_seq'), ?, ?, ?)";
-
-					$sqlParams[] = $newPath;
-					$sqlParams[] = $currentUse;
-					$sqlParams[] = $newType;
-				}
+				case 'add':
+					addNewStorage($req['path'], $req['type']);
+					$message = 'New storage area was successfully added.';
+					break;
+				case 'delete':
+					deleteStorage($req['id']);
+					$message = 'The selected storage area was successfully deleted.';
+					break;
+				case 'setCurrent':
+					setStorageAsCurrent($req['id']);
+					$message = 'The current storage was successfully changed.';
+					break;
 			}
-			else if($mode == 'delete')
-			{
-				if($newType == 1)
-				{
-					$sqlStr = "SELECT COUNT(*) FROM series_list WHERE storage_id=?";
-				}
-				else if($newType == 2)
-				{
-					$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list WHERE status > 0 AND storage_id=?";
-				}
-
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->bindParam(1, $newStorageID);
-				$stmt->execute();
-
-				if($stmt->fetchColumn()>0)
-				{
-					$message = '<span style="color:#ff0000;">Storage ' . $newStorageID . ' was already stored.</span>';
-				}
-				else
-				{
-					$stmt = $pdo->prepare("SELECT current_use FROM storage_master WHERE storage_id=?");
-					$stmt->bindParam(1, $newStorageID);
-					$stmt->execute();
-
-					if($stmt->fetchColumn() == 't')
-					{
-						$message = '<span style="color:#ff0000;"> Error: storage ID ' . $newStorageID
-								 . ' is set as current use.</span>';
-					}
-					else
-					{
-						$sqlStr = "DELETE FROM storage_master WHERE storage_id=?";
-						$sqlParams[] = $newStorageID;
-					}
-				}
-			}
-			else if($mode == 'changeCurrent')
-			{
-				if($oldDicomID != 0 && $newDicomID != 0 && $oldDicomID != $newDicomID)
-				{
-					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=1");
-					$stmt->execute();
-
-					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
-					$sqlParams[] = $newDicomID;
-
-				}
-
-				if($oldResultID != 0 && $newResultID != 0 && $oldResultID != $newResultID)
-				{
-					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=2");
-					$stmt->execute();
-
-					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
-					$sqlParams[] = $newResultID;
-				}
-
-				if($oldCacheID != 0 && $newCacheID != 0 && $oldCacheID != $newCacheID)
-				{
-					$stmt = $pdo->prepare("UPDATE storage_master SET current_use='f' WHERE type=3");
-					$stmt->execute();
-
-					$sqlStr = "UPDATE storage_master SET current_use='t' WHERE storage_id=?";
-					$sqlParams[] = $newCacheID;
-				}
-			}
-
-			if($mode == 'add')
-			{
-				$newPath = (realpath($newPath) == "") ? $newPath : realpath($newPath);
-
-				if(is_dir($newPath))
-				{
-					if($newType == 1 && $message == "&nbsp;")
-					{
-						if(mkdir($newPath.$DIR_SEPARATOR."tmp") == FALSE)
-						{
-							//rmdir($newPath);
-							$message = '<span style="color:#ff0000;"> Fail to create directory: '
-										. htmlspecialchars($newPath) . $DIR_SEPARATOR . 'tmp</span>';
-						}
-					}
-				}
-				else
-				{
-					$message = '<span style="color:#ff0000;"> Error: ' . $newPath . ' does not exist</span>';
-				}
-			}
-
-			if($message == "&nbsp;" && $sqlStr != "")
-			{
-				$stmt = $pdo->prepare($sqlStr);
-				$stmt->execute($sqlParams);
-
-				$tmp = $stmt->errorInfo();
-				$message = $tmp[2];
-
-				if($message == "")
-				{
-					$message = '<span style="color:#0000ff;">';
-
-					switch($mode)
-					{
-						case 'add':
-							$message .= 'New setting was successfully added.';
-							break;
-
-						case 'delete':
-							$message .= 'The selected setting (ID=' . $newStorageID . ') was successfully deleted.';
-							break;
-
-						case 'changeCurrent':
-							$message .= 'The current storage was successfully changed.';
-							break;
-					}
-					$message .= '</span>';
-
-					//--------------------------------------------------------------------------------------------
-					// Modify storage.json
-					//--------------------------------------------------------------------------------------------
-					if($mode == 'add' || $mode == 'delete')
-					{
-						$sqlStr = "SELECT storage_id, path FROM storage_master ORDER BY storage_id ASC";
-						$tmpList = DBConnector::query($sqlStr, null, 'ALL_NUM');
-
-						$storageList = array();
-
-						foreach($tmpList as $item)
-						{
-							$storageList[$item[0]] = $item[1];
-						}
-
-						file_put_contents("../../config/storage.json", json_encode($storageList));
-					}
-					//--------------------------------------------------------------------------------------------
-				}
-				else $message = '<span style="color:#ff0000;">' . $message . '</span>';
-			}
-
-			//----------------------------------------------------------------------------------------------------
-
-			//----------------------------------------------------------------------------------------------------
-			// Make one-time ticket
-			//----------------------------------------------------------------------------------------------------
-			$_SESSION['ticket'] = md5(uniqid().mt_rand());
-			//----------------------------------------------------------------------------------------------------
-
-			//----------------------------------------------------------------------------------------------------
-			// Retrieve storage list
-			//----------------------------------------------------------------------------------------------------
-			$sqlStr = "SELECT storage_id, path, type, current_use"
-					. " FROM storage_master ORDER BY storage_id ASC;";
-
-			$stmt = $pdo->prepare($sqlStr);
-			$stmt->execute();
-
-			$storageList = $stmt->fetchAll(PDO::FETCH_NUM);
-
-			$oldDicomID = 0;
-			$oldResultID = 0;
-
-			foreach($storageList as $item)
-			{
-				if($item[3]==true)
-				{
-					if($item[2] ==1)      $oldDicomID  = $item[0];
-					else if($item[2] ==2) $oldResultID = $item[0];
-					else if($item[2] ==3) $oldCacheID  = $item[0];
-				}
-			}
-			//---------------------------------------------------------------------------------------------------
-
-			//------------------------------------------------------------------------------------------------
-			// Settings for Smarty
-			//------------------------------------------------------------------------------------------------
-			$smarty = new SmartyEx();
-
-			$smarty->assign('params',       $params);
-			$smarty->assign('message',      $message);
-			$smarty->assign('storageList',  $storageList);
-			$smarty->assign('oldDicomID',   $oldDicomID);
-			$smarty->assign('oldResultID',  $oldResultID);
-			$smarty->assign('oldCacheID',   $oldCacheID);
-
-			$smarty->assign('ticket',  rawurlencode($_SESSION['ticket']));
-
-			$smarty->display('administration/data_storage_config.tpl');
-			//------------------------------------------------------------------------------------------------
+			$pdo->commit();
+			// Update storage.json file
+			$area = Storage::select();
+			foreach ($area as $item)
+				$storageList[$item->storage_id] = $item->path;
+			file_put_contents("../../config/storage.json", json_encode($storageList));
 		}
 		catch (PDOException $e)
 		{
-			var_dump($e->getMessage());
+			if ($t) $pdo->rollBack();
+			$message = 'Database error.';
 		}
-
-		$pdo = null;
+		catch (Exception $e)
+		{
+			if ($t) $pdo->rollBack();
+			$message = $e->getMessage();
+		}
 	}
+
+	//--------------------------------------------------------------------------
+	// Make one-time ticket
+	//--------------------------------------------------------------------------
+	$ticket = md5(uniqid().mt_rand());
+	$_SESSION['ticket'] = $ticket;
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// Retrieve storage list
+	//--------------------------------------------------------------------------
+	$storage = Storage::select(array(), array('order' => array('storage_id')));
+
+	//--------------------------------------------------------------------------
+	// Settings for Smarty
+	//--------------------------------------------------------------------------
+	$smarty->assign('params', $params);
+	$smarty->assign('storage', $storage);
+	$smarty->assign('ticket', $ticket);
+	$smarty->assign('message', $message);
+	$smarty->display('administration/data_storage_config.tpl');
+	//--------------------------------------------------------------------------
+}
+catch (Exception $e)
+{
+	$smarty->assign('params', $params);
+	$smarty->assign('message', $e->getMessage());
+	$smarty->display('critical_error.tpl');
+}
+
+function addNewStorage($path, $type)
+{
+	if (strlen(trim($path)) == 0)
+		throw new Exception('Path to the new storage area is empty.');
+	if (!is_dir($path))
+		throw new Exception("'$path' is not a valid directory. " .
+					"Create an empty directory first.");
+	$path = realpath($path);
+	if (!is_writable($path))
+		throw new Exception("'$path' is not writable.");
+	$tmp = Storage::select(array('path' => $path));
+	if (count($tmp))
+		throw new Exception('Input path is already registered.');
+
+	if ($type == Storage::DICOM_STORAGE)
+	{
+		if (!mkdir($path . $DIR_SEPARATOR . "tmp"))
+			throw new Exception('Failed to create temporary directory. ' .
+				'Check if the directory is writable.');
+	}
+
+	// Set as 'current' if no storage is already set as current
+	$tmp = Storage::select(array('type' => $type));
+	$currentUse = count($tmp) == 0 ? 't' : 'f';
+
+	// Get new storage ID
+	$newID = DBConnector::query(
+		"SELECT nextval('storage_master_storage_id_seq')", null,
+		'SCALAR'
+	);
+
+	// Save
+	$newItem = new Storage();
+	$newItem->save(array('Storage' => array(
+		'storage_id' => $newID,
+		'path' => $path,
+		'current_use' => $currentUse,
+		'type' => $type
+	)));
+}
+
+function deleteStorage($id)
+{
+	$target = new Storage($id);
+	if (!isset($target->path))
+		throw new Exception('Storage area not found.');
+	if ($target->current_use)
+		throw new Exception('This storage is set as current use.');
+
+	if ($target->type == Storage::DICOM_STORAGE)
+		$sqlStr = "SELECT COUNT(*) FROM series_list WHERE storage_id=?";
+	else if ($target->type == Storage::PLUGIN_RESULT)
+		$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list WHERE status > 0 AND storage_id=?";
+	$result = DBConnector::query($sqlStr, array($id), 'SCALAR');
+	if ($result > 0)
+		throw new Exception('This storage area is already used.');
+
+	$target->delete($id);
+}
+
+function setStorageAsCurrent($id)
+{
+	$target = new Storage($id);
+	if (!isset($target->type))
+		throw new Exception('Storage area not found.');
+	$type = $target->type;
+	DBConnector::query(
+		"UPDATE storage_master SET current_use='f' WHERE type=?", $type);
+	DBConnector::query(
+		"UPDATE storage_master SET current_use='t' WHERE storage_id=?", $id);
+}
+
 ?>
