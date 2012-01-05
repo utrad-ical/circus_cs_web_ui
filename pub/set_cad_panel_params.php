@@ -22,7 +22,7 @@
 		$sqlStr .= " ORDER BY pm.plugin_name ASC, pm.version DESC";
 
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->bindParam(1, Job::JOB_SUCCEEDED);
+		$stmt->bindValue(1, Job::JOB_SUCCEEDED);
 		if($modalityList[$i] != 'all')  $stmt->bindParam(2, $modalityList[$i]);
 		$stmt->execute();
 
