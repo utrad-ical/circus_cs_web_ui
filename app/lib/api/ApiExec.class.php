@@ -14,6 +14,7 @@ class ApiExec
 	const QUERY_FEEDBACK = "queryFeedback";
 	const INTERNAL_EXECUTE_PLUGIN = "InternalExecutePlugin";
 	const SERIES_RULESET = "seriesRuleset";
+	const QUERY_JOB_QUEUE = "queryJobQueue";
 
 	static $action_list = array(
 		self::LOGIN          => "LoginAction",
@@ -22,7 +23,8 @@ class ApiExec
 		self::EXECUTE_PLUGIN => "ExecutePluginAction",
 		self::QUERY_FEEDBACK => "QueryFeedbackAction",
 		self::INTERNAL_EXECUTE_PLUGIN => "InternalExecutePluginAction",
-		self::SERIES_RULESET => "SeriesRuleSetAction"
+		self::SERIES_RULESET => "SeriesRuleSetAction",
+		self::QUERY_JOB_QUEUE => "QueryJobQueueAction"
 	);
 
 	protected static $currentUser;

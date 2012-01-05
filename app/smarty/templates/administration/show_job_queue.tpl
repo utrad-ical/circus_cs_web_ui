@@ -3,47 +3,74 @@
 <!--
 {literal}
 
-function GetJobQueueList()
-{
-	$.ajax(
-		{
-			url: "get_job_queue_list.php",
-			dataType: "json",
-			success: function(data){
-				if(data.message=="")
-				{
-					$("#jobList tbody").html(data.jobListHtml);
-					$('#jobList').autoStylize();
-				}
-				else
-				{
-					$("#message").append(data.message);
-				}
-			}
-		}
-	);
-}
-
-function DeleteJob(jobID)
-{
-	if(confirm('Do you delete the job (JobID:'+ jobID + ') ?'))
-	{
-		$.post(
-			"delete_plugin_job.php",
-			{ jobID: jobID },
-			function(data){
-				$("#message").text(data.message);
-				GetJobQueueList();
-			},
-			"json"
-		);
-	}
-}
-
 $(function () {
+	function getJobQueueList()
+	{
+		$('#refresh').disable();
+		$('#busy').show();
+		$.webapi({
+			api: '../api/api.php',
+			action: 'queryJobQueue',
+			onSuccess: refresh,
+			onFail: onMessage
+		});
+	}
 
-	$('#refresh-button').click(function () {
-		GetJobQueueList();
+	function relax()
+	{
+		$('#refresh').enable();
+		$('#busy').hide();
+	}
+
+	function onMessage(text)
+	{
+		$('#message').text(error);
+		relax();
+	}
+
+	function refresh(data)
+	{
+		var cols = ['job_id', 'registered_at', 'exec_user', 'plugin_name',
+			'plugin_type', 'patient_id', 'study_id', 'series_id', 'priority', 'pm_id'];
+		var tbody = $('#jobList tbody').empty();
+		jobs = data.jobs;
+		for (var i = 0; i < jobs.length; i++)
+		{
+			var job = jobs[i];
+			var tr = $('<tr>');
+			for (var j = 0; j < cols.length; j++)
+				$('<td>').addClass(cols[j]).appendTo(tr).text(job[cols[j]]);
+			if (job.status == 1)
+				$('<td>In Queue <input type="button" class="form-btn" value="delete"></td>').appendTo(tr);
+			else
+				$('<td>Processing</td>').appendTo(tr);
+			tr.appendTo(tbody);
+		}
+		tbody.autoStylize().find('tr:odd').addClass('column');
+		$('#message').text('');
+		relax();
+	}
+
+	$('#jobList').click(function(event) {
+		if (!$(event.target).is(':button'))
+			return;
+		var id = $(event.target).closest('tr').find('.job_id').text();
+		if(confirm('Do you delete the job (JobID:'+ id + ') ?'))
+		{
+			$.post(
+				"delete_plugin_job.php",
+				{ jobID: id },
+				function(data){
+					$("#message").text(data.message);
+					getJobQueueList();
+				},
+				"json"
+			);
+		}
+	});
+
+	$('#refresh').click(function () {
+		getJobQueueList();
 	});
 
 	$('#reset-button').click(function () {
@@ -62,7 +89,7 @@ $(function () {
 		}
 	});
 
-	GetJobQueueList();
+	getJobQueueList();
 });
 
 -->
@@ -72,7 +99,6 @@ $(function () {
 
 #message { margin: 0; padding: 1em 1em 0 1em; font-weight: bold; color: red; }
 #jobList table { margin: 1em 0; }
-#content h3 { margin: 1.5em 0 0.5em 0; }
 #resetQueue table td { padding: 0.5em; }
 
 </style>
@@ -88,7 +114,6 @@ $(function () {
 <div id="message"></div>
 
 <form id="form1" name="form1">
-	<input type="hidden" id="ticket" name="ticket" value="{$params.ticket|escape}" />
 	<div id="jobList">
 		<table class="col-tbl" style="width:100%;">
 			<thead>
@@ -103,7 +128,6 @@ $(function () {
 					<th>Series ID</th>
 					<th>Priority</th>
 					<th>PM ID</th>
-					{*<th>Detail</th>*}
 					<th>Status</th>
 				</tr>
 			</thead>
@@ -113,7 +137,8 @@ $(function () {
 	</div>
 
 	<div id="list-btn">
-		<input type="button" id="refresh-button" class="form-btn" value="Refresh" />
+		<input type="button" id="refresh" class="form-btn" value="Refresh" />
+		<span id="busy"> Loading... <img src="../images/busy.gif" /></span>
 	</div>
 
 	{*<h3>Reset job queue</h3>

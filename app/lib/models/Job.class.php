@@ -13,6 +13,14 @@ class Job extends Model
 	protected static $_belongsTo = array(
 		'Plugin' => array('key' => 'plugin_id')
 	);
+	protected static $_hasAndBelongsToMany = array(
+		'Series' => array(
+			'joinTable' => 'job_queue_series',
+			'foreignKey' => 'job_id',
+			'associationForeignKey' => 'series_sid',
+			'foreignPrimaryKey' => 'sid'
+		)
+	);
 
 	/**
 	 * Indicates the job has failed while processing.
