@@ -1,0 +1,33 @@
+div.cad-inspector .col-tbl td {
+	text-align: left;
+	word-break: break-all;
+	padding-left: 1em;
+	padding-right: 1em;
+	vertical-align: top;
+}
+div.cad-inspector .col-tbl td.name {
+	font-weight: bold;
+	word-break: normal;
+}
+div.cad-inspector .col-tbl td.name em {
+	color: gray;
+	font-size: 80%;
+}
+div.cad-inspector .col-tbl {
+	margin-bottom: 1.5em;
+}
+div.cad-inspector h2 {
+	margin-bottom: 1em;
+}
+div.cad-inspector p.caution {
+	color: gray;
+	font-weight: bold;
+	text-align: right;
+}
+div.cad-inspector td.parameters li {
+	margin-left: 30px;
+	text-indent: -30px;
+}
+div.cad-inspector td.parameters em {
+	font-style: italic;
+}
