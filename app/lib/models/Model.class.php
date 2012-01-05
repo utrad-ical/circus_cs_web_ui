@@ -43,7 +43,14 @@ abstract class Model implements Iterator
 		$vals  = array();
 		foreach ($condition as $key => $value)
 		{
-			$conds[] = "$key = ?";
+			if (preg_match('/^(.+?)\s*(=|<|<=|>|>=|<>|like)$/', $key, $m))
+			{
+				$key = $m[1];
+				$op = $m[2];
+			}
+			else
+				$op = '=';
+			$conds[] = "$key $op ?";
 			$vals[] = $value;
 		}
 		if (count($condition))
