@@ -559,7 +559,7 @@
 				. " el.exec_user, el.executed_at"
 				. " FROM patient_list pt, study_list st, series_list sr,"
 				. " executed_plugin_list el, executed_series_list es, plugin_master pm"
-				. " WHERE pm.type=1 AND el.status=" . $PLUGIN_SUCESSED
+				. " WHERE pm.type=1 AND el.status=" . Job::JOB_SUCCEEDED
 				. " AND pm.plugin_id=el.plugin_id"
 				. " AND es.job_id=el.job_id"
 				. " AND es.volume_id=0 AND sr.sid=es.series_sid"

@@ -95,7 +95,7 @@
 					. " FROM executed_plugin_list el, plugin_master pm";
 
 			$sqlCond = " WHERE pm.plugin_id=el.plugin_id AND pm.type=2 AND el.status=?";
-			$condArr[] = $PLUGIN_SUCESSED;
+			$condArr[] = Job::JOB_SUCCEEDED;
 
 			if($params['resDateKind'] != 'all')  $addressParams['resDateKind'] = $params['resDateKind'];
 

@@ -19,7 +19,7 @@ try
 	// For plug-in execution block
 	//--------------------------------------------------------------------------------------------------------------
 	$sqlStr = "SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list WHERE status = ?";
-	$result = DBConnector::query($sqlStr, $PLUGIN_SUCESSED, 'ARRAY_NUM');
+	$result = DBConnector::query($sqlStr, Job::JOB_SUCCEEDED, 'ARRAY_NUM');
 
 	$executionNum = $result[0];
 	$oldestExecDate = substr($result[1], 0, 10);

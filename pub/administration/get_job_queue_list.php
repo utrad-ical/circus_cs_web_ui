@@ -67,7 +67,7 @@ try
 								.  '<td>' . $item['priority'] . '</td>'
 								.  '<td>' . $item['pm_id'] . '</td>';
 
-		if( $item['status'] == $PLUGIN_ALLOCATED || $item['status'] == $PLUGIN_PROCESSING)
+		if( $item['status'] == Job::JOB_ALLOCATED || $item['status'] == Job::JOB_PROCESSING)
 		{
 			$dstData['jobListHtml'] .= '<td>Processing</td>';
 		}

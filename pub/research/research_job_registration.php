@@ -63,7 +63,7 @@ try
 
 		$sqlStr = "SELECT job_id FROM executed_plugin_list"
 				. " WHERE plugin_id=? AND status>?";
-		$jobIdArr = DBConnector::query($sqlStr, array($pluginID, $PLUGIN_FAILED), 'ALL_COLUMN');
+		$jobIdArr = DBConnector::query($sqlStr, array($pluginID, Job::JOB_FAILED), 'ALL_COLUMN');
 
 		foreach($jobIdArr as $jobID)
 		{
@@ -86,7 +86,7 @@ try
 					$sqlStr = "SELECT status, executed_at, exec_user FROM executed_plugin_list WHERE job_id=?";
 					$result = DBConnector::query($sqlStr, array($jobID), 'ARRAY_NUM');
 
-					if($result[0] == $PLUGIN_SUCESSED)
+					if($result[0] == Job::JOB_SUCCEEDED)
 					{
 						$dstData['message'] = '<b>Already executed by ' . $result[2] . ' !!</b>';
 					    $dstData['executeddAt'] = $result[1];

@@ -421,7 +421,7 @@
 							$tmpDate = $execResult[2];
 
 							// Set executed date or time (if successed)
-							if($cadColSettings[$cadNum][3] == $PLUGIN_SUCESSED)
+							if($cadColSettings[$cadNum][3] == Job::JOB_SUCCEEDED)
 							{
 								if($mode == 'today' && substr($tmpDate, 0, 10) == date('Y-m-d'))
 								{
