@@ -7,12 +7,6 @@
  */
 class CadResultExtension extends CadResultElement
 {
-	/**
-	 * (non-PHPdoc)
-	 * @see CadResultElement::requiringFiles()
-	 */
-	public function requiringFiles() { return null; }
-
 	// Methods for views
 	public function head() { return ''; }
 	public function beforeBlocks() { return ''; }
