@@ -14,7 +14,6 @@ $PLUGIN_DIR        = $BASE_DIR . $DIR_SEPARATOR . "plugins";
 $LOG_DIR           = $BASE_DIR . $DIR_SEPARATOR . "logs";
 $WEB_UI_ROOT       = $BASE_DIR . $DIR_SEPARATOR . "web_ui";
 $WEB_UI_LIBDIR     = $WEB_UI_ROOT . $DIR_SEPARATOR . "app" . $DIR_SEPARATOR . "lib";
-$SUBDIR_JPEG       = "jpg_img";
 $SUBDIR_CAD_RESULT = "cad_results";
 
 $CONFIG_DICOM_STORAGE = "DICOMStorageServer.ini";
@@ -55,7 +54,6 @@ $PLUGIN_JOB_MANAGER_SERVICE = "Plug-in Job Manager";
 // Variables for session time limit
 //------------------------------------------------------------------------------
 $SESSION_TIME_LIMIT = 3600;
-$SESSION_TIME_LIMIT_ADMIN_PAGES = 1800;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -69,33 +67,11 @@ $PAGER_DELTA = 3;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Papameters for presentation of executed result of CAD software
-//------------------------------------------------------------------------------
-$RESULT_COL_NUM = 3;
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // Reserved user ID / name by CIRCUS CS
 //------------------------------------------------------------------------------
 $DEFAULT_CAD_PREF_USER = 'preference_default';
 $RESERVED_USER_LIST = array($DEFAULT_CAD_PREF_USER, 'server_service');
 //------------------------------------------------------------------------------
-
-/**
- * Count DICOM files in the selected directory.
- */
-function GetFileNumberOfDicomInPath($path)
-{
-	$flist = scandir($path);
-	$imgCnt = 0;
-
-	for($i = 0; $i < count($flist); $i++)
-	{
-		if(preg_match('/\\.dcm$/i', $flist[$i]))  $imgCnt++;
-	}
-
-	return $imgCnt;
-}
 
 /**
  * Retrieve DICOM file list in the selected path.
