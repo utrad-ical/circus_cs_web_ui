@@ -79,7 +79,7 @@ class CadInspector extends CadResultExtension
 		if ($this->enabled)
 			return array(
 				array (
-					'label' => 'CAD Inspector',
+					'label' => 'Inspector',
 					'template' => 'cad_inspector.tpl'
 				)
 			);
