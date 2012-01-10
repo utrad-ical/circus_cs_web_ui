@@ -9,11 +9,14 @@
 class CadInspector extends CadResultExtension
 {
 	private $enabled = false;
+	private $modules = array();
 
-	private $avail_modules = array(
+	private static $avail_modules = array(
 		'basic' => 'inspector_basic.tpl',
 		'series' => 'inspector_series.tpl',
 		'presentation' => 'inspector_presentation.tpl',
+		'feedback' => 'inspector_feedback.tpl',
+		'files' => 'inspector_files.tpl',
 		'attributes' => 'inspector_attributes.tpl',
 		'displays' => 'inspector_displays.tpl'
 	);
@@ -37,22 +40,66 @@ class CadInspector extends CadResultExtension
 			return;
 		$params = $this->getParameter();
 		$module_names = preg_split('/\s*\,\s*/', $params['modules']);
-		$modules = array();
+		$this->modules = array();
 		foreach ($module_names as $module)
 		{
 			if ($module == 'all')
 			{
-				$modules = array_values($this->avail_modules);
+				$this->modules = self::$avail_modules;
 				break;
 			}
-			else if ($m = $this->avail_modules[$module])
+			else if ($m = self::$avail_modules[$module])
 			{
-				if (array_search($m, $modules) === false)
-					$modules[] = $m;
+				if (array_search($m, $this->modules) === false)
+					$this->modules[$module] = $m;
 			}
 		}
-		$this->smarty->assign('inspector_modules', $modules);
+		$this->smarty->assign('inspector_modules', $this->modules);
+
+		if ($this->modules['feedback'])
+			$this->assignFeedback();
+		if ($this->modules['files'])
+			$this->assignFiles();
+
 		return '';
+	}
+
+	protected function assignFeedback()
+	{
+		$entries = $this->cadResult->queryFeedback();
+		foreach ($entries as $entry)
+		{
+			$entry->loadFeedback();
+			$inspector_feedback[] = array(
+				'type' => $entry->is_consensual ? 'Consensual' : 'Personal',
+				'registerer' => $entry->entered_by,
+				'feedback' => array(
+					'block feedback' => $entry->blockFeedback,
+					'additional feedback' => $entry->additionalFeedback
+				)
+			);
+		}
+
+		$this->smarty->assign('inspector_feedback', $inspector_feedback);
+	}
+
+	protected function assignFiles()
+	{
+		$path = $this->cadResult->pathOfCadResult();
+		$entries = @scandir($path);
+		foreach ($entries as $entry)
+		{
+			if ($entry == '.' || $entry == '..') continue;
+			$file = "$path/$entry";
+			$size = filesize($file);
+			$type = filetype($file);
+			$inspector_files[] = array(
+				'file' => $entry,
+				'size' => $size,
+				'type' => $type
+			);
+		}
+		$this->smarty->assign('inspector_files', $inspector_files);
 	}
 
 	public function tabs()
