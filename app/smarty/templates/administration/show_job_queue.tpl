@@ -24,7 +24,7 @@ $(function () {
 
 	function onMessage(text)
 	{
-		$('#message').text(error);
+		$('#message').text(text);
 		relax();
 	}
 
@@ -47,7 +47,6 @@ $(function () {
 			tr.appendTo(tbody);
 		}
 		tbody.autoStylize().find('tr:odd').addClass('column');
-		$('#message').text('');
 		relax();
 	}
 
@@ -57,19 +56,22 @@ $(function () {
 		var id = $(event.target).closest('tr').find('.job_id').text();
 		if(confirm('Do you delete the job (JobID:'+ id + ') ?'))
 		{
-			$.post(
-				"delete_plugin_job.php",
-				{ jobID: id },
-				function(data){
-					$("#message").text(data.message);
+			$('#busy').show();
+			$.webapi({
+				api: '../api/api.php',
+				action: 'deleteJob',
+				params: { jobID: id },
+				onSuccess: function() {
+					onMessage('Successfully deleted the job ' + id);
 					getJobQueueList();
 				},
-				"json"
-			);
+				onFail: onMessage
+			});
 		}
 	});
 
 	$('#refresh').click(function () {
+		onMessage('');
 		getJobQueueList();
 	});
 

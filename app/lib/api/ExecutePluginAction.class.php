@@ -33,7 +33,8 @@ class ExecutePluginAction extends ApiActionBase
 			throw $e;
 		}
 
-		$result = QueryJobAction::query_job(array($job_id));
+		$j = new QueryJobAction($this->owner);
+		$result = $j->query_job(array($job_id));
 		return $result[0];
 	}
 }
