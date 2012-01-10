@@ -24,9 +24,10 @@ div.cad-inspector p.caution {
 	font-weight: bold;
 	text-align: right;
 }
-div.cad-inspector td.parameters li {
-	margin-left: 30px;
-	text-indent: -30px;
+div.cad-inspector td.parameters li li {
+	margin-left: 5px;
+	padding-left: 15px;
+	border-left: 1px solid silver;
 }
 div.cad-inspector td.parameters em {
 	font-style: italic;
