@@ -14,25 +14,12 @@ class QueryJobAction extends ApiAction
 		self::show	// "queue_list" or "error_list"
 	);
 
-	protected static $required_privileges = array(
-		Auth::API_EXEC
-	);
-
-
-	function requiredPrivileges()
+	function execute($params)
 	{
-		return self::$required_privileges;
-	}
-
-
-	function execute($api_request)
-	{
-		$action = $api_request['action'];
-		$params = $api_request['params'];
 		$show = $params['show'];
 
 		if(self::check_params($params) == FALSE) {
-			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+			throw new ApiOperationException("Invalid parameter.");
 		}
 
 		$result = array();
@@ -41,44 +28,38 @@ class QueryJobAction extends ApiAction
 		switch ($cond)
 		{
 			case self::studyUID:
-				$result = self::query_job_study($params['studyUID']);
+				$result = $this->query_job_study($params['studyUID']);
 				break;
 
 			case self::seriesUID:
-				$result = self::query_job_series($params['seriesUID']);
+				$result = $this->query_job_series($params['seriesUID']);
 				break;
 
 			case self::jobID:
-				$result = self::query_job($params['jobID']);
+				$result = $this->query_job($params['jobID']);
 				break;
 
 			case self::show:
 				if ($params['show'] == "queue_list")
 				{
-					$result = self::queue_list();
+					$result = $this->queue_list();
 				}
 				elseif ($params['show'] == "error_list")
 				{
-					$result = self::error_list();
+					$result = $this->error_list();
 				}
 				else
 				{
-					throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+					throw new ApiOperationException("Invalid parameter.");
 				}
 				break;
 
 			default:
-				throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+				throw new ApiOperationException("Invalid parameter.");
 				break;
 		}
 
-		$res = new ApiResponse();
-		$res->setResult($action, null);
-		if(count($result) > 0) {
-			$res->setResult($action, $result);
-		}
-
-		return $res;
+		return $result;
 	}
 
 
@@ -189,7 +170,7 @@ class QueryJobAction extends ApiAction
 
 			// Set status
 			if(isset($result[0]['status'])) {
-				$result[0]['status'] = self::get_status($result[0]['status']);
+				$result[0]['status'] = $this->get_status($result[0]['status']);
 			}
 
 			// Set waiting

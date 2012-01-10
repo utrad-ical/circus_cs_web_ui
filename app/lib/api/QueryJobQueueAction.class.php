@@ -2,16 +2,15 @@
 
 class QueryJobQueueAction extends ApiAction
 {
-	public function requiredPrivileges()
-	{
-		return array(Auth::SERVER_OPERATION);
-	}
+	protected static $required_privileges = array(
+		Auth::SERVER_OPERATION
+	);
 
-	public function execute($api_request)
+	public function execute($params)
 	{
 		$jobs = Job::select(
-		array('status >=' => Job::JOB_NOT_ALLOCATED),
-		array('order' => array('registered_at'))
+			array('status >=' => Job::JOB_NOT_ALLOCATED),
+			array('order' => array('registered_at'))
 		);
 
 		$job_list = array();
@@ -40,8 +39,6 @@ class QueryJobQueueAction extends ApiAction
 			$job_list[] = $item;
 		}
 
-		$res = new ApiResponse();
-		$res->setResult($action, array('jobs' => $job_list));
-		return $res;
+		return array('jobs' => $job_list);
 	}
 }

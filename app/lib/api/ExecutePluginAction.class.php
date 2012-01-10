@@ -9,18 +9,8 @@ class ExecutePluginAction extends ApiAction
 		Auth::CAD_EXEC
 	);
 
-
-	function requiredPrivileges()
+	function execute($params)
 	{
-		return self::$required_privileges;
-	}
-
-
-	function execute($api_request)
-	{
-		$action = $api_request['action'];
-		$params = $api_request['params'];
-
 		try {
 			$pdo = DBConnector::getConnection();
 			$pdo->beginTransaction();
@@ -30,24 +20,22 @@ class ExecutePluginAction extends ApiAction
 				'version' => $params['pluginVersion']
 			));
 			if (!$plugin)
-				throw new Exception('Plugin not found');
+				throw new ApiOperationException('Plugin not found');
 
 			$job_id = Job::registerNewJob(
 				$plugin,
 				$params['seriesUID'],
-				ApiExec::currentUser()->user_id,
+				$this->owner->currentUser()->user_id,
 				$params['priority'],
 				$params['resultPolicy']
 			);
 			$pdo->commit();
 		} catch (Exception $e) {
 			if ($t) $pdo->rollBack();
-			throw new ApiException($e->getMessage(), ApiResponse::STATUS_ERR_OPE);
+			throw $e;
 		}
 
-		$res = new ApiResponse();
 		$result = QueryJobAction::query_job(array($job_id));
-		$res->setResult($action, $result[0]);
-		return $res;
+		return $result[0];
 	}
 }

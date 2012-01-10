@@ -2,26 +2,14 @@
 
 class LoginAction extends ApiAction
 {
-	protected static $required_privileges = array(
-		Auth::API_EXEC
-	);
-
-
-	function requiredPrivileges()
-	{
-		return self::$required_privileges;
-	}
-
-
-	function execute($api_request)
+	public function execute($params)
 	{
 		$params = $api_request['params'];
-		$action = $api_request['action'];
 		$mode = $params['mode'];
 
 		$user = ApiExec::currentUser();
 		if(!isset($user)) {
-			throw new ApiException('Authentication required');
+			throw new ApiAuthException('Authentication required');
 		}
 
 		$result = null;
@@ -63,9 +51,7 @@ class LoginAction extends ApiAction
 				break;
 		}
 
-		$res = new ApiResponse();
-		$res->setResult($action, $result);
-		return $res;
+		return $result;
 	}
 }
 

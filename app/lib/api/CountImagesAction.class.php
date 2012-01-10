@@ -2,28 +2,16 @@
 
 class CountImagesAction extends ApiAction
 {
-	protected static $required_privileges = array(
-		Auth::API_EXEC
-	);
-
-
-	function requiredPrivileges()
-	{
-		return self::$required_privileges;
-	}
-
-
-	function execute($api_request)
+	public function execute($params)
 	{
 		$params = $api_request['params'];
-		$action = $api_request['action'];
 
 		$seriesUIDs = $params['seriesInstanceUID'];
 		$studyUIDs = $params['studyInstanceUID'];
 
 		if($this->check_params($params) == FALSE)
 		{
-			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+			throw new ApiOperationException("Invalid parameter.");
 		}
 
 		$result = array();
@@ -40,9 +28,7 @@ class CountImagesAction extends ApiAction
 			unset($result);
 		}
 
-		$res = new ApiResponse();
-		$res->setResult($action, $result);
-		return $res;
+		return $result;
 	}
 
 	private function check_params($params)

@@ -2,25 +2,11 @@
 
 class QueryFeedbackAction extends ApiAction
 {
-	protected static $required_privileges = array(
-		Auth::API_EXEC
-	);
-
-
-	function requiredPrivileges()
+	public function execute($params)
 	{
-		return self::$required_privileges;
-	}
-
-
-	function execute($api_request)
-	{
-		$params = $api_request['params'];
-		$action = $api_request['action'];
-
 		if($this->check_params($params) == FALSE)
 		{
-			throw new ApiException("Invalid parameter.", ApiResponse::STATUS_ERR_OPE);
+			throw new ApiOperationException("Invalid parameter.");
 		}
 
 		$jobID  = $params['jobID'];
@@ -50,16 +36,7 @@ class QueryFeedbackAction extends ApiAction
 			);
 		}
 
-		if (count($result) <= 0)
-		{
-			$res = new ApiResponse();
-			$res->setResult($action, null);
-			return $res;
-		}
-
-		$res = new ApiResponse();
-		$res->setResult($action, $result);
-		return $res;
+		return $result;
 	}
 
 

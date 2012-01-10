@@ -7,8 +7,21 @@
  */
 abstract class ApiAction
 {
-	protected static $required_privileges;
+	protected static $required_privileges = array(
+		Auth::API_EXEC
+	);
 
-	abstract public function requiredPrivileges();
+	protected $owner;
+
+	public function __construct($owner)
+	{
+		$this->owner = $owner;
+	}
+
+	public function requiredPrivileges()
+	{
+		return static::$required_privileges;
+	}
+
 	abstract public function execute($api_request);
 }

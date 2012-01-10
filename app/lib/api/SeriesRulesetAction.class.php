@@ -8,31 +8,30 @@ class SeriesRulesetAction extends ApiAction
 {
 	private $_entries;
 
-	public function requiredPrivileges()
-	{
-		return array(Auth::SERVER_SETTINGS);
-	}
+	protected static $required_privileges = array(
+		Auth::SERVER_SETTINGS
+	);
 
-	public function execute($api_request)
+	public function execute($params)
 	{
-		$plugin_id = $api_request['params']['plugin_id'];
+		$plugin_id = $params['plugin_id'];
 		$this->_entries = PluginCadSeries::select(
 			array('plugin_id' => $plugin_id),
 			array('order' => array('volume_id'))
 		);
 		if (!count($this->_entries))
-			throw new ApiException('Plugin not found', ApiResponse::STATUS_ERR_OPE);
+			throw new ApiOperationException('Plugin not found');
 
-		switch ($api_request['params']['mode'])
+		switch ($params['mode'])
 		{
 			case 'get':
 				return $this->getRuleSets();
 				break;
 			case 'set':
-				return $this->setRuleSets($plugin_id, $api_request['params']['pluginRuleSetsData']);
+				return $this->setRuleSets($plugin_id, $params['pluginRuleSetsData']);
 				break;
 			default:
-				throw new ApiException('Mode not specified', ApiResponse::STATUS_ERR_OPE);
+				throw new ApiOperationException('Mode not specified');
 		}
 	}
 
@@ -44,22 +43,20 @@ class SeriesRulesetAction extends ApiAction
 				'label' => $item->volume_label,
 				'ruleset' => json_decode($item->ruleset)
 			);
-
-		$res = new ApiResponse();
-		$res->setResult($action, $items);
-		return $res;
+		return $items;
 	}
 
 	private function setRuleSets($plugin_id, $data)
 	{
 		$data = json_decode($data, true);
 		if (!data)
-			throw new ApiException('Data invalid', ApiResponse::STATUS_ERR_OPE);
+			throw new ApiOperationException('Data invalid');
 
 		$pdo = DBConnector::getConnection();
 
 		try {
 			$pdo->beginTransaction();
+			$t = true;
 			foreach ($this->_entries as $volume_id => $item)
 			{
 				$rulesets = $data[$volume_id];
@@ -70,13 +67,11 @@ class SeriesRulesetAction extends ApiAction
 				);
 			}
 			$pdo->commit();
-		} catch (PDOException $e) {
-			throw new ApiException('DB Error ' . $e->getMessage(), ApiResponse::STATUS_ERR_SYS);
+		} catch (Exception $e) {
+			if ($t) $pdo->rollBack();
+			throw $e;
 		}
-
-		$res = new ApiResponse();
-		$res->setResult($action, null);
-		return $res;
+		return null;
 	}
 
 }

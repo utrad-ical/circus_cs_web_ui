@@ -1,33 +1,48 @@
 <?php
 include("../common.php");
+require_once('../../app/lib/api/ApiException.class.php');
+// manually issue require() to load exception subclasses
 
-$api_request = json_decode($_POST['request'], true);
-if (is_null($api_request))
+try
 {
-	$api_request = json_decode(file_get_contents("php://input"), true);
-}
-if (is_null($api_request) && $_POST['action'])
-	$api_request = $_POST;
-
-if (is_null($api_request))
-{
-	$res = new ApiResponse();
-	$res->setError(NULL, ApiResponse::STATUS_ERR_OPE, "Request format is invalid.");
-	echo $res->getJson();
-	exit;
-}
-else
-{
-	try {
-		$res = ApiExec::doAction($api_request);
-		echo $res->getJson();
-	}
-	catch (Exception $e)
+	$api_request = json_decode($_POST['request'], true);
+	if (is_null($api_request))
 	{
-		$action = $api_request['action'];
-		$res = new ApiResponse();
-		$res->setError($action, ApiResponse::STATUS_ERR_SYS, "Internal system error.");
-		echo $res->getJson();
+		$api_request = json_decode(file_get_contents("php://input"), true);
 	}
-}
+	if (is_null($api_request) && $_POST['action'])
+	$api_request = $_POST;
+	if (is_null($api_request))
+		throw new ApiOperationException("Request format is invalid.");
 
+	$exec = new ApiExec();
+	$res = $exec->doAction($api_request);
+	$result = array(
+		'action' => $exec->action,
+		'status' => 'OK',
+	);
+	if (!is_null($res))
+		$result['result'] = $res;
+	echo json_encode($result);
+}
+catch (Exception $e)
+{
+	if ($e instanceof ApiAuthException)
+		$error_type = 'AuthError';
+	else if ($e instanceof ApiOperationException)
+		$error_type = 'OperationError';
+	else
+		$error_type = 'SystemError';
+	$result = array(
+		'status' => $error_type,
+		'error' => array('message' => $e->getMessage())
+	);
+
+	// Hide exception details thrown from PDO (security)
+	if ($e instanceof PDOException)
+		$result['error'] = 'Internal Database Error.';
+
+	if ($exec && $exec->action)
+		$result['action'] = $exec->action;
+	echo json_encode($result);
+}
