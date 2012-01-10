@@ -5,17 +5,24 @@
  */
 function smarty_modifier_dumpParams(array $items)
 {
-	if (count($items) == 0) return "<em>(Empty)</em>";
-	foreach ($items as $key => $val)
+	$indent = function($item) use(&$indent)
 	{
-		$result .= "<li><strong>" . htmlspecialchars($key) . "</strong>: ";
-		if (is_array($val))
-			$result .= htmlspecialchars(json_encode($val));
-		else if (is_null($val))
-			$result .= "<em>null</em>";
+		if (is_array($item))
+		{
+			if (count($item) == 0)
+				return '<em>(Empty)</em>';
+			foreach ($item as $k => $v)
+			{
+				$result .= '<li><strong>' . htmlspecialchars($k) . '</strong>: ' .
+					$indent($v) . '</li>';
+			}
+			return "<ul>$result</ul>";
+		}
+		else if (is_null($item))
+			return '<em>null</em>';
 		else
-			$result .= htmlspecialchars($val);
-		$result .= "</li>";
-	}
-	return  "<ul>$result</ul>";
+			return htmlspecialchars($item);
+	};
+
+	return '<ul>' . $indent($items) . '</ul>';
 }

@@ -11,7 +11,7 @@ Number of feedback: {$inspector_feedback|@count|number_format}
 		<tr>
 			<td class="name themeColor">{$item.type|escape}</td>
 			<td>{$item.registerer|escape}</td>
-			<td>{$item.feedback|@dumpParams}</td>
+			<td class="parameters">{$item.feedback|@dumpParams}</td>
 		</tr>
 	{/foreach}
 	</tbody>
