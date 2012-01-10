@@ -1,6 +1,6 @@
 <?php
 
-class QueryFeedbackAction extends ApiAction
+class QueryFeedbackAction extends ApiActionBase
 {
 	public function execute($params)
 	{

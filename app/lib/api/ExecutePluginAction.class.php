@@ -1,6 +1,6 @@
 <?php
 
-class ExecutePluginAction extends ApiAction
+class ExecutePluginAction extends ApiActionBase
 {
 	protected $rule;
 

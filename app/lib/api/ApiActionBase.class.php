@@ -5,7 +5,7 @@
  *
  * @author Yukihiro Ohno <y-ohno@j-mac.co.jp>
  */
-abstract class ApiAction
+abstract class ApiActionBase
 {
 	protected static $required_privileges = array(
 		Auth::API_EXEC

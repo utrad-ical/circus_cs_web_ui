@@ -1,6 +1,6 @@
 <?php
 
-class CountImagesAction extends ApiAction
+class CountImagesAction extends ApiActionBase
 {
 	public function execute($params)
 	{

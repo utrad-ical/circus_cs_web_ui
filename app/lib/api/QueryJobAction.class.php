@@ -1,6 +1,6 @@
 <?php
 
-class QueryJobAction extends ApiAction
+class QueryJobAction extends ApiActionBase
 {
 	const studyUID  = "studyuid";
 	const seriesUID = "seriesuid";

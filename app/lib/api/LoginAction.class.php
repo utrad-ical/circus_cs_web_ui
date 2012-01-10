@@ -1,6 +1,6 @@
 <?php
 
-class LoginAction extends ApiAction
+class LoginAction extends ApiActionBase
 {
 	public function execute($params)
 	{

@@ -1,6 +1,6 @@
 <?php
 
-class QueryJobQueueAction extends ApiAction
+class QueryJobQueueAction extends ApiActionBase
 {
 	protected static $required_privileges = array(
 		Auth::SERVER_OPERATION

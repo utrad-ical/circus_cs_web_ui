@@ -4,7 +4,7 @@
  * Fetches/updates Series Ruleset. (undocumented API)
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class SeriesRulesetAction extends ApiAction
+class SeriesRulesetAction extends ApiActionBase
 {
 	private $_entries;
 
