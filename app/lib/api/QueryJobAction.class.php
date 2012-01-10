@@ -14,7 +14,7 @@ class QueryJobAction extends ApiActionBase
 		self::show	// "queue_list" or "error_list"
 	);
 
-	function execute($params)
+	public function execute($params)
 	{
 		$show = $params['show'];
 

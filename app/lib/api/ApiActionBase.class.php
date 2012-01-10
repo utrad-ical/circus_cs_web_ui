@@ -23,5 +23,5 @@ abstract class ApiActionBase
 		return static::$required_privileges;
 	}
 
-	abstract public function execute($api_request);
+	abstract public function execute($params);
 }

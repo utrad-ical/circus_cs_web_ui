@@ -7,7 +7,7 @@ class ExecutePluginAction extends ApiActionBase
 		Auth::CAD_EXEC
 	);
 
-	function execute($params)
+	public function execute($params)
 	{
 		try {
 			$pdo = DBConnector::getConnection();
