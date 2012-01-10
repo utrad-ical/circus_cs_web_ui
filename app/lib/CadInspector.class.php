@@ -87,6 +87,7 @@ class CadInspector extends CadResultExtension
 	{
 		$path = $this->cadResult->pathOfCadResult();
 		$entries = @scandir($path);
+		if (!$entries) return;
 		foreach ($entries as $entry)
 		{
 			if ($entry == '.' || $entry == '..') continue;
