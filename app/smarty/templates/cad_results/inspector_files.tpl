@@ -7,7 +7,11 @@
 	<tbody>
 	{foreach from=$inspector_files item=item}
 		<tr>
+			{if $item.type=='file'}
+			<td class="name themeColor"><a href="{$cadResult->webPathOfCadResult()|escape}/{$item.file|escape}">{$item.file|escape}</a></td>
+			{else}
 			<td class="name themeColor">{$item.file|escape}</td>
+			{/if}
 			<td>{$item.type|escape}</td>
 			<td class="al-r">{$item.size|number_format}</td>
 		</tr>
