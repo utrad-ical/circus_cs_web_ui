@@ -86,11 +86,6 @@ abstract class Model implements Iterator
 			return null;
 	}
 
-	public function find($condition = array(), $options = array())
-	{
-		return static::select($condition, $options);
-	}
-
 	protected function loadBelonging($key)
 	{
 		$class = get_class($this);
@@ -104,8 +99,7 @@ abstract class Model implements Iterator
 	{
 		$class = get_class($this);
 		$assoc = $class::$_hasMany[$key];
-		$finder = new $key();
-		$children = $finder->find(array(
+		$children = $key::select(array(
 			$assoc['key'] => $this->_data[$class::$_primaryKey]));
 		$this->_data[$key] = $children;
 		return $children;
