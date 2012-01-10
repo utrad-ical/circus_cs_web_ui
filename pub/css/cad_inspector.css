@@ -31,3 +31,15 @@ div.cad-inspector td.parameters li {
 div.cad-inspector td.parameters em {
 	font-style: italic;
 }
+div.cad-inspector p.inspector-navi {
+	margin: 0.8em 1em;
+}
+div.cad-inspector p.inspector-navi .form-btn {
+	padding-right: 1em;
+	padding-left: 1em;
+	margin: 0 0.5em;
+}
+input#inspector-display-id {
+	width: 3em;
+	text-align: right;
+}
