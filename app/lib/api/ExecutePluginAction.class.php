@@ -2,8 +2,6 @@
 
 class ExecutePluginAction extends ApiActionBase
 {
-	protected $rule;
-
 	protected static $required_privileges = array(
 		Auth::API_EXEC,
 		Auth::CAD_EXEC
