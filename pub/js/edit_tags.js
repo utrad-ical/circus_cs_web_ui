@@ -9,14 +9,12 @@ circus.edittag = (function() {
 	var tags = [];
 	var cat_id;
 	var callback;
-	var top;
 
 	function editorLoad(extra)
 	{
 		internalLoad(
 			cat_id,
 			sid,
-			top,
 			function(result) {
 				tags = result;
 				refresh();
@@ -25,14 +23,14 @@ circus.edittag = (function() {
 		);
 	}
 
-	function internalLoad(category, referenceID, toTopDir, onLoad, extra)
+	function internalLoad(category, referenceID, onLoad, extra)
 	{
 		var params = { category: category, referenceID: referenceID };
 		if (extra instanceof Object)
 			for (var key in extra)
 				params[key] = extra[key];
 		$.post(
-			toTopDir + 'tag_registration.php',
+			circus.totop + 'tag_registration.php',
 			params,
 			function(data) {
 				var tmp = JSON.parse(data);
@@ -90,16 +88,15 @@ circus.edittag = (function() {
 			4: 'CAD result',
 			5: 'CAD result element'
 		},
-		load: function(category, referenceID, toTopDir, onLoad) {
-			internalLoad(category, referenceID, toTopDir, onLoad);
+		load: function(category, referenceID, onLoad) {
+			internalLoad(category, referenceID, onLoad);
 		},
-		openEditor: function(category, referenceID, toTopDir, onClose) {
+		openEditor: function(category, referenceID, onClose) {
 			sid = referenceID;
 			cat_id = category;
-			top = toTopDir ? toTopDir : '';
 			callback = onClose;
 			var div = $('<div>').addClass('edit-tag');
-			div.load(top + 'edit_tags.html', function() {
+			div.load(circus.totop + 'edit_tags.html', function() {
 				$('#edit-tags-title').text(global.cat_title[category]);
 				$('#edit-tags-close').click(function() {
 					$.unblockUI();

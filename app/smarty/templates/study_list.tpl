@@ -95,7 +95,7 @@ jq/ui/theme/jquery-ui.custom.css
 				</td>
 				{if $smarty.session.personalFBFlg}
 				<td>
-					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="circus.edittag.openEditor(2,'{$item[0]|escape}','')" title="{$item[11]|escape}" />
+					<input id="tagBtn{$item[0]|escape}" type="button" value="tag" class="s-btn form-btn" onclick="circus.edittag.openEditor(2,'{$item[0]|escape}')" title="{$item[11]|escape}" />
 				</td>
 				{/if}
 			</tr>

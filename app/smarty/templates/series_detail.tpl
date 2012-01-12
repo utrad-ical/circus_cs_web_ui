@@ -40,9 +40,9 @@ $(function() {
 		$('#series-tags').refreshTags(tags, 'series_list.php', 'filterTag');
 	};
 	$('#edit-tag').click(function() {
-		circus.edittag.openEditor(3, sid, '', refresh);
+		circus.edittag.openEditor(3, sid, refresh);
 	});
-	circus.edittag.load(3, sid, '', refresh);
+	circus.edittag.load(3, sid, refresh);
 });
 
 </script>
