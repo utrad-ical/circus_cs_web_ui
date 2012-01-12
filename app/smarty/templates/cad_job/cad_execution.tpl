@@ -55,7 +55,7 @@ $(function(){
 		};
 
 		$.webapi({
-			action: 'InternalExecutePlugin',
+			action: 'internalExecutePlugin',
 			params: params,
 			onSuccess: function(data) {
 				$('.job-id').text(data.jobID);
