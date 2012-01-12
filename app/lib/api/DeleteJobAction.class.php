@@ -4,11 +4,12 @@ class DeleteJobAction extends ApiActionBase
 {
 	protected static $required_privileges = array(Auth::SERVER_SETTINGS);
 
+	protected static $rules = array(
+		'jobID' => array('type' => 'int', 'required' => true)
+	);
+
 	protected function execute($params)
 	{
-		if (!is_numeric($params['jobID']))
-			throw new ApiOperationException('Job ID not specified');
-
 		$pdo = DBConnector::getConnection();
 		$pdo->beginTransaction();
 
