@@ -7,104 +7,70 @@ class QueryJobAction extends ApiActionBase
 	const jobID     = "jobid";
 	const show      = "show";
 
-	protected static $param_strings = array(
-		self::studyUID,
-		self::seriesUID,
-		self::jobID,
-		self::show	// "queue_list" or "error_list"
+	protected static $rules = array(
+		'studyUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
+		'seriesUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
+		'jobID' => array('type' => 'array', 'childrenRule' => array('type' => 'int')),
+		'show' => array('type' => 'select', 'options' => array('queue_list', 'error_list')),
 	);
 
 	protected function execute($params)
 	{
-		$show = $params['show'];
-
-		if(self::check_params($params) == FALSE) {
-			throw new ApiOperationException("Invalid parameter.");
-		}
+		// Check for number of conditions specified
+		if (count($params['studyUID'])) $conditions++;
+		if (count($params['seriesUID'])) $conditions++;
+		if (count($params['jobID'])) $conditions++;
+		if ($params['show']) $conditions++;
+		if ($conditions == 0)
+			throw new ApiOperationException('Query condition not set.');
+		if ($conditions > 1)
+			throw new ApiOperationException('You can not combine more than one condition.');
 
 		$result = array();
 
-		$cond = strtolower(key($params));
-		switch ($cond)
+		if ($params['studyUID'])
 		{
-			case self::studyUID:
-				$result = $this->query_job_study($params['studyUID']);
-				break;
-
-			case self::seriesUID:
-				$result = $this->query_job_series($params['seriesUID']);
-				break;
-
-			case self::jobID:
-				$result = $this->query_job($params['jobID']);
-				break;
-
-			case self::show:
-				if ($params['show'] == "queue_list")
-				{
-					$result = $this->queue_list();
-				}
-				elseif ($params['show'] == "error_list")
-				{
-					$result = $this->error_list();
-				}
-				else
-				{
-					throw new ApiOperationException("Invalid parameter.");
-				}
-				break;
-
-			default:
-				throw new ApiOperationException("Invalid parameter.");
-				break;
+			$result = $this->query_job_study($params['studyUID']);
 		}
-
+		elseif ($params['seriesUID'])
+		{
+			$result = $this->query_job_series($params['seriesUID']);
+		}
+		elseif ($params['jobID'])
+		{
+			$result = $this->query_job($params['jobID']);
+		}
+		elseif ($params['show'] == 'queue_list')
+		{
+			$result = $this->queue_list();
+		}
+		elseif ($params['show'] == 'error_list')
+		{
+			$result = $this->error_list();
+		}
 		return $result;
 	}
-
-
-	private function check_params($params)
-	{
-		if(count($params) < 1) {
-			return false;
-		}
-
-		return true;
-	}
-
 
 	function queue_list()
 	{
-		$sqlStr = 'select'
-		. '      sl.study_instance_uid  as "studyUID",'
-		. '      sl.series_instance_uid as "seriesUID",'
-		. '      jq.job_id              as "jobID",'
-		. '      pm.plugin_name         as "pluginName",'
-		. '      pm.version             as "pluginVersion",'
-		. '      rp.policy_name         as "resultPolicy",'
-		. '      jq.registered_at       as "registeredAt",'
-		. '      pl.status              as "status",'
-		. '      jq.priority            as "priority"'
-		. ' from job_queue            jq,'
-		. '      job_queue_series     qs,'
-		. '      series_list          sl,'
-		. '      plugin_master        pm,'
-		. '      executed_plugin_list pl,'
-		. '      plugin_result_policy rp'
-		. ' where jq.job_id     = qs.job_id'
-		. ' and   qs.series_sid = sl.sid'
-		. ' and   jq.plugin_id  = pm.plugin_id'
-		. ' and   jq.job_id     = pl.job_id'
-		. ' and   pl.policy_id  = rp.policy_id';
-
-		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
-
-		return $result;
+		$sql = 'SELECT job_id FROM job_queue WHERE status >= 0';
+		$jobIDs = DBConnector::query($sql, array(), 'ALL_COLUMN');
+		return $this->query_job($jobIDs);
 	}
-
 
 	function error_list()
 	{
+		$sql = 'SELECT job_id FROM executed_plugin_list WHERE status = -1';
+		$jobIDs = DBConnector::query($sql, array(), 'ALL_COLUMN');
+		return $this->query_job($jobIDs);
+	}
+
+	function query_job(array $jobIDArr)
+	{
+		if (count($jobIDArr) == 0)
+			return array();
+		$placeHolders = implode(',', array_fill(0, count($jobIDArr), '?'));
+
 		$sqlStr = 'select'
 		. ' sl.study_instance_uid  as "studyUID",'
 		. ' sl.series_instance_uid as "seriesUID",'
@@ -112,84 +78,43 @@ class QueryJobAction extends ApiActionBase
 		. ' pm.plugin_name         as "pluginName",'
 		. ' pm.version             as "pluginVersion",'
 		. ' rp.policy_name         as "resultPolicy",'
+		. ' jq.registered_at       as "registeredAt",'
 		. ' el.executed_at         as "executedAt",'
-		. ' \'error\'              as "status"'
-		. ' from'
-		. ' executed_plugin_list el,'
-		. ' series_list          sl,'
-		. ' plugin_master        pm,'
-		. ' plugin_result_policy rp,'
-		. ' executed_series_list esl'
-		. ' where el.plugin_id = pm.plugin_id'
-		. ' and   el.job_id = esl.job_id'
-		. ' and   esl.series_sid = sl.sid'
-		. ' and   el.policy_id = rp.policy_id'
-		. ' and   el.status = -1';
+		. ' el.status              as "status",'
+		. ' jq.priority            as "priority"'
+		. ' from executed_plugin_list el'
+		. ' left join'
+		. ' job_queue jq'
+		. ' on el.job_id = jq.job_id'
+		. ' left join'
+		. ' executed_series_list es'
+		. ' on el.job_id     = es.job_id'
+		. ' left join'
+		. ' series_list sl'
+		. ' on es.series_sid = sl.sid'
+		. ' left join'
+		. ' plugin_master pm'
+		. ' on el.plugin_id  = pm.plugin_id'
+		. ' left join'
+		. ' plugin_result_policy rp'
+		. ' on el.policy_id  = rp.policy_id'
+		. ' where el.job_id IN (' . $placeHolders . ')';
 
-		$result = DBConnector::query($sqlStr, array(), 'ALL_ASSOC');
+		$results = DBConnector::query($sqlStr, $jobIDArr, 'ALL_ASSOC');
 
-		return $result;
-	}
-
-
-	function query_job($jobIDArr)
-	{
-		$ret = array();
-		foreach ($jobIDArr as $id)
+		foreach ($results as &$item)
 		{
-			$sqlStr = 'select'
-			. ' sl.study_instance_uid  as "studyUID",'
-			. ' sl.series_instance_uid as "seriesUID",'
-			. ' el.job_id              as "jobID",'
-			. ' pm.plugin_name         as "pluginName",'
-			. ' pm.version             as "pluginVersion",'
-			. ' rp.policy_name         as "resultPolicy",'
-			. ' jq.registered_at       as "registeredAt",'
-			. ' el.executed_at         as "executedAt",'
-			. ' el.status              as "status",'
-			. ' jq.priority            as "priority"'
-			. ' from executed_plugin_list el'
-			. ' left join'
-			. ' job_queue jq'
-			. ' on	el.job_id = jq.job_id'
-			. ' left join'
-			. '	executed_series_list es'
-			. ' on	el.job_id     = es.job_id'
-			. ' left join'
-			. '	series_list sl'
-			. ' on	es.series_sid = sl.sid'
-			. ' left join'
-			. '	plugin_master pm'
-			. ' on	el.plugin_id  = pm.plugin_id'
-			. ' left join'
-			. '	plugin_result_policy rp'
-			. ' on	el.policy_id  = rp.policy_id'
-			. ' where el.job_id = ?';
-
-			$result = DBConnector::query($sqlStr, array($id), 'ALL_ASSOC');
+			// Set waiting & priority
+			if ($item['status'] == Job::JOB_NOT_ALLOCATED)
+				$item['waiting'] = $this->get_waiting($item['registeredAt'], $item['priority']);
+			if (is_null($item['priority'])) unset($item['priority']);
 
 			// Set status
-			if(isset($result[0]['status'])) {
-				$result[0]['status'] = $this->get_status($result[0]['status']);
-			}
+			$item['status'] = $this->get_status($item['status']);
 
-			// Set waiting
-			$waiting = self::get_waiting($result[0][registeredAt], $result[0]['priority']);
-			if ($waiting >= 0) {
-				$result[0]['waiting'] = $waiting;
-			}
-
-			if($result) {
-				if(count($jobIDArr) == 1) {
-					return $result;
-				}
-				array_push($ret, $result);
-			}
 		}
-
-		return $ret;
+		return $results;
 	}
-
 
 	function query_job_study($studyArr)
 	{
@@ -216,7 +141,7 @@ class QueryJobAction extends ApiActionBase
 			}
 		}
 
-		return self::query_job($jobIDArr);
+		return $this->query_job($jobIDArr);
 	}
 
 
@@ -245,9 +170,8 @@ class QueryJobAction extends ApiActionBase
 			}
 		}
 
-		return self::query_job($jobIDArr);
+		return $this->query_job($jobIDArr);
 	}
-
 
 	private function get_status($stat)
 	{
@@ -255,36 +179,26 @@ class QueryJobAction extends ApiActionBase
 		{
 			case -1:
 				return "error";
-				break;
 			case 1:
 				return "in_queue";
-				break;
 			case 2:
 				return "processing";
-				break;
 			case 3:
 				return "processing";
-				break;
 			case 4:
 				return "finished";
-				break;
-			default:
-				break;
 		}
-
 		return $stat;
 	}
 
 	private function get_waiting($reg, $pri)
 	{
 		// Count waiting
-		$sqlStr = 'select count(*) cnt'
+		$sqlStr = 'select count(*)'
 		. ' from job_queue'
 		. ' where priority > ?'
-		. ' or (registered_at <= ? and priority = ?)';
-
-		$waiting = DBConnector::query($sqlStr, array($pri, $reg, $pri),'ALL_ASSOC');
-
-		return ($waiting[0]['cnt'] - 1);
+		. ' or (registered_at < ? and priority = ?)';
+		$waiting = DBConnector::query($sqlStr, array($pri, $reg, $pri),'SCALAR');
+		return (int)$waiting;
 	}
 }
