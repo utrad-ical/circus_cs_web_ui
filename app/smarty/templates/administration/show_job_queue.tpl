@@ -9,7 +9,6 @@ $(function () {
 		$('#refresh').disable();
 		$('#busy').show();
 		$.webapi({
-			api: '../api/api.php',
 			action: 'queryJobQueue',
 			onSuccess: refresh,
 			onFail: onMessage
@@ -58,7 +57,6 @@ $(function () {
 		{
 			$('#busy').show();
 			$.webapi({
-				api: '../api/api.php',
 				action: 'deleteJob',
 				params: { jobID: id },
 				onSuccess: function() {

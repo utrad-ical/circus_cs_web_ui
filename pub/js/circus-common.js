@@ -4,6 +4,7 @@
  * Currently this file contains scripts for dynamic layout elements.
  */
 
+var circus = circus || {};
 
 //Initialize
 $(function(){
@@ -167,7 +168,7 @@ $.extend({
 		}
 
 		var defaults = {
-			api: 'api/api.php',
+			api: circus.totop + 'api/api.php',
 			action: null,
 			params: {},
 			onSuccess: $.noop,

@@ -25,9 +25,18 @@ class SmartyEx extends Smarty
 		$this->plugins_dir[] = $rootPath . 'plugins/';
 
 		$this->assign('currentUser', Auth::currentUser());
-		$rp = relativePath(dirname($_SERVER['PHP_SELF']), $_SESSION['topdir']);
 
+		// Find web root directory (where home.php exists) as a relative path
+		do
+		{
+			$rp = str_repeat('../', $step);
+			if (file_exists($rp . 'home.php'))
+				break;
+		} while ($step++ < 10);
+		if ($step >= 10)
+			throw new Exception('Web root cannot be resolved');
 		$this->assign('totop', $rp);
+
 	}
 }
 

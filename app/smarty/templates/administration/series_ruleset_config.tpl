@@ -342,7 +342,6 @@ $(function() {
 		if (targetPlugin)
 		{
 			$.webapi({
-				api: '../api/api.php',
 				action: 'seriesRuleset',
 				params: {
 					plugin_id: targetPlugin,
@@ -443,7 +442,6 @@ $(function() {
 		if (targetPlugin)
 		{
 			$.webapi({
-				api: '../api/api.php',
 				action: 'seriesRuleset',
 				params: {
 					plugin_id: targetPlugin,

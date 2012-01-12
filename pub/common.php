@@ -91,26 +91,6 @@ function GetDicomFileListInPath($path)
 }
 
 /**
- * Calculate relative path from $from to $to
- * @param string Absolute base path
- * @param string Absolute target path
- * @return string Something like '../', '../a/b/c';
- */
-function relativePath($from, $to)
-{
-	global $DIR_SEPARATOR_WEB;
-	$ps = $DIR_SEPARATOR_WEB;
-	$arFrom = explode($ps, rtrim($from, $ps));
-	$arTo = explode($ps, rtrim($to, $ps));
-	while(count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0]))
-	{
-		array_shift($arFrom);
-		array_shift($arTo);
-	}
-	return str_repeat('..'.$ps, count($arFrom)).implode($ps, $arTo);
-}
-
-/**
  * Utility function to calculate age.
  * @param string $birthDate The date of birth in 'YYYY-MM-DD' or 'YYYYMMDD'
  * format (hyphens are optinal).
