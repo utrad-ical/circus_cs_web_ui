@@ -2,10 +2,8 @@
 
 class CountImagesAction extends ApiActionBase
 {
-	public function execute($params)
+	protected function execute($params)
 	{
-		$params = $api_request['params'];
-
 		$seriesUIDs = $params['seriesInstanceUID'];
 		$studyUIDs = $params['studyInstanceUID'];
 

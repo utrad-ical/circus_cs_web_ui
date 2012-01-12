@@ -2,21 +2,15 @@
 
 class LoginAction extends ApiActionBase
 {
-	public function execute($params)
+	protected function execute($params)
 	{
-		$params = $api_request['params'];
 		$mode = $params['mode'];
-
-		$user = ApiExec::currentUser();
-		if(!isset($user)) {
-			throw new ApiAuthException('Authentication required');
-		}
 
 		$result = null;
 		switch ($mode)
 		{
 			case "getOnetime":
-				$userid = $user->user_id;
+				$userid = $this->currentUser->user_id;
 				$time = date("Y-m-d H:i:s");
 				$ip = getenv("REMOTE_ADDR");
 
@@ -47,7 +41,7 @@ class LoginAction extends ApiActionBase
 			case "newSession":
 			default:
 				session_start();
-				Auth::createSession($user);
+				Auth::createSession($this->currentUser);
 				break;
 		}
 

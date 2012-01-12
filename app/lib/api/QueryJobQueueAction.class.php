@@ -6,7 +6,7 @@ class QueryJobQueueAction extends ApiActionBase
 		Auth::SERVER_OPERATION
 	);
 
-	public function execute($params)
+	protected function execute($params)
 	{
 		$jobs = Job::select(
 			array('status >=' => Job::JOB_NOT_ALLOCATED),
@@ -22,7 +22,7 @@ class QueryJobQueueAction extends ApiActionBase
 			$item['plugin_name'] = $plugin->fullName();
 			$item['plugin_type'] = $plugin->pluginType();
 
-			Patient::$anonymizeMode = Auth::currentUser()->needsAnonymization();
+			Patient::$anonymizeMode = $this->currentUser->needsAnonymization();
 
 			if($plugin->type == Plugin::CAD_PLUGIN)
 			{

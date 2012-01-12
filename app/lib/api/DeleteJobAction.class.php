@@ -4,7 +4,7 @@ class DeleteJobAction extends ApiActionBase
 {
 	protected static $required_privileges = array(Auth::SERVER_SETTINGS);
 
-	public function execute($params)
+	protected function execute($params)
 	{
 		if (!is_numeric($params['jobID']))
 			throw new ApiOperationException('Job ID not specified');

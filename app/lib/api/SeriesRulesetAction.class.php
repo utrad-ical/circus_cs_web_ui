@@ -12,7 +12,7 @@ class SeriesRulesetAction extends ApiActionBase
 		Auth::SERVER_SETTINGS
 	);
 
-	public function execute($params)
+	protected function execute($params)
 	{
 		$plugin_id = $params['plugin_id'];
 		$this->_entries = PluginCadSeries::select(

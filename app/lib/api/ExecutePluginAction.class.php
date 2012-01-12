@@ -7,7 +7,7 @@ class ExecutePluginAction extends ApiActionBase
 		Auth::CAD_EXEC
 	);
 
-	public function execute($params)
+	protected function execute($params)
 	{
 		try {
 			$pdo = DBConnector::getConnection();
@@ -23,7 +23,7 @@ class ExecutePluginAction extends ApiActionBase
 			$job_id = Job::registerNewJob(
 				$plugin,
 				$params['seriesUID'],
-				$this->owner->currentUser()->user_id,
+				$this->currentUser->user_id,
 				$params['priority'],
 				$params['resultPolicy']
 			);

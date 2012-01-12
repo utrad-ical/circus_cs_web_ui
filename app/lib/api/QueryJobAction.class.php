@@ -7,14 +7,14 @@ class QueryJobAction extends ApiActionBase
 	const jobID     = "jobid";
 	const show      = "show";
 
-	static $param_strings = array(
+	protected static $param_strings = array(
 		self::studyUID,
 		self::seriesUID,
 		self::jobID,
 		self::show	// "queue_list" or "error_list"
 	);
 
-	public function execute($params)
+	protected function execute($params)
 	{
 		$show = $params['show'];
 

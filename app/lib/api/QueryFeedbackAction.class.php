@@ -2,7 +2,7 @@
 
 class QueryFeedbackAction extends ApiActionBase
 {
-	public function execute($params)
+	protected function execute($params)
 	{
 		if($this->check_params($params) == FALSE)
 		{
@@ -19,9 +19,7 @@ class QueryFeedbackAction extends ApiActionBase
 		// Retrieve the CAD Result
 		$cadResult = new CadResult($jobID);
 		if (!isset($cadResult->job_id))
-		{
-			$result = null;
-		}
+			throw new ApiOperationException('Target job not found.');
 		$feedback = $cadResult->queryFeedback($kind, $userID);
 
 		$result = array();
@@ -35,7 +33,6 @@ class QueryFeedbackAction extends ApiActionBase
 				)
 			);
 		}
-
 		return $result;
 	}
 

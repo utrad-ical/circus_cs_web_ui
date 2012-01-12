@@ -15,10 +15,19 @@ try
 	if (is_null($api_request))
 		throw new ApiOperationException("Request format is invalid.");
 
-	$exec = new ApiExec();
-	$res = $exec->doAction($api_request);
+	$action = $api_request['action'];
+
+	// Autoload action class.
+	if (!preg_match('/^[A-Za-z_]+$/', $action))
+		throw new ApiOperationException("Requested action is not defined.");
+	$class = ucfirst($action) . "Action";
+	if (!file_exists("../../app/lib/api/$class.class.php"))
+		throw new ApiOperationException("Requested action is not defined.");
+
+	$api = new $class();
+	$res = $api->doAction($api_request);
 	$result = array(
-		'action' => $exec->action,
+		'action' => $action,
 		'status' => 'OK',
 	);
 	if (!is_null($res))
@@ -40,7 +49,7 @@ catch (Exception $e)
 
 	// Hide exception details thrown from PDO (security)
 	if ($e instanceof PDOException)
-		$result['error'] = 'Internal Database Error.';
+		$result['error']['message'] = 'Internal database error.';
 
 	if ($exec && $exec->action)
 		$result['action'] = $exec->action;
