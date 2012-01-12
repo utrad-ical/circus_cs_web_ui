@@ -55,7 +55,6 @@ $(function(){
 		};
 
 		$.webapi({
-			api: '../api/api.php',
 			action: 'InternalExecutePlugin',
 			params: params,
 			onSuccess: function(data) {
