@@ -11,6 +11,8 @@ abstract class ApiActionBase
 		Auth::API_EXEC
 	);
 
+	protected static $rules = array();
+
 	/**
 	 * The current authenticated user.
 	 * Do not use Auth::currentUser() inside the action classes,
@@ -34,7 +36,18 @@ abstract class ApiActionBase
 			}
 		}
 
-		return $this->execute($api_request['params']);
+		$params = $api_request['params'];
+
+		if (count(static::$rules))
+		{
+			$validator = new FormValidator();
+			$validator->addRules(static::$rules);
+			if (!$validator->validate($params))
+				throw new ApiOperationException(implode("\n", $validator->errors));
+			$params = $validator->output;
+		}
+
+		return $this->execute($params);
 	}
 
 	/**
