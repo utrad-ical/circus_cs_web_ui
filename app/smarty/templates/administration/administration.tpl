@@ -9,16 +9,19 @@ $(function() {
 	}
 	else
 	{
-		$(window).load(function () {
-			if (confirm('Do you want to enter administration mode?'))
-			{
-				$('#administration').show();
-				$('#smoke').hide();
-				$.get('administration.php', { open: 1 });
-			}
-			else
-			{
-				window.location = '../home.php';
+		$('#dialog-confirm').dialog({
+			modal: true,
+			resizable: false,
+			buttons: {
+				"OK": function() {
+					$(this).dialog("close");
+					$('#administration').show();
+					$('#smoke').hide();
+					$.get('administration.php', { open: 1 });
+				},
+				"Cancel": function() {
+					window.location = '../home.php';
+				}
 			}
 		});
 	}
@@ -37,7 +40,12 @@ fieldset li:hover { background-color: #ffddae; }
 
 {/literal}
 {/capture}
-{include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
+{capture name="require"}
+jq/ui/jquery-ui.min.js
+jq/ui/theme/jquery-ui.custom.css
+{/capture}
+{include file="header.tpl" head_extra=$smarty.capture.extra
+	require=$smarty.capture.require body_class="spot"}
 
 <div id="smoke"></div>
 
@@ -125,6 +133,10 @@ fieldset li:hover { background-color: #ffddae; }
 		</li>
 	</ul>
 </fieldset>
+
+<div id="dialog-confirm" title="Confirmation" style="display: none">
+Do you want to enter administration mode?
+</div>
 
 </div>
 </form>
