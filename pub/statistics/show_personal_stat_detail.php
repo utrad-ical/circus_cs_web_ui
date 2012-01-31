@@ -448,7 +448,7 @@ if($params['errorMessage'] == "&nbsp;")
 					. "candidate_classification cc,"
 					. "plugin_master pm,"
 					. "series_list sr,"
-					. $resultTableName . " cad"
+					. '"' . $resultTableName . '" cad'
 					. " WHERE el.job_id=es.job_id"
 					. " AND el.job_id=cad.job_id"
 					. " AND el.job_id=fl.job_id"
