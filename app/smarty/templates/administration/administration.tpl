@@ -3,6 +3,7 @@
 var adminModeFlg = {$adminModeFlg};
 {literal}
 $(function() {
+	var ok = false;
 	if (adminModeFlg) {
 		$('#administration').show();
 		$('#smoke').hide();
@@ -14,14 +15,18 @@ $(function() {
 			resizable: false,
 			buttons: {
 				"OK": function() {
-					$(this).dialog("close");
+					ok = true;
+					$(this).dialog('close');
 					$('#administration').show();
 					$('#smoke').hide();
 					$.get('administration.php', { open: 1 });
 				},
 				"Cancel": function() {
-					window.location = '../home.php';
+					$(this).dialog('close');
 				}
+			},
+			close: function() {
+				if (!ok) window.location = '../home.php';
 			}
 		});
 	}
