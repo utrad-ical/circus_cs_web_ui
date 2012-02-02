@@ -177,3 +177,22 @@ function CopyDirRecursively($srcDir, $dstDir)
 	return TRUE;
 }
 
+/**
+ * Finds the web root directory as relative path from the current directory.
+ * @return string The relative path of the web root, like '../../' or '';
+ * @throws Exception
+ */
+function relativeTopDir()
+{
+	// Find web root directory (where home.php exists) as a relative path
+	do
+	{
+		$rp = str_repeat('../', $step);
+		if (file_exists($rp . 'home.php'))
+		break;
+	} while ($step++ < 10);
+	if ($step >= 10)
+		throw new Exception('Web root cannot be resolved');
+	return $rp;
+}
+

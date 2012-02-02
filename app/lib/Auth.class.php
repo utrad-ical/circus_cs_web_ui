@@ -322,7 +322,7 @@ class Auth
 		global $DIR_SEPARATOR_WEB;
 		Auth::logout();
 		$mode_str = $mode ? "?mode=$mode" : '';
-		header('location: ' . $_SESSION['topdir'] . $DIR_SEPARATOR_WEB . 'index.php' . $mode_str);
+		header('location: ' . relativeTopDir() . 'index.php' . $mode_str);
 		exit();
 	}
 
