@@ -247,11 +247,8 @@ class Auth
 
 		$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
 		$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
-		$_SESSION['modifyConsensualFlg'] = isset($priv['consensualFeedbackModify']) ? 1 : 0;
 		$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
 		$_SESSION['volumeDLFlg']         = isset($priv['volumeDownload']) ? 1 : 0;
-		$_SESSION['serverOperationFlg']  = isset($priv['serverOperation']) ? 1 : 0;
-		$_SESSION['serverSettingsFlg']   = isset($priv['serverSettings']) ? 1 : 0;
 		$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
 		$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
 		$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
