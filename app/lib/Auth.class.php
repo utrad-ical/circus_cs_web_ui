@@ -225,14 +225,13 @@ class Auth
 		$_SESSION['userID']        = $user->user_id;
 		$_SESSION['userName']      = $user->user_name;
 		$_SESSION['key']           = sha1($user->user_id);
-		$_SESSION['lastLogin']     = $user->last_login_dt;
-		$_SESSION['lastIPAddr']    = $user->ip_address;
-		$_SESSION['nowIPAddr']     = getenv("REMOTE_ADDR");
-		$_SESSION['groupID']       = $user->Group[0]->group_id;
 		$_SESSION['todayDisp']     = $user->today_disp;
-		$_SESSION['darkroomFlg']   = ($user->darkroom == 't') ? 1 : 0;
 		$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
 		$_SESSION['showMissed']    = $user->show_missed;
+
+		// save status for last login
+		$_SESSION['lastLogin']     = $user->last_login_dt;
+		$_SESSION['lastIPAddr']    = $user->ip_address;
 
 		$user->save(array('User' => array(
 			'last_login_dt' => date('Y-m-d h:i:s'),
@@ -246,7 +245,6 @@ class Auth
 
 		$_SESSION['colorSet']            = $color_set;
 
-		$_SESSION['execCADFlg']          = isset($priv['cadExec']) ? 1 : 0;
 		$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
 		$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
 		$_SESSION['modifyConsensualFlg'] = isset($priv['consensualFeedbackModify']) ? 1 : 0;

@@ -37,7 +37,6 @@ try
 	)));
 
 	$_SESSION['todayDisp']    = $params['newTodayDisp'];
-	$_SESSION['darkroomFlg']  = ($params['newDarkroom'] == 't') ? 1 : 0;
 	$_SESSION['anonymizeFlg'] = ($params['newAnonymized'] == 't') ? 1 : 0;
 	$_SESSION['showMissed']   = $params['newShowMissed'];
 

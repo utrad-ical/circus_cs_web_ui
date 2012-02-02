@@ -32,8 +32,8 @@
 
 <div>
 	<h1>Welcome to CIRCUS clinical server</h1>
-	<span style="margin-left:10px;">User: {$smarty.session.userID} (from {$smarty.session.nowIPAddr})
-	<span class="last_login">Last login: {$smarty.session.lastLogin} (from {$smarty.session.lastIPAddr})</span>
+	<span style="margin-left:10px;">User: {$currentUser->user_id|escape} (from {$smarty.server.REMOTE_ADDR})
+	<span class="last_login">Last login: {$smarty.session.lastLogin|escape} (from {$smarty.session.lastIPAddr})</span>
 </div>
 
 <h2>News</h2>

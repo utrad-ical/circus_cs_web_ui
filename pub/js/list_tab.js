@@ -180,7 +180,7 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 	location.href = 'cad_results/cad_result.php?' + $.param(params);
 }
 
-function ChangeCADMenu(source, seriesID, menuID, cadExecPermit)
+function ChangeCADMenu(source, seriesID, menuID)
 {
 	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");

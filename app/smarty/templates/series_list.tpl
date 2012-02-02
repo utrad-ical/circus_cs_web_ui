@@ -130,7 +130,7 @@ jq/ui/theme/jquery-ui.custom.css
 						<td class="al-l">
 							{if $item[13] > 0}
 								{* ----- pull-down menu ----- *}
-								<select id="cadMenu{$smarty.foreach.cnt.iteration}" onchange="ChangeCADMenu({if $params.mode=='today'}'todaysSeriesList'{else}'seriesList'{/if},'{$smarty.foreach.cnt.iteration}', this.selectedIndex, {$smarty.session.execCADFlg})" style="width:100px;">
+								<select id="cadMenu{$smarty.foreach.cnt.iteration}" onchange="ChangeCADMenu({if $params.mode=='today'}'todaysSeriesList'{else}'seriesList'{/if},'{$smarty.foreach.cnt.iteration}', this.selectedIndex)" style="width:100px;">
 									{section name=i start=0 loop=$item[13]}
 
 										{assign var="i"         value=$smarty.section.i.index}
@@ -150,7 +150,7 @@ jq/ui/theme/jquery-ui.custom.css
 									{/section}
 								</select>
 
-								{if $smarty.session.execCADFlg == 1}
+								{if $currentUser->hasPrivilege('cadExec')}
 									<input type="button" id="execButton{$smarty.foreach.cnt.iteration}" name="execButton{$smarty.foreach.cnt.iteration}" value="&nbsp;Exec&nbsp;" onclick="RegistCADJob('{$smarty.foreach.cnt.iteration}', '{$item[1]}', '{$item[2]}');" class="s-btn form-btn"{if $item[14][$selectedID][2] || $item[14][0][3]>0} style="display:none;"{/if} />
 								{/if}
 
