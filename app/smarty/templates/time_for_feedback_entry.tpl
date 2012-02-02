@@ -106,8 +106,6 @@ function ResetCondition()
 {
 	$("#srDateRange").daterange('option', 'kind', 'all');
 	$("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
-
-	ChangeCadMenu();
 }
 
 $(function() {
