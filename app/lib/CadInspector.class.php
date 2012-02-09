@@ -105,7 +105,7 @@ class CadInspector extends CadResultExtension
 
 	public function tabs()
 	{
-		$visible_groups = $this->params['visible_groups'];
+		$visible_groups = $this->params['visibleGroups'];
 		if (is_string($visible_groups))
 		{
 			$groups = preg_split('/\s*\,\s*/', $visible_groups);
