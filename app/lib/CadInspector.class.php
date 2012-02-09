@@ -36,7 +36,7 @@ class CadInspector extends CadResultExtension
 
 	public function head()
 	{
-		if (!$this->enabled)
+		if ($this->enabled === false)
 			return;
 		$params = $this->getParameter();
 		$module_names = preg_split('/\s*\,\s*/', $params['modules']);
@@ -55,6 +55,10 @@ class CadInspector extends CadResultExtension
 			}
 		}
 		$this->smarty->assign('inspector_modules', $this->modules);
+		if ($this->enabled === 'warn')
+		{
+			$this->smarty->assign('inspector_warn', 1);
+		}
 
 		if ($this->modules['feedback'])
 			$this->assignFeedback();
@@ -109,7 +113,6 @@ class CadInspector extends CadResultExtension
 		if (is_string($visible_groups))
 		{
 			$groups = preg_split('/\s*\,\s*/', $visible_groups);
-			$this->enabled = false;
 			foreach (Auth::currentUser()->Group as $gp)
 			{
 				if (array_search($gp->group_id, $groups) !== false)
@@ -121,10 +124,11 @@ class CadInspector extends CadResultExtension
 		}
 		else
 		{
-			$this->enabled = true;
+			// visibleGroups parameter is required
+			$this->enabled = 'warn';
 		}
 
-		if ($this->enabled)
+		if ($this->enabled) // true or 'warn'
 			return array(
 				array (
 					'label' => 'Inspector',
