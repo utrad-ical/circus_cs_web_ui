@@ -95,7 +95,7 @@ function registerFeedback(CadResult $cadResult, $feedback, $temporary, $is_conse
 	);
 	if (!$is_consensual)
 		$cond['entered_by'] = $user_id; // only delete my personal feedback
-	$fbs = Feecback::select($cond);
+	$fbs = Feedback::select($cond);
 	foreach ($fbs as $delete_fb)
 		Feedback::delete($delete_fb->fb_id);
 
