@@ -133,7 +133,7 @@
 				"otherwise"  => "all"),
 			"filterTP" => array(
 				"type" => "select",
-				"options" => array("with", "withour", "all"),
+				"options" => array("with", "without", "all"),
 				"default" => "all",
 				"otherwise"  => "all"),
 			"filterFN" => array(
