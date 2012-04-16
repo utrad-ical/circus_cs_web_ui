@@ -219,6 +219,14 @@ $(function(){
 		var mode = $('#mode-form input[name=feedbackMode]:checked').val();
 		if (mode != circus.feedback.feedbackMode)
 			$('#mode-form').submit();
+	}).each(function() {
+		var title = $(this).attr('title');
+		if (!title) return;
+		$(this).tooltip({
+			content: title,
+			my: 'left top',
+			at: 'left bottom',
+		}).removeAttr('title');
 	});
 
 	var dialog = $('#temporary-confirm');
