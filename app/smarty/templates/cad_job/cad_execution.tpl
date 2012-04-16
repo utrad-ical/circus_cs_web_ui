@@ -1,5 +1,5 @@
 {capture name="require"}
-../js/series_ruleset.js
+js/series_ruleset.js
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
