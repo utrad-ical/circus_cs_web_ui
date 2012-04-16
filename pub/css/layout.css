@@ -777,7 +777,7 @@ span.opinions-count {
 	border-radius: 5px;
 }
 
- /* ==================================================
+/* ==================================================
 	Ruleset Highlighting
  =================================================== */
 
@@ -787,3 +787,23 @@ span.opinions-count {
 .key-text { color: blue; }
 .value-text { color: black; font-weight: bold; }
 .condition-text { color: purple; }
+
+
+/* ===================================================
+	Tooltips
+==================================================== */
+
+.tooltip {
+	position: absolute;
+	border: 1px solid black;
+	padding: 3px;
+	background-color: #ffffe1;
+	color: black;
+	text-align: center;
+	border-radius: 2px;
+}
+
+.tooltip-error {
+	color: red;
+	font-weight: bold;
+}

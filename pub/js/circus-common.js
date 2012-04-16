@@ -158,6 +158,38 @@ $.fn.radioToButton = function(styles) {
 	});
 };
 
+// Shows simple tooltip. requires jQuery UI.
+$.fn.tooltip = function(params) {
+	var content = null;
+	if (typeof params == 'string') params = {content: params};
+	var defaults = {
+		my: 'center top',
+		at: 'center bottom',
+		offset: '0 3',
+		width: 250
+	};
+	params = $.extend(defaults, params);
+
+	return this.each(function() {
+		var elem = $(this);
+		elem.hover(
+			function() {
+				var tip = $('<div>')
+					.addClass('tooltip')
+					.append(params.content)
+					.appendTo($('body'));
+				if ('tipClass' in params) tip.addClass(params.tipClass);
+				var tmp = { my: params.my, at: params.at, offset: params.offset };
+				tmp.of = params.of ? params.of : elem;
+				tip.position(tmp);
+			},
+			function() {
+				$('div.tooltip').remove();
+			}
+		);
+	});
+};
+
 // webapi method calls CIRCUS CS Web API.
 $.extend({
 	'webapi': function(options) {

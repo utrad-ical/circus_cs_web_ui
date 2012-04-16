@@ -33,7 +33,8 @@ circus.evalListener = (function() {
 						if (opinions instanceof Object)
 						{
 							$('<span class="opinions-count">').text(opinions.length).appendTo(a);
-							a.attr('title', opinions.join(', '));
+							var txt = opinions.join(', ');
+							a.tooltip(txt);
 						}
 					}
 				});
