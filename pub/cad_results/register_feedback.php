@@ -123,7 +123,8 @@ function registerFeedback(CadResult $cadResult, $feedback, $temporary, $is_conse
 		$cadResult2 = new CadResult($job_id);
 		// Actually not the exact copy, since use of buildInitilalConsensualFeedback
 		// may modify the feedback content (like 'missed TP' => 'TP')
-		$cfb = $cadResult2->buildInitialConsensualFeedback();
+		$pfb = $cadResult2->queryFeedback('personal');
+		$cfb = $cadResult2->buildInitialConsensualFeedback($pfb);
 		if (!registerFeedback($cadResult2, $cfb, false, true))
 			return false;
 	}

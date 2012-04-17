@@ -21,6 +21,7 @@ circus.cadresult.seriesList = {$seriesList|@json_encode};
 circus.cadresult.presentation = {$presentationParams|@json_encode};
 circus.cadresult.attributes = {$attr|@json_encode};
 circus.feedback.initdata = {$feedbacks|@json_encode};
+circus.feedback.personalOpinions = {$personalOpinions|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 circus.feedback.feedbackStatus = "{$feedbackStatus}";
 circus.feedback.personalFeedbackAvail = "{$avail_pfb}";

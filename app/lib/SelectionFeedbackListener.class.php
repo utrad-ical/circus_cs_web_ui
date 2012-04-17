@@ -57,13 +57,11 @@ class SelectionFeedbackListener extends FeedbackListener
 			'INSERT INTO candidate_classification(candidate_id, evaluation, fb_id) ' .
 			'VALUES(?, ?, ?)'
 		);
-		foreach ($data as $display_id => $block_feedback)
+		foreach ($data as $display_id => $selection)
 		{
-			if (!isset($block_feedback['selection']))
-				continue;
 			$sth->execute(array(
 				$display_id,
-				$block_feedback['selection'],
+				$selection,
 				$fb->fb_id
 			));
 		}
@@ -80,9 +78,7 @@ class SelectionFeedbackListener extends FeedbackListener
 		$result = array();
 		foreach ($rows as $row)
 		{
-			$result[$row['candidate_id']] = array(
-				'selection' => $row['evaluation']
-			);
+			$result[$row['candidate_id']] = $row['evaluation'];
 		}
 		return $result;
 	}
@@ -108,24 +104,26 @@ class SelectionFeedbackListener extends FeedbackListener
 				$map[$v] = $v;
 		}
 		// Integrate personal opinions and make consensual opinion
+		$opinions = array();
 		foreach ($personal_fb_list as $pfb)
 		{
-			foreach ($pfb->blockFeedback as $display_id => $block)
+			foreach ($pfb->blockFeedback as $display_id => $selection)
 			{
-				if (!isset($result[$display_id]))
-					$result[$display_id] = array(
-						'opinions' => array()
-					);
-				$opinion = $map[$block['selection']];
-				$result[$display_id]['opinions'][$opinion][] = $pfb->entered_by;
+				$opinion = $map[$selection];
+				$opinions[$display_id][$opinion] = true;
 			}
 		}
-		foreach ($result as &$block)
+		foreach ($opinions as $display_id => $arr)
 		{
-			if (count($block['opinions']) == 1) // All opinions are the same
+			if (count($arr) == 1)
 			{
-				$selection = array_keys($block['opinions']);
-				$block['selection'] = $selection[0];
+				// All opinions matched for this display
+				reset($arr);
+				$result[$display_id] = key($arr);
+			}
+			else
+			{
+				$result[$display_id] = null;
 			}
 		}
 		return $result;

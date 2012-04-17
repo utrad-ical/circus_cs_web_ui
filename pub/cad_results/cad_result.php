@@ -95,6 +95,8 @@ function show_cad_results($jobID, $feedbackMode) {
 		$noFeedback = $noFeedback && !($ext instanceof IFeedbackListener);
 	}
 
+	// Prepare feedback data
+	$personalOpinions = array();
 	if ($feedbackMode == 'personal')
 	{
 		$feedback = $cadResult->queryFeedback('user', $user_id, false);
@@ -102,6 +104,16 @@ function show_cad_results($jobID, $feedbackMode) {
 	else
 	{
 		$feedback = $cadResult->queryFeedback('consensual', null, false);
+		$opinions = $cadResult->queryFeedback('personal', null, true);
+		foreach ($opinions as $item)
+		{
+			$item->loadFeedback();
+			$personalOpinions[] = array(
+				'entered_by' => $item->entered_by,
+				'blockFeedback' => $item->blockFeedback,
+				'additionalFeedback' => $item->additionalFeedback
+			);
+		}
 	}
 	if (is_array($feedback) && count($feedback) > 0)
 	{
@@ -113,7 +125,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		$feedback = null;
 		if ($feedbackMode == 'consensual')
 		{
-			$feedback = $cadResult->buildInitialConsensualFeedback();
+			$feedback = $cadResult->buildInitialConsensualFeedback($opinions);
 		}
 	}
 
@@ -194,6 +206,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'feedbackListener' => $feedbackListener,
 		'presentationParams' => $presentationParams,
 		'feedbacks' => $feedback,
+		'personalOpinions' => $personalOpinions,
 		'tabs' => $tabs,
 		'extensions' => $extensions,
 	));

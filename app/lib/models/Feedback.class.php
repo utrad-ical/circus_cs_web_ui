@@ -17,6 +17,8 @@ class Feedback extends Model
 		'CadResult' => array('key' => 'job_id')
 	);
 
+	private $_fbDataLoaded = false;
+
 	/**
 	 * Feedback status is 'registered'.
 	 * @var int
@@ -81,6 +83,7 @@ class Feedback extends Model
 
 	public function loadFeedback()
 	{
+		if ($this->_fbDataLoaded) return;
 		$cadResult = $this->CadResult;
 		$listener = $cadResult->Plugin->presentation()->feedbackListener();
 
@@ -97,5 +100,6 @@ class Feedback extends Model
 				$this->additionalFeedback[$id] = $ext->loadFeedback($this);
 			}
 		}
+		$this->_fbDataLoaded = true;
 	}
 }

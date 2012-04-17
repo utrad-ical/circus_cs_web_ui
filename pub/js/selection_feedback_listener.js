@@ -20,17 +20,28 @@ circus.evalListener = (function() {
 			});
 			if (circus.feedback.feedbackMode == 'consensual')
 			{
+				var map = {};
+				$.each(circus.cadresult.presentation.feedbackListener.personal, function() {
+					if ('consensualMapsTo' in this)
+						map[this.value] = this.consensualMapsTo
+					else
+						map[this.value] = this.value;
+				});
 				var initData = circus.feedback.initdata.blockFeedback;
 				$('.feedback-pane input:radio').each(function() {
 					var radio = $(this);
 					var val = radio.val();
 					var block = radio.closest('.result-block');
 					var display_id = block.data('displayid');
-					var a = $('input:radio[value=' + val + '] + a', block);
-					if (initData[display_id] && initData[display_id].opinions)
+					var a = radio.next('a');
+					if (display_id in initData)
 					{
-						var opinions = initData[display_id].opinions[val];
-						if (opinions instanceof Object)
+						var opinions = [];
+						$.each(circus.feedback.personalOpinions, function() {
+							if (map[this.blockFeedback[display_id]] == val)
+								opinions.push(this.entered_by);
+						});
+						if (opinions.length > 0)
 						{
 							$('<span class="opinions-count">').text(opinions.length).appendTo(a);
 							var txt = opinions.join(', ');
@@ -42,18 +53,15 @@ circus.evalListener = (function() {
 		},
 		set: function (target, value)
 		{
-			if (!value) value = {};
 			$('.feedback-pane input[type=radio]', target).each(function() {
-				if ($(this).val() == value.selection) {
+				if ($(this).val() == value) {
 					$(this).click().trigger('flush');
 				}
 			});
 		},
 		get: function (target)
 		{
-			return {
-				selection: $('.feedback-pane input[type=radio]:checked', target).val()
-			};
+			return $('.feedback-pane input[type=radio]:checked', target).val()
 		},
 		validate: function (target)
 		{
