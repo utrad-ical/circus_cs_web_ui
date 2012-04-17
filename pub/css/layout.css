@@ -581,6 +581,10 @@ input.registration {
 	font-weight: bold;
 }
 
+#fn-found-container p {
+	margin: 5px;
+}
+
 span.register-ok {
 	color: green;
 	font-weight: bold;
