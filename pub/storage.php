@@ -32,17 +32,21 @@
 	// output the file
 	switch($mimeType)
 	{
+		// text based files
 		case "text/plain":  // .txt
 		case "text/csv":    // .csv
 		case "text/html":   // .html
 		case "text/css":    // .css
+			header("Content-type: {$mimeType}");
+			readfile($fileName);
+			break;
 
 		// images
 		case "image/jpeg":  // .jpg .jpeg
 		case "image/png":   // .png
 		case "image/gif":   // .gif
-
 			header("Content-type: {$mimeType}"); // set mime type
+			header("Cache-Control: max-age=3600");
 			readfile($fileName);
 			break;
 
@@ -52,7 +56,7 @@
 		case "application/x-lzh":            // .lha .lzh
 		case "application/x-tar":            // .tar .tgz
 
-			$pathInfo = pathinfo($fileName);			// get path info
+			$pathInfo = pathinfo($fileName); // get path info
 			$fileSize = filesize($fileName);
 
 			@apache_setenv('no-gzip', 1);
