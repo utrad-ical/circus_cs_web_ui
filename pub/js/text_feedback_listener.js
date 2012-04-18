@@ -65,11 +65,11 @@ circus.evalListener = (function() {
 		},
 		disable: function (target)
 		{
-			$('.evaluation-text', target).disable();
+			$('.evaluation-text', target).attr('readonly', 'readonly');
 		},
 		enable: function (target)
 		{
-			$('.evaluation-text', target).enable();
+			$('.evaluation-text', target).removeAttr('readonly');
 		}
 	};
 	return global;
