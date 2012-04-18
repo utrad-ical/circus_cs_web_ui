@@ -34,13 +34,22 @@ $cmdDcmCompress = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "CompressDcmFile.e
 set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR);
 set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'models');
 set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'api');
-function __autoLoad($class)
-{
-	if (!class_exists($class))
+
+spl_autoload_register(function($class) {
+	if (preg_match('/FeedbackListener$/', $class))
+	{
+		include_once("feedbacklistener/$class.class.php");
+	}
+	else if (preg_match('/DisplayPresenter$/', $class))
+	{
+		include_once("displaypresenter/$class.class.php");
+	}
+	else
 	{
 		include_once($class . ".class.php");
 	}
-}
+});
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
