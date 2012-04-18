@@ -59,12 +59,12 @@ class TextFeedbackListener extends FeedbackListener
 		);
 		foreach ($data as $display_id => $block_feedback)
 		{
-			if (!isset($block_feedback['text']))
+			if (!is_scalar($block_feedback['text']))
 				continue;
 			$sth->execute(array(
 				$fb->fb_id,
 				$display_id,
-				$block_feedback['text'],
+				$block_feedback,
 			));
 		}
 	}
@@ -81,9 +81,7 @@ class TextFeedbackListener extends FeedbackListener
 		foreach ($rows as $row)
 		{
 			$key = intval($row['key']);
-			$result[$key] = array(
-				'text' => $row['value']
-			);
+			$result[$key] = $row['value'];
 		}
 		return $result;
 	}
@@ -98,9 +96,8 @@ class TextFeedbackListener extends FeedbackListener
 		$result = array();
 		foreach ($personal_fb_list as $pfb)
 		{
-			foreach ($pfb->blockFeedback as $display_id => $block)
+			foreach ($pfb->blockFeedback as $display_id => $text)
 			{
-				$text = $block['text'];
 				if (!is_array($buf[$display_id]))
 					$buf[$display_id] = array();
 				$buf[$display_id][$text] = true;
@@ -108,12 +105,9 @@ class TextFeedbackListener extends FeedbackListener
 		}
 		foreach ($buf as $display_id => $bfb)
 		{
-			$result[$display_id] = array(
-				'text' =>
-					implode(
-						$this->params['opinionSeparator'],
-						array_keys($bfb)
-					)
+			$result[$display_id] = implode(
+				$this->params['opinionSeparator'],
+				array_keys($bfb)
 			);
 		}
 		return $result;

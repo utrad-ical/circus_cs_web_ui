@@ -22,7 +22,7 @@ circus.evalListener = (function() {
 					var display_id = field.closest('.result-block').data('displayid');
 					var tip = $('<div>');
 					$.each(circus.feedback.personalOpinions, function() {
-						var txt = this.entered_by + ': ' + this.blockFeedback[display_id].text;
+						var txt = this.entered_by + ': ' + this.blockFeedback[display_id];
 						tip.append(txt).append('<br>');
 					});
 					field.tooltip({
@@ -34,12 +34,11 @@ circus.evalListener = (function() {
 		},
 		set: function (target, value)
 		{
-			var txt = value && value instanceof Object ? value.text : '';
-			$('.evaluation-text', target).val(txt);
+			$('.evaluation-text', target).val(value);
 		},
 		get: function (target)
 		{
-			return {text: $('.evaluation-text', target).val()};
+			return $('.evaluation-text', target).val();
 		},
 		validate: function (target)
 		{
