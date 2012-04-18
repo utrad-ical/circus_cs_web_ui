@@ -165,8 +165,7 @@ $.fn.tooltip = function(params) {
 	var defaults = {
 		my: 'center top',
 		at: 'center bottom',
-		offset: '0 3',
-		width: 250
+		offset: '0 3'
 	};
 	params = $.extend(defaults, params);
 
@@ -178,6 +177,7 @@ $.fn.tooltip = function(params) {
 					.addClass('tooltip')
 					.append(params.content)
 					.appendTo($('body'));
+				if ('width' in params) tip.css('width', params.width);
 				if ('tipClass' in params) tip.addClass(params.tipClass);
 				var tmp = { my: params.my, at: params.at, offset: params.offset };
 				tmp.of = params.of ? params.of : elem;
