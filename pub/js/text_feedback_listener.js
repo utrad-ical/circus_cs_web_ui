@@ -14,6 +14,23 @@ circus.evalListener = (function() {
 			.keyup(function() {
 				circus.feedback.change();
 			});
+
+			if (circus.feedback.feedbackMode == 'consensual')
+			{
+				$('.evaluation-text').each(function() {
+					var field = $(this);
+					var display_id = field.closest('.result-block').data('displayid');
+					var tip = $('<div>');
+					$.each(circus.feedback.personalOpinions, function() {
+						var txt = this.entered_by + ': ' + this.blockFeedback[display_id].text;
+						tip.append(txt).append('<br>');
+					});
+					field.tooltip({
+						content: tip,
+						width: field.width()
+					});
+				});
+			}
 		},
 		set: function (target, value)
 		{
