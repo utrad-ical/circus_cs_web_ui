@@ -23,7 +23,16 @@ $(function() {
 		$('#inspector-display-next').click(function() { show(current+1); });
 		$('#inspector-expand-all').click(function() {
 			$('.inspector-displays tbody tr').show();
-			$('.inspector-navi').hide();
+			$('.inspector-navi span input').disable();
+			$('#inspector-expand-all').hide();
+			$('#inspector-collapse-all').show();
+		});
+		$('#inspector-collapse-all').click(function() {
+			$('.inspector-displays tbody tr').hide();
+			$('.inspector-navi span input').enable();
+			$('#inspector-expand-all').show();
+			$('#inspector-collapse-all').hide();
+			show(0);
 		});
 		$('#inspector-display-id').blur(function() {
 			var id = parseInt($('#inspector-display-id').val());
@@ -54,10 +63,13 @@ $(function() {
 -->
 </script>
 <p class="inspector-navi">
+	<span>
 	<input id="inspector-display-prev" type="button" value="&lt;" class="form-btn" />
 	<input id="inspector-display-id" type="text" value="0" /> / {$displays|@count|number_format}
 	<input id="inspector-display-next" type="button" value="&gt;" class="form-btn" />
+	</span>
 	<input id="inspector-expand-all" type="button" value="Expand all" class="form-btn" />
+	<input id="inspector-collapse-all" type="button" value="Collapse all" class="form-btn" style="display: none"/>
 </p>
 <table class="col-tbl inspector-displays">
 	<thead>
