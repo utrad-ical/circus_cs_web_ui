@@ -12,6 +12,13 @@
 
 	$fileName = $pathList[$id] . '/' . $subPath;
 
+	$dirs = preg_split('{[/\\\\]}', $subPath);
+	if (array_search('..', $dirs) !== false)
+	{
+		header('HTTP/1.0 403 Forbidden');
+		exit;
+	}
+
 	if (!file_exists($fileName))
 	{
 		header('HTTP/1.0 404 Not Found');
