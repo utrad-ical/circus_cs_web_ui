@@ -1,12 +1,12 @@
 <?php
 
 /**
- * TextEvalListener, subclass of FeedbackListener, provides a text input box
+ * TextFeedbackListener, subclass of FeedbackListener, provides a text input box
  * for collecting feedback data.
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class TextFeedbackListener extends FeedbackListener
+class TextFeedbackListener extends ScalarFeedbackListener
 {
 	/**
 	 * (non-PHPdoc)
@@ -44,46 +44,6 @@ class TextFeedbackListener extends FeedbackListener
 	{
 		parent::show();
 		return '<div class="evaluation-text-container"><input type="text" class="evaluation-text" /></div>';
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see IFeedbackListener::saveFeedback()
-	 */
-	public function saveFeedback(Feedback $fb, $data)
-	{
-		$pdo = DBConnector::getConnection();
-		$sth = $pdo->prepare(
-			'INSERT INTO feedback_attributes(fb_id, key, value) ' .
-			'VALUES(?, ?, ?)'
-		);
-		foreach ($data as $display_id => $block_feedback)
-		{
-			if (!is_scalar($block_feedback['text']))
-				continue;
-			$sth->execute(array(
-				$fb->fb_id,
-				$display_id,
-				$block_feedback,
-			));
-		}
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see IFeedbackListener::loadFeedback()
-	 */
-	public function loadFeedback(Feedback $fb)
-	{
-		$sql = 'SELECT * FROM feedback_attributes WHERE fb_id=?';
-		$rows = DBConnector::query($sql, array($fb->fb_id), 'ALL_ASSOC');
-		$result = array();
-		foreach ($rows as $row)
-		{
-			$key = intval($row['key']);
-			$result[$key] = $row['value'];
-		}
-		return $result;
 	}
 
 	/**

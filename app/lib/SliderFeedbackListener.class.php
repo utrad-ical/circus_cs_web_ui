@@ -6,7 +6,7 @@
  *
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
-class SliderFeedbackListener extends FeedbackListener
+class SliderFeedbackListener extends ScalarFeedbackListener
 {
 	/**
 	 * (non-PHPdoc)
@@ -49,44 +49,6 @@ class SliderFeedbackListener extends FeedbackListener
 		parent::show();
 		return '<div class="evaluation-slider-container">' .
 			'<div class="evaluation-slider" /></div></div>';
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see IFeedbackListener::saveFeedback()
-	 */
-	public function saveFeedback(Feedback $fb, $data)
-	{
-		$pdo = DBConnector::getConnection();
-		$sth = $pdo->prepare(
-			'INSERT INTO feedback_attributes(fb_id, key, value) ' .
-			'VALUES(?, ?, ?)'
-		);
-		foreach ($data as $display_id => $value)
-		{
-			$sth->execute(array(
-				$fb->fb_id,
-				$display_id,
-				$value,
-			));
-		}
-	}
-
-	/**
-	 * (non-PHPdoc)
-	 * @see IFeedbackListener::loadFeedback()
-	 */
-	public function loadFeedback(Feedback $fb)
-	{
-		$sql = 'SELECT * FROM feedback_attributes WHERE fb_id=?';
-		$rows = DBConnector::query($sql, array($fb->fb_id), 'ALL_ASSOC');
-		$result = array();
-		foreach ($rows as $row)
-		{
-			$key = intval($row['key']);
-			$result[$key] = $row['value'];
-		}
-		return $result;
 	}
 
 	/**
