@@ -32,21 +32,31 @@ $cmdDcmCompress = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "CompressDcmFile.e
 // Include path definition and enable class autoloading
 //------------------------------------------------------------------------------
 set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR);
-set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'models');
-set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR . $DIR_SEPARATOR . 'api');
 
 spl_autoload_register(function($class) {
-	if (preg_match('/FeedbackListener$/', $class))
+	global $WEB_UI_LIBDIR, $DIR_SEPARATOR;
+
+	// First use include path with no absolute path specified!
+	@include_once("$class.class.php");
+	if (class_exists($class)) return;
+
+	$includes = array(
+		array('feedbacklistener/', '/FeedbackListener$/'),
+		array('displaypresenter/', '/DisplayPresenter$/'),
+		array('models/', ''),
+		array('api/', ''),
+	);
+	foreach($includes as $item)
 	{
-		include_once("feedbacklistener/$class.class.php");
-	}
-	else if (preg_match('/DisplayPresenter$/', $class))
-	{
-		include_once("displaypresenter/$class.class.php");
-	}
-	else
-	{
-		include_once($class . ".class.php");
+		$path = $item[0];
+		$pattern = $item[1];
+		if ($pattern && !preg_match($pattern, $class)) continue;
+		$file = "$WEB_UI_LIBDIR$DIR_SEPARATOR$path$class.class.php";
+		if (file_exists($file))
+		{
+			include_once($file);
+			return;
+		}
 	}
 });
 
