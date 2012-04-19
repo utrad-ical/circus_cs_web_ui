@@ -5,7 +5,7 @@ $CIRCUS_CS_VERSION = "2.3";
 //------------------------------------------------------------------------------
 // Define directories, commands, etc.
 //------------------------------------------------------------------------------
-$DIR_SEPARATOR = '\\';
+$DIR_SEPARATOR = DIRECTORY_SEPARATOR;
 $DIR_SEPARATOR_WEB = '/';
 
 $BASE_DIR          = "C:\\CIRCUS-CS";
