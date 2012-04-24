@@ -7,6 +7,8 @@
  */
 abstract class FeedbackListener extends CadBlockElement implements IFeedbackListener
 {
+	const BLOCK_PREFIX = 'display';
+
 	/**
 	 * Returns the HTML that renders this evaluation listener.
 	 * For evaluation listeners, this method should return mere skeleton

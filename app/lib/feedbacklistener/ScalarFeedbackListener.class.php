@@ -18,9 +18,12 @@ abstract class ScalarFeedbackListener extends FeedbackListener
 		$sql = 'SELECT * FROM feedback_attributes WHERE fb_id=?';
 		$rows = DBConnector::query($sql, array($fb->fb_id), 'ALL_ASSOC');
 		$result = array();
+		$pat = '/' . FeedbackListener::BLOCK_PREFIX . '(\d+)/';
 		foreach ($rows as $row)
 		{
-			$key = intval($row['key']);
+			if (!preg_match($pat, $row['key'], $m))
+				continue;
+			$key = intval($m[1]);
 			$result[$key] = $row['value'];
 		}
 		return $result;
@@ -41,7 +44,7 @@ abstract class ScalarFeedbackListener extends FeedbackListener
 		{
 			$sth->execute(array(
 				$fb->fb_id,
-				$display_id,
+				FeedbackListener::BLOCK_PREFIX . $display_id,
 				$value,
 			));
 		}
