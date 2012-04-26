@@ -10,6 +10,7 @@ $DIR_SEPARATOR_WEB = '/';
 
 $BASE_DIR          = "C:\\CIRCUS-CS";
 $APP_DIR           = $BASE_DIR . $DIR_SEPARATOR . "apps";
+$CONF_DIR          = $BASE_DIR . $DIR_SEPARATOR . "config";
 $PLUGIN_DIR        = $BASE_DIR . $DIR_SEPARATOR . "plugins";
 $LOG_DIR           = $BASE_DIR . $DIR_SEPARATOR . "logs";
 $WEB_UI_ROOT       = $BASE_DIR . $DIR_SEPARATOR . "web_ui";

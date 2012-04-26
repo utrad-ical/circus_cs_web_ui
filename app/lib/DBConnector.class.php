@@ -34,9 +34,7 @@ class DBConnector
 			);
 
 			// Parse the db.ini file for overriding default values.
-			$ps = $GLOBALS['DIR_SEPARATOR'];
-			$iniFile =
-				$GLOBALS['WEB_UI_ROOT'] . $ps . 'config' . $ps . 'db.ini';
+			$iniFile = $GLOBALS['CONF_DIR'] . $GLOBALS['DIR_SEPARATOR'] . 'db.ini';
 			$ini = parse_ini_file($iniFile);
 			if (is_array($ini)) {
 				$param = array_merge($param, $ini);
