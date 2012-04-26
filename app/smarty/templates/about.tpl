@@ -54,7 +54,7 @@ ul li {
 {include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 
 <h2>About CIRCUS CS</h2>
-<img src="images/circus-logo.jpg" width="231" height="170" align="right">
+<img src="images/circus-logo.jpg" width="231" height="170" style="float: right">
 
 <p><b>CIRCUS CS</b> (Clinical Server) is a web based CAD process platform for clinical environment.
 CIRCUS CS is developed under CIRCUS (Clinical Infrastructure for Radiologic Computation of United Solutions)
@@ -69,7 +69,9 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 
 <p>Currently, Win32 and Win64 versions are released. UNIX version will be available in the near future. </p>
 
-<h3>Developer team:</h3>
+<p><a href="http://www.ut-radiology.umin.jp/ical/CIRCUS/">CIRCUS CS Webstite (Japanese)</a></p>
+
+<h3 style="clear: both">Developer team:</h3>
 <dl class="developers">
 	<dt>Yukihiro NOMURA, PhD</dt>
 	<dd>overall coding, plugin development, and project management</dd>
@@ -100,6 +102,7 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 		CIRCUS: an MDA platform for clinical image analysis in hospitals,
 		Transactions on Mass-Data Analysis of Images and Signals, vol.2, no.1, pp.112-127, 2010</li>
 </ol>
+<p><a href="http://www.ut-radiology.umin.jp/ical/CIRCUS/publications.html">Full list (in CIRCUS CS web site)</a></p>
 
 <h2>Installed plug-ins</h2>
 <div class="plug-in">
