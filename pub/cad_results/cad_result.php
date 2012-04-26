@@ -72,6 +72,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	// Enabling plugin-specific template directory
 	$td = $smarty->template_dir;
 	$smarty->template_dir = array(
+		$cadResult->Plugin->configurationPath(),
 		$td . $DIR_SEPARATOR . 'cad_results',
 		$td
 	);
