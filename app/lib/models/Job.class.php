@@ -193,7 +193,7 @@ class Job extends Model
 			$m = $item['matched_rule'];
 			$stmt2->execute(array($job_id, $vid, $item['series_sid'],
 				$m['start_img_num'], $m['end_img_num'],
-				$m['required_private_tags'], $m['flip_type']));
+				$m['required_private_tags'], $m['flip_type'] ?: 0));
 		}
 		return $job_id;
 	}
