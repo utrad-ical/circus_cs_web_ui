@@ -4,7 +4,7 @@ Auth::checkSession();
 Auth::purgeUnlessGranted(AUTH::SERVER_SETTINGS);
 
 $params = array('message'  => "&nbsp;");
-$confFname = $APP_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
+$confFname = $CONF_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
 
 //------------------------------------------------------------------------------
 // Import $_REQUEST variables
