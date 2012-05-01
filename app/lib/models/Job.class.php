@@ -147,14 +147,23 @@ class Job extends Model
 
 		$now = date("Y-m-d H:i:s");
 
+		// Determine environment
+		$env_items = array();
+		foreach ($series_queue as $item)
+		{
+			$e = $item['matched_rule']['environment'];
+			if (strlen($e) > 0) $env_items[$e] = true;
+		}
+		$environment = $env_items ? implode(',', array_keys($env_items)) : null;
+
 		// Register into "execxuted_plugin_list"
 		$sqlStr = "INSERT INTO executed_plugin_list"
 			. " (job_id, plugin_id, storage_id, policy_id, status, exec_user,"
-			. " registered_at, executed_at, started_at)"
-			. " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			. " registered_at, executed_at, started_at, environment)"
+			. " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$sqlParams = array(
 			$job_id, $plugin->plugin_id, $storage_id, $policy_id,
-			Job::JOB_NOT_ALLOCATED, $user_id, $now, $now, $now
+			Job::JOB_NOT_ALLOCATED, $user_id, $now, $now, $now, $environment
 		);
 		DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 
@@ -175,15 +184,16 @@ class Job extends Model
 		);
 		$stmt2 = $pdo->prepare(
 			"INSERT INTO job_queue_series" .
-			"(job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags)" .
-			" VALUES (?, ?, ?, ?, ?, ?)"
+			"(job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags, flip_type)" .
+			" VALUES (?, ?, ?, ?, ?, ?, ?)"
 		);
 		foreach ($series_queue as $vid => $item)
 		{
 			$stmt1->execute(array($job_id, $vid, $item['series_sid']));
 			$m = $item['matched_rule'];
 			$stmt2->execute(array($job_id, $vid, $item['series_sid'],
-				$m['start_img_num'], $m['end_img_num'], $m['required_private_tags']));
+				$m['start_img_num'], $m['end_img_num'],
+				$m['required_private_tags'], $m['flip_type']));
 		}
 		return $job_id;
 	}
