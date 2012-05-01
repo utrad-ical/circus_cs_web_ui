@@ -17,10 +17,8 @@ $(function() {
 		}
 
 		var pSeries = circus.cadresult.seriesList[0]; // primary series
-		// var sImg = pSeries.start_img_num;
-		// var eImg = pSeries.start_img_num + (pSeries.image_count - 1) * pSeries.image_delta;
-		var sImg = 1;
-		var eImg = pSeries.numImages;
+		var sImg = pSeries.start_img_num;
+		var eImg = pSeries.start_img_num + (pSeries.image_count - 1) * pSeries.image_delta;
 		var minImg = Math.min(sImg, eImg);
 		var maxImg = Math.max(sImg, eImg);
 
@@ -47,6 +45,7 @@ $(function() {
 			options.wl = attr.window_level;
 		if (attr.window_width !== undefined)
 			options.ww = attr.window_width;
+		console.log(options);
 		$('.viewer', block).imageviewer(options);
 	});
 });

@@ -60,6 +60,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			'location_y, location_z, nearest_lesion_id, integrated_from) ' .
 			'VALUES (?, ?, ?, ?, ?, ?)'
 		);
+
 		foreach ($data as $fn)
 		{
 			if (!is_array($fn))
@@ -69,11 +70,13 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			{
 				continue;
 			}
+			$volume_z = $this->cadResult->sliceNumToVolume($fn['location_z'], 0);
+
 			$sth->execute(array(
 				$fb->fb_id,
 				$fn['location_x'],
 				$fn['location_y'],
-				$fn['location_z'],
+				$volume_z,
 				$fn['nearest_lesion_id'] > 0 ? $fn['nearest_lesion_id'] : 0,
 				0
 			));
@@ -93,12 +96,13 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			'ALL_ASSOC'
 		);
 		$result = array();
+		$cr = $this->cadResult;
 		foreach ($rows as $row)
 		{
 			$result[] = array(
 				'location_x' => $row['location_x'],
 				'location_y' => $row['location_y'],
-				'location_z' => $row['location_z'],
+				'location_z' => $cr->volumeToSliceNum($row['location_z'], 0),
 				'nearest_lesion_id' => $row['nearest_lesion_id'] ?: null,
 				'entered_by' => $fb->entered_by
 			);

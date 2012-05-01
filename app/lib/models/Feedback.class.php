@@ -54,6 +54,7 @@ class Feedback extends Model
 		$job_id = $data['Feedback']['job_id'];
 		$cadResult = new CadResult($job_id);
 		$listener = $cadResult->Plugin->presentation()->feedbackListener();
+		$listener->setCadResult($cadResult);
 		$pdo = DBConnector::getConnection();
 
 		$pdo->beginTransaction();
@@ -72,6 +73,7 @@ class Feedback extends Model
 			$id = $ext->additionalFeedbackID();
 			if (!isset($data['additionalFeedback'][$id]))
 				continue;
+			$ext->setCadResult($cadResult);
 			$ext->saveFeedback($this, $data['additionalFeedback'][$id]);
 		}
 
@@ -86,6 +88,7 @@ class Feedback extends Model
 		if ($this->_fbDataLoaded) return;
 		$cadResult = $this->CadResult;
 		$listener = $cadResult->Plugin->presentation()->feedbackListener();
+		$listener->setCadResult($cadResult);
 
 		if (!($listener instanceof NullFeedbackListener))
 			$this->blockFeedback = $listener->loadFeedback($this);
@@ -97,6 +100,7 @@ class Feedback extends Model
 			if ($ext instanceof IFeedbackListener)
 			{
 				$id = $ext->additionalFeedbackID();
+				$ext->setCadResult($cadResult);
 				$this->additionalFeedback[$id] = $ext->loadFeedback($this);
 			}
 		}

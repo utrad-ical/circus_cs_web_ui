@@ -92,6 +92,7 @@ class CadResult extends Model
 		$pr = $this->Plugin->presentation();
 		$extensions = $pr->extensions();
 		$feedbackListener = $pr->feedbackListener();
+		$feedbackListener->setCadResult($this);
 		foreach ($opinions as $pfb) $pfb->loadFeedback();
 		foreach ($extensions as $ext)
 		{
@@ -240,6 +241,7 @@ class CadResult extends Model
 	public function getDisplays()
 	{
 		$presenter = $this->Plugin->presentation()->displayPresenter();
+		$presenter->setCadResult($this);
 		return $presenter->extractDisplays($this->rawResult);
 	}
 
@@ -345,5 +347,38 @@ class CadResult extends Model
 		$path = $this->Storage->path;
 		$result =  $path . $DIR_SEPARATOR . $this->job_id;
 		return $result;
+	}
+
+	/**
+	* Converts volume coordinate to slice number coordinate.
+	* This function does not check boundaries: it may return negative value
+	* of values greater than the number of images in the DICOM series.
+	* @param int $volume_z The input z-coordinate.
+	* @param int $volume_id The volume ID with which the conversion is done.
+	* @return int The z-coordinate in slice number.
+	*/
+	public function volumeToSliceNum($volume_z, $volume_id = 0)
+	{
+		$series_list = $this->ExecutedSeries;
+		$series = $series_list[$volume_id];
+		$start_img_num = $series->start_img_num;
+		$image_delta = $series->image_delta;
+		return $volume_z * $image_delta + $start_img_num;
+	}
+
+	/**
+	 * Converts slice number coordinate to volume coordinate.
+	 * This function does not check the input parameteres strictly.
+	 * @param int $volume_z The input z-coordinate.
+	 * @param int $volume_id The volume ID with which the convertion is done.
+	 * @return int The z-coordinate in volume coordinate.
+	 */
+	public function sliceNumToVolume($series_z, $volume_id = 0)
+	{
+		$series_list = $this->ExecutedSeries;
+		$series = $series_list[$volume_id];
+		$start_img_num = $series->start_img_num;
+		$image_delta = $series->image_delta;
+		return ($series_z - $start_img_num) / $image_delta;
 	}
 }

@@ -177,7 +177,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	$seriesList = array();
 	foreach ($cadResult->ExecutedSeries as $es)
 	{
-		// var_dump($es);
 		$series = $es->Series;
 		$vid = (int)($es->volume_id);
 		$seriesList[$vid] = array(

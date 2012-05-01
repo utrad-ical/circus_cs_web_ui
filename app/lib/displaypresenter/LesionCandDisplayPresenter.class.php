@@ -60,6 +60,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		);
 		$required_fields = array('location_x', 'location_y', 'location_z',
 			'confidence');
+
 		foreach ($input as $rec)
 		{
 			foreach ($required_fields as $req)
@@ -72,6 +73,8 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			{
 				$rec['_hidden'] = true;
 			}
+			$rec['original_z'] = $rec['location_z'];
+			$rec['location_z'] = $this->cadResult->volumeToSliceNum($rec['location_z'], 0);
 			$result[$display_id] = $rec;
 		}
 		return $result;
