@@ -1,0 +1,34 @@
+<div style="padding: 1em;">
+<p style="margin-bottom: 10px">Download Volume</p>
+<form style="text-align: left">
+	<ul id="download-volume-type">
+		<li>
+			<label><input type="radio" name="dltype" value="job"/> Download for the selected job</label>
+		</li>
+		<li>
+			<label><input type="radio" name="dltype" value="series"/> Manual download</label>
+		</li>
+	</ul>
+	<fieldset><legend>Range</legend>
+		<div id="download-volume-range-slider" style="margin: 10px"></div>
+		<div style="text-align: right;">
+			<span id="download-volume-range-text"></span>
+			<input type="button" class="form-btn" id="download-volume-all" value="All" style="padding: 0 15px"/>
+		</div>
+		Orientation:
+			<select style="margin: 0" id="download-volume-delta">
+				<option value="0">Auto</option>
+				<option value="1">Forward</option>
+				<option value="-1">Reverse</option>
+			</select><br />
+	</fieldset>
+	<fieldset><legend>Options</legend>
+		Required private tags: <input type="text" id="download-volume-private-tags"/>
+	</fieldset>
+	<div id="download-volume-navigator" style="text-align: right; padding: 15px 0 0">
+		<span id="download-volume-busy" style="font-weight: bold"><img src="../images/busy.gif" /> Processing...&nbsp;</span>
+		<input type="button" id="download-volume-begin" class="form-btn" value="Download" />
+		<input type="button" id="download-volume-close" value="Close" class="form-btn">
+	</div>
+</form>
+</div>

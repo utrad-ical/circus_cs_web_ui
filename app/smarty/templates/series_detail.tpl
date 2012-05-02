@@ -3,6 +3,7 @@ jq/ui/jquery-ui.min.js
 jq/jquery.blockUI.js
 js/search_panel.js
 js/edit_tags.js
+js/download_volume.js
 jq/ui/theme/jquery-ui.custom.css
 jq/jquery.mousewheel.min.js
 js/jquery.imageviewer.js
@@ -19,11 +20,6 @@ var viewer = {$viewer|@json_encode};
 
 $(function() {
 	// sets up image viewer
-	$('#download').click(function() {
-		window.open("about:blank","Download", "width=400,height=200,location=no,resizable=no");
-		$('#dl-form').submit();
-	});
-
 	var viewer_params = {
 		source: new DicomDynamicImageSource(seriesInstanceUID, ''),
 		maxWidth: 500
@@ -33,6 +29,12 @@ $(function() {
 	v.bind('imagechange', function() {
 		$('#slice-number').text(v.imageviewer('option', 'index'));
 		$('#slice-location').text(v.imageviewer('option', 'sliceLocation'));
+	});
+
+	// sets up volume download button
+	$('#download').click(function() {
+		var series_uid = $('#seriesInstanceUID').val();
+		circus.download_volume.openDialogForSeries(series_uid);
 	});
 
 	// tag editor
@@ -126,9 +128,9 @@ $(function() {
 				</tr>
 			</table>
 			{if $currentUser->hasPrivilege('volumeDownload')}
-			<form id="dl-form" target="Download" action="research/convert_volume_data.php" method="post">
+			<form id="dl-form">
 				<div id="download-panel">
-					<input id="download" value="Download volume data" type="button" class="form-btn"/>
+					<input type="button" id="download" value="Download volume data" class="form-btn"/>
 				</div>
 				<input type="hidden" id="seriesInstanceUID" name="seriesInstanceUID" value="{$series->series_instance_uid|escape}" />
 			</form>
