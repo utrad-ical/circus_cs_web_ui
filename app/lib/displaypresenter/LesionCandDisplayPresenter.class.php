@@ -73,7 +73,7 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			{
 				$rec['_hidden'] = true;
 			}
-			$rec['original_z'] = $rec['location_z'];
+			$rec['volume_z'] = $rec['location_z'];
 			$rec['location_z'] = $this->cadResult->volumeToSliceNum($rec['location_z'], 0);
 			$result[$display_id] = $rec;
 		}
