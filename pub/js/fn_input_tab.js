@@ -38,8 +38,8 @@ circus.feedback.additional = circus.feedback.additional || [];
 			}
 
 			var pSeries = circus.cadresult.seriesList[0]; // primary series
-			var sImg = pSeries.start_img_num;
-			var eImg = pSeries.start_img_num + (pSeries.image_count - 1) * pSeries.image_delta;
+			var sImg = pSeries.z_org_img_num;
+			var eImg = pSeries.z_org_img_num + (pSeries.image_count - 1) * pSeries.image_delta;
 			var minImg = Math.min(sImg, eImg);
 			var maxImg = Math.max(sImg, eImg);
 

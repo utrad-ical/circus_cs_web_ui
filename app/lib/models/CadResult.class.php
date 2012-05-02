@@ -361,9 +361,9 @@ class CadResult extends Model
 	{
 		$series_list = $this->ExecutedSeries;
 		$series = $series_list[$volume_id];
-		$start_img_num = $series->start_img_num;
+		$z_org_img_num = $series->z_org_img_num;
 		$image_delta = $series->image_delta;
-		return $volume_z * $image_delta + $start_img_num;
+		return $volume_z * $image_delta + $z_org_img_num;
 	}
 
 	/**
@@ -377,8 +377,8 @@ class CadResult extends Model
 	{
 		$series_list = $this->ExecutedSeries;
 		$series = $series_list[$volume_id];
-		$start_img_num = $series->start_img_num;
+		$z_org_img_num = $series->z_org_img_num;
 		$image_delta = $series->image_delta;
-		return ($series_z - $start_img_num) / $image_delta;
+		return ($series_z - $z_org_img_num) / $image_delta;
 	}
 }

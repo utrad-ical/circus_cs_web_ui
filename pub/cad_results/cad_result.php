@@ -184,7 +184,7 @@ function show_cad_results($jobID, $feedbackMode) {
 			'studyUID' => $series->Study->study_instance_uid,
 			'seriesUID' => $series->series_instance_uid,
 			'numImages' => $series->image_number,
-			'start_img_num' => $es->start_img_num,
+			'z_org_img_num' => $es->z_org_img_num,
 			'image_delta' => $es->image_delta,
 			'image_count' => $es->image_count
 		);
