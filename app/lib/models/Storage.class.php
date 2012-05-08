@@ -42,4 +42,14 @@ class Storage extends Model
 		}
 		return 'Unknown';
 	}
+
+	/**
+	 * Creates a new Storage instance of the specified type which is currently
+	 * active.
+	 * @param int $type Storage type.
+	 */
+	public static function getCurrentStorage($type)
+	{
+		return Storage::selectOne(array('current_use' => 't', 'type' => $type));
+	}
 }
