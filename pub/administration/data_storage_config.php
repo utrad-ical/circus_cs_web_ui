@@ -81,7 +81,7 @@ try
 	//--------------------------------------------------------------------------
 	// Retrieve storage list
 	//--------------------------------------------------------------------------
-	$storage = Storage::select(array(), array('order' => array('storage_id')));
+	$storage = Storage::select(array(), array('order' => array('type', 'storage_id')));
 
 	//--------------------------------------------------------------------------
 	// Settings for Smarty
