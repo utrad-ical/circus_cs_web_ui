@@ -58,7 +58,9 @@ class CountImagesAction extends ApiActionBase
 					array(
 						"studyInstanceUID" => $series->study_instance_uid,
 						"seriesInstanceUID" => $id,
-						"number" => $series->image_number
+						"number" => $series->image_number,
+						"minImageNumber" => $series->min_image_number,
+						"maxImageNumber" => $series->max_image_number
 					)
 				);
 			}
