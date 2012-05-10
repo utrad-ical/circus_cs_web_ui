@@ -159,9 +159,10 @@ $.fn.radioToButton = function(styles) {
 };
 
 // Shows simple tooltip. requires jQuery UI.
-$.fn.tooltip = function(params) {
-	var content = null;
-	if (typeof params == 'string') params = {content: params};
+$.fn.tooltip = function(option) {
+	var params = option;
+	if (typeof params == 'string') params = { content: params };
+	if (typeof params.content == 'string') params.content = $('<span>').text(params.content);
 	var defaults = {
 		my: 'center top',
 		at: 'center bottom',
@@ -173,9 +174,10 @@ $.fn.tooltip = function(params) {
 		var elem = $(this);
 		elem.hover(
 			function() {
+				var content = params.content.clone().show();
 				var tip = $('<div>')
 					.addClass('tooltip')
-					.append(params.content)
+					.append(content)
 					.appendTo($('body'));
 				if ('width' in params) tip.css('width', params.width);
 				if ('tipClass' in params) tip.addClass(params.tipClass);

@@ -805,6 +805,7 @@ span.opinions-count {
 	color: black;
 	text-align: center;
 	border-radius: 2px;
+	z-index: 9999;
 }
 
 .tooltip-error {
