@@ -18,11 +18,11 @@ class SmartyEx extends Smarty
 		global $BASE_DIR, $DIR_SEPARATOR, $WEB_UI_ROOT;
 		parent::__construct();
 		$rootPath = $WEB_UI_ROOT . $DIR_SEPARATOR . 'app' . $DIR_SEPARATOR . 'smarty' . $DIR_SEPARATOR;
-		$this->template_dir  = $rootPath . 'templates/';
-		$this->compile_dir   = $rootPath . 'templates_c/';
-		$this->config_dir    = $rootPath . 'configs/';
-		$this->cache_dir     = $rootPath . 'cache/';
-		$this->plugins_dir[] = $rootPath . 'plugins/';
+		$this->template_dir  = $rootPath . 'templates';
+		$this->compile_dir   = $rootPath . 'templates_c';
+		$this->config_dir    = $rootPath . 'configs';
+		$this->cache_dir     = $rootPath . 'cache';
+		$this->plugins_dir[] = $rootPath . 'plugins';
 
 		$this->assign('currentUser', Auth::currentUser());
 
