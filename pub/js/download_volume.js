@@ -41,7 +41,6 @@ circus.download_volume = (function() {
 				params.startImgNum = v[0];
 				params.endImgNum   = v[1];
 				params.imageDelta = $('#download-volume-delta', dialog).val();
-
 				break;
 			case 'job':
 				params.jobID = target_job_id;

@@ -47,10 +47,22 @@ class CreateVolumeAction extends ApiActionBase
 
 		if ($params['mode'] == 'series')
 		{
-			$filename = series_uid;
+			$filename = $series_uid;
 			$archiver = new VolumeArchiver($dst, $filename, $series_uid, $params['requiredPrivateTags']);
-			$cnt = $params['endImgNum'] - $params['startImgNum'] + 1;
-			$ret = $archiver->archiveFromSeries($series_uid, $params['startImgNum'], $params['imageDelta'], $cnt);
+			$start = $params['startImgNum'];
+			$end = $params['endImgNum'];
+			$delta = $params['imageDelta'];
+			$cnt = $end - $start + 1;
+			if ($delta < 0)
+			{
+				// force reverse
+				$ret = $archiver->archiveFromSeries($series_uid, $end, $delta, $cnt);
+			}
+			else
+			{
+				// auto or forward
+				$ret = $archiver->archiveFromSeries($series_uid, $start, $delta, $cnt);
+			}
 		}
 		else
 		{
