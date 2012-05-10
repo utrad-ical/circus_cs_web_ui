@@ -161,6 +161,7 @@ class VolumeArchiver
 				break;
 			}
 		}
+
 		if (is_null($es) || is_null($es->z_org_img_num) ||
 			is_null($es->image_delta) || is_null($es->image_count))
 		{
@@ -169,7 +170,6 @@ class VolumeArchiver
 			throw new Exception('Specified volume not found or not processed');
 		}
 
-		if (!$this->_filename) $this->_filename = $series->series_instance_uid;
 		return $this->archiveFromSeries($series->series_instance_uid,
 			$es->z_org_img_num, $es->image_delta, $es->image_count
 		);

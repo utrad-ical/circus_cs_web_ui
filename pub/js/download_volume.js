@@ -62,7 +62,8 @@ circus.download_volume = (function() {
 
 	function radioClicked() {
 		var val = $(':radio:checked', dialog).val();
-		$('#download-volume-range :input').prop('disabled', val != 'range');
+		$('#download-volume-range :input').enable(val != 'job');
+		slider.slider('option', 'disabled', val == 'job');
 	}
 
 	function sliderChange(event, ui) {
@@ -183,7 +184,7 @@ circus.download_volume = (function() {
 			dialog = null;
 			series_info = null;
 			target_job_id = job_id;
-			target_volume_id = job_id;
+			target_volume_id = volume_id;
 			target_series = series_uid;
 			callback = onClose;
 			openDialog();

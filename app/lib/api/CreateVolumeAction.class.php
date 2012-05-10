@@ -1,9 +1,27 @@
 <?php
 
+/**
+ * CreateVolume action create zip archive of DICOM series for download.
+ * @author Soichiro Miki <smiki-tky@umin.ac.jp>
+ */
 class CreateVolumeAction extends ApiActionBase
 {
 	protected static $required_privileges = array(
 		Auth::VOLUME_DOWNLOAD
+	);
+
+	protected static $rules = array(
+		'mode' => array('type' => 'select', 'options' => array('job', 'series')),
+		'seriesInstanceUID' => array('type' => 'string'),
+		'jobID' => array('type' => 'int'),
+		'volumeID' => array('type' => 'int'),
+		'startImgNum' => array('type' => 'int', 'min' => 1),
+		'endImgNum' => array('type' => 'int', 'min' => 1),
+		'imageDelta' => array('type' => 'int'),
+		'requiredPrivateTags' => array(
+			'type' => 'string',
+			'regex' => '/^(\d\d\d\d,\d\d\d\d;)*(\d\d\d\d,\d\d\d\d)?$/'
+		)
 	);
 
 	protected function execute($params)
@@ -25,12 +43,27 @@ class CreateVolumeAction extends ApiActionBase
 		if (!$r)
 			throw new ApiSystemException('Failed to create temporary directory in web cache area.');
 
-		$archiver = new VolumeArchiver($dst, $series_uid, $series_uid, $params['requiredPrivateTags']);
-		$cnt = $params['endImgNum'] - $params['startImgNum'] + 1;
 
-		$archiver->archiveFromSeries($series_uid, $params['startImgNum'], $params['imageDelta'], $cnt);
 
-		$url = "storage/$storage_id/$dir/$series_uid.zip";
+		if ($params['mode'] == 'series')
+		{
+			$filename = series_uid;
+			$archiver = new VolumeArchiver($dst, $filename, $series_uid, $params['requiredPrivateTags']);
+			$cnt = $params['endImgNum'] - $params['startImgNum'] + 1;
+			$ret = $archiver->archiveFromSeries($series_uid, $params['startImgNum'], $params['imageDelta'], $cnt);
+		}
+		else
+		{
+			$job_id = $params['jobID'];
+			$volume_id = $params['volumeID'];
+			$filename = "job$job_id";
+			$archiver = new VolumeArchiver($dst, $filename, $volume_id, $params['requiredPrivateTags']);
+			$ret = $archiver->archiveFromJobID($job_id, $volume_id);
+		}
+		if (!ret)
+			throw new ApiSystemException('Unknown error occurred while creating volume archive file.');
+
+		$url = "storage/$storage_id/$dir/$filename.zip";
 		return array(
 			'location' => $url
 		);
