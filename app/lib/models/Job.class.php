@@ -61,7 +61,7 @@ class Job extends Model
 	 * @throws InvalidArgumentException
 	 */
 	public static function registerNewJob(Plugin $plugin, array $series,
-		$user_id, $priority = 1, $resultPolicy = 'default')
+		$user_id, $priority = 1, $resultPolicy = PluginResultPolicy::DEFAULT_POLICY)
 	{
 		if (!($plugin instanceof Plugin))
 			throw new InvalidArgumentException('Plugin not defined');

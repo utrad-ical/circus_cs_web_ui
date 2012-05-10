@@ -6,6 +6,13 @@ class PluginResultPolicy extends Model
 	protected static $_primaryKey = 'policy_id';
 
 	/**
+	 * Name of the default policy name.
+	 * This policy cannot be renamed or deleted.
+	 * @var string
+	 */
+	const DEFAULT_POLICY = 'default';
+
+	/**
 	 * Utility method that checks if the allow_** parameters contains
 	 * the name of groups specified by $groups.
 	 * @param string $allow_list The comma-separated list of group IDs.

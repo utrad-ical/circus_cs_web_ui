@@ -45,6 +45,7 @@ $(function () {
 			.multiselect('refresh');
 			$('#auto-cons').val(1)
 				.prop('checked', pol_data.automatic_consensus);
+			$('#policy-name').prop('readonly', pol_data.policy_name == 'default');
 		}
 		tr.addClass('editing');
 		editor.show(300);

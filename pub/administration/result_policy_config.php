@@ -65,12 +65,21 @@ try {
 	{
 		if ($req['target']) {
 			$pol = new PluginResultPolicy($req['target']);
+			if (!isset($pol->policy_id))
+			{
+				throw new Exception('Target policy does not exist.');
+			}
+			$is_default_policy = $pol->policy_name == PluginResultPolicy::DEFAULT_POLICY;
 		}
 		else
 		{
 			$pol = new PluginResultPolicy();
 		}
 		$data = array('PluginResultPolicy' => array());
+		if ($is_default_policy && $req['policy_name'] != PluginResultPolicy::DEFAULT_POLICY)
+		{
+			throw new Exception('You cannot edit the name of the default policy.');
+		}
 		foreach ($fields as $column)
 		{
 			$data['PluginResultPolicy'][$column] = $req[$column];
@@ -93,7 +102,7 @@ $_SESSION['ticket'] = md5(uniqid().mt_rand());
 //------------------------------------------------------------------------------
 // Retrieve policy lists
 //------------------------------------------------------------------------------
-$pols = PluginResultPolicy::select(array()); // fetch all policies
+$pols = PluginResultPolicy::select(array(), array('order' => array('policy_name'))); // fetch all policies
 $policyList = array();
 foreach ($pols as $pol)
 {
