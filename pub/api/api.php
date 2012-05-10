@@ -3,6 +3,9 @@ include("../common.php");
 require_once('../../app/lib/api/ApiException.class.php');
 // manually issue require() to load exception subclasses
 
+error_reporting(0); // turn off error reporting
+set_error_handler('api_error_handler', E_WARNING | E_ERROR);
+
 try
 {
 	$api_request = json_decode($_POST['request'], true);
@@ -42,16 +45,29 @@ catch (Exception $e)
 		$error_type = 'OperationError';
 	else
 		$error_type = 'SystemError';
-	$result = array(
-		'status' => $error_type,
-		'error' => array('message' => $e->getMessage())
-	);
 
+	$message = $e->getMessage();
 	// Hide exception details thrown from PDO (security)
 	if ($e instanceof PDOException)
-		$result['error']['message'] = 'Internal database error.';
+		$message = 'Internal database error.';
+	output_error($error_type, $message);
+}
 
-	if ($exec && $exec->action)
-		$result['action'] = $exec->action;
+function output_error($error_type, $message)
+{
+	global $action;
+	$result = array(
+		'status' => $error_type,
+		'error' => array('message' => $message)
+	);
+	if ($action) $result['action'] = $action;
 	echo json_encode($result);
+	exit();
+}
+
+function api_error_handler($errno, $errmsg, $filename, $linenum, $vars)
+{
+	// detect the use of error supression operator ('@')
+	if (error_reporting() === 0) return;
+	output_error('SystemError', "$errmsg in $filename line $linenum");
 }
