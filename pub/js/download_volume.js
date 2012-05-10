@@ -67,8 +67,8 @@ circus.download_volume = (function() {
 
 	function sliderChange(event, ui) {
 		var v = ui.values;
-		var txt = v[0] + ' - ' + v[1];
-		$('#download-volume-range-text').text(txt);
+		$('#download-volume-range-start').val(v[0]);
+		$('#download-volume-range-end').val(v[1]);
 	}
 
 	function onVolumeLoad(data)
@@ -92,6 +92,7 @@ circus.download_volume = (function() {
 			change: sliderChange,
 			slide: sliderChange
 		});
+		sliderChange(null, { values: [series_info.minImageNumber, series_info.maxImageNumber] })
 
 		$('#download-volume-close').click(function() {
 			$.unblockUI();
@@ -108,6 +109,26 @@ circus.download_volume = (function() {
 		{
 			$(':radio[name="dltype"]', dialog).val(['job']);
 		}
+
+		$('#download-volume-range-start').blur(function(event) {
+			var val = slider.slider('option', 'values');
+			var newval = parseInt($('#download-volume-range-start').val());
+			if (isNaN(newval))
+				newval = series_info.minImageNumber;
+			newval = Math.max(newval, series_info.minImageNumber);
+			newval = Math.min(newval, val[1]);
+			slider.slider('option', 'values', [newval, val[1]]);
+		});
+
+		$('#download-volume-range-end').blur(function(event) {
+			var val = slider.slider('option', 'values');
+			var newval = parseInt($('#download-volume-range-end').val());
+			if (isNaN(newval))
+				newval = series_info.maxImageNumber;
+			newval = Math.min(newval, series_info.maxImageNumber);
+			newval = Math.max(newval, val[0]);
+			slider.slider('option', 'values', [val[0], newval]);
+		});
 
 		$('#download-volume-all').click(function() {
 			slider.slider(
@@ -159,6 +180,8 @@ circus.download_volume = (function() {
 	var global = {
 		openDialogForJob: function(series_uid, job_id, volume_id, onClose)
 		{
+			dialog = null;
+			series_info = null;
 			target_job_id = job_id;
 			target_volume_id = job_id;
 			target_series = series_uid;

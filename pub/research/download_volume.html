@@ -12,11 +12,12 @@
 	<fieldset><legend>Range</legend>
 		<div id="download-volume-range-slider" style="margin: 10px"></div>
 		<div style="text-align: right;">
-			<span id="download-volume-range-text"></span>
+			<input type="text" id="download-volume-range-start" style="width: 40px" /> -
+			<input type="text" id="download-volume-range-end" style="width: 40px" />
 			<input type="button" class="form-btn" id="download-volume-all" value="All" style="padding: 0 15px"/>
 		</div>
-		Orientation:
-			<select style="margin: 0" id="download-volume-delta">
+		Direction:
+			<select id="download-volume-delta">
 				<option value="0">Auto</option>
 				<option value="1">Forward</option>
 				<option value="-1">Reverse</option>
