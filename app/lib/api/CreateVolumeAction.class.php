@@ -68,7 +68,7 @@ class CreateVolumeAction extends ApiActionBase
 		{
 			$job_id = $params['jobID'];
 			$volume_id = $params['volumeID'];
-			$filename = "job$job_id";
+			$filename = "job{$job_id}_volume{$volume_id}";
 			$archiver = new VolumeArchiver($dst, $filename, $volume_id, $params['requiredPrivateTags']);
 			$ret = $archiver->archiveFromJobID($job_id, $volume_id);
 		}
