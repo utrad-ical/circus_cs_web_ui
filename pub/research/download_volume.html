@@ -9,7 +9,7 @@
 			<label><input type="radio" name="dltype" value="series"/> Manual download</label>
 		</li>
 	</ul>
-	<fieldset id="download-volume-range"><legend>Range</legend>
+	<fieldset id="download-volume-range"><legend>Range (image number)</legend>
 		<div id="download-volume-range-slider" style="margin: 10px"></div>
 		<div style="text-align: right;">
 			<input type="text" id="download-volume-range-start" style="width: 40px" /> -
@@ -22,6 +22,11 @@
 				<option value="1">Forward</option>
 				<option value="-1">Reverse</option>
 			</select><br />
+			<div id="download-volume-delta-help" style="display:none; text-align: left;">
+				<p><strong>Auto:</strong> Head to foot, according to slice location</p>
+				<p><strong>Forward:</strong> Ascending image number</p>
+				<p><strong>Reverse:</strong> Descending image number</p>
+			</div>
 	</fieldset>
 	<fieldset><legend>Options</legend>
 		Required private tags: <input type="text" id="download-volume-private-tags"/>

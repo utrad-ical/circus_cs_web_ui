@@ -130,6 +130,10 @@ circus.download_volume = (function() {
 			slider.slider('option', 'values', [val[0], newval]);
 		});
 
+		$('#download-volume-delta').tooltip({
+			content: $('#download-volume-delta-help')
+		});
+
 		$('#download-volume-all').click(function() {
 			slider.slider(
 				'option',
