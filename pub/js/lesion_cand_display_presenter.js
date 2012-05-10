@@ -45,7 +45,6 @@ $(function() {
 			options.wl = attr.window_level;
 		if (attr.window_width !== undefined)
 			options.ww = attr.window_width;
-		console.log(options);
 		$('.viewer', block).imageviewer(options);
 	});
 });
