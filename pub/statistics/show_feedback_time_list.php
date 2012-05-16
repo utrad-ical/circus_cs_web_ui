@@ -91,7 +91,7 @@ if($params['errorMessage'] == "&nbsp;")
 		$sqlParams[] = $userID;
 
 		$jobIDList = DBConnector::query($sqlStr, $sqlParams, 'ALL_COLUMN');
-
+		
 		for($j = 0; $j < count($jobIDList); $j++)
 		{
 			$sqlStr = "SELECT sr.patient_id, sr.series_date, sr.series_time,"
@@ -137,28 +137,28 @@ if($params['errorMessage'] == "&nbsp;")
 							.  '<td>' . $results[$i][3] . ' v.' . $results[$i][4] . '</td>'
 							.  '<td>' . $results[$i][5] . '</td>';
 				}
-
+				
 				if($startFlg == 0)
 				{
-					if($results[$i][6] == 'open' && $results[$i][7] == 'CAD result')
+					if($results[$i][6] == 'open' && $results[$i][7] == 'CAD result, personal')
 					{
 						$totalStartTime = $results[$i][8];
 					}
 				}
 
 				if($startFlg == 0
-				   && ($results[$i][6] != 'open' || ($results[$i][6] == 'open' &&  $results[$i][7] == 'FN input')))
+				   && ($results[$i][6] != 'open' || ($results[$i][6] == 'open' &&  $results[$i][7] == 'FN Input')))
 				{
 					$startFlg=1;
 				}
 
-				if($fnInputFlg == 0 && $results[$i][6] == 'open' &&  $results[$i][7] == 'FN input')
+				if($fnInputFlg == 0 && $results[$i][6] == 'switchtab' &&  $results[$i][7] == 'FN Input')
 				{
 					$fnInputFlg = 1;
 					$fnStartTime = $results[$i][8];
 				}
 
-				if($fnInputFlg == 1 && $results[$i][6] == 'save' &&  $results[$i][7] == 'FN input')
+				if($fnInputFlg == 1 && $results[$i][6] == 'switchtab' &&  $results[$i][7] == 'CAD Result')
 				{
 					$fnInputFlg = 0;
 					$fnEndTime = $results[$i][8];
