@@ -438,29 +438,23 @@ if($params['errorMessage'] == "&nbsp;")
 		//--------------------------------------------------------------------------------------------------------------
 		if($userNum == 1 && $params['version'] != "All" && $params['dataStr'] == "")
 		{
-			$sqlParams = array($minVolume, $maxVolume, $params['cadName'], $params['version'], $userList[0]);
+			$sqlParams = array($minVolume, $maxVolume, $userList[0]);
 
-			$sqlStr = "SELECT el.job_id, cc.evaluation,"
+			$sqlStr = "SELECT es.job_id, cc.evaluation,"
 					. " cad.location_x, cad.location_y, cad.location_z"
-					. " FROM executed_plugin_list el,"
-					. "executed_series_list es,"
-					. "feedback_list fl,"
-					. "candidate_classification cc,"
-					. "plugin_master pm,"
-					. "series_list sr,"
+					. " FROM executed_series_list es,"
+					. " feedback_list fl,"
+					. " candidate_classification cc,"
+					. " series_list sr,"
 					. '"' . $resultTableName . '" cad'
-					. " WHERE el.job_id=es.job_id"
-					. " AND el.job_id=cad.job_id"
-					. " AND el.job_id=fl.job_id"
+					. " WHERE es.job_id=cad.job_id"
+					. " AND es.job_id=fl.job_id"
 					. " AND cc.fb_id=fl.fb_id"
 					. " AND cad.sub_id=cc.candidate_id"
 					. " AND cad.volume_size>=?"
 					. " AND cad.volume_size<=?"
 					. " AND es.volume_id=0"
 					. " AND es.series_sid=sr.sid"
-					. " AND pm.plugin_id=el.plugin_id"
-					. " AND pm.plugin_name=?"
-					. " AND pm.version=?"
 					. " AND fl.is_consensual='f'"
 					. " AND fl.status=1"
 					. " AND fl.entered_by=?";
@@ -477,7 +471,7 @@ if($params['errorMessage'] == "&nbsp;")
 				$sqlParams[] = $params['dateTo'];
 			}
 
-			$sqlStr .= "ORDER BY cc.evaluation ASC, el.job_id ASC, cc.candidate_id ASC";
+			$sqlStr .= "ORDER BY cc.evaluation ASC, es.job_id ASC, cc.candidate_id ASC";
 
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
@@ -489,8 +483,7 @@ if($params['errorMessage'] == "&nbsp;")
 					. "MAX(case when key='crop_org_z' then value else null end),"
 					. "MAX(case when key='crop_width' then value else null end),"
 					. "MAX(case when key='crop_height' then value else null end),"
-					. "MAX(case when key='crop_depth' then value else null end),"
-					. "MAX(case when key='start_img_num' then value else '1' end)"
+					. "MAX(case when key='crop_depth' then value else null end)"
 					. " FROM executed_plugin_attributes WHERE job_id=? GROUP BY job_id";
 					
 			$stmtAttr = $pdo->prepare($sqlStr);
@@ -504,7 +497,7 @@ if($params['errorMessage'] == "&nbsp;")
 				$tmpDataArr[] = $result['evaluation'];
 				$tmpDataArr[] = (real)($result['location_x'] - $attrArr[0]) / (real)$attrArr[3];
 				$tmpDataArr[] = (real)($result['location_y'] - $attrArr[1]) / (real)$attrArr[4];
-				$tmpDataArr[] = (real)(($result['location_z'] - ($attrArr[6]-1)) - $attrArr[2]) / (real)$attrArr[5];
+				$tmpDataArr[] = (real)($result['location_z'] - $attrArr[2]) / (real)$attrArr[5];
 			}
 		
 			$params['dataStr'] = implode('^', $tmpDataArr);
@@ -556,4 +549,4 @@ if($params['errorMessage'] == "&nbsp;")
 }
 
 echo json_encode($dstData);
-?>
+
