@@ -70,6 +70,14 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 			{
 				continue;
 			}
+			if (count($fn['personal_fn_id']) > 0)
+			{
+				$integrated_from = implode(',', $fn['personal_fn_id']);
+			}
+			else
+			{
+				$integrated_from = null;
+			}
 			$volume_z = $this->cadResult->sliceNumToVolume($fn['location_z'], 0);
 
 			$sth->execute(array(
@@ -78,7 +86,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				$fn['location_y'],
 				$volume_z,
 				$fn['nearest_lesion_id'] > 0 ? $fn['nearest_lesion_id'] : 0,
-				0
+				$integrated_from
 			));
 		}
 		DBConnector::query(
@@ -100,6 +108,7 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 		foreach ($rows as $row)
 		{
 			$result[] = array(
+				'fn_id' => $row['fn_id'],
 				'location_x' => $row['location_x'],
 				'location_y' => $row['location_y'],
 				'location_z' => $cr->volumeToSliceNum($row['location_z'], 0),
@@ -133,7 +142,8 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 					'location_x' => $fn['location_x'],
 					'location_y' => $fn['location_y'],
 					'location_z' => $fn['location_z'],
-					'entered_by' => $pfb->entered_by
+					'entered_by' => $pfb->entered_by,
+					'personal_fn_id' => array($fn['fn_id'])
 				);
 				$item = $this->snapToNearestHiddenCand($displays, $item);
 				$result[] = $item;
@@ -195,9 +205,11 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				'entered_by' => array(),
 				'location_x' => $fn['location_x'],
 				'location_y' => $fn['location_y'],
-				'location_z' => $fn['location_z']
+				'location_z' => $fn['location_z'],
+				'personal_fn_id' => array()
 			);
 			$buf[$key]['entered_by'][$fn['entered_by']] = 1;
+			array_splice($buf[$key]['personal_fn_id'], -1, 0, $fn['personal_fn_id']);
 		}
 		foreach ($buf as $key => $item)
 		{
@@ -207,7 +219,8 @@ class FnInputTab extends CadResultExtension implements IFeedbackListener
 				'location_y' => $item['location_y'],
 				'location_z' => $item['location_z'],
 				'nearest_lesion_id' => $item['nearest_lesion_id'],
-				'entered_by' => $joined
+				'entered_by' => $joined,
+				'personal_fn_id' => $item['personal_fn_id']
 			);
 		}
 		return $result;

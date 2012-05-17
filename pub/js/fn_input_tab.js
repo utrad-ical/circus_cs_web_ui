@@ -172,19 +172,22 @@ circus.feedback.additional = circus.feedback.additional || [];
 		_fn_integrate: function(indexes, markers)
 		{
 			var sum = {x:0, y:0, z:0};
+			var personal_fn_ids = [];
 			for (var i = indexes.length-1; i >= 0; i--)
 			{
 				var idx = indexes[i];
 				sum.x += markers[idx].location_x;
 				sum.y += markers[idx].location_y;
 				sum.z += markers[idx].location_z;
+				personal_fn_ids = personal_fn_ids.concat(markers[idx].personal_fn_id);
 				markers.splice(idx, 1);
 			}
 			var newFn = {
 				location_x: Math.floor(sum.x / indexes.length + 0.5),
 				location_y: Math.floor(sum.y / indexes.length + 0.5),
 				location_z: Math.floor(sum.z / indexes.length + 0.5),
-				entered_by: circus.userID
+				entered_by: circus.userID,
+				personal_fn_id: personal_fn_ids
 			};
 			f._snapToNearestHiddenCand(newFn);
 			markers.push(newFn);
@@ -194,6 +197,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			var tbl = $('#fn-input-table tbody');
 			tbl.find('tr').remove();
 			var markers = f._viewer.imageviewer('option', 'markers');
+			console && console.log(markers);
 			var markerCount = markers.length;
 			for (var i = 0; i < markerCount; i++)
 			{
@@ -253,6 +257,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 		{
 			var newitem = event.newItem;
 			newitem.entered_by = circus.userID;
+			newitem.personal_fn_id = [];
 			if (circus.feedback.feedbackMode == 'consensual')
 				f._snapToNearestHiddenCand(newitem);
 			else
@@ -319,10 +324,12 @@ circus.feedback.additional = circus.feedback.additional || [];
 				var key = fn.location_x + ',' + fn.location_y + ',' + fn.location_z;
 				buf[key] = buf[key] || {
 					nearest_lesion_id: fn.nearest_lesion_id,
-					entered_by: {}
+					entered_by: {},
+					personal_fn_id: []
 				};
 				f._assignLoc(buf[key], fn);
 				buf[key].entered_by[fn.entered_by] = 1;
+				buf[key].personal_fn_id = buf[key].personal_fn_id.concat(fn.personal_fn_id);
 			}
 			for (var key in buf)
 			{
@@ -335,7 +342,8 @@ circus.feedback.additional = circus.feedback.additional || [];
 					location_y: item.location_y,
 					location_z: item.location_z,
 					nearest_lesion_id: item.nearest_lesion_id,
-					entered_by: joined
+					entered_by: joined,
+					personal_fn_id: item.personal_fn_id
 				});
 			}
 			return result;
