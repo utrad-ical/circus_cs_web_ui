@@ -71,6 +71,9 @@ class CadInspector extends CadResultExtension
 	protected function assignFeedback()
 	{
 		$entries = $this->cadResult->queryFeedback();
+		usort($entries, function($a, $b) {
+			return ($a->is_consensual?1:0) - ($b->is_consensual?1:0);
+		});
 		foreach ($entries as $entry)
 		{
 			$entry->loadFeedback();
