@@ -8,7 +8,7 @@ Number of feedback: {$inspector_feedback|@count|number_format}
 	</thead>
 	<tbody>
 	{foreach from=$inspector_feedback item=item}
-		<tr>
+		<tr{if $item.type == 'Consensual'} class="column"{/if}>
 			<td class="name themeColor">{$item.type|escape}</td>
 			<td>{$item.registerer|escape}</td>
 			<td class="parameters">{$item.feedback|@dumpParams}</td>
