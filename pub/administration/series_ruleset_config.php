@@ -16,7 +16,6 @@ $keys = array(
 	array('value' => 'body_part'),
 	array('value' => 'image_width'),
 	array('value' => 'image_height'),
-	array('value' => 'study_uid', 'label' => 'study instance UID'),
 	array('value' => 'series_description'),
 	array('value' => 'image_number', 'label' => 'number of images')
 );
