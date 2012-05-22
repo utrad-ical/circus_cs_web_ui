@@ -94,6 +94,7 @@ circus.download_volume = (function() {
 		});
 		sliderChange(null, { values: [series_info.minImageNumber, series_info.maxImageNumber] })
 
+		$('#download-volume-busy-img').attr('src', circus.totop + 'images/busy.gif');
 		$('#download-volume-close').click(function() {
 			$.unblockUI();
 			if (callback instanceof Function) callback();
