@@ -30,7 +30,7 @@ class CadInspector extends CadResultExtension
 	{
 		return array_merge(parent::defaultParams(), array(
 			'modules' => 'all',
-			'visible_groups' => null
+			'visibleGroups' => null
 		));
 	}
 
