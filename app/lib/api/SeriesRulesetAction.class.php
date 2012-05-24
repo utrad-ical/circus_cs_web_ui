@@ -49,8 +49,35 @@ class SeriesRulesetAction extends ApiActionBase
 	private function setRuleSets($plugin_id, $data)
 	{
 		$data = json_decode($data, true);
-		if (!data)
+		if (!is_array($data))
+		{
 			throw new ApiOperationException('Data invalid');
+		}
+
+		$validate_rules = array(
+			'start_img_num' => array('type' => 'int', 'min' => 0, 'default' => 0),
+			'end_img_num' => array('type' => 'int', 'min' => 0, 'default' => 0),
+			'required_private_tag' => array('type' => 'string', 'default' => ''),
+			'image_delta' => array('type' => 'int', 'default' => 0),
+			'environment' => array('type' => 'string', 'regex' => '/^\w*$/', 'default' => '')
+		);
+		$validator = new FormValidator();
+		$validator->addRules($validate_rules);
+
+		foreach ($data as $vol_id => $ruleSetList)
+		{
+			if (!is_array($ruleSetList))
+				throw new ApiOperationException('Data invalid: malformed ruleset list');
+			foreach ($ruleSetList as $ruleSet)
+			{
+				// throw new ApiAuthException(json_encode($ruleSet['rule']));
+				if (!is_array($ruleSet['filter']) || !is_array($ruleSet['rule']))
+					throw new ApiOperationException('Data invalid: malformed ruleset');
+				if (!$validator->validate($ruleSet['rule']))
+					throw new ApiOperationException(implode("\n", $validator->errors));
+				$ruleSet['rule'] = $validator->output;
+			}
+		}
 
 		$pdo = DBConnector::getConnection();
 

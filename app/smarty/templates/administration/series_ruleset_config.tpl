@@ -125,7 +125,7 @@ $(function() {
 		rule.start_img_num = Math.max(parseInt($('#start-img-num').val()) || 0, 0);
 		rule.end_img_num = Math.max(parseInt($('#end-img-num').val()) || 0, 0);
 		rule.required_private_tags = $('#required-private-tags').val();
-		rule.flip_type = $('#flip-type').val();
+		rule.image_delta = parseInt($('#image-delta').val()) || 0;
 		rule.environment = $('#environment').val();
 		return rule;
 	}
@@ -236,7 +236,7 @@ $(function() {
 			$('#start-img-num').val(currentRuleSet.rule.start_img_num);
 			$('#end-img-num').val(currentRuleSet.rule.end_img_num);
 			$('#required-private-tags').val(currentRuleSet.rule.required_private_tags);
-			$('#flip-type').val(currentRuleSet.rule.flip_type);
+			$('#image-delta').val(currentRuleSet.rule.image_delta);
 			$('#environment').val(currentRuleSet.rule.environment);
 
 			$('#select-help').hide();
@@ -650,12 +650,12 @@ require=$smarty.capture.require body_class="spot"}
 					<td><input type="text" id="required-private-tags" size="30" /></td>
 				</tr>
 				<tr>
-					<th>Image flipping</th>
+					<th>Direction</th>
 					<td>
-						<select id="flip-type">
+						<select id="image-delta">
 							<option value="0">auto (head to foot)</option>
-							<option value="1">always</option>
-							<option value="2">never</option>
+							<option value="1">forward</option>
+							<option value="-1">reverse</option>
 						</select>
 					</td>
 				</tr>

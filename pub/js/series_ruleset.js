@@ -79,6 +79,18 @@ circus.ruleset = (function() {
 		{
 			results.push('Require private tags(' + rule.required_private_tags + ')');
 		}
+		if (rule.image_delta > 0)
+		{
+			results.push('Direction(forward)');
+		}
+		if (rule.image_delta < 0)
+		{
+			results.push('Direction(reverse)');
+		}
+		if (rule.environment)
+		{
+			results.push('Environment(' + rule.environment + ')');
+		}
 		return results.join(', ');
 	}
 
