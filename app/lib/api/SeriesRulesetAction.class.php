@@ -57,7 +57,10 @@ class SeriesRulesetAction extends ApiActionBase
 		$validate_rules = array(
 			'start_img_num' => array('type' => 'int', 'min' => 0, 'default' => 0),
 			'end_img_num' => array('type' => 'int', 'min' => 0, 'default' => 0),
-			'required_private_tag' => array('type' => 'string', 'default' => ''),
+			'required_private_tags' => array(
+				'type' => 'string',
+				'regex' => '/^(\d\d\d\d,\d\d\d\d;)*(\d\d\d\d,\d\d\d\d)?$/'
+			),
 			'image_delta' => array('type' => 'int', 'default' => 0),
 			'environment' => array('type' => 'string', 'regex' => '/^\w*$/', 'default' => '')
 		);
