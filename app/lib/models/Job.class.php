@@ -184,7 +184,7 @@ class Job extends Model
 		);
 		$stmt2 = $pdo->prepare(
 			"INSERT INTO job_queue_series" .
-			"(job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags, flip_type)" .
+			"(job_id, volume_id, series_sid, start_img_num, end_img_num, required_private_tags, image_delta)" .
 			" VALUES (?, ?, ?, ?, ?, ?, ?)"
 		);
 		foreach ($series_queue as $vid => $item)
@@ -193,7 +193,7 @@ class Job extends Model
 			$m = $item['matched_rule'];
 			$stmt2->execute(array($job_id, $vid, $item['series_sid'],
 				$m['start_img_num'], $m['end_img_num'],
-				$m['required_private_tags'], $m['flip_type'] ?: 0));
+				$m['required_private_tags'], $m['image_delta'] ?: 0));
 		}
 		return $job_id;
 	}
