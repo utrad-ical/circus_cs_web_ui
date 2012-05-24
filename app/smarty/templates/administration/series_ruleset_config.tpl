@@ -9,6 +9,7 @@ js/series_ruleset.js
 $(function() {
 
 	var targetPlugin = null;
+	var targetPluginName = null;
 
 	var pluginRuleSetsData = null;
 	var labels = null;
@@ -33,6 +34,7 @@ $(function() {
 	function enterEdit()
 	{
 		$('#selector-pane, #editor-pane').show();
+		$('#selected-plugin-name').text(targetPluginName);
 		$('#plugin-selector-pane').hide();
 		$('#plugin-select').val(['']);
 		modified = false;
@@ -341,6 +343,7 @@ $(function() {
 
 	$('#plugin-select').change(function() {
 		targetPlugin = $('#plugin-select').val();
+		targetPluginName = $('#plugin-select option:selected').text();
 		pluginRuleSetsData = [];
 		labels = [];
 		if (targetPlugin)
@@ -481,7 +484,7 @@ h3 { margin-bottom: 15px; }
 	color: #8a3b2b;
 }
 
-#plugin-selector-pane {
+#selected-plugin-pane {
 	margin: 0 0 15px; 0;
 }
 
@@ -616,6 +619,7 @@ require=$smarty.capture.require body_class="spot"}
 </div>
 
 <div id="selector-pane">
+	<div id="selected-plugin-pane"><b>Plugin:</b>&nbsp;<span id="selected-plugin-name"></span></div>
 	<div id="rulesets-list"></div>
 	<div id="save-pane">
 		<a href="#" id="close-button">Close</a>&nbsp;
