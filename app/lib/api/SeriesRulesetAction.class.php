@@ -59,7 +59,7 @@ class SeriesRulesetAction extends ApiActionBase
 			'end_img_num' => array('type' => 'int', 'min' => 0, 'default' => 0),
 			'required_private_tags' => array(
 				'type' => 'string',
-				'regex' => '/^(\d\d\d\d,\d\d\d\d;)*(\d\d\d\d,\d\d\d\d)?$/'
+				'regex' => '/^([0-9A-Fa-f]{4},[0-9A-Fa-f]{4};)*([0-9A-Fa-f]{4},[0-9A-Fa-f]{4})?$/'
 			),
 			'image_delta' => array('type' => 'int', 'default' => 0),
 			'environment' => array('type' => 'string', 'regex' => '/^\w*$/', 'default' => '')
