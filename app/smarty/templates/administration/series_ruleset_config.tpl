@@ -493,6 +493,7 @@ h3 { margin-bottom: 15px; }
 	background-color: white;
 	float: left;
 	min-height: 510px;
+	word-wrap: break-word;
 }
 
 #editor-pane {
