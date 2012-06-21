@@ -20,7 +20,7 @@ class CreateVolumeAction extends ApiActionBase
 		'imageDelta' => array('type' => 'int'),
 		'requiredPrivateTags' => array(
 			'type' => 'string',
-			'regex' => '/^(\d\d\d\d,\d\d\d\d;)*(\d\d\d\d,\d\d\d\d)?$/'
+			'regex' => '/^([0-9A-Fa-f]{4},[0-9A-Fa-f]{4};)*([0-9A-Fa-f]{4},[0-9A-Fa-f]{4})?$/'
 		)
 	);
 
