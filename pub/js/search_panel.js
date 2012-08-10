@@ -73,7 +73,7 @@ function DoSearch(list, mode)
 
 	if(list == "series" || list == "cad")
 	{
-		var filterTag = $("#" + list + "Search .input[name='filterTag']").val();
+		var filterTag = $("#" + list + "Search input[name='filterTag']").val();
 
 		if(filterTag)  params.filterTag = filterTag;
 
