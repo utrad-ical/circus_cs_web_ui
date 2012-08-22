@@ -117,9 +117,9 @@ class SeriesFilter {
 			case '*=': // contains
 				return strpos($cmp_target, $value) !== false;
 			case '^=': // begins with
-				return strpos($cmp_target, $value) == 0;
+				return strpos($cmp_target, $value) === 0;
 			case '$=': // ends with
-				return strrpos($cmp_target, $value) == strlen($cmp_target) - strlen($value);
+				return strrpos($cmp_target, $value) === strlen($cmp_target) - strlen($value);
 			default:
 				throw new LogicException('Bad comparison operator.');
 		}

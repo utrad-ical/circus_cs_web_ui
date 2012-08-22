@@ -36,6 +36,10 @@ class SeriesFilterTest extends PHPUnit_Framework_TestCase
 		$this->doTestNode('{"key":"st", "value":"efg", "condition": "^="}', false);
 		$this->doTestNode('{"key":"st", "value":"efg", "condition": "*="}', true);
 		$this->doTestNode('{"key":"st", "value":"efg", "condition": "$="}', true);
+
+		$this->doTestNode('{"key":"st", "value":"xxx", "condition": "^="}', false);
+		$this->doTestNode('{"key":"st", "value":"xxx", "condition": "*="}', false);
+		$this->doTestNode('{"key":"st", "value":"xxx", "condition": "$="}', false);
 	}
 
 	public function testComparisonNodeNumeral()
@@ -44,7 +48,6 @@ class SeriesFilterTest extends PHPUnit_Framework_TestCase
 
 		$this->doTestNode('{"key":"no", "value":120}', true);
 		$this->doTestNode('{"key":"no", "value":121, "condition":"!="}', true);
-		$this->doTestNode('{"key":"no", "value":121, "condition":"<>"}', true);
 		$this->doTestNode('{"key":"no", "value":120, "condition":"="}', true);
 
 		$this->doTestNode('{"key":"no", "value":121, "condition":"<"}', true);
