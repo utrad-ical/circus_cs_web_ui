@@ -62,7 +62,7 @@ jq/ui/theme/jquery-ui.custom.css
 		<table class="col-tbl" style="width: 100%;">
 			<thead>
 				<tr>
-					{if $smarty.session.dataDeleteFlg}<th>&nbsp;</th>{/if}
+					{if $smarty.session.dataDeleteFlg}<th><input type="checkbox" onclick="$(this.parentNode.parentNode.parentNode.parentNode).find('input[type=\'checkbox\']').attr('checked', this.checked)" /></th>{/if}
 					<th>
 						{if $params.orderCol=='PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfSeriesList('PatientID', '{if $params.orderCol=="PatientID" && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 					</th>
