@@ -122,7 +122,7 @@ $(function () {
 	<tr>
 		<th rowspan="2">Policy</th>
 		<th colspan="3">Allow</th>
-		{* <th rowspan="2">PFB Freeze</th> *}
+		<th rowspan="2">PFB Freeze</th>
 		<th rowspan="2">Max PFBs</th>
 		<th rowspan="2">Min PFB to CFB</th>
 		<th rowspan="2">Auto CFB</th>
@@ -141,7 +141,7 @@ $(function () {
 		<td class="allow-reference allow"><div class="al">{$pol.allow_result_reference|escape}</div></td>
 		<td class="allow-personal allow"><div class="al">{$pol.allow_personal_fb|escape}</div></td>
 		<td class="allow-consensual allow"><div class="al">{$pol.allow_consensual_fb|escape}</div></td>
-		{* <td class="num">{$pol.time_to_freeze_personal_fb|escape}</td> *}
+		<td class="num">{$pol.time_to_freeze_personal_fb|escape}</td>
 		<td class="num">{$pol.max_personal_fb|escape}</td>
 		<td class="num">{$pol.min_personal_fb_to_make_consensus|escape}</td>
 		<td>{$pol.automatic_consensus|OorMinus}</td>
@@ -195,7 +195,7 @@ $(function () {
 				</select>
 			</td>
 		</tr>
-		<tr style="display: none">
+		<tr>
 			<th>Time to freeze personal feedback (min.)</th>
 			<td><input type="text" name="time_to_freeze_personal_fb" id="freeze-time" class="num" /> (0: freeze at once)</td>
 		</tr>
