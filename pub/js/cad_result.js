@@ -154,6 +154,36 @@ circus.feedback = function() {
 			else
 				alert("System Error:\n" + result);
 		},
+		unregister_check: function() {
+			$('#unregister_pane').hide();
+			$.webapi({
+				action: 'unregisterFeedback',
+				params: {
+					feedbackMode: circus.feedback.feedbackMode,
+					jobID: circus.jobID,
+					dryRun: 1
+				},
+				onSuccess: function(response) {
+					$('#unregister_pane').show();
+					$('#unregister').click(circus.feedback.unregister);
+				},
+				onFail: $.noop // cannot be unregistered
+			});
+		},
+		unregister: function(event) {
+			if (!confirm('Cancel this feedback and edit again?'))
+				return;
+			$.webapi({
+				action: 'unregisterFeedback',
+				params: {
+					feedbackMode: circus.feedback.feedbackMode,
+					jobID: circus.jobID
+				},
+				onSuccess: function(response) {
+					location.reload(true);
+				},
+			})
+		},
 		additional: []
 	};
 	return global;
@@ -200,6 +230,12 @@ $(function(){
 	{
 		circus.feedback.disable();
 	}
+
+	if (circus.feedback.feedbackStatus == 'registered')
+	{
+		circus.feedback.unregister_check();
+	}
+
 	circus.feedback.modified = false;
 
 	$('#register').click(function() {

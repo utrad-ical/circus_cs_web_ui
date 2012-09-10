@@ -87,7 +87,9 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 <ul id="register-error"></ul>
 <ul id="register-message"></ul>
 {if $feedbacks->status == 1}<p>Registered at: {$feedbacks->registered_at|escape}
-  {if $feedbacks->is_consensual}(by {$feedbacks->entered_by|escape}){/if}</p>{/if}
+  {if $feedbacks->is_consensual}(by {$feedbacks->entered_by|escape}){/if}</p>
+  <p id="unregister_pane"><a id="unregister">Unregister</a></p>
+{/if}
 </div>
 {/if}
 

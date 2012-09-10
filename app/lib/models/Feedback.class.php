@@ -83,6 +83,18 @@ class Feedback extends Model
 		return true;
 	}
 
+	/**
+	 * Just change the feedback status to temporary.
+	 * Do not use save() method for this purpose because it may modify the
+	 * feedback content.
+	 */
+	public function unregister()
+	{
+		parent::save(array(
+			'Feedback' => array('status' => self::TEMPORARY)
+		));
+	}
+
 	public function loadFeedback()
 	{
 		if ($this->_fbDataLoaded) return;
