@@ -120,7 +120,7 @@ class Auth
 		),
 		array (
 			self::CONSENSUAL_FEEDBACK_MODIFY,
-			'(Not implemented) Unregister the consensual feedback.'
+			'Unregister the consensual feedback.'
 		),
 		array (
 			self::LIST_SEARCH,
