@@ -120,7 +120,8 @@ class Auth
 		),
 		array (
 			self::CONSENSUAL_FEEDBACK_MODIFY,
-			'Unregister the consensual feedback.'
+			'Unregister the consensual feedback.',
+			self::SERVER_OPERATION // upper level
 		),
 		array (
 			self::LIST_SEARCH,
