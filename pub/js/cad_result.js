@@ -182,6 +182,7 @@ circus.feedback = function() {
 				onSuccess: function(response) {
 					location.reload(true);
 				},
+				onFail: function(message) { alert(message); }
 			})
 		},
 		additional: []
