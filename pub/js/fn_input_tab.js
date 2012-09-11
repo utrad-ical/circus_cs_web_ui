@@ -75,21 +75,23 @@ circus.feedback.additional = circus.feedback.additional || [];
 						f._resetMarkers();
 					}
 				})
+				$('#fn-found').click(function() {
+					f._actionlog('Select "FN Found"');
+					circus.feedback.change();
+				});
+				$('#fn-not-found').click(function() {
+					f._actionlog('Select "FN Not Found"');
+					circus.feedback.change();
+				});
 			}
 
 			if (!canEdit) {
 				$('input:checkbox', tbl).disable();
 				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input').disable();
+				$('#fn-found, #fn-not-found').prop('disabled', true);
+				if (data.length == 0)
+					$('#fn-not-found').prop('checked', true);
 			}
-
-			$('#fn-found').click(function() {
-				f._actionlog('Select "FN Found"');
-				circus.feedback.change();
-			});
-			$('#fn-not-found').click(function() {
-				f._actionlog('Select "FN Not Found"');
-				circus.feedback.change();
-			});
 
 			$('#jump-fn-input').click(function () {
 				circus.cadresult.showTabLabel('FN Input');
