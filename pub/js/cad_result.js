@@ -180,6 +180,7 @@ circus.feedback = function() {
 					jobID: circus.jobID
 				},
 				onSuccess: function(response) {
+					$(window).trigger('actionlog', { action: 'unregister' });
 					location.reload(true);
 				},
 				onFail: function(message) { alert(message); }
