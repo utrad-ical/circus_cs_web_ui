@@ -24,6 +24,7 @@ circus.feedback.initdata = {$feedbacks|@json_encode};
 circus.feedback.personalOpinions = {$personalOpinions|@json_encode};
 circus.feedback.feedbackMode = "{$feedbackMode}";
 circus.feedback.feedbackStatus = "{$feedbackStatus}";
+circus.feedback.feedbackTemporary = {$feedbackTemporary|@json_encode};
 circus.feedback.personalFeedbackAvail = "{$avail_pfb}";
 circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 </script>
@@ -110,6 +111,7 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 </div><!-- /tab-content -->
 
 <div id="temporary-confirm" title="CIRCUS CS" style="display: none;">
+<p><strong>This feedback is not registered yet.</strong></p>
 <p>Do you want to temporarily save changes before leaving this page?</p>
 </div>
 

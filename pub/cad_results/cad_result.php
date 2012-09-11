@@ -117,6 +117,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	}
 
 	// Prepare feedback data
+	$feedback_temporary = false;
 	$personalOpinions = array();
 	if ($feedbackMode == 'personal')
 	{
@@ -138,6 +139,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	}
 	if (is_array($feedback) && count($feedback) > 0)
 	{
+		$feedback_temporary = true;
 		$feedback = array_shift($feedback);
 		$feedback->loadFeedback();
 	}
@@ -215,6 +217,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'noFeedback' => $noFeedback,
 		'feedbackMode' => $feedbackMode,
 		'feedbackStatus' => $feedback_status,
+		'feedbackTemporary' => $feedback_temporary,
 		'avail_pfb' => $avail_pfb,
 		'avail_cfb' => $avail_cfb,
 		'avail_cfb_reason' => $avail_cfb_reason,
