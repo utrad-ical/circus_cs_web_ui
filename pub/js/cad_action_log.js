@@ -34,5 +34,6 @@ circus.actionLog = (function()
 })();
 
 $(window).bind('actionlog', function (event, params) {
+	if (circus.feedback.feedbackStatus != 'normal') return;
 	circus.actionLog.register(params.action, params.options);
 });
