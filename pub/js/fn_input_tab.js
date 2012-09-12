@@ -89,7 +89,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 				$('input:checkbox', tbl).disable();
 				$('#fn-delete, #fn-integrate, #fn-reset, #jump-fn-input').disable();
 				$('#fn-found, #fn-not-found').prop('disabled', true);
-				if (data.length == 0)
+				if (data instanceof Array && data.length == 0)
 					$('#fn-not-found').prop('checked', true);
 			}
 
