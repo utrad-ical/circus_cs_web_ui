@@ -10,6 +10,8 @@ class CreateVolumeAction extends ApiActionBase
 		Auth::VOLUME_DOWNLOAD
 	);
 
+	protected static $internal = true;
+
 	protected static $rules = array(
 		'mode' => array('type' => 'select', 'options' => array('job', 'series')),
 		'seriesInstanceUID' => array('type' => 'string'),

@@ -2,6 +2,8 @@
 
 class LoginAction extends ApiActionBase
 {
+	protected static $public = true;
+
 	protected function execute($params)
 	{
 		$mode = $params['mode'];

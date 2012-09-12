@@ -7,11 +7,21 @@
  */
 abstract class ApiActionBase
 {
-	protected static $required_privileges = array(
-		Auth::API_EXEC
-	);
+	/**
+	 * Additional privilege required to use this action.
+	 */
+	protected static $required_privileges = array();
 
 	protected static $rules = array();
+
+	/**
+	 * Determines whether this action can be used with 'basic' authentication.
+	 * If this is true, this API is only usable with users with 'apiExec'
+	 * privilege with 'basic' authentication.
+	 * Instead, if this is false, the use of this API is protected for
+	 * internal use.
+	 */
+	protected static $public = false;
 
 	/**
 	 * The current authenticated user.
@@ -27,6 +37,11 @@ abstract class ApiActionBase
 	public function doAction(array $api_request)
 	{
 		$this->authenticate($api_request);
+
+		if (static::$public && !$this->currentUser->hasPrivilege(Auth::API_EXEC))
+		{
+			throw new ApiAuthException('Required privilege apiExec');
+		}
 
 		foreach (static::$required_privileges as $priv)
 		{
@@ -76,6 +91,8 @@ abstract class ApiActionBase
 		{
 			case 'basic':
 				$user = Auth::checkAuth($auth['user'], $auth['pass']);
+				if (!static::$public)
+					throw new ApiAuthException('Authentication error: session required');
 				if (!$user->user_id)
 					throw new ApiAuthException('Basic authentication failed');
 				$this->currentUser = $user;
@@ -93,6 +110,5 @@ abstract class ApiActionBase
 		}
 		return true;
 	}
-
 
 }

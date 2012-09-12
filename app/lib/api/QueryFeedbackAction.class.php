@@ -2,6 +2,8 @@
 
 class QueryFeedbackAction extends ApiActionBase
 {
+	protected static $public = true;
+
 	protected function execute($params)
 	{
 		if($this->check_params($params) == FALSE)

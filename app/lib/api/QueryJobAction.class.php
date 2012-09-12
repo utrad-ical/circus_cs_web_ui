@@ -7,6 +7,8 @@ class QueryJobAction extends ApiActionBase
 	const jobID     = "jobid";
 	const show      = "show";
 
+	protected static $public = true;
+
 	protected static $rules = array(
 		'studyUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
 		'seriesUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),

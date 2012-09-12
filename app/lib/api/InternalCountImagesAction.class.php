@@ -8,4 +8,6 @@ class InternalCountImagesAction extends CountImagesAction
 	protected static $required_privileges = array(
 		Auth::VOLUME_DOWNLOAD
 	);
+
+	protected static $internal = true;
 }
