@@ -3,32 +3,22 @@
 var adminModeFlg = {$adminModeFlg};
 {literal}
 $(function() {
-	var ok = false;
 	if (adminModeFlg) {
 		$('#administration').show();
-		$('#smoke').hide();
 	}
 	else
 	{
-		$('#dialog-confirm').dialog({
-			modal: true,
-			resizable: false,
-			buttons: {
-				"OK": function() {
-					ok = true;
-					$(this).dialog('close');
+		$.confirm(
+			'Do you want to enter administration mode?',
+			function (choice) {
+				if (choice == 1) {
 					$('#administration').show();
-					$('#smoke').hide();
 					$.get('administration.php', { open: 1 });
-				},
-				"Cancel": function() {
-					$(this).dialog('close');
+				} else {
+					window.location = '../home.php';
 				}
-			},
-			close: function() {
-				if (!ok) window.location = '../home.php';
 			}
-		});
+		);
 	}
 })
 </script>
@@ -51,8 +41,6 @@ jq/ui/theme/jquery-ui.custom.css
 {/capture}
 {include file="header.tpl" head_extra=$smarty.capture.extra
 	require=$smarty.capture.require body_class="spot"}
-
-<div id="smoke"></div>
 
 <div id="administration" style="display: none">
 <form onsubmit="return false;">
@@ -138,10 +126,6 @@ jq/ui/theme/jquery-ui.custom.css
 		</li>
 	</ul>
 </fieldset>
-
-<div id="dialog-confirm" title="Confirmation" style="display: none">
-Do you want to enter administration mode?
-</div>
 
 </div>
 </form>

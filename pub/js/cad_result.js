@@ -267,37 +267,7 @@ $(function(){
 		}).removeAttr('title');
 	});
 
-	var dialog = $('#temporary-confirm');
 	var postLocation = null;
-
-	$('#temporary-confirm').dialog({
-		autoOpen: false,
-		draggable: false,
-		resizable: false,
-		modal: true,
-		buttons: [
-			{
-				text: 'Save',
-				click: function() {
-					dialog.dialog('close');
-					circus.feedback.register(true, postLocation);
-				}
-			},
-			{
-				text: "Don't Save",
-				click: function() {
-					dialog.dialog('close');
-					location.replace(postLocation);
-				}
-			},
-			{
-				text: 'Cancel',
-				click: function() {
-					dialog.dialog('close');
-				}
-			}
-		]
-	});
 
 	if (circus.feedback.feedbackStatus == 'normal')
 	{
@@ -305,11 +275,18 @@ $(function(){
 			if (!circus.feedback.modified && !circus.feedback.feedbackTemporary)
 				return;
 			postLocation = $(event.currentTarget).attr('href');
-			dialog.dialog('open');
+			$.choice(
+				'<p><strong>This feedback is not registered yet.</strong></p>' +
+				'<p>Do you want to temporarily save changes before leaving this page?</p>',
+				["Save", "Don't Save", "Cancel"],
+				function(choice) {
+					if (choice == 0) circus.feedback.register(true, postLocation);
+					if (choice == 1) location.replace(postLocation);
+				}
+			);
 			return false;
 		});
 	}
-
 
 	function setModeIcon(status, target)
 	{

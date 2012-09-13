@@ -426,17 +426,10 @@ $(function() {
 	$('#close-button').click(function() {
 		if (modified)
 		{
-			$('#close-confirm').dialog({
-				autoOpen: true,
-				modal: true,
-				buttons: {
-					"Don't Save": function() {
-						$(this).dialog('close');
-						exitEdit();
-					},
-					"Cancel": function() { $(this).dialog('close'); }
-				}
-			});
+			$.confirm(
+				'Exit without saving?',
+				function(choice) { if (choice == 1) exitEdit(); }
+			);
 		}
 		else
 		{
@@ -680,7 +673,5 @@ require=$smarty.capture.require body_class="spot"}
 	<button id="condition-addgroup" class="condition-toolbutton"></button>
 	<button id="condition-delete" class="condition-toolbutton"></button>
 </div>
-
-<div id="close-confirm" title="Confirm" style="display: none">Exit without saving?</div>
 
 {include file="footer.tpl"}
