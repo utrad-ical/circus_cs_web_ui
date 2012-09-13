@@ -179,8 +179,9 @@ body.spot #content h2 {
 	line-height: 1.8;
 	overflow: hidden;
 }
-a:link.btn-tab,a:active.btn-tab,a:visited.btn-tab{
+a.btn-tab {
 	display: block;
+	cursor: pointer;
 	text-decoration: none;
 	width: 150px;
 	height: 25px;

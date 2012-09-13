@@ -38,9 +38,9 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {include file="darkroom_button.tpl"}
 <div id="cadResultTab" class="tabArea">
 <ul>
-	<li><a class="btn-tab btn-tab-active" href="#">CAD Result</a></li>
+	<li><a class="btn-tab btn-tab-active">CAD Result</a></li>
 	{foreach from=$tabs item=tab}
-	<li><a class="btn-tab" href="#">{$tab.label|escape}</a>
+	<li><a class="btn-tab">{$tab.label|escape}</a>
 	{/foreach}
 </ul>
 </div>

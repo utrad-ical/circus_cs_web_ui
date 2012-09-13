@@ -248,7 +248,7 @@ $(function(){
 		var target = $(event.target);
 		var index = $('.tabArea a').index(target);
 		circus.cadresult.showTab(index);
-	});
+	}).mousedown(function() { return false; });
 
 	$('#mode-form input[name=feedbackMode]')
 		.val([circus.feedback.feedbackMode])
