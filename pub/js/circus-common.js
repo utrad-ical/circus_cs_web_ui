@@ -234,5 +234,76 @@ $.extend({
 			},
 			'text'
 		);
+	},
+	'loadUI': function(callback) {
+		if (typeof callback != 'function') callback = $.noop;
+		if (typeof jQuery.ui == 'undefined')
+		{
+			var css = circus.totop + 'jq/ui/theme/jquery-ui.custom.css';
+			if (document.createStylesheet) { // for IE
+				document.createStyleSheet(css);
+			}
+			else
+			{
+				$('<style>').attr('type', 'text/css')
+				.html('@import url("' + css + '")')
+				.appendTo("head");
+			}
+			$.getScript(circus.totop + 'jq/ui/jquery-ui.min.js', callback);
+		}
+		else
+		{
+			callback();
+		}
+	},
+	'alert': function() {
+		var a = $.merge([], arguments);
+		a.push(['OK']);
+		$.choice.apply(this, a);
+	},
+	'confirm': function() {
+		var a = $.merge([], arguments);
+		a.push(['Cancel', 'OK']);
+		$.choice.apply(this, a);
+	},
+	'choice': function() {
+		var prompt = '';
+		var callback = $.noop;
+		var options = {};
+		var choices = ['Close'];
+		var result = false;
+		for (var i = 0; i < arguments.length; i++)
+		{
+			var arg = arguments[i];
+			if (typeof arg == 'string') prompt = arg;
+			if (typeof arg == 'object') options = arg;
+			if (typeof arg == 'function') callback = arg;
+			if (arg instanceof Array) choices = arg;
+		}
+		var buttons = [];
+		for (var i = 0; i < choices.length; i++)
+		{
+			(function(ii) {
+				buttons.push({
+					text: choices[i],
+					click: function() {
+						result = ii;
+						$(this).dialog('close');
+					}
+				})
+
+			})(i); // closure
+		}
+		var params = $.extend({
+			buttons: buttons,
+			modal: true,
+			draggable: false,
+			resizable: false,
+			title: 'CIRCUS CS',
+			close: function() { callback(result); }
+		}, options);
+		$.loadUI(function() {
+			$('<div>').html(prompt).attr('title', params.title).dialog(params);
+		})
 	}
 });
