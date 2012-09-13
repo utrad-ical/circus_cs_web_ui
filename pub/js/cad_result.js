@@ -171,20 +171,25 @@ circus.feedback = function() {
 			});
 		},
 		unregister: function(event) {
-			if (!confirm('Cancel this feedback and edit again?'))
-				return;
-			$.webapi({
-				action: 'unregisterFeedback',
-				params: {
-					feedbackMode: circus.feedback.feedbackMode,
-					jobID: circus.jobID
-				},
-				onSuccess: function(response) {
-					$(window).trigger('actionlog', { action: 'unregister' });
-					location.reload(true);
-				},
-				onFail: function(message) { alert(message); }
-			})
+			$.confirm(
+				'Cancel this feedback and edit again?',
+				function (choice) {
+					if (choice == 1) {
+						$.webapi({
+							action: 'unregisterFeedback',
+							params: {
+								feedbackMode: circus.feedback.feedbackMode,
+								jobID: circus.jobID
+							},
+							onSuccess: function(response) {
+								$(window).trigger('actionlog', { action: 'unregister' });
+								location.reload(true);
+							},
+							onFail: function(message) { $.alert(message); }
+						});
+					}
+				}
+			);
 		},
 		additional: []
 	};
