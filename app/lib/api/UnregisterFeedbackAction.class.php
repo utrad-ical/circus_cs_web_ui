@@ -15,7 +15,8 @@ class UnregisterFeedbackAction extends ApiActionBase
 		'feedbackMode' => array('type' => 'select', 'required' => true,
 			'options' => array('personal', 'consensual')),
 		'user' => array('type' => 'str'),
-		'dryRun' => array('type' => 'str')
+		'dryRun' => array('type' => 'str'),
+		'delete' => array('type' => 'str')
 	);
 
 	/**
@@ -174,7 +175,14 @@ class UnregisterFeedbackAction extends ApiActionBase
 		}
 
 		// Now we actually unregister the feedback data. This part is simple.
-		$fb->unregister();
+		if (!!($params['delete']))
+		{
+			$fb->delete($fb->fb_id);
+		}
+		else
+		{
+			$fb->unregister();
+		}
 
 		return true; // success!
 	}
