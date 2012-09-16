@@ -37,6 +37,8 @@ class CadResult extends Model
 	protected $rawResult;
 	protected $presentation;
 
+	private $_cachedRelativeTop;
+
 	/**
 	 * Retrieves the list of feedback data associated with this CAD Result.
 	 * @param string $kind One of the following. 'personal', the list of
@@ -311,7 +313,9 @@ class CadResult extends Model
 	public function webPathOfPluginPub()
 	{
 		$plugin_name = $this->Plugin->fullName();
-		return "plugin/$plugin_name";
+		$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
+		$this->_cachedRelativeTop = $r;
+		return $r . "plugin/$plugin_name";
 	}
 
 	/**
@@ -332,9 +336,10 @@ class CadResult extends Model
 	 */
 	public function webPathOfCadResult()
 	{
-		global $DIR_SEPARATOR_WEB, $SUBDIR_CAD_RESULT;
+		$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
+		$this->_cachedRelativeTop = $r;
 		$str_id = $this->storage_id;
-		return '../storage/' . $str_id . '/' . $this->job_id; // TODO: change
+		return $r . 'storage/' . $str_id . '/' . $this->job_id;
 	}
 
 	/**
