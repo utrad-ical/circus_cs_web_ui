@@ -171,8 +171,9 @@ circus.feedback = function() {
 			});
 		},
 		unregister: function(event) {
-			$.confirm(
-				'Cancel this feedback and edit again?',
+			$.choice(
+				'Unregister this feedback and edit again?',
+				['Cancel', 'Unregister'],
 				function (choice) {
 					if (choice == 1) {
 						$.webapi({

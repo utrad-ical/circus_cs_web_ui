@@ -26,11 +26,11 @@ Number of feedback: {$inspector_feedback|@count|number_format}
 <script type="text/javascript">{literal}
 $(function() {
 	function unreg(params) {
-		params.jobID = circus.jobID;
 		$.webapi({
 			action: 'unregisterFeedback',
 			params: params,
-			onSuccess: function() { $.alert('Succeeded. Reload the browser to see the effect.'); }
+			onSuccess: function() { $.alert('Succeeded. Reload the browser to see the effect.'); },
+			onFail: function(message) { $.alert(message); }
 		});
 	}
 
@@ -41,17 +41,27 @@ $(function() {
 		var type = $('td:eq(0)', tr).text() == 'Consensual' ? 'consensual' : 'personal';
 		var user = $('td:eq(1)', tr).text();
 		$(this).click(function() {
-			var params = { feedbackMode: type };
+			var params = { feedbackMode: type, jobID: circus.jobID, dryRun: 1 };
 			if (type == 'personal') params.user = user;
-			$.choice(
-				'Do you really want to unregister feedback?',
-				['Cancel', 'Delete Completely', 'Unregister (edit again)'],
-				function(choice) {
-					if (choice == 1) { params.delete = 1; unreg(params); }
-					if (choice == 2) { unreg(params); }
+			$.webapi({
+				action: 'unregisterFeedback',
+				params: params,
+				onSuccess: function() {
+					delete params.dryRun;
+					$.choice(
+						'Do you really want to unregister feedback or completely delete it?',
+						['Cancel', 'Delete Completely', 'Unregister (edit again)'],
+						function(choice) {
+							if (choice == 1) { params.delete = 1; unreg(params); }
+							if (choice == 2) { unreg(params); }
+						},
+						{ width: '40em' }
+					);
 				},
-				{ width: '40em' }
-			);
+				onFail: function(message) {
+					$.alert(message);
+				}
+			});
 		});
 	});
 });
