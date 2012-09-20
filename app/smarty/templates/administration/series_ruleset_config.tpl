@@ -129,6 +129,7 @@ $(function() {
 		rule.required_private_tags = $('#required-private-tags').val();
 		rule.image_delta = parseInt($('#image-delta').val()) || 0;
 		rule.environment = $('#environment').val();
+		rule.continuous = $('#continuous').prop('checked');
 		return rule;
 	}
 
@@ -240,6 +241,7 @@ $(function() {
 			$('#required-private-tags').val(currentRuleSet.rule.required_private_tags);
 			$('#image-delta').val(currentRuleSet.rule.image_delta);
 			$('#environment').val(currentRuleSet.rule.environment);
+			$('#continuous').prop('checked', !!currentRuleSet.rule.continuous);
 
 			$('#select-help').hide();
 			$('#editor-contents').show();
@@ -660,6 +662,10 @@ require=$smarty.capture.require body_class="spot"}
 				<tr>
 					<th>Provide environment</th>
 					<td><input type="text" id="environment" /></td>
+				</tr>
+				<tr>
+					<th>Force continuous series</th>
+					<td><input type="checkbox" id="continuous" /></td>
 				</tr>
 			</tbody>
 		</table>

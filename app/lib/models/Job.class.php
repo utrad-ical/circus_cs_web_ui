@@ -105,6 +105,16 @@ class Job extends Model
 				$errors[] = "Target series for volume ID $vid can not be processed (filter unmatch).";
 				continue;
 			}
+
+			if ($matched['continuous'])
+			{
+				if ($s->image_number != $s->max_image_number - $s->min_image_number + 1)
+				{
+					$errors[] = "Target series has discontinuous image number.";
+					continue;
+				}
+			}
+
 			$series_queue[$vid] = array(
 				'series_uid' => $series[$vid],
 				'series_sid' => $s->series_sid,

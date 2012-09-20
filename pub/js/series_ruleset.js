@@ -91,6 +91,11 @@ circus.ruleset = (function() {
 		{
 			results.push('Environment(' + rule.environment + ')');
 		}
+		if (rule.continuous)
+		{
+			results.push('Continuous');
+		}
+
 		return results.join(', ');
 	}
 
