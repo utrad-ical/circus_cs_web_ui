@@ -21,6 +21,8 @@ class FormValidator
 		'numeric'   => 'NumericValidator',
 		'str'       => 'StringValidator',
 		'string'    => 'StringValidator',
+		'bool'      => 'BoolValidator',
+		'boolean'   => 'BoolValidator',
 		'pgregex'   => 'PgRegexValidator',
 		'date'      => 'DateValidator',
 		'datetime'  => 'DateTimeValidator',
@@ -328,7 +330,7 @@ class IntegerValidator extends ScalarValidator
 				$this->error = "Input data '$label' must be no more than $max.";
 				return false;
 			}
-			$this->output = $input;
+			$this->output = intval($input);
 			return true;
 		} else {
 			$this->error = "Input data '$label' is not a valid number.";
@@ -396,6 +398,25 @@ class StringValidator extends ScalarValidator
 			}
 		}
 		$this->output = $input;
+		return true;
+	}
+}
+
+/**
+ * Validator for boolean value.
+ * This depends on (bool) cast of PHP, so strings such as "-1", "false", "no"
+ * will be parsed as TRUE. Only strings "" and "0" is treated as FALSE.
+ * @package formValidators
+ */
+class BoolValidator extends ScalarValidator {
+	public function validate($input) {
+		$label = $this->label;
+		if ($this->params['strict'] && !is_bool($input))
+		{
+			$this->error = "Input data '$label' must be boolean value.";
+			return false;
+		}
+		$this->output = (bool)$input;
 		return true;
 	}
 }
@@ -828,4 +849,3 @@ class JsonValidator extends ValidatorBase
 		}
 	}
 }
-
