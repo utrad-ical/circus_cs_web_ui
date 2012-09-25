@@ -1,5 +1,4 @@
 <h2>Basic</h2>
-{$cadResult->webPathOfPluginPub()|escape}
 <table class="col-tbl">
   <thead>
     <tr><th>Key</th><th>Value</th></tr>
