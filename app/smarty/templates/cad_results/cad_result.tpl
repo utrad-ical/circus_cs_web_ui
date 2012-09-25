@@ -70,6 +70,12 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 
   <div style="clear: both"></div>
 
+{if $cadResult->status == constant('Job::JOB_INVALIDATED')}
+<div id="message">
+Warning: This job is marked as <strong>invalid</strong>.
+</div>
+{/if}
+
 {foreach from=$extensions item=ext}
 {$ext->beforeBlocks()}
 {/foreach}

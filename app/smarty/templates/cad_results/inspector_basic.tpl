@@ -17,6 +17,10 @@
       <td>{$cadResult->job_id|escape}</td>
     </tr>
     <tr>
+      <td class="name themeColor">Job Status</td>
+      <td>{$cadResult->status|status_str}</td>
+    </tr>
+    <tr>
       <td class="name themeColor">Executed time</td>
       <td>{$cadResult->executed_at|escape}</td>
     </tr>

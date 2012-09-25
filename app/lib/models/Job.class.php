@@ -21,11 +21,17 @@ class Job extends Model
 			'foreignPrimaryKey' => 'sid'
 		)
 	);
+	protected static $_consts;
 
 	/**
 	 * Indicates the job has failed while processing.
 	 */
 	const JOB_FAILED        = -1;
+
+	/**
+	 * Indicates the job is invalidated.
+	 */
+	const JOB_INVALIDATED   = -2;
 
 	/**
 	 * Indicates the job is in the queue, but not allocated to any process
@@ -123,6 +129,21 @@ class Job extends Model
 		ksort($result, SORT_NUMERIC);
 
 		return $result;
+	}
+
+	/*
+	 * Returns job status string from status code.
+	 * @param int $code Status code.
+	 * @return string Status string such as 'SUCCEEDED', 'FAILED'.
+	 */
+	public static function codeToStatusName($code)
+	{
+		if (!self::$_consts)
+		{
+			$ref = new ReflectionClass(__CLASS__);
+			self::$_consts = array_flip($ref->getConstants());
+		}
+		return str_replace('JOB_', '', self::$_consts[$code]);
 	}
 
 	/**
