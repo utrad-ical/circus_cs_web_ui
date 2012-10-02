@@ -50,6 +50,82 @@ class Job extends Model
 	const JOB_SUCCEEDED     =  4;
 
 	/**
+	 * Builds the list of executable series for each volume ID,
+	 * which matches the ruleset of the specified CAD plugin.
+	 * @param Plugin $plugin
+	 * @param str $primary_series_uid
+	 * @return array An array of executable series, indexed by volume ID.
+	 * Each value holds an array of Series object which
+	 * matched the corresponding ruleset for that volume ID.
+	 */
+	public static function findExecutableSeries(Plugin $plugin,
+		$primary_series_uid)
+	{
+		if (!($plugin instanceof Plugin))
+			throw new Exception('Plugin is not correctly specified.');
+		if ($plugin->type != 1)
+			throw new Exception($plugin->fullName() . ' is not CAD plug-in.');
+		if (!$plugin->exec_enabled)
+			throw new Exception($plugin->fullName() . ' is not allowed to execute.');
+		$cad_master = $plugin->CadPlugin[0];
+		if (!($cad_master instanceof CadPlugin))
+			throw new Exception('Critical CAD master error. (Broken installation)');
+		$input_type = $cad_master->input_type;
+		if ($input_type < 0 || 2 < $input_type)
+			throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
+
+		$primarySeries = Series::selectOne(array('series_instance_uid' => $primary_series_uid));
+		if (!($primarySeries instanceof Series))
+			throw new Exception('Target primary series does not exist.');
+
+		$vols = $plugin->PluginCadSeries;
+		$rules = array();
+		foreach ($vols as $v) $rules[$v->volume_id] = json_decode($v->ruleset, true);
+
+		$result = array();
+
+		switch ($input_type)
+		{
+			case 0: // primary series only
+				$where = array('series_instance_uid', $primarySeries->series_instance_uid);
+				break;
+			case 1: // find secondary and subsequent volumes from the same study
+				$where = array('study_instance_uid', $primarySeries->Study->study_instance_uid);
+				break;
+			case 2: // find secondary and subsequent volumes from the same patient
+				$where = array('patient_id', $primarySeries->Study->Patient->patient_id);
+				break;
+		}
+		$candidates = DBConnector::query(
+			"SELECT * FROM series_join_list WHERE {$where[0]}=? " .
+			"ORDER BY study_date DESC, series_number ASC",
+			$where[1],
+			'ALL_ASSOC'
+		);
+
+		$fp = new SeriesFilter();
+		foreach ($vols as $v)
+		{
+			$vid = $v->volume_id;
+			$targets = array();
+			foreach ($candidates as $s)
+			{
+				$uid = $s['series_instance_uid'];
+				if ($vid == 0 && $uid != $primarySeries->series_instance_uid)
+					continue;
+				if ($vid > 0 && $uid == $primarySeries->series_instance_uid)
+					continue;
+				if ($fp->processRuleSets($s, $rules[$vid]))
+					$targets[] = new Series($s['series_sid']);
+			}
+			$result[$vid] = $targets;
+		}
+		ksort($result, SORT_NUMERIC);
+
+		return $result;
+	}
+
+	/**
 	 * Utility method to register a new job.
 	 *
 	 * You are recommended to use this method to insert new job,

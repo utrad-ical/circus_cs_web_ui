@@ -40,83 +40,42 @@ try
 
 	$params = $validator->output;
 
-	if($params['srcList'] == 'todaysSeries')	$params['listTabTitle'] = "Today's series";
-	else										$params['listTabTitle'] = "Series list";
+	if($params['srcList'] == 'todaysSeries')
+		$params['listTabTitle'] = "Today's series";
+	else
+		$params['listTabTitle'] = "Series list";
 
-	// Check plugin
+	// Check plugin exists
 	$plugin = Plugin::selectOne(array('plugin_name' => $params['cadName'], 'version' => $params['version']));
 	if (!$plugin)
 		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not installed.');
-	if ($plugin->type != 1)
-		throw new Exception($plugin->fullName() . ' is not CAD plug-in.');
-	if(!$plugin->exec_enabled)
-		throw new Exception($plugin->fullName() . ' is not allowed to execute.');
-	$cad_master = $plugin->CadPlugin[0];
-	if (!($cad_master instanceof CadPlugin))
-		throw new Exception('Critical CAD master error. (Broken installation)');
-	$input_type = $cad_master->input_type;
-	if ($input_type < 0 || 2 < $input_type)
-		throw new Exception('Input type is incorrect (' . $plugin->fullName() . ')');
 
 	$primarySeries = Series::selectOne(array('series_instance_uid' => $params['seriesInstanceUID']));
-	if (!($primarySeries instanceof Series))
-		throw new Exception('Target primary series does not exist.');
+	if (!$primarySeries)
+		throw new Exception('Primary series does not exist');
 
-	// Set anonymization mode
-	Patient::$anonymizeMode = Auth::currentUser()->needsAnonymization();
-	$patient = $primarySeries->Study->Patient;
+	$avail_series = Job::findExecutableSeries($plugin, $primarySeries->series_instance_uid);
 
-	//--------------------------------------------------------------------------
-	//  Build volume information
-	//--------------------------------------------------------------------------
 	$vols = $plugin->PluginCadSeries;
 	$volumeInfo = array(); // keys: volume ID
 	foreach ($vols as $vol)
 	{
-		$volumeInfo[$vol->volume_id] = array(
-			'id' => $vol->volume_id,
+		$vid = $vol->volume_id;
+		$volumeInfo[$vid] = array(
+			'id' => $vid,
 			'label' => $vol->volume_label,
 			'ruleSetList' => json_decode($vol->ruleset, true),
+			'targetSeries' => $avail_series[$vid]
 		);
-	}
-
-	// (1) Primary volume, which is already specified
-	$volumeInfo[0]['targetSeries'] = array($primarySeries);
-
-	// (2) Complementary volume(s), which may need manual selection
-	if ($input_type > 0)
-	{
-		if ($input_type == 1) // within the same study
-			$where = array('study_id', $primarySeries->Study->study_id);
-		if ($input_type == 2) // within the same patient
-			$where = array('patient_id', $primarySeries->Study->Patient->patient_id);
-		$candidates = DBConnector::query(
-			"SELECT * FROM series_join_list WHERE {$where[0]}=? " .
-			"ORDER BY study_date DESC, series_number ASC",
-			$where[1],
-			'ALL_ASSOC'
-		);
-		$fp = new SeriesFilter();
-		foreach ($vols as $v)
-		{
-			$vid = $v->volume_id;
-			if ($vid == 0)
-				continue; // skip primary series, which is manually specified
-			$targets = array();
-			foreach ($candidates as $s)
-			{
-				if ($s['series_instance_uid'] == $primarySeries->series_instance_uid)
-					continue; // exclude the primary series
-				if ($fp->processRuleSets($s, $volumeInfo[$vid]['ruleSetList']))
-					$targets[] = new Series($s['series_sid']);
-			}
-			$volumeInfo[$vid]['targetSeries'] = $targets;
-		}
 	}
 	ksort($volumeInfo, SORT_NUMERIC);
 
 	// Get CAD result policy
 	$policies = PluginResultPolicy::select();
+
+	// Get Patient Info and set anonymization mode
+	Patient::$anonymizeMode = Auth::currentUser()->needsAnonymization();
+	$patient = $primarySeries->Study->Patient;
 
 	//--------------------------------------------------------------------------
 	// Settings for Smarty
