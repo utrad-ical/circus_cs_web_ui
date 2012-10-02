@@ -181,7 +181,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'extensions' => $extParameters
 	);
 
-	$url_pub  = $cadResult->webPathOfPluginPub() . '/';
+	$url_pub  = $cadResult->webPathOfPluginPub(true) . '/';
 	$path_pub = $cadResult->pathOfPluginPub() . '/';
 	if (file_exists($path_pub . 'cad_result.css'))
 	{

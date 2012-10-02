@@ -309,13 +309,20 @@ class CadResult extends Model
 
 	/**
 	 * Returns the URL of plugin-specific public directory.
+	 * @param bool $from_root If false, result path is relative to current
+	 * directory. If true, result is from CIRCUS CS web root.
 	 */
-	public function webPathOfPluginPub()
+	public function webPathOfPluginPub($from_root = false)
 	{
 		$plugin_name = $this->Plugin->fullName();
-		$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
-		$this->_cachedRelativeTop = $r;
-		return $r . "plugin/$plugin_name";
+		if ($from_root)
+		{
+			return "plugin/$plugin_name";
+		} else {
+			$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
+			$this->_cachedRelativeTop = $r;
+			return $r . "plugin/$plugin_name";
+		}
 	}
 
 	/**
