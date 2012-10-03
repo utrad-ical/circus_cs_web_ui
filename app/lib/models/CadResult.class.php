@@ -326,6 +326,17 @@ class CadResult extends Model
 	}
 
 	/**
+	 * Returns the plugin-specific web config directory.
+	 * This directory contains plugin-specific template files, sub class files, etc.
+	 */
+	public function pathOfPluginWeb()
+	{
+		global $WEB_UI_ROOT;
+		$plugin_name = $this->Plugin->fullName();
+		return "$WEB_UI_ROOT/plugin/$plugin_name";
+	}	
+
+	/**
 	 * Returns the plugin-specific public directory.
 	 * This directory contains plugin-specific image files, css files,
 	 * javascript files, etc.
