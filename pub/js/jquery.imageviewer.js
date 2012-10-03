@@ -538,7 +538,7 @@ var StaticImageSource = function(source)
 				if (width.length > 0)
 					return pad(parseInt(index), parseInt(width), zero == '0' ? '0' : ' ');
 				else
-					return parsetInt(index);
+					return parseInt(index);
 			}
 		);
 	}
