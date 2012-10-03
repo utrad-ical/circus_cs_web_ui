@@ -535,7 +535,7 @@ var StaticImageSource = function(source)
 		return src.replace(
 			/%((0?)\d)?d/g,
 			function(str, width, zero) {
-				if (width.length > 0)
+				if (parseInt(width) > 0)
 					return pad(parseInt(index), parseInt(width), zero == '0' ? '0' : ' ');
 				else
 					return parseInt(index);
