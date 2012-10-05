@@ -226,6 +226,13 @@ $.widget('ui.imageviewer', {
 					labelx = 6;
 					labely = 6;
 					break;
+				case 'cross':
+					$('<div class="ui-imageviewer-cross" />')
+						.css({left: x - 25, top: y - 25})
+						.appendTo(container);
+					labelx = 12;
+					labely = 12;
+					break;
 				case 'dot':
 				default:
 					$('<div class="ui-imageviewer-dot" />')

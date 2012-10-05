@@ -660,6 +660,14 @@ span.register-not-ok {
 	z-index: 10;
 }
 
+.ui-imageviewer div.ui-imageviewer-cross {
+    position: absolute;
+    width: 51px;
+    height: 51px;
+    background-image: url('../cad_results/images/magenta_cross.png');
+    z-index: 10;
+}
+
 .ui-imageviewer div.ui-imageviewer-markerlabel {
 	position: absolute;
 	color: magenta;
