@@ -22,7 +22,7 @@ circus.download_volume = (function() {
 	function beginArchive()
 	{
 		var priv = $('#download-volume-private-tags').val();
-		if (priv.match(/^(\d\d\d\d,\d\d\d\d;)*(\d\d\d\d,\d\d\d\d)?$/) === null)
+		if (priv.match(/^([0-9A-Fa-f]{4},[0-9A-Fa-f]{4};)*([0-9A-Fa-f]{4},[0-9A-Fa-f]{4})?$/) === null)
 		{
 			alert("Wrong syntax in required private tags field.");
 			return;
