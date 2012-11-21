@@ -60,14 +60,40 @@ function show_cad_results($jobID, $feedbackMode) {
 		critical_error('This CAD job has not finished yet.', 'Not Finished');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->Plugin->configurationPath());
 
-	// Assigning the result to Smarty
-	$smarty = new SmartyEx();
-
 	$user = Auth::currentUser();
 	$user_id = $user->user_id;
 
 	if (!$cadResult->checkCadResultAvailability($user->Group))
 		critical_error('You do not have privilege to see this CAD result.');
+
+	// Automatically change to consensual mode
+	$feedbackList = $cadResult->queryFeedback('all', null, false);
+	$registerConsensualFeedbackFlg = 0;
+	$enterOnwPersonalFeedbackFlg   = 0;
+
+	foreach($feedbackList as $item)
+	{
+		$item->loadFeedback();
+		
+		if($item->is_consensual && $item->status == 1)
+		{
+			$registerConsensualFeedbackFlg = 1;
+		}
+		else if(!$item->is_consensual && $item->entered_by == $user_id)
+		{
+			$enterOnwPersonalFeedbackFlg   = 1;
+		}
+	}
+
+	if($feedbackMode == 'personal'
+		&& $registerConsensualFeedbackFlg == 1
+		&& $enterOnwPersonalFeedbackFlg == 0)
+	{
+		header('Location: ./cad_result.php?jobID=' . $jobID . '&feedbackMode=consensual');
+	}
+
+	// Assigning the result to Smarty
+	$smarty = new SmartyEx();
 
 	// Set smarty default template handler.
 	$td = $smarty->template_dir;
