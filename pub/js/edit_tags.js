@@ -118,7 +118,7 @@ circus.edittag = (function() {
 				css: { cursor: 'auto' },
 				overlayCSS: { cursor: 'auto' }
 			});
-		    $(document).keypress(function(event) {
+			$(document).unbind('keypress').bind('keypress', function(event) {
 				if(event.keyCode == 27)
 					$.unblockUI();
 			});
