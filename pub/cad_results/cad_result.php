@@ -75,7 +75,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	{
 		$item->loadFeedback();
 		
-		if($item->is_consensual && $item->status == 1)
+		if($item->is_consensual && $item->status == Feedback::REGISTERED)
 		{
 			$registerConsensualFeedbackFlg = 1;
 		}
