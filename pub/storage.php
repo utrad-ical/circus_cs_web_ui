@@ -55,6 +55,7 @@
 		case "application/x-7z-compressed":  // .7z
 		case "application/x-lzh":            // .lha .lzh
 		case "application/x-tar":            // .tar .tgz
+		case "application/octet-stream":
 
 			$pathInfo = pathinfo($fileName); // get path info
 			$fileSize = filesize($fileName);
