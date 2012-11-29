@@ -385,8 +385,9 @@
 			$operator = ($params['personalFB'] == "entered") ? 'IN' : '<> ALL';
 
 			$tmpCond .= " el.job_id " . $operator
-					 .  " (SELECT DISTINCT job_id FROM feedback_list WHERE is_consensual='f' AND status=1)";
-//
+					 .  " (SELECT DISTINCT job_id FROM feedback_list"
+					 .  " WHERE is_consensual='f' AND status=1 AND entered_by='". $userID ."')";
+
 //			if($params['personalFB'] == "entered")
 //			{
 //				if($params['filterFBUser'] != "")
