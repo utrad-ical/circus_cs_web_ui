@@ -1,0 +1,25 @@
+#cad-downloader-pane {
+	margin: 1em 0;
+}
+
+/* Restrict max height if downloader is shown in main result page */
+.cadResult #cad-downloader-pane {
+	max-height: 300px;
+	overflow: auto;
+}
+
+#cad-downloader {
+	min-width: 300px;
+}
+
+#cad-downloader th {
+}
+
+#cad-downloader .cad-downloader-file {
+	text-align: left;
+	font-weight: bold;
+}
+
+#cad-downloader .cad-downloader-size {
+	text-align: right;
+}
