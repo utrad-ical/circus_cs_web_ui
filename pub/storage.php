@@ -41,10 +41,12 @@
 			readfile($fileName);
 			break;
 
-		// images
+		// images and videos
 		case "image/jpeg":  // .jpg .jpeg
 		case "image/png":   // .png
 		case "image/gif":   // .gif
+		case "video/mp4":   // .mp4 .m4v
+		case "video/x-flv": // .flv
 			header("Content-type: {$mimeType}"); // set mime type
 			header("Cache-Control: max-age=3600");
 			readfile($fileName);

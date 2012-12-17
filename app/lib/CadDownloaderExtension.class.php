@@ -18,7 +18,11 @@ class CadDownloaderExtension extends CadResultExtension
 
 	public function requiringFiles()
 	{
-		return array('css/cad_downloader.css');
+		return array(
+			'css/cad_downloader.css',
+			'jq/jquery.jplayer.min.js',
+			'js/cad_dir_inspector.js'
+		);
 	}
 
 	public function beforeBlocks()
@@ -60,38 +64,6 @@ class CadDownloaderExtension extends CadResultExtension
 		}
 		if (!$this->_enabled) return array();
 
-		$path = $this->cadResult->pathOfCadResult();
-		$wpath = $this->cadResult->webPathOfCadResult();
-		$m = $this->params['filesMatch'];
-		$matched = array();
-		if ($handle = opendir($path)) {
-			while (false !== ($entry = readdir($handle))) {
-				if ($entry == "." && $entry == "..") continue;
-				if (preg_match($m, $entry))
-				{
-					$size = filesize($path . DIRECTORY_SEPARATOR . $entry);
-					$link = $entry;
-					if (is_array($this->params['substitutes']))
-					{
-						foreach ($this->params['substitutes'] as $sub)
-						{
-							print_r($link);
-							$cnt = 0;
-							$link = preg_replace($sub[0], $sub[1], $link, -1, $cnt);
-							if ($cnt > 0) break;
-						}
-					}
-					$matched[] = array(
-						"file" => $entry,
-						"link" => $link,
-						"url" => "$wpath/$entry",
-						"size" => $size
-					);
-				}
-			}
-			closedir($handle);
-		}
-		$this->smarty->assign('cad_downloader_items', $matched);
 		$this->smarty->assign('cad_downloader_title', $this->params['title']);
 		if ($this->params['position'] == 'tab')
 		{

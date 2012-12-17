@@ -8,18 +8,61 @@
 	overflow: auto;
 }
 
-#cad-downloader {
-	min-width: 300px;
+.job-file-list {
+	width: 480px;
+	overflow: hidden;
+	padding-top: 1px;
 }
 
-#cad-downloader th {
+.job-file-list .job-file-entry {
+	padding: 2px 10px;
+	border: 1px solid silver;
+	margin-top: -1px;
+	cursor: pointer;
 }
 
-#cad-downloader .cad-downloader-file {
+.job-file-list .job-file-entry:hover {
+	background-color: #ddd;
+}
+
+.darkroom .job-file-list .job-file-entry:hover {
+	background-color: #333;
+}
+
+.job-file-list .error {
+	color: red;
+	font-weight: bold;
+}
+
+.job-file-list .job-file-name {
 	text-align: left;
 	font-weight: bold;
 }
 
-#cad-downloader .cad-downloader-size {
+.job-file-list .job-file-size {
+	font-size: 80%;
+	color: silver;
+	margin-left: 2em;
 	text-align: right;
+}
+
+.job-file-list .job-file-preview {
+	text-align: center;
+	padding: 3px;
+}
+
+.job-file-list .job-file-thumbnail {
+	max-width: 300px;
+	max-height: 300px;
+}
+
+.job-file-list .job-file-expanded {
+	margin-top: 2px;
+	margin-bottom: 2px;
+	border-radius: 5px;
+}
+
+.job-file-list .job-file-preview textarea {
+	height: 5em;
+	width: 100%;
 }
