@@ -93,18 +93,16 @@ class CadInspector extends CadResultExtension
 	protected function assignFiles()
 	{
 		$path = $this->cadResult->pathOfCadResult();
-		$entries = @scandir($path);
-		if (!$entries) return;
-		foreach ($entries as $entry)
+		$flags = FilesystemIterator::SKIP_DOTS | FilesystemIterator::CURRENT_AS_SELF |
+			FilesystemIterator::UNIX_PATHS;
+		$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, $flags));
+		$inspector_files = array();
+		foreach ($it as $entry)
 		{
-			if ($entry == '.' || $entry == '..') continue;
-			$file = "$path/$entry";
-			$size = filesize($file);
-			$type = filetype($file);
 			$inspector_files[] = array(
-				'file' => $entry,
-				'size' => $size,
-				'type' => $type
+				'file' => $entry->getSubPathname(),
+				'size' => $entry->getSize(),
+				'type' => $entry->getType()
 			);
 		}
 		$this->smarty->assign('inspector_files', $inspector_files);
