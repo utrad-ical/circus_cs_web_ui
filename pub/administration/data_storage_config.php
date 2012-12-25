@@ -53,11 +53,8 @@ try
 					break;
 			}
 			$pdo->commit();
-			// Update storage.json file
-			$area = Storage::select();
-			foreach ($area as $item)
-				$storageList[$item->storage_id] = $item->path;
-			file_put_contents("../../config/storage.json", json_encode($storageList));
+			// Delete storage.json file
+			@unlink('../../cache/storage.json');
 		}
 		catch (PDOException $e)
 		{

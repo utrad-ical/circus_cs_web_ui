@@ -66,6 +66,14 @@ function show_cad_results($jobID, $feedbackMode) {
 	if (!$cadResult->checkCadResultAvailability($user->Group))
 		critical_error('You do not have privilege to see this CAD result.');
 
+	// Grant the user to access files in CAD result pages.
+	$grants = explode(';', $_SESSION['authenticated_jobs']);
+	$i = array_search($jobID, $grants);
+	if ($i !== false) { array_splice($grants, $i, 1); }
+	array_unshift($grants, $jobID);
+	array_splice($grants, 10);
+	$_SESSION['authenticated_jobs'] = implode(';', $grants);
+
 	// Automatically change to consensual mode
 	$feedbackList = $cadResult->queryFeedback('all', null, false);
 	$registerConsensualFeedbackFlg = 0;
@@ -74,7 +82,7 @@ function show_cad_results($jobID, $feedbackMode) {
 	foreach($feedbackList as $item)
 	{
 		$item->loadFeedback();
-		
+
 		if($item->is_consensual && $item->status == Feedback::REGISTERED)
 		{
 			$registerConsensualFeedbackFlg = 1;
