@@ -4,97 +4,65 @@
  * @author Y. Nomura <nomuray-tky@umin.ac.jp>
  */
 
-	$id      = $_GET['id'];
-	$subPath = $_GET['subPath'];
+$id      = $_GET['id'];
+$subPath = $_GET['subPath'];
 
-	// Load path list (JSON)
-	$pathList = json_decode(file_get_contents('../config/storage.json'), TRUE);
+$download = isset($_GET['dl']);
 
-	$fileName = $pathList[$id] . '/' . $subPath;
+// Load path list (JSON)
+$pathList = json_decode(file_get_contents('../config/storage.json'), true);
+$fileName = $pathList[$id] . '/' . $subPath;
 
-	$dirs = preg_split('{[/\\\\]}', $subPath);
-	if (array_search('..', $dirs) !== false)
+// Security: deny access to parent directories
+$dirs = preg_split('{[/\\\\]}', $subPath);
+if (array_search('..', $dirs) !== false)
+{
+	header('HTTP/1.0 403 Forbidden');
+	exit;
+}
+
+if (!file_exists($fileName))
+{
+	header('HTTP/1.0 404 Not Found');
+	exit;
+}
+
+// get mime type
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+$mimeType = finfo_file($finfo, $fileName);
+list($type, $subtype) = explode('/', $mimeType);
+finfo_close($finfo);
+
+// turn off output buffering (or large archives may cause out-of-memory error)
+if (ob_get_level()) ob_end_clean();
+
+// output the file
+$patterns = array(
+	'text' => '/^plain|csv|html|css)$/',
+	'image' => '/^jpeg|png|gif$/',
+	'video' => '/^mp4$/',
+	'application' => '/^zip|x-7z-compressed|x-lzh|x-tar|octet-stream$/'
+);
+
+if (!isset($patterns[$type]) || !preg_match($patterns[$type], $subtype))
+{
+	header('HTTP/1.0 403 Forbidden');
+	exit;
+}
+
+if ($download)
+{
+	$as = @$_GET['as'];
+	if (preg_match('/[\w\.\-\(\)\=\#\@]/', $as))
 	{
-		header('HTTP/1.0 403 Forbidden');
-		exit;
+		header("Content-Disposition: attachment; filename=\"$as\"");
 	}
-
-	if (!file_exists($fileName))
+	else
 	{
-		header('HTTP/1.0 404 Not Found');
-		exit;
+		header("Content-Disposition: attachment");
 	}
+}
 
-	// get mime type
-	$finfo = finfo_open(FILEINFO_MIME_TYPE);
-	$mimeType = finfo_file($finfo, $fileName);
-
-	// output the file
-	switch($mimeType)
-	{
-		// text based files
-		case "text/plain":  // .txt
-		case "text/csv":    // .csv
-		case "text/html":   // .html
-		case "text/css":    // .css
-			header("Content-type: {$mimeType}");
-			readfile($fileName);
-			break;
-
-		// images and videos
-		case "image/jpeg":  // .jpg .jpeg
-		case "image/png":   // .png
-		case "image/gif":   // .gif
-		case "video/mp4":   // .mp4 .m4v
-		case "video/x-flv": // .flv
-			header("Content-type: {$mimeType}"); // set mime type
-			header("Cache-Control: max-age=3600");
-			readfile($fileName);
-			break;
-
-		// archives (download)
-		case "application/zip":              // .zip
-		case "application/x-7z-compressed":  // .7z
-		case "application/x-lzh":            // .lha .lzh
-		case "application/x-tar":            // .tar .tgz
-		case "application/octet-stream":
-
-			$pathInfo = pathinfo($fileName); // get path info
-			$fileSize = filesize($fileName);
-
-			@apache_setenv('no-gzip', 1);
-			@ini_set('zlib.output_compression', 0);
-			header("Content-type: application/force-download");
-			header('Content-Type: application/octet-stream');
-			header('Content-Length: ' .  $fileSize);
-
-			set_time_limit(300);
-
-			$chunkSize = 1 * (1024 * 1024); // how many bytes per chunk
-
-			if ($fileSize > $chunkSize)
-			{
-				$fp = fopen($fileName, 'rb');
-				$buffer = '';
-				while (!feof($fp))
-				{
-					$buffer = fread($fp, $chunkSize);
-					echo $buffer;
-					ob_flush();
-					flush();
-				}
-				fclose($fp);
-			}
-			else
-			{
-				readfile($fileName);
-			}
-			break;
-
-		// forbidden
-		default:
-			header('HTTP/1.0 403 Forbidden');
-			break;
-	}
-	finfo_close($finfo);
-
+header("Content-Type: {$mimeType}");
+header("Cache-Control: max-age=3600");
+readfile($fileName);
