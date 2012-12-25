@@ -60,6 +60,7 @@ class InspectJobDirectoryAction extends ApiActionBase
 			$result[] = array(
 				'file' => $entry,
 				'url' => "$wpath/$entry",
+				'download' => "$wpath/$entry?dl=1",
 				'size' => $it->getSize(),
 				'link' => $link,
 			);

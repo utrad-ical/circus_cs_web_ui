@@ -53,7 +53,7 @@ if (!isset($patterns[$type]) || !preg_match($patterns[$type], $subtype))
 if ($download)
 {
 	$as = @$_GET['as'];
-	if (preg_match('/[\w\.\-\(\)\=\#\@]/', $as))
+	if (preg_match('/^[\w\.\-\(\)\=\#\@]+$/', $as))
 	{
 		header("Content-Disposition: attachment; filename=\"$as\"");
 	}

@@ -8,8 +8,8 @@
 		for (var i = 0; i < data.length; i++)
 		{
 			var entry = data[i];
-			var div = $('<div>').addClass('job-file-entry');
-			var a = $('<a>').text(entry.link).attr('href', entry.url);
+			var div = $('<div>').addClass('job-file-entry').data('url', entry.url);
+			var a = $('<a>').text(entry.link).attr('href', entry.download);
 			$('<span>').addClass('job-file-name').append(a).appendTo(div);
 			$('<span>').addClass('job-file-size').text('(' + entry.size + ' bytes)').appendTo(div);
 			div.appendTo(main);
@@ -24,14 +24,14 @@
 
 	function preview(row)
 	{
-		var url = $('.job-file-name a', row).attr('href');
+		var url = row.data('url');
 		var div = $('<div>').addClass('job-file-preview').appendTo(row);
 		var m;
 		if (url.match(/\.(jpe?g|png|gif)$/i))
 		{
 			$('<img>').addClass('job-file-thumbnail').attr('src', url).appendTo(div);
 		}
-		else if (m = url.match(/\.(mp4|m4v|flv)$/i))
+		else if (m = url.match(/\.(mp4|m4v)$/i))
 		{
 			var ext = m[1].toLowerCase();
 			if (ext == 'mp4') ext = 'm4v';
