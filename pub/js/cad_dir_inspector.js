@@ -1,6 +1,9 @@
 (function() {
 	var self;
 	var main;
+	var match;
+	var subst;
+	var isBusy = false;
 
 	function listHandler(data)
 	{
@@ -62,6 +65,7 @@
 
 	function clickHandler(event)
 	{
+		if (isBusy) return;
 		var target = $(event.target);
 		if (!target.is('.job-file-entry,.job-file-preview')) return;
 		var row = target.closest('.job-file-entry');
@@ -77,27 +81,71 @@
 		}
 	}
 
+	function busy()
+	{
+		isBusy = true;
+		self.css('opacity', 0.5);
+	}
+
+	function relax()
+	{
+		isBusy = false;
+		self.css('opacity', '');
+	}
+
 	function init()
 	{
 		self.empty();
 		main = $('<div>').addClass('job-file-list').appendTo(self);
 		main.click(clickHandler);
+
+		var ext = circus.cadresult.presentation.extensions.CadDownloaderExtension;
+		if (ext['enableUpload'])
+		{
+			var uploader = $('<div>').appendTo(self);
+			var file = $('<input type="file" name="upfile">').appendTo(uploader);
+			var submit = $('<button class="form-btn">').text('Upload').appendTo(uploader);
+			submit.click(function(event) {
+				if (isBusy) return;
+				submit.disable();
+				file.upload(
+					'attach_file.php',
+					{jobID: circus.jobID},
+					function (data) {
+						if (data != 'OK')
+						{
+							alert("Error\n" + data);
+						}
+						refresh();
+						submit.enable();
+					},
+					'text'
+				);
+			});
+		}
 	}
 
-	var fn = function(filesMatch, substitutes) {
-		self = this;
-		init();
-		if (!substitutes) substitutes = [];
+	function refresh()
+	{
 		$.webapi({
 			action: 'inspectJobDirectory',
 			params: {
 				jobID: circus.jobID,
-				filesMatch: filesMatch,
-				substitutes: substitutes
+				filesMatch: match,
+				substitutes: subst
 			},
 			onSuccess: listHandler,
 			onFail: errorHandler
 		});
+	}
+
+	var fn = function(filesMatch, substitutes) {
+		if (!substitutes) substitutes = [];
+		self = this;
+		match = filesMatch;
+		subst = substitutes;
+		init();
+		refresh();
 	};
 
 	$.fn.cadDirInspector = fn;

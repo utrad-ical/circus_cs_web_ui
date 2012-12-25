@@ -18,11 +18,14 @@ class CadDownloaderExtension extends CadResultExtension
 
 	public function requiringFiles()
 	{
-		return array(
+		$result = array(
 			'css/cad_downloader.css',
 			'jq/jquery.jplayer.min.js',
 			'js/cad_dir_inspector.js'
 		);
+		if ($this->params['enableUpload'])
+			$result[] = 'jq/jquery.upload-1.0.2.min.js';
+		return $result;
 	}
 
 	public function beforeBlocks()

@@ -42,6 +42,11 @@ class InspectJobDirectoryAction extends ApiActionBase
 		$pattern = $this->_params['filesMatch'];
 		while ($it->valid())
 		{
+			if ($it->current()->isDir())
+			{
+				$it->next();
+				continue;
+			}
 			$entry = $it->getSubPathname();
 			if (is_string($pattern) && !preg_match($pattern, $entry))
 			{
