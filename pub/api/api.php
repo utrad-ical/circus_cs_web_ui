@@ -3,11 +3,12 @@ include("../common.php");
 require_once('../../app/lib/api/ApiException.class.php');
 // manually issue require() to load exception subclasses
 
-error_reporting(0); // turn off error reporting
+error_reporting(E_CORE_ERROR); // turn off error reporting
 set_error_handler('api_error_handler', E_WARNING | E_ERROR);
 
 try
 {
+	header('Content-Type: application/json');
 	$api_request = json_decode($_POST['request'], true);
 	if (is_null($api_request))
 	{
