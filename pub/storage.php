@@ -52,7 +52,7 @@ if ($is_cad_result)
 		error(403, 'You do not have access to this job. Reload the result page.');
 }
 
-if (!file_exists($fileName)) {
+if (!is_file($fileName) || !is_readable($fileName)) {
 	error(404);
 }
 
@@ -68,7 +68,7 @@ if (ob_get_level()) ob_end_clean();
 
 // output the file
 $patterns = array(
-	'text' => '/^plain|csv|html|css)$/',
+	'text' => '/^plain|csv|html|css$/',
 	'image' => '/^jpeg|png|gif$/',
 	'video' => '/^mp4$/',
 	'application' => '/^zip|x-7z-compressed|x-lzh|x-tar|octet-stream$/'
