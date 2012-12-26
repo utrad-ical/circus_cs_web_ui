@@ -34,6 +34,7 @@ class CadResult extends Model
 	protected $displayPresenter;
 	protected $feedbackListener;
 	protected $extensions;
+	protected $resultLoaded = false;
 	protected $rawResult;
 	protected $presentation;
 
@@ -244,6 +245,7 @@ class CadResult extends Model
 	{
 		$presenter = $this->Plugin->presentation()->displayPresenter();
 		$presenter->setCadResult($this);
+		if (!$this->resultLoaded) $this->loadRawResult();
 		return $presenter->extractDisplays($this->rawResult);
 	}
 
@@ -253,6 +255,7 @@ class CadResult extends Model
 	 */
 	public function rawCadResult()
 	{
+		if (!$this->resultLoaded) $this->loadRawResult();
 		return $this->rawResult;
 	}
 
@@ -282,16 +285,8 @@ class CadResult extends Model
 		return null; // not implemented
 	}
 
-	public function load($id)
+	protected function loadRawResult()
 	{
-		//
-		// STEP: Load using inheriting load method
-		//
-		parent::load($id);
-
-		if (!isset($this->_data['job_id']))
-			return;
-
 		//
 		// STEP: Get the table name which actually holds the result data
 		//
@@ -305,6 +300,8 @@ class CadResult extends Model
 		//
 		$sqlStr = "SELECT * FROM \"$result_table\" WHERE job_id=?";
 		$this->rawResult = DBConnector::query($sqlStr, $this->job_id, 'ALL_ASSOC');
+
+		$this->resultLoaded = true;
 	}
 
 	/**
@@ -334,7 +331,7 @@ class CadResult extends Model
 		global $WEB_UI_ROOT;
 		$plugin_name = $this->Plugin->fullName();
 		return "$WEB_UI_ROOT/plugin/$plugin_name";
-	}	
+	}
 
 	/**
 	 * Returns the plugin-specific public directory.
