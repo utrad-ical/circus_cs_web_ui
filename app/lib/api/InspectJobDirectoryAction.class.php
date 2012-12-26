@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Internal API action class which lists downloadable files in plugin result
+ * directories. Works with CadDownloaderExtension class.
+ * @author Soichiro Miki <smiki-tky@umin.ac.jp>
+ */
 class InspectJobDirectoryAction extends ApiActionBase
 {
 	/**
@@ -27,8 +32,8 @@ class InspectJobDirectoryAction extends ApiActionBase
 				break;
 			}
 		}
-		if (!is_array($this->_options) || !$this->_options['enableUpload'])
-			new ApiOperationException('This pluguin does not enable file uploads.');
+		if (!is_array($this->_options))
+			new ApiOperationException('This pluguin does not enable file downloads.');
 
 		$user = $this->currentUser;
 		if (!$this->_cad_result->checkCadResultAvailability($user->Group))
@@ -39,16 +44,52 @@ class InspectJobDirectoryAction extends ApiActionBase
 		return $result;
 	}
 
+	/**
+	 * Determines whether user can download the specified file.
+	 * Subclasses can override this function and implement custom checking
+	 * (for example, complicated user-based access control).
+	 * @param string $entry The subpath (sub/path/to/file.ext) of the file.
+	 * @return boolean True if user can download this file.
+	 */
+	protected function checkAccess($entry)
+	{
+		$pattern = $this->_options['filesMatch'];
+		return is_string($pattern) && preg_match($pattern, $entry);
+	}
+
+	protected function getKeywords()
+	{
+		$cr = $this->_cad_result;
+		Patient::$anonymizeMode = $this->currentUser->needsAnonymization();
+		$from = array('{$PATIENT_ID}', '{$JOB_ID}', '{$STUDY_DATE}', '{$JOB_DATE}', '{$TODAY}');
+		$primary_series = $cr->Series[0];
+		$sd = new DateTime($primary_series->Study->study_date);
+		$ed = new DateTime($cr->executed_at);
+		$to = array(
+			$primary_series->Study->Patient->patient_id,
+			$cr->job_id,
+			$sd->format('Y-m-d'),
+			$ed->format('Y-m-d'),
+			date('Y-m-d')
+		);
+		return array('from' => $from, 'to' => $to);
+	}
+
 	protected function readJobDirContents()
 	{
-		$path = $this->_cad_result->pathOfCadResult();
-		$wpath = $this->_cad_result->webPathOfCadResult();
+		$cr = $this->_cad_result;
+		$path = $cr->pathOfCadResult();
+		$wpath = $cr->webPathOfCadResult();
 		$flags = FilesystemIterator::SKIP_DOTS |
 			FilesystemIterator::UNIX_PATHS |
 			FilesystemIterator::CURRENT_AS_FILEINFO;
 		$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, $flags));
 		$result = array();
-		$pattern = $this->_options['filesMatch'];
+
+		$keywords = $this->getKeywords();
+		$from = $keywords['from'];
+		$to = $keywords['to'];
+
 		while ($it->valid())
 		{
 			if ($it->current()->isDir())
@@ -57,24 +98,45 @@ class InspectJobDirectoryAction extends ApiActionBase
 				continue;
 			}
 			$entry = $it->getSubPathname();
-			if (is_string($pattern) && !preg_match($pattern, $entry))
+
+			if (!$this->checkAccess($entry))
 			{
 				$it->next();
 				continue;
 			}
+
+			if (!$this->checkAccess($entry)) continue;
 
 			$link = $entry;
 			if (is_array($this->_options['substitutes']))
 			{
 				foreach ($this->_options['substitutes'] as $sub)
 				{
-					$link = preg_replace($sub[0], $sub[1], $link);
+					$link = preg_replace($sub[0], $sub[1], $link, -1, $cnt);
+					if ($cnt > 0)
+					{
+						$link = str_replace($from, $to, $link);
+						break;
+					}
+				}
+			}
+			if (is_array($this->_options['filename']))
+			{
+				foreach ($this->_options['filename'] as $item)
+				{
+					$as = preg_replace($item[0], $item[1], $entry, -1, $cnt);
+					if ($cnt > 0)
+					{
+						$as = str_replace($from, $to, $as);
+						$as = urlencode($as);
+						break;
+					}
 				}
 			}
 			$result[] = array(
 				'file' => $entry,
 				'url' => "$wpath/$entry",
-				'download' => "$wpath/$entry?dl=1",
+				'download' => "$wpath/$entry?dl=1&as=$as",
 				'size' => $it->getSize(),
 				'link' => $link,
 			);
