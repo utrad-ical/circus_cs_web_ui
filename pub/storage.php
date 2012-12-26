@@ -57,25 +57,28 @@ if (!is_file($fileName) || !is_readable($fileName)) {
 }
 
 
-// get mime type
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mimeType = finfo_file($finfo, $fileName);
-list($type, $subtype) = explode('/', $mimeType);
-finfo_close($finfo);
-
 // turn off output buffering (or large archives may cause out-of-memory error)
 if (ob_get_level()) ob_end_clean();
 
-// output the file
-$patterns = array(
-	'text' => '/^plain|csv|html|css$/',
-	'image' => '/^jpeg|png|gif$/',
-	'video' => '/^mp4$/',
-	'application' => '/^zip|x-7z-compressed|x-lzh|x-tar|octet-stream$/'
-);
+$path_parts = pathinfo($fileName);
+$file_ext   = $path_parts['extension'];
 
-if (!isset($patterns[$type]) || !preg_match($patterns[$type], $subtype))
-	error(403);
+// get mime type
+$mime_types = array(
+	'txt' => 'text/plain',
+	'csv' => 'text/csv',
+	'html' => 'text/html',
+	'htm' => 'text/html',
+	'css' => 'text/css',
+	'jpeg' => 'image/jpeg',
+	'jpg' => 'image/jpeg',
+	'png' => 'image/png',
+	'gif' => 'image/gif',
+	'mp4' => 'video/mp4',
+	'm4v' => 'video/mp4',
+	'zip' => 'application/zip'
+);
+$mime_type = $mime_types[$file_ext] ?: 'application/octet-stream';
 
 if ($download)
 {
@@ -90,8 +93,9 @@ if ($download)
 	}
 }
 
-header("Content-Type: {$mimeType}");
+header("Content-Type: {$mime_type}");
 header("Cache-Control: max-age=3600");
+header("Accept-Ranges: none");
 readfile($fileName);
 
 function error($status = 403, $message = '')
