@@ -10,7 +10,9 @@ class CadDownloaderExtension extends CadResultExtension
 			parent::defaultParams(),
 			array(
 				'position' => 'after',
-				'filesMatch' => '/\\.(jpe?g|png|gif)$/i',
+				'filesMatch' => '/(\\.(jpe?g|png|gif)$|^attachment\\/)/i',
+				'enableUpload' => false,
+				'enablePreview' => true
 				// 'title' => 'Download'
 			)
 		);

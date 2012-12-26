@@ -108,9 +108,9 @@ class InspectJobDirectoryAction extends ApiActionBase
 			if (!$this->checkAccess($entry)) continue;
 
 			$link = $entry;
-			if (is_array($this->_options['substitutes']))
+			if (is_array($this->_options['links']))
 			{
-				foreach ($this->_options['substitutes'] as $sub)
+				foreach ($this->_options['links'] as $sub)
 				{
 					$link = preg_replace($sub[0], $sub[1], $link, -1, $cnt);
 					if ($cnt > 0)
@@ -120,9 +120,9 @@ class InspectJobDirectoryAction extends ApiActionBase
 					}
 				}
 			}
-			if (is_array($this->_options['filename']))
+			if (is_array($this->_options['fileNames']))
 			{
-				foreach ($this->_options['filename'] as $item)
+				foreach ($this->_options['fileNames'] as $item)
 				{
 					$as = preg_replace($item[0], $item[1], $entry, -1, $cnt);
 					if ($cnt > 0)

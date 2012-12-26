@@ -1,6 +1,7 @@
 (function() {
 	var self;
 	var main;
+	var options;
 	var isBusy = false;
 
 	function listHandler(data)
@@ -63,7 +64,7 @@
 
 	function clickHandler(event)
 	{
-		if (isBusy) return;
+		if (!options['enablePreview'] || isBusy) return;
 		var target = $(event.target);
 		if (!target.is('.job-file-entry,.job-file-preview')) return;
 		var row = target.closest('.job-file-entry');
@@ -97,8 +98,8 @@
 		main = $('<div>').addClass('job-file-list').appendTo(self);
 		main.click(clickHandler);
 
-		var ext = circus.cadresult.presentation.extensions.CadDownloaderExtension;
-		if (ext['enableUpload'])
+		options = circus.cadresult.presentation.extensions.CadDownloaderExtension;
+		if (options['enableUpload'])
 		{
 			var uploader = $('<div>').appendTo(self);
 			var file = $('<input type="file" name="upfile">').appendTo(uploader);
