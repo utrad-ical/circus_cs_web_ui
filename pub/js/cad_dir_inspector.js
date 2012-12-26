@@ -1,8 +1,6 @@
 (function() {
 	var self;
 	var main;
-	var match;
-	var subst;
 	var isBusy = false;
 
 	function listHandler(data)
@@ -131,19 +129,14 @@
 			action: 'inspectJobDirectory',
 			params: {
 				jobID: circus.jobID,
-				filesMatch: match,
-				substitutes: subst
 			},
 			onSuccess: listHandler,
 			onFail: errorHandler
 		});
 	}
 
-	var fn = function(filesMatch, substitutes) {
-		if (!substitutes) substitutes = [];
+	var fn = function() {
 		self = this;
-		match = filesMatch;
-		subst = substitutes;
 		init();
 		refresh();
 	};

@@ -6,21 +6,30 @@ class InspectJobDirectoryAction extends ApiActionBase
 	 * @var CadResult
 	 */
 	private $_cad_result = null;
-	private $_params;
+	private $_options = null;
 
 	protected static $rules = array(
-		'jobID' => array('type' => 'int', 'required' => true),
-		'filesMatch' => array('type' => 'string'),
-		'substitutes' => array('type' => 'array')
+		'jobID' => array('type' => 'int', 'required' => true)
 	);
 
 	protected function execute($params)
 	{
-		$this->_params = $params;
-
 		// check that current user has access to job directory
 		$job_id = $params['jobID'];
 		$this->_cad_result = new CadResult($job_id);
+
+		$extensions = $this->_cad_result->Plugin->presentation()->extensions();
+		foreach ($extensions as $item)
+		{
+			if ($item instanceof CadDownloaderExtension)
+			{
+				$this->_options = $item->getParameter();
+				break;
+			}
+		}
+		if (!is_array($this->_options) || !$this->_options['enableUpload'])
+			new ApiOperationException('This pluguin does not enable file uploads.');
+
 		$user = $this->currentUser;
 		if (!$this->_cad_result->checkCadResultAvailability($user->Group))
 			new ApiOperationException('You do not have privilege to see this CAD result.');
@@ -39,7 +48,7 @@ class InspectJobDirectoryAction extends ApiActionBase
 			FilesystemIterator::CURRENT_AS_FILEINFO;
 		$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, $flags));
 		$result = array();
-		$pattern = $this->_params['filesMatch'];
+		$pattern = $this->_options['filesMatch'];
 		while ($it->valid())
 		{
 			if ($it->current()->isDir())
@@ -55,9 +64,9 @@ class InspectJobDirectoryAction extends ApiActionBase
 			}
 
 			$link = $entry;
-			if (is_array($this->_params['substitutes']))
+			if (is_array($this->_options['substitutes']))
 			{
-				foreach ($this->_params['substitutes'] as $sub)
+				foreach ($this->_options['substitutes'] as $sub)
 				{
 					$link = preg_replace($sub[0], $sub[1], $link);
 				}
