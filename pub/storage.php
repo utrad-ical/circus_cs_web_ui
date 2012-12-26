@@ -5,7 +5,7 @@
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 
-$id      = $_GET['id'];
+$id = $_GET['id'];
 $subPath = $_GET['subPath'];
 
 $download = isset($_GET['dl']);
@@ -56,10 +56,6 @@ if (!is_file($fileName) || !is_readable($fileName)) {
 	error(404);
 }
 
-
-// turn off output buffering (or large archives may cause out-of-memory error)
-if (ob_get_level()) ob_end_clean();
-
 $path_parts = pathinfo($fileName);
 $file_ext   = $path_parts['extension'];
 
@@ -79,6 +75,7 @@ $mime_types = array(
 	'zip' => 'application/zip'
 );
 $mime_type = $mime_types[$file_ext] ?: 'application/octet-stream';
+$file_size = filesize($fileName);
 
 if ($download)
 {
@@ -95,8 +92,52 @@ if ($download)
 
 header("Content-Type: {$mime_type}");
 header("Cache-Control: max-age=3600");
-header("Accept-Ranges: none");
-readfile($fileName);
+header('Accept-Ranges: bytes');
+header_remove('Pragma');
+
+// turn off output buffering (or large archives may cause out-of-memory error)
+if (ob_get_level()) ob_end_clean();
+if(isset($_SERVER['HTTP_RANGE']))
+{
+	list($size_unit, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+	if ($size_unit != 'bytes') error(416);
+	list($range) = explode(',', $range, 2); // ignore multiple ranges
+	list($seek_start, $seek_end) = explode('-', $range, 2);
+	$seek_end   = (empty($seek_end)) ? ($file_size - 1) : min(abs(intval($seek_end)),($file_size - 1));
+	$seek_start = (empty($seek_start) || $seek_end < abs(intval($seek_start))) ? 0 : max(abs(intval($seek_start)),0);
+}
+else
+{
+	$seek_start = 0;
+	$seek_end = $file_size - 1;
+}
+
+//Only send partial content header if downloading a piece of the file (IE workaround)
+if ($seek_start > 0 || $seek_end < ($file_size - 1))
+{
+	header('HTTP/1.1 206 Partial Content');
+	header("Content-Range: bytes $seek_start-$seek_end/$file_size");
+	header('Content-Length: ' . ($seek_end - $seek_start + 1));
+}
+else
+{
+	header("Content-Length: $file_size");
+}
+
+set_time_limit(0);
+$file = fopen($fileName,"rb");
+fseek($file, $seek_start);
+
+while(!feof($file))
+{
+	print(@fread($file, 1024*8));
+	if (connection_status() != 0)
+	{
+		@fclose($file);
+		exit;
+	}
+}
+fclose($file);
 
 function error($status = 403, $message = '')
 {
@@ -104,6 +145,9 @@ function error($status = 403, $message = '')
 	{
 		case 404:
 			header('HTTP/1.0 404 Not Found');
+			break;
+		case 416:
+			header('HTTP/1.1 416 Requested Range Not Satisfiable');
 			break;
 		case 403:
 		default:
