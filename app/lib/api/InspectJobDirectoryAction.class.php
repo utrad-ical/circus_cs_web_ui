@@ -2,7 +2,7 @@
 
 /**
  * Internal API action class which lists downloadable files in plugin result
- * directories. Works with CadDownloaderExtension class.
+ * directories. Works with CadFileManagerExtension class.
  * @author Soichiro Miki <smiki-tky@umin.ac.jp>
  */
 class InspectJobDirectoryAction extends ApiActionBase
@@ -26,7 +26,7 @@ class InspectJobDirectoryAction extends ApiActionBase
 		$extensions = $this->_cad_result->Plugin->presentation()->extensions();
 		foreach ($extensions as $item)
 		{
-			if ($item instanceof CadDownloaderExtension)
+			if ($item instanceof CadFileManagerExtension)
 			{
 				$this->_options = $item->getParameter();
 				break;

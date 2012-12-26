@@ -98,7 +98,7 @@
 		main = $('<div>').addClass('job-file-list').appendTo(self);
 		main.click(clickHandler);
 
-		options = circus.cadresult.presentation.extensions.CadDownloaderExtension;
+		options = circus.cadresult.presentation.extensions.CadFileManagerExtension;
 		if (options['enableUpload'])
 		{
 			var uploader = $('<div>').appendTo(self);

@@ -3,8 +3,9 @@
 }
 
 /* Restrict max height if downloader is shown in main result page */
-.cadResult #cad-downloader-pane {
-	max-height: 300px;
+.cadResult #cad-file-manager .job-file-list {
+	margin: 15px;
+	max-height: 500px;
 	overflow: auto;
 }
 

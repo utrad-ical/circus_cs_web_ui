@@ -1,6 +1,6 @@
 <?php
 
-class CadDownloaderExtension extends CadResultExtension
+class CadFileManagerExtension extends CadResultExtension
 {
 	private $_enabled = false;
 
@@ -21,7 +21,7 @@ class CadDownloaderExtension extends CadResultExtension
 	public function requiringFiles()
 	{
 		$result = array(
-			'css/cad_downloader.css',
+			'css/cad_dir_inspector.css',
 			'jq/jquery.jplayer.min.js',
 			'js/cad_dir_inspector.js'
 		);
@@ -69,12 +69,12 @@ class CadDownloaderExtension extends CadResultExtension
 		}
 		if (!$this->_enabled) return array();
 
-		$this->smarty->assign('cad_downloader_title', $this->params['title']);
+		$this->smarty->assign('cad_file_manager_title', $this->params['title']);
 		if ($this->params['position'] == 'tab')
 		{
 			return array(array(
 				label => $this->params['title'] ?: 'Download',
-				template => 'cad_results/cad_downloader.tpl'
+				template => 'cad_results/cad_file_manager.tpl'
 			));
 		}
 		else
@@ -85,6 +85,6 @@ class CadDownloaderExtension extends CadResultExtension
 
 	protected function export()
 	{
-		return $this->smarty->fetch('cad_results/cad_downloader.tpl');
+		return $this->smarty->fetch('cad_results/cad_file_manager.tpl');
 	}
 }
