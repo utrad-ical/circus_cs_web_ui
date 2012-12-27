@@ -23,21 +23,16 @@ class InspectJobDirectoryAction extends ApiActionBase
 		$job_id = $params['jobID'];
 		$this->_cad_result = new CadResult($job_id);
 
-		$extensions = $this->_cad_result->Plugin->presentation()->extensions();
-		foreach ($extensions as $item)
-		{
-			if ($item instanceof CadFileManagerExtension)
-			{
-				$this->_options = $item->getParameter();
-				break;
-			}
-		}
-		if (!is_array($this->_options))
-			new ApiOperationException('This pluguin does not enable file downloads.');
+		$ext = $this->_cad_result->Plugin->presentation()->extensionByName('CadFileManagerExtension');
+		if (!$ext)
+			throw new ApiOperationException('This pluguin does not enable file downloads.');
+		$groups = $this->currentUser->Group;
+		if (!$this->_cad_result->checkCadResultAvailability($groups))
+			throw new ApiOperationException('You do not have privilege to see this CAD result.');
+		if (!$ext->checkVisibleGroups($groups))
+			throw new ApiOperationException('You do not have acess to see the contents of this CAD result.');
 
-		$user = $this->currentUser;
-		if (!$this->_cad_result->checkCadResultAvailability($user->Group))
-			new ApiOperationException('You do not have privilege to see this CAD result.');
+		$this->_options = $ext->getParameter();
 
 		// recursively read the current directory.
 		$result = $this->readJobDirContents();

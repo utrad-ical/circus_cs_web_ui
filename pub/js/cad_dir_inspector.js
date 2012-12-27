@@ -2,6 +2,7 @@
 	var self;
 	var main;
 	var options;
+	var upload;
 	var isBusy = false;
 
 	function listHandler(data)
@@ -99,7 +100,7 @@
 		main.click(clickHandler);
 
 		options = circus.cadresult.presentation.extensions.CadFileManagerExtension;
-		if (options['enableUpload'])
+		if (upload)
 		{
 			var uploader = $('<div>').appendTo(self);
 			var file = $('<input type="file" name="upfile">').appendTo(uploader);
@@ -136,7 +137,8 @@
 		});
 	}
 
-	var fn = function() {
+	var fn = function(uploadable) {
+		upload = uploadable;
 		self = this;
 		init();
 		refresh();

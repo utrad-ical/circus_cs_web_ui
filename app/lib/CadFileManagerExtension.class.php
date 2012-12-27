@@ -10,9 +10,11 @@ class CadFileManagerExtension extends CadResultExtension
 			parent::defaultParams(),
 			array(
 				'position' => 'after',
+				'visibleGroups' => 'admin',
 				'filesMatch' => '/(\\.(jpe?g|png|gif)$|^attachment\\/)/i',
-				'enableUpload' => false,
-				'enablePreview' => true
+				'uploadableGropus' => 'admin',
+				'deleteFilesMatch' => '{^attachment/.}',
+				'enablePreview' => true,
 				// 'title' => 'Download'
 			)
 		);
@@ -25,7 +27,7 @@ class CadFileManagerExtension extends CadResultExtension
 			'jq/jquery.jplayer.min.js',
 			'js/cad_dir_inspector.js'
 		);
-		if ($this->params['enableUpload'])
+		if ($this->checkUploadableGroups(Auth::currentUser()->Group))
 			$result[] = 'jq/jquery.upload-1.0.2.min.js';
 		return $result;
 	}
@@ -52,35 +54,56 @@ class CadFileManagerExtension extends CadResultExtension
 		}
 	}
 
+	public function checkVisibleGroups(array $group)
+	{
+		return $this->checkGroups($group, $this->params['visibleGroups']);
+	}
+
+	public function checkUploadableGroups(array $group)
+	{
+		return $this->checkGroups($group, $this->params['uploadableGroups']);
+	}
+
+	public function checkDeletableGroups(array $group)
+	{
+		return $this->checkGroups($group, $this->params['deletableGroups']);
+	}
+
 	public function tabs()
 	{
-		$visible_groups = $this->params['visibleGroups'];
-		if (is_string($visible_groups))
-		{
-			$groups = preg_split('/\s*\,\s*/', $visible_groups);
-			foreach (Auth::currentUser()->Group as $gp)
-			{
-				if (array_search($gp->group_id, $groups) !== false)
-				{
-					$this->_enabled = true;
-					break;
-				}
-			}
-		}
+		$current_groups = Auth::currentUser()->Group;
+		$this->_enabled = $this->checkVisibleGroups($current_groups);
 		if (!$this->_enabled) return array();
 
 		$this->smarty->assign('cad_file_manager_title', $this->params['title']);
+		$this->smarty->assign('cad_file_manager_uploadable', $this->checkUploadableGroups($current_groups));
 		if ($this->params['position'] == 'tab')
 		{
 			return array(array(
-				label => $this->params['title'] ?: 'Download',
-				template => 'cad_results/cad_file_manager.tpl'
+				'label' => $this->params['title'] ?: 'Download',
+				'template' => 'cad_results/cad_file_manager.tpl',
 			));
 		}
 		else
 		{
 			return array();
 		}
+	}
+
+	protected function checkGroups(array $group, $access_string)
+	{
+		if (is_string($access_string))
+		{
+			$accessible = preg_split('/\s*\,\s*/', $access_string);
+			foreach ($group as $gp)
+			{
+				if (array_search($gp->group_id, $accessible) !== false)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	protected function export()

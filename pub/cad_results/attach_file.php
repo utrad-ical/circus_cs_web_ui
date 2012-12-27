@@ -33,6 +33,20 @@ if (!$cad_result->checkCadResultAvailability($user->Group))
 	exit();
 }
 
+$ext = $cad_result->Plugin->presentation()->extensionByName('CadFileManagerExtension');
+if (!$ext)
+{
+	echo 'This plug-in does not enable file downloads.';
+	exit();
+}
+if (!$ext->checkUploadableGroups(Auth::currentUser()->Group))
+{
+	echo 'You do not have acess to file upload function.';
+	exit();
+}
+
+$options = $ext->getParameter();
+
 $dest = $cad_result->pathOfCadResult() . '/attachment/';
 if (!file_exists($dest))
 {
@@ -45,7 +59,15 @@ if (!file_exists($dest))
 	}
 }
 
-if (move_uploaded_file($_FILES['upfile']['tmp_name'], $dest . $_FILES["upfile"]["name"])) {
+$file = $_FILES['upfile'];
+$pat = $options['uploadFilesMatch'];
+if (strlen($pat) > 0 && !preg_match($pat, $file['name']))
+{
+	echo "This file type cannot be uploaded.";
+	exit();
+}
+
+if (move_uploaded_file($file['tmp_name'], $dest . $file["name"])) {
 	echo "OK";
 } else {
 	echo "Internal Server Error.";
