@@ -67,7 +67,15 @@ if (strlen($pat) > 0 && !preg_match($pat, $file['name']))
 	exit();
 }
 
-if (move_uploaded_file($file['tmp_name'], $dest . $file["name"])) {
+$dest_file_path = $dest . $file["name"];
+
+if (file_exists($dest_file_path) && !$options['overwrite'])
+{
+	echo "You can not overwrite existing files.";
+	exit();
+}
+
+if (move_uploaded_file($file['tmp_name'], $dest_file_path)) {
 	echo "OK";
 } else {
 	echo "Internal Server Error.";

@@ -67,3 +67,9 @@
 	height: 5em;
 	width: 100%;
 }
+
+button.job-file-delete {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+}

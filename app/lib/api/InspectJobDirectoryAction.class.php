@@ -12,9 +12,11 @@ class InspectJobDirectoryAction extends ApiActionBase
 	 */
 	private $_cad_result = null;
 	private $_options = null;
+	private $_canDelete = null; // privilege defined by presentation.json
 
 	protected static $rules = array(
-		'jobID' => array('type' => 'int', 'required' => true)
+		'jobID' => array('type' => 'int', 'required' => true),
+		'delete' => array('type' => 'string')
 	);
 
 	protected function execute($params)
@@ -31,12 +33,32 @@ class InspectJobDirectoryAction extends ApiActionBase
 			throw new ApiOperationException('You do not have privilege to see this CAD result.');
 		if (!$ext->checkVisibleGroups($groups))
 			throw new ApiOperationException('You do not have acess to see the contents of this CAD result.');
+		$this->_canDelete = $ext->checkDeletableGroups($groups);
 
 		$this->_options = $ext->getParameter();
 
-		// recursively read the current directory.
-		$result = $this->readJobDirContents();
-		return $result;
+		if (strlen($params['delete']) > 0)
+		{
+			if (!$this->checkDeletable($params['delete']))
+			{
+				throw new ApiOperationException('You can not delete this file.');
+			}
+			$this->delete($params['delete']);
+		}
+		else
+		{
+			// recursively read the current directory.
+			$result = $this->readJobDirContents();
+			return $result;
+		}
+	}
+
+	protected function delete($target_file)
+	{
+		$file = $this->_cad_result->pathOfCadResult() . DIRECTORY_SEPARATOR . $target_file;
+		if (!unlink($file))
+			throw new ApiSystemException('Failed to delete file.');
+		return true;
 	}
 
 	/**
@@ -49,7 +71,14 @@ class InspectJobDirectoryAction extends ApiActionBase
 	protected function checkAccess($entry)
 	{
 		$pattern = $this->_options['filesMatch'];
-		return is_string($pattern) && preg_match($pattern, $entry);
+		return strlen($pattern) == 0 || preg_match($pattern, $entry);
+	}
+
+	protected function checkDeletable($entry)
+	{
+		if (!$this->_canDelete) return false;
+		$pattern = $this->_options['deleteFilesMatch'];
+		return strlen($pattern) == 0 || preg_match($pattern, $entry);
 	}
 
 	protected function getKeywords()
@@ -100,8 +129,6 @@ class InspectJobDirectoryAction extends ApiActionBase
 				continue;
 			}
 
-			if (!$this->checkAccess($entry)) continue;
-
 			$link = $entry;
 			if (is_array($this->_options['links']))
 			{
@@ -134,6 +161,7 @@ class InspectJobDirectoryAction extends ApiActionBase
 				'download' => "$wpath/$entry?dl=1&as=$as",
 				'size' => $it->getSize(),
 				'link' => $link,
+				'deletable' => $this->checkDeletable($entry)
 			);
 			$it->next();
 		}

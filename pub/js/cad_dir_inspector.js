@@ -4,6 +4,8 @@
 	var options;
 	var upload;
 	var isBusy = false;
+	var deleteButton;
+	var deleteTarget;
 
 	function listHandler(data)
 	{
@@ -11,11 +13,54 @@
 		for (var i = 0; i < data.length; i++)
 		{
 			var entry = data[i];
-			var div = $('<div>').addClass('job-file-entry').data('url', entry.url);
+			var div = $('<div>').addClass('job-file-entry').
+				data('file', entry.file).
+				data('url', entry.url).
+				data('deletable', entry.deletable).
+				hover(entryEnter, entryLeave);
 			var a = $('<a>').text(entry.link).attr('href', entry.download);
 			$('<span>').addClass('job-file-name').append(a).appendTo(div);
 			$('<span>').addClass('job-file-size').text('(' + entry.size + ' bytes)').appendTo(div);
 			div.appendTo(main);
+		}
+	}
+
+	function entryEnter(event)
+	{
+		var target = $(event.currentTarget);
+		if (!target.is('.job-file-entry') || !target.data('deletable')) return;
+		deleteTarget = target;
+		align();
+	}
+
+	function align()
+	{
+		if (!deleteTarget) return;
+		deleteButton.appendTo(deleteTarget).show().position({
+			my: 'right top',
+			at: 'right top',
+			of: deleteTarget,
+			offset: '-5px 3px'
+		});
+	}
+
+	function entryLeave(event)
+	{
+		deleteButton.appendTo(self).hide();
+		deleteTarget = null;
+	}
+
+	function deleteClicked(event)
+	{
+		if (!deleteTarget) return;
+		var fileName = deleteTarget.data('file');
+		if (confirm('Delete ' + fileName + '?'))
+		{
+			$.webapi({
+				action: 'inspectJobDirectory',
+				params: { jobID: circus.jobID, delete: fileName },
+				onSuccess: refresh
+			});
 		}
 	}
 
@@ -73,11 +118,13 @@
 		{
 			row.removeClass('job-file-expanded');
 			row.find('.job-file-preview').remove();
+			align();
 		}
 		else
 		{
 			row.addClass('job-file-expanded');
 			preview(row);
+			align();
 		}
 	}
 
@@ -116,6 +163,7 @@
 						{
 							alert("Error\n" + data);
 						}
+						file.val('');
 						refresh();
 						submit.enable();
 					},
@@ -123,10 +171,16 @@
 				);
 			});
 		}
+
+		deleteButton = $('<button>').addClass('job-file-delete').button({
+			icons: { primary: 'ui-icon-close' },
+			text: false
+		}).click(deleteClicked).appendTo(self).hide();
 	}
 
 	function refresh()
 	{
+		entryLeave();
 		$.webapi({
 			action: 'inspectJobDirectory',
 			params: {
