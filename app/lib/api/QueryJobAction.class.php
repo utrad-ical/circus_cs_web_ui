@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Public Web API for search CAD job.
+ * @author Yukihiro Ohno <y-ohno@j-mac.co.jp>
+ * @author Soichiro Miki <smiki-tky@umin.ac.jp>
+ */
 class QueryJobAction extends ApiActionBase
 {
 	const studyUID  = "studyuid";
@@ -11,6 +16,7 @@ class QueryJobAction extends ApiActionBase
 
 	protected static $rules = array(
 		'studyUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
+		'accessionNumber' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
 		'seriesUID' => array('type' => 'array', 'childrenRule' => array('type' => 'string')),
 		'jobID' => array('type' => 'array', 'childrenRule' => array('type' => 'int')),
 		'show' => array('type' => 'select', 'options' => array('queue_list', 'error_list')),
@@ -20,6 +26,7 @@ class QueryJobAction extends ApiActionBase
 	{
 		// Check for number of conditions specified
 		if (count($params['studyUID'])) $conditions++;
+		if (count($params['accessionNumber'])) $conditions++;
 		if (count($params['seriesUID'])) $conditions++;
 		if (count($params['jobID'])) $conditions++;
 		if ($params['show']) $conditions++;
@@ -32,7 +39,11 @@ class QueryJobAction extends ApiActionBase
 
 		if ($params['studyUID'])
 		{
-			$result = $this->query_job_study($params['studyUID']);
+			$result = $this->query_job_study($params['studyUID'], 'study_instance_uid');
+		}
+		elseif ($params['accessionNumber'])
+		{
+			$result = $this->query_job_study($params['accessionNumber'], 'accession_number');
 		}
 		elseif ($params['seriesUID'])
 		{
@@ -118,11 +129,9 @@ class QueryJobAction extends ApiActionBase
 		return $results;
 	}
 
-	function query_job_study($studyArr)
+	function query_job_study($studyArr, $field)
 	{
 		$sqlStr = 'select'
-		. '  sl.study_instance_uid,'
-		. '  sl.series_instance_uid,'
 		. '  esl.job_id'
 		. ' from'
 		. '  executed_series_list esl'
@@ -130,8 +139,12 @@ class QueryJobAction extends ApiActionBase
 		. '  series_list sl'
 		. ' on'
 		. '  sl.sid = esl.series_sid'
+		. ' left join'
+		. '  study_list st'
+		. ' on'
+		. '  st.study_instance_uid = sl.study_instance_uid'
 		. ' where'
-		. '  sl.study_instance_uid = ?';
+		. "  st.$field = ?";
 
 		$jobIDArr = array();
 		foreach ($studyArr as $s)
