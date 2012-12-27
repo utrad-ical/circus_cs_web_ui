@@ -9,6 +9,7 @@ class CadPresentation
 	private $_displayPresenter;
 	private $_feedbackListener;
 	private $_extensions = array();
+	private $_extHash = array();
 	private $_owner;
 
 	public function __construct($fileName, Plugin $owner)
@@ -35,6 +36,11 @@ class CadPresentation
 	public function extensions()
 	{
 		return $this->_extensions;
+	}
+
+	public function extensionByName($class)
+	{
+		return $this->_extHash[$class];
 	}
 
 	protected function instanciateOne($class, array $params = array())
@@ -81,7 +87,9 @@ class CadPresentation
 			}
 			else if ($this->is_a($class, 'CadResultExtension'))
 			{
-				$this->_extensions[] = $this->instanciateOne($class, $params);
+				$inst = $this->instanciateOne($class, $params);
+				$this->_extensions[] = $inst;
+				$this->_extHash[$class] = $inst;
 			}
 			else
 			{
