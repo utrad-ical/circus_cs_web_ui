@@ -24,7 +24,27 @@ class Patient extends Model
 	 */
 	public function age()
 	{
-		return CalcAge($this->_data['birth_date'], date('Ymd'));
+		return $this->calcAge($this->_data['birth_date'], date('Ymd'));
+	}
+
+	/**
+	* Utility function to calculate age.
+	* @param string $birthDate The date of birth in 'YYYY-MM-DD' or 'YYYYMMDD'
+	* format (hyphens are optinal).
+	* @param string $baseDate The date at which we calculate age
+	* (typically today).
+	* @return string The calculated age. Return -1 if invalid date is passed.
+	*/
+	protected function calcAge($birthDate, $baseDate)
+	{
+		$birthDate = str_replace('-', '', $birthDate);
+		$baseDate  = str_replace('-', '', $baseDate);
+
+		if(!checkdate(substr($birthDate,4,2), substr($birthDate,6,2), substr($birthDate,0,4)))	return -1;
+		if(!checkdate(substr($baseDate,4,2),  substr($baseDate,6,2),  substr($baseDate,0,4)))	return -1;
+
+		if($baseDate < $birthDate)	return -1;
+		else						return (int)(($baseDate - $birthDate) / 10000);
 	}
 
 	public function __get($key)

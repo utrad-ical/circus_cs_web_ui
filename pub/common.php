@@ -8,13 +8,13 @@ $CIRCUS_CS_VERSION = "3.3";
 $DIR_SEPARATOR = DIRECTORY_SEPARATOR;
 $DIR_SEPARATOR_WEB = '/';
 
-$BASE_DIR          = "C:\\CIRCUS-CS";
-$APP_DIR           = $BASE_DIR . $DIR_SEPARATOR . "apps";
-$CONF_DIR          = $BASE_DIR . $DIR_SEPARATOR . "config";
-$PLUGIN_DIR        = $BASE_DIR . $DIR_SEPARATOR . "plugins";
-$LOG_DIR           = $BASE_DIR . $DIR_SEPARATOR . "logs";
-$WEB_UI_ROOT       = $BASE_DIR . $DIR_SEPARATOR . "web_ui";
-$WEB_UI_LIBDIR     = $WEB_UI_ROOT . $DIR_SEPARATOR . "app" . $DIR_SEPARATOR . "lib";
+$BASE_DIR          = dirname(dirname(__DIR__));
+$APP_DIR           = "$BASE_DIR/apps";
+$CONF_DIR          = "$BASE_DIR/config";
+$PLUGIN_DIR        = "$BASE_DIR/plugins";
+$LOG_DIR           = "$BASE_DIR/logs";
+$WEB_UI_ROOT       = "$BASE_DIR/web_ui";
+$WEB_UI_LIBDIR     = "$WEB_UI_ROOT/app/lib";
 $SUBDIR_CAD_RESULT = "cad_results";
 
 $CONFIG_DICOM_STORAGE = "DICOMStorageServer.ini";
@@ -22,11 +22,11 @@ $CONFIG_DICOM_STORAGE = "DICOMStorageServer.ini";
 $LOGIN_LOG               = "loginUser_log.txt";
 $LOGIN_ERROR_LOG         = "loginUser_errlog.txt";
 
-$cmdCreateThumbnail = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "createThumbnail.exe");
-$cmdForProcess  = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "Wrap_CreateProcess.exe");
-$cmdDcmToVolume = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "dcm2volume.exe");
-$cmdDcmToPng = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "dcm2png.exe");
-$cmdDcmCompress = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "CompressDcmFile.exe");
+$cmdCreateThumbnail = "$APP_DIR/createThumbnail.exe";
+$cmdForProcess  = "$APP_DIR/Wrap_CreateProcess.exe";
+$cmdDcmToVolume = "$APP_DIR/dcm2volume.exe";
+$cmdDcmToPng = "$APP_DIR/dcm2png.exe";
+$cmdDcmCompress = "$APP_DIR/CompressDcmFile.exe";
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ $cmdDcmCompress = sprintf("%s%s%s", $APP_DIR, $DIR_SEPARATOR, "CompressDcmFile.e
 set_include_path(get_include_path() . PATH_SEPARATOR . $WEB_UI_LIBDIR);
 
 spl_autoload_register(function($class) {
-	global $WEB_UI_LIBDIR, $DIR_SEPARATOR;
+	global $WEB_UI_LIBDIR;
 
 	// First use include path with no absolute path specified!
 	@include_once("$class.class.php");
@@ -52,7 +52,7 @@ spl_autoload_register(function($class) {
 		$path = $item[0];
 		$pattern = $item[1];
 		if ($pattern && !preg_match($pattern, $class)) continue;
-		$file = "$WEB_UI_LIBDIR$DIR_SEPARATOR$path$class.class.php";
+		$file = "$WEB_UI_LIBDIR/$path$class.class.php";
 		if (file_exists($file))
 		{
 			include_once($file);
@@ -79,7 +79,8 @@ $SESSION_TIME_LIMIT = 3600;
 //------------------------------------------------------------------------------
 // Variables for modality list and CAD log
 //------------------------------------------------------------------------------
-$modalityList = array('all', 'CT', 'MR', 'CR', 'DX', 'XA', 'NM', 'PT', 'US', 'RF', 'RG', 'MG', 'OT');
+$modalityList = array('all', 'CT', 'MR', 'CR', 'DX', 'XA',
+	'NM', 'PT', 'US', 'RF', 'RG', 'MG', 'OT');
 
 $PATIENT_LIST_PER_PAGE = 10;
 $CAD_LOG_PER_PAGE = 20;
@@ -94,44 +95,8 @@ $RESERVED_USER_LIST = array($DEFAULT_CAD_PREF_USER, 'server_service');
 //------------------------------------------------------------------------------
 
 /**
- * Retrieve DICOM file list in the selected path.
- */
-function GetDicomFileListInPath($path)
-{
-	$tmpFlist = scandir($path);
-
-	$flist = array();
-
-	for($i=0; $i < count($tmpFlist); $i++)
-	{
-		if(preg_match('/\\.dcm$/i', $tmpFlist[$i]))  $flist[] = $tmpFlist[$i];
-	}
-
-	return $flist;
-}
-
-/**
- * Utility function to calculate age.
- * @param string $birthDate The date of birth in 'YYYY-MM-DD' or 'YYYYMMDD'
- * format (hyphens are optinal).
- * @param string $baseDate The date at which we calculate age
- * (typically today).
- * @return string The calculated age. Return -1 if invalid date is passed.
- */
-function CalcAge($birthDate, $baseDate)
-{
-	$birthDate = str_replace('-', '', $birthDate);
-	$baseDate  = str_replace('-', '', $baseDate);
-
-	if(!checkdate(substr($birthDate,4,2), substr($birthDate,6,2), substr($birthDate,0,4)))	return -1;
-	if(!checkdate(substr($baseDate,4,2),  substr($baseDate,6,2),  substr($baseDate,0,4)))	return -1;
-
-	if($baseDate < $birthDate)	return -1;
-	else						return (int)(($baseDate - $birthDate) / 10000);
-}
-
-/**
  * Utility function to encode key/value pair into urlencoded format.
+ * @deprecated
  */
 function UrlKeyValPair($key, $val)
 {
@@ -144,8 +109,6 @@ function UrlKeyValPair($key, $val)
  */
 function DeleteDirRecursively($dir)
 {
-	global $DIR_SEPARATOR;
-
 	if(is_dir($dir))
 	{
 		$objects = scandir($dir);
@@ -154,9 +117,11 @@ function DeleteDirRecursively($dir)
 		{
 			if($object != "." && $object != "..")
 			{
-				$fname = $dir . $DIR_SEPARATOR . $object;
-				if(filetype($fname) == "dir")		DeleteDirRecursively($fname);
-				else								unlink($fname);
+				$fname = "$dir/$object";
+				if(filetype($fname) == "dir")
+					DeleteDirRecursively($fname);
+				else
+					unlink($fname);
 			}
 		}
 		reset($objects);
@@ -165,37 +130,6 @@ function DeleteDirRecursively($dir)
 	return TRUE;
 }
 
-/**
- * Recursively copy a directory that is not empty.
- * @param string $srcDir The path of source directory.
- * @param string $dstDir The path of destination directory
- */
-function CopyDirRecursively($srcDir, $dstDir)
-{
-	global $DIR_SEPARATOR;
-
-	if(is_dir($srcDir))
-	{
-		if(!is_dir($dstDir))  mkdir($dstDir);
-
-		$objects = scandir($srcDir);
-
-		foreach( $objects as $file )
-		{
-			if( $file == "." || $file == ".." )  continue;
-
-			if( is_dir($srcDir.$DIR_SEPARATOR.$file) )
-			{
-				CopyDirRecursively($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
-			}
-			else
-			{
-				copy($srcDir.$DIR_SEPARATOR.$file, $dstDir.$DIR_SEPARATOR.$file);
-			}
-		}
-	}
-	return TRUE;
-}
 
 /**
  * Finds the web root directory as relative path from the current directory.
