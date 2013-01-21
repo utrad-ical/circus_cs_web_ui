@@ -209,11 +209,11 @@ function ChangeCADMenu(source, seriesID, menuID)
 
 			if(jobStatus == -1)
 			{
-				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Fail to execute</span>');
+				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Failed to execute</span>');
 			}
 			else if(source == 'todaysSeriesList')
 			{
-				$("#cadInfo"+seriesID).html('<span style="color:#f00;">Not executed</span>');
+				$("#cadInfo"+seriesID).html('<span style="color:#00f;">Not executed</span>');
 			}
 			else
 			{

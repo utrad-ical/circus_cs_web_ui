@@ -156,7 +156,7 @@ jq/ui/theme/jquery-ui.custom.css
 
 								<input type="button" id="resultButton{$smarty.foreach.cnt.iteration}" name="resultButton{$smarty.foreach.cnt.iteration}" value="Result" onclick="ShowCADResultFromSeriesList({$smarty.foreach.cnt.iteration}, {$smarty.session.personalFBFlg});" class="s-btn form-btn"{if $item[14][0][3]<4} style="display:none;"{/if} />
 								<div id="cadInfo{$smarty.foreach.cnt.iteration}">
-									{if $item[14][0][4] != ''}Executed at {$item[14][0][4]|escape}{elseif 0<$item[14][0][3] && $item[14][0][3]<4}Registered in CAD job list{elseif $item[14][0][3]==-1}<span style="color:#f00;">Fail to execute</span>{elseif $params.mode == 'today'}<span style="color:#f00;">Not executed</span>{else}&nbsp;{/if}
+									{if $item[14][0][4] != ''}Executed at {$item[14][0][4]|escape}{elseif 0<$item[14][0][3] && $item[14][0][3]<4}Registered in CAD job list{elseif $item[14][0][3]==-1}<span style="color:#f00;">Failed to execute</span>{elseif $params.mode == 'today'}<span style="color:#00f;">Not executed</span>{else}&nbsp;{/if}
 								</div>
 
 							{else}
