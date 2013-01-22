@@ -6,3 +6,5 @@ config/db.ini
 Thumbs.db
 /plugin/*
 /pub/plugin/*
+updater.log
+migrator.log

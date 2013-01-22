@@ -156,16 +156,32 @@ abstract class Model implements Iterator
 		return isset($this->_data[$name]);
 	}
 
-	public function save($data)
+	/**
+	 * Update the current data, or save new data.
+	 * @param array $data The data to be saved.
+	 * @param bool $upsert Whether to update existing record if already exists.
+	 * @throws BadMethodCallException
+	 */
+	public function save(array $data, $upsert = false)
 	{
 		$class = get_class($this);
-		$table = $class::$_table;
-		$pkey = $class::$_primaryKey;
+		$table = static::$_table;
+		$pkey = static::$_primaryKey;
 		$obj = $data[$class];
 		$tableAsSqlView = $class::$_tableAsSqlView;
 
 		if($tableAsSqlView)
 			throw new BadMethodCallException('You can not save to SQL view');
+
+		if ($upsert)
+		{
+			$dummy = static::selectOne(array($pkey => $obj[$pkey]));
+			if ($dummy)
+			{
+				$dummy->save($data);
+				return;
+			}
+		}
 
 		if ($this->_data[$pkey])
 		{

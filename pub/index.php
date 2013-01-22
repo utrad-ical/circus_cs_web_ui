@@ -5,14 +5,24 @@
 
 	function displayLoginPage($message = '')
 	{
-		global $CIRCUS_CS_VERSION;
+		global $CIRCUS_CS_VERSION, $CIRCUS_REVISION;
+		$rev = intval(ServerParam::getVal('revision'));
 		$smarty = new SmartyEx();
+		if ($rev < $CIRCUS_REVISION)
+		{
+			$smarty->assign(
+				'critical_error',
+				"This CIRCUS CS installation is not complete.\n" .
+				"Consult the administrator and run the migration script."
+			);
+		}
 		$smarty->assign('version', $CIRCUS_CS_VERSION);
 		$smarty->assign('message', $message);
 		$smarty->display('login_disp.tpl');
 	}
 
 	$mode = $_REQUEST['mode'];
+
 
 	switch ($mode)
 	{

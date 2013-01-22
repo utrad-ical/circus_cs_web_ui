@@ -5,11 +5,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>CIRCUS CS {$version}</title>
 <link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
-<script language="javascript" type="text/javascript" src="jq/jquery.min.js"></script>
+<script type="text/javascript" src="jq/jquery.min.js"></script>
 <link rel="shortcut icon" href="favicon.ico" />
 
 {literal}
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 <!--
 $(function()
 {
@@ -24,42 +24,32 @@ $(function()
 </script>
 
 <style type="text/css" media="all,screen">
-<!--
 body {
 	background-color: #b4ebfa;
 	margin: 0 auto;
 	text-align: center;
 }
 #login-pnl {
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 100px;
-	width: 407px;
-	height: 270px;
+	margin: 100px auto 0;
+	width: 357px;
+	height: 250px;
+	padding: 20px 25px 0 25px;
 	background: #396 url(images/login_bk.png) no-repeat;
 }
-.longin-pnl-innner {
+label {
+	display: block;
+	margin: 3px auto;
+	padding: 3px 0;
 	width: 295px;
-	margin: 0 auto;
-	padding-top: 70px;
-	text-align: center;
-}
-table.login-tbl {
-	width: 100%;
-	font-size: 12px;
-}
-table.login-tbl th,
-table.login-tbl td {
 	background-color: #e0e0e0;
-	color: #404040;
-	padding: 5px;
-	border-bottom: 5px solid #fff;
 }
-table.login-tbl td {
-	text-align: left;
+label span {
+	display: inline-block;
+	width: 80px;
+	font-weight: bold;
 }
-.error-blk {
-	height: 30px;
+.message {
+	min-height: 30px;
 	font-weight: bold;
 	color: red;
 }
@@ -70,18 +60,16 @@ input.field {
 input.login-btn {
 	background:url(images/login_btn_bk_new2.jpg) repeat-x;
 	border: 1px solid #444;
-	padding-bottom: 3px;
 	width: 100px;
 	height: 23px;
+	line-height: 23px;
 	cursor: pointer;
 }
 p.version {
 	text-align: right;
-	margin-right: 30px;
-	padding-top: 20px;
+	margin: 5px 5px 70px 0;
 	color: gray;
 }
--->
 </style>
 {/literal}
 
@@ -90,23 +78,27 @@ p.version {
 <body>
 <div id="login-pnl">
 <form action="index.php" method="post">
-	<p class="version">clinical server {$version}</p>
-	<div class="longin-pnl-innner">
-		<table class="login-tbl">
-			<tr>
-				<th style="width: 80px;">User ID</th>
-				<td><input type="text" name="userID" value="" class="field" /></td>
-			</tr>
-			<tr>
-				<th>Password</th>
-				<td><input type="password" name="pswd" value="" class="field" /></td>
-			</tr>
-		</table>
+	<p class="version">Clinical Server {$version|escape}</p>
+	{if $critical_error}
+	<div id="critical-error">
+		<p class="message">{$critical_error|escape|nl2br}</p>
 	</div>
-	<div id="messageArea" class="error-blk">
-		{$message}
+	{else}
+	<div id="normal-login">
+		<label>
+			<span>User ID</span>
+			<input type="text" name="userID" value="" class="field" autofocus="autofocus" />
+		</label>
+		<label>
+			<span>Password</span>
+			<input type="password" name="pswd" value="" class="field" />
+		</label>
+		<p id="messageArea" class="message">
+			{$message|escape}
+		</p>
+		<input type="submit" id="mode" name="mode" value="Login" class="login-btn" />
 	</div>
-	<input type="submit" id="mode" name="mode" value="Login" class="login-btn" />
+	{/if}
 </form>
 </div>
 </body>

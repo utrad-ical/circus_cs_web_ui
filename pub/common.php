@@ -1,6 +1,10 @@
 <?php
 
-$CIRCUS_CS_VERSION = "3.3.2";
+call_user_func(function() {
+	$tmp = json_decode(file_get_contents(dirname(__DIR__) . '/version.json'), true);
+	$GLOBALS['CIRCUS_CS_VERSION'] = $tmp['CIRCUS_CS_VERSION'];
+	$GLOBALS['CIRCUS_REVISION'] = $tmp['REVISION'];
+});
 
 //------------------------------------------------------------------------------
 // Define directories, commands, etc.
