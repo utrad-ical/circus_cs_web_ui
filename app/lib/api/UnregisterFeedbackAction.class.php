@@ -27,11 +27,11 @@ class UnregisterFeedbackAction extends ApiActionBase
 	 * (set by CAD result policy) has not passed.
 	 * (2) You have serverOperation privilege.
 	 * @param CadResult $cad_result The CadResult object.
-	 * @param string $user The target user ID. If null, the personal feedback
+	 * @param string $user_id The target user ID. If null, the personal feedback
 	 * for the current user is the target.
 	 * @return Feedback The Feedback object if it can be gracefully unregistered.
 	 */
-	protected function checkPersonal(CadResult $cad_result, $user = null)
+	protected function checkPersonal(CadResult $cad_result, $user_id = null)
 	{
 		$policy = $cad_result->PluginResultPolicy;
 		if (!$policy)
@@ -70,7 +70,7 @@ class UnregisterFeedbackAction extends ApiActionBase
 			}
 		}
 
-		$fb = $cad_result->queryFeedback('personal', $target_user->user_id);
+		$fb = $cad_result->queryFeedback('user', $target_user->user_id);
 		if (count($fb) == 0)
 		{
 			throw new ApiOperationException(
@@ -148,7 +148,7 @@ class UnregisterFeedbackAction extends ApiActionBase
 	{
 		$cad_result = new CadResult($job_id);
 		if (!$cad_result || !$cad_result->job_id)
-			throw new ApiSystemException('CAD result not found.'); // fetal
+			throw new ApiSystemException('CAD result not found.');
 
 		if ($is_consensual)
 		{

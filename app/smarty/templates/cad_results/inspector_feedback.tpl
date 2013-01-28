@@ -11,7 +11,7 @@ Number of feedback: {$inspector_feedback|@count|number_format}
 		<tr{if $item.type == 'Consensual'} class="column"{/if}>
 			<td class="name themeColor">{$item.type|escape}</td>
 			<td>
-				{$item.registerer|escape}
+				<span class="inspector-feedback-registerer">{$item.registerer|escape}</span>
 				{if $item.type == 'Consensual' && $currentUser->hasPrivilege('serverOperation')
 					|| $item.type != 'Consensual' && $currentUser->hasPrivilege('consensualFeedbackModify')}
 					<p><input class="form-btn inspector-unreg" type="button" value="Delete/Unregister" /></p>
@@ -39,7 +39,7 @@ $(function() {
 	$('.inspector-unreg').each(function() {
 		var tr = $(this).closest('tr');
 		var type = $('td:eq(0)', tr).text() == 'Consensual' ? 'consensual' : 'personal';
-		var user = $('td:eq(1)', tr).text();
+		var user = $('td:eq(1) .inspector-feedback-registerer', tr).text();
 		$(this).click(function() {
 			var params = { feedbackMode: type, jobID: circus.jobID, dryRun: 1 };
 			if (type == 'personal') params.user = user;
