@@ -5,6 +5,41 @@
  * @author Yukihiro NOMURA <nomuray-tky@umin.ac.jp>
  */
 
+/**
+ * Recursively delete a directory that is not empty.
+ * @param string $dir The path to the directory to delete.
+ * @param DateTime $rmDate condition for date/time of deleting files
+ * @param boolean $selfDeleteFlg Flag for deleting root directory
+ */
+function DeleteDirRecursivelyWithDateCondition($dir, $rmDate, $selfDeleteFlg)
+{
+	if(is_dir($dir))
+	{
+		$objects = scandir($dir);
+		
+		$fileDate = new DateTime();
+		
+		foreach ($objects as $object)
+		{
+			if($object != "." && $object != "..")
+			{
+				$fileName = "$dir/$object";
+				if(filetype($fileName) == "dir")
+					DeleteDirRecursivelyWithDateCondition($fileName, $rmDate, true);
+				else
+					$fileDate->setTimestamp(filemtime($fileName));
+					
+					if($fileDate < $rmDate)  @unlink($fileName);
+			}
+		}
+		reset($objects);
+		if($selfDeleteFlg == true)  rmdir($dir);
+	}
+	return true;
+}
+
+
+
 include_once("../../pub/common.php");
 
 $DEFAULT_RM_DATES = '-1 week';
@@ -18,21 +53,7 @@ try
 
 	foreach($pathList as $path)
 	{
-		$objects = scandir($path);
-
-		$fileDate = new DateTime();
-
-		foreach ($objects as $object)
-		{
-			if($object != "." && $object != "..")
-			{
-				$fileName = $path . $DIR_SEPARATOR . $object;
-
-				$fileDate->setTimestamp(filemtime($fileName));
-
-				if($fileDate < $rmDate)  @unlink($fileName);
-			}
-		}
+		DeleteDirRecursivelyWithDateCondition($path, $rmDate, false);
 	}
 
 }
