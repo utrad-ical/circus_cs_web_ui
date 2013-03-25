@@ -81,8 +81,6 @@ function show_cad_results($jobID, $feedbackMode) {
 
 	foreach($feedbackList as $item)
 	{
-		$item->loadFeedback();
-
 		if($item->is_consensual && $item->status == Feedback::REGISTERED)
 		{
 			$registerConsensualFeedbackFlg = 1;
@@ -129,7 +127,6 @@ function show_cad_results($jobID, $feedbackMode) {
 		return true;
 	};
 	$smarty->default_template_handler_func = $template_handler;
-
 
 	$displayPresenter = $cadResult->Plugin->presentation()->displayPresenter();
 	$displayPresenter->setSmarty($smarty);
