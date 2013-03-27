@@ -13,7 +13,7 @@ Required CSS file:
 	layout.css
 *}
 <div class="result-block">
-<input type="hidden" class="display-id" name="display_id" value="{$display.display_id}" />
+<input type="hidden" class="display-id" name="display_id" value="{$display_id}" />
 <div class="display-pane">
 {displayPresenter}
 </div><!-- /display-pane -->

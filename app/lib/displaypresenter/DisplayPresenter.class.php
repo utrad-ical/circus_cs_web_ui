@@ -84,7 +84,6 @@ class DisplayPresenter extends CadBlockElement
 		switch ($this->params['displayExtractType'])
 		{
 			case 'all':
-				$input['display_id'] = 1;
 				$result = array(1 => $input);
 				break;
 			case 'row':
