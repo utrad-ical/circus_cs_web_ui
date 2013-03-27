@@ -46,6 +46,8 @@ try {
 	$cadResult = new CadResult($job_id);
 	if (!$cadResult->job_id)
 		throw new Exception('No CAD result found for the specified Job ID.');
+	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->Plugin->configurationPath());
+
 	$reason = 'You can not enter the feedback for unknown reason.';
 	if ($is_consensual)
 		$av = $cadResult->feedbackAvailability('consensual', $currentUser, $reason);
