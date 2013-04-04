@@ -5,7 +5,7 @@ js/search_panel.js
 js/edit_tags.js
 js/download_volume.js
 jq/ui/theme/jquery-ui.custom.css
-jq/jquery.mousewheel.min.js
+jq/jquery.mousewheel.js
 js/jquery.imageviewer.js
 css/darkroom.css
 {/capture}
