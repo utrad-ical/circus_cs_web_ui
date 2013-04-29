@@ -3,7 +3,6 @@
 class DeleteJobAction extends ApiActionBase
 {
 	protected static $required_privileges = array(Auth::SERVER_SETTINGS);
-	protected static $internal = true;
 
 	protected static $rules = array(
 		'jobID' => array('type' => 'int', 'required' => true)

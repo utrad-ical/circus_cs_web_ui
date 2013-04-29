@@ -9,5 +9,5 @@ class InternalCountImagesAction extends CountImagesAction
 		Auth::VOLUME_DOWNLOAD
 	);
 
-	protected static $internal = true;
+	protected static $public = false;
 }

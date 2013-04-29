@@ -2,6 +2,8 @@
 
 class CountImagesAction extends ApiActionBase
 {
+	protected static $public = true;
+
 	protected function execute($params)
 	{
 		$seriesUIDs = $params['seriesInstanceUID'];
