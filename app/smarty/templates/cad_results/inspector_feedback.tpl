@@ -52,7 +52,7 @@ $(function() {
 						'Do you really want to unregister feedback or completely delete it?',
 						['Cancel', 'Delete Completely', 'Unregister (edit again)'],
 						function(choice) {
-							if (choice == 1) { params.delete = 1; unreg(params); }
+							if (choice == 1) { params.deleteFlg = 1; unreg(params); }
 							if (choice == 2) { unreg(params); }
 						},
 						{ width: '40em' }
