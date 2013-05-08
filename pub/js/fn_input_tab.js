@@ -199,7 +199,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 			var tbl = $('#fn-input-table tbody');
 			tbl.find('tr').remove();
 			var markers = f._viewer.imageviewer('option', 'markers');
-			console && console.log(markers);
+			// console && console.log(markers);
 			var markerCount = markers.length;
 			for (var i = 0; i < markerCount; i++)
 			{

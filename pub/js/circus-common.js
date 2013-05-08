@@ -197,7 +197,7 @@ $.extend({
 	'webapi': function(options) {
 		function defaultFailedHandler(errorMessage, data)
 		{
-			console && console.log(errorMessage, data);
+			// console && console.log(errorMessage, data);
 			alert("API Error:\n" + errorMessage)
 		}
 

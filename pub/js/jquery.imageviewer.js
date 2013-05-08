@@ -476,7 +476,7 @@ var DicomDynamicImageSource = function(series_instance_uid, toTopDir){
 		if (result.status != 'OK')
 		{
 			cacheval.error = result.error.message;
-			console && console.log(result.error.message, req);
+			// console && console.log(result.error.message, req);
 		}
 		if (result.imgFname && result.sliceNumber)
 		{
