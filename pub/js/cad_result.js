@@ -82,7 +82,7 @@ circus.feedback = function() {
 					if (tmp.message)
 					{
 						var mes = caption + ': <span class="register-not-ok">' + tmp.message + '</span>';
-						if (messages.indexOf(mes) == -1)
+						if ($.inArray(mes, messages) == -1)
 						messages.push(mes);
 					}
 				}
@@ -96,7 +96,7 @@ circus.feedback = function() {
 					if (!tmp.register_ok) {
 						register_ok = false;
 					}
-					if (tmp.message && messages.indexOf(tmp.message) == -1)
+					if (tmp.message && $.inArray(tmp.message, messages) == -1)
 						messages.push(tmp.message);
 				}
 			}

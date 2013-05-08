@@ -21,7 +21,7 @@ $(function () {
 		var editor = $('#editor');
 		$('input.privCheck', editor).each(function () {
 			var targetPriv = $(this).val();
-			var checked = group_data.privs.indexOf(targetPriv) >= 0;
+			var checked = $.inArray(targetPriv, group_data.privs) >= 0;
 			if (checked)
 				$(this).attr('checked', 'checked');
 			else
