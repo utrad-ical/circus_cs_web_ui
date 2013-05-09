@@ -81,6 +81,7 @@ $.widget('ui.daterange', {
 			if (item.stripe)
 				opt.addClass('ui-daterange-stripe')
 		}
+		if (self.options.kind === null) self.options.kind = self._types[0].label;
 		self.kindSelect = kindSelect;
 
 		var customField = $('<span>')
