@@ -64,7 +64,7 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 <ul>
 	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI
 	<li>DICOM storage server: DCMTK 3.6.0, PostgreSQL
-	<li>External application for research function: R 2.13.2, gnuplot 4.4
+	<li>External application for research function: R 2.15.3, gnuplot 4.4
 </ul>
 
 <p>Currently, Win32 and Win64 versions are released. UNIX version will be available in the near future. </p>
@@ -79,7 +79,7 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 	<dd>concept design, engineering supervision, and project direction</dd>
 	<dt>Naoto HAYASHI, MD PhD</dt>
 	<dd>clinical supervision</dd>
-	<dt>Soichiro MIKI, MD</dt>
+	<dt>Soichiro MIKI, MD PhD</dt>
 	<dd>clinical advice, and coding</dd>
 	<dt>Takeharu YOSHIKAWA, MD PhD</dt>
 	<dd>clinical advice</dd>
