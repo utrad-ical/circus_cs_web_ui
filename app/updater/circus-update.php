@@ -68,6 +68,7 @@ class CircusUpdater
 			$this->fileUpdate($archiveName);
 		}
 
+
 		// Update complete.
 		// Migration is done in another process, so that it can be updated
 		// just before the migration.
@@ -87,7 +88,7 @@ class CircusUpdater
 		$this->log("Welcome to CIRCUS CS Updater.");
 		$this->log("-----------------------------");
 		$this->log("Current Version:     $CIRCUS_CS_VERSION");
-		$this->log("Current DB Revision: " . $this->_oldRevision);
+		$this->log("Current DB Revision: " . $this->_oldRevision . "\n");
 	}
 
 	protected function fileUpdate($archiveName)
@@ -111,8 +112,8 @@ class CircusUpdater
 				$v = json_decode($zip->getFromIndex($i), true);
 				$this->_newVersion = $v['CIRCUS_CS_VERSION'];
 				$this->_newRevision = $v['REVISION'];
-				$this->log("CIRCUS CS update file found.");
-				$this->log("New version={$this->_newVersion}, New revision={$this->_newRevision}");
+				$this->log("CIRCUS CS update file found.", 1);
+				$this->log("New version={$this->_newVersion}, New revision={$this->_newRevision}", 1);
 				break;
 			}
 		}
@@ -131,19 +132,22 @@ class CircusUpdater
 		}
 
 		// Final check to execute update.
-		print "This will update CIRCUS CS ver. $CIRCUS_CS_VERSION to {$this->_newVersion}.\n";
-		print "Before proceeding, make sure that your data are backed up.\n";
+		$this->log('');
+		$this->log("This will update CIRCUS CS ver. $CIRCUS_CS_VERSION to {$this->_newVersion}.");
+		$this->log("+--- WARNING -------------------------------------------------+");
+		$this->log("|  Before proceeding, make sure that your data are backed up! |");
+		$this->log("+-------------------------------------------------------------+");
 		print "Continue? ";
 		if (!$this->inputYesNo()) exit();
 
-		print "Extracting ZIP archive...\n";
+		$this->log("Extracting ZIP archive...");
 		for ($i = 0; $i < $num; $i++)
 		{
 			$name = $zip->getNameIndex($i);
 			$this->log("Extracting file $name", 1);
 			$this->_zip->extractTo($BASE_DIR, $name);
 		}
-		print "Extraction finished.\n\n";
+		$this->Log("Extraction finished.");
 	}
 
 	protected function log($message, $depth = 0)
@@ -156,7 +160,7 @@ class CircusUpdater
 
 	protected function inputYesNo()
 	{
-		print "[Y/n]";
+		print "[Y/n] ";
 		$char = fgets(STDIN);
 		if (preg_match('/\s*Y(es)?\s*/i', $char))
 			return true;

@@ -38,6 +38,7 @@ class CircusMigrator
 		ServerParam::setVal('hoge', 3);
 		global $CIRCUS_REVISION;
 
+		print "\n";
 		$this->log("Welcome to CIRCUS CS DB Migrator.");
 		$this->log("---------------------------------");
 
@@ -61,15 +62,16 @@ class CircusMigrator
 		$queue = $this->survey();
 		$this->log("-> " . count($queue) . " file(s) to update.", 1);
 
+		$db = DBConnector::getConnection();
 		foreach ($queue as $rev => $migration)
 		{
-			$this->log("Updating to revision $rev ({$item[2]})");
+			$this->log("Updating to revision $rev...");
 			if (isset($migration[self::SQL]))
 			{
 				$this->log("Executing SQL update for revision $rev", 1);
 				$file = __DIR__ . "/revisions/" . $migration[self::SQL];
 				$sql = file_get_contents($file);
-				DBConnector::query($sql);
+				$db->exec($sql);
 			}
 			if (isset($migration[self::PHP]))
 			{
@@ -84,7 +86,7 @@ class CircusMigrator
 			$this->log("Updated to revision $rev");
 		}
 
-		// ServerParam::setVal('revision', $CIRCUS_REVISION);
+		$this->log("CIRCUS CS DB Struture is now up to date.");
 	}
 
 	protected function survey()
