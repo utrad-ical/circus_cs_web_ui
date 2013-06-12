@@ -68,6 +68,11 @@ jq/ui/theme/jquery-ui.custom.css
 		<table class="col-tbl" style="width: 100%;">
 			<thead>
 				<tr>
+			     {if $smarty.session.colorSet == "admin"}
+                    <th rowspan="2">
+                        {if $params.orderCol=='JobID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('JobID', '{if $params.orderCol=='JobID' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Job ID</a></span>
+                    </th>
+                {/if}
 					<th rowspan="2">
 						{if $params.orderCol=='PatientID'}<span style="color:#fff; font-size:10px">{if $params.orderMode=="ASC"}&#9650;{else}&#9660;{/if}</span>{/if}<span><a onclick="ChangeOrderOfCADList('PatientID', '{if $params.orderCol=='PatientID' && $params.orderMode=="ASC"}DESC{else}ASC{/if}');">Patient ID</a></span>
 					</th>
@@ -136,6 +141,7 @@ jq/ui/theme/jquery-ui.custom.css
 
 					<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 
+			            {if $smarty.session.colorSet == "admin"}<td>{$item[9]|escape}</td>{/if}	
 						<td class="al-l"><a href="cad_log.php?filterPtID={$item[0]|escape}">{$item[0]|escape}</td>
 						<td class="al-l">{$item[1]|escape}</td>
 						<td>{$item[2]|escape}</td>

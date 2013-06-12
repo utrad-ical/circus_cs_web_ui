@@ -143,7 +143,7 @@
 				"otherwise"  => "all"),
 			"orderCol" => array(
 				"type" => "select",
-				"options" => array("PatientID","Name","Age","Sex","Series","CAD","CADdate"),
+				"options" => array("JobID","PatientID","Name","Age","Sex","Series","CAD","CADdate"),
 				"default" => "CADdate",
 				"otherwise" => "CADdate"),
 			"orderMode" => array(
@@ -525,6 +525,7 @@
 
 		switch($params['orderCol'])
 		{
+			case "JobID":		$orderColStr = 'el.job_id '       . $params['orderMode'];  break;
 			case "PatientID":	$orderColStr = 'pt.patient_id '   . $params['orderMode'];  break;
 			case "Name":		$orderColStr = 'pt.patient_name ' . $params['orderMode'];  break;
 			case "Age":			$orderColStr = 'st.age '          . $params['orderMode'];  break;
