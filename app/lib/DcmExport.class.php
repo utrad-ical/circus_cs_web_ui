@@ -36,7 +36,7 @@ class DcmExport
 			return false;
 
 		$cmdStr = sprintf(
-			'%s %s %s %d %d %d %d %d %s',
+			'"%s" "%s" "%s" %d %d %d %d %d "%s"',
 			$cmdCreateThumbnail, $srcFname, $dstFname,
 			$quality, $windowLevel, $windowWidth, $imgWidth, $imgHeight,
 			$dumpFname
