@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta charset="UTF-8" />
 <title>CIRCUS CS {$version}</title>
 <link href="css/layout.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="jq/jquery.min.js"></script>
@@ -10,17 +9,16 @@
 
 {literal}
 <script type="text/javascript">
-<!--
 $(function()
 {
-	// Detecting IE7 or below
-	if ($.browser.msie && $.browser.version < 8 || !JSON)
+	// Browswer detection
+	// (support.tbody distinguishes IE >=8 from <8)
+	if (typeof JSON != 'object' || !$.support.tbody)
 	{
 		$("#messageArea").text("Your browser is not supported.");
 		$("#mode").attr("disabled", "disabled");
 	}
 });
--->
 </script>
 
 <style type="text/css" media="all,screen">
