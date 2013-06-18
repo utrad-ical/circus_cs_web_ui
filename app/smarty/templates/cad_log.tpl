@@ -141,7 +141,7 @@ jq/ui/theme/jquery-ui.custom.css
 
 					<tr id="row{$smarty.foreach.cnt.iteration}" {if $smarty.foreach.cnt.iteration%2==0}class="column"{/if}>
 
-			            {if $smarty.session.colorSet == "admin"}<td>{$item[9]|escape}</td>{/if}	
+			            {if $smarty.session.colorSet == "admin"}<td>{$item[9]|escape}</td>{/if}
 						<td class="al-l"><a href="cad_log.php?filterPtID={$item[0]|escape}">{$item[0]|escape}</td>
 						<td class="al-l">{$item[1]|escape}</td>
 						<td>{$item[2]|escape}</td>
@@ -173,7 +173,7 @@ jq/ui/theme/jquery-ui.custom.css
 		</table>
 
 		{* ------ Hooter with page list --- *}
-		<div id="serp-paging" class="al-c mt10">
+		<div id="serp-paging" class="al-c" style="margin-top: 10px;">
 			{if $params.maxPageNum > 1}
 				{if $params.pageNum > 1}
 					<div><a href="{$params.pageAddress}&pageNum={$params.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
@@ -188,7 +188,7 @@ jq/ui/theme/jquery-ui.custom.css
 					{assign var="i" value=$smarty.section.i.index}
 
 					{if $i==$params.pageNum}
-						<div><span style="color: red" class="fw-bold">{$i}</span></div>
+						<div><span style="color: red; font-weight: bold;">{$i}</span></div>
 					{else}
 						<div><a href="{$params.pageAddress}&pageNum={$i}">{$i}</a></div>
 					{/if}
@@ -209,7 +209,7 @@ jq/ui/theme/jquery-ui.custom.css
 	<!-- / List -->
 	</div> <!-- / CAD log End -->
 
-	<div class="al-r fl-clr">
+	<div style="clear: both; text-align: right;">
 		<p class="pagetop"><a href="#page">page top</a></p>
 	</div>
 

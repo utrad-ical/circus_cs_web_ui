@@ -53,7 +53,7 @@
 		[Top {$cadExecutionData|@count}]</p>
 		<ul>
 			{foreach from=$cadExecutionData item=item}
-				<li class="ml10">{$item.plugin_name|escape}&nbsp;v.{$item.version|escape}: {$item.cnt|escape}</li>
+				<li>{$item.plugin_name|escape}&nbsp;v.{$item.version|escape}: {$item.cnt|escape}</li>
 			{/foreach}
 		</ul>
 	{/if}
@@ -61,10 +61,9 @@
 
 {if $smarty.session.personalFBFlg==1 && $smarty.session.latestResults!='none' && $latestHtml !=""}
 	<h2>Latest results</h2>
-	<div class="ml15">
+	<div style="margin-left: 15px;">
 		{$latestHtml}
 	</div>
-	<div class="fl-r"></div>
 {/if}
 
 {include file="footer.tpl"}

@@ -182,7 +182,7 @@ function ChangeCadMenu()
 <h2>User preference</h2>
 
 <h3>Change password</h3>
-<div class="p20" style="width: 50%;">
+<div style="padding: 20px; width: 50%;">
 	<form onsubmit="return false;">
 	<table class="detail-tbl" style="width: 100%;">
 		<tr>
@@ -201,16 +201,16 @@ function ChangeCadMenu()
 		</tr>
 	</table>
 
-	<div class="pl20 mb20 mt10">
+	<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
 		<p>
-			<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePassword();" />
+			<input id="changePagePrefBtn" type="button" value="Change" class="form-btn" style="width: 100px;" onclick="ChangePassword();" />
 		</p>
 	</div>
 	</form>
 </div>
 
 <h3>Page preference</h3>
-<div class="p20" style="width: 50%;">
+<div style="padding: 20px; width: 50%;">
 	<form onsubmit="return false;">
 	<table class="detail-tbl" style="width: 100%;">
 		<tr>
@@ -243,16 +243,16 @@ function ChangeCadMenu()
 			</td>
 		</tr>
 	</table>
-	<div class="pl20 mb20 mt10">
+	<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
 		<p>
-			<input id="changePagePrefBtn" type="button" value="Change" class="w100 form-btn" onclick="ChangePagePreference();" />
+			<input id="changePagePrefBtn" type="button" value="Change" class="form-btn" style="width: 100px;" onclick="ChangePagePreference();" />
 		</p>
 	</div>
 	</form>
 </div>
 
 <h3>CAD preference</h3>
-<div class="p20" style="width: 50%;">
+<div style="padding: 20px; width: 50%;">
 	<div class="detail-panel02">
 		<table class="detail-tbl" style="width: 100%;">
 			<tr>
@@ -275,8 +275,8 @@ function ChangeCadMenu()
 			</tr>
 		</table>
 
-		<div class="pl20 mb20 mt10">
-			<p><input id="applyButton" type="button" value="Select" class="w100 form-btn" onclick="ShowCadPreferenceDetail();" /></p>
+		<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
+			<p><input id="applyButton" type="button" value="Select" class="form-btn" style="width: 100px;" onclick="ShowCadPreferenceDetail();" /></p>
 		</div>
 
 		<div id="detailCadPrefrence" style="display:none;">
@@ -321,9 +321,9 @@ function ChangeCadMenu()
 				</tr>*}
 			</table>
 
-			<div class="pl20 mb20 mt10">
-					<input id="updateCADPrefBtn" type="button" value="Update" class="w100 form-btn" onclick="RegisterCadPreference('update');">
-					<input id="deleteCADPrefBtn" type="button" value="Delete" class="w100 form-btn" onclick="RegisterCadPreference('delete');" style="display:none;">
+			<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
+					<input id="updateCADPrefBtn" type="button" value="Update" class="form-btn" style="width: 100px;" onclick="RegisterCadPreference('update');">
+					<input id="deleteCADPrefBtn" type="button" value="Delete" class="form-btn" style="width: 100px;" onclick="RegisterCadPreference('delete');" style="display:none;">
 			</div>
 		</div>
 	</div>

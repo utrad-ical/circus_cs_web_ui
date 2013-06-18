@@ -62,7 +62,7 @@ function ChangeResearchMenu()
 function ChangeCadMenu()
 {
 	var versionStr = $("#cadMenu option:selected").val().split("^");
-	
+
 	var optionStr = "";
 
 	if(versionStr != "")
@@ -205,7 +205,7 @@ $(function() {
 
 	<div id="researchJob">
 
-		<p id="registMessage" class="clr-orange mb10" style="display:none;">&nbsp;</p>
+		<p id="registMessage" style="color: orange; display:none; margin-bottom: 10px">&nbsp;</p>
 
 		<form name="form1" onsubmit="return false;">
 
@@ -213,7 +213,7 @@ $(function() {
 
 		<div id="researchCondition" class="search-panel">
 			<h3>Step 1: Set condition</h3>
-			<div class="p20">
+			<div style="padding: 20px">
 				<table class="search-tbl">
 					<tr>
 						<th style="width: 8.0em;"><span class="trim01">Research</span></th>
@@ -272,22 +272,22 @@ $(function() {
    						<th><span class="trim01">Tag</span></th>
 						<td colspan="3"><input name="filterTag" type="text" style="width: 200px;" value="" /></td>
 					</tr>
-				</table>	
-				<div class="al-l mt10 ml20" style="width: 100%;">
-					<input name="" type="button" value="Show list" class="w100 form-btn" onclick="ShowCadList();" />
-					<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition();" />
+				</table>
+				<div class="al-l" style="margin-top: 10px; margin-left: 20px; width: 100%;">
+					<input name="" type="button" value="Show list" class="form-btn" style="width: 100px;" onclick="ShowCadList();" />
+					<input name="" type="button" value="Reset" class="form-btn" style="width: 100px;" onclick="ResetCondition();" />
 				</div>
-			</div><!-- / .m20 END -->
+			</div>
 		</div><!-- / .search-panel END -->
 		<!-- / Research Conditions -->
 
 		<div id="cadList" style="display:none;">
 
-			<h3 class="mb5">Step 2: Select CAD results</h3>
+			<h3 style="margin-bottom: 5px">Step 2: Select CAD results</h3>
 
 			<div style="height: 300px; overflow-x: hidden; overflow-y: scroll;">
 
-				<table class="col-tbl mb10" style="width: 98%;">
+				<table class="col-tbl" style="width: 98%; margin-bottom: 10px;">
 					<thead>
 						<tr>
 							<th rowspan="2">&nbsp;</th>
@@ -314,13 +314,13 @@ $(function() {
 			</div>
 		</div>
 
-		<div id="execution" class="mt10" style="display:none;">
-			<h3 class="mb5">Step 3: Execution</h3>
-			<div class="al-l ml20 mt10" style="width: 100%;">
-				<input name="" type="button" value="Execute" class="w100 form-btn" onclick="RegistResearchJob();" />
+		<div id="execution" style="margin-top: 10px; display:none;">
+			<h3 style="margin-bottom: 5px;">Step 3: Execution</h3>
+			<div class="al-l" style="width: 100%; margin-left: 20px; margin-top: 10px;">
+				<input name="" type="button" value="Execute" class="form-btn" style="width: 100px" onclick="RegistResearchJob();" />
 			</div>
 		</div>
-		
+
 		</form>
 	</div><!-- / #researchJob END -->
 

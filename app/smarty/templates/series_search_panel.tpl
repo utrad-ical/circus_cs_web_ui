@@ -60,9 +60,9 @@
 			</span>
 			<input type="button" value="Search" class="form-btn" onclick="DoSearch('series', '{$params.mode|escape}');" />
 			<input type="button" value="Reset" class="form-btn" onclick="ResetSearchBlock('series', '{$params.mode|escape}');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
+			<p style="margin-top: 5px; color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
-	</div><!-- / .m20 END -->
+	</div>
 </div><!-- / .search-panel END -->
 
 

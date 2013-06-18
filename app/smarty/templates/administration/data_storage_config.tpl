@@ -40,6 +40,7 @@ $(function() {
 	padding: 10px 0 0 3px;
 	font-weight: bold;
 }
+#storage-list .storage-path { text-align: left; }
 #message { font-weight: bold; color: red; margin: 1.5em; }
 #add-new { display: none; margin-top: 1.3em; }
 </style>
@@ -74,7 +75,7 @@ $(function() {
 		{/if}
 		<tr class="{cycle values=",column"}{if $item->current_use} current-use{/if}">
 			<td><span class="storage-id">{$item->storage_id|escape}</span></td>
-			<td class="al-l">{$item->path|escape}</td>
+			<td class="storage-path">{$item->path|escape}</td>
 			<td>{if $item->current_use==true}TRUE{else}FALSE{/if}</td>
 			<td>
 				<input type="button" value="Delete" class="delete s-btn form-btn"{if $item->current_use} disabled="disabled"{/if}/>

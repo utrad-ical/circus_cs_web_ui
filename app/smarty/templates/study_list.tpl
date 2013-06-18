@@ -105,13 +105,13 @@ jq/ui/theme/jquery-ui.custom.css
 </table>
 
 {* {if $smarty.session.dataDeleteFlg}
-	<div class="mt10 ml10">
+	<div style="margin-top: 10px; margin-left: 10px;">
 		<input type="button" value="delete" class="s-btn form-btn"  onclick="DeleteData('study');" />
 	</div>
 {/if} *}
 
 {* ------ Hooter with page list --- *}
-<div id="serp-paging" class="al-c mt10">
+<div id="serp-paging" class="al-c" style="margin-top: 10px">
 	{if $params.maxPageNum > 1}
 		{if $params.pageNum > 1}
 			<div><a href="{$params.pageAddress}&pageNum={$params.pageNum-1}"><span style="color: red">&laquo;</span>&nbsp;Previous</a></div>
@@ -126,7 +126,7 @@ jq/ui/theme/jquery-ui.custom.css
 			{assign var="i" value=$smarty.section.i.index}
 
     		{if $i==$params.pageNum}
-				<div><span style="color: red" class="fw-bold">{$i}</span></div>
+				<div><span style="color: red; font-weight: bold;">{$i}</span></div>
 			{else}
 				<div><a href="{$params.pageAddress}&pageNum={$i}">{$i}</a></div>
 			{/if}

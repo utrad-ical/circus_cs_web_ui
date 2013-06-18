@@ -211,7 +211,7 @@ $(function() {
 	<!-- ***** Serach conditions ***** -->
 		<div class="statSearch">
 			<h3>Search</h3>
-			<div class="p20">
+			<div style="padding: 20px;">
 				<table class="search-tbl">
 					<tr>
 						<th style="width: 8em;"><span class="trim01">Series date</span></th>
@@ -256,18 +256,18 @@ $(function() {
 					</tr>
 
 				</table>
-				<div class="al-l mt10 ml20" style="width: 100%;">
-					<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
-					<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
-					<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
+				<div class="al-l" style="margin-top: 10px; margin-left: 20px; width: 100%;">
+					<input name="" type="button" value="Apply" class="form-btn" style="width: 100px;" onclick="ShowPersonalStatResult()" />
+					<input name="" type="button" value="Reset" class="form-btn" style="width: 100px;" onclick="ResetCondition()" />
+					<p id="errorMessage" style="margin-top: 5px; color:#f00; font-wight:bold;">&nbsp;</p>
 				</div>
-			</div><!-- / .m20 END -->
+			</div>
 		</div><!-- / #statSearch END -->
 	<!-- / Search conditions -->
 
 	<div id="statRes" style="display:none;">
 		<h3>Results of personal statistics</h3>
-		<table class="col-tbl mt20 mb20" style="width: 100%;">
+		<table class="col-tbl" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
 			<thead>
 			</thead>
 			<tbody>
@@ -275,7 +275,7 @@ $(function() {
 		</table>
 
 		<div id="scatterPlot" style="width: 950px;" style="display:none;">
-			<table id="plotLegend" class="block-al-r mb10">
+			<table id="plotLegend" class="block-al-r" style="margin-bottom: 10px;">
 				<tr>
 					<td name="known TP">
 						<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
@@ -298,7 +298,7 @@ $(function() {
 				</tr>
 			</table>
 
-			<table class="ml10">
+			<table style="margin-left: 10px">
 				<tr>
 					<td style="width: 330px;"><img id="scatterPlotAx"   src="images/statistics/ps_scatter_plot_base_xy.png" /></td>
 					<td style="width: 330px;"><img id="scatterPlotCoro" src="images/statistics/ps_scatter_plot_base_xz.png" /></td>
@@ -309,7 +309,7 @@ $(function() {
 	</div>
 	</form>
 
-	<div class="al-r fl-clr">
+	<div style="clear: both; text-align: right;">
 		<p class="pagetop"><a href="#page">page top</a></p>
 	</div>
 

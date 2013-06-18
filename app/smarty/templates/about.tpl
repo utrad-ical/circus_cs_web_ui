@@ -48,6 +48,7 @@ ul li {
 	margin-left: 2em;
 	list-style-type: disc;
 }
+
 </style>
 {/literal}
 {/capture}

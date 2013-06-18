@@ -40,7 +40,7 @@
 			</span>
 			<input type="button" value="Search" class="form-btn" onclick="DoSearch('patient', '');" />
 			<input type="button" value="Reset" class="form-btn"  onclick="ResetSearchBlock('patient', '');" />
-			<p class="mt5" style="color:#f00; font-wight:bold;">{$params.errorMessage}</p>
+			<p style="margin-top: 5px; color:#f00; font-wight:bold;">{$params.errorMessage}</p>
 		</div>
-	</div><!-- / .p20 END -->
+	</div>
 </div><!-- / .search-panel END -->

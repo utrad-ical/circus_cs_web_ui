@@ -136,7 +136,7 @@ $(function() {
 			</form>
 			{/if}
 		</div><!-- / .detail-panel END -->
-		<div class="fl-clr"></div>
+		<div style="clear: both"></div>
 	</div>
 	<!-- / Series detail END -->
 

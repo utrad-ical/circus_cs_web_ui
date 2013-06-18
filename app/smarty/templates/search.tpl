@@ -20,7 +20,7 @@ js/viewControl.js
 
 <h2>Search</h2>
 
-<ul class="inline mt5 ml10">
+<ul class="inline" style="margin-top: 5px; margin-left: 10px;">
 	<li><a href="javascript:void(0)"  class="btn btn-search" title="Patient" id="apatient">Patient</a></li>
 	<li><a href="javascript:void(0)"  class="btn btn-search" title="Study" id="astudy">Study</a></li>
 	<li><a href="javascript:void(0)"  class="btn selected-btn-search" title="Series" id="aseries">Series</a></li>
@@ -32,7 +32,7 @@ js/viewControl.js
 *}
 </ul>
 
-<br class="fl-clr">
+<br style="clear: both">
 
 <!-- ***** Search panel ******************************************** -->
 

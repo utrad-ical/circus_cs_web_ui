@@ -13,7 +13,7 @@
 			<td class="name themeColor">{$item.file|escape}</td>
 			{/if}
 			<td>{$item.type|escape}</td>
-			<td class="al-r">{$item.size|number_format}</td>
+			<td style="text-align: right">{$item.size|number_format}</td>
 		</tr>
 	{/foreach}
 	</tbody>

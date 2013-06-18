@@ -144,7 +144,7 @@ $(function() {
 	<!-- ***** Search conditions ***** -->
 		<div class="statSearch">
 			<h3>Search</h3>
-			<div class="p20">
+			<div style="padding: 20px;">
 				<table class="search-tbl">
 					<tr>
 					<tr>
@@ -184,18 +184,18 @@ $(function() {
 						</td>
 					</tr>
 				</table>
-				<div class="al-l mt10 ml20" style="width: 100%;">
-					<input name="" type="button" value="Apply" class="w100 form-btn" onclick="ShowPersonalStatResult()" />
-					<input name="" type="button" value="Reset" class="w100 form-btn" onclick="ResetCondition()" />
-					<p id="errorMessage" class="mt5" style="color:#f00; font-wight:bold;">&nbsp;</p>
+				<div class="al-l" style="margin-top: 10px; margin-left: 20px; width: 100%;">
+					<input name="" type="button" value="Apply" class="form-btn" style="width: 100px;" onclick="ShowPersonalStatResult()" />
+					<input name="" type="button" value="Reset" class="form-btn" style="width: 100px;" onclick="ResetCondition()" />
+					<p id="errorMessage" style="margin-top: 5px; color:#f00; font-wight:bold;">&nbsp;</p>
 				</div>
-			</div><!-- / .m20 END -->
+			</div>
 		</div><!-- / #statSearch END -->
 	<!-- / Search conditions END -->
 
 	<div id="statRes" style="display:none;">
 		<h3>Time for feedback entry</h3>
-		<table class="col-tbl mt20 mb20" style="width: 100%;">
+		<table class="col-tbl" style="margin-top: 20px; margin-bottom: 20px; width: 100%;">
 			<thead>
 				<tr>
 					<th rowspan="2">CAD ID</th>
@@ -222,7 +222,7 @@ $(function() {
 	</div>
 	</form>
 
-	<div class="al-r fl-clr">
+	<div style="clear: both; text-align: right;">
 		<p class="pagetop"><a href="#page">page top</a></p>
 	</div>
 
