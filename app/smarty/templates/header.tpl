@@ -25,7 +25,7 @@ Parameters:
 
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
-<link href="{$totop}css/import.css" rel="stylesheet" type="text/css" media="all" />
+<link href="{$totop}css/layout.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="{$totop}jq/jquery.min.js"></script>
 <script type="text/javascript" src="{$totop}js/circus-common.js"></script>
 <script type="text/javascript">circus.totop = "{$totop|escape:javascript}";</script>

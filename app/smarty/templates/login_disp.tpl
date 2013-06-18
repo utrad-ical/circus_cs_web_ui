@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>CIRCUS CS {$version}</title>
-<link href="css/import.css" rel="stylesheet" type="text/css" media="all" />
+<link href="css/layout.css" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" src="jq/jquery.min.js"></script>
 <link rel="shortcut icon" href="favicon.ico" />
 

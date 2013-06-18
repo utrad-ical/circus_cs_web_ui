@@ -9,7 +9,7 @@
 
 <title>CIRCUS CS {$smarty.session.circusVersion}</title>
 
-<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
+<link href="../css/layout.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../jq/jquery.upload-1.0.2.min.js"></script>
@@ -27,9 +27,9 @@ $(function() {
 		if(confirm('Do you upload the plug-in package to CIRCUS CS?'))
 		{
 			$("#field").upload('plugin_init_registration.php', function(data){
-				 
+
 				$("#message").html(data);
-			 
+
 			}, "html");
 		}
 	});

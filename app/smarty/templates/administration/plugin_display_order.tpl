@@ -3,7 +3,7 @@ jq/ui/jquery-ui.min.js
 jq/ui/theme/jquery-ui.custom.css
 {/capture}
 {capture name="extra"}
-{*<link href="../css/import.css" rel="stylesheet" type="text/css" media="all" />
+{*<link href="../css/layout.css" rel="stylesheet" type="text/css" media="all" />
 <script language="javascript" type="text/javascript" src="../jq/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../js/circus-common.js"></script>
 <script language="javascript" type="text/javascript" src="../js/viewControl.js"></script>
@@ -38,7 +38,7 @@ function ShowPluginConfDetail(){
 
 				$("#executableStr").val(data.executableList.join('^'));
 				$("#hiddenStr").val(data.hiddenList.join('^'));
-				
+
 				$("#pluginConfDetail").show();
 
 		  }, "json");
@@ -66,7 +66,7 @@ function buttonStyle(mode)
 			{
 				if(i!=0)							$("#upButton").removeAttr("disabled");
 				else								$("#upButton").attr("disabled", "disabled");
-			
+
 				if(i!=(leftBox.options.length-1))	$("#downButton").removeAttr("disabled");
 				else								$("#downButton").attr("disabled", "disabled");
 			}
@@ -91,12 +91,12 @@ function itemMove(mode)
 	$("#saveBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("#resetBtn").removeAttr("disabled").removeClass('form-btn-disabled').addClass('form-btn-normal');
 	$("messageArea").html('&nbsp;');
-	
+
 	var leftBox = document.getElementById('executableList');
 	var rightBox = document.getElementById('hiddenList');
-	
+
 	var fromBox, toBox;
-	
+
 	if(mode == 1)
 	{
 		fromBox = leftBox;
@@ -113,7 +113,7 @@ function itemMove(mode)
 		while ( fromBox.selectedIndex >= 0 )
 		{
 			var newOption = new Option();
-			newOption.text = fromBox.options[fromBox.selectedIndex].text; 
+			newOption.text = fromBox.options[fromBox.selectedIndex].text;
 			newOption.value = fromBox.options[fromBox.selectedIndex].value;
 			toBox.options[toBox.length] = newOption;
 			fromBox.remove(fromBox.selectedIndex);
@@ -128,7 +128,7 @@ function itemMove(mode)
 		else if(mode == -1)
 		{
 			if(fromBox.length < 1) $("#leftButton").attr("disabled", "disabled");
-		}	
+		}
 
 	}
 	return false;
@@ -155,7 +155,7 @@ function SaveSettings()
 	{
 		var leftBox = document.getElementById('executableList');
 		var rightBox = document.getElementById('hiddenList');
-		
+
 		var executableStr = "";
 		var hiddenStr = "";
 
@@ -164,7 +164,7 @@ function SaveSettings()
 			if(i > 0)  executableStr += "^";
 			executableStr += leftBox.options[i].text;
 		}
-		
+
 		for(var i=0; i<rightBox.options.length; i++)
 		{
 			if(i > 0)  hiddenStr += "^";
@@ -253,7 +253,7 @@ head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
 	<div class="line"></div>
 
-	<div id="pluginConfDetail" style="display:none;">	
+	<div id="pluginConfDetail" style="display:none;">
 
 		<input type="hidden" id="typeTmp"       name="typeTmp"       value="">
 		<input type="hidden" id="executableStr" name="executableStr" value="">
@@ -272,7 +272,7 @@ head_extra=$smarty.capture.extra require=$smarty.capture.require}
 				<td valign=top>
 					<select id="executableList" size="10" onchange="buttonStyle(1)" style="width:200px;"></select>
 				</td>
-		
+
 				<td valign=middle>
 					<input type="button" value="&rarr;" id="rightButton" disabled onclick="itemMove(1)" style="width:24px;height:24px;font-weight:bold;"><br/><br/>
 					<input type="button" value="&larr;" id="leftButton" disabled onclick="itemMove(-1)" style="width:24px;height:24px;font-weight:bold;">
