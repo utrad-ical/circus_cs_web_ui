@@ -1,16 +1,48 @@
 @charset "utf-8";
 
-body {
-	margin: 10px 0 0 0;
-	color: #000;
-	font-size: 12px;
+/* ==============================
+   Reset and basic styling
+================================*/
+
+html {
+	overflow-y: scroll;
+}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+	margin: 0;
+	padding: 0;
 }
 
+body {
+	line-height: 1.5;
+	background: #fff;
+	color: #000;
+	margin: 10px 0 0 0;
+	font-family: verdana,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",Osaka,"ＭＳ Ｐゴシック","MS PGothic",Sans-Serif;
+	font-size: 12px;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style: normal;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size: 100%;
+}
+img,abbr,acronym,fieldset {
+	border: 0;
+}
 a {
 	text-decoration: underline;
 	color: #000;
 }
-
+li {
+	list-style-type: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+caption,th {
+	text-align: left;
+}
 input[type=button] {
 	font-family: verdana,"ＭＳ Ｐゴシック",sans-serif;
 	padding: 0;
@@ -19,10 +51,16 @@ input[type=button] {
 input.s-btn {
 	font-size: 80%;
 }
-
+hr {
+	display: none;
+}
 fieldset { border: 1px solid black; padding: 10px; }
 fieldset legend { display: block; font-weight: bold; padding: 0 10px; color: black; }
 
+/* text-align */
+.al-c {text-align: center !important;}
+.al-l {text-align: left !important;}
+.al-r {text-align: right !important;}
 
 /* ===================================================
 	CIRCUS Common Page Layout
