@@ -8,8 +8,6 @@ var circus = circus || {};
 
 //Initialize
 $(function(){
-	// Enable rollover actions for elements with these classes
-	$('.jq-btn').rolloverBtn();
 	// Process elements with 'form-btn' and 'radio-to-button' classes
 	$('body').autoStylize();
 	// Adjust container height
@@ -63,25 +61,6 @@ $.fn.enable = function() {
 $.fn.disable = function() {
 	return $(this).filter(':not(:disabled)')
 		.attr('disabled', 'disabled').trigger('flush').end();
-};
-
-// 'rollOverBtn' applies mouseover/mouseout handlers to highlight the target
-// element by moving the background position.
-$.fn.rolloverBtn = function(_switch) {
-	return this.each(function() {
-		var _this = $(this);
-		if (!_this.data('rolloverBtnInit'))
-		{
-			_this
-				.hover(
-					function() {
-						_this.css('background-position', '0 ' + _this.height() + 'px');
-					},
-					function(){ _this.css('background-position', '0 0'); }
-				)
-				.data('rolloverBtnInit', true);
-		}
-	});
 };
 
 // 'hoverStyle' applies CSS classes for 'disabled', 'hover' and 'normal' status.

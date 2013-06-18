@@ -25,19 +25,8 @@ CSS information
 	background: url(../img_common/btn/user/menu_bk.gif) left repeat-y;
 }
 
-.jq-btn-home { background-image: url(../img_common/btn/user/jq-btn-home.gif) ; }
-#menu .jq-btn-today {
-	background-image: url(../img_common/btn/user/jq-btn-today.gif) ;
-	color: #66ccff;
-}
-.jq-btn-search { background-image: url(../img_common/btn/user/jq-btn-search.gif) ; }
-.jq-btn-statistics { background-image: url(../img_common/btn/user/jq-btn-statistics.gif) ; }
-.jq-btn-research { background-image: url(../img_common/btn/user/jq-btn-research.gif) ; }
-.jq-btn-preference { background-image: url(../img_common/btn/user/jq-btn-preference.gif) ; }
-.jq-btn-favorites { background-image: url(../img_common/btn/user/jq-btn-favorites.gif) ; }
-.jq-btn-administration { background-image: url(../img_common/btn/user/jq-btn-administration.gif) ; }
-.jq-btn-logout { background-image: url(../img_common/btn/user/jq-btn-logout.gif) ; }
-
+.topmenu { background-image: url(../img_common/btn/user/menu.png); }
+.topmenu-today { color: #66ccff; }
 
 /* ===================================================
 	#content

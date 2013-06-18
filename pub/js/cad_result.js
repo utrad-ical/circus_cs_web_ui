@@ -277,7 +277,7 @@ $(function(){
 
 	if (circus.feedback.feedbackStatus == 'normal')
 	{
-		$('#menu .jq-btn, #about-circus-btn').click(function(event) {
+		$('#menu .topmenu, #about-circus-btn').click(function(event) {
 			if (!circus.feedback.modified && !circus.feedback.feedbackTemporary)
 				return;
 			postLocation = $(event.currentTarget).attr('href');

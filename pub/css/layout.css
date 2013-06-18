@@ -144,35 +144,6 @@ h1 img {
 	line-height: 2;
 }
 
-#menu .jq-btn-today {
-	position: relative;
-	text-decoration: none;
-	text-align: center;
-	font-family: Arial, Verdana, sans-serif;
-	font-weight: bold;
-}
-
-#menu .jq-btn-today .month {
-	position: absolute;
-	left: 18px;
-	top: 9px;
-	width: 32px;
-	font-size: 12px;
-	line-height: 12px;
-	text-indent: 0;
-}
-
-#menu .jq-btn-today .day {
-	position: absolute;
-	left: 18px;
-	top: 22px;
-	width: 32px;
-	font-size: 16px;
-	line-height: 16px;
-	color: white;
-	text-indent: 0;
-}
-
 /* =================================================
 	CIRCUS Common Content Styles, and Tab Interface
 
@@ -314,13 +285,12 @@ table.search-tbl th, table.search-tbl td {
 	Colores are defined separately in mode.*.css
 ==================================================== */
 
-/* menu buttons (rollover by jQuery.fn.rolloverBtn plugin) */
-.jq-btn {
+.topmenu {
 	display:block;
 	cursor:pointer;
 	border:0px none;
 	background-color:transparent;
-	background-repeat:repeat;
+	background-repeat:no-repeat;
 	padding:0;
 	margin:0;
 	outline:0;
@@ -328,8 +298,51 @@ table.search-tbl th, table.search-tbl td {
 	text-indent: 200px;
 	width: 197px;
 	height: 49px;
+	position: relative;
+	text-decoration: none;
+	text-align: center;
+	font-family: Arial, Verdana, sans-serif;
+	font-weight: bold;
+}
+.topmenu-home { background-position: 0px 0px; }
+.topmenu-home:hover { background-position: 0px -49px; }
+.topmenu-today { background-position: -197px 0px; }
+.topmenu-today:hover { background-position: -197px -49px; }
+.topmenu-search { background-position: -394px 0px; }
+.topmenu-search:hover { background-position: -394px -49px; }
+.topmenu-statistics { background-position: -591px 0px; }
+.topmenu-statistics:hover { background-position: -591px -49px; }
+.topmenu-preference { background-position: -788px 0px; }
+.topmenu-preference:hover { background-position: -788px -49px; }
+.topmenu-favorites { background-position: -985px -49px; }
+.topmenu-favorites:hover { background-position: -985px -49px; }
+.topmenu-research { background-position: -1182px 0px; }
+.topmenu-research:hover { background-position: -1182px -49px; }
+.topmenu-logout { background-position: -1379px 0px; }
+.topmenu-logout:hover { background-position: -1379px -49px; }
+.topmenu-administration { background-position: -1576px 0px; }
+.topmenu-administration:hover { background-position: -1576px -49px; }
+
+#menu .topmenu-today .month {
+	position: absolute;
+	left: 18px;
+	top: 9px;
+	width: 32px;
+	font-size: 12px;
+	line-height: 12px;
+	text-indent: 0;
 }
 
+#menu .topmenu-today .day {
+	position: absolute;
+	left: 18px;
+	top: 22px;
+	width: 32px;
+	font-size: 16px;
+	line-height: 16px;
+	color: white;
+	text-indent: 0;
+}
 
 /* radio button */
 .radio-to-button {
