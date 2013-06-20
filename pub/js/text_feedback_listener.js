@@ -25,7 +25,7 @@ circus.evalListener = (function() {
 						var txt = this.entered_by + ': ' + this.blockFeedback[display_id];
 						tip.append(txt).append('<br>');
 					});
-					field.tooltip({
+					field.toolhint({
 						content: tip,
 						width: field.width()
 					});

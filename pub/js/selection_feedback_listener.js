@@ -45,7 +45,7 @@ circus.evalListener = (function() {
 						{
 							$('<span class="opinions-count">').text(opinions.length).appendTo(a);
 							var txt = opinions.join(', ');
-							a.tooltip(txt);
+							a.toolhint(txt);
 						}
 					}
 				});

@@ -841,10 +841,10 @@ span.opinions-count {
 
 
 /* ===================================================
-	Tooltips
+	Toolhints
 ==================================================== */
 
-.tooltip {
+.toolhint {
 	position: absolute;
 	border: 1px solid black;
 	padding: 3px;
@@ -855,7 +855,7 @@ span.opinions-count {
 	z-index: 9999;
 }
 
-.tooltip-error {
+.toolhint-error {
 	color: red;
 	font-weight: bold;
 }

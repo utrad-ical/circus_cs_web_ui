@@ -266,7 +266,7 @@ $(function(){
 	}).each(function() {
 		var title = $(this).attr('title');
 		if (!title) return;
-		$(this).tooltip({
+		$(this).toolhint({
 			content: title,
 			my: 'left top',
 			at: 'left bottom',

@@ -106,8 +106,8 @@ $.fn.radioToButton = function(styles) {
 	});
 };
 
-// Shows simple tooltip. requires jQuery UI.
-$.fn.tooltip = function(option) {
+// Shows simple toolhint. requires jQuery UI.
+$.fn.toolhint = function(option) {
 	var params = option;
 	if (typeof params == 'string') params = { content: params };
 	if (typeof params.content == 'string') params.content = $('<span>').text(params.content);
@@ -124,7 +124,7 @@ $.fn.tooltip = function(option) {
 			function() {
 				var content = params.content.clone().show();
 				var tip = $('<div>')
-					.addClass('tooltip')
+					.addClass('toolhint')
 					.append(content)
 					.appendTo($('body'));
 				if ('width' in params) tip.css('width', params.width);
@@ -134,7 +134,7 @@ $.fn.tooltip = function(option) {
 				tip.position(tmp);
 			},
 			function() {
-				$('div.tooltip').remove();
+				$('div.toolhint').remove();
 			}
 		);
 	});
