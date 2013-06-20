@@ -27,7 +27,7 @@ $(function(){
 $.fn.autoStylize = function() {
 	return this.each(function() {
 		var _this = $(this);
-		_this.find('.radio-to-button').andSelf().filter('.radio-to-button').radioToButton({
+		_this.find('.radio-to-button').addBack().filter('.radio-to-button').radioToButton({
 			normal: 'radio-to-button-normal',
 			hover: 'radio-to-button-hover',
 			checked: 'radio-to-button-checked',
