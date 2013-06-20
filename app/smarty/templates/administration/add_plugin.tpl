@@ -66,7 +66,7 @@ div.line{
 		<!-- / #leftside END -->
 
 		<div id="content">
-			<h2>Add plug-in from packaged file</h2>
+			<h2>Install plug-in from packaged file</h2>
 
 			<form id="form1" name="form1">
 				<input type="hidden" id="ticket" name="ticket" value="{$params.ticket|escape}" />
