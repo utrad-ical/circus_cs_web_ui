@@ -140,17 +140,14 @@ p.add-favorite {
 
 .form-btn {
 	border: 1px solid #06694c;
-}
-
-.form-btn-normal {
 	color: #000;
 	background-color: #76e4a6;
 }
-.form-btn-hover {
+.form-btn:hover {
 	color: #fff;
 	background-color: #339966;
 }
-.form-btn-disabled {
+.form-btn[disabled] {
 	color: #ccc;
 	background-color: #999;
 }

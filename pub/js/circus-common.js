@@ -33,11 +33,6 @@ $.fn.autoStylize = function() {
 			checked: 'radio-to-button-checked',
 			disabled: 'radio-to-button-disabled'
 		});
-		_this.find('.form-btn').andSelf().filter('.form-btn').hoverStyle({
-			normal: 'form-btn-normal',
-			hover: 'form-btn-hover',
-			disabled: 'form-btn-disabled'
-		});
 	});
 };
 
@@ -61,32 +56,6 @@ $.fn.enable = function() {
 $.fn.disable = function() {
 	return $(this).filter(':not(:disabled)')
 		.attr('disabled', 'disabled').trigger('flush').end();
-};
-
-// 'hoverStyle' applies CSS classes for 'disabled', 'hover' and 'normal' status.
-$.fn.hoverStyle = function(styles) {
-	return this.each(function() {
-		var _this = $(this);
-		var setStyle = function(hover)
-		{
-			$.each(styles, function(k, v) { _this.removeClass(v); });
-			if (_this.is(':disabled')) {
-				_this.addClass(styles['disabled']);
-			} else if (hover) {
-				_this.addClass(styles['hover']);
-			} else {
-				_this.addClass(styles['normal']);
-			}
-		};
-		var flush = function() { setStyle(false); };
-		_this
-			.hover(
-				function() { setStyle(true) },
-				function() { setStyle(false) }
-			)
-			.bind('flush', function() { flush(); });
-		flush();
-	});
 };
 
 // 'radioToButton' can make radio buttons have appearance of normal buttons.

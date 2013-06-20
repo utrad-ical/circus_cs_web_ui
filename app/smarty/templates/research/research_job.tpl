@@ -127,7 +127,6 @@ function ShowCadList()
 
 			  	$("#cadList .col-tbl tbody").empty().append(tableHtml);
      		 	$("#cadList, #execution").show();
-				$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
 			  }, "json");
 }
 
@@ -149,8 +148,6 @@ function ShowCadList()
 //			  	$("#researchList .col-tbl thead").empty().append(data.thead);
 //			  	$("#researchList .col-tbl tbody").empty().append(data.tbody);
 //			  	$("#serp-paging").html(data.footer);
-//				$('.form-btn').hoverStyle({normal: 'form-btn-normal', hover: 'form-btn-hover',disabled: 'form-btn-disabled'});
-//
 //			  }, "json");
 //}
 
