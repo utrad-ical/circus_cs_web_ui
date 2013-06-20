@@ -2,7 +2,6 @@
 CIRCUS CS template
 Requires:
 	layout.css
-	radio-to-button.js
 *}
 <form>
 <div>
