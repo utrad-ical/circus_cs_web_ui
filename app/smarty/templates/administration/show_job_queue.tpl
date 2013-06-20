@@ -45,7 +45,7 @@ $(function () {
 				$('<td>Processing</td>').appendTo(tr);
 			tr.appendTo(tbody);
 		}
-		tbody.autoStylize().find('tr:odd').addClass('column');
+		tbody.find('tr:odd').addClass('column');
 		relax();
 	}
 

@@ -83,7 +83,6 @@ circus.download_volume = (function() {
 	function onHtmlLoad()
 	{
 		if (!dialog) return;
-		dialog.autoStylize();
 		slider = $('#download-volume-range-slider').slider({
 			range: true,
 			min: series_info.minImageNumber,

@@ -73,7 +73,6 @@ circus.edittag = (function() {
 			$('<td>').append(btn).appendTo(tr);
 			tbody.append(tr);
 		}
-		tbody.autoStylize();
 		$('#edit-tags-loading').hide(0);
 		$('#tags-list').show(0);
 		$('#edit-tags-add').enable();
@@ -110,7 +109,6 @@ circus.edittag = (function() {
 					if (event.keyCode == 13)
 						$('#edit-tags-add').click();
 				});
-				$('#edit-tags-add, #edit-tags-close').autoStylize();
 				editorLoad();
 			});
 			$.blockUI({
