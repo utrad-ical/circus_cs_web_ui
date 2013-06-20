@@ -68,7 +68,7 @@ $.fn.radioToButton = function(styles) {
 		var setStyle = function(hover)
 		{
 			$.each(styles, function(k, v) { btn.removeClass(v); });
-			if (_radio.attr('checked'))
+			if (_radio.is(':checked'))
 			{
 				btn.addClass(styles['checked']);
 			} else if (_radio.is(':disabled')) {
