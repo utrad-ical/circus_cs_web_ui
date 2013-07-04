@@ -28,11 +28,19 @@ body {
 	text-align: center;
 }
 #login-pnl {
-	margin: 100px auto 0;
-	width: 357px;
-	height: 250px;
-	padding: 20px 25px 0 25px;
-	background: #396 url(images/login_bk.png) no-repeat;
+	margin: 115px auto 0;
+	width: 360px;
+	height: 230px;
+	padding-top: 5px;
+	position: relative;
+}
+#login-bk {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 360px;
+	height: 235px;
+	z-index: -1;
 }
 label {
 	display: block;
@@ -75,6 +83,7 @@ p.version {
 
 <body>
 <div id="login-pnl">
+<img id="login-bk" src="images/login_bk.png" alt="" />
 <form action="index.php" method="post">
 	<p class="version">Clinical Server {$version|escape}</p>
 	{if $critical_error}

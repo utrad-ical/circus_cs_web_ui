@@ -17,6 +17,12 @@ $(function(){
 	$(window).bind('resize', resized);
 	resized();
 
+	// If CSS3 background-size is supported, use higher resolution background
+	if (document.createElement("div").style.backgroundSize === '')
+	{
+		$('.topmenu').addClass('hi');
+	}
+
 	// Calendar in the menu
 	var month = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
 		'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];

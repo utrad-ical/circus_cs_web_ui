@@ -26,6 +26,7 @@ CSS information
 }
 
 .topmenu { background-image: url(../img_common/btn/guest/menu.png); }
+.topmenu.hi { background-image: url(../img_common/btn/guest/menu-hi.png); }
 .topmenu-today { color: #339966; }
 
 /* ===================================================
