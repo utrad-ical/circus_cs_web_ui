@@ -4,18 +4,22 @@ class QueryFeedbackAction extends ApiActionBase
 {
 	protected static $public = true;
 
+	protected static $rules = array(
+		'jobID' => array('type' => 'int', 'required' => true),
+		'kind' => array(
+			'type' => 'select',
+			'options' => array('all', 'personal', 'consensual', 'user'),
+			'default' => 'all'
+		),
+		'userID' => array('type' => 'str'),
+		'withData' => array('type' => 'bool')
+	);
+
 	protected function execute($params)
 	{
-		if($this->check_params($params) == FALSE)
-		{
-			throw new ApiOperationException("Invalid parameter.");
-		}
-
 		$jobID  = $params['jobID'];
 		$kind   = $params['kind'];
-		if (!isset($kind)) {
-			$kind = "all";
-		}
+		$with_data = $params['withData'];
 		$userID = $params['userID'];
 
 		// Retrieve the CAD Result
@@ -26,31 +30,21 @@ class QueryFeedbackAction extends ApiActionBase
 
 		$result = array();
 		foreach ($feedback as $f) {
-			array_push(
-				$result,
-				array(
-					'enteredBy'    => $f->entered_by,
-					'registeredAt' => $f->registered_at,
-					'isConsensual' => $f->is_consensual
-				)
+			$item = array(
+				'enteredBy'    => $f->entered_by,
+				'registeredAt' => $f->registered_at,
+				'isConsensual' => $f->is_consensual
 			);
+			if ($with_data)
+			{
+				$f->loadFeedback();
+				$item['feedback'] = array(
+					'blockFeedback' => $f->blockFeedback,
+					'additionalFeedback' => $f->additionalFeedback
+				);
+			}
+			array_push($result, $item);
 		}
 		return $result;
 	}
-
-
-	private function check_params($params)
-	{
-		if(!isset($params['jobID'])) {
-			return false;
-		}
-
-		$kind = $params['kind'];
-		if (isset($kind) && !in_array($kind, array("all", "personal", "consensual", "user"))) {
-			return false;
-		}
-
-		return true;
-	}
-
 }
