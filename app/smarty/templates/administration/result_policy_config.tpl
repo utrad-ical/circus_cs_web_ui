@@ -65,6 +65,7 @@ $(function () {
 		$('select option', editor).removeAttr('selected');
 		$('select', editor).multiselect('refresh');
 		$('input.num', editor).val('0');
+		$('#auto-cons').prop('checked', false);		
 		var editor = $('#editor');
 		editor.show(300);
 	});

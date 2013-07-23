@@ -160,7 +160,7 @@ circus.feedback.additional = circus.feedback.additional || [];
 				function () { indexes.push(tbl.find('tr').index(this)); } );
 			action(indexes, markers);
 			f._actionlog(actionName + ' ' + indexes.join(', '));
-			$('input:checked', tbl).removeAttr('checked');
+			$('input:checked', tbl).prop('checked', false);
 			f._viewer.imageviewer('option', 'markers', markers); // commit and redraw
 			f._updateTable();
 		},
@@ -233,8 +233,8 @@ circus.feedback.additional = circus.feedback.additional || [];
 			$('#fn-count').text(markers.length);
 			if (markerCount > 0)
 			{
-				$('#fn-not-found').disable().removeAttr('checked');
-				$('#fn-found').enable().attr('checked', 'checked');
+				$('#fn-not-found').disable().prop('checked', false);
+				$('#fn-found').enable().prop('checked', true);
 			}
 			else
 			{

@@ -23,9 +23,9 @@ $(function () {
 			var targetPriv = $(this).val();
 			var checked = $.inArray(targetPriv, group_data.privs) >= 0;
 			if (checked)
-				$(this).attr('checked', 'checked');
+				$(this).prop('checked', true);
 			else
-				$(this).removeAttr('checked');
+				$(this).prop('checked', false);
 		});
 		editingTarget = group_id;
 		$('#editor-header').text('Editing Gruop: ' + group_id);
@@ -37,7 +37,7 @@ $(function () {
 	$('#add-group-button').click(function () {
 		cancel();
 		var editor = $('#editor');
-		$('input.privCheck', editor).attr('checked', '');
+		$('input.privCheck', editor).prop('checked', false);
 		$('#editor-header').text('Adding New Group');
 		$('#target-group').val('');
 		$('#new-name').val('');

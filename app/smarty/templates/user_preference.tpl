@@ -70,10 +70,10 @@ function ShowCadPreferenceDetail()
 			$("#sortKey").val(data.sortKey[1]);
 			$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 				return ($(this).val() == data.sortOrder[1])
-			}).attr("checked", true);
+			}).prop("checked", true);
 			//$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
 			//	return ($(this).val() == data.dispCandidateTag[1])
-			//}).attr("checked", true);
+			//}).prop("checked", true);
 			$("#preferenceFlg").val(data.preferenceFlg);
 			$("#detailCadPrefrence").show();
 			$("#updateCADPrefBtn").show();
@@ -120,10 +120,10 @@ function RegisterCadPreference(mode)
 								$("#sortKey").val($("#defaultSortKey").val());
 								$("#detailCadPrefrence input[name='sortOrder']").filter(function(){
 									return ($(this).val() == $("#defaultSortOrder").val())
-								}).attr("checked", true);
+								}).prop("checked", true);
 								//$("#detailCadPrefrence input[name='dispCandidateTag']").filter(function(){
 								//	return ($(this).val() == $("#defaultDispCandidateTag").val())
-								//}).attr("checked", true);
+								//}).prop("checked", true);
 								$("#deleteCADPrefBtn").hide();
 							}
 							else

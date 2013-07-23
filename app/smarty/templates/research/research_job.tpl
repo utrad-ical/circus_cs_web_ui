@@ -85,7 +85,7 @@ function ResetCondition()
     $("#researchJob .cadDateRange").daterange('option', 'kind', 'all');
 	$("#researchJob input[name^='filterAge'], #researchJob input[name='filterTag']").removeAttr("value");
 	$("#researchJob select[name='researchMenu'], #cadMenu, #versionMenu").children().removeAttr("selected");
-	//$("#researchJob input[name='filterSex']").removeAttr("disabled").filter(function(){ return ($(this).val() == "all") }).attr("checked", true);
+	//$("#researchJob input[name='filterSex']").removeAttr("disabled").filter(function(){ return ($(this).val() == "all") }).prop("checked", true);
 	ChangeResearchMenu();
 	$("#cadList, #registMessage").hide();
 }

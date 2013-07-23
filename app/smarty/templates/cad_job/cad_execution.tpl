@@ -18,7 +18,7 @@ $(function(){
 
 	$('.series-list').each(function() {
 		if ($('.r', this).length == 1)
-			$('.r', this).attr('checked', 'checked');
+			$('.r', this).prop('checked', true);
 		$('.r').each(function() {
 			$(this).data('series_uid', $(this).next('.series-uid').text());
 		});
@@ -32,9 +32,9 @@ $(function(){
 		// uncheck duplicate
 		$('.r').each(function() {
 			if ($(this).data('series_uid') == series_uid)
-				$(this).removeAttr('checked');
+				$(this).prop('checked', false);
 		});
-		r.attr('checked', 'checked');
+		r.prop('checked', true);
 		updateStatus();
 	});
 
