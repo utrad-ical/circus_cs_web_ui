@@ -46,6 +46,7 @@ $(function () {
 		);
 		$('#groupList').val(user_data.groups).multiselect('refresh');
 		tr.addClass('editing');
+		$('input[type=password]', editor).val('');
 		editor.show(300);
 	});
 
@@ -68,7 +69,7 @@ $(function () {
 		$('#target-user', editor).val('');
 		$('#user-id').removeAttr('readonly');
 		$('input[type=radio]', editor).val([]);
-		$('input[type=text]', editor).val('');
+		$('input[type=text],input[type=password]', editor).val('');
 		$('input[name=enabled]', editor).val(['true']);
 		$('#groupList').val([]).multiselect('refresh');
 		editor.show(300);
@@ -234,8 +235,8 @@ head_extra=$smarty.capture.extra require=$smarty.capture.require}
 			</tr>
 		</table>
 		<div>
-			<input type="button" id="save-button" class="form-btn" value="save" />
-			<input type="button" id="cancel-button" class="form-btn" value="cancel" />
+			<input type="button" id="save-button" class="form-btn" value="Save" />
+			<input type="button" id="cancel-button" class="form-btn" value="Cancel" />
 		</div>
 	</div>
 </form>
