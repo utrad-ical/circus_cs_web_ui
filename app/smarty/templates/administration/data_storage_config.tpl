@@ -21,7 +21,12 @@ $(function() {
 		$('#list-form').submit();
 	});
 
-	$('#add-open').click(function() { $('#add-new').show(300); });
+	$('#add-open').click(function() {
+		$('input[name=path]', '#add-new').val('');
+		$('select[name=type]', '#add-new').prop('selectedIndex', 0); 
+		$('#add-new').show(300); 
+	});
+        
 	$('#add-cancel').click(function() { $('#add-new').hide(); });
 });
 -->
