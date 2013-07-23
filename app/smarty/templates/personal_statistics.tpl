@@ -26,6 +26,9 @@ function ShowPersonalStatResult()
 	{
 		$("#errorMessage").html('&nbsp;');
 		$.blockUI();
+		
+		$("#scatterPlot [name^='check']").prop("checked", false);
+        $("[name='checkKownTP'],[name='checkMissedTP']","#scatterPlot").prop("checked", true);
 
 		$.ajax({
 				type:   "POST",
@@ -36,7 +39,13 @@ function ShowPersonalStatResult()
 						  version:  $("#versionMenu").val(),
 	       				  evalUser: $("#userMenu").val(),
 						  minSize:  $("#minSize").val(),
-			              maxSize:  $("#maxSize").val()},
+			              maxSize:  $("#maxSize").val(),
+			              dataStr:  $("#dataStr").val(),
+                          knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
+                          missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
+                          subTpFlg:    ((document.form1.checkSubTP.checked == true) ? 1 : 0),
+                          fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
+                          pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},              
 				dataType: "json",
 				timeout: 180000,	// 3 minutes (avoid timeout error)
 
@@ -61,7 +70,6 @@ function ShowPersonalStatResult()
 								else
 								{
 									$("#scatterPlot").show();
-									$("#scatterPlot [name^=check]").attr("checked", "checked");
 								}
 
 								$("#plotLegend td").hide();
@@ -122,7 +130,7 @@ function RedrawScatterPlot()
 
 			error:   function(){
 						$.unblockUI();
-						alert("Fail to redraw scatter plots.");
+						alert("Failed to redraw scatter plots.");
 					}
 		});
 }
@@ -168,9 +176,9 @@ function ChangeUserList(mode, allStatFlg)
 
 function ResetCondition()
 {
-	$("#srDateRange").daterange('option', 'kind', 'all');
-	$("#minSize, #maxSize").removeAttr("value");
-	$("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
+    $("#srDateRange").daterange('option', 'kind', 'all');
+    $("#minSize, #maxSize").removeAttr("value");
+    $("#cadMenu, #userMenu, #versionMenu").children().removeAttr("selected");
 }
 
 $(function() {
@@ -278,19 +286,19 @@ $(function() {
 			<table id="plotLegend" class="block-al-r" style="margin-bottom: 10px;">
 				<tr>
 					<td name="known TP">
-						<input name="checkKownTP" type="checkbox" checked="checked" /><img src="images/statistics/knownTP.png" />
+						<input name="checkKownTP" type="checkbox" /><img src="images/statistics/knownTP.png" />
 					</td>
 					<td name="missed TP">
-						<input name="checkMissedTP" type="checkbox" checked="checked" /><img src="images/statistics/missedTP.png" />
+						<input name="checkMissedTP" type="checkbox" /><img src="images/statistics/missedTP.png" />
 					</td>
 					<td name="sub TP">
-						<input name="checkSubTP" type="checkbox" checked="checked" /><img src="images/statistics/subTP.png" />
+						<input name="checkSubTP" type="checkbox" /><img src="images/statistics/subTP.png" />
 					</td>
 					<td name="FP">
-						<input name="checkFP" type="checkbox" checked="checked" /><img src="images/statistics/FP.png" />
+						<input name="checkFP" type="checkbox" /><img src="images/statistics/FP.png" />
 					</td>
 					<td name="pending">
-						<input name="checkPending" type="checkbox" checked="checked" /><img src="images/statistics/pending.png" />
+						<input name="checkPending" type="checkbox" /><img src="images/statistics/pending.png" />
 					</td>
 					<td name="redrawBtn">
 						<input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" />
