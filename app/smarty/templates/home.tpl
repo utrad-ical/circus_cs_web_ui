@@ -32,7 +32,7 @@
 
 <div>
 	<h1>Welcome to CIRCUS clinical server</h1>
-	<span style="margin-left:10px;">User: {$currentUser->user_id|escape} (from {$smarty.server.REMOTE_ADDR})
+	<span style="margin-left:10px;">User: {$currentUser->user_id|escape} (from {$smarty.server.REMOTE_ADDR})</span>
 	<span class="last_login">Last login: {$smarty.session.lastLogin|escape} (from {$smarty.session.lastIPAddr})</span>
 </div>
 
