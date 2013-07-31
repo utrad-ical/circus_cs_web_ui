@@ -349,12 +349,17 @@ class CadResult extends Model
 	 * Returns CAD result directory URL.
 	 * @return string CAD result directory web path.
 	 */
-	public function webPathOfCadResult()
+	public function webPathOfCadResult($from_root = false)
 	{
-		$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
-		$this->_cachedRelativeTop = $r;
 		$str_id = $this->storage_id;
-		return $r . 'storage/' . $str_id . '/' . $this->job_id;
+		if ($from_root)
+		{
+			return 'storage/' . $str_id . '/' . $this->job_id;
+		} else {
+			$r = $this->_cachedRelativeTop !== null ? $this->_cachedRelativeTop : relativeTopDir();
+			$this->_cachedRelativeTop = $r;
+			return $r . 'storage/' . $str_id . '/' . $this->job_id;
+		}
 	}
 
 	/**
