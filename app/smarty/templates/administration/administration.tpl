@@ -54,26 +54,22 @@ jq/ui/theme/jquery-ui.custom.css
 	<ul>
 		<li>
 			<em>DICOM storage server</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='dicom_storage_server_config.php';" />
+			<a href="dicom_storage_server_config.php" class="form-btn">config</a>
 		</li>
 		<li>
 			<em>Data storage</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='data_storage_config.php';"/>
+			<a href="data_storage_config.php" class="form-btn">config</a>
 		</li>
 {/if}
 {if $currentUser->hasPrivilege('processManage')}
 		<li>
 			<em>Server service</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='server_service_config.php';" />
+			<a href="server_service_config.php" class="form-btn">config</a>
 		</li>
 {/if}
 		<li>
 			<em>Server logs</em>
-			<input type="button" value="show" class="form-btn"
-				onclick="location.href='server_logs.php';" />
+			<a href="server_logs.php" class="form-btn">show</a>
 		</li>
 	</ul>
 </fieldset>
@@ -84,8 +80,7 @@ jq/ui/theme/jquery-ui.custom.css
 {if $currentUser->hasPrivilege('restrictedUserEdit')}
 		<li>
 			<em>Users</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='user_config.php';" />
+			<a href="user_config.php" class="form-btn">config</a>
 		</li>
 {else}
 		<li>You do not have the privilege to edit user accounts.</li>
@@ -93,8 +88,7 @@ jq/ui/theme/jquery-ui.custom.css
 {if $currentUser->hasPrivilege('serverSettings')}
 		<li>
 			<em>Groups</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='group_config.php';" />
+			<a href="group_config.php" class="form-btn">config</a>
 		</li>
 {/if}
 	</ul>
@@ -106,29 +100,24 @@ jq/ui/theme/jquery-ui.custom.css
 	<ul>
 		<li>
 			<em>Install plug-in from package</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='add_plugin.php';" />
+			<a href="add_plugin.php" class="form-btn">config</a>
 		</li>
 		<li>
 			<em>Plug-in display order</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='plugin_display_order.php';">
+			<a href="plugin_display_order.php" class="form-btn">config</a>
 		</li>
 		<li>
 			<em>CAD result policies</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='result_policy_config.php';">
+			<a href="result_policy_config.php" class="form-btn">config</a>
 		</li>
 		<li>
 			<em>Series ruleset</em>
-			<input type="button" value="config" class="form-btn"
-				onclick="location.href='series_ruleset_config.php';">
+			<a href="series_ruleset_config.php" class="form-btn">config</a>
 		</li>
 {/if}
 		<li>
 			<em>Plug-in job queue</em>
-			<input type="button" value="show" class="form-btn"
-				onclick="location.href='show_job_queue.php';" />
+			<a href="show_job_queue.php" class="form-btn">show</a>
 		</li>
 	</ul>
 </fieldset>

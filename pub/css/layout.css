@@ -383,6 +383,8 @@ table.search-tbl th, table.search-tbl td {
 .form-btn {
 	display:inline-block;
 	cursor:pointer;
+	text-align: center;
+	text-decoration: none;
 }
 
 /* =================================================
