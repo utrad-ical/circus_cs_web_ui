@@ -10,7 +10,8 @@
 	//--------------------------------------------------------------------------
 	// Group privilege check
 	//--------------------------------------------------------------------------
-	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+	if (!Auth::currentUser()->isAdministrativeUser())
+		Auth::purge();
 
 	//--------------------------------------------------------------------------
 	// Generate one-time ticket

@@ -73,6 +73,15 @@ class User extends Model
 	}
 
 	/**
+	 * Checks if the user has any administrative type privilege.
+	 */
+	public function isAdministrativeUser()
+	{
+		return $this->hasPrivilege(Auth::RESTRICTED_USER_EDIT) ||
+			$this->hasPrivilege(Auth::PROCESS_MANAGE);
+	}
+
+	/**
 	 * Updates the group list of this user.
 	 * This does not check if the group IDs are valid.
 	 * Should be used with transactioning.

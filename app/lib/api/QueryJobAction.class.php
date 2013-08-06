@@ -123,7 +123,7 @@ class QueryJobAction extends ApiActionBase
 			if (is_null($item['priority'])) unset($item['priority']);
 
 			// Set status
-			$item['status'] = $this->get_status($item['status']);
+			$item['status'] = self::getJobStatus($item['status']);
 
 		}
 		return $results;
@@ -188,19 +188,18 @@ class QueryJobAction extends ApiActionBase
 		return $this->query_job($jobIDArr);
 	}
 
-	private function get_status($stat)
+	public static function getJobStatus($stat)
 	{
 		switch ($stat)
 		{
-			case -1:
+			case Job::JOB_FAILED:
 				return "error";
-			case 1:
+			case Job::JOB_NOT_ALLOCATED:
 				return "in_queue";
-			case 2:
+			case Job::JOB_ALLOCATED:
+			case Job::JOB_PROCESSING:
 				return "processing";
-			case 3:
-				return "processing";
-			case 4:
+			case Job::JOB_SUCCEEDED:
 				return "finished";
 		}
 		return $stat;

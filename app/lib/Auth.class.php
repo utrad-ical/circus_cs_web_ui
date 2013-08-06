@@ -67,7 +67,7 @@ class Auth
 	/**
 	 * Name of 'restrictedUserEdit' privilege.
 	 */
-	const RESTICTED_USER_EDIT = 'restrictedUserEdit';
+	const RESTRICTED_USER_EDIT = 'restrictedUserEdit';
 
 	/**
 	* Name of 'processManage' privilege.
@@ -155,7 +155,7 @@ class Auth
 			self::SERVER_SETTINGS // upper level
 		),
 		array (
-			self::RESTICTED_USER_EDIT,
+			self::RESTRICTED_USER_EDIT,
 			'Can add or modify non-admin level users.',
 			self::SERVER_OPERATION // upper level
 		),
@@ -262,7 +262,7 @@ class Auth
 		$priv = array_flip($user->listPrivilege());
 
 		$color_set = $user->hasPrivilege(Auth::PERSONAL_INFO_VIEW) ? 'user' : 'guest';
-		if ($user->hasPrivilege(Auth::SERVER_OPERATION)) $color_set = 'admin';
+		if ($user->isAdministrativeUser()) $color_set = 'admin';
 
 		$_SESSION['colorSet']            = $color_set;
 

@@ -20,7 +20,7 @@
 	<p class="user">User: {$currentUser->user_id|escape}</p>
 	<ul>
 		<li><a href="{$totop}user_preference.php" class="topmenu topmenu-preference" title="preference">preference</a></li>
-		{if $currentUser->hasPrivilege('serverOperation')}
+		{if $currentUser->isAdministrativeUser()}
 		<li><a href="{$totop}administration/administration.php" class="topmenu topmenu-administration" title="administration">administration</a></li>
 		{/if}
 		<li><a href="{$totop}index.php?mode=logout" class="topmenu topmenu-logout" title="logout">logout</a></li>

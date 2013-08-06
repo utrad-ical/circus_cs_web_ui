@@ -62,6 +62,8 @@ jq/ui/theme/jquery-ui.custom.css
 			<input type="button" value="config" class="form-btn"
 				onclick="location.href='data_storage_config.php';"/>
 		</li>
+{/if}
+{if $currentUser->hasPrivilege('processManage')}
 		<li>
 			<em>Server service</em>
 			<input type="button" value="config" class="form-btn"
@@ -79,11 +81,15 @@ jq/ui/theme/jquery-ui.custom.css
 <fieldset>
 	<legend>Users & Groups</legend>
 	<ul>
+{if $currentUser->hasPrivilege('restrictedUserEdit')}
 		<li>
 			<em>Users</em>
 			<input type="button" value="config" class="form-btn"
 				onclick="location.href='user_config.php';" />
 		</li>
+{else}
+		<li>You do not have the privilege to edit user accounts.</li>
+{/if}
 {if $currentUser->hasPrivilege('serverSettings')}
 		<li>
 			<em>Groups</em>
