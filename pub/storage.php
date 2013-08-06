@@ -34,7 +34,6 @@ $is_cad_result = $storage['type'] == 2; // Storage::PLUGIN_RESULT
 $storage_path = $storage['path'];
 $fileName = $storage_path . '/' . $subPath;
 
-
 // Security: deny access to parent directories
 $dirs = preg_split('{[/\\\\]}', $subPath);
 if (array_search('..', $dirs) !== false)
@@ -47,9 +46,26 @@ if ($is_cad_result)
 {
 	$job_id = $dirs[0];
 	session_start();
-	$jobs = explode(';', $_SESSION['authenticated_jobs']);
-	if (array_search($job_id, $jobs) === false)
-		error(403, 'You do not have access to this job. Reload the result page.');
+
+	if (isset($_SESSION['authenticated_jobs']))
+	{
+		$jobs = explode(';', $_SESSION['authenticated_jobs']);
+		if (array_search($job_id, $jobs) === false)
+			error(403, 'You do not have access to this job. Reload the result page.');
+	} elseif (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+		// Try basic authentication
+		require_once('common.php');
+		$user = Auth::checkAuth($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+		if (!$user)
+			error(403, 'Basic authentication failed.');
+		$job = new CadResult($job_id);
+		if (!isset($job->job_id))
+			error(403, 'No such CAD job.');
+		if (!$job->checkCadResultAvailability($user->Group))
+			error(403, 'You do not have access to this job.');
+	} else {
+		error(404, 'You do not have access to this job. Reload the result page.');
+	}
 }
 
 if (!is_file($fileName) || !is_readable($fileName)) {
