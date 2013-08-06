@@ -1,7 +1,7 @@
 <?php
 include("../common.php");
 Auth::checkSession();
-Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+Auth::purgeUnlessGranted(Auth::RESTICTED_USER_EDIT);
 
 $message = '';
 
@@ -162,12 +162,12 @@ try
 		if (!$currentUser->hasPrivilege(Auth::SERVER_SETTINGS))
 		{
 			// Secrity Rule:
-			// User with only 'serverOperation' privilege can not edit user
+			// User with only 'restrictedUserEdit' privilege can not edit user
 			// with 'serverOperation' or 'serverSettings' privilege.
-			if ($update_mode && $user->hasPrivilege(Auth::SERVER_OPERATION))
+			if ($update_mode && ($user->hasPrivilege(Auth::RESTICTED_USER_EDIT) || $user->hasPrivilege(Auth::PROCESS_MANAGE)))
 				throw new Exception("You do not have sufficient privilege to modify user '$req[target]'.");
 			foreach ($groups as $group)
-				if ($group->hasPrivilege(Auth::SERVER_OPERATION))
+				if ($group->hasPrivilege(Auth::RESTICTED_USER_EDIT) || $group->hasPrivilege(Auth::PROCESS_MANAGE))
 					throw new Exception(
 						"You do not have sufficient privilege to add this user to '$group->group_id' group.");
 		}
@@ -206,7 +206,7 @@ try
 
 		if (!$currentUser->hasPrivilege(Auth::SERVER_SETTINGS))
 		{
-			if ($user->hasPrivilege(Auth::SERVER_OPERATION))
+			if ($user->hasPrivilege(Auth::RESTICTED_USER_EDIT) || $user->hasPrivilege(Auth::PROCESS_MANAGE))
 				throw new Exception("You do not have sufficient privilege to delete user '$req[target]'.");
 		}
 

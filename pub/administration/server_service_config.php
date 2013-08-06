@@ -1,7 +1,7 @@
 <?php
 require("../common.php");
 Auth::checkSession();
-Auth::purgeUnlessGranted(AUTH::SERVER_OPERATION);
+Auth::purgeUnlessGranted(AUTH::PROCESS_MANAGE);
 
 //------------------------------------------------------------------------------
 // Make one-time ticket

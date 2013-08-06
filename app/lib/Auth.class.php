@@ -65,6 +65,16 @@ class Auth
 	const SERVER_OPERATION = 'serverOperation';
 
 	/**
+	 * Name of 'restrictedUserEdit' privilege.
+	 */
+	const RESTICTED_USER_EDIT = 'restrictedUserEdit';
+
+	/**
+	* Name of 'processManage' privilege.
+	*/
+	const PROCESS_MANAGE = 'processManage';
+
+	/**
 	 * Name of 'personalInfoView' privilege.
 	 * @var string
 	 */
@@ -143,6 +153,16 @@ class Auth
 			self::SERVER_OPERATION,
 			'Can do some of the server administration task.',
 			self::SERVER_SETTINGS // upper level
+		),
+		array (
+			self::RESTICTED_USER_EDIT,
+			'Can add or modify non-admin level users.',
+			self::SERVER_OPERATION // upper level
+		),
+		array (
+			self::PROCESS_MANAGE,
+			'Can kill or reboot service processes and plugin jobs.',
+			self::SERVER_OPERATION // upper level
 		),
 		array (
 			self::PERSONAL_INFO_VIEW,
