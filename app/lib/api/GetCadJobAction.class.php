@@ -40,7 +40,7 @@ class GetCadJobAction extends ApiActionBase
 			'resultPolicy' => $cr->ResultPolicy->policy_name,
 			'registeredAt' => $cr->registered_at,
 			'executedAt' => $cr->executed_at,
-			'status' => $cr->status
+			'status' => QueryJobAction::getJobStatus($cr->status)
 		);
 
 		if ($cr->status != Job::JOB_SUCCEEDED)
