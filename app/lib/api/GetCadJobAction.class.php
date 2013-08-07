@@ -46,6 +46,11 @@ class GetCadJobAction extends ApiActionBase
 		if ($cr->status != Job::JOB_SUCCEEDED)
 			return $result;
 
+		if ($params['withDisplays'] || $params['withFeedback'])
+		{
+			set_include_path(get_include_path() . PATH_SEPARATOR . $cr->Plugin->configurationPath());
+		}
+
 		// Display
 		if ($params['withDisplays'])
 		{
