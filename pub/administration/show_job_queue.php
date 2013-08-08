@@ -1,7 +1,7 @@
 <?php
 include_once("../common.php");
 Auth::checkSession();
-Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+Auth::purgeUnlessGranted(Auth::PROCESS_MANAGE);
 
 //------------------------------------------------------------------------------
 // Settings for Smarty

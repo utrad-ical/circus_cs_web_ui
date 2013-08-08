@@ -1,7 +1,7 @@
 <?php
 	include("../common.php");
 	Auth::checkSession();
-	Auth::purgeUnlessGranted(Auth::SERVER_OPERATION);
+	Auth::purgeUnlessGranted(Auth::PROCESS_MANAGE);
 
 	//--------------------------------------------------------------------------
 	// Import $_REQUEST variables
