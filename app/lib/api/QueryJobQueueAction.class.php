@@ -3,7 +3,7 @@
 class QueryJobQueueAction extends ApiActionBase
 {
 	protected static $required_privileges = array(
-		Auth::SERVER_OPERATION
+		Auth::PROCESS_MANAGE
 	);
 
 	protected function execute($params)
