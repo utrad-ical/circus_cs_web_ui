@@ -72,6 +72,38 @@ class DisplayPresenter extends CadBlockElement
 	}
 
 	/**
+	 * Utility function to convert Z coordinate in volume to dicom image number.
+	 * @param int $z Z coordinate in the created volume.
+	 * @param int $vol_id Volume ID.
+	 * @return int The converted DICOM image number.
+	 */
+	protected function convertVolumeCoordinateToImageNum($z, $vol_id = 0)
+	{
+		$sr = $this->cadResult->ExecutedSeries[$vol_id];
+		if (!$sr)
+		{
+			throw new BadMethodCallException('Volume ID out of bounds');
+		}
+		return $z * $sr->image_delta + $sr->z_org_img_num;
+	}
+
+	/**
+	 * Utility function to convert dicom image number to Z coordinate in volume.
+	 * @param int $num DICOM image number.
+	 * @param int $vol_id Volume ID.
+	 * @return int The converted Z coordinate in the created volume.
+	 */
+	protected function convertImageNumToVolumeCoordinate($num, $vol_id = 0)
+	{
+		$sr = $this->cadResult->ExecutedSeries[$vol_id];
+		if (!$sr)
+		{
+			throw new BadMethodCallException('Volume ID out of bounds');
+		}
+		return ($num - $sr->z_org_img_num) / $sr->image_delta;
+	}
+
+	/**
 	 * Extract the displays from the input table.
 	 * This is a good point for subclasses to override.
 	 * You can add extra information to the extracted displays,

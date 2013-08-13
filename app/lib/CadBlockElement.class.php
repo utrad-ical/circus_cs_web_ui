@@ -9,7 +9,7 @@
 abstract class CadBlockElement extends CadResultElement
 {
 	/**
-	 * @var CADResult
+	 * @var CadResult
 	 */
 	protected $owner;
 
