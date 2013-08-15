@@ -13,6 +13,12 @@
 				if (tmp.is(':radio') || tmp.is(':checkbox') && !$.isArray(val)) val = [val];
 				tmp.val(val);
 			}
+			var elem = $('#' + key);
+			if (elem.is('.ui-daterange')) {
+				elem.daterange('option', 'kind', val[0]);
+				elem.daterange('option', 'fromDate', val[1]);
+				elem.daterange('option', 'toDate', val[2]);
+			}
 		});
 		return this;
 	}
@@ -20,7 +26,7 @@
 	function toObject() {
 		var result = {};
 		var self = this;
-		$('input, textarea, select', this).each(function() {
+		$('input, textarea, select', this).filter(':not(.ui-daterange *)').each(function() {
 			var e = $(this);
 			var name = e.prop('name');
 			if (name in result) return;
@@ -49,6 +55,15 @@
 				}
 			}
 			result[name] = v;
+		});
+		$('.ui-daterange').each(function() {
+			var e = $(this);
+			var name = e.prop('id');
+			result[name] = [
+				e.daterange('option', 'kind'),
+				e.daterange('option', 'fromDate'),
+				e.daterange('option', 'toDate')
+			];
 		});
 		return result;
 	}
