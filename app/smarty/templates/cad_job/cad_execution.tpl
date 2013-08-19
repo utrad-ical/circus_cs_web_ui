@@ -149,7 +149,7 @@ ul.filters li { list-style-type: disc; }
 		{else}
 			<li><a href="../series_list.php?mode=study&studyInstanceUID={$params.studyInstanceUID}" class="btn-tab" title="Series list">Series list</a></li>
 		{/if}
-		<li><a href="" class="btn-tab" title="list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">CAD execution</a></li>
+		<li><a href="" class="btn-tab" title=list" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff" onclick="return false;">CAD execution</a></li>
 	</ul>
 </div><!-- / .tabArea END -->
 
