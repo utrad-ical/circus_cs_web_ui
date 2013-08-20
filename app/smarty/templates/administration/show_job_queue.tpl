@@ -32,7 +32,7 @@ $(function () {
 		var cols = ['job_id', 'registered_at', 'exec_user', 'plugin_name',
 			'plugin_type', 'patient_id', 'study_id', 'series_id', 'priority', 'pm_id'];
 		var tbody = $('#jobList tbody').empty();
-		jobs = data.jobs;
+		var jobs = data.jobs;
 		for (var i = 0; i < jobs.length; i++)
 		{
 			var job = jobs[i];
@@ -49,9 +49,7 @@ $(function () {
 		relax();
 	}
 
-	$('#jobList').click(function(event) {
-		if (!$(event.target).is(':button'))
-			return;
+	$('#jobList').on('click', ':button', function(event) {
 		var id = $(event.target).closest('tr').find('.job_id').text();
 		if(confirm('Do you delete the job (JobID:'+ id + ') ?'))
 		{
@@ -71,6 +69,15 @@ $(function () {
 	$('#refresh').click(function () {
 		onMessage('');
 		getJobQueueList();
+	});
+
+	var timer = null;
+	$('#auto-refresh').on('change', function() {
+		var interval = parseInt($('#auto-refresh').val()) * 1000;
+		clearInterval(timer);
+		if (interval > 0) {
+			timer = setInterval(getJobQueueList, interval);
+		}
 	});
 
 	$('#reset-button').click(function () {
@@ -138,6 +145,15 @@ $(function () {
 
 	<div id="list-btn">
 		<input type="button" id="refresh" class="form-btn" value="Refresh" />
+		<label>
+		Automatic refresh:
+		<select id="auto-refresh">
+			<option value="0">Off</option>
+			<option value="10">10sec.</option>
+			<option value="60">1min.</option>
+			<option value="300">5min.</option>
+		</select>
+		</label>
 		<span id="busy"> Loading... <img src="../images/busy.gif" /></span>
 	</div>
 
