@@ -47,8 +47,7 @@ class VolumeArchiver
 		if ($this->_required_private_tags)
 			$cmd .= " " . escapeshellarg($this->_required_private_tags);
 
-		$wrap = $cmdForProcess . " " . escapeshellarg($cmd);
-		$result = shell_exec($wrap);
+		$result = shell_exec($cmd);
 
 		if (!preg_match('/Succeeded/', $result))
 			throw new Exception("A volume converter error occurred.");
