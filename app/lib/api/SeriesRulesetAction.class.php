@@ -62,7 +62,7 @@ class SeriesRulesetAction extends ApiActionBase
 				'regex' => '/^([0-9A-Fa-f]{4},[0-9A-Fa-f]{4};)*([0-9A-Fa-f]{4},[0-9A-Fa-f]{4})?$/'
 			),
 			'image_delta' => array('type' => 'int', 'default' => 0),
-			'environment' => array('type' => 'string', 'regex' => '/^\w*$/', 'default' => ''),
+			'environment' => array('type' => 'string', 'regex' => '/^[\w,.-]*$/', 'default' => ''),
 			'continuous' => array('type' => 'bool')
 		);
 		$validator = new FormValidator();
