@@ -255,10 +255,11 @@ class Job extends Model
 
 		// Register into "job_queue"
 		$sqlStr = "INSERT INTO job_queue"
-			. " (job_id, plugin_id, priority, status, exec_user, registered_at, updated_at)"
-			. " VALUES (?, ?, ?, 1, ?, ?, ?)";
+			. " (job_id, plugin_id, priority, status, exec_user,"
+			. " registered_at, updated_at, environment)"
+			. " VALUES (?, ?, ?, 1, ?, ?, ?, ?)";
 		$sqlParams = array(
-			$job_id, $plugin->plugin_id, $priority, $user_id, $now, $now
+			$job_id, $plugin->plugin_id, $priority, $user_id, $now, $now, $environment
 		);
 		DBConnector::query($sqlStr, $sqlParams, 'SCALAR');
 
