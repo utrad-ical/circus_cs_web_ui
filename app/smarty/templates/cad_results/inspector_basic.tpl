@@ -56,5 +56,9 @@
       <td class="name themeColor">Result storage path</td>
       <td>{$cadResult->pathOfCadResult()|escape}</td>
     </tr>
+    <tr>
+      <td class="name themeColor">Environment</td>
+      <td>{if is_null($cadResult->environment)}<i>(Empty)</i>{else}{$cadResult->environment|escape}{/if}</td>
+    </tr>
   </tbody>
 </table>
