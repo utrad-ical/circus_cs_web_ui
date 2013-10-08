@@ -28,10 +28,6 @@ $(function () {
 		editor.show(300);
 	});
 
-	$('.delete_button').click(function (event) {
-		cancel(0);
-	});
-
 	$('#cancel_button').click(function () {
 		$('#groups tr').removeClass('editing');
 		cancel(300);
