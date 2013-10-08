@@ -5,12 +5,15 @@ Auth::checkSession();
 Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS);
 
 try {
+	$pdo = DBConnector::getConnection();
+
 	$validator = new FormValidator();
 	$validator->addRules(array(
 		'mode' => array(
 			'type' => 'select',
-			'options' => array('set')
+			'options' => array('set', 'set_order')
 		),
+		'order' => array('type' => 'string'),
 		'plugin_id' => array('type' => 'int'),
 		'exec_enabled' => array('type' => 'bool', 'default' => false),
 		'default_policy' => array('type' => 'int'),
@@ -23,9 +26,11 @@ try {
 		throw new Exception(implode(" ", $validator->errors));
 	}
 
+	if ($req['mode'] && $req['ticket'] != $_SESSION['ticket']) {
+		throw new Exception('Invalid page transition detected. Try again.');
+	}
+
 	if ($req['mode'] == 'set') {
-		if ($req['ticket'] != $_SESSION['ticket'])
-			throw new Exception('Invalid page transition detected. Try again.');
 		$plugin = new Plugin($req['plugin_id']);
 		if (!$plugin->plugin_name) throw new Exception('Invalid plugin specified');
 		$cadPlugin = $plugin->CadPlugin[0];
@@ -41,7 +46,24 @@ try {
 		$message = "Plugin {$plugin->fullName()} was successfully updated.";
 	}
 
+	if ($req['mode'] == 'set_order') {
+		$order = json_decode($req['order']);
+		$i = 1;
+		$pdo->beginTransaction();
+		$transaction_started = true;
+		foreach ($order as $pid) {
+			$plugin = new CadPlugin($pid);
+			if (!isset($plugin->plugin_id)) throw new Exception('Failed');
+			$plugin->save(array('CadPlugin' => array(
+				'label_order' => $i++
+			)));
+		}
+		$pdo->commit();
+		$message = "Plugin display order was successfully saved.";
+	}
+
 } catch (Exception $e) {
+	if ($transaction_started) $pdo->rollBack();
 	$message = $e->getMessage() . " at " . $e->getTraceAsString();
 }
 display($message);
@@ -83,9 +105,10 @@ function display($message)
 			$tmp['default_policy'] = $default_policy_id;
 		}
 		$tmp['default_policy_name'] = $pol_map[$tmp['default_policy']]['policy_name'];
-		$plugins[$tmp['plugin_id']] = $tmp;
+		$tmp['full_name'] = $item->fullName();
+		$plugins[] = $tmp;
 	}
-	uasort($plugins, function($a, $b) { return $a['label_order'] - $b['label_order']; });
+	usort($plugins, function($a, $b) { return $a['label_order'] - $b['label_order']; });
 
 	$smarty->assign(array(
 		'message' => $message,

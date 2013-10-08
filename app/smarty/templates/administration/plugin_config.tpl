@@ -1,10 +1,10 @@
 {capture name="require"}
 js/jquery.formserializer.js
+jq/ui/jquery-ui.min.js
+jq/ui/theme/jquery-ui.custom.css
 {/capture}
 {capture name="extra"}
 <script type="text/javascript">
-<!--
-
 var data = {$plugins|@json_encode};
 
 {literal}
@@ -17,11 +17,11 @@ $(function () {
 	$('.edit_button').click(function(event) {
 		cancel(0);
 		var tr = $(event.target).closest('tr.plugin').addClass('editing');
-		var plugin_id = $('.plugin_id', tr).text();
-		var plugin_data = data[plugin_id];
-		if (!plugin_data)
-			return;
-		$('#target').text(plugin_data.plugin_name + ' v.' + plugin_data.version);
+		var plugin_id = parseInt($('.plugin_id', tr).text());
+		var plugin_data = null;
+		$.each(data, function(i, item) { if (item.plugin_id == plugin_id) plugin_data = item; });
+		if (plugin_data === null) return;
+		$('#target').text(plugin_data.full_name);
 		var editor = $('#editor');
 		$('#plugin_id').val(plugin_id);
 		editor.fromObject(plugin_data);
@@ -40,8 +40,31 @@ $(function () {
 	$('#save_button').click(function () {
 		$('#editor_form').submit();
 	});
+
+	$('#order_button').click(function() {
+		cancel(0);
+		var dialog = $('#order_dialog');
+		var ul = $('#plugin_order');
+		ul.empty();
+		$.each(data, function(i, item) {
+			var li = $('<li>').text(item.full_name).data('pid', item.plugin_id).appendTo(ul);
+			if (!item.exec_enabled) li.addClass('disabled');
+		});
+		ul.sortable({ axis: 'y', containment: dialog });
+		$('#order_dialog').dialog({
+			modal: true,
+			buttons: {
+				OK: function() {
+					var txt = $('li', ul).map(function() { return $(this).data('pid'); }).get().join(',');
+					txt = '[' + txt + ']';
+					$('#order').val(txt);
+					$('#order_form').submit();
+				},
+				Cancel: function() { dialog.dialog('close'); }
+			}
+		});
+	});
 });
--->
 </script>
 
 <style type="text/css">
@@ -58,6 +81,19 @@ $(function () {
 #panel { margin: 0.5em; }
 
 #plugins tr.editing td.plugin_id { background-color: salmon; }
+
+#order_dialog { display: none; }
+#plugin_order { padding: 1em; }
+#plugin_order li {
+	background-color: #eee;
+	margin: 2px;
+	padding: 2px;
+	cursor: n-resize;
+	font-weight: bolder;
+}
+#plugin_order li.disabled { color: gray; }
+#plugin_order li:hover { background-color: #ebbe8c; }
+
 </style>
 
 {/literal}
@@ -95,7 +131,7 @@ require=$smarty.capture.require body_class="spot"}
 </table>
 
 <div id="panel">
-	<input type="button" class="form-btn" value="Plugin Display Order" id="order-button" />
+	<input type="button" class="form-btn" value="Plugin Display Order" id="order_button" />
 </div>
 
 <div id="editor" style="display: none">
@@ -125,5 +161,16 @@ require=$smarty.capture.require body_class="spot"}
 	</div>
 </form>
 </div>
+
+<div id="order_dialog" title="Plugin Display Order">
+	<p>Sort plug-in display order by dragging.</p>
+	<ul id="plugin_order">
+	</ul>
+</div>
+<form id="order_form" method="POST">
+<input type="hidden" name="mode" value="set_order" />
+<input type="hidden" name="ticket" value="{$ticket|escape}" />
+<input type="hidden" name="order" value="" id="order" />
+</form>
 
 {include file="footer.tpl"}
