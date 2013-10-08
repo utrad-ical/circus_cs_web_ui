@@ -4,11 +4,14 @@ js/series_ruleset.js
 {capture name="extra"}
 <script type="text/javascript">
 <!--
+var initial_policy = {$initialPolicy|@json_encode};
 {literal}
 $(function(){
 	var registered = false;
 
 	$('#messages p').hide();
+
+	$('#cadResultPolicy').val([initial_policy]);
 
 	$('.filter').each(function() {
 		var f = $(this);
@@ -188,7 +191,7 @@ ul.filters li { list-style-type: disc; }
 		<div id="buttons">
 			<p><label>Result policy: <select id="cadResultPolicy">
 				{foreach from=$policies item=item}
-				<option value="{$item->policy_name|escape}"{if $item->policy_name=="default"} selected="selected"{/if}>{$item->policy_name|escape}</option>
+				<option value="{$item->policy_name|escape}">{$item->policy_name|escape}</option>
 				{/foreach}
 			</select></label></p>
 			<input name="" type="button" value="Cancel" id="cancel" class="form-btn" onclick="history.back(1);" />

@@ -160,7 +160,6 @@ if(!$errorFlg)
 		$stmt->execute($sqlParams);
 
 		$resultTableName = (isset($data['resultTable']['tableName'])) ? $data['resultTable']['tableName'] : "";
-		$scoreTableName  = (isset($data['scoreTable']['tableName'])) ? $data['scoreTable']['tableName'] : "";
 
 		$sqlStr = "SELECT COUNT(*) FROM plugin_master WHERE type=? AND exec_enabled='t'";
 		$maxLabelOrder = DBConnector::query($sqlStr, array($data['pluginType']), 'SCALAR') + 1;
@@ -169,14 +168,13 @@ if(!$errorFlg)
 		{
 			// Set plugin_cad_master
 			$sqlStr = "INSERT INTO plugin_cad_master(plugin_id, label_order,"
-					. " input_type, result_type, time_limit, result_table, score_table)"
+					. " input_type, result_type, time_limit, result_table)"
 					. " VALUES (?, ?, ?, ?, ?, ?, ?)";
 			$sqlParams = array($pluginID, $maxLabelOrder,
 								$data['cadDefinition']['inputType'],
 								$data['cadDefinition']['resultType'],
 								$data['cadDefinition']['timeLimit'],
-								$resultTableName,
-								$scoreTableName);
+								$resultTableName);
 			$stmt = $pdo->prepare($sqlStr);
 			$stmt->execute($sqlParams);
 

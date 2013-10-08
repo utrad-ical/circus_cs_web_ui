@@ -9,6 +9,7 @@ class CadPlugin extends Model
 	protected static $_table = 'plugin_cad_master';
 	protected static $_primaryKey = 'plugin_id';
 	protected static $_belongsTo = array(
-		'Plugin' => array('key' => 'plugin_id')
+		'Plugin' => array('key' => 'plugin_id'),
+		'PluginResultPolicy' => array('key' => 'default_policy')
 	);
 }
