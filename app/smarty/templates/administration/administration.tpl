@@ -107,10 +107,6 @@ jq/ui/theme/jquery-ui.custom.css
 			<a href="plugin_config.php" class="form-btn">config</a>
 		</li>
 		<li>
-			<em>Plug-in display order</em>
-			<a href="plugin_display_order.php" class="form-btn">config</a>
-		</li>
-		<li>
 			<em>CAD result policies</em>
 			<a href="result_policy_config.php" class="form-btn">config</a>
 		</li>
