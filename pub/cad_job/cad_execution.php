@@ -50,6 +50,11 @@ try
 	if (!$plugin)
 		throw new Exception($params['cadName'].' ver.'.$params['version'].' is not installed.');
 
+	// Find the default policy
+	$default_pol = $plugin->CadPlugin[0]->PluginResultPolicy;
+	$initialPolicy = isset($default_pol->policy_name) ?
+		$default_pol->policy_name : PluginResultPolicy::DEFAULT_POLICY;
+
 	$primarySeries = Series::selectOne(array('series_instance_uid' => $params['seriesInstanceUID']));
 	if (!$primarySeries)
 		throw new Exception('Primary series does not exist');
@@ -65,7 +70,7 @@ try
 			'id' => $vid,
 			'label' => $vol->volume_label,
 			'ruleSetList' => json_decode($vol->ruleset, true),
-			'targetSeries' => $avail_series[$vid]
+			'targetSeries' => $avail_series[$vid],
 		);
 	}
 	ksort($volumeInfo, SORT_NUMERIC);
@@ -83,6 +88,7 @@ try
 	$smarty->assign('volumeInfo', $volumeInfo);
 	$smarty->assign('patient', $patient);
 	$smarty->assign('policies', $policies);
+	$smarty->assign('initialPolicy', $initialPolicy);
 	//--------------------------------------------------------------------------
 
 }
