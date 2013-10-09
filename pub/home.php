@@ -8,19 +8,15 @@ try
 {
 	$pdo = DBConnector::getConnection();
 
-	//--------------------------------------------------------------------------------------------------------------
-	// For news block
-	//--------------------------------------------------------------------------------------------------------------
-	$sqlStr = "SELECT plugin_name, version, install_dt FROM plugin_master ORDER BY install_dt DESC LIMIT 5";
-	$newsData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
-	//--------------------------------------------------------------------------------------------------------------
+	// News block
+	$plugins = array_map(
+		function($item) { return $item->getData(); },
+		Plugin::select(array(), array('limit' => 5, 'order' => array('install_dt DESC')))
+	);
 
-	//--------------------------------------------------------------------------------------------------------------
-	// For plug-in execution block
-	//--------------------------------------------------------------------------------------------------------------
+	// Plug-in execution block
 	$sqlStr = "SELECT COUNT(*), MIN(executed_at) FROM executed_plugin_list WHERE status = ?";
 	$result = DBConnector::query($sqlStr, Job::JOB_SUCCEEDED, 'ARRAY_NUM');
-
 	$executionNum = $result[0];
 	$oldestExecDate = substr($result[1], 0, 10);
 
@@ -32,11 +28,13 @@ try
 				. " GROUP BY plugin_name, version ORDER BY COUNT(job_id) DESC LIMIT 3";
 		$cadExecutionData = DBConnector::query($sqlStr, null, 'ALL_ASSOC');
 	}
-	//--------------------------------------------------------------------------------------------------------------
 
-	//--------------------------------------------------------------------------------------------------------------
+	// Message board
+	$topMessage = ServerParam::getVal('top_message');
+
+	//--------------------------------------------------------------------------
 	//// For latest missed TP
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	$latestHtml = "";
 
 	if($_SESSION['personalFBFlg']==1 && $_SESSION['showMissed']!='none')
@@ -185,21 +183,24 @@ try
 			}
 		}
 	}
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	// Settings for Smarty
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 	$smarty = new SmartyEx();
 
-	$smarty->assign('newsData',         $newsData);
-	$smarty->assign('executionNum',     $executionNum);
-	$smarty->assign('oldestExecDate',   $oldestExecDate);
-	$smarty->assign('cadExecutionData', $cadExecutionData);
-	$smarty->assign('latestHtml', $latestHtml);
+	$smarty->assign(array(
+		'plugins' => $plugins,
+		'executionNum' => $executionNum,
+		'oldestExecDate' => $oldestExecDate,
+		'cadExecutionData' => $cadExecutionData,
+		'topMessage' => $topMessage,
+		'latestHtml' => $latestHtml
+	));
 
 	$smarty->display('home.tpl');
-	//--------------------------------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
 
 }
 catch (PDOException $e)
