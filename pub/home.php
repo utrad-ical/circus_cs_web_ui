@@ -26,6 +26,9 @@ try
 
 	// Message board
 	$topMessage = ServerParam::getVal('top_message');
+	if (ServerParam::getVal('top_message_style') != 'html') {
+		$topMessage = nl2br(htmlspecialchars($topMessage));
+	}
 
 	// latest missed TP
 	$user = Auth::currentUser();

@@ -106,10 +106,10 @@ $(function() {
 </div>
 
 <div id="center">
-	{if !is_null($topMessage)}
+	{if !is_null($topMessage) && strlen($topMessage)}
 	<div class="module top_message">
 		<h2>Message</h2>
-		{$topMessage}
+		<div id="top_message">{$topMessage}</div>
 	</div>
 	{/if}
 

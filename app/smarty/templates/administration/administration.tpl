@@ -60,6 +60,10 @@ jq/ui/theme/jquery-ui.custom.css
 			<em>Data storage</em>
 			<a href="data_storage_config.php" class="form-btn">config</a>
 		</li>
+		<li>
+			<em>Website configuration</em>
+			<a href="website_config.php" class="form-btn">config</a>
+		</li>
 {/if}
 {if $currentUser->hasPrivilege('processManage')}
 		<li>
