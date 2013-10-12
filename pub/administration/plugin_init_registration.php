@@ -169,7 +169,7 @@ if(!$errorFlg)
 			// Set plugin_cad_master
 			$sqlStr = "INSERT INTO plugin_cad_master(plugin_id, label_order,"
 					. " input_type, result_type, time_limit, result_table)"
-					. " VALUES (?, ?, ?, ?, ?, ?, ?)";
+					. " VALUES (?, ?, ?, ?, ?, ?)";
 			$sqlParams = array($pluginID, $maxLabelOrder,
 								$data['cadDefinition']['inputType'],
 								$data['cadDefinition']['resultType'],
