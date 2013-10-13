@@ -45,7 +45,8 @@ $(function() {
 		var series_uid = _this.data('series-uid');
 		var crop = _this.data('crop');
 		var extra_opt = _this.data('opt');
-		var loc = _this.data('loc').split(',').map(function(i){return parseInt(i);});
+		var loc = _this.data('loc').split(',');
+		for (var i = 0; i < loc.length; i++) loc[i] = parseInt(loc[i]);
 		var options = {
 			source: new DicomDynamicImageSource(series_uid, ''),
 			index: loc[2],
