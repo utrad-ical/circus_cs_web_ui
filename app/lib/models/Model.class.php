@@ -64,6 +64,10 @@ abstract class Model implements Iterator
 		{
 			$sql .= ' LIMIT ' . implode(', ', $options['limit']);
 		}
+		if (is_scalar($options['limit']))
+		{
+			$sql .= ' LIMIT ' . $options['limit'];
+		}
 
 		$rows = DBConnector::query($sql, $vals, 'ALL_ASSOC');
 		$results = array();
