@@ -412,13 +412,13 @@ if(!$errorFlg)
 		// Commit transaction
 		$pdo->commit();
 
-		$message .= '<span style="color:blue;">Success to register plug-in (' . $baseName . ')</span>';
+		$message .= '<span style="color:blue;">Succeeded to register plug-in (' . $baseName . ')</span>';
 	}
 	catch (PDOException $e)
 	{
 		$pdo->rollBack();
 		DeleteDirRecursively($pluginPath);
-		$message .= '<span style="color:red;">[ERROR] Fail to register plug-in (' . $baseName . ')<br />'
+		$message .= '<span style="color:red;">[ERROR] Failed to register plug-in (' . $baseName . ')<br />'
 				 .  '(' . $e->getMessage() . ')</span>';
 	}
 }
