@@ -9,6 +9,7 @@ $keys = array(
 	array('value' => 'manufacturer'),
 	array('value' => 'model_name'),
 	array('value' => 'station_name'),
+	array('value' => 'patient_id'),
 	array('value' => 'sex'),
 	array('value' => 'age'),
 	array('value' => 'study_date'),
