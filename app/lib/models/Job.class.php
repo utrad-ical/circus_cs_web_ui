@@ -34,6 +34,11 @@ class Job extends Model
 	const JOB_INVALIDATED   = -2;
 
 	/**
+	 * Indicates the job is aborted.
+	 */
+	const JOB_ABORTED       = -3;	
+	
+	/**
 	 * Indicates the job is in the queue, but not allocated to any process
 	 * machine.
 	 */
@@ -305,7 +310,7 @@ class Job extends Model
 		}
 		return $job_id;
 	}
-
+	
 	/**
 	 * Detects job duplication.
 	 * A duplicated job is a job with the same plugin and excactly the same
@@ -352,5 +357,23 @@ EOT;
 		else
 			return false;
 
+	}
+	
+	public static function abortJob($job_id)
+	{
+		// Update "job_queue"
+		$sqlStr = "UPDATE job_queue"
+		. " SET status=?"
+		. " WHERE job_id=?";
+		$sqlParams = array(self::JOB_ABORTED, $job_id);
+		DBConnector::query($sqlStr, $sqlParams);
+	
+		// Update "executed_plugin_list"
+		$sqlStr = "UPDATE executed_plugin_list"
+		. " SET status=?"
+		. " WHERE job_id=?";
+		DBConnector::query($sqlStr, $sqlParams);
+	
+		return true;
 	}
 }

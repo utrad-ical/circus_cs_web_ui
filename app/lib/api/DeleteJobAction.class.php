@@ -24,6 +24,10 @@ class DeleteJobAction extends ApiActionBase
 			Job::delete($target->job_id);
 			CadResult::delete($target->job_id);
 		}
+		else if($target->status == Job::JOB_PROCESSING)
+		{
+			Job::abortJob($target->job_id);
+		}
 		else
 		{
 			throw new ApiOperationException(

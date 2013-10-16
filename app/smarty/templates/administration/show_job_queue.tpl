@@ -42,7 +42,7 @@ $(function () {
 			if (job.status == 1)
 				$('<td>In Queue <input type="button" class="form-btn" value="delete"></td>').appendTo(tr);
 			else
-				$('<td>Processing</td>').appendTo(tr);
+				$('<td>Processing <input type="button" class="form-btn" value="delete"></td>').appendTo(tr);
 			tr.appendTo(tbody);
 		}
 		tbody.find('tr:odd').addClass('column');
