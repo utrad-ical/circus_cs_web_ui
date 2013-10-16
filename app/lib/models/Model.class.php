@@ -239,7 +239,7 @@ abstract class Model implements Iterator
 	 */
 	public static function lock()
 	{
-		DBConnector::query('LOCK TABLE ' . static::$_table);
+		DBConnector::query('LOCK TABLE ' . static::$_table, null, 'SCALAR');
 	}
 
 	// Iterators
