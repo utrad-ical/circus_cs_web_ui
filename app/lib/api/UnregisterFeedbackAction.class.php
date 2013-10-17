@@ -48,7 +48,7 @@ class UnregisterFeedbackAction extends ApiActionBase
 			);
 		}
 
-		if ($this->currentUser->hasPrivilege(Auth::SERVER_OPERATION))
+		if ($this->currentUser->hasPrivilege(Auth::DATA_DELETE))
 		{
 			if ($user_id != null)
 			{
@@ -80,7 +80,7 @@ class UnregisterFeedbackAction extends ApiActionBase
 		}
 		$fb = reset($fb);
 
-		if (!$this->currentUser->hasPrivilege(Auth::SERVER_OPERATION))
+		if (!$this->currentUser->hasPrivilege(Auth::DATA_DELETE))
 		{
 			// check for PFB freeze time
 			$limit = $policy->time_to_freeze_personal_fb;
