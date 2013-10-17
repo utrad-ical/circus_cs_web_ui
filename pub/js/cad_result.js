@@ -316,6 +316,30 @@ $(function(){
 
 	$(window).trigger('actionlog', { action: "open", options: "CAD result, " + circus.feedback.feedbackMode });
 
+	// admin menus
+	var admin_btn = $('#cad-result-admin-menu');
+	if (admin_btn.length) {
+		var menu = $('#cad-result-admin-menu-items').menu();
+		admin_btn.on('mouseenter', function() {
+			menu.show().position({of: admin_btn, my: 'right top', at: 'right bottom'});
+		});
+		$('#cad-result-admin-menu-pane').on('mouseleave', function() {
+			menu.hide();
+		});
+		$('#invalidate-btn').click(function() {
+			$.confirm('Invalidate this CAD Job?', function(ok) {
+				if (ok == 0) return;
+				$.webapi({
+					action: 'invalidateJob',
+					params: { jobID: [circus.jobID] },
+					onSuccess: function(result) {
+						location.reload(true);
+					}
+				});
+			});
+		});
+	}
+
 	// tags
 	var refresh = function(tags) {
 		$('#cad-tags').refreshTags(tags, '../cad_log.php', 'filterTag');

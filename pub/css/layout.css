@@ -173,7 +173,7 @@ body.spot #content h2 {
 	tabArea
 ---------------------------------------------------- */
 .tabArea {
-	padding-top: 40px;
+	margin-top: 40px;
 }
 .tabArea ul {
 	font-size: 14px;
@@ -525,6 +525,15 @@ table.detail-tbl th, table.detail-tbl td {
 	font-size: 110%;
 }
 
+#invalidated-message {
+	background-color: #d00;
+	border: 1px solid #800;
+	color: white;
+	padding: 1em;
+	margin: 0.5em;
+	font-size: 130%;
+}
+
 .mode-icon {
 	display: inline-block !important;
 	vertical-align: text-bottom;
@@ -650,6 +659,16 @@ span.register-ok {
 span.register-not-ok {
 	color: red;
 	font-weight: bold;
+}
+
+#cad-result-admin-menu-pane {
+	float: right;
+}
+
+#cad-result-admin-menu-items {
+	position: absolute;
+	display: none;
+	width: 250px;
 }
 
 /* ===================================================

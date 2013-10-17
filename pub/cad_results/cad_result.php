@@ -56,7 +56,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		critical_error('The CAD result for this ID was not found.', 'Not Found');
 	if ($cadResult->status == Job::JOB_FAILED)
 		critical_error('This CAD job did not finish correctly.', 'Execution Error');
-	if ($cadResult->status != Job::JOB_SUCCEEDED)
+	if ($cadResult->status != Job::JOB_SUCCEEDED && $cadResult->status != Job::JOB_INVALIDATED)
 		critical_error('This CAD job has not finished yet.', 'Not Finished');
 	set_include_path(get_include_path() . PATH_SEPARATOR . $cadResult->Plugin->configurationPath());
 

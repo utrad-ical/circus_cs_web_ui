@@ -42,8 +42,11 @@ CSS information
 }
 
 /* Darkroom toggle button */
+#darkroom-pane {
+	float: right;
+}
 #darkroom {
-	background-color:#000; color:#fff;
+	background-color:#000; color:#fff; border: 1px solid gray;
 }
 
 .darkroom #darkroom {

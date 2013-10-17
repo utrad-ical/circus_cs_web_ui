@@ -7,7 +7,7 @@
 class InvalidateJobAction extends ApiActionBase
 {
 	protected static $required_privileges = array(
-		Auth::SERVER_OPERATION
+		Auth::DATA_DELETE
 	);
 
 	protected static $rules = array(
@@ -32,13 +32,13 @@ class InvalidateJobAction extends ApiActionBase
 		$db->beginTransaction();
 		Job::lock();
 		CadResult::lock();
-		$db->query(
+		$sth = $db->prepare(
 			'UPDATE executed_plugin_list SET status=? ' .
-			'WHERE status IN (?, ?) AND job_id IN ' . $ids,
-			array(Job::JOB_INVALIDATED, Job::JOB_SUCCEEDED, Job::JOB_PROCESSING)
+			'WHERE status=? AND job_id IN ' . $ids
 		);
+		$sth->execute(array(Job::JOB_INVALIDATED, Job::JOB_SUCCEEDED));
 		$db->commit();
 
-		return null;
+		return true;
 	}
 }

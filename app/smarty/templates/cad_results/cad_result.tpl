@@ -36,6 +36,16 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 {include file="header.tpl" body_class="cad-result"
 	require=$smarty.capture.require head_extra=$smarty.capture.extra}
 {include file="darkroom_button.tpl"}
+
+{if $currentUser->hasPrivilege('dataDelete')}
+<div id="cad-result-admin-menu-pane">
+<button id="cad-result-admin-menu" class="form-btn">Administration menu</button>
+<ul id="cad-result-admin-menu-items">
+<li><a href="#" id="invalidate-btn">Invalidate this CAD job</a></li>
+</ul>
+</div>
+{/if}
+
 <div id="cadResultTab" class="tabArea">
 <ul>
 	<li><a class="btn-tab btn-tab-active">CAD Result</a></li>
@@ -46,6 +56,13 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 </div>
 <div class="tab-content">
 <div class="cadResult">
+
+{if $cadResult->status == constant('Job::JOB_INVALIDATED')}
+<div id="invalidated-message">
+<strong>INVALID:</strong> This CAD job is marked as invalid.
+</div>
+{/if}
+
 <h2>CAD Result [{$cadResult->Plugin->plugin_name|escape}&nbsp;
   v.{$cadResult->Plugin->version|escape} ID:{$cadResult->job_id}]</h2>
   <div class="headerArea">
@@ -69,12 +86,6 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
   {/if}
 
   <div style="clear: both"></div>
-
-{if $cadResult->status == constant('Job::JOB_INVALIDATED')}
-<div id="message">
-Warning: This job is marked as <strong>invalid</strong>.
-</div>
-{/if}
 
 {foreach from=$extensions item=ext}
 {$ext->beforeBlocks()}
