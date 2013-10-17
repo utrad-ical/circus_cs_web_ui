@@ -335,7 +335,7 @@ class Job extends Model
 		$or_clause = implode(' OR ', $eqn);
 
 		// Find exactly the same job (same plugin, same combination of series),
-		// which is not marked as 'failed.'
+		// which is not marked as 'failed' nor 'invalidated'.
 		$sql = <<<EOT
 SELECT el.job_id AS job_id
 FROM executed_plugin_list AS el
