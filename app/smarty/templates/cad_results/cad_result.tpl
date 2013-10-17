@@ -16,6 +16,7 @@ js/jquery.imageviewer.js
 <script type="text/javascript">
 circus.jobID = {$cadResult->job_id};
 circus.userID = "{$smarty.session.userID|escape:javascript}";
+circus.cadresult.status = {$cadResult->status|escape};
 circus.cadresult.displays = {$displays|@json_encode};
 circus.cadresult.seriesList = {$seriesList|@json_encode};
 circus.cadresult.presentation = {$presentationParams|@json_encode};

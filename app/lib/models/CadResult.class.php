@@ -175,6 +175,12 @@ class CadResult extends Model
 			return $feedbackMode == 'personal' ? 'disabled' : 'registered';
 		}
 
+		// Invalidated job cannot accept new feedback registration.
+		if ($this->status == Job::JOB_INVALIDATED) {
+			$reason = 'This job is marked as invalid.';
+			return 'locked';
+		}
+
 		if ($feedbackMode == 'personal')
 		{
 			if (!$currentUser->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER))

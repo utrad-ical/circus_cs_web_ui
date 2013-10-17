@@ -327,6 +327,10 @@ $(function(){
 			menu.hide();
 		});
 		$('#invalidate-btn').click(function() {
+			if (circus.cadresult.status != 4) {
+				$.alert('This CAD job is already marked as invalid.');
+				return;
+			}
 			$.confirm('Invalidate this CAD Job?', function(ok) {
 				if (ok == 0) return;
 				$.webapi({
