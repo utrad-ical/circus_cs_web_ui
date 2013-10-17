@@ -27,12 +27,14 @@ js/jquery.imageviewer.js
 	border-bottom: 1px solid black;
 	clear: none;
 }
-.missed_block {
+.showcase_block {
 	display: inline-block;
+	vertical-align: top;
 	width: 280px;
 	border: 1px solid gray;
+	margin-bottom: 3px;
 }
-.missed_block .detail {
+.showcase_block .detail {
 	float: right;
 	margin: 2px 2px;
 }
@@ -121,7 +123,7 @@ $(function() {
 			{assign var="job" value=$item.job}
 			{assign var="d" value=$item.display}
 			{assign var="pt" value=$job->Series[0]->Study->Patient}
-			<div class="missed_block">
+			<div class="showcase_block">
 				<a class="detail form-btn" href="cad_results/cad_result.php?jobID={$job->job_id}">Detail</a>
 				<p><strong>Pt.:</strong> {$pt->patient_name|escape} ({$pt->patient_id|escape})</p>
 				<p><strong>St.:</strong> {$job->Series[0]->Study->study_date|escape}</p>
