@@ -195,12 +195,6 @@ a.btn-tab {
 	width: 150px;
 	height: 25px;
 }
-a:hover.btn-tab {
-	display: block;
-	text-decoration: none;
-	width: 150px;
-	height: 25px;
-}
 
 /*
 	tab-content
@@ -211,20 +205,9 @@ a:hover.btn-tab {
 	width: 960px;
 	border: 1px solid;
 }
-* html .tab-content {
-	width: 1000px;
-}
-
-p.add-favorite {
-	float: right;
-	border-width: 1px;
-	border-style: solid;
-}
-
 
 /* =================================================
 	Search Panels
-
 	#content
 		search-panel
 			search-tbl
@@ -286,23 +269,14 @@ table.search-tbl th, table.search-tbl td {
 ==================================================== */
 
 .topmenu {
-	display:block;
-	cursor:pointer;
-	border:0px none;
-	background-color:transparent;
-	background-repeat:no-repeat;
-	padding:0;
-	margin:0;
-	outline:0;
-	overflow:hidden;
+	display: block;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	overflow: hidden;
 	text-indent: 200px;
 	width: 197px;
 	height: 49px;
 	position: relative;
-	text-decoration: none;
-	text-align: center;
-	font-family: Arial, Verdana, sans-serif;
-	font-weight: bold;
 }
 .topmenu.hi {
 	background-size: 1773px 98px;
@@ -409,31 +383,8 @@ table.search-tbl th, table.search-tbl td {
 	text-decoration: underline;
 }
 
-.sort-by {
-	clear: both;
-	width: 830px;
-	padding-top: 3px;
-	/*text-align: right;*/
-}
-
-.sort-by div.total-cand
-{
-	width:435px;
-	margin-left:15px;
-	text-align:left;
-	float:left;
-	block:inline;
-}
-
-.sort-by div.sort-btn
-{
-	width:380px;
-	float:left;
-	text-align:right;
-}
-
 /* =================================================
-	Tag (for series, CAD, research)
+	Tag (for series, CAD)
 ==================================================== */
 #tagArea
 {
@@ -459,7 +410,6 @@ table.arrange-tbl td {
 	overflow: hidden;
 	padding: 0 10px 5px 0;
 }
-
 
 div.setting input {
 	float: right;
@@ -528,28 +478,6 @@ table.detail-tbl th, table.detail-tbl td {
 .mode-icon {
 	display: inline-block !important;
 	vertical-align: text-bottom;
-}
-
-.result-record-2cols { /* Deprecated */
-	width:388px;
-	float:left;
-	margin:5px 20px 15px 0px;
-	margin-left:0;
-	padding: 1px 1px 3px 1px;
-	border-color: #888;
-	border-width: 1px;
-	border-style: solid;
-}
-
-.result-record-3cols { /* Deprecated */
-	width:260px;
-	float:left;
-	margin:5px 20px 15px 0px;
-	margin-left:0;
-	padding: 1px 1px 3px 1px;
-	border-color: #888;
-	border-width: 1px;
-	border-style: solid;
 }
 
 .result-block {
