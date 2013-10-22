@@ -71,7 +71,7 @@
 	function clearForm() {
 		$(':checked', this).prop('checked', false);
 		$(':selected', this).prop('selected', false);
-		$(':text, :password, textarea', this).val();
+		$(':text, :password, textarea', this).val('');
 		return this;
 	}
 
