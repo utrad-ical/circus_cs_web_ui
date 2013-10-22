@@ -30,8 +30,11 @@ class DeleteJobAction extends ApiActionBase
 		}
 		else
 		{
+			$pdo->rollback();
 			throw new ApiOperationException(
-				'The target job can not be deleted (status: ' . $target->status . ')');
+				'The target job can not be deleted (status: ' .
+				Job::codeToStatusName($target->status) . ')'
+			);
 		}
 		$pdo->commit();
 		return null;
