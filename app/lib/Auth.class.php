@@ -248,7 +248,6 @@ class Auth
 		$_SESSION['key']           = sha1($user->user_id);
 		$_SESSION['todayDisp']     = $user->today_disp;
 		$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
-		$_SESSION['showMissed']    = $user->show_missed;
 
 		// save status for last login
 		$_SESSION['lastLogin']     = $user->last_login_dt;

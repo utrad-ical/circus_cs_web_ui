@@ -5,19 +5,20 @@
 <script type="text/javascript" language="javascript">
 <!--
 
-var root = "{$totop|escape:javascript}";
-
 {literal}
 $(function() {
 	$('#darkroom').click(function() {
-		var body = $('body');
-		$('body').toggleClass('darkroom');
-		$.post(
-			root + 'preference/change_darkroom.php',
-			{ darkroom: body.hasClass('darkroom') ? 't' : 'f' },
-			$.noop,
-			'text'
-		);
+		var $body = $('body');
+		$body.toggleClass('darkroom');
+		$.webapi({
+			action: 'updateUserPreference',
+			params: {
+				mode: 'change_darkroom',
+				darkroom: $body.hasClass('darkroom') ? 't' : 'f'
+			},
+			onSuccess: $.noop,
+			onFail: $.noop
+		});
 	});
 });
 {/literal}

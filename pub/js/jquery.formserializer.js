@@ -29,7 +29,7 @@
 		$('input, textarea, select', this).filter(':not(.ui-daterange *)').each(function() {
 			var e = $(this);
 			var name = e.prop('name');
-			if (name in result) return;
+			if (!name.length || name in result) return;
 			var v = null;
 			if (e.is('textarea')) {
 				v = e.val();
