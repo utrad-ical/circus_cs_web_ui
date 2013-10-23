@@ -60,6 +60,25 @@ class FormValidator
 	 */
 	public function addRule($keyName, $rule)
 	{
+		if (is_scalar($rule)) {
+			if (preg_match('/^(\!?)([^?]+)(\?(.+))?$/', $rule, $match)) {
+				if ($match[1]) $required = true;
+				if ($match[4]) $default = $match[4];
+				$rule = $match[2];
+			}
+			if ($rule[0] == '/') {
+				$theRule = array('type' => 'string', 'regex' => $rule);
+			} elseif (preg_match('/^\[(.+)\]$/', $rule, $match)) {
+				$opts = explode('|', $match[1]);
+				$theRule = array('type' => 'select', 'options' => $opts);
+			} else {
+				$theRule = array('type' => $rule);
+			}
+			$rule = $theRule;
+			if ($required) $rule['required'] = true;
+			if (isset($default)) $rule['default'] = true;
+		}
+
 		$validator = $this->validators[$rule['type']];
 		if (class_exists($validator)) {
 			$ruleObj = new $validator;
