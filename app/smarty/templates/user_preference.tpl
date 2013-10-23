@@ -74,8 +74,6 @@ $(function() {
 	});
 	cadChanged();
 
-	$('#cad_name, #cad_version').change(function() { $('#cad_pref_form').hide(); });
-
 	$('#cad_select_button').click(function() {
 		$.webapi({
 			action: 'updateUserPreference',
@@ -85,8 +83,12 @@ $(function() {
 				version: $cad_version.val()
 			},
 			onSuccess: function(data) {
-				$('#cad_pref_content').html(data.form).fromObject(data.preference);
+				var form = data.form;
+				if (!form) form = 'There is no preference available in this CAD.';
+				$('#editing_cad').text($cad_name.val() + ' ver.' + $cad_version.val());
+				$('#cad_pref_content').html(form).fromObject(data.preference);
 				$('#cad_pref_form').show();
+				$('#cad_selector').hide();
 			}
 		});
 	});
@@ -104,12 +106,14 @@ $(function() {
 			onSuccess: function(data) {
 				success(data);
 				$('#cad_pref_form').hide();
+				$('#cad_selector').show();
 			}
 		});
 	});
 
 	$('#cad_pref_cancel_button').click(function() {
 		$('#cad_pref_form').hide();
+		$('#cad_selector').show();
 		return false;
 	});
 
@@ -120,8 +124,13 @@ $(function() {
 <style type="text/css">
 .pref_section { margin: 20px; }
 .form-btn { width: 100px; }
+.form_menu { padding-left: 20px; margin-bottom: 20px; margin-top: 10px; }
 #cad_pref_form { display: none; }
+#cad_selector td { min-width: 150px; }
+#editing_cad { font-weight: bold; }
 label ~ label { margin-left: 10px; }
+#cad_pref_content th { min-width: 100px; }
+#cad_pref_content { border: 1px solid silver; }
 
 </style>
 
@@ -150,7 +159,7 @@ label ~ label { margin-left: 10px; }
 			<td><input id="re_password" type="password" style="width: 150px;" /></td>
 		</tr>
 	</table>
-	<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
+	<div class="form_menu">
 		<input id="password_change_button" type="button" value="Change" class="form-btn" />
 	</div>
 </div>
@@ -188,33 +197,36 @@ label ~ label { margin-left: 10px; }
 			</td>
 		</tr>
 	</table>
-	<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
+	<div class="form_menu">
 		<input id="pagepref_change_button" type="button" value="Change" class="form-btn" />
 	</div>
 </div>
 
 <h3>CAD preference</h3>
 <div class="pref_section" id="cadpref_section">
-	<table class="detail-tbl" style="min-width: 50%;">
-		<tr>
-			<th><span class="trim01">CAD</span></th>
-			<td>
-				<select id="cad_name"></select>
-			</td>
-			<th><span class="trim01">Version</span></th>
-			<td>
-				<select id="cad_version"></select>
-			</td>
-		</tr>
-	</table>
-	<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
-		<p><input id="cad_select_button" type="button" value="Select" class="form-btn" /></p>
+	<div id="cad_selector">
+		<table class="detail-tbl" style="min-width: 50%;">
+			<tr>
+				<th><span class="trim01">CAD</span></th>
+				<td>
+					<select id="cad_name"></select>
+				</td>
+				<th><span class="trim01">Version</span></th>
+				<td>
+					<select id="cad_version"></select>
+				</td>
+			</tr>
+		</table>
+		<div class="form_menu">
+			<p><input id="cad_select_button" type="button" value="Select" class="form-btn" /></p>
+		</div>
 	</div>
 
 	<div id="cad_pref_form">
+		<div>Editing: <span id="editing_cad"></span></div>
 		<table id="cad_pref_content" class="detail-tbl">
 		</table>
-		<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
+		<div class="form_menu">
 			<a href="#" id="cad_pref_cancel_button">Cancel</a>
 			<input id="cad_pref_update_button" type="button" value="Update" class="form-btn" />
 		</div>

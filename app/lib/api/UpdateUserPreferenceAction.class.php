@@ -95,6 +95,7 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		foreach ($presentation->extensions() as $ext) {
 			$form .= $ext->preferenceForm();
 		}
+		$form = trim($form);
 
 		return array(
 			'form' => $form,

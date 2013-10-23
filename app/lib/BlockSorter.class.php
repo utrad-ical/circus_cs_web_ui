@@ -16,7 +16,8 @@ class BlockSorter extends CadResultExtension
 				'visible' => false,
 				'position' => 'before',
 				'label' => 'Sort:',
-				'useUserPreference' => false
+				'useUserPreference' => true,
+				'options' => 'auto'
 			)
 		);
 	}
@@ -28,9 +29,18 @@ class BlockSorter extends CadResultExtension
 
 	private function sorterHtml($class)
 	{
-		$this->smarty->assign('sorter', $this->params);
+		$this->smarty->assign('sorter', $this->getSortKeys());
 		$this->smarty->assign('sorterClass', $class);
 		return $this->smarty->fetch('cad_results/cad_result_sorter.tpl');
+	}
+
+	private function getSortKeys()
+	{
+		$p = $this->params;
+		// sort keys can be defined by presentation.json file.
+		if (is_array($p['options'])) return $p['options'];
+		// or default keys is determined according to the display presenter.
+		return $this->owner->presentation()->displayPresenter()->sortKeys();
 	}
 
 	public function head()
@@ -85,32 +95,22 @@ class BlockSorter extends CadResultExtension
 			return '';
 	}
 
-	// TODO: This will be configurable
-	private $_keys = array(
-		'confidence' => 'Confidence',
-		"location_z" => 'Img. No.',
-		"volume_size" => 'Volume'
-	);
-
 	public function preferenceForm()
 	{
+		if (!$this->params['useUserPreference']) return null;
 		$opts = '';
-		foreach ($this->_keys as $key => $val) {
-			$opts .= "<option value='$key'>$val</option>\n";
+		$keys = $this->getSortKeys();
+		foreach ($keys as $item) {
+			$opts .= "<option value='$item[key]'>$item[label]</option>\n";
 		}
 
 		return <<<EOL
 <tr>
-<th>Sort key</th>
+<th>Sort</th>
 <td>
 <select name="sortKey">
 $opts
 </select>
-</td>
-</tr>
-<tr>
-<th>Sort order</th>
-<td>
 <label><input type="radio" name="sortOrder" value="ASC" />Asc.</label>
 <label><input type="radio" name="sortOrder" value="DESC" />Desc.</label>
 </td>
@@ -120,8 +120,11 @@ EOL;
 
 	public function preferenceValidationRule()
 	{
+		if (!$this->params['useUserPreference']) return array();
+		$keys = array();
+		foreach ($this->getSortKeys() as $item) $keys[] = $item['key'];
 		return array(
-			'sortKey' => array('type' => 'select', 'options' => array_keys($this->_keys)),
+			'sortKey' => array('type' => 'select', 'options' => $keys),
 			'sortOrder' => '[ASC|DESC]'
 		);
 	}

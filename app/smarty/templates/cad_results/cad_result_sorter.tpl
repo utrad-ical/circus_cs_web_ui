@@ -1,7 +1,7 @@
   <div class="sorter-area {$sorterClass}"><form>
     {$sorter.label|escape}
     <select id="sorter" name="sortKey">
-      {foreach from=$sorter.options item=sort}
+      {foreach from=$sorter item=sort}
       <option value="{$sort.key|escape}">{$sort.label|escape}</option>
       {/foreach}
     </select>

@@ -142,4 +142,9 @@ class DisplayPresenter extends CadBlockElement
 		}
 		return $result;
 	}
+
+	public function sortKeys()
+	{
+		return array();
+	}
 }

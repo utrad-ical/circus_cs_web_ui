@@ -19,7 +19,11 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 			array(
 				'caption' => 'Lesion Classification',
 				'scrollRange' => 5,
-				'noResultMessage' => 'No lesion candidates found.'
+				'noResultMessage' => 'No lesion candidates found.',
+				'maxDispNum' => 5,
+				'confidenceThreshold' => 0,
+				'askMaxDispNum' => false,
+				'askConfidenceThreshold' => false
 			)
 		);
 	}
@@ -41,6 +45,16 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		$result = array();
 		$count = 0;
 		$pref = $this->owner->userPreference();
+
+		$max_disp_num = $this->params['maxDispNum'];
+		if ($this->params['askMaxDispNum'] && isset($pref['maxDispNum'])) {
+			$max_disp_num = intval($pref['maxDispNum']);
+		}
+
+		$confidence_threshold = $this->params['confidenceThreshold'];
+		if ($this->params['askConfidenceThreshold'] && isset($pref['confidenceThreshold'])) {
+			$confidence_threshold = $pref['confidenceThreshold'];
+		}
 
 		if (count($input) < 1)
 			return $result;
@@ -68,8 +82,11 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 					throw new Exception("Required field ($req) not defined");
 			$key = $this->findDisplayIdField($rec);
 			$display_id = $rec[$key];
+			if ($rec['confidence'] < $confidence_threshold) {
+				continue;
+			}
 			$rec['display_id'] = $display_id;
-			if ($pref['maxDispNum'] && ++$count > $pref['maxDispNum'])
+			if ($max_disp_num > 0 && ++$count > $max_disp_num)
 			{
 				$rec['_hidden'] = true;
 			}
@@ -82,16 +99,40 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 
 	public function preferenceForm()
 	{
-		return <<<EOL
-<tr>
-<th>Maximum display candidates</th>
-<td><input type="text" name="maxDispNum" style="text-align: right;"/></td>
-</tr>
-EOL;
+		$result = '';
+		if ($this->params['askMaxDispNum']) {
+			$result .=
+				'<tr><th>Maximum display candidates</th>'.
+				'<td><input type="text" name="maxDispNum" style="text-align: right;"/> (0: unlimited)</td>' .
+				"</tr>\n";
+		}
+		if ($this->params['askConfidenceThreshold']) {
+			$result .=
+				'<tr><th>Confidence Threshold</th>'.
+				'<td><input type="text" name="confidenceThreshold" style="text-align: right;"/> (0: unlimited)</td>' .
+				"</tr>\n";
+		}
+		return $result ?: null;
 	}
 
 	public function preferenceValidationRule()
 	{
-		return array('maxDispNum' => 'int');
+		$result = array();
+		if ($this->params['askMaxDispNum']) {
+			$result['maxDispNum'] = 'int';
+		}
+		if ($this->params['askConfidenceThreshold']) {
+			$result['confidenceThreshold'] = 'numeric';
+		}
+		return $result;
+	}
+
+	public function sortKeys()
+	{
+		return array(
+			array('label' => 'Volume Size', 'key' =>  'volume_size'),
+			array('label' => 'Image No.', 'key' => 'location_z'),
+			array('label' => 'Confidence', 'key' => 'confidence')
+		);
 	}
 }

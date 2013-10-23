@@ -9,16 +9,6 @@
 abstract class CadBlockElement extends CadResultElement
 {
 	/**
-	 * @var CadResult
-	 */
-	protected $owner;
-
-	public function __construct($owner)
-	{
-		$this->owner = $owner;
-	}
-
-	/**
 	 * Called just after setting up this block element.
 	 */
 	public function prepare()
