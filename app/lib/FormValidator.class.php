@@ -51,7 +51,7 @@ class FormValidator
 	/**
 	 * Associative array which holds the internal rule set.
 	 */
-	private $rules;
+	private $rules = array();
 
 	/**
 	 * Adds one validation rule to the internal rule set.
