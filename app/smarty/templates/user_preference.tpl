@@ -85,7 +85,8 @@ $(function() {
 				version: $cad_version.val()
 			},
 			onSuccess: function(data) {
-				$('#cad_pref_form').show().fromObject(data);
+				$('#cad_pref_content').html(data.form).fromObject(data.preference);
+				$('#cad_pref_form').show();
 			}
 		});
 	});
@@ -95,7 +96,7 @@ $(function() {
 			mode: 'set_cad_preference',
 			plugin_name: $cad_name.val(),
 			version: $cad_version.val(),
-			preferences: $('#cad_pref_form').toObject()
+			preferences: $('#cad_pref_content').toObject()
 		};
 		$.webapi({
 			action: 'updateUserPreference',
@@ -121,6 +122,7 @@ $(function() {
 .form-btn { width: 100px; }
 #cad_pref_form { display: none; }
 label ~ label { margin-left: 10px; }
+
 </style>
 
 {/literal}
@@ -210,32 +212,8 @@ label ~ label { margin-left: 10px; }
 	</div>
 
 	<div id="cad_pref_form">
-		<table class="detail-tbl" style="width: 100%;">
-			<tr>
-				<th style="width: 17em;"><span class="trim01">Sort key</span></th>
-				<td>
-					<select name="sortKey">
-						<option value="confidence">Confidence</option>
-						<option value="location_z">Img. No.</option>
-						<option value="volume_size">Volume</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">Sort order</span></th>
-				<td>
-					<label><input type="radio" name="sortOrder" value="ASC" />Asc.</label>
-					<label><input type="radio" name="sortOrder" value="DESC" />Desc.</label>
-				</td>
-			</tr>
-			<tr>
-				<th><span class="trim01">Maximum display candidates</span></th>
-				<td>
-					<input name="maxDispNum" type="text" style="text-align: right; width: 100px;" />
-				</td>
-			</tr>
+		<table id="cad_pref_content" class="detail-tbl">
 		</table>
-
 		<div style="padding-left: 20px; margin-bottom: 20px; margin-top: 10px;">
 			<a href="#" id="cad_pref_cancel_button">Cancel</a>
 			<input id="cad_pref_update_button" type="button" value="Update" class="form-btn" />

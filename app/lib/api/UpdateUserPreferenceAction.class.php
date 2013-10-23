@@ -67,7 +67,7 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		return null;
 	}
 
-	private function mode_get_cad_preference($params, &$plugin = null)
+	private function preparePlugin($params)
 	{
 		$params = $this->getValidatedParams($params, array(
 			'plugin_name' => 'string', 'version' => 'string'
@@ -76,8 +76,30 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		if (!$plugin) {
 			throw new ApiOperationException('Specified plugin not found');
 		}
+		set_include_path(get_include_path() . PATH_SEPARATOR . $plugin->configurationPath());
+		return $plugin;
+	}
+
+	private function mode_get_cad_preference($params)
+	{
+		$plugin = $this->preparePlugin($params);
+
+		// current user configuration (with default value used)
 		$configs = $plugin->userPreference($this->currentUser);
-		return $configs;
+
+		// build HTML form according to the current presentation rule
+		$presentation = $plugin->presentation();
+		$form = '';
+		$form .= $presentation->displayPresenter()->preferenceForm();
+		$form .= $presentation->feedbackListener()->preferenceForm();
+		foreach ($presentation->extensions() as $ext) {
+			$form .= $ext->preferenceForm();
+		}
+
+		return array(
+			'form' => $form,
+			'preference' => $configs
+		);
 	}
 
 	private function mode_set_cad_preference($params)
@@ -86,15 +108,20 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		$pdo->beginTransaction();
 		$pdo->query('LOCK plugin_user_preference');
 
-		$this->mode_get_cad_preference($params, $plugin);
+		$plugin = $this->preparePlugin($params);
 		$plugin_id = $plugin->plugin_id;
 		$user_id = $this->currentUser->user_id;
 
-		$prefs = $this->getValidatedParams($params['preferences'], array(
-			"sortKey" => '[confidence|location_z|volume_size]',
-			"sortOrder" => '[ASC|DESC]',
-			"maxDispNum" => 'int'
-		));
+		$presentation = $plugin->presentation();
+		$rules = array();
+		$rules = array_merge($rules, $presentation->displayPresenter()->preferenceValidationRule());
+		$rules = array_merge($rules, $presentation->feedbackListener()->preferenceValidationRule());
+		foreach ($presentation->extensions() as $ext) {
+			$tmp = $ext->preferenceValidationRule();
+			$rules = array_merge($rules, $ext->preferenceValidationRule());
+		}
+
+		$prefs = $this->getValidatedParams($params['preferences'], $rules);
 
 		$tmp = DBConnector::query(
 			'SELECT key, value FROM plugin_user_preference WHERE plugin_id=? AND user_id=?',

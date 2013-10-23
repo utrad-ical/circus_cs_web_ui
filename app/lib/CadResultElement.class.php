@@ -96,4 +96,27 @@ abstract class CadResultElement
 	{
 		$this->smarty = $smarty;
 	}
+
+	/**
+	 * Returns the HTML form which can be used to customize this result element.
+	 * @return string Valid HTML string which will be displayed in
+	 * user preference page. This must contain HTML form element such as
+	 * <input> or <textarea> whose name attributes matches the keys
+	 * returned by the preferenceValidationRule() method.
+	 */
+	public function preferenceForm()
+	{
+		return null;
+	}
+
+	/**
+	 * Returns the list of keys and validation rules which this result element
+	 * can understand.
+	 * @return array keys and corresponding validation rules, which can be
+	 * passed to FormValidator::addRules()
+	 */
+	public function preferenceValidationRule()
+	{
+		return array();
+	}
 }

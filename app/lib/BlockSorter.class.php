@@ -84,4 +84,45 @@ class BlockSorter extends CadResultExtension
 		else
 			return '';
 	}
+
+	// TODO: This will be configurable
+	private $_keys = array(
+		'confidence' => 'Confidence',
+		"location_z" => 'Img. No.',
+		"volume_size" => 'Volume'
+	);
+
+	public function preferenceForm()
+	{
+		$opts = '';
+		foreach ($this->_keys as $key => $val) {
+			$opts .= "<option value='$key'>$val</option>\n";
+		}
+
+		return <<<EOL
+<tr>
+<th>Sort key</th>
+<td>
+<select name="sortKey">
+$opts
+</select>
+</td>
+</tr>
+<tr>
+<th>Sort order</th>
+<td>
+<label><input type="radio" name="sortOrder" value="ASC" />Asc.</label>
+<label><input type="radio" name="sortOrder" value="DESC" />Desc.</label>
+</td>
+</tr>
+EOL;
+	}
+
+	public function preferenceValidationRule()
+	{
+		return array(
+			'sortKey' => array('type' => 'select', 'options' => array_keys($this->_keys)),
+			'sortOrder' => '[ASC|DESC]'
+		);
+	}
 }

@@ -79,4 +79,19 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 		}
 		return $result;
 	}
+
+	public function preferenceForm()
+	{
+		return <<<EOL
+<tr>
+<th>Maximum display candidates</th>
+<td><input type="text" name="maxDispNum" style="text-align: right;"/></td>
+</tr>
+EOL;
+	}
+
+	public function preferenceValidationRule()
+	{
+		return array('maxDispNum' => 'int');
+	}
 }
