@@ -26,26 +26,26 @@ function ShowPersonalStatResult()
 	{
 		$("#errorMessage").html('&nbsp;');
 		$.blockUI();
-		
+
 		$("#scatterPlot [name^='check']").prop("checked", false);
         $("[name='checkKownTP'],[name='checkMissedTP']","#scatterPlot").prop("checked", true);
 
 		$.ajax({
 				type:   "POST",
-				url:    "statistics/show_personal_stat_detail.php",
+				url:    "show_personal_stat_detail.php",
 				data:   { dateFrom: $('#srDateRange').daterange('option', 'fromDate'),
 				 		  dateTo:   $('#srDateRange').daterange('option', 'toDate'),
-						  cadName:  $("#cadMenu option:selected").text(),
+				 		  cadName:  $("#cadMenu option:selected").text(),
 						  version:  $("#versionMenu").val(),
-	       				  evalUser: $("#userMenu").val(),
+						  evalUser: $("#userMenu").val(),
 						  minSize:  $("#minSize").val(),
-			              maxSize:  $("#maxSize").val(),
-			              dataStr:  $("#dataStr").val(),
-                          knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
-                          missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
-                          subTpFlg:    ((document.form1.checkSubTP.checked == true) ? 1 : 0),
-                          fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
-                          pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},              
+						  maxSize:  $("#maxSize").val(),
+						  dataStr:  $("#dataStr").val(),
+						  knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
+						  missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
+						  subTpFlg:    ((document.form1.checkSubTP.checked == true) ? 1 : 0),
+						  fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
+						  pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},
 				dataType: "json",
 				timeout: 180000,	// 3 minutes (avoid timeout error)
 
@@ -100,19 +100,19 @@ function RedrawScatterPlot()
 
 	$.ajax({
 			type:   "POST",
-			url:    "statistics/show_personal_stat_detail.php",
+			url:    "show_personal_stat_detail.php",
 			data:   { dateFrom:    $('#srDateRange').daterange('option', 'fromDate'),
 			 		  dateTo:      $('#srDateRange').daterange('option', 'toDate'),
 					  cadName:     $("#cadMenu option:selected").text(),
 					  version:     $("#versionMenu").val(),
-            		  evalUser:    $("#userMenu").val(),
+					  evalUser:    $("#userMenu").val(),
 					  minSize:     $("#minSize").val(),
-       			      maxSize:     $("#maxSize").val(),
+					  maxSize:     $("#maxSize").val(),
 					  dataStr:     $("#dataStr").val(),
 					  knownTpFlg:  ((document.form1.checkKownTP.checked == true) ? 1 : 0),
 					  missedTpFlg: ((document.form1.checkMissedTP.checked == true) ? 1 : 0),
 					  subTpFlg:    ((document.form1.checkSubTP.checked == true) ? 1 : 0),
-       			      fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
+					  fpFlg:       ((document.form1.checkFP.checked == true) ? 1 : 0),
 					  pendingFlg:  ((document.form1.checkPending.checked == true) ? 1 : 0)},
 			dataType: "json",
 
@@ -162,7 +162,7 @@ function ChangeUserList(mode, allStatFlg)
 
 	if(allStatFlg == 1)
 	{
-		$.post("statistics/user_list_for_parsonal_stat.php",
+		$.post("user_list_for_parsonal_stat.php",
 			 	{ cadName: cadName,
 			 	  version: version},
 				  function(data){
@@ -183,7 +183,7 @@ function ResetCondition()
 
 $(function() {
 
-	$('#srDateRange').daterange();
+	$('#srDateRange').daterange({ icon: '../images/calendar_view_month.png' });
 
 	// Parameters of UI blocking for ajax requests (using jquery blockUI)
 	$.blockUI.defaults.message = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
@@ -203,8 +203,8 @@ $(function() {
 <!-- ***** TAB ***** -->
 <div id="researchListTab" class="tabArea">
 	<ul>
-		<li><a href="#" class="btn-tab" title="Reading characteristics" style="background-image: url(img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Personal statistics</a></li>
-		<li><a href="statistics/time_for_feedback_entry.php" class="btn-tab" title="Time for feedback entry">Time for feedback</a></li>
+		<li><a href="#" class="btn-tab" title="Reading characteristics" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Personal statistics</a></li>
+		<li><a href="time_for_feedback_entry.php" class="btn-tab" title="Time for feedback entry">Time for feedback</a></li>
 	</ul>
 </div><!-- / .tabArea END -->
 
@@ -286,19 +286,19 @@ $(function() {
 			<table id="plotLegend" class="block-al-r" style="margin-bottom: 10px;">
 				<tr>
 					<td name="known TP">
-						<input name="checkKownTP" type="checkbox" /><img src="images/statistics/knownTP.png" />
+						<input name="checkKownTP" type="checkbox" /><img src="../images/statistics/knownTP.png" />
 					</td>
 					<td name="missed TP">
-						<input name="checkMissedTP" type="checkbox" /><img src="images/statistics/missedTP.png" />
+						<input name="checkMissedTP" type="checkbox" /><img src="../images/statistics/missedTP.png" />
 					</td>
 					<td name="sub TP">
-						<input name="checkSubTP" type="checkbox" /><img src="images/statistics/subTP.png" />
+						<input name="checkSubTP" type="checkbox" /><img src="../images/statistics/subTP.png" />
 					</td>
 					<td name="FP">
-						<input name="checkFP" type="checkbox" /><img src="images/statistics/FP.png" />
+						<input name="checkFP" type="checkbox" /><img src="../images/statistics/FP.png" />
 					</td>
 					<td name="pending">
-						<input name="checkPending" type="checkbox" /><img src="images/statistics/pending.png" />
+						<input name="checkPending" type="checkbox" /><img src="../images/statistics/pending.png" />
 					</td>
 					<td name="redrawBtn">
 						<input name="" type="button" class="form-btn" value="Redraw" onclick="RedrawScatterPlot();" style="margin-left:5px; font-weight:bold;" />
@@ -308,9 +308,9 @@ $(function() {
 
 			<table style="margin-left: 10px">
 				<tr>
-					<td style="width: 330px;"><img id="scatterPlotAx"   src="images/statistics/ps_scatter_plot_base_xy.png" /></td>
-					<td style="width: 330px;"><img id="scatterPlotCoro" src="images/statistics/ps_scatter_plot_base_xz.png" /></td>
-					<td style="width: 330px;"><img id="sactterPlotSagi" src="images/statistics/ps_scatter_plot_base_yz.png" /></td>
+					<td style="width: 330px;"><img id="scatterPlotAx"   src="../images/statistics/ps_scatter_plot_base_xy.png" /></td>
+					<td style="width: 330px;"><img id="scatterPlotCoro" src="../images/statistics/ps_scatter_plot_base_xz.png" /></td>
+					<td style="width: 330px;"><img id="sactterPlotSagi" src="../images/statistics/ps_scatter_plot_base_yz.png" /></td>
 				</tr>
 			</table>
 		</div>

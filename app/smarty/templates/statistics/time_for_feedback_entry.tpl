@@ -129,7 +129,7 @@ $(function() {
 
 <div id="researchListTab" class="tabArea">
 	<ul>
-		<li><a href="../personal_statistics.php" class="btn-tab" title="Personal statistics">Personal statistics</a></li>
+		<li><a href="personal_statistics.php" class="btn-tab" title="Personal statistics">Personal statistics</a></li>
 		<li><a href="#" class="btn-tab" title="Time for feedback entry" style="background-image: url(../img_common/btn/{$smarty.session.colorSet}/tab0.gif); color:#fff">Time for feedback</a></li>
 	</ul>
 </div><!-- / .tabArea END -->
