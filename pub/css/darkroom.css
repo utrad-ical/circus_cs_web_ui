@@ -46,7 +46,10 @@ CSS information
 	float: right;
 }
 #darkroom {
-	background-color:#000; color:#fff; border: 1px solid gray;
+	background-color:#000;
+	color:#fff;
+	border: 1px solid gray;
+	padding: 1px 6px;
 }
 
 .darkroom #darkroom {
