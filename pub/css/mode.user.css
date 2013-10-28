@@ -158,5 +158,8 @@ p.add-favorite {
 	General theme color
  ===================================================*/
 .themeColor {
-	color: #09F;
+	color: #09f;
+}
+.themeBackground {
+	background-color: #6cf;
 }

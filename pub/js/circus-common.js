@@ -20,7 +20,7 @@ $(function(){
 	// If CSS3 background-size is supported, use higher resolution background
 	if (document.createElement("div").style.backgroundSize === '')
 	{
-		$('.topmenu').addClass('hi');
+		$('.topmenu, #stats_menu').addClass('hi');
 	}
 
 	// Calendar in the menu
