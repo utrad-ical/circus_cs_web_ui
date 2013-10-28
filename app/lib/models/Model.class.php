@@ -234,6 +234,14 @@ abstract class Model implements Iterator
 		DBConnector::query($sql, array($id), 'SCALAR');
 	}
 
+	/**
+	 * Locks table (uses exclusive lock).
+	 */
+	public static function lock()
+	{
+		DBConnector::query('LOCK TABLE ' . static::$_table, null, 'SCALAR');
+	}
+
 	// Iterators
 	public function rewind() { reset($this->_data); }
 	public function current() { return current($this->_data); }

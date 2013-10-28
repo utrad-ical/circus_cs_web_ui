@@ -192,6 +192,8 @@ class QueryJobAction extends ApiActionBase
 	{
 		switch ($stat)
 		{
+			case Job::JOB_INVALIDATED:
+				return "invalidated";
 			case Job::JOB_FAILED:
 				return "error";
 			case Job::JOB_NOT_ALLOCATED:

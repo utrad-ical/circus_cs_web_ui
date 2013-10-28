@@ -62,7 +62,7 @@ class DBConnector
 	 * @param string $outputType Format of the return type.
 	 * @return Result of the query in the specified format.
 	 */
-	static function query($sqlStr, $bindValues, $outputType = 'SCALAR')
+	static function query($sqlStr, $bindValues = null, $outputType = 'SCALAR')
 	{
 		$pdo = self::getConnection();
 		$stmt = $pdo->prepare($sqlStr);

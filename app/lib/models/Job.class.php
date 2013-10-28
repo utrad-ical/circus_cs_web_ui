@@ -21,11 +21,22 @@ class Job extends Model
 			'foreignPrimaryKey' => 'sid'
 		)
 	);
+	protected static $_consts;
 
 	/**
 	 * Indicates the job has failed while processing.
 	 */
 	const JOB_FAILED        = -1;
+
+	/**
+	 * Indicates the job is invalidated.
+	 */
+	const JOB_INVALIDATED   = -2;
+
+	/**
+	 * Indicates the job is aborted.
+	 */
+	const JOB_ABORTED       = -3;
 
 	/**
 	 * Indicates the job is in the queue, but not allocated to any process
@@ -123,6 +134,21 @@ class Job extends Model
 		ksort($result, SORT_NUMERIC);
 
 		return $result;
+	}
+
+	/*
+	 * Returns job status string from status code.
+	 * @param int $code Status code.
+	 * @return string Status string such as 'SUCCEEDED', 'FAILED'.
+	 */
+	public static function codeToStatusName($code)
+	{
+		if (!self::$_consts)
+		{
+			$ref = new ReflectionClass(__CLASS__);
+			self::$_consts = array_flip($ref->getConstants());
+		}
+		return str_replace('JOB_', '', self::$_consts[$code]);
 	}
 
 	/**
@@ -309,7 +335,7 @@ class Job extends Model
 		$or_clause = implode(' OR ', $eqn);
 
 		// Find exactly the same job (same plugin, same combination of series),
-		// which is not marked as 'failed.'
+		// which is not marked as 'failed' nor 'invalidated'.
 		$sql = <<<EOT
 SELECT el.job_id AS job_id
 FROM executed_plugin_list AS el
@@ -331,5 +357,30 @@ EOT;
 		else
 			return false;
 
+	}
+
+	/**
+	 * Mark the specified job as 'aborted'. The aborted job will
+	 * eventually converted into 'failed' status by the job manager.
+	 * This method does not handle DB transatcion; you should manually
+	 * handle transaction before/after calling this method.
+	 * @param int $job_id
+	 */
+	public static function abortJob($job_id)
+	{
+		// Update "job_queue"
+		$sqlStr = "UPDATE job_queue"
+		. " SET status=?"
+		. " WHERE job_id=?";
+		$sqlParams = array(self::JOB_ABORTED, $job_id);
+		DBConnector::query($sqlStr, $sqlParams);
+
+		// Update "executed_plugin_list"
+		$sqlStr = "UPDATE executed_plugin_list"
+		. " SET status=?"
+		. " WHERE job_id=?";
+		DBConnector::query($sqlStr, $sqlParams);
+
+		return true;
 	}
 }

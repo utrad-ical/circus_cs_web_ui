@@ -150,6 +150,14 @@ class UnregisterFeedbackAction extends ApiActionBase
 		if (!$cad_result || !$cad_result->job_id)
 			throw new ApiSystemException('CAD result not found.');
 
+		// If CAD job is invalidated, entered feedback can only be deleted.
+		// No unregistering for further edits.
+		if (!($params['deleteFlg']) && $cad_result->status == Job::JOB_INVALIDATED) {
+			throw new ApiOperationException(
+				'You cannot modify feedback in a invalidated CAD job.'
+			);
+		}
+
 		if ($is_consensual)
 		{
 			return $this->checkConsensual($cad_result);

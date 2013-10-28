@@ -7,7 +7,7 @@
 html {
 	overflow-y: scroll;
 }
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,button {
 	margin: 0;
 	padding: 0;
 }
@@ -173,7 +173,7 @@ body.spot #content h2 {
 	tabArea
 ---------------------------------------------------- */
 .tabArea {
-	padding-top: 40px;
+	margin-top: 40px;
 }
 .tabArea ul {
 	font-size: 14px;
@@ -475,6 +475,15 @@ table.detail-tbl th, table.detail-tbl td {
 	font-size: 110%;
 }
 
+#invalidated-message {
+	background-color: #d00;
+	border: 1px solid #800;
+	color: white;
+	padding: 1em;
+	margin: 0.5em;
+	font-size: 130%;
+}
+
 .mode-icon {
 	display: inline-block !important;
 	vertical-align: text-bottom;
@@ -578,6 +587,21 @@ span.register-ok {
 span.register-not-ok {
 	color: red;
 	font-weight: bold;
+}
+
+#cad-result-admin-menu-pane {
+	float: right;
+}
+
+#cad-result-admin-menu {
+	margin-right: 15px;
+	padding: 1px 6px;
+}
+
+#cad-result-admin-menu-items {
+	position: absolute;
+	display: none;
+	width: 250px;
 }
 
 /* ===================================================

@@ -12,19 +12,29 @@ class DeleteJobAction extends ApiActionBase
 	{
 		$pdo = DBConnector::getConnection();
 		$pdo->beginTransaction();
+		CadResult::lock();
+		Job::lock();
 
 		$target = new Job($params['jobID']);
 		if (!isset($target->job_id))
 			throw new ApiOperationException('Target job not found (may be already deleted).');
-		if ($target->status == Job::JOB_NOT_ALLOCATED)
+		if ($target->status == Job::JOB_NOT_ALLOCATED ||
+			$target->status == Job::JOB_ALLOCATED)
 		{
 			Job::delete($target->job_id);
 			CadResult::delete($target->job_id);
 		}
+		else if($target->status == Job::JOB_PROCESSING)
+		{
+			Job::abortJob($target->job_id);
+		}
 		else
 		{
+			$pdo->rollback();
 			throw new ApiOperationException(
-				'The target job can not be deleted (status: ' . $target->status . ')');
+				'The target job can not be deleted (status: ' .
+				Job::codeToStatusName($target->status) . ')'
+			);
 		}
 		$pdo->commit();
 		return null;

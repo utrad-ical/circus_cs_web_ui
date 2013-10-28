@@ -179,7 +179,8 @@ class Auth
 		),
 		array (
 			self::DATA_DELETE,
-			'Can delete series/patient/study data.'
+			'Can delete series/patient/study data.',
+			self::SERVER_SETTINGS // upper level
 		),
 		array (
 			self::MENU_SHOW,

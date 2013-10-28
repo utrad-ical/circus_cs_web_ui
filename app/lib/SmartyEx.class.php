@@ -24,6 +24,8 @@ class SmartyEx extends Smarty
 		$this->cache_dir     = $rootPath . 'cache';
 		$this->plugins_dir[] = $rootPath . 'plugins';
 
+		$this->register_modifier('status_str', array('Job', 'codeToStatusName'));
+
 		$this->assign('currentUser', Auth::currentUser());
 
 		$this->assign('totop', relativeTopDir());

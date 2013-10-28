@@ -1,4 +1,4 @@
-<div style="position:absolute; top: 2px; right:2px;">
+<div id="darkroom-pane">
 	<button id="darkroom">darkroom</button>
 </div>
 
