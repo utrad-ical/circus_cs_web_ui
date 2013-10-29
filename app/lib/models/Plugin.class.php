@@ -88,20 +88,6 @@ class Plugin extends Model
 		return $result;
 	}
 
-	/**
-	 * Saves the user preference.
-	 * @param string $user The user ID.
-	 * @param array $values Key/value pairs of settings.
-	 */
-	public function saveUserPreference($user, $values)
-	{
-		$pdo = DBConnector::getConnection();
-		$pdo->beginTransaction();
-		$sql = '';
-		$pdo->commit();
-		// TODO: implement save user preference
-	}
-
 	public function configurationPath()
 	{
 		global $WEB_UI_ROOT;

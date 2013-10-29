@@ -93,6 +93,26 @@ $(function() {
 		});
 	});
 
+	$('#cad_pref_reset_button').click(function() {
+		var params = {
+			mode: 'reset_cad_preference',
+			plugin_name: $cad_name.val(),
+			version: $cad_version.val()
+		};
+		$.confirm('Reset this preference and use default settings?', function(ans) {
+			if (!ans) return;
+			$.webapi({
+				action: 'updateUserPreference',
+				params: params,
+				onSuccess: function(data) {
+					success(data);
+					$('#cad_pref_form').hide();
+					$('#cad_selector').show();
+				}
+			});
+		});
+	});
+
 	$('#cad_pref_update_button').click(function() {
 		var params = {
 			mode: 'set_cad_preference',
@@ -228,6 +248,7 @@ label ~ label { margin-left: 10px; }
 		</table>
 		<div class="form_menu">
 			<a href="#" id="cad_pref_cancel_button">Cancel</a>
+			<input id="cad_pref_reset_button" type="button" value="Reset" class="form-btn" />
 			<input id="cad_pref_update_button" type="button" value="Update" class="form-btn" />
 		</div>
 	</div>

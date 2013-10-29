@@ -103,6 +103,19 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		);
 	}
 
+	private function mode_reset_cad_preference($params)
+	{
+		$user_id = $this->currentUser->user_id;
+		$plugin = $this->preparePlugin($params);
+
+		DBConnector::query(
+			'DELETE FROM plugin_user_preference ' .
+			'WHERE plugin_id=? AND user_id=?',
+			array($plugin->plugin_id, $user_id)
+		);
+		return array('message' => 'User preference was reset.');
+	}
+
 	private function mode_set_cad_preference($params)
 	{
 		$pdo = DBConnector::getConnection();
