@@ -102,7 +102,7 @@ if(!$errorFlg)
 
 	if(!is_file($jsonFname) || ($file = file_get_contents($jsonFname)) == false)
 	{
-		$message .= '<span style="color:red;">Fail to load plugin.json ' . $jsonFname .'</span><br/>';
+		$message .= '<span style="color:red;">Failed to load plugin.json ' . $jsonFname .'</span><br/>';
 		DeleteDirRecursively($pluginPath);
 		$errorFlg = 1;
 	}
@@ -111,7 +111,7 @@ if(!$errorFlg)
 		$data = json_decode($file, true);
 		if(json_last_error() != JSON_ERROR_NONE)
 		{
-			$message .= '<span style="color:red;">Fail to load plugin.json ' . $jsonFname .'</span><br/>';
+			$message .= '<span style="color:red;">Failed to load plugin.json ' . $jsonFname .'</span><br/>';
 			DeleteDirRecursively($pluginPath);
 			$errorFlg = 1;
 		}
@@ -191,22 +191,6 @@ if(!$errorFlg)
 					$sqlParams[1] = $item['volumeID'];
 					$sqlParams[2] = isset($item['label']) ? $item['label'] : "";
 					$sqlParams[3] = is_array($item['ruleset']) ? json_encode($item['ruleset']) : "[]";
-					$stmt = $pdo->prepare($sqlStr);
-					$stmt->execute($sqlParams);
-				}
-			}
-
-			// Set plugin_user_preference
-			if(isset($data['defalutUserPreference']))
-			{
-				$sqlParams = array($pluginID, $DEFAULT_CAD_PREF_USER);
-
-				foreach($data['defalutUserPreference'] as $item)
-				{
-					$sqlStr = 'INSERT INTO plugin_user_preference(plugin_id, user_id, "key", "value")'
-							. 'VALUES (?, ?, ?, ?)';
-					$sqlParams[2] = $item['key'];
-					$sqlParams[3] = $item['value'];
 					$stmt = $pdo->prepare($sqlStr);
 					$stmt->execute($sqlParams);
 				}
