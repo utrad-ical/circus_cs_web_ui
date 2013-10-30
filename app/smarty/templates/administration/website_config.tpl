@@ -33,7 +33,8 @@ label > span { font-weight: bold; }
 {include file="header.tpl" head_extra=$smarty.capture.extra
 require=$smarty.capture.require body_class="spot"}
 
-<h2>Website configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Website configuration</h2>
 
 <div id="message">{$message|escape}</div>
 

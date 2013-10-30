@@ -116,7 +116,8 @@ $(function () {
 
 </head>
 
-<h2>Plug-in job queue</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Plug-in job queue</h2>
 
 <div id="message"></div>
 

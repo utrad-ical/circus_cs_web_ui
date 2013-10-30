@@ -120,7 +120,8 @@ $(function () {
 {include file="header.tpl" body_class="spot"
 head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<h2>User configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+User configuration</h2>
 
 <form id="editor-form" method="post">
 	<input type="hidden" name="mode" value="set" />

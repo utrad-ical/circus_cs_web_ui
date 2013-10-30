@@ -49,7 +49,8 @@ $(function() {
 <form onsubmit="return false;">
 <input type="hidden" id="ticket" value="{$ticket|escape}" />
 
-<h2>Server service</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Server service</h2>
 
 {foreach from=$machineList item=item}
 {if $item.process_enabled}

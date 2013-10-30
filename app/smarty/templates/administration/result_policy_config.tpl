@@ -65,7 +65,7 @@ $(function () {
 		$('select option', editor).removeAttr('selected');
 		$('select', editor).multiselect('refresh');
 		$('input.num', editor).val('0');
-		$('#auto-cons').prop('checked', false);		
+		$('#auto-cons').prop('checked', false);
 		var editor = $('#editor');
 		editor.show(300);
 	});
@@ -115,7 +115,8 @@ $(function () {
 {include file="header.tpl" body_class="spot"
 	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<h2>CAD Result Policy Configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+CAD Result Policy Configuration</h2>
 
 <div id="message">{$message|escape}</div>
 

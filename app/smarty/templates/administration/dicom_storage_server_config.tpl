@@ -57,7 +57,8 @@ function RestartStorageSv()
 {include file="header.tpl"
 	head_extra=$smarty.capture.extra body_class="spot"}
 
-<h2>Configuration of DICOM storage server</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Configuration of DICOM storage server</h2>
 
 <div id="message">{$params.message}</div>
 

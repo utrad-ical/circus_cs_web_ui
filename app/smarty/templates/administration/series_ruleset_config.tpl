@@ -602,7 +602,8 @@ var keys = {$keys|@json_encode};
 {include file="header.tpl" head_extra=$smarty.capture.extra
 require=$smarty.capture.require body_class="spot"}
 
-<h2>Series Ruleset Configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Series Ruleset Configuration</h2>
 
 <div id="plugin-selector-pane">
 	<b>Plugin:</b>&nbsp;

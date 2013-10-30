@@ -114,7 +114,8 @@ span.highlight { background-color: #8a3b2b; color: white; }
 {include file="header.tpl"
 	head_extra=$smarty.capture.extra body_class="spot"}
 
-<h2>Group configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Group configuration</h2>
 
 <div id="message">{$message|escape}</div>
 

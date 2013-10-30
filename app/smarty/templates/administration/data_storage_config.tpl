@@ -23,10 +23,10 @@ $(function() {
 
 	$('#add-open').click(function() {
 		$('input[name=path]', '#add-new').val('');
-		$('select[name=type]', '#add-new').prop('selectedIndex', 0); 
-		$('#add-new').show(300); 
+		$('select[name=type]', '#add-new').prop('selectedIndex', 0);
+		$('#add-new').show(300);
 	});
-        
+
 	$('#add-cancel').click(function() { $('#add-new').hide(); });
 });
 -->
@@ -53,7 +53,8 @@ $(function() {
 {/capture}
 {include file="header.tpl" head_extra=$smarty.capture.extra
 	body_class="spot"}
-<h2>Data storage configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Data storage configuration</h2>
 
 <div id="message">{$message|escape|nl2br}</div>
 

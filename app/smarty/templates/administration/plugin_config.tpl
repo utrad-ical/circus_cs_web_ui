@@ -97,7 +97,8 @@ $(function () {
 {include file="header.tpl" head_extra=$smarty.capture.extra
 require=$smarty.capture.require body_class="spot"}
 
-<h2>Plug-in configuration</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Plug-in configuration</h2>
 
 <div id="message">{$message|escape}</div>
 

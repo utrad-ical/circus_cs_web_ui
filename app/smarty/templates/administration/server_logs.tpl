@@ -34,7 +34,8 @@ $(function () {
 <form id="form1" name="form1" onsubmit="return false;">
 <input type="hidden" id="ticket" value="{$params.ticket}" />
 
-<h2>Server logs</h2>
+<h2><div class="breadcrumb"><a href="administration.php">Administration</a> &gt;</div>
+Server logs</h2>
 <form id="form1" name="form1">
 	<table class="col-tbl" id="filelist">
 		<tr>
