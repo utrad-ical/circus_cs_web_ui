@@ -107,11 +107,57 @@ try
 				try
 				{
 					$pdo->beginTransaction();
+					
+					// Check number of execution failure (Failed/Invalidated/Aborted)
+					$ps = $seriesUidArr[0]; // series UID for the primary series
+					$s = Series::selectOne(array('series_instance_uid' => $ps));
+					
+					$eqn = array();
+					$binds = array();
+					
+					foreach($seriesUidArr as $vid => $series_uid)
+					{
+						$eqn[] = 'es.volume_id = ? AND sl.series_instance_uid = ?';
+						$binds[] = $vid;
+						$binds[] = $series_uid;
+					}
+					$or_clause = implode(' OR ', $eqn);
+					
+					// Find exactly the same job (same plugin, same combination of series),
+					// which is marked as 'failed', 'invalidated' or 'aborted'.
+					$sqlStr = <<<EOT
+SELECT el.job_id AS job_id
+FROM executed_plugin_list AS el
+  JOIN executed_series_list AS es
+    ON el.job_id = es.job_id
+  JOIN series_list AS sl
+    ON es.series_sid = sl.sid
+WHERE
+  el.plugin_id = ? AND el.status < 0
+  AND ($or_clause)
+GROUP BY el.job_id
+HAVING COUNT(*) = ?
+EOT;
+					array_unshift($binds, $plugin->plugin_id);
+					array_push($binds, count($seriesUidArr));
+
+					$failedJobIdList = DBConnector::query($sqlStr, $binds, 'ALL_COLUMN');
+					//printf("%d/%d\r\n", count($failedJobIdList), $params['maxRetryNum']);
+					
+					if($params['maxRetryNum'] < count($failedJobIdList))
+					{
+						$message = 'The number of exection failure was exceeded'
+									. '(Plug-in:'.$params['pluginName'].' ver.'.$params['version']
+									. ', UID of 1st series:'.$seriesUidArr[0].')';
+						throw new Exception($message);
+					}
+					
 					$jobID = Job::registerNewJob( $plugin,
 												  $seriesUidArr,
 												  $executedBy,
 												  $params['priority'],
 												  $params['resultPolicy']);
+					
 					$pdo->commit();
 				}
 				catch (Exception $e)
