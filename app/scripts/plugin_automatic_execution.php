@@ -11,26 +11,26 @@ $executedBy = "server_service";
 function appendLog($fileName, $date, $message)
 {
 	$fp = fopen($fileName, "a");
-	
+
 	if($fp)  fprintf($fp, "[%s] %s\r\n", $date->format('Y-m-d H:i:s'), $message);
-	
+
 	fclose($fp);
 }
 
 try
 {
 	$pdo = DBConnector::getConnection();
-	
+
 	$nowDateTime = new DateTime();
-	
+
 	//----------------------------------------------------------------------------------------------
 	// Load configuration file (JSON format)
 	//----------------------------------------------------------------------------------------------
 	$jsonFileName = $argv[1];
-	
+
 	if(!file_exists($jsonFileName))
 	{
-		printf("ERROR: %s is not exist.\r\n", $jsonFileName);
+		printf("ERROR: %s does not exist.\r\n", $jsonFileName);
 	}
 	$paramData = json_decode(file_get_contents($jsonFileName), TRUE);
 	//----------------------------------------------------------------------------------------------
@@ -45,23 +45,23 @@ try
 		if (!$plugin)
 		throw new Exception($params['pluginName'].' ver.'.$params['version'].' is not installed.');
 		//------------------------------------------------------------------------------------------
-		
+
 		//------------------------------------------------------------------------------------------
 		// Check plugin executable time
 		//------------------------------------------------------------------------------------------
 		$timeRangeFlg = 0;
-		
+
 		foreach($params['executableTime']['ranges'] as $timeArr)
 		{
 			$fromTime = clone $nowDateTime;
 			$toTime   = clone $nowDateTime;
-			
+
 			$fromArr = explode(":", $timeArr['from']);
 			$toArr   = explode(":", $timeArr['to']);
-		
+
 			$fromTime->setTime($fromArr[0], $fromArr[1], $fromArr[2]);
 			$toTime->setTime($toArr[0], $toArr[1], $toArr[2]);
-	
+
 			if($fromTime <= $nowDateTime && $nowDateTime <= $toTime)
 			{
 				$timeRangeFlg = 1;
@@ -85,36 +85,36 @@ try
 										   'last_received_at<=' => $minLastRecieveTime->format('Y-m-d H:i:s')),
 									 array('order' => array('sid ASC')));
 		//------------------------------------------------------------------------------------------
-		
+
 		foreach($seriesList as $series)
 		{
 			$availSeries = Job::findExecutableSeries($plugin, $series->series_instance_uid);
-			
+
 			if (array_product(array_map("count", $availSeries)) == 1)
 			{
 				$seriesUidArr = array();
 				$j = new QueryJobAction($executedBy);
-				
+
 				foreach($availSeries as $item)
 				{
 					$seriesUidArr[] = $item[0]->series_instance_uid;
 				}
 				//var_dump($seriesUidArr);
-				
+
 				$result = $j->query_job_series(array('seriesUID' => $seriesUidArr));
 				//var_dump($result[0]);
-				
+
 				try
 				{
 					$pdo->beginTransaction();
-					
+
 					// Check number of execution failure (Failed/Invalidated/Aborted)
 					$ps = $seriesUidArr[0]; // series UID for the primary series
 					$s = Series::selectOne(array('series_instance_uid' => $ps));
-					
+
 					$eqn = array();
 					$binds = array();
-					
+
 					foreach($seriesUidArr as $vid => $series_uid)
 					{
 						$eqn[] = 'es.volume_id = ? AND sl.series_instance_uid = ?';
@@ -122,7 +122,7 @@ try
 						$binds[] = $series_uid;
 					}
 					$or_clause = implode(' OR ', $eqn);
-					
+
 					// Find exactly the same job (same plugin, same combination of series),
 					// which is marked as 'failed', 'invalidated' or 'aborted'.
 					$sqlStr = <<<EOT
@@ -143,7 +143,7 @@ EOT;
 
 					$failedJobIdList = DBConnector::query($sqlStr, $binds, 'ALL_COLUMN');
 					//printf("%d/%d\r\n", count($failedJobIdList), $params['maxRetryNum']);
-					
+
 					if($params['maxRetryNum'] < count($failedJobIdList))
 					{
 						$message = 'The number of exection failure was exceeded'
@@ -151,13 +151,13 @@ EOT;
 									. ', UID of 1st series:'.$seriesUidArr[0].')';
 						throw new Exception($message);
 					}
-					
+
 					$jobID = Job::registerNewJob( $plugin,
 												  $seriesUidArr,
 												  $executedBy,
 												  $params['priority'],
 												  $params['resultPolicy']);
-					
+
 					$pdo->commit();
 				}
 				catch (Exception $e)
@@ -171,18 +171,18 @@ EOT;
 					}
 					continue;
 				}
-				
+
 				$result = $j->query_job(array($jobID));
-				
+
 				$buffer = sprintf("Registered (JobID: %d, Plug-in: %s ver.%s, SeriesUID: %s)",
 									$result[0]['jobID'],
 									$result[0]['pluginName'],
 									$result[0]['pluginVersion'],
 									$result[0]["seriesUID"]);
-				
+
 				appendLog($paramData['logFileName'], $nowDateTime, $buffer);
 				//var_dump($result[0]);
-			
+
 			}
 			//if(count($availSeries[0]) > 0)  var_dump($availSeries);
 		}
