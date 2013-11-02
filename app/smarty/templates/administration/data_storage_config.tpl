@@ -102,11 +102,11 @@ Data storage configuration</h2>
 		<input type="hidden" name="mode" value="add" />
 		<table class="detail-tbl">
 			<tr>
-				<th style="width: 5em;"><span class="trim01">Path</th>
+				<th style="width: 5em;"><span class="trim01">Path</span></th>
 				<td><input type="text" size="60" name="path" /></td>
 			</tr>
 			<tr>
-				<th><span class="trim01">Type</th>
+				<th><span class="trim01">Type</span></th>
 				<td>
 					<select name="type">
 						<option value="1">DICOM storage</option>
