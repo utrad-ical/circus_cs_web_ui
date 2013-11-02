@@ -44,8 +44,8 @@
 <ul id="stats_menu">
 <li class="plot themeBackground"><a href="personal_statistics.php">Lesion Plot</a></li>
 <li class="time_for_feedback themeBackground"><a href="time_for_feedback_entry.php">Feedback Time</a></li>
+<li class="froc themeBackground"><a href="../research/research_list.php">FROC Analysys</a></li>
 <li class="export disabled"><a>Export Feedback</a></li>
-<li class="froc disabled"><a>FROC Analysys</a></li>
 </ul>
 
 {include file="footer.tpl"}

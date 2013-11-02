@@ -13,9 +13,6 @@
 		<li><a href="{$totop}search.php" class="topmenu topmenu-search" title="search">search</a></li>
 		{/if}
 		<li><a href="{$totop}statistics/statistics.php" class="topmenu topmenu-statistics" title="statistics">statistics</a></li>
-		{if $currentUser->hasPrivilege('researchShow')}
-		<li><a href="{$totop}research/research_list.php" class="topmenu topmenu-research" title="research">research</a></li>
-		{/if}
 	</ul>
 	<p class="user">User: {$currentUser->user_id|escape}</p>
 	<ul>
