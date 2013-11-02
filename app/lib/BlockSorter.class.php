@@ -45,10 +45,15 @@ class BlockSorter extends CadResultExtension
 
 	public function head()
 	{
+		global $DEFAULT_CAD_PREF_USER;
 		$p = $this->params;
 		if ($p['useUserPreference'])
 		{
 			$pref = $this->owner->userPreference();
+			// Legacy: Default preference is used for the time being
+			$default_pref = $this->owner->userPreference($DEFAULT_CAD_PREF_USER);
+			$pref = array_merge($default_pref, $pref);
+
 			if (isset($pref['sortKey']) && isset($pref['sortOrder']))
 			{
 				$initials = array(

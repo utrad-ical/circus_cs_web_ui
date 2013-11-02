@@ -23,7 +23,7 @@ class Plugin extends Model
 		'CadPlugin' => array('key' => 'plugin_id')
 	);
 
-	protected $userPreference = array();
+	protected $userPreference = array(); // for caching
 
 	protected $presentation = null;
 
@@ -67,25 +67,19 @@ class Plugin extends Model
 		if (is_array($this->userPreference[$userid]))
 			return $this->userPreference[$userid];
 		$sql = 'SELECT * FROM plugin_user_preference '
-			. 'WHERE plugin_id = ? AND user_id IN (?, ?)';
+			. 'WHERE plugin_id = ? AND user_id = ?';
 
 		$items = DBConnector::query($sql,
-			array($this->plugin_id, $userid, $DEFAULT_CAD_PREF_USER),
+			array($this->plugin_id, $userid),
 			'ALL_ASSOC');
 
 		$user_prefs = array();
-		$default_prefs = array();
 		foreach ($items as $item)
 		{
-			if ($item['user_id'] == $DEFAULT_CAD_PREF_USER)
-				$default_prefs[$item['key']] = $item['value'];
-			else
-				$user_prefs[$item['key']] = $item['value'];
+			$user_prefs[$item['key']] = $item['value'];
 		}
-		$result = array_merge($default_prefs, $user_prefs);
-		$this->userPreference[$userid] = $result;
-
-		return $result;
+		$this->userPreference[$userid] = $user_prefs;
+		return $user_prefs;
 	}
 
 	public function configurationPath()

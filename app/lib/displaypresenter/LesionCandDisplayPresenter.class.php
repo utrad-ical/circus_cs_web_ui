@@ -42,9 +42,15 @@ class LesionCandDisplayPresenter extends DisplayPresenter
 	 */
 	public function extractDisplays($input)
 	{
+		global $DEFAULT_CAD_PREF_USER;
+
 		$result = array();
 		$count = 0;
 		$pref = $this->owner->userPreference();
+
+		// Legacy: Default preference is used for the time being
+		$default_pref = $this->owner->userPreference($DEFAULT_CAD_PREF_USER);
+		$pref = array_merge($default_pref, $pref);
 
 		$max_disp_num = $this->params['maxDispNum'];
 		if ($this->params['askMaxDispNum'] && isset($pref['maxDispNum'])) {

@@ -52,7 +52,6 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		$this->currentUser->save(array('User' => $params));
 
 		// TODO: Remove these eventually
-		$_SESSION['todayDisp'] = $params['today_disp'];
 		$_SESSION['anonymizeFlg'] = ($params['anonymized'] == 't') ? 1 : 0;
 
 		return array('message' => 'User page preference was successfully changed.');
@@ -84,7 +83,7 @@ class UpdateUserPreferenceAction extends ApiActionBase
 	{
 		$plugin = $this->preparePlugin($params);
 
-		// current user configuration (with default value used)
+		// current user configuration
 		$configs = $plugin->userPreference($this->currentUser);
 
 		// build HTML form according to the current presentation rule
@@ -103,16 +102,20 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		);
 	}
 
+	private function removeCadPreference($plugin_id, $user_id)
+	{
+		DBConnector::query(
+			'DELETE FROM plugin_user_preference ' .
+			'WHERE plugin_id=? AND user_id=?',
+			array($plugin_id, $user_id)
+		);
+	}
+
 	private function mode_reset_cad_preference($params)
 	{
 		$user_id = $this->currentUser->user_id;
 		$plugin = $this->preparePlugin($params);
-
-		DBConnector::query(
-			'DELETE FROM plugin_user_preference ' .
-			'WHERE plugin_id=? AND user_id=?',
-			array($plugin->plugin_id, $user_id)
-		);
+		$this->removeCadPreference($plugin->plugin_id, $user_id);
 		return array('message' => 'User preference was reset.');
 	}
 
@@ -125,6 +128,7 @@ class UpdateUserPreferenceAction extends ApiActionBase
 		$plugin = $this->preparePlugin($params);
 		$plugin_id = $plugin->plugin_id;
 		$user_id = $this->currentUser->user_id;
+		$this->removeCadPreference($plugin_id, $user_id);
 
 		$presentation = $plugin->presentation();
 		$rules = array();
@@ -137,30 +141,13 @@ class UpdateUserPreferenceAction extends ApiActionBase
 
 		$prefs = $this->getValidatedParams($params['preferences'], $rules);
 
-		$tmp = DBConnector::query(
-			'SELECT key, value FROM plugin_user_preference WHERE plugin_id=? AND user_id=?',
-			array($plugin_id, $user_id),
-			'ALL_ASSOC'
-		);
-		$old = array();
-		foreach ($tmp as $item) $old[$item['key']] = $item['value'];
-
-		$updateSth = $pdo->prepare(
-			'UPDATE plugin_user_preference SET value=? ' .
-			'WHERE plugin_id=? AND user_id=? AND key=?'
-		);
-		$insertSth = $pdo->prepare(
+		$sth = $pdo->prepare(
 			'INSERT INTO plugin_user_preference (plugin_id, user_id, key, value) ' .
 			'VALUES(?, ?, ?, ?)'
 		);
 		foreach ($prefs as $key => $value) {
-			if (isset($old[$key])) {
-				if ($old[$key] !== $value) {
-					$updateSth->execute(array($value, $plugin_id, $user_id, $key));
-				}
-			} else {
-				$insertSth->execute(array($plugin_id, $user_id, $key, $value));
-			}
+			if (is_null($value)) continue;
+			$sth->execute(array($plugin_id, $user_id, $key, $value));
 		}
 		$pdo->commit();
 		return array('message' => 'User preference saved.');
