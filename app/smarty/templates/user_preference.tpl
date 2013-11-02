@@ -87,6 +87,7 @@ $(function() {
 				if (!form) form = 'There is no preference available in this CAD.';
 				$('#editing_cad').text($cad_name.val() + ' ver.' + $cad_version.val());
 				$('#cad_pref_content').html(form).fromObject(data.preference);
+				$('#cad_pref_content th').wrapInner('<span class="trim01" />');
 				$('#cad_pref_form').show();
 				$('#cad_selector').hide();
 			}
@@ -127,6 +128,9 @@ $(function() {
 				success(data);
 				$('#cad_pref_form').hide();
 				$('#cad_selector').show();
+			},
+			onFail: function(message) {
+				$.alert(message);
 			}
 		});
 	});
@@ -145,12 +149,13 @@ $(function() {
 .pref_section { margin: 20px; }
 .form-btn { width: 100px; }
 .form_menu { padding-left: 20px; margin-bottom: 20px; margin-top: 10px; }
+table.detail-tbl th { padding-right: 10px; }
 #cad_pref_form { display: none; }
 #cad_selector td { min-width: 150px; }
 #editing_cad { font-weight: bold; }
 label ~ label { margin-left: 10px; }
 #cad_pref_content th { min-width: 100px; }
-#cad_pref_content { border: 1px solid silver; }
+#cad_pref_content { background-color: #f9f9f9; margin-top: 10px; }
 
 </style>
 
@@ -165,7 +170,7 @@ label ~ label { margin-left: 10px; }
 <div class="pref_section" id="password_section">
 	<table class="detail-tbl" style="width: 50%;">
 		<tr>
-			<th style="width:15em;"><span class="trim01">Current password</span></th>
+			<th><span class="trim01">Current password</span></th>
 			<td>
 				<input id="old_password" type="password" style="width: 150px;" />
 			</td>
@@ -188,7 +193,7 @@ label ~ label { margin-left: 10px; }
 <div class="pref_section" id="pagepref_section">
 	<table class="detail-tbl" style="min-width: 50%;">
 		<tr>
-			<th style="width: 25em;"><span class="trim01">Display today's list</span></th>
+			<th><span class="trim01">Display today's list</span></th>
 			<td>
 				<label><input name="today_disp" type="radio" value="series" />Today's Series</label>
 				<label><input name="today_disp" type="radio" value="cad" />Today's CAD</label>
@@ -243,7 +248,7 @@ label ~ label { margin-left: 10px; }
 	</div>
 
 	<div id="cad_pref_form">
-		<div>Editing: <span id="editing_cad"></span></div>
+		<div>Preference for: <span id="editing_cad"></span></div>
 		<table id="cad_pref_content" class="detail-tbl">
 		</table>
 		<div class="form_menu">
