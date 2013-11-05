@@ -12,7 +12,7 @@
 		</li>
 		<li><a href="{$totop}search.php" class="topmenu topmenu-search" title="search">search</a></li>
 		{/if}
-		<li><a href="{$totop}statistics/statistics.php" class="topmenu topmenu-statistics" title="statistics">statistics</a></li>
+		<li><a href="{$totop}analysis/index.php" class="topmenu topmenu-analysis" title="analysis">analysis</a></li>
 	</ul>
 	<p class="user">User: {$currentUser->user_id|escape}</p>
 	<ul>

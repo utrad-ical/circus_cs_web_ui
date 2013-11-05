@@ -200,8 +200,8 @@ $(function() {
 {include file="header.tpl" body_class="spot"
 	require=$smarty.capture.require head_extra=$smarty.capture.extra}
 
-<h2><div class="breadcrumb"><a href="statistics.php">Statistics</a> &gt;</div>
-Personal statistics</h2>
+<h2><div class="breadcrumb"><a href="index.php">Analysis</a> &gt;</div>
+Lesion Locations</h2>
 {*<h2>Reading characteristics</h2>*}
 
 <form name="form1">

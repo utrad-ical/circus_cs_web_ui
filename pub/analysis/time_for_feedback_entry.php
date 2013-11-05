@@ -12,6 +12,6 @@
 	$smarty->assign('cadList',       $cadList);
 	$smarty->assign('versionDetail', explode('^', $cadList[0][1]));
 
-	$smarty->display('statistics/time_for_feedback_entry.tpl');
+	$smarty->display('analysis/time_for_feedback_entry.tpl');
 	//----------------------------------------------------------------------------------------------
 ?>

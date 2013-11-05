@@ -12,5 +12,5 @@
 	$smarty->assign('cadList',       $cadList);
 	$smarty->assign('versionDetail', explode('^', $cadList[0][1]));
 
-	$smarty->display('statistics/personal_statistics.tpl');
+	$smarty->display('analysis/personal_statistics.tpl');
 	//--------------------------------------------------------------------------

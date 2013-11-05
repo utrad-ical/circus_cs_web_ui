@@ -125,7 +125,7 @@ $(function() {
 {include file="header.tpl" body_class="spot"
 	head_extra=$smarty.capture.extra require=$smarty.capture.require}
 
-<h2><div class="breadcrumb"><a href="statistics.php">Statistics</a> &gt;</div>
+<h2><div class="breadcrumb"><a href="index.php">Analysis</a> &gt;</div>
 Time for feedback entry</h2>
 
 <form name="form1">

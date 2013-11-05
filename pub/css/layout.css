@@ -295,8 +295,8 @@ table.search-tbl th, table.search-tbl td {
 .topmenu-today:hover { background-position: -197px -49px; }
 .topmenu-search { background-position: -394px 0px; }
 .topmenu-search:hover { background-position: -394px -49px; }
-.topmenu-statistics { background-position: -591px 0px; }
-.topmenu-statistics:hover { background-position: -591px -49px; }
+.topmenu-analysis { background-position: -591px 0px; }
+.topmenu-analysis:hover { background-position: -591px -49px; }
 .topmenu-preference { background-position: -788px 0px; }
 .topmenu-preference:hover { background-position: -788px -49px; }
 .topmenu-favorites { background-position: -985px -49px; }
