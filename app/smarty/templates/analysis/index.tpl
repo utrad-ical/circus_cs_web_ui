@@ -49,7 +49,7 @@ Plsease be patient and avoid running those functions in working hours.</p>
 <li class="plot themeBackground"><a href="personal_statistics.php">Lesion Locations</a></li>
 <li class="time_for_feedback themeBackground"><a href="time_for_feedback_entry.php">Feedback Time</a></li>
 <li class="froc themeBackground"><a href="../research/research_list.php">FROC Analysys</a></li>
-<li class="export disabled"><a>Export Feedback</a></li>
+<li class="export themeBackground"><a href="export_feedback.php">Export Feedback</a></li>
 </ul>
 
 {include file="footer.tpl"}
