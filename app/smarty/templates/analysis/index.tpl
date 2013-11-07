@@ -41,6 +41,10 @@
 {include file="header.tpl" head_extra=$smarty.capture.extra body_class="spot"}
 <h2>Analysis Menu</h2>
 
+<p class="themeColor"><strong>Note:</strong> These analysis functions may
+heavily consume server processing time and memory.<br/>
+Plsease be patient and avoid running those functions in working hours.</p>
+
 <ul id="stats_menu">
 <li class="plot themeBackground"><a href="personal_statistics.php">Lesion Locations</a></li>
 <li class="time_for_feedback themeBackground"><a href="time_for_feedback_entry.php">Feedback Time</a></li>
