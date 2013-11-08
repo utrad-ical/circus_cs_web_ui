@@ -12,11 +12,13 @@ function UpdateConfig()
 	{
 		var params = {
 			mode:            'update',
-			newAeTitle:       $("#newAETitle").val(),
-			newPort:          $("#newPort").val(),
-			newThumbnailFlg:  $('input[name="newThumbnailFlg"]:checked').val(),
-			newCompressFlg:   $('input[name="newCompressFlg"]:checked').val(),
-			newThumbnailSize: $("#newThumbnailSize").val(),
+			newAeTitle:              $("#newAeTitle").val(),
+			newPort:                 $("#newPort").val(),
+			newThumbnailFlg:         $('input[name="newThumbnailFlg"]:checked').val(),
+			newThumbnailSize:        $("#newThumbnailSize").val(),
+			newCompressDicomFile:    $('input[name="newCompressDicomFile"]:checked').val(),
+			newOverwriteDicomFile:   $('input[name="newOverwriteDicomFile"]:checked').val(),
+			newOverwritePatientName: $('input[name="newOverwritePatientName"]:checked').val(),
 			ticket:           data.ticket
 		};
 		var address = 'dicom_storage_server_config.php?' + $.param(params);
@@ -26,10 +28,12 @@ function UpdateConfig()
 
 function CancelConfig()
 {
-	$("#newAeTitle.value").val(data.aeTitle);
+	$("#newAeTitle").val(data.aeTitle);
 	$("#newPort").val(data.port);
-	$("input[name='newThumbnailFlg']").filter(function(){ return ($(this).val() == data.thumbnailFlg) }).attr("checked", true);
-	$("input[name='newCompressFlg']").filter(function(){ return ($(this).val() == data.compressFlg) }).attr("checked", true);
+	$("input[name='newThumbnailFlg']").filter(function(){ return ($(this).val() == data.thumbnailFlg) }).prop("checked", true);
+	$("input[name='newCompressDicomFile']").filter(function(){ return ($(this).val() == data.compressDicomFile) }).prop("checked", true);
+	$("input[name='newOverwriteDicomFile']").filter(function(){ return ($(this).val() == data.overwriteDicomFile) }).prop("checked", true);
+	$("input[name='newOverwritePatientName']").filter(function(){ return ($(this).val() == data.overwritePatientName) }).prop("checked", true);
 	$("#newThumbnailSize").val(data.defaultThumbnailSize);
 }
 
@@ -66,7 +70,7 @@ Configuration of DICOM storage server</h2>
 	<table class="detail-tbl">
 		<tr>
 			<th style="width: 20em;"><span class="trim01">AE title</th>
-			<td><input id="newAETitle" size="20" type="text" value="{$configData.aeTitle|escape}" /></td>
+			<td><input id="newAeTitle" size="20" type="text" value="{$configData.aeTitle|escape}" /></td>
 		</tr>
 
 		<tr>
@@ -83,17 +87,34 @@ Configuration of DICOM storage server</h2>
 		</tr>
 
 		<tr>
+			<th><span class="trim01">Default thumbnail size</th>
+			<td><input id="newThumbnailSize" size="20" type="text" value="{$configData.defaultThumbnailSize|escape}" /></td>
+		</tr>
+		
+		<tr>
 			<th><span class="trim01">Compress DICOM image with lossless JPEG</th>
 			<td>
-				<label><input name="newCompressFlg" type="radio" value="1"{if $configData.compressFlg} checked="checked"{/if} />TRUE</label>
-				<label><input name="newCompressFlg" type="radio" value="0"{if !$configData.compressFlg} checked="checked"{/if} />FALSE</label>
+				<label><input name="newCompressDicomFile" type="radio" value="1"{if $configData.compressDicomFile} checked="checked"{/if} />TRUE</label>
+				<label><input name="newCompressDicomFile" type="radio" value="0"{if !$configData.compressDicomFile} checked="checked"{/if} />FALSE</label>
 			</td>
 		</tr>
 
 		<tr>
-			<th><span class="trim01">Default thumbnail size</th>
-			<td><input id="newThumbnailSize" size="20" type="text" value="{$configData.defaultThumbnailSize|escape}" /></td>
+			<th><span class="trim01">Overwrite DICOM file</th>
+			<td>
+				<label><input name="newOverwriteDicomFile" type="radio" value="1"{if $configData.overwriteDicomFile} checked="checked"{/if} />TRUE</label>
+				<label><input name="newOverwriteDicomFile" type="radio" value="0"{if !$configData.overwriteDicomFile} checked="checked"{/if} />FALSE</label>
+			</td>
 		</tr>
+
+		<tr>
+			<th><span class="trim01">Overwrite patient's name</th>
+			<td>
+				<label><input name="newOverwritePatientName" type="radio" value="1"{if $configData.overwritePatientName} checked="checked"{/if} />TRUE</label>
+				<label><input name="newOverwritePatientName" type="radio" value="0"{if !$configData.overwritePatientName} checked="checked"{/if} />FALSE</label>
+			</td>
+		</tr>
+
 	</table>
 
 	<div id="editor-commit">

@@ -4,28 +4,30 @@ Auth::checkSession();
 Auth::purgeUnlessGranted(AUTH::SERVER_SETTINGS);
 
 $params = array('message'  => "&nbsp;");
-$confFname = $CONF_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
+$configFileName = $CONF_DIR . $DIR_SEPARATOR . $CONFIG_DICOM_STORAGE;
 
 //------------------------------------------------------------------------------
 // Import $_REQUEST variables
 //------------------------------------------------------------------------------
 $mode = (isset($_REQUEST['mode']) && ($_SESSION['ticket'] == $_REQUEST['ticket'])) ? $_REQUEST['mode'] : "";
-$newAeTitle       = (isset($_REQUEST['newAeTitle'])) ? $_REQUEST['newAeTitle']      : "";
-$newPort          = (isset($_REQUEST['newPort']))   ? $_REQUEST['newPort']   : "";
-$newThumbnailFlg  = (isset($_REQUEST['newThumbnailFlg'])) ? $_REQUEST['newThumbnailFlg'] : "";
-$newCompressFlg   = (isset($_REQUEST['newCompressFlg']))  ? $_REQUEST['newCompressFlg']  : "";
-$newThumbnailSize = (isset($_REQUEST['newThumbnailSize'])) ? $_REQUEST['newThumbnailSize']  : "";
+$newAeTitle              = (isset($_REQUEST['newAeTitle'])) ? $_REQUEST['newAeTitle']      : "";
+$newPort                 = (isset($_REQUEST['newPort']))   ? $_REQUEST['newPort']   : "";
+$newThumbnailFlg         = (isset($_REQUEST['newThumbnailFlg'])) ? $_REQUEST['newThumbnailFlg'] : "";
+$newThumbnailSize        = (isset($_REQUEST['newThumbnailSize'])) ? $_REQUEST['newThumbnailSize']  : "";
+$newCompressDicomFile    = (isset($_REQUEST['newCompressDicomFile']))  ? $_REQUEST['newCompressDicomFile']  : "";
+$newOverwriteDicomFile   = (isset($_REQUEST['newOverwriteDicomFile'])) ? $_REQUEST['newOverwriteDicomFile']  : "";
+$newOverwritePatientName = (isset($_REQUEST['newOverwritePatientName'])) ? $_REQUEST['newOverwritePatientName']  : "";
 //------------------------------------------------------------------------------
 
 $restartFlg = 0;
 
 if($mode == "update")  // Update
 {
-	$fp = fopen($confFname, 'r');
+	$fp = fopen($configFileName, 'r');
 
 	if($fp == FALSE)
 	{
-		$params['message'] = 'Fail to open file: ' . $confFname;
+		$params['message'] = 'Failed to open file: ' . $configFileName;
 	}
 	else
 	{
@@ -40,23 +42,35 @@ if($mode == "update")  // Update
 				switch(trim($tmpArr[0]))
 				{
 					case 'aeTitle':
-						$tmpArr[1] = sprintf(" %s\r\n", $newAeTitle);
+						$tmpArr[1] = sprintf("%s\r\n", $newAeTitle);
 						break;
 
 					case 'port':
-						$tmpArr[1] = sprintf(" %s\r\n", $newPort);
+						$tmpArr[1] = sprintf("%s\r\n", $newPort);
 						break;
 
 					case 'thumbnailFlg':
-						$tmpArr[1] = sprintf(" %s\r\n", $newThumbnailFlg);
-						break;
-
-					case 'compressFlg':
-						$tmpArr[1] = sprintf(" %s\r\n", $newCompressFlg);
+						$tmpArr[1] = sprintf("%s\r\n", $newThumbnailFlg);
 						break;
 
 					case 'defaultThumbnailSize':
-						$tmpArr[1] = sprintf(" %s\r\n", $newThumbnailSize);
+						$tmpArr[1] = sprintf("%s\r\n", $newThumbnailSize);
+						break;
+
+					case 'compressFlg':
+					case 'compressDicomFile':
+						$tmpArr[0] = 'compressDicomFile';
+						$tmpArr[1] = sprintf("%s\r\n", $newCompressDicomFile);
+						break;
+
+					case 'overwriteDicomFile':
+						$tmpArr[1] = sprintf("%s\r\n", $newOverwriteDicomFile);
+						break;
+
+					case 'overwritePtNameFlg':
+					case 'overwritePatientName':
+						$tmpArr[0] = 'overwritePatientName';
+						$tmpArr[1] = sprintf("%s\r\n", $newOverwritePatientName);
 						break;
 				}
 
@@ -69,7 +83,7 @@ if($mode == "update")  // Update
 		}
 		fclose($fp);
 
-		file_put_contents($confFname, $dstStr);
+		file_put_contents($configFileName, $dstStr);
 
 		$params['message'] = 'Configuration file was successfully updated. Please restart DICOM storage server!!';
 		$restartFlg = 1;
@@ -77,23 +91,19 @@ if($mode == "update")  // Update
 }
 else if($mode == "restartSv")
 {
-	win32_stop_service($DICOM_STORAGE_SERVICE);
-	win32_start_service($DICOM_STORAGE_SERVICE);
+	WinServiceControl::stopService($DICOM_STORAGE_SERVICE);
+	WinServiceControl::startService($DICOM_STORAGE_SERVICE);
 
-	$status = win32_query_service_status($DICOM_STORAGE_SERVICE);
+	$status = WinServiceControl::getStatus($DICOM_STORAGE_SERVICE);
 
-	if($status != FALSE)
+	if($status != FALSE && $status['val'] == 1)
 	{
-		if($status['CurrentState'] == WIN32_SERVICE_RUNNING
-   			|| $status['CurrentState'] == WIN32_SERVICE_START_PENDING)
-		{
-			$params['message'] = 'DICOM storage server is restarted.';
-		}
+		$params['message'] = 'DICOM storage server is restarted.';
 	}
 }
 
 // Load configration file
-$configData = parse_ini_file($confFname);
+$configData = parse_ini_file($configFileName);
 
 //------------------------------------------------------------------------------
 // Make one-time ticket
