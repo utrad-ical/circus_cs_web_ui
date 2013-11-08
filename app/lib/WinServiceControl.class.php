@@ -55,5 +55,31 @@ class WinServiceControl
 		}
 		return $result;
 	}
+
+	public static function startService($serviceName, $hostName = 'localhost')
+	{
+		self::changeServerStatus($serviceName, $hostName, 'start');
+		return;
+	}
+
+	public static function stopService($serviceName, $hostName = 'localhost')
+	{
+		self::changeServerStatus($serviceName, $hostName, 'stop');
+		return;
+	}
+
+	private function changeServerStatus($serviceName, $hostName, $mode)
+	{
+		if($mode == 'stop' || $mode == 'start')
+		{
+			$cmdStr = sprintf('sc.exe \\\\%s %s "%s"',
+						$hostName,
+						$mode,
+						$serviceName);
+			shell_exec($cmdStr);
+		}
+		return;
+	}
+
 }
 

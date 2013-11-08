@@ -6,13 +6,13 @@
 	$serviceName = (isset($_REQUEST['serviceName'])) ? $_REQUEST['serviceName'] : "";
 	$ipAddress = (isset($_REQUEST['ipAddress'])) ? $_REQUEST['ipAddress'] : "127.0.0.1";
 
-	if($mode == 'stop' || $mode == 'start')
+	if($mode == 'stop')
 	{
-		$cmdStr = sprintf('sc.exe \\\\%s %s "%s"',
-				$ipAddress,
-				$mode,
-				$serviceName);
-		shell_exec($cmdStr);
+		WinServiceControl::stopService($serviceName, $ipAddress);
+	}
+	else if($mode == 'start')
+	{
+		WinServiceControl::startService($serviceName, $ipAddress);
 	}
 
 	$dstData = WinServiceControl::getStatus($serviceName, $ipAddress);
