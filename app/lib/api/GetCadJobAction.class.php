@@ -104,11 +104,13 @@ class GetCadJobAction extends ApiActionBase
 			foreach ($cr->ExecutedSeries as $es)
 			{
 				$s = $es->Series;
-				$result['series'][$es->volume_id] = array(
+				$result['series'][] = array(
+					'volume_id' => $es->volume_id,
 					'modality' => $s->modality,
 					'seriesNumber' => $s->series_number,
 					'seriesDescription' => $s->series_description,
 					'seriesDate' => $s->series_date . " " . $s->series_time,
+					'imageNumber' => $s->image_number,
 					'minImageNumber' => $s->min_image_number,
 					'maxImageNumber' => $s->max_image_number,
 				);
