@@ -13,6 +13,7 @@ class GetCadJobAction extends ApiActionBase
 		'withDisplays' => array('type' => 'boolean'),
 		'withFeedback' => array('type' => 'boolean'),
 		'withFiles' => array('type' => 'boolean'),
+		'withSeries' => array('type' => 'boolean'),
 		'withAttributes' => array('type' => 'boolean')
 	);
 
@@ -94,6 +95,24 @@ class GetCadJobAction extends ApiActionBase
 		if ($params['withFiles'])
 		{
 			$result['files'] = $this->readJobDirContents();
+		}
+
+		// Series
+		if ($params['withSeries'])
+		{
+			$result['series'] = array();
+			foreach ($cr->ExecutedSeries as $es)
+			{
+				$s = $es->Series;
+				$result['series'][$es->volume_id] = array(
+					'modality' => $s->modality,
+					'seriesNumber' => $s->series_number,
+					'seriesDescription' => $s->series_description,
+					'seriesDate' => $s->series_date . " " . $s->series_time,
+					'minImageNumber' => $s->min_image_number,
+					'maxImageNumber' => $s->max_image_number,
+				);
+			}
 		}
 
 		return $result;
