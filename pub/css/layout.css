@@ -483,7 +483,7 @@ table.detail-tbl th, table.detail-tbl td {
 	font-size: 110%;
 }
 
-#invalidated-message {
+.warning-message {
 	background-color: #d00;
 	border: 1px solid #800;
 	color: white;

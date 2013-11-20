@@ -228,6 +228,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		Patient::$anonymizeMode = true;
 
 	$seriesList = array();
+	$warn_outdated = false;
 	foreach ($cadResult->ExecutedSeries as $es)
 	{
 		$series = $es->Series;
@@ -241,6 +242,9 @@ function show_cad_results($jobID, $feedbackMode) {
 			'image_delta' => $es->image_delta,
 			'image_count' => $es->image_count
 		);
+		if (strcmp($series->last_received_at, $cadResult->registered_at) > 0) {
+			$warn_outdated = true;
+		}
 	}
 	ksort($seriesList, SORT_NUMERIC);
 
@@ -266,6 +270,7 @@ function show_cad_results($jobID, $feedbackMode) {
 		'personalOpinions' => $personalOpinions,
 		'tabs' => $tabs,
 		'extensions' => $extensions,
+		'warn_outdated' => $warn_outdated
 	));
 
 	// Render using Smarty

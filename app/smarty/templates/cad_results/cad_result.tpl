@@ -59,8 +59,15 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 <div class="cadResult">
 
 {if $cadResult->status == constant('Job::JOB_INVALIDATED')}
-<div id="invalidated-message">
+<div id="invalidated-message" class="warning-message">
 <strong>INVALID:</strong> This CAD job is marked as invalid.
+</div>
+{/if}
+
+{if $warn_outdated}
+<div class="warning-message">
+<strong>Warning:</strong> Some of the images in this series were modified
+after this job was executed. This CAD result may be invalid.
 </div>
 {/if}
 
