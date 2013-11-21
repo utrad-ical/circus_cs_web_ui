@@ -66,8 +66,8 @@ circus.feedback.consensualFeedbackAvail = "{$avail_cfb}";
 
 {if $warn_outdated}
 <div class="warning-message">
-<strong>Warning:</strong> Some of the images in this series were modified
-after this job was executed. This CAD result may be invalid.
+<strong>Warning:</strong> Some of the images in processed series were
+modified after this job was executed. This CAD result may be invalid.
 </div>
 {/if}
 
