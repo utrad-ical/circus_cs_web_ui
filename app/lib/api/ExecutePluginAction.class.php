@@ -10,6 +10,8 @@ class ExecutePluginAction extends ApiActionBase
 		try {
 			$pdo = DBConnector::getConnection();
 			$pdo->beginTransaction();
+			CadResult::lock();
+			ExecutedSeries::lock();
 			$t = true;
 			$plugin = Plugin::selectOne(array(
 				'plugin_name' => $params['pluginName'],
