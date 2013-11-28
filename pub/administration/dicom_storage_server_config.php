@@ -33,6 +33,8 @@ if($mode == "update")  // Update
 	{
 		$dstStr = "";
 
+		$isOverwriteDicomFileFlg = 0;
+
 		while(!feof($fp))
 		{
 			$tmpArr = explode("=", fgets($fp));
@@ -65,6 +67,7 @@ if($mode == "update")  // Update
 
 					case 'overwriteDicomFile':
 						$tmpArr[1] = sprintf("%s\r\n", $newOverwriteDicomFile);
+						$isOverwriteDicomFileFlg = 1;
 						break;
 
 					case 'overwritePtNameFlg':
@@ -74,7 +77,7 @@ if($mode == "update")  // Update
 						break;
 				}
 
-				$dstStr .= $tmpArr[0] . "=" . $tmpArr[1];
+				$dstStr .= trim($tmpArr[0]) . "=" . $tmpArr[1];
 			}
 			else
 			{
@@ -82,6 +85,14 @@ if($mode == "update")  // Update
 			}
 		}
 		fclose($fp);
+
+		// Corresponding to update 3.4-6 to 3.7
+		if(!$isOverwriteDicomFileFlg)
+		{
+			$dstStr .= sprintf("\r\n\r\n");
+			$dstStr .= sprintf("; Flag for overwrite DICOM file (1: allow to overwrite)\r\n");
+			$dstStr .= sprintf("overwriteDicomFile=%s\r\n", $newOverwriteDicomFile);
+		}
 
 		file_put_contents($configFileName, $dstStr);
 
@@ -104,6 +115,38 @@ else if($mode == "restartSv")
 
 // Load configration file
 $configData = parse_ini_file($configFileName);
+
+//------------------------------------------------------------------------------
+// Corresponding to update 3.4-6 to 3.7
+//------------------------------------------------------------------------------
+$isOverwriteDicomFileFlg = 0;
+
+foreach($configData as $key => $value)
+{
+	switch($key)
+	{
+		case 'compressFlg':
+			unset($configData['compressFlg']);
+			$configData['compressDicomFile'] = $value;
+			break;
+
+		case 'overwritePtNameFlg':
+			unset($configData['overwritePtNameFlg']);
+			$configData['overwritePatientName'] = $value;
+			break;
+
+		case 'overwritePtNameFlg':
+			$isOverwriteDicomFileFlg = 1;
+			break;
+	}
+}
+
+// Add 'overwriteDicomFile' (default: true)
+if(!$isOverwriteDicomFileFlg)
+{
+	$configData['overwriteDicomFile'] = 1;
+}
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Make one-time ticket
