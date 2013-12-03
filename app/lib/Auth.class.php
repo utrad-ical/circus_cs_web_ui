@@ -368,16 +368,12 @@ class Auth
 	/**
 	 * Outputs the login erro log file.
 	 * @param string $user_id Who tried to log-in
-	 * @param string $password MD5 hash of the given password
 	 */
-	public static function log_failure($user_id, $password)
+	public static function log_failure($user_id)
 	{
 		global $LOGIN_ERROR_LOG;
 		self::log(
-			sprintf(
-				"Login error: userID=%s, password=%s",
-				$user_id, $password
-			),
+			sprintf("Login error: userID=%s", $user_id),
 			$LOGIN_ERROR_LOG
 		);
 	}
