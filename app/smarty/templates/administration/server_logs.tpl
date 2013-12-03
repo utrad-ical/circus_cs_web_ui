@@ -23,6 +23,7 @@ $(function () {
 -->
 </script>
 <style type="text/css">
+#filelist td { padding-left: 10px; padding-right: 10px; }
 #filelist td.file-name { text-align: left; }
 #filelist td.last-update { text-align: left; }
 #filelist td.size { text-align: right; }
