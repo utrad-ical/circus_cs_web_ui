@@ -48,20 +48,29 @@ catch (Exception $e)
 		$error_type = 'SystemError';
 
 	$message = $e->getMessage();
+	$log_message = "($action) $message\n" . $e->getTraceAsString();
+
 	// Hide exception details thrown from PDO (security)
 	if ($e instanceof PDOException)
 		$message = 'Internal database error.';
-	output_error($error_type, $message);
+
+	output_error($error_type, $message, $log_message);
 }
 
-function output_error($error_type, $message)
+function output_error($error_type, $message, $log_message)
 {
-	global $action;
+	global $action, $LOG_DIR;
 	$result = array(
 		'status' => $error_type,
 		'error' => array('message' => $message)
 	);
 	if ($action) $result['action'] = $action;
+
+	$fp = fopen("$LOG_DIR/webapi_errlog.txt", 'a');
+	$datetime = date('Y-m-d H:i:s');
+	fwrite($fp, "[$datetime] $error_type: $log_message\n");
+	fclose($fp);
+
 	echo json_encode($result);
 	exit();
 }
@@ -70,5 +79,7 @@ function api_error_handler($errno, $errmsg, $filename, $linenum, $vars)
 {
 	// detect the use of error supression operator ('@')
 	if (error_reporting() === 0) return;
-	output_error('SystemError', "$errmsg in $filename line $linenum");
+	$message = "$errmsg";
+	$log_message = "$errmsg in $filename line $linenum";
+	output_error('SystemError', $message, $log_message);
 }
