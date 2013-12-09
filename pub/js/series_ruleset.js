@@ -1,5 +1,5 @@
 /**
- * Series ruleset stringify routines.
+ * Series rulesets.
  */
 
 if (typeof circus == 'undefined') circus = {};
