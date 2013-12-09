@@ -254,7 +254,7 @@ class Auth
 		$_SESSION['lastIPAddr']    = $user->ip_address;
 
 		$user->save(array('User' => array(
-			'last_login_dt' => date('Y-m-d h:i:s'),
+			'last_login_dt' => $loginDateTime,
 			'ip_address' => getenv("REMOTE_ADDR"),
 		)));
 
