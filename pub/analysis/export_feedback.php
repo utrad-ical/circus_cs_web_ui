@@ -1,6 +1,7 @@
 <?php
 include_once('../common.php');
 Auth::checkSession();
+Auth::purgeUnlessGranted(Auth::SERVER_SETTINGS); // subject to change
 
 try {
 	$plugins = array();
