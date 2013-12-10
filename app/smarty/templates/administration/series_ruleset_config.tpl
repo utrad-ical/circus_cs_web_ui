@@ -1,8 +1,10 @@
 {capture name="require"}
 jq/ui/jquery-ui.min.js
 jq/ui/theme/jquery-ui.custom.css
+css/jquery.ruleseteditor.css
 js/series_ruleset.js
 js/jquery.formserializer.js
+js/jquery.ruleseteditor.js
 administration/series_ruleset_config.js
 {/capture}
 {capture name="extra"}
@@ -45,41 +47,10 @@ h3 { margin-bottom: 15px; }
 	border-color: #ebbe8c;
 }
 
-#rule {
-	font-size: 80%; color: gray;
-	margin: 10px 0 30px 10px;
-}
-
 #select-help {
 	margin: 50px;
 	text-align: center;
 }
-
-.group-select { font-weight: bold; margin-left: 3px; }
-.group-node {
-	border: 1px solid silver;
-}
-
-.group-node .group-node {
-	margin-left: 15px;
-	border-top: none;
-	border-bottom: none;
-	border-right: none;
-	border-left: 3px solid silver;
-}
-
-.comparison-node {
-	padding: 2px 2px 2px 15px;
-}
-
-.hover-node {
-	background-color: #ffc;
-}
-
-.comparison-node .value {
-	width: 250px;
-}
-
 
 .rulesets {
 	margin-bottom: 2px;
@@ -120,11 +91,6 @@ h3 { margin-bottom: 15px; }
 .ruleset-tools { text-align: right; margin: 0 5px 15px 0; }
 .ruleset-toolbutton { width: 18px; height: 18px; margin: 0 3px; }
 .ruleset-toolbutton span.ui-button-icon-primary { left: 0; }
-#condition-tools { width: 115px; height: 18px; position: absolute; }
-.condition-toolbutton { width: 18px; height: 18px; margin: 0; }
-.condition-toolbutton span.ui-button-icon-primary { left: 0; }
-
-
 .rule-box { margin-top: 10px; }
 .rule-box th { font-weight: bold; padding: 5px 15px; }
 
@@ -173,7 +139,6 @@ Series Ruleset Configuration</h2>
 	<div id="editor-contents">
 		<h3>Condition</h3>
 		<div id="condition"></div>
-		<div id="rule"></div>
 
 		<div id="down">&downarrow;</div>
 
@@ -214,14 +179,6 @@ Series Ruleset Configuration</h2>
 			</tbody>
 		</table>
 	</div>
-</div>
-
-<div id="condition-tools" style="display: none">
-	<button id="move-up" class="condition-toolbutton"></button>
-	<button id="move-down" class="condition-toolbutton"></button>
-	<button id="condition-add" class="condition-toolbutton"></button>
-	<button id="condition-addgroup" class="condition-toolbutton"></button>
-	<button id="condition-delete" class="condition-toolbutton"></button>
 </div>
 
 {include file="footer.tpl"}

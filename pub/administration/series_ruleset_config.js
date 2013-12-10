@@ -7,13 +7,7 @@ $(function() {
 	var labels = null;
 	var currentRuleSet = null;
 
-	var hoveringElement = null;
-
 	var modified = false;
-
-	var op = circus.ruleset.op;
-	var oph = {};
-	for (var i = 0; i < op.length; i++) oph[op[i].op] = op[i];
 
 	function exitEdit()
 	{
@@ -33,86 +27,6 @@ $(function() {
 		$('#save-button').disable();
 	}
 
-	/**
-	 * Creates a new HTML div element (as a jQuery object) representing the
-	 * given filter node.
-	 */
-	function createElementFromNode(node)
-	{
-		function createElementFromGroupNode(node)
-		{
-			var elem = $('<div>').addClass('group-node node');
-			var max = node.members.length;
-			groupSelect.clone().val(node.group).appendTo(elem);
-			for (var i = 0; i < max; i++)
-			{
-				var child = createElementFromNode(node.members[i]);
-				child.appendTo(elem);
-			}
-			elem.sortable({
-				axis: 'y',
-				containment: 'parent',
-				update: ruleSetChanged
-			});
-			return elem;
-		}
-
-		function createElementFromComparisonNode(node)
-		{
-			var elem = $('<div>').addClass('comparison-node node');
-			var value = $('<input type="text" class="value">').val(node.value);
-			var tmpKey = keySelect.clone().val([node.key]);
-			var tmpOp = opSelect.clone().val([node.condition]);
-			elem.append(tmpKey, tmpOp, value);
-			return elem;
-		}
-
-		if (node.members instanceof Array)
-			return createElementFromGroupNode(node);
-		else if (node.key !== undefined)
-			return createElementFromComparisonNode(node);
-		else
-			throw new Exception();
-	}
-
-	/**
-	 * Creates a node object from the given div element (as the jQuery object)
-	 * (opposite of createElementFromNode)
-	 */
-	function createNodeFromElement(element)
-	{
-		function createNodeFromGroupElement(element)
-		{
-			var members = [];
-			element.children('.node').each(function() {
-				var item = createNodeFromElement($(this));
-				if (item != null)
-					members.push(item);
-			});
-			var groupType = $('.group-select', element).val();
-			if (members.length > 0)
-				return { group: groupType, members: members };
-			else
-				return null;
-		}
-
-		function createNodeFromComparisonElement(element)
-		{
-			return {
-				key: element.find('.key-select').val(),
-				condition: element.find('.operation-select').val(),
-				value: element.find('.value').val()
-			};
-		}
-
-		if (element.is('.group-node'))
-			return createNodeFromGroupElement(element);
-		else if (element.is('.comparison-node'))
-			return createNodeFromComparisonElement(element);
-		else
-			throw "exception";
-	}
-
 	function createRuleFromElement()
 	{
 		var rule = {};
@@ -124,24 +38,6 @@ $(function() {
 		rule.continuous = $('#continuous').prop('checked');
 		return rule;
 	}
-
-	var keySelect = $('<select>').addClass('key-select');
-	for (var i = 0; i < keys.length; i++)
-	{
-		var label = keys[i].value.replace('_', ' ');
-		if ('label' in keys[i]) label = keys[i].label;
-		$('<option>').attr('value', keys[i].value)
-			.text(label).appendTo(keySelect);
-	};
-
-	var opSelect = $('<select>').addClass('operation-select');
-	for (i = 0; i < op.length; i++)
-	{
-		$('<option>').attr('value', op[i].op)
-			.text(op[i].label).appendTo(opSelect);
-	}
-
-	var groupSelect = $('<select class="group-select"><option>and</option><option>or</option></select>');
 
 	function newRuleSetListContent(item)
 	{
@@ -167,15 +63,11 @@ $(function() {
 		if (!currentRuleSet)
 			return;
 		modify();
-		var conditiondiv = $('#condition > div');
-		if (conditiondiv.data('targetRuleSet') != currentRuleSet)
-			return;
-		currentRuleSet.filter = createNodeFromElement(conditiondiv);
+		currentRuleSet.filter = $('#condition').filtereditor('option', 'filter');
 		currentRuleSet.rule = createRuleFromElement();
 		$('#rulesets-list li.active .content').replaceWith(
 			newRuleSetListContent(currentRuleSet)
 		);
-		$('#condition-tools').hide();
 	}
 
 	function ruleSetListChanged() {
@@ -195,38 +87,9 @@ $(function() {
 
 	function refreshRuleSet()
 	{
-		$('#condition-tools').appendTo($('body'));
-		$('#condition').empty();
-
 		if (currentRuleSet)
 		{
-			var node = createElementFromNode(currentRuleSet.filter);
-			node.data('targetRuleSet', currentRuleSet);
-			node.mousemove(function(event) {
-				var element = $(event.target);
-				if (element != hoveringElement && element.is('.node'))
-				{
-					if (hoveringElement) hoveringElement.removeClass('hover-node');
-					if (element.parents('.node').length == 0)
-					{
-						// top level group cannot be changed
-						$('#condition-tools').hide();
-						hoveringElement = null;
-					}
-					else
-					{
-						$('#condition-tools').appendTo(element).show().position({
-							of: element, at: 'right top', my: 'right top', offset: '0 3'
-						});
-						hoveringElement = element;
-						hoveringElement.addClass('hover-node');
-					}
-				}
-			})
-			.mouseleave(function() {
-				$('#condition-tools').hide();
-			})
-			.appendTo('#condition');
+			$('#condition').filtereditor('option', 'filter', currentRuleSet.filter);
 
 			$('#start-img-num').val(currentRuleSet.rule.start_img_num);
 			$('#end-img-num').val(currentRuleSet.rule.end_img_num);
@@ -244,7 +107,6 @@ $(function() {
 			$('#select-help').show();
 			$('#editor-contents').hide();
 			$('#editor-pane').removeClass('active');
-			$('#rule').text('');
 			hoveringElement = null;
 		}
 	}
@@ -255,7 +117,7 @@ $(function() {
 		if (grp.length == 0)
 			return;
 		var dum = {
-			filter: { group: 'and', members: [$.extend({}, dummyCondition)] },
+			filter: { group: 'and', members: [{ key: 'modality', condition: '=', value: 'CT'}] },
 			rule: {}
 		};
 		var volume_id = grp.data('volume-id');
@@ -326,6 +188,8 @@ $(function() {
 		refreshRuleSet();
 	}
 
+	$('#condition').filtereditor({keys: keys});
+
 	// Change active ruleset
 	$('#rulesets-list').click(function(event) {
 		var li = $(event.target).closest('li');
@@ -363,60 +227,6 @@ $(function() {
 			exitEdit();
 	});
 
-	var dummyCondition = { key: 'modality', condition: '=', value: 'CT'};
-
-	// Set up condition tools
-	(function() {
-		$('#move-up').button({icons: { primary: 'ui-icon-carat-1-n' }}).click(function(event) {
-			if (!hoveringElement)
-				return;
-			var prev = hoveringElement.prev('.node');
-			if (prev)
-			{
-				hoveringElement.insertBefore(prev);
-				ruleSetChanged();
-			}
-		});
-		$('#move-down').button({icons: { primary: 'ui-icon-carat-1-s' }}).click(function() {
-			if (!hoveringElement)
-				return;
-			var next = hoveringElement.next('.node');
-			if (next)
-			{
-				hoveringElement.insertAfter(next);
-				ruleSetChanged();
-			}
-		});
-		$('#condition-add').button({icons: { primary: 'ui-icon-plusthick' }}).click(function() {
-			if (!hoveringElement)
-				return;
-			var newElement = createElementFromNode(dummyCondition);
-			if (hoveringElement.is('.group-node'))
-				newElement.appendTo(hoveringElement);
-			else
-				newElement.insertAfter(hoveringElement);
-			ruleSetChanged();
-		});
-		$('#condition-addgroup').button({icons: { primary: 'ui-icon-folder-open' }}).click(function() {
-			if (!hoveringElement)
-				return;
-			var newElement = createElementFromNode({ group: 'and', members: [dummyCondition]});
-			if (hoveringElement.is('.group-node'))
-				newElement.appendTo(hoveringElement);
-			else
-				newElement.insertAfter(hoveringElement);
-			ruleSetChanged();
-		});
-		$('#condition-delete').button({icons: { primary: 'ui-icon-minusthick' }}).click(function() {
-			if (!hoveringElement)
-				return;
-			$('#condition-tools').hide().appendTo('body');
-			hoveringElement.remove();
-			ruleSetChanged();
-		});
-	})();
-
-
 	$('#close-button').click(function() {
 		if (modified)
 		{
@@ -450,7 +260,8 @@ $(function() {
 		}
 	});
 
-	$('#editor-pane').change(ruleSetChanged).keyup(ruleSetChanged);
+	$('.rule-box').change(ruleSetChanged).keyup(ruleSetChanged);
+	$('#condition').on('filterchange', ruleSetChanged);
 
 	$('#plugin-select').change();
 
