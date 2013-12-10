@@ -126,25 +126,48 @@ try
 					// Find exactly the same job (same plugin, same combination of series),
 					// which is marked as 'failed', 'invalidated' or 'aborted'.
 					$sqlStr = <<<EOT
-SELECT el.job_id AS job_id
+SELECT el.job_id, el.status AS job_id
 FROM executed_plugin_list AS el
   JOIN executed_series_list AS es
     ON el.job_id = es.job_id
   JOIN series_list AS sl
     ON es.series_sid = sl.sid
 WHERE
-  el.plugin_id = ? AND el.status < 0
+  el.plugin_id = ?
+  AND el.status < 0
   AND ($or_clause)
-GROUP BY el.job_id
+GROUP BY el.job_id, el.status
 HAVING COUNT(*) = ?
 EOT;
 					array_unshift($binds, $plugin->plugin_id);
 					array_push($binds, count($seriesUidArr));
 
-					$failedJobIdList = DBConnector::query($sqlStr, $binds, 'ALL_COLUMN');
+					$failedJobIdList = DBConnector::query($sqlStr, $binds, 'ALL_NUM');
 					//printf("%d/%d\r\n", count($failedJobIdList), $params['maxRetryNum']);
 
-					if($params['maxRetryNum'] < count($failedJobIdList))
+					$failedCnt        = 0;
+					$invalidatedCnt   = 0;
+					$invalidatedJobId = 0;
+
+					foreach($failedJobIdList as $item)
+					{
+						if($item[1] == JOB::JOB_INVALIDATED)
+						{
+							$invalidatedJobId = $item[0];
+							$invalidatedCnt++;
+						}
+						else	$failedCnt++;
+					}
+
+					if($invalidatedCnt > 0)
+					{
+						$message = 'The job was previously invalidated in job ID='.$invalidatedJobId
+						. '(Plug-in:'.$params['pluginName'].' ver.'.$params['version']
+						. ', UID of 1st series:'.$seriesUidArr[0].')'
+						. ', invalidated job ID:'.$invalidatedJobId.')';
+						throw new Exception($message);
+					}
+					else if($params['maxRetryNum'] < $failedCnt)
 					{
 						$message = 'The number of exection failure was exceeded'
 									. '(Plug-in:'.$params['pluginName'].' ver.'.$params['version']
