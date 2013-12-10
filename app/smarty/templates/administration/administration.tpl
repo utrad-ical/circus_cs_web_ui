@@ -126,6 +126,16 @@ jq/ui/theme/jquery-ui.custom.css
 	</ul>
 </fieldset>
 
+<fieldset>
+	<legend>Tools</legend>
+	<ul>
+		<li>
+			<em>Plugin author tool</em>
+			<a href="plugin_author.php" class="form-btn">show</a>
+		</li>
+	</ul>
+</fieldset>
+
 </div>
 </form>
 
