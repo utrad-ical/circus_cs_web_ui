@@ -19,6 +19,16 @@ $(function() {
 
 	var feedback = null; // raw feedback data
 
+	function busy() {
+		$('#apply_btn').disable();
+		$('#busy').show();
+	}
+
+	function relax() {
+		$('#apply_btn').enable();
+		$('#busy').hide();
+	}
+
 	function cadChanged() {
 		var val = $cad_name.val();
 		if (!val) { $cad_version.val(''); return; }
@@ -40,14 +50,20 @@ $(function() {
 			alert('Please specify CAD.');
 			return;
 		}
+		busy();
 		$.webapi({
 			action: 'exportFeedback',
 			params: $('#condition').toObject(),
-			onSuccess: dataLoaded
+			onSuccess: dataLoaded,
+			onFail: function(error) {
+				relax();
+				alert(error);
+			}
 		});
 	});
 
 	function dataLoaded(data) {
+		relax();
 		if (!$.isPlainObject(data) || !$.isArray(data.data)) return;
 		$('#response').text('Number of jobs: ' + data.data.length +
 			', response time: ' + data.query_time.toFixed(3) + 'sec.');
@@ -111,7 +127,8 @@ $(function() {
 
 <style type="text/css">
 .search-tbl th { padding-right: 2em; }
-input.form-btn { padding-right: 10px; padding-left: 10px; }
+input.form-btn { padding: 2px 10px; }
+#busy { display: none; }
 #result_pane { margin-top: 30px; display: none; }
 #format_pane { margin: 10px 0; }
 #result { width: 100%; height: 500px; }
@@ -152,6 +169,7 @@ Export feedback data</h2>
 	</table>
 	<div class="al-l" style="margin-top: 10px; margin-left: 20px; width: 100%;">
 		<input type="button" id="apply_btn" value="load feedback data" class="form-btn" />
+		<span id="busy"><img src="../images/busy.gif" />Loading...</span>
 	</div>
 
 	<div id="result_pane">
