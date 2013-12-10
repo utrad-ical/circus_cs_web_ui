@@ -1,10 +1,12 @@
 @charset "utf-8";
 
-.group-node {
-	border: 1px solid silver;
-}
+.ui-filtereditor-node { margin-top: 2px; }
 
-.group-node .group-node {
+.ui-filtereditor-group-select { font-weight: bold; margin-left: 3px; }
+
+.ui-filtereditor-group-node { border: 1px solid silver; }
+
+.ui-filtereditor-group-node .ui-filtereditor-group-node {
 	margin-left: 15px;
 	border-top: none;
 	border-bottom: none;
@@ -12,20 +14,16 @@
 	border-left: 3px solid silver;
 }
 
-.comparison-node {
+.ui-filtereditor-comparison-node {
 	padding: 2px 2px 2px 15px;
 }
 
-.hover-node {
-	background-color: #ffc;
-}
+.ui-filtereditor-hover-node { background-color: #ffc; }
 
-.comparison-node .value {
+.ui-filtereditor-comparison-node .value {
 	width: 250px;
 }
 
-.group-select { font-weight: bold; margin-left: 3px; }
-
-#condition-tools { width: 115px; height: 18px; position: absolute; }
-.condition-toolbutton { width: 18px; height: 18px; margin: 0; }
-.condition-toolbutton span.ui-button-icon-primary { left: 0; }
+.ui-filtereditor-toolbar { width: 115px; height: 18px; position: absolute; }
+.ui-filtereditor-toolbutton { width: 18px; height: 18px; margin: 0; }
+.ui-filtereditor-toolbutton span.ui-button-icon-primary { left: 0; }
