@@ -16,6 +16,6 @@ try {
 	$smarty->assign('plugins', $plugins);
 	$smarty->display('analysis/export_feedback.tpl');
 } catch(Exception $e) {
-	critical_error($e);
+	print ($e->getMessage());
 }
 

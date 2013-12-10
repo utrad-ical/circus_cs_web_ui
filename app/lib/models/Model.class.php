@@ -53,8 +53,9 @@ abstract class Model implements Iterator
 			$conds[] = "$key $op ?";
 			$vals[] = $value;
 		}
-		if (count($condition))
-		$sql .= ' WHERE ' . implode(' AND ', $conds);
+		if (count($condition)) {
+			$sql .= ' WHERE ' . implode(' AND ', $conds);
+		}
 
 		if (is_array($options['order']))
 		{
@@ -68,7 +69,6 @@ abstract class Model implements Iterator
 		{
 			$sql .= ' LIMIT ' . $options['limit'];
 		}
-
 		$rows = DBConnector::query($sql, $vals, 'ALL_ASSOC');
 		$results = array();
 		if (!is_array($rows)) return $results;

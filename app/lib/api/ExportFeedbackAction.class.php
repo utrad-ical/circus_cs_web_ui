@@ -25,13 +25,14 @@ class ExportFeedbackAction extends ApiActionBase {
 
 		$start_time = microtime(true);
 
-		$condition= array('plugin_id' => $plugin->plugin_id);
+		$condition = array('plugin_id' => $plugin->plugin_id);
 
 		if ($params['cad_date'][1]) { // date min
-			$condition['executed_at >=']  = $params['cad_date'][1];
+			$condition['executed_at >='] = $params['cad_date'][1];
 		}
 		if ($params['cad_date'][2]) { // date max
-			$condition['executed_at <='] = $params['cad_date'][2];
+			$max = date('Y-m-d', strtotime($params['cad_date'][2] . ' +1 day'));
+			$condition['executed_at <'] = $max;
 		}
 
 		$jobs = CadResult::select($condition);
