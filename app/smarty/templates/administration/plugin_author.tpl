@@ -207,9 +207,11 @@ $(function() {
 
 	// FINISH
 	$('#finish').on('click', function() {
+		var pluginName = $('#pluginName').val();
+		var version = $('#version').val();
 		var result = {
-			pluginName: $('#pluginName').val(),
-			version: $('#version').val(),
+			pluginName: pluginName,
+			version: version,
 			pluginType: $('input[name="pluginType"]:checked').val(),
 			architecture: $('input[name="architecture"]:checked').val(),
 			desctiption: $('#description').val(),
@@ -217,12 +219,15 @@ $(function() {
 				inputType: $('input[name="inputType"]:checked').val(),
 				resultType: $('input[name="resultType"]:checked').val(),
 				timeLimit: parseInt($('#timeLimit').val())
+			},
+			resultTable: {
+				tableName: (pluginName + '_v.' + version)
 			}
 		};
 
 		result.seriesDefinition = volume_info;
 
-		result.resultTable = $.map(column_list.find('li').get(), function(col) {
+		result.resultTable.column = $.map(column_list.find('li').get(), function(col) {
 			return {
 				name: $('.column_name', col).val(),
 				type: $('.column_type', col).val(),
