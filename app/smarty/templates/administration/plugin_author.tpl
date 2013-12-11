@@ -388,7 +388,7 @@ Plugin definition file (plugin.json) builder</h2>
 						<dt>Condition</dt>
 						<dd>Determine the minimum requirement each input volume must meet.</dd>
 						<dt>Continuous</dt>
-						<dd>If checked, </dd>
+						<dd>If checked, CIRCUS CS checks if the image numbers in the target series is continuous.</dd>
 					</dl>
 				</div>
 			</td>
