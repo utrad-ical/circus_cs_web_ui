@@ -59,7 +59,6 @@ class Plugin extends Model
 	 */
 	public function userPreference($user = null)
 	{
-		global $DEFAULT_CAD_PREF_USER;
 		if ($user instanceof User)
 			$userid = $user->user_id;
 		else

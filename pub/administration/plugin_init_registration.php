@@ -187,8 +187,7 @@ if(!$errorFlg)
 				{
 					$sqlStr = "INSERT INTO plugin_cad_series(plugin_id, volume_id, volume_label, ruleset)"
 							. " VALUES (?, ?, ?, ?)";
-					$sqlParams = array($pluginID, $DEFAULT_CAD_PREF_USER);
-					$sqlParams[1] = $item['volumeID'];
+					$sqlParams = array($pluginID, $item['volumeID']);
 					$sqlParams[2] = isset($item['label']) ? $item['label'] : "";
 					$sqlParams[3] = is_array($item['ruleset']) ? json_encode($item['ruleset']) : "[]";
 					$stmt = $pdo->prepare($sqlStr);

@@ -45,7 +45,6 @@ class BlockSorter extends CadResultExtension
 
 	public function head()
 	{
-		global $DEFAULT_CAD_PREF_USER;
 		$p = $this->params;
 		if ($p['useUserPreference'])
 		{
