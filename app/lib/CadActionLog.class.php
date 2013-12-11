@@ -2,8 +2,6 @@
 
 class CadActionLog extends CadResultExtension
 {
-	public function requiringFiles()
-	{
-		return array('js/cad_action_log.js');
-	}
+	// nothing to configure.
+	// actual logging code is implemented in cad_result.js
 }

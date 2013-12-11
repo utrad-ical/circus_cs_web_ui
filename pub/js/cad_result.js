@@ -139,13 +139,21 @@ circus.feedback = function() {
 				{
 					if (postUrl)
 					{
-						$(window).trigger('actionlog', { action: 'save' });
-						location.replace(postUrl);
+						$(window).trigger('actionlog', {
+							action: 'save',
+							success: function() {
+								location.replace(postUrl);
+							}
+						});
 					}
 					else
 					{
-						$(window).trigger('actionlog', { action: 'register' });
-						location.reload(true);
+						$(window).trigger('actionlog', {
+							action: 'register',
+							success: function() {
+								location.reload(true);
+							}
+						});
 					}
 				}
 				else
@@ -183,8 +191,13 @@ circus.feedback = function() {
 								jobID: circus.jobID
 							},
 							onSuccess: function(response) {
-								$(window).trigger('actionlog', { action: 'unregister' });
-								location.reload(true);
+								$(window).trigger('actionlog', {
+									action: 'unregister',
+									force: true,
+									success: function() {
+										location.reload(true);
+									}
+								});
 							},
 							onFail: function(message) { $.alert(message); }
 						});
@@ -314,7 +327,6 @@ $(function(){
 		$('#consensual-mode').enable();
 	}
 
-	$(window).trigger('actionlog', { action: "open", options: "CAD result, " + circus.feedback.feedbackMode });
 
 	// admin menus
 	var admin_btn = $('#cad-result-admin-menu');
@@ -343,6 +355,34 @@ $(function(){
 			});
 		});
 	}
+
+	// action logs
+	$(window).bind('actionlog', function (event, params) {
+		if (!('CadActionLog' in circus.cadresult.presentation.extensions)) {
+			if ('success' in params && typeof params.success == 'function') {
+				params.success();
+			}
+			return;
+		}
+		if (circus.feedback.feedbackStatus != 'normal' && !params.force) return;
+		var data = { jobID: circus.jobID, action: params.action }
+		if ('options' in params)
+			data.options = params.options;
+		$.post(
+			'action_log.php',
+			data,
+			function(ret) {
+				if (ret.status != 'OK') {
+					alert("Action log error:\n" + ret.error.message);
+				}
+				if ('success' in params && typeof params.success == 'function') {
+					params.success();
+				}
+			},
+			'json'
+		);
+	});
+	$(window).trigger('actionlog', { action: "open", options: "CAD result, " + circus.feedback.feedbackMode });
 
 	// tags
 	var refresh = function(tags) {
