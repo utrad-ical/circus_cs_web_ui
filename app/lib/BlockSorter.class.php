@@ -51,7 +51,8 @@ class BlockSorter extends CadResultExtension
 		{
 			$pref = $this->owner->userPreference();
 			// Legacy: Default preference is used for the time being
-			$default_pref = $this->owner->userPreference($DEFAULT_CAD_PREF_USER);
+			$default_pref = array('sortKey'   => $p['defaultKey'],
+								  'sortOrder' => $p['defaultOrder']);
 			$pref = array_merge($default_pref, $pref);
 
 			if (isset($pref['sortKey']) && isset($pref['sortOrder']))
@@ -63,8 +64,8 @@ class BlockSorter extends CadResultExtension
 			}
 			else
 			{
-				throw new CadPresentationException(
-					'"useUserPreference" is true but there is not such preference value.');
+				throw new CadPresentationException(var_dump($p));
+					//'"useUserPreference" is true but there is not such preference value.');
 			}
 		}
 		else
