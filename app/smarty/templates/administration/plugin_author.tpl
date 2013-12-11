@@ -160,8 +160,7 @@ $(function() {
 	}
 
 	function addVolume() {
-		var vol = $.extend(true, {}, new_volume);
-		vol.volumeID = volume_info.length;
+		var vol = $.extend(true, {volumeID: volume_info.length}, new_volume);
 		volume_info.push(vol);
 		seriesUpdate();
 		seriesActivate(volume_info.length - 1);
@@ -220,20 +219,18 @@ $(function() {
 				resultType: $('input[name="resultType"]:checked').val(),
 				timeLimit: parseInt($('#timeLimit').val())
 			},
+			seriesDefinition: volume_info,
 			resultTable: {
-				tableName: (pluginName + '_v.' + version)
+				tableName: (pluginName + '_v.' + version),
+				column: $.map(column_list.find('li').get(), function(col) {
+					return {
+						name: $('.column_name', col).val(),
+						type: $('.column_type', col).val(),
+						size: parseInt($('.column_size', col).text())
+					};
+				})
 			}
 		};
-
-		result.seriesDefinition = volume_info;
-
-		result.resultTable.column = $.map(column_list.find('li').get(), function(col) {
-			return {
-				name: $('.column_name', col).val(),
-				type: $('.column_type', col).val(),
-				size: parseInt($('.column_size', col).text())
-			};
-		});
 
 		var txt = JSON.stringify(result, null, "\t");
 		$('#generated_file').val(txt);
