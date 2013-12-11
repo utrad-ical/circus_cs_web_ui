@@ -127,7 +127,14 @@ $(function() {
 		ruleset: [
 			{
 				filter: { group: 'and', members: [{ key: 'modality', condition: '=', value: 'CT'}] },
-				rule: { continuous: false }
+				rule: {
+					start_img_num: 0,
+					end_img_num: 0,
+					required_private_tags: '',
+					flip_type: 0,
+					environment: '',
+					continuous: false
+				}
 			}
 		]
 	};
@@ -189,8 +196,8 @@ $(function() {
 		seriesUpdate();
 	});
 	$('#continuous').on('change', function() {
-		var rule = { continuous: $('#continuous').prop('checked') };
-		volume_info[active_index].rule = rule;
+		var checked = $('#continuous').prop('checked');
+		volume_info[active_index].ruleset[0].rule.continuous = checked;
 	});
 
 	// HELP
