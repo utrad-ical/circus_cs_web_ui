@@ -15,6 +15,8 @@ var keys = {$keys|@json_encode};
 #tbl { width: 100%; }
 #tbl th { width: 150px; padding: 0.5em 0; }
 #tbl td { text-align: left; padding: 0.5em; }
+td.error { background-color: #fdd; }
+.error_message { color: red; margin: 0.3em; white-space: pre-line; }
 .desc { display: none; }
 #filter { width: 700px; }
 #help { margin: 1em 0; border: 1px solid silver; border-radius: 3px; padding: 5px 10px; }
@@ -202,6 +204,7 @@ $(function() {
 
 	// HELP
 	$('table').on('focusin mousedown', 'td', function(event) {
+		validate();
 		var td = $(event.currentTarget);
 		var desc = $('.desc', td);
 		var title = td.prev('th').text();
@@ -211,33 +214,95 @@ $(function() {
 		desc.clone().show().appendTo(help);
 	});
 
+	// CHECK
+	function validate() {
+		var error = false;
+		var result = {};
+
+		function validateItem(element, valid, message) {
+			td = element.closest('td');
+			td.find('.error_message').remove();
+			if (!valid) {
+				error = true;
+				td.addClass('error');
+				if (!message) message = 'This field is invalid.';
+				$('<div>').addClass('error_message').text(message).appendTo(td);
+			} else {
+				td.removeClass('error');
+			}
+		}
+
+		function radioValidate(elementName) {
+			var element = $('input[name="' + elementName + '"]');
+			validateItem(element, element.filter(':checked').length == 1);
+			result[elementName] = element.filter(':checked').val();
+		}
+
+		var pluginName = $('#pluginName');
+		validateItem(pluginName, pluginName.val().match(/^[A-Za-z][A-Za-z0-9_\-]*$/));
+		result.pluginName = pluginName.val();
+
+		var version = $('#version');
+		validateItem(version, version.val().match(/^[0-9\.a-zA-Z]*$/));
+		result.version = version.val();
+
+		radioValidate('pluginType');
+		radioValidate('architecture');
+
+		result.description = $('#description').val();
+
+		radioValidate('inputType');
+		radioValidate('resultType');
+		var timeLimit = $('#timeLimit');
+		validateItem(timeLimit, timeLimit.val().match(/^(0|[1-9]\d+)$/));
+
+		result.cadDefinition = {
+			inputType: $('input[name="inputType"]:checked').val(),
+			resultType: $('input[name="resultType"]:checked').val(),
+			timeLimit: parseInt(timeLimit.val())
+		};
+
+		result.seriesDefinition = volume_info;
+
+		var bads = [];
+		var hash = {};
+		column_list.find('li').each(function(idx, col) {
+			var cname = $('.column_name', col).val();
+			if (!cname.match(/^[A-Za-z][A-Za-z0-9_]*$/)) {
+				bads.push('Invalid character in column name: ' + cname);
+			}
+			if (cname == 'job_id' || cname == 'sub_id') {
+				bads.push('Preserved column name: ' + cname);
+			}
+			if (hash.hasOwnProperty(cname)) {
+				bads.push('Duplicated column name: ' + cname);
+			}
+			hash[cname] = true;
+		});
+		validateItem(column_list, bads.length == 0, bads.join('\n'));
+
+		result.resultTable = {
+			tableName: (pluginName.val() + '_v.' + version.val()),
+			column: $.map(column_list.find('li').get(), function(col) {
+				return {
+					name: $('.column_name', col).val(),
+					type: $('.column_type', col).val(),
+					size: parseInt($('.column_size', col).text())
+				};
+			})
+		};
+
+		if (error) return false;
+		return result;
+	}
+
 	// FINISH
 	$('#finish').on('click', function() {
-		var pluginName = $('#pluginName').val();
-		var version = $('#version').val();
-		var result = {
-			pluginName: pluginName,
-			version: version,
-			pluginType: $('input[name="pluginType"]:checked').val(),
-			architecture: $('input[name="architecture"]:checked').val(),
-			desctiption: $('#description').val(),
-			cadDefinition: {
-				inputType: $('input[name="inputType"]:checked').val(),
-				resultType: $('input[name="resultType"]:checked').val(),
-				timeLimit: parseInt($('#timeLimit').val())
-			},
-			seriesDefinition: volume_info,
-			resultTable: {
-				tableName: (pluginName + '_v.' + version),
-				column: $.map(column_list.find('li').get(), function(col) {
-					return {
-						name: $('.column_name', col).val(),
-						type: $('.column_type', col).val(),
-						size: parseInt($('.column_size', col).text())
-					};
-				})
-			}
-		};
+		var result = validate();
+		if (result === false) {
+			$.alert('Fix the error(s)');
+			return;
+		}
 
 		var txt = JSON.stringify(result, null, "\t");
 		$('#generated_file').val(txt);
