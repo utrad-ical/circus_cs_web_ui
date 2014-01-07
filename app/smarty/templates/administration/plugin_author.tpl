@@ -60,14 +60,27 @@ dd { margin-left: 2em; }
 $(function() {
 
 	// FOR TABLE DEFINITION
-	var default_columns = [
-		{ name: "location_x", type: "smallint", size: 0 },
-		{ name: "location_y", type: "smallint", size: 0 },
-		{ name: "location_z", type: "smallint", size: 0 },
-		{ name: "slice_location", type: "real", size: 0 },
-		{ name: "volume_size", type: "real", size: 0 },
-		{ name: "confidence", type: "real", size: 0 }
+	var table_templates = [
+		{
+			tname: 'LesionCandDisplayPresenter',
+			columns: [
+				{ name: "location_x", type: "smallint", size: 0 },
+				{ name: "location_y", type: "smallint", size: 0 },
+				{ name: "location_z", type: "smallint", size: 0 },
+				{ name: "slice_location", type: "real", size: 0 },
+				{ name: "volume_size", type: "real", size: 0 },
+				{ name: "confidence", type: "real", size: 0 }
+			]
+		},
+		{
+			tname: 'Empty (No columns)',
+			columns: []
+		}
 	];
+
+	$.each(table_templates, function(idx, item) {
+		$('#template_name').append($('<option>').text(item.tname));
+	});
 
 	var column_type = $('<select>').addClass('column_type');
 	$.each(['int', 'smallint', 'real', 'boolean', 'text'], function(i, t) {
@@ -86,14 +99,14 @@ $(function() {
 		return li;
 	}
 
-	function resetColumns(data) {
+	function callTemplate(data) {
 		column_list.empty();
 		$.each(data, function(i, col) {
 			var li = createColumn(col.name, col.type, col.size);
 			li.appendTo(column_list);
 		});
 	}
-	resetColumns(default_columns);
+	callTemplate(table_templates[0].columns);
 
 	$('#column_add').on('click', function() {
 		var li = createColumn('new_field', 'smallint', 0);
@@ -101,7 +114,6 @@ $(function() {
 	});
 
 	column_list.on('click', '.column_delete', function(event) {
-		if (column_list.find('li').length <= 1) return;
 		$(event.currentTarget).closest('li').remove();
 	});
 
@@ -121,7 +133,12 @@ $(function() {
 		}
 	});
 
-	$('#column_default').click(function() { resetColumns(default_columns); });
+	$('#load_column_template').click(function() {
+		var template = $('#template_name').val();
+		$.each(table_templates, function(i, t) {
+			if (t.tname == template) callTemplate(t.columns);
+		});
+	});
 
 	// FOR SERIES DEFINITION
 	var new_volume = {
@@ -426,8 +443,8 @@ Plugin definition file (plugin.json) builder</h2>
 				<ol id="column_list">
 				</ol>
 				<div>
-					<input type="button" class="form-btn" id="column_add" value="add column">
-					<input type="button" class="form-btn" id="column_default" value="Call default for LesionCandDisplayPresenter">
+					<input type="button" class="form-btn" id="column_add" value="add new column" /> |
+					<select id="template_name"></select><input type="button" class="form-btn" id="load_column_template" value="load template" />
 				</div>
 				<div class="desc">
 					<p>This section defines how your CAD results are saved in the database.
