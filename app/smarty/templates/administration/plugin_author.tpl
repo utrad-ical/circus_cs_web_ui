@@ -323,12 +323,18 @@ $(function() {
 
 		var txt = JSON.stringify(result, null, "\t");
 		$('#generated_file').val(txt);
+		var data = 'data:application/octet-stream,' + encodeURIComponent(txt);
+		$('#download_link').attr('href', data);
 		$('#output').dialog({
 			width: 800,
 			modal: true,
 			autoOpen: true,
 			open: function() { $('#generated_file').select(); }
 		});
+		if (!$.support.opacity) { // captures IE <= 8
+			$.alert('This browser may not support file download. ' +
+			'You can manually save the content of the text box via the clipboard.');
+		}
 	});
 });
 </script>
@@ -493,6 +499,7 @@ Plugin definition file (plugin.json) builder</h2>
 <div id="output" title="Result">
 <p>Generated plug-in definition (plugin.json) file:</p>
 <textarea id="generated_file" readonly="readonly"></textarea>
+<p style="text-align: right; margin: 2px"><a id="download_link" download="plugin.json" class="form-btn">download</a></p>
 </div>
 
 <div id="help">Help
