@@ -67,7 +67,6 @@ $(function() {
 			useMarkerLabel: false
 		};
 		options = $.extend(options, extra_opt);
-		console.log(options);
 		_this.imageviewer(options);
 	});
 });

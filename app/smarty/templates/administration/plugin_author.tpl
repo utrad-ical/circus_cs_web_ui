@@ -120,7 +120,6 @@ $(function() {
 	column_list.on('change', '.column_type', function() {
 		var t = $(event.target);
 		var size = t.siblings('.column_size');
-		console.log(size);
 		if (t.val() == 'text') {
 			var bytes = parseInt(size.text());
 			if (bytes == 0) bytes = 128;
