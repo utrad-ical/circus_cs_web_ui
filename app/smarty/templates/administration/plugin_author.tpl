@@ -405,13 +405,13 @@ Plugin definition file (plugin.json) builder</h2>
 			<th>Input Type</th>
 			<td>
 				<label>
-					<input type="radio" name="inputType" value="1" checked="checked" />Single series
+					<input type="radio" name="inputType" value="0" checked="checked" />Single series
 				</label>
 				<label>
-					<input type="radio" name="inputType" value="2" />Single study
+					<input type="radio" name="inputType" value="1" />Single study
 				</label>
 				<label>
-					<input type="radio" name="inputType" value="3" />All study within patient
+					<input type="radio" name="inputType" value="2" />All study within patient
 				</label>
 				<div class="desc">
 					Scope of the series which this plug-in can process.
