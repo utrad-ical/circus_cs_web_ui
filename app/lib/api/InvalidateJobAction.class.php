@@ -30,8 +30,11 @@ class InvalidateJobAction extends ApiActionBase
 		$db = DBConnector::getConnection();
 
 		$db->beginTransaction();
-		Job::lock();
 		CadResult::lock();
+		ExecutedSeries::lock();
+		Job::lock();
+		JobSeries::lock();
+
 		$sth = $db->prepare(
 			'UPDATE executed_plugin_list SET status=? ' .
 			'WHERE status=? AND job_id IN ' . $ids

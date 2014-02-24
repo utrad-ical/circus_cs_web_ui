@@ -12,6 +12,8 @@ class ExecutePluginAction extends ApiActionBase
 			$pdo->beginTransaction();
 			CadResult::lock();
 			ExecutedSeries::lock();
+			Job::lock();
+			JobSeries::lock();
 			$t = true;
 			$plugin = Plugin::selectOne(array(
 				'plugin_name' => $params['pluginName'],

@@ -107,6 +107,10 @@ try
 				try
 				{
 					$pdo->beginTransaction();
+					CadResult::lock();
+					ExecutedSeries::lock();
+					Job::lock();
+					JobSeries::lock();
 
 					// Check number of execution failure (Failed/Invalidated/Aborted)
 					$ps = $seriesUidArr[0]; // series UID for the primary series

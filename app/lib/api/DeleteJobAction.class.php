@@ -13,7 +13,9 @@ class DeleteJobAction extends ApiActionBase
 		$pdo = DBConnector::getConnection();
 		$pdo->beginTransaction();
 		CadResult::lock();
+		ExecutedSeries::lock();
 		Job::lock();
+		JobSeries::lock();
 
 		$target = new Job($params['jobID']);
 		if (!isset($target->job_id))
