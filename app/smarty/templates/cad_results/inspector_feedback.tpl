@@ -46,20 +46,21 @@ $(function() {
 			$.webapi({
 				action: 'unregisterFeedback',
 				params: params,
-				onSuccess: function() {
-					delete params.dryRun;
-					$.choice(
-						'Do you really want to unregister feedback or completely delete it?',
-						['Cancel', 'Delete Completely', 'Unregister (edit again)'],
-						function(choice) {
-							if (choice == 1) { params.deleteFlg = 1; unreg(params); }
-							if (choice == 2) { unreg(params); }
-						},
-						{ width: '40em' }
-					);
-				},
-				onFail: function(message) {
-					$.alert(message);
+				onSuccess: function(response) {
+					if (response.canUnregister) {
+						delete params.dryRun;
+						$.choice(
+							'Do you really want to unregister feedback or completely delete it?',
+							['Cancel', 'Delete Completely', 'Unregister (edit again)'],
+							function(choice) {
+								if (choice == 1) { params.deleteFlg = 1; unreg(params); }
+								if (choice == 2) { unreg(params); }
+							},
+							{ width: '40em' }
+						);
+					} else {
+						$.alert(response.message);
+					}
 				}
 			});
 		});

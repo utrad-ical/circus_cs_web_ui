@@ -29,7 +29,8 @@ class UnregisterFeedbackAction extends ApiActionBase
 	 * @param CadResult $cad_result The CadResult object.
 	 * @param string $user_id The target user ID. If null, the personal feedback
 	 * for the current user is the target.
-	 * @return Feedback The Feedback object if it can be gracefully unregistered.
+	 * @return mixed The Feedback object if it can be safely unregistered,
+	 * or string message indicating why it can not be unregistered.
 	 */
 	protected function checkPersonal(CadResult $cad_result, $user_id = null)
 	{
@@ -42,10 +43,8 @@ class UnregisterFeedbackAction extends ApiActionBase
 		$cfb = $cad_result->queryFeedback('consensual');
 		if (count($cfb) > 0)
 		{
-			throw new ApiOperationException(
-				'Can not unregister this personal feedback: ' .
-				'consensual feedback is already registered.'
-			);
+			return 'Can not unregister this personal feedback: ' .
+				'consensual feedback is already registered.';
 		}
 
 		if ($this->currentUser->hasPrivilege(Auth::DATA_DELETE))
@@ -63,20 +62,16 @@ class UnregisterFeedbackAction extends ApiActionBase
 		{
 			if ($user_id != null && $target_user->user_id != $user_id)
 			{
-				throw new ApiOperationException(
-					'You do not have privilege to unregister ' .
-					'personal feedback entered by others.'
-				);
+				return 'You do not have privilege to unregister ' .
+					'personal feedback entered by others.';
 			}
 		}
 
 		$fb = $cad_result->queryFeedback('user', $target_user->user_id);
 		if (count($fb) == 0)
 		{
-			throw new ApiOperationException(
-				'Target personal feedback entered by ' .
-				$target_user->user_id . ' is not found.'
-			);
+			return 'Target personal feedback entered by ' .
+				$target_user->user_id . ' is not found.';
 		}
 		$fb = reset($fb);
 
@@ -91,17 +86,13 @@ class UnregisterFeedbackAction extends ApiActionBase
 			{
 				if ($limit > 0)
 				{
-					throw new ApiOperationException(
-						'Can not unregister this personal feedback: ' .
-						"unregister time limit ($limit min.) has passed."
-					);
+					return 'Can not unregister this personal feedback: ' .
+						"unregister time limit ($limit min.) has passed.";
 				}
 				else
 				{
-					throw new ApiOperationException(
-						'Can not unregister this personal feedback: ' .
-						'this operation is prohibited by CAD result policy.'
-					);
+					return 'Can not unregister this personal feedback: ' .
+						'this operation is prohibited by CAD result policy.';
 				}
 			}
 		}
@@ -114,7 +105,8 @@ class UnregisterFeedbackAction extends ApiActionBase
 	 * Consensual feedback can be unregistered when
 	 * you have consensualFeedbackModify privilege.
 	 * @param CadResult $cad_result The CadResult object.
-	 * @return Feedback The Feedback object if it can be gracefully unregistered.
+	 * @return mixed The Feedback object if it can be safely unregistered,
+	 * or string message indicating why it can not be unregistered.
 	 */
 	protected function checkConsensual(CadResult $cad_result)
 	{
@@ -123,15 +115,11 @@ class UnregisterFeedbackAction extends ApiActionBase
 
 		if (!$fb)
 		{
-			throw new ApiOperationException(
-				'Consensual feedback is not yet registered.'
-			);
+			return 'Consensual feedback is not yet registered.';
 		}
 		if (!$this->currentUser->hasPrivilege(Auth::CONSENSUAL_FEEDBACK_MODIFY))
 		{
-			throw new ApiOperationException(
-				'You do not have sufficient privilege to unregister consensual feedback.'
-			);
+			return 'You do not have sufficient privilege to unregister consensual feedback.';
 		}
 		return $fb;
 	}
@@ -153,9 +141,7 @@ class UnregisterFeedbackAction extends ApiActionBase
 		// If CAD job is invalidated, entered feedback can only be deleted.
 		// No unregistering for further edits.
 		if (!($params['deleteFlg']) && $cad_result->status == Job::JOB_INVALIDATED) {
-			throw new ApiOperationException(
-				'You cannot modify feedback in a invalidated CAD job.'
-			);
+			return 'You cannot modify feedback in a invalidated CAD job.';
 		}
 
 		if ($is_consensual)
@@ -174,12 +160,22 @@ class UnregisterFeedbackAction extends ApiActionBase
 		$job_id = $params['jobID'];
 		$is_consensual = $params['feedbackMode'] == 'consensual';
 
-		$fb = $this->check($job_id, $is_consensual, $params['user'] ?: null);
+		// $result holds Feedback object or error message
+		$result = $this->check($job_id, $is_consensual, $params['user'] ?: null);
+		$fb = $result instanceof Feedback ? $result : null;
+		$message = $result instanceof Feedback ? null : $result;
 
 		if (!!($params['dryRun']))
 		{
-			// You can unregister this FB now. But not for now.
-			return true;
+			return array(
+				'canUnregister' => $fb !== null,
+				'message' => $message
+			);
+		}
+
+		// Throws API error when not in dry-run mode
+		if (!$fb) {
+			throw new ApiOperationException($message);
 		}
 
 		// Now we actually unregister the feedback data. This part is simple.

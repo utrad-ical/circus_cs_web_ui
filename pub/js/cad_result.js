@@ -172,10 +172,11 @@ circus.feedback = function() {
 					dryRun: 1
 				},
 				onSuccess: function(response) {
-					$('#unregister_pane').show();
-					$('#unregister').click(circus.feedback.unregister);
-				},
-				onFail: $.noop // cannot be unregistered
+					if (response.canUnregister) {
+						$('#unregister_pane').show();
+						$('#unregister').click(circus.feedback.unregister);
+					}
+				}
 			});
 		},
 		unregister: function(event) {
