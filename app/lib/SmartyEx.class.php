@@ -1,7 +1,7 @@
 <?php
 
 global $WEB_UI_ROOT;
-require_once($WEB_UI_ROOT . '/app/vendor/Smarty-2.6.26/Smarty.class.php');
+require_once($WEB_UI_ROOT . '/app/vendor/Smarty-2.6.28/Smarty.class.php');
 
 /**
  * SmartyEx subclasses Smarty, and does CIRCUS-specific initialization.
