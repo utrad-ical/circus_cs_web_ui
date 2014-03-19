@@ -43,7 +43,12 @@
 				if($valid_user)
 				{
 					Auth::createSession($valid_user);
-					header('location: home.php');
+					if (isset($_SESSION['redirect'])) {
+						header('Location: ' . $_SESSION['redirect']);
+						unset($_SESSION['redirect']);
+					} else {
+						header('Location: home.php');
+					}
 					exit;
 				} else {
 					Auth::log_failure($_POST['userID']);

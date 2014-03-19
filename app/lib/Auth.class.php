@@ -298,7 +298,7 @@ class Auth
 	public static function logout()
 	{
 		self::$currentUser = null;
-		session_destroy();
+		unset($_SESSION['userID']);
 	}
 
 	/**
@@ -312,6 +312,10 @@ class Auth
 		global $SESSION_TIME_LIMIT, $LOGIN_LOG;
 		session_cache_limiter('nocache');
 		session_start();
+
+		if ($redirect && !isset($_SESSION['userID'])) {
+			self::purge();
+		}
 
 		self::$currentUser = new User($_SESSION['userID']);
 		$userID = self::$currentUser->user_id;
@@ -334,10 +338,16 @@ class Auth
 	 */
 	public static function purge($mode = null)
 	{
+		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+			$_SESSION['redirect'] = $_SERVER['REQUEST_URI'];
+		} else {
+			unset($_SESSION['redirect']);
+		}
+
 		global $DIR_SEPARATOR_WEB;
 		Auth::logout();
 		$mode_str = $mode ? "?mode=$mode" : '';
-		header('location: ' . relativeTopDir() . 'index.php' . $mode_str);
+		header('Location: ' . relativeTopDir() . 'index.php' . $mode_str);
 		exit();
 	}
 
