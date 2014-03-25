@@ -20,6 +20,12 @@ class ServerParam extends Model
 		}
 	}
 
+	public static function getBoolVal($key)
+	{
+		$tmp = self::getVal($key);
+		return $tmp == '1';
+	}
+
 	public static function setVal($key, $value)
 	{
 		$dum = new ServerParam();
@@ -27,6 +33,11 @@ class ServerParam extends Model
 			'key' => $key,
 			'value' => $value
 		)), true); // upsert
+	}
+
+	public static function setBoolVal($key, $value)
+	{
+		self::setVal($key, $value ? '1' : '0');
 	}
 
 	public static function getArray($key)

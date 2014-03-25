@@ -192,6 +192,23 @@ class Auth
 		)
 	);
 
+	const DEFAULT_SESSION_TIME_LIMIT = 3600;
+
+	/**
+	 * Session time limit can be configured using website configuration.
+	 */
+	private static function sessionTimeLimit()
+	{
+		if (is_null(self::$session_time_limit)) {
+			$tmp = intval(ServerParam::getVal('session_time_limit')) * 60;
+			if ($tmp <= 0) $tmp = self::DEFAULT_SESSION_TIME_LIMIT;
+			self::$session_time_limit = $tmp;
+		}
+		return self::$session_time_limit;
+	}
+	// Do not use this value directly, use the singleton method above
+	private static $session_time_limit = null;
+
 	/**
 	 * Returns the list of availabe privilege types.
 	 */
@@ -239,7 +256,6 @@ class Auth
 	{
 		global $CIRCUS_CS_VERSION;
 		global $LOGIN_LOG;
-		global $SESSION_TIME_LIMIT;
 
 		// login succeed
 		$loginDateTime = date("Y-m-d H:i:s");
@@ -276,7 +292,7 @@ class Auth
 
 		if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
 
-		$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
+		$_SESSION['timeLimit'] = time() + self::sessionTimeLimit();
 
 		self::log(
 			sprintf("Login: userID=%s", $_SESSION['userID']),
@@ -292,6 +308,7 @@ class Auth
 			sprintf('Logout: userID=%s', $_SESSION['userID']),
 			$LOGIN_LOG
 		);
+		// session_destroy();
 		self::logout();
 	}
 
@@ -309,7 +326,15 @@ class Auth
 	 */
 	public static function checkSession($redirect = true)
 	{
-		global $SESSION_TIME_LIMIT, $LOGIN_LOG;
+		global $LOGIN_LOG;
+		$timelimit = self::sessionTimeLimit();
+
+		// Default cookie lifetime is 0 (= until the browser is closed).
+		// Set explicit session life time to keep session alive.
+		if (ServerParam::getBoolVal('keep_session')) {
+			session_set_cookie_params($timelimit);
+		}
+
 		session_cache_limiter('nocache');
 		session_start();
 
@@ -326,8 +351,8 @@ class Auth
 			self::purge('timeout');
 		}
 		else
-		{
-			$_SESSION['timeLimit'] = time() + $SESSION_TIME_LIMIT;
+		{ // extend session
+			$_SESSION['timeLimit'] = time() + $timelimit;
 		}
 	}
 
