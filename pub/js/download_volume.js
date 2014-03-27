@@ -5,6 +5,7 @@ circus.download_volume = (function() {
 	var series_info;
 	var target_job_id;
 	var target_volume_id;
+	var target_volume_info;
 	var callback;
 	var dialog;
 	var slider;
@@ -61,7 +62,13 @@ circus.download_volume = (function() {
 
 	function radioClicked() {
 		var val = $(':radio:checked', dialog).val();
-		$('#download-volume-range :input').enable(val != 'job');
+		if(val == 'job')
+		{
+			$('#download-volume-private-tags').val(target_volume_info["required_private_tags"]);
+			$('#download-volume-delta').val(target_volume_info["image_delta"]);
+			slider.slider('option', 'values', [series_info.minImageNumber, series_info.maxImageNumber]);
+		}
+		$('#download-volume-range,#download-options :input').enable(val != 'job');
 		slider.slider('option', 'disabled', val == 'job');
 	}
 
@@ -107,7 +114,10 @@ circus.download_volume = (function() {
 		}
 		else
 		{
+			target_volume_info = circus.cadresult.seriesList[target_volume_id];
 			$(':radio[name="dltype"]', dialog).val(['job']);
+			$('#download-volume-private-tags').val(target_volume_info["required_private_tags"]);
+			$('#download-volume-delta').val(target_volume_info["image_delta"]);
 		}
 
 		$('#download-volume-range-start').blur(function(event) {

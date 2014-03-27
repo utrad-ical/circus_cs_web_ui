@@ -240,7 +240,8 @@ function show_cad_results($jobID, $feedbackMode) {
 			'numImages' => $series->image_number,
 			'z_org_img_num' => $es->z_org_img_num,
 			'image_delta' => $es->image_delta,
-			'image_count' => $es->image_count
+			'image_count' => $es->image_count,
+			'required_private_tags' => $es->required_private_tags
 		);
 		if (strcmp($series->last_received_at, $cadResult->registered_at) > 0) {
 			$warn_outdated = true;
