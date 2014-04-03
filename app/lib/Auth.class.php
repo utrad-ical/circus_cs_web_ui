@@ -261,8 +261,6 @@ class Auth
 		$loginDateTime = date("Y-m-d H:i:s");
 		$_SESSION['circusVersion'] = $CIRCUS_CS_VERSION;
 		$_SESSION['userID']        = $user->user_id;
-		$_SESSION['userName']      = $user->user_name;
-		$_SESSION['key']           = sha1($user->user_id);
 		$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
 
 		// save status for last login
@@ -284,7 +282,6 @@ class Auth
 		$_SESSION['personalFBFlg']       = isset($priv['personalFeedbackEnter']) ? 1 : 0;
 		$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
 		$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
-		$_SESSION['volumeDLFlg']         = isset($priv['volumeDownload']) ? 1 : 0;
 		$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
 		$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
 		$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
@@ -295,7 +292,7 @@ class Auth
 		$_SESSION['timeLimit'] = time() + self::sessionTimeLimit();
 
 		self::log(
-			sprintf("Login: userID=%s", $_SESSION['userID']),
+			sprintf("Login: userID=%s", $user->user_id),
 			$LOGIN_LOG
 		);
 		return true;
@@ -304,8 +301,9 @@ class Auth
 	public static function manualLogout()
 	{
 		global $LOGIN_LOG;
+		$user = self::$currentUser;
 		self::log(
-			sprintf('Logout: userID=%s', $_SESSION['userID']),
+			sprintf('Logout: userID=%s', $user->user_id),
 			$LOGIN_LOG
 		);
 		// session_destroy();
@@ -314,6 +312,7 @@ class Auth
 
 	public static function logout()
 	{
+		$user = self::$currentUser;
 		self::$currentUser = null;
 		unset($_SESSION['userID']);
 	}
