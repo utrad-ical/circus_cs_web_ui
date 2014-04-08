@@ -9,6 +9,7 @@
 class Auth
 {
 	private static $currentUser;
+	private static $initialUserID = null;
 
 	/**
 	 * Name of 'cadExec' privilege.
@@ -272,6 +273,8 @@ class Auth
 			'ip_address' => getenv("REMOTE_ADDR"),
 		)));
 
+		unset($_SESSION['initialUserID']);
+
 		$priv = array_flip($user->listPrivilege());
 
 		$color_set = $user->hasPrivilege(Auth::PERSONAL_INFO_VIEW) ? 'user' : 'guest';
@@ -315,6 +318,11 @@ class Auth
 		$user = self::$currentUser;
 		self::$currentUser = null;
 		unset($_SESSION['userID']);
+	}
+
+	public static function setInitialUserAfterReset($user_id)
+	{
+		self::$initialUserID = $user_id;
 	}
 
 	/**
@@ -364,6 +372,7 @@ class Auth
 	{
 		if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			$_SESSION['redirect'] = $_SERVER['REQUEST_URI'];
+			$_SESSION['initialUserID'] = self::$initialUserID;
 		} else {
 			unset($_SESSION['redirect']);
 		}

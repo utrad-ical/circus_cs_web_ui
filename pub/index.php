@@ -18,11 +18,11 @@
 		}
 		$smarty->assign('version', $CIRCUS_CS_VERSION);
 		$smarty->assign('message', $message);
+		$smarty->assign('initialUserID', $_SESSION['initialUserID']);
 		$smarty->display('login_disp.tpl');
 	}
 
 	$mode = $_REQUEST['mode'];
-
 
 	switch ($mode)
 	{

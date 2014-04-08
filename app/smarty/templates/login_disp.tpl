@@ -94,11 +94,11 @@ p.version {
 	<div id="normal-login">
 		<label>
 			<span>User ID</span>
-			<input type="text" name="userID" value="" class="field" autofocus="autofocus" />
+			<input type="text" name="userID" value="{$initialUserID|escape}" class="field"{if is_null($initialUserID)} autofocus="autofocus"{/if} />
 		</label>
 		<label>
 			<span>Password</span>
-			<input type="password" name="pswd" value="" class="field" />
+			<input type="password" name="pswd" value="" class="field"{if !is_null($initialUserID)} autofocus="autofocus"{/if} />
 		</label>
 		<p id="messageArea" class="message">
 			{$message|escape}
