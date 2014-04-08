@@ -262,6 +262,7 @@ class Auth
 		$loginDateTime = date("Y-m-d H:i:s");
 		$_SESSION['circusVersion'] = $CIRCUS_CS_VERSION;
 		$_SESSION['userID']        = $user->user_id;
+		$_SESSION['key']           = sha1($user->user_id);
 		$_SESSION['anonymizeFlg']  = ($user->anonymized == 't') ? 1 : 0;
 
 		// save status for last login
