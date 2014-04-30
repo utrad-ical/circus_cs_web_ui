@@ -88,7 +88,7 @@ function ShowPersonalStatResult()
 
 				error:   function(){
 							$.unblockUI();
-							alert("Fail to analyze personal statistics.");
+							alert("Failed to analyze personal statistics.");
 						}
 			});
 	}

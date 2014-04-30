@@ -10,7 +10,7 @@ $svStat = WinServiceControl::getStatus($PLUGIN_JOB_MANAGER_SERVICE, $hostName);
 
 if($svStat['str'] != 'Stopped')
 {
-	$dstData['message'] = "[ERROR] Fail to reset plug-in job queue (" . $PLUGIN_JOB_MANAGER_SERVICE . ' is not stopped)';
+	$dstData['message'] = "[ERROR] Failed to reset plug-in job queue (" . $PLUGIN_JOB_MANAGER_SERVICE . ' is not stopped)';
 }
 
 if($dstData['message'] == "")
@@ -47,7 +47,7 @@ if($dstData['message'] == "")
 	catch (PDOException $e)
 	{
 		$pdo->rollBack();
-		$dstData['message'] = '[ERROR] Fail to reset plug-in job queue';
+		$dstData['message'] = '[ERROR] Failed to reset plug-in job queue';
 		//$dstData['message'] = $e->getMessage();
 	}
 }

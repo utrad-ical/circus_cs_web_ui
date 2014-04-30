@@ -184,7 +184,7 @@ try
 			{
 				$pdo->rollBack();
 
-				$dstData['message'] = '<b>Fail to register plug-in job!!</b>';
+				$dstData['message'] = '<b>Failed to register plug-in job!!</b>';
 				$dstData['message'] = var_dump($e->getMessage());
 				$dstData['registeredAt'] = "";
 			}
