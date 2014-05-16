@@ -9,13 +9,13 @@ function DeleteData(mode)
 
 	if(sids.length == 0)
 	{
-	   alert('Please select at least one ' + mode + '!');
+		alert('Please select at least one ' + mode + '!');
 	}
 	else if(confirm('Do you delete selected ' + mode + '?'))
 	{
 
 		$.post("delete_list.php",
-               {mode: mode, 'sidArr[]': sids, ticket: $("#ticket").val()},
+				{mode: mode, 'sidArr[]': sids, ticket: $("#ticket").val()},
 				function(data){
 					alert(data.message);
 					location.reload();
@@ -52,17 +52,17 @@ function EditTag(category, sid)
 function ShowStudyList(idNum, encryptedPtID)
 {
 	location.href = 'study_list.php?mode=patient&encryptedPtID='
-                  + encodeURIComponent(encryptedPtID);
+				  + encodeURIComponent(encryptedPtID);
 }
 
 function ChangeOrderOfPatientList(orderCol, orderMode)
 {
 	var params = { orderCol: orderCol,
-				   orderMode: orderMode,
-				   filterPtID: $("#hiddenFilterPtID").val(),
-				   filterPtName: $("#hiddenFilterPtName").val(),
-				   filterSex: $("#hiddenFilterSex").val(),
-				   showing: $("#hiddenShowing").val() };
+					orderMode: orderMode,
+					filterPtID: $("#hiddenFilterPtID").val(),
+					filterPtName: $("#hiddenFilterPtName").val(),
+					filterSex: $("#hiddenFilterSex").val(),
+					showing: $("#hiddenShowing").val() };
 
 	var address = 'patient_list.php?' + $.param(params);
 	location.replace(address);
@@ -76,30 +76,30 @@ function ChangeOrderOfPatientList(orderCol, orderMode)
 function ShowSeriesList(idNum, studyInstanceUID)
 {
 	location.href = 'series_list.php?mode=study&studyInstanceUID='
-                  + encodeURIComponent(studyInstanceUID);
+				  + encodeURIComponent(studyInstanceUID);
 }
 
 function ChangeOrderOfStudyList(orderCol, orderMode)
 {
 	var params = { orderCol: orderCol,
-                   orderMode:orderMode,
-                   filterModality: $("#hiddenFilterModality").val(),
-				   filterAgeMin: $("#hiddenFilterAgeMin").val(),
-	               filterAgeMax: $("#hiddenFilterAgeMax").val(),
-	               stDateKind: $("#hiddenStDateKind").val(),
-	               stDateFrom: $("#hiddenStDateFrom").val(),
-	               stDateTo: $("#hiddenStDateTo").val(),
-	               stTimeTo: $("#hiddenStTimeTo").val(),
-	               showing: $("#hiddenShowing").val() };
+					orderMode:orderMode,
+					filterModality: $("#hiddenFilterModality").val(),
+					filterAgeMin: $("#hiddenFilterAgeMin").val(),
+					filterAgeMax: $("#hiddenFilterAgeMax").val(),
+					stDateKind: $("#hiddenStDateKind").val(),
+					stDateFrom: $("#hiddenStDateFrom").val(),
+					stDateTo: $("#hiddenStDateTo").val(),
+					stTimeTo: $("#hiddenStTimeTo").val(),
+					showing: $("#hiddenShowing").val() };
 
 	if($("#mode").val() == 'patient')
 	{
 		params.mode = "patient";
-        params.encryptedPtID = $("#encryptedPtID").val();
+		params.encryptedPtID = $("#encryptedPtID").val();
 	}
 	else
 	{
-		params.filterPtID   = $("#encryptedPtID").val();
+		params.filterPtID   = $("#hiddenFilterPtID").val();
 		params.filterPtName = $("#hiddenFilterPtName").val();
 		params.filterSex    = $("#hiddenFilterSex").val();
 	}
@@ -116,16 +116,16 @@ function ChangeOrderOfStudyList(orderCol, orderMode)
 //--------------------------------------------------------------------------------------------------
 function CreateListAddressForSeriesList(mode, orderCol, orderMode)
 {
-	var params = { orderCol:       orderCol,
-                   orderMode:      orderMode,
-                   filterModality:      $("#hiddenFilterModality").val(),
-                   filterSrDescription: $("#hiddenFilterSrDescription").val(),
-	               showing:             $("#hiddenShowing").val() };
+	var params = {  orderCol:       orderCol,
+					orderMode:      orderMode,
+					filterModality:      $("#hiddenFilterModality").val(),
+					filterSrDescription: $("#hiddenFilterSrDescription").val(),
+					showing:             $("#hiddenShowing").val() };
 
 	if(mode == 'study')
 	{
 		params.mode = 'study';
-        params.studyInstanceUID = $("#studyInstanceUID").val();
+		params.studyInstanceUID = $("#studyInstanceUID").val();
 	}
 	else
 	{
@@ -160,8 +160,8 @@ function ChangeOrderOfSeriesList(orderCol, orderMode)
 
 function ShowSeriesDetail(sid)
 {
-	var params = { sid: sid,
-                   listTabName: ($("#mode").val() == 'today') ? "Today's series" : "Series list" };
+	var params = {  sid: sid,
+					listTabName: ($("#mode").val() == 'today') ? "Today's series" : "Series list" };
 
 	location.href = "series_detail.php?" + $.param(params);
 }
@@ -172,8 +172,8 @@ function ShowCADResultFromSeriesList(seriesID, personalFeedbackFlg)
 	// Get option value from pulldown menu
 	var tmpStr = $("#cadMenu"+seriesID).val().split("^");
 
-	var params = { jobID:   tmpStr[4],
-                   srcList: ($("#mode").val()=="today") ? 'todaysSeries' : 'series' };
+	var params = {  jobID:   tmpStr[4],
+					srcList: ($("#mode").val()=="today") ? 'todaysSeries' : 'series' };
 
 	if(personalFeedbackFlg == 1)  params.feedbackMode = 'personal';
 
@@ -242,7 +242,7 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 	if($("#mode").val() == "today")		address += '&srcList=todaysSeries';
 	else								address += '&srcList=series';
 
-	location.href=address;
+	location.href = address;
 }
 //--------------------------------------------------------------------------------------------------
 
@@ -262,26 +262,26 @@ function ShowCADResultFromCADLog(jobID, personalFBFlg)
 
 function ChangeOrderOfCADList(orderCol, orderMode)
 {
-	var params = { orderCol:       orderCol,
-                   orderMode:      orderMode,
-				   filterPtID:     $("#hiddenFilterPtID").val(),
-				   filterPtName:   $("#hiddenFilterPtName").val(),
-				   filterSex:      $("#hiddenFilterSex").val(),
-                   filterModality: $("#hiddenFilterModality").val(),
-				   filterAgeMin:   $("#hiddenFilterAgeMin").val(),
-	               filterAgeMax:   $("#hiddenFilterAgeMax").val(),
-	               srDateKind:     $("#hiddenSrDateKind").val(),
-	               srDateFrom:     $("#hiddenSrDateFrom").val(),
-	               srDateTo:       $("#hiddenSrDateTo").val(),
-	               srTimeTo:       $("#hiddenSrTimeTo").val(),
-   	               filterCadID:    $("#hiddenFilterCadID").val(),
-	               filterCAD:      $("#hiddenFilterCAD").val(),
-	               filterVersion:  $("#hiddenFilterVersion").val(),
-                   personalFB:     $("#hiddenFilterPersonalFB").val(),
-                   consensualFB:   $("#hiddenFilterConsensualFB").val(),
-                   filterTP:       $("#hiddenFilterTP").val(),
-                   filterFN:       $("#hiddenFilterFN").val(),
-	               showing:        $("#hiddenShowing").val() };
+	var params = {  orderCol:       orderCol,
+					orderMode:      orderMode,
+					filterPtID:     $("#hiddenFilterPtID").val(),
+					filterPtName:   $("#hiddenFilterPtName").val(),
+					filterSex:      $("#hiddenFilterSex").val(),
+					filterModality: $("#hiddenFilterModality").val(),
+					filterAgeMin:   $("#hiddenFilterAgeMin").val(),
+					filterAgeMax:   $("#hiddenFilterAgeMax").val(),
+					srDateKind:     $("#hiddenSrDateKind").val(),
+					srDateFrom:     $("#hiddenSrDateFrom").val(),
+					srDateTo:       $("#hiddenSrDateTo").val(),
+					srTimeTo:       $("#hiddenSrTimeTo").val(),
+					filterCadID:    $("#hiddenFilterCadID").val(),
+					filterCAD:      $("#hiddenFilterCAD").val(),
+					filterVersion:  $("#hiddenFilterVersion").val(),
+					personalFB:     $("#hiddenFilterPersonalFB").val(),
+					consensualFB:   $("#hiddenFilterConsensualFB").val(),
+					filterTP:       $("#hiddenFilterTP").val(),
+					filterFN:       $("#hiddenFilterFN").val(),
+					showing:        $("#hiddenShowing").val() };
 
 	if($("#mode").val() == 'today')
 	{
