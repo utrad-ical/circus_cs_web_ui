@@ -231,9 +231,6 @@ function RegistCADJob(seriesID, studyInstanceUID, seriesInstanceUID)
 	var cadName = tmpStr[0];
 	var version = tmpStr[1];
 
-	var orderCol  = $("#orderCol").val();
-	var orderMode = $("#orderMode").val();
-
 	var address = 'cad_job/cad_execution.php?cadName=' + encodeURIComponent(cadName)
                 + '&version=' + encodeURIComponent(version)
 	            + '&studyInstanceUID=' + encodeURIComponent(studyInstanceUID)
