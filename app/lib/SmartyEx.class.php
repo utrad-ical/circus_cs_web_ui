@@ -1,13 +1,13 @@
 <?php
 
 global $WEB_UI_ROOT;
-require_once($WEB_UI_ROOT . '/app/vendor/Smarty-2.6.28/Smarty.class.php');
+require_once($WEB_UI_ROOT . '/app/vendor/Smarty-3.1.18/SmartyBC.class.php');
 
 /**
  * SmartyEx subclasses Smarty, and does CIRCUS-specific initialization.
- * Requires Smarty 2.6 but Smarty 3.x is not supported.
+ * Requires Smarty 3.1.x
  */
-class SmartyEx extends Smarty
+class SmartyEx extends SmartyBC
 {
 	/**
 	 * Constructor.
@@ -22,7 +22,7 @@ class SmartyEx extends Smarty
 		$this->compile_dir   = $rootPath . 'templates_c';
 		$this->config_dir    = $rootPath . 'configs';
 		$this->cache_dir     = $rootPath . 'cache';
-		$this->plugins_dir[] = $rootPath . 'plugins';
+		$this->addPluginsDir($rootPath . 'plugins');
 
 		$this->register_modifier('status_str', array('Job', 'codeToStatusName'));
 
