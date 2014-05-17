@@ -31,6 +31,7 @@ try
 	}
 
 	// latest missed TP
+	$recentMissed = array();
 	$user = Auth::currentUser();
 	Patient::$anonymizeMode = $user->needsAnonymization();
 	if ($user->hasPrivilege(Auth::PERSONAL_FEEDBACK_ENTER) && $user->show_missed != 'none')
@@ -48,7 +49,6 @@ try
 			'ALL_ASSOC'
 		);
 
-		$recentMissed = array();
 		foreach ($missed_jobs as $item) {
 			$job = new CadResult($item['job_id']);
 			$prn = $job->Plugin->presentation();

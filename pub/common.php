@@ -137,6 +137,7 @@ function DeleteDirRecursively($dir)
 function relativeTopDir()
 {
 	// Find web root directory (where home.php exists) as a relative path
+	$step = 0;
 	do
 	{
 		$rp = str_repeat('../', $step);
