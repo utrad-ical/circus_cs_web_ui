@@ -57,15 +57,15 @@ abstract class Model implements Iterator
 			$sql .= ' WHERE ' . implode(' AND ', $conds);
 		}
 
-		if (is_array($options['order']))
+		if (isset($options['order']) && is_array($options['order']))
 		{
 			$sql .= ' ORDER BY ' . implode(', ', $options['order']);
 		}
-		if (is_array($options['limit']))
+		if (isset($options['limit']) && is_array($options['limit']))
 		{
 			$sql .= ' LIMIT ' . implode(', ', $options['limit']);
 		}
-		if (is_scalar($options['limit']))
+		if (isset($options['limit']) && is_scalar($options['limit']))
 		{
 			$sql .= ' LIMIT ' . $options['limit'];
 		}
