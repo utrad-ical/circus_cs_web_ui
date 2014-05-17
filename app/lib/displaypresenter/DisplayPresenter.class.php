@@ -63,7 +63,7 @@ class DisplayPresenter extends CadBlockElement
 	 * This method is called multiple times by the framework.
 	 * In each call, the current display is assigned to the
 	 * Smarty instance stored in $this->smarty.
-	 * Call $this->smarty->get_template_vars('display') to get it.
+	 * Call $this->smarty->getTemplateVars('display') to get it.
 	 * @return string The rendered HTML that describes the given CAD display.
 	 */
 	public function show()

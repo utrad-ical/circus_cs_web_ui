@@ -1,13 +1,13 @@
 <?php
 
 global $WEB_UI_ROOT;
-require_once($WEB_UI_ROOT . '/app/vendor/Smarty-3.1.18/SmartyBC.class.php');
+require_once($WEB_UI_ROOT . '/app/vendor/Smarty-3.1.18/Smarty.class.php');
 
 /**
  * SmartyEx subclasses Smarty, and does CIRCUS-specific initialization.
  * Requires Smarty 3.1.x
  */
-class SmartyEx extends SmartyBC
+class SmartyEx extends Smarty
 {
 	/**
 	 * Constructor.
@@ -24,7 +24,7 @@ class SmartyEx extends SmartyBC
 		$this->cache_dir     = $rootPath . 'cache';
 		$this->addPluginsDir($rootPath . 'plugins');
 
-		$this->register_modifier('status_str', array('Job', 'codeToStatusName'));
+		$this->registerPlugin('modifier', 'status_str', array('Job', 'codeToStatusName'));
 
 		$this->assign('currentUser', Auth::currentUser());
 

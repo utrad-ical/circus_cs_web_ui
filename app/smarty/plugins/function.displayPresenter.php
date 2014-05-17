@@ -5,6 +5,6 @@
  */
 function smarty_function_displayPresenter ($param, $smarty)
 {
-	$presenter = $smarty->get_template_vars('displayPresenter');
+	$presenter = $smarty->getTemplateVars('displayPresenter');
 	return $presenter->show($smarty);
 }
