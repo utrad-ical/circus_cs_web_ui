@@ -17,12 +17,14 @@ class SmartyEx extends Smarty
 	{
 		global $BASE_DIR, $DIR_SEPARATOR, $WEB_UI_ROOT;
 		parent::__construct();
-		$rootPath = $WEB_UI_ROOT . $DIR_SEPARATOR . 'app' . $DIR_SEPARATOR . 'smarty' . $DIR_SEPARATOR;
-		$this->template_dir  = $rootPath . 'templates';
-		$this->compile_dir   = $rootPath . 'templates_c';
-		$this->config_dir    = $rootPath . 'configs';
-		$this->cache_dir     = $rootPath . 'cache';
-		$this->addPluginsDir($rootPath . 'plugins');
+		$rootPath  = $WEB_UI_ROOT . $DIR_SEPARATOR . 'app' . $DIR_SEPARATOR . 'smarty' . $DIR_SEPARATOR;
+		$cachePath = $WEB_UI_ROOT . $DIR_SEPARATOR . 'cache';
+
+		$this->setTemplateDir($rootPath . 'templates')
+			->setCompileDir($cachePath)
+			->setCacheDir($cachePath)
+			->setConfigDir($rootPath . 'configs')
+			->addPluginsDir($rootPath . 'plugins');
 
 		$this->registerPlugin('modifier', 'status_str', array('Job', 'codeToStatusName'));
 
