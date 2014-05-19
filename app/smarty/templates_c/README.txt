@@ -1,1 +1,0 @@
-Template files compiled by Smarty go here.
