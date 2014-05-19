@@ -19,7 +19,7 @@ class DisplayPresenter extends CadBlockElement
 		$smarty = $this->smarty;
 		$smarty->assign('displayPresenterParams', $this->params);
 		$path = $this->owner->configurationPath();
-		if ($smarty->template_exists($path . $DIR_SEPARATOR . "display_presenter.tpl"))
+		if ($smarty->templateExists($path . $DIR_SEPARATOR . "display_presenter.tpl"))
 		{
 			return $smarty->fetch($path . $DIR_SEPARATOR . "display_presenter.tpl");
 		}

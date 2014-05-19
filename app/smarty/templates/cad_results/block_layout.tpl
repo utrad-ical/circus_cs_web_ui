@@ -9,7 +9,7 @@ Individual plugins can override this template for custom layouts.
 *}
 <div class="result-blocks" id="result-blocks">
 {foreach from=$displays key=display_id item=display}
-{if !$display._hidden}{include file="block.tpl}{/if}
+{if !$display._hidden}{include file="block.tpl"}{/if}
 {foreachelse}
 <p class="no-result">{$presentationParams.displayPresenter.noResultMessage|escape}</p>
 {/foreach}
