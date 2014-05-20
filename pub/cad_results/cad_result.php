@@ -123,6 +123,8 @@ function show_cad_results($jobID, $feedbackMode) {
 	foreach ($extensions as $ext)
 	{
 		$ext->setCadResult($cadResult);
+		$ext->setSmarty($smarty);
+		$ext->prepare();
 		$noFeedback = $noFeedback && !($ext instanceof IFeedbackListener);
 	}
 
@@ -178,7 +180,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	$extParameters = array();
 	foreach ($extensions as $ext)
 	{
-		$ext->setSmarty($smarty);
 		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);

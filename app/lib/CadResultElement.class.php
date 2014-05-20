@@ -119,4 +119,13 @@ abstract class CadResultElement
 	{
 		return array();
 	}
+
+	/**
+	* Called just after setting up this block element.
+	*/
+	public function prepare()
+	{
+		return null; // nothing
+	}
+
 }
