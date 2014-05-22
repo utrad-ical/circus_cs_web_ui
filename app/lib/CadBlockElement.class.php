@@ -9,18 +9,8 @@
 abstract class CadBlockElement extends CadResultElement
 {
 	/**
-	 * Called just after setting up this block element.
-	 */
-	public function prepare()
-	{
-		return null; // nothing
-	}
-
-	/**
 	 * Returns the HTML of the element.
 	 * @param Smarty $smarty The Smarty instance
 	 */
 	abstract public function show();
-
-
 }

@@ -5,6 +5,6 @@
  */
 function smarty_function_feedbackListener ($param, $smarty)
 {
-	$listener = $smarty->get_template_vars('feedbackListener');
+	$listener = $smarty->getTemplateVars('feedbackListener');
 	return $listener->show($smarty);
 }

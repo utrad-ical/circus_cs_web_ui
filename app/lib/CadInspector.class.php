@@ -34,8 +34,27 @@ class CadInspector extends CadResultExtension
 		));
 	}
 
-	public function head()
+	public function prepare()
 	{
+		$visible_groups = $this->params['visibleGroups'];
+		if (is_string($visible_groups))
+		{
+			$groups = preg_split('/\s*\,\s*/', $visible_groups);
+			foreach (Auth::currentUser()->Group as $gp)
+			{
+				if (array_search($gp->group_id, $groups) !== false)
+				{
+					$this->enabled = true;
+					break;
+				}
+			}
+		}
+		else
+		{
+			// visibleGroups parameter is required
+			$this->enabled = 'warn';
+		}
+
 		if ($this->enabled === false)
 			return;
 		$params = $this->getParameter();
@@ -64,8 +83,6 @@ class CadInspector extends CadResultExtension
 			$this->assignFeedback();
 		if ($this->modules['files'])
 			$this->assignFiles();
-
-		return '';
 	}
 
 	protected function assignFeedback()
@@ -110,25 +127,6 @@ class CadInspector extends CadResultExtension
 
 	public function tabs()
 	{
-		$visible_groups = $this->params['visibleGroups'];
-		if (is_string($visible_groups))
-		{
-			$groups = preg_split('/\s*\,\s*/', $visible_groups);
-			foreach (Auth::currentUser()->Group as $gp)
-			{
-				if (array_search($gp->group_id, $groups) !== false)
-				{
-					$this->enabled = true;
-					break;
-				}
-			}
-		}
-		else
-		{
-			// visibleGroups parameter is required
-			$this->enabled = 'warn';
-		}
-
 		if ($this->enabled) // true or 'warn'
 			return array(
 				array (

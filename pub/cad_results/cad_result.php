@@ -102,31 +102,10 @@ function show_cad_results($jobID, $feedbackMode) {
 	$smarty = new SmartyEx();
 
 	// Set smarty default template handler.
-	$td = $smarty->template_dir;
-	$smarty->template_id = md5($cadResult->Plugin->fullName());
-	$smarty->template_dir = $cadResult->Plugin->configurationPath();
-	$template_handler = function ($resource_type, $resource_name,
-		&$template_source, &$template_timestamp, &$smarty_obj) use ($td)
-	{
-		global $DIR_SEPARATOR;
-		if ($resource_type != 'file')
-			return false;
-		$cadtemplate = $td . $DIR_SEPARATOR . 'cad_results' . $DIR_SEPARATOR . $resource_name;
-		$template = $td . $DIR_SEPARATOR . $resource_name;
-		if (file_exists($cadtemplate))
-		{
-			$template_timestamp = time(); // always recompile
-			$template_source = file_get_contents($cadtemplate);
-		}
-		else if (file_exists($template))
-		{
-			$template_timestamp = filemtime($template);
-			$template_source = file_get_contents($template);
-		}
-		else return false;
-		return true;
-	};
-	$smarty->default_template_handler_func = $template_handler;
+	$dirs = $smarty->getTemplateDir();
+	array_unshift($dirs, $dirs[0] . "cad_results/");
+	array_unshift($dirs, $cadResult->Plugin->configurationPath());
+	$smarty->setTemplateDir($dirs);
 
 	$displayPresenter = $cadResult->Plugin->presentation()->displayPresenter();
 	$displayPresenter->setSmarty($smarty);
@@ -144,6 +123,8 @@ function show_cad_results($jobID, $feedbackMode) {
 	foreach ($extensions as $ext)
 	{
 		$ext->setCadResult($cadResult);
+		$ext->setSmarty($smarty);
+		$ext->prepare();
 		$noFeedback = $noFeedback && !($ext instanceof IFeedbackListener);
 	}
 
@@ -199,7 +180,6 @@ function show_cad_results($jobID, $feedbackMode) {
 	$extParameters = array();
 	foreach ($extensions as $ext)
 	{
-		$ext->setSmarty($smarty);
 		array_splice($requiringFiles, -1, 0, $ext->requiringFiles());
 		foreach ($ext->tabs() as $tab)
 			array_push($tabs, $tab);
