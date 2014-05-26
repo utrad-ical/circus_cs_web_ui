@@ -1,7 +1,6 @@
-app/smarty/templates_c/*
-app/smarty/cache/*
 config/db.ini
 /cache/*
+!/cache/templates_c
 /config/storage.json
 Thumbs.db
 /plugin/*

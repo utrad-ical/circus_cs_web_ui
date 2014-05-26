@@ -21,7 +21,7 @@ class SmartyEx extends Smarty
 		$cachePath = $WEB_UI_ROOT . $DIR_SEPARATOR . 'cache';
 
 		$this->setTemplateDir($rootPath . 'templates')
-			->setCompileDir($cachePath)
+			->setCompileDir($cachePath . $DIR_SEPARATOR . 'templates_c')
 			->setCacheDir($cachePath)
 			->setConfigDir($rootPath . 'configs')
 			->addPluginsDir($rootPath . 'plugins');
