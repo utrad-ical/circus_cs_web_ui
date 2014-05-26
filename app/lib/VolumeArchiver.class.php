@@ -53,7 +53,7 @@ class VolumeArchiver
 			throw new Exception("A volume converter error occurred.");
 
 		$f = $this->_contentname !== null ? $this->_contentname : $this->_filename;
-		$files = array("$f.raw", "$f.txt", "$f.mha");
+		$files = array("$f.raw", "$f.txt", "$f.mhd");
 		$zipfile = $this->_dst . $DIR_SEPARATOR . $this->_filename . '.zip';
 
 		try
