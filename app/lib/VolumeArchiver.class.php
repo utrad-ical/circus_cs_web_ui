@@ -38,7 +38,7 @@ class VolumeArchiver
 	protected function doArchiveFromSeries($input_path,
 		$start_img_num, $image_delta, $image_count)
 	{
-		global $cmdForProcess, $cmdDcmToVolume, $DIR_SEPARATOR;
+		global $cmdDcmToVolume, $DIR_SEPARATOR;
 
 		$cmd = $cmdDcmToVolume . " " . escapeshellarg($input_path) . " " .
 			escapeshellarg($this->_dst) . " ". escapeshellarg($this->_contentname) . " " .

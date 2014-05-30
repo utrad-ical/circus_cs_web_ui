@@ -23,14 +23,11 @@ $SUBDIR_CAD_RESULT = "cad_results";
 
 $CONFIG_DICOM_STORAGE = "DICOMStorageServer.ini";
 
-$LOGIN_LOG               = "loginUser_log.txt";
-$LOGIN_ERROR_LOG         = "loginUser_errlog.txt";
+$LOGIN_LOG       = "loginUser_log.txt";
+$LOGIN_ERROR_LOG = "loginUser_errlog.txt";
 
 $cmdCreateThumbnail = "$APP_DIR/createThumbnail.exe";
-$cmdForProcess  = "$APP_DIR/Wrap_CreateProcess.exe";
-$cmdDcmToVolume = "$APP_DIR/dcm2volume.exe";
-$cmdDcmToPng = "$APP_DIR/dcm2png.exe";
-$cmdDcmCompress = "$APP_DIR/CompressDcmFile.exe";
+$cmdDcmToVolume     = "$APP_DIR/dcm2volume.exe";
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
