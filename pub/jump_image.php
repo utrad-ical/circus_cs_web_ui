@@ -126,22 +126,13 @@ try
 	$dstData['windowWidth'] = $req['windowWidth'];
 	$dstData['sliceNumber'] = $req['imgNum'];
 
-	// Get and slice location from dump data
-	$fp = @fopen($dumpFname, "r");
-	if($fp == null)
-		throw new Exception('Could not open dump file.');
-	while($str = fgets($fp))
+	// Get slice location from dump data
+	$lines = @file_get_contents($dumpFname);
+	if($lines !== false && strlen($lines) > 0)
 	{
-		$dumpTitle   = strtok($str,":");
-		$dumpContent = strtok("\r\n");
-		switch($dumpTitle)
-		{
-			case 'Slice location':
-				$dstData['sliceLocation'] = sprintf("%.2f", $dumpContent);
-				break;
-		}
+		$dumpData = json_decode($lines, true);
+		$dstData['sliceLocation'] = sprintf("%.2f", $dumpData['sliceLocation']);
 	}
-	fclose($fp);
 	if (!isset($dstData['sliceLocation']))
 		throw new Exception('Could not determine slice location from dump file.');
 
