@@ -125,7 +125,7 @@
 			foreach($seriesList as $vals)
 			{
 				$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list el, executed_series_list es "
-				        . " WHERE es.series_sid=? AND el.job_id=es.job_id AND el.status>0";
+				        . " WHERE es.series_sid=? AND el.job_id=es.job_id";
 
 				$stmt = $pdo->prepare($sqlStr);
 				$stmt->bindParam(1, $vals['srSID']);
@@ -133,7 +133,7 @@
 
 				if($stmt->fetchColumn() > 0)
 				{
-					$dstData['message'] = 'Executed/processing plugin exists in selected series';
+					$dstData['message'] = 'Assigned plugin exists in selected series';
 					break;
 				}
 			}
@@ -257,7 +257,7 @@
 		catch (PDOException $e)
 		{
 			$pdo->rollBack();
-			var_dump($e->getMessage());
+			$dstData['message'] = $e->getMessage();
 		}
 
 		if($dstData['message'] == "")
