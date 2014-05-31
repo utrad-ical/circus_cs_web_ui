@@ -4,6 +4,7 @@ js/jquery.daterange.js
 js/search_panel.js
 js/list_tab.js
 jq/ui/theme/jquery-ui.custom.css
+jq/jquery.blockUI.js
 {/capture}
 {include file="header.tpl" body_class="series-list" require=$smarty.capture.require}
 

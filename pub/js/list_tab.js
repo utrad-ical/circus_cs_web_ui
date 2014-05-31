@@ -13,10 +13,20 @@ function DeleteData(mode)
 	}
 	else if(confirm('Do you delete selected ' + mode + '?'))
 	{
-
+		// Parameters of UI blocking for ajax requests (using jquery blockUI)
+		var msg = '<span style="font-weight:bold; font-size:16px;"><img src="images/busy.gif" />'
+				+ '&nbsp;[Delete series] Processing, just a moment...</span>';
+		
+		$.blockUI({
+			message: msg,
+			fadeOut: 0,
+			css: { width: '440px', padding: '5px' },
+		});
+		
 		$.post("delete_list.php",
 				{mode: mode, 'sidArr[]': sids, ticket: $("#ticket").val()},
 				function(data){
+					$.unblockUI();
 					alert(data.message);
 					location.reload();
 				}, "json");
