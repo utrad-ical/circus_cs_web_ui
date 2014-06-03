@@ -1,9 +1,9 @@
 config/db.ini
-/cache/*
+/cache
 !/cache/templates_c
 /config/storage.json
 Thumbs.db
-/plugin/*
-/pub/plugin/*
+/plugin
+/pub/plugin
 updater.log
 migrator.log
