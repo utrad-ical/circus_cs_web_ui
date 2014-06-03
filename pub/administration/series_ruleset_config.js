@@ -260,7 +260,7 @@ $(function() {
 		}
 	});
 
-	$('.rule-box').change(ruleSetChanged).keyup(ruleSetChanged);
+	$('.rule-box').on('change input keyup paste', ruleSetChanged);
 	$('#condition').on('filterchange', ruleSetChanged);
 
 	$('#plugin-select').change();

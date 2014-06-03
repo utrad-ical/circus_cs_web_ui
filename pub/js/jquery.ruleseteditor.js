@@ -75,7 +75,7 @@ $.widget('ui.filtereditor', {
 			self.hoveringNode = null;
 		});
 		this.element.on('change', 'select', $.proxy(this._filterChanged, this));
-		this.element.on('input keydown', 'input', $.proxy(this._filterChanged, this));
+		this.element.on('input keydown keyup paste', 'input', $.proxy(this._filterChanged, this));
 
 	},
 

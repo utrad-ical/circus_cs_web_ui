@@ -94,7 +94,14 @@ h3 { margin-bottom: 15px; }
 .rule-box { margin-top: 10px; }
 .rule-box th { font-weight: bold; padding: 5px 15px; }
 
-#down { font-size: 20px; text-align: center; }
+#down {
+	margin: 15px auto;
+	width: 0;
+	height: 0;
+	border-top: 10px solid black;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
 
 #save-pane { text-align: right; margin: 30px 5px 0 0; border-top: 1px solid gray; padding: 10px; }
 #save-button { padding: 0.5em 2em; }
@@ -140,7 +147,7 @@ Series Ruleset Configuration</h2>
 		<h3>Condition</h3>
 		<div id="condition"></div>
 
-		<div id="down">&downarrow;</div>
+		<div id="down"></div>
 
 		<h3>Rule</h3>
 
