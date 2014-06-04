@@ -26,7 +26,7 @@ try {
 		'ticket' => array('type' => 'string'),
 		'mode' => array(
 			'type' => 'select',
-			'options' => array('set')
+			'options' => array('set','delete')
 		),
 		'target' => array('type' => 'int'),
 		'policy_name' => array(
@@ -87,6 +87,21 @@ try {
 		$pol->save($data);
 		$message = 'Policy "' . $pol->policy_name . '" updated.';
 	}
+
+	if ($_POST['mode'] == 'delete')
+	{
+		$pol = new PluginResultPolicy($req['target']);
+		if (!isset($pol->policy_id))
+		{
+			throw new Exception('Target policy does not exist.');
+		}
+		if($pol->policy_name == PluginResultPolicy::DEFAULT_POLICY)
+		{
+			throw new Exception('You cannot delete the default policy.');
+		}
+		$pol->delete($pol->policy_id);
+		$message = 'Policy "' . $pol->policy_name . '" deleted.';
+	}
 }
 catch (Exception $e)
 {
@@ -109,7 +124,18 @@ foreach ($pols as $pol)
 	$item = array();
 	$pol_id = $pol->policy_id;
 	$item['policy_id'] = $pol_id;
+	$item['delete_btn_flg'] = false;
 	foreach ($fields as $column) $item[$column] = $pol->$column;
+
+	// Set flag for enable/disable [delete] button
+	$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list"
+			. " WHERE policy_id=?";
+
+	if($item['policy_name'] != PluginResultPolicy::DEFAULT_POLICY)
+	{
+		$item['delete_btn_flg'] = (DBConnector::query($sqlStr, array($pol_id), 'SCALAR') == 0);
+	}
+
 	$policyList[$pol_id] = $item;
 }
 

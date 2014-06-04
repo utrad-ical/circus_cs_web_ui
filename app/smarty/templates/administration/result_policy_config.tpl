@@ -69,6 +69,18 @@ $(function () {
 		var editor = $('#editor');
 		editor.show(300);
 	});
+	
+	$('.delete-button').click(function (event) {
+		cancel(0);
+		var tr = $(event.target).closest('tr.policy');
+		var pol_id = $('.pol-id', tr).val();
+		var pol_data = data[pol_id];		
+		if (!confirm("Delete result policy '" + pol_data.policy_name + "'? This cannot be undone."))
+			return;
+		var form = $('#delete-policy-form');
+		$('input[name=target]', form).val(pol_id);
+		form.submit();
+	});	
 
 	$('#cancel-button').click(function () {
 		$('#groups tr').removeClass('editing');
@@ -147,7 +159,10 @@ CAD Result Policy Configuration</h2>
 		<td class="num">{$pol.max_personal_fb|escape}</td>
 		<td class="num">{$pol.min_personal_fb_to_make_consensus|escape}</td>
 		<td>{$pol.automatic_consensus|OorMinus}</td>
-		<td class="operation"><input type="button" class="edit-button form-btn" value="Edit" /></td>
+		<td class="operation">
+			<input type="button" class="edit-button form-btn" value="Edit" />
+			<input type="button" class="delete-button form-btn" value="delete"{if !$pol.delete_btn_flg} disabled="disabled"{/if} />
+		</td>
 	</tr>
 	{/foreach}
 </table>
@@ -220,5 +235,14 @@ CAD Result Policy Configuration</h2>
 	</div>
 </form>
 </div>
+
+<form id="delete-policy-form" method="post" action="result_policy_config.php">
+	<div style="display: none">
+		<input type="hidden" name="ticket" value="{$ticket|escape}" />
+		<input type="hidden" name="mode" value="delete" />
+		<input type="hidden" id="delete-target" name="target" />
+	</div>
+</form>
+
 
 {include file="footer.tpl"}
