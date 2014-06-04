@@ -38,7 +38,7 @@ $message = "";
 $uploadFile = $_FILES["upfile"]["name"];
 //----------------------------------------------------------------------------------------------------
 
-$baseName = substr($uploadFile, 0, strlen($uploadFile)-4);
+$baseName = "";
 $errorFlg = 0;
 
 // Connect to SQL Server
@@ -50,43 +50,32 @@ $installDate = date("Y-m-d H:i:s");
 //----------------------------------------------------------------------------------------------------
 //  unzip the pakcage file
 //----------------------------------------------------------------------------------------------------
+$tmpPath = $pluginPath . uniqid();
+
 if(move_uploaded_file($_FILES['upfile']['tmp_name'], $pluginPath.$uploadFile))
 {
-	$pos = strpos($baseName, "_v.");
-	$pluginName = substr($baseName, 0, $pos);
-	$version = substr($baseName, $pos+3, strlen($baseName)-$pos-3);
+	$zipData = new ZipArchive;
 
-	$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list el, plugin_master pm"
-			. " WHERE pm.plugin_id=el.plugin_id"
-			. " AND pm.plugin_name=?"
-			. " AND pm.version=?"
-			. " AND el.status>=0";
-
-	if(DBConnector::query($sqlStr, array($pluginName, $version), 'SCALAR') == 0)
+	if ($zipData->open($pluginPath.$uploadFile) === TRUE)
 	{
-		$zipData = new ZipArchive;
-		if ($zipData->open($pluginPath.$uploadFile) === TRUE)
-		{
-			$zipData->extractTo($PLUGIN_DIR);
-  				$zipData->close();
-		}
-		else
-		{
-			$message = '<span style="color:red;">[ERROR] '
-					 . $uploadFile . ' is not ZIP file.</span>';
-			$errorFlg = 1;
-		}
+		$zipData->extractTo($tmpPath);
+		$zipData->close();
 	}
 	else
 	{
 		$message = '<span style="color:red;">[ERROR] '
-				 . $baseName . ' was already executed in this server.</span>';
+		. $uploadFile . ' is not ZIP file.</span>';
 		$errorFlg = 1;
 	}
 	unlink($pluginPath.$uploadFile);
-
-	$pluginPath .= $baseName;
 }
+else
+{
+	$message = '<span style="color:red;">[ERROR] Failed to upload file ('
+	. $uploadFile . ')</span>';
+	$errorFlg = 1;
+}
+
 //----------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------------------------------
@@ -95,15 +84,15 @@ if(move_uploaded_file($_FILES['upfile']['tmp_name'], $pluginPath.$uploadFile))
 if(!$errorFlg)
 {
 	$message = '<span style="font-weight:bold;">Uploaded file name:</span>&nbsp;'
-				 . $_FILES['upfile']['name']
-				 . ' (File size:&nbsp;' . $_FILES['upfile']['size'] . ' bytes)<br/>';
+	. $_FILES['upfile']['name']
+	. ' (File size:&nbsp;' . $_FILES['upfile']['size'] . ' bytes)<br/>';
 
-	$jsonFname = $pluginPath . $DIR_SEPARATOR . "plugin.json";
+	$jsonFileName = $tmpPath . $DIR_SEPARATOR . "plugin.json";
 
-	if(!is_file($jsonFname) || ($file = file_get_contents($jsonFname)) == false)
+	if(!is_file($jsonFileName) || ($file = file_get_contents($jsonFileName)) == false)
 	{
-		$message .= '<span style="color:red;">Failed to load plugin.json ' . $jsonFname .'</span><br/>';
-		DeleteDirRecursively($pluginPath);
+		$message .= '<span style="color:red;">Failed to load plugin.json</span><br/>';
+		DeleteDirRecursively($tmpPath);
 		$errorFlg = 1;
 	}
 	else
@@ -111,10 +100,72 @@ if(!$errorFlg)
 		$data = json_decode($file, true);
 		if(json_last_error() != JSON_ERROR_NONE)
 		{
-			$message .= '<span style="color:red;">Failed to load plugin.json ' . $jsonFname .'</span><br/>';
-			DeleteDirRecursively($pluginPath);
+			$message .= '<span style="color:red;">Failed to decode JSON format</span><br/>';
+			DeleteDirRecursively($tmpPath);
 			$errorFlg = 1;
 		}
+		else
+		{
+			$message .= '<span style="font-weight:bold;">Plug-in name:</span> '
+			. $data['pluginName'] . '</br>'
+			. '<span style="font-weight:bold;">Version:</span> '
+			. $data['version'] . '</br>';
+			$baseName = $data['pluginName'] . '_v.' . $data['version'];
+		}
+	}
+}
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+// Check the plug-in was already excuted
+//----------------------------------------------------------------------------------------------------
+if(!$errorFlg)
+{
+	$sqlStr = "SELECT COUNT(*) FROM executed_plugin_list el, plugin_master pm"
+			. " WHERE pm.plugin_id=el.plugin_id"
+			. " AND pm.plugin_name=?"
+			. " AND pm.version=?"
+			. " AND el.status>=0";
+	try
+	{
+		if(DBConnector::query($sqlStr, array($data['pluginName'], $data['version']), 'SCALAR') != 0)
+		{
+			$message = '<span style="color:red;">[ERROR] '
+			. $baseName . ' was already executed in this server.</span>';
+			$errorFlg = 1;
+			DeleteDirRecursively($tmpPath);
+		}
+	}
+	catch (PDOException $e)
+	{
+		$message .= '<span style="color:red;">[ERROR] Failed to check plug-in execution ('
+		. $baseName . ')<br />'
+		.  '(' . $e->getMessage() . ')</span>';
+		$errorFlg = 1;
+	}
+}
+//----------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------
+// Change directory name
+//----------------------------------------------------------------------------------------------------
+if(!$errorFlg)
+{
+	$pluginPath .= $baseName;
+
+	if(file_exists($pluginPath))
+	{
+		DeleteDirRecursively($pluginPath);
+	}
+
+	if(!rename($tmpPath, $pluginPath))
+	{
+		$message = '<span style="color:red;">[ERROR] '
+		. ' Failed to rename directory name ('
+		. $tmpPath . ' => '
+		. $pluginPath . ')</span>';
+		$errorFlg = 1;
+		DeleteDirRecursively($tmpPath);
 	}
 }
 //----------------------------------------------------------------------------------------------------
@@ -135,7 +186,7 @@ if(!$errorFlg)
 		// Get new plugin_id
 		$sqlStr = "SELECT plugin_id FROM plugin_master WHERE plugin_name=? AND version=?";
 		$stmt = $pdo->prepare($sqlStr);
-		$stmt->execute(array($pluginName, $version));
+		$stmt->execute(array($data['pluginName'], $data['version']));
 
 		if($stmt->rowCount() == 1)
 		{
@@ -153,7 +204,7 @@ if(!$errorFlg)
 		// Set plugin_master
 		$sqlStr = 'INSERT INTO plugin_master(plugin_id, plugin_name, "version", "type",'
 				. 'description, install_dt) VALUES (?, ?, ?, ?, ?, ?)';
-		$sqlParams = array($pluginID, $pluginName, $version,
+		$sqlParams = array($pluginID, $data['pluginName'], $data['version'],
 							$data['pluginType'], $data['description'],
 							date("Y-m-d H:i:s", time()));
 		$stmt = $pdo->prepare($sqlStr);
@@ -330,18 +381,16 @@ if(!$errorFlg)
 		//----------------------------------------------------------------------------------------------------
 
 		//----------------------------------------------------------------------------------------------------
-		// Set process_machine_installed_plugins and copy files for execution
+		// Set process_machine_installed_plugins
 		//----------------------------------------------------------------------------------------------------
-		$message .= 'Set process_machine_installed_plugins and copy files for execution<br/>';
-
-		$binDir = $pluginPath . $DIR_SEPARATOR . 'bin' . $DIR_SEPARATOR;
+		$message .= 'Set process_machine_installed_plugins<br/>';
 
 		$sqlStr = "SELECT * FROM process_machine_list WHERE plugin_job_manager>=2";
 		$processMachineList = DBConnector::query($sqlStr, NULL, 'ALL_ASSOC');
 
 		foreach($processMachineList as $item)
 		{
-			if(!($item['architecture'] == 'x86' && $data['architecture'] == 'x64'))
+			if($item['architecture'] != 'x86')
 			{
 				$sqlStr = "INSERT INTO process_machine_installed_plugins"
 						. "(pm_id, plugin_id, exec_enabled, priority)"
@@ -349,23 +398,6 @@ if(!$errorFlg)
 				$sqlParams = array($item['pm_id'], $pluginID);
 				$stmt =$pdo->prepare($sqlStr);
 				$stmt->execute($sqlParams);
-
-				$dstPath = $pluginPath;
-
-				if(!($item['ip_address'] == '127.0.0.1' || $item['ip_address'] == 'localhost'))
-				{
-					$dstPath = '\\\\' . $item['ip_address'] . $DIR_SEPARATOR . 'CIRCUS-CS'
-							 . $DIR_SEPARATOR . 'plugins' . $DIR_SEPARATOR . $baseName;
-				}
-
-				if($item['architecture'] == 'x64' && is_dir($binDir.'x64'))
-				{
-					CopyDirRecursively($binDir.'x64', $dstPath);
-				}
-				else
-				{
-					CopyDirRecursively($binDir.'x86', $dstPath);
-				}
 			}
 		}
 		//----------------------------------------------------------------------------------------------------
