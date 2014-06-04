@@ -67,6 +67,9 @@ try
 			case -1:
 				$caseNum['failed'] = $r[1];
 				break;
+			case -2:
+				$caseNum['invalidated'] = $r[1];
+				break;
 			case  1:
 			case  2:
 			case  3:

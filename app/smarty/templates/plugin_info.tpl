@@ -77,6 +77,7 @@ $(function() {
 		<tr>
 			<th>Success</th>
 			<th>Failed</th>
+			<th>Invalidated</th>
 			<th>Processing</th>
 		</tr>
 	</thead>
@@ -84,6 +85,7 @@ $(function() {
 		<tr>
 			<td>{$caseNum.success|number_format}</td>
 			<td>{$caseNum.failed|number_format}</td>
+			<td>{$caseNum.invalidated|number_format}</td>
 			<td>{$caseNum.processing|number_format}</td>
 		</tr>
 	</tbody>
