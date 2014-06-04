@@ -379,17 +379,9 @@ Plugin definition file (plugin.json) builder</h2>
 			<th>Architecture</th>
 			<td>
 				<label>
-					<input type="radio" name="architecture" value="x86" />x86
-				</label>
-				<label>
 					<input type="radio" name="architecture" value="x64" checked="checked" />x64
 				</label>
-				<label>
-					<input type="radio" name="architecture" value="x86/x64" />x86/x64
-				</label>
-				<div class="desc">
-					Plug-in architecture.
-				</div>
+				<div class="desc">Currently, only "x64" is supported.</div>
 			</td>
 		</tr>
 		<tr>
