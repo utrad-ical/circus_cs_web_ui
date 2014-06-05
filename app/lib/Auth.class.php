@@ -82,18 +82,6 @@ class Auth
 	const PERSONAL_INFO_VIEW = 'personalInfoView';
 
 	/**
-	 * Name of 'researchExec' privilege.
-	 * @var string
-	 */
-	const RESEARCH_EXEC = 'researchExec';
-
-	/**
-	 * Name of 'researchShow' privilege.
-	 * @var string
-	 */
-	const RESEARCH_SHOW = 'researchShow';
-
-	/**
 	 * Name of 'dateDelete' privilege.
 	 * @var string
 	 */
@@ -168,15 +156,6 @@ class Auth
 		array (
 			self::PERSONAL_INFO_VIEW,
 			'Can view personal information (names, birthdays, etc) without anonymization.'
-		),
-		array (
-			self::RESEARCH_EXEC,
-			'Can execute any research plugin.'
-		),
-		array (
-			self::RESEARCH_SHOW,
-			'Can view the results of any research plugin.',
-			self::RESEARCH_EXEC // upper level
 		),
 		array (
 			self::DATA_DELETE,
@@ -287,8 +266,6 @@ class Auth
 		$_SESSION['consensualFBFlg']     = isset($priv['consensualFeedbackEnter']) ? 1 : 0;
 		$_SESSION['allStatFlg']          = isset($priv['allStatisticsView']) ? 1 : 0;
 		$_SESSION['anonymizeGroupFlg']   = isset($priv['personalInfoView']) ? 0 : 1;
-		$_SESSION['researchExecFlg']     = isset($priv['researchExec']) ? 1 : 0;
-		$_SESSION['researchShowFlg']     = isset($priv['researchShow']) ? 1 : 0;
 		$_SESSION['dataDeleteFlg']       = isset($priv['dataDelete']) ? 1 : 0;
 
 		if($_SESSION['anonymizeGroupFlg'] == 1)  $_SESSION['anonymizeFlg'] = 1;
