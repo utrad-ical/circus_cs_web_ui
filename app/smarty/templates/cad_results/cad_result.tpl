@@ -71,7 +71,7 @@ modified after this job was executed. This CAD result may be invalid.
 </div>
 {/if}
 
-<h2>CAD Result [{$cadResult->Plugin->plugin_name|escape}&nbsp;
+<h2>CAD Result [{$cadResult->Plugin->plugin_name|escape}
   v.{$cadResult->Plugin->version|escape} ID:{$cadResult->job_id}]</h2>
   <div class="headerArea">
     {$series->Study->Patient->patient_name|escape} ({$series->Study->Patient->patient_id})
