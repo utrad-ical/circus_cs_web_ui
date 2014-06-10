@@ -63,12 +63,11 @@ project in <a href="http://www.ut-radiology.umin.jp/ical/" target="blank">UTRAD 
 
 <p>CIRCUS CS is based on the following technologies:</p>
 <ul>
-	<li>Web interface: Apache, PostgreSQL, PHP, PECL, jQuery, jQuery UI
+	<li>Web interface: Apache, PostgreSQL, PHP, jQuery, jQuery UI
 	<li>DICOM storage server: DCMTK 3.6.0, PostgreSQL
-	<li>External application for research function: R 2.15.3, gnuplot 4.4
 </ul>
 
-<p>Currently, Win32 and Win64 versions are released. UNIX version will be available in the near future. </p>
+<p>Currently, Win64 versions are released. UNIX version will be available in the near future. </p>
 
 <p><a href="http://www.ut-radiology.umin.jp/ical/CIRCUS/">CIRCUS CS Webstite (Japanese)</a></p>
 
